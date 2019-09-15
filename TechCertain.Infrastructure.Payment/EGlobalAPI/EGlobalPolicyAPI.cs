@@ -1,0 +1,1254 @@
+﻿using System;
+using System.Collections.Generic;
+using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
+
+namespace TechCertain.Infrastructure.Payment.EGlobalAPI
+{
+    public class EGlobalPolicyAPI
+    {
+        private EGlobalPolicy EGlobalPolicy;
+        private User CurrentUser;
+        private string EbixUser;
+        private string EbixDepartment; //branchcode
+
+        public EGlobalPolicyAPI(EGlobalPolicy _EGlobalPolicy, User _CurrentUser)
+        {
+            EGlobalPolicy = _EGlobalPolicy;
+            CurrentUser = _CurrentUser;
+        }
+
+        #region Invoice Creation
+
+        /// <summary>
+        /// Creates the policy invoice with specified Policy Risks and autodetects transaction type
+        /// </summary>
+        /// <param name="risks">Risks.</param>
+        public void CreatePolicyInvoice()
+        {
+            // Create the PolicyRisks
+            GetPolicyRisks();
+
+            // Create the Insurers
+            GetInsurers();
+
+            // Create the Policy
+            GetPolicy();
+
+            // Create the SubAgents
+            GetSubAgents();
+
+            // Update Policy fields
+            EGlobalPolicy.Policy.PolicyDateTime = DateTime.Now;
+            EGlobalPolicy.Policy.EffectiveDate = DateTime.Now;
+        }
+
+        #endregion
+
+        #region Reverse Invoice
+
+        public void CreateReversePolicyInvoice(Guid invoiceID)
+        {
+            //SetTransactionType(TransactionType.Reverse);
+            LoadTransaction(invoiceID);
+            //CreateReversePolicyInvoice(GetReversePolicyRisks());
+
+            ReversePolicy();
+
+            GetReversePolicyRisks();
+
+            GetInsurers();
+
+            GetReverseSubAgents();
+
+            // Update Policy fields
+            EGlobalPolicy.Policy.PolicyDateTime = DateTime.Now;
+            EGlobalPolicy.Policy.EffectiveDate = DateTime.Now;
+        }
+
+        /// <summary>
+        /// Creates the reverse policy invoice from the specified policy risks
+        /// </summary>
+        /// <param name="risks">Risks.</param>
+        public void CreateReversePolicyInvoice(List<EBixPolicyRisk> risks)
+        {
+            EGlobalPolicy.PaymentDirection = -1;
+
+            //PolicyRisks = risks;
+
+            GetInsurers();
+
+            // Create the Policy
+            //EGlobalPolicy.PolicyRisks = GetPolicy();
+
+            GetReverseSubAgents();
+
+            // Update Policy fields
+            EGlobalPolicy.Policy.PolicyDateTime = DateTime.Now;
+            EGlobalPolicy.Policy.EffectiveDate = DateTime.Now;
+        }
+
+        protected virtual void ReversePolicy()
+        {
+            EGlobalPolicy.Policy.BSCAmount *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.BscGST *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.DueByClient *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.SPCFee *= EGlobalPolicy.PaymentDirection;
+        }
+
+        protected virtual void GetReversePolicyRisks()
+        {
+            List<EBixPolicyRisk> risks = EGlobalPolicy.PolicyRisks;
+
+            foreach (EBixPolicyRisk risk in risks)
+            {
+                risk.CoyPremium *= EGlobalPolicy.PaymentDirection;
+                risk.CEQuake *= EGlobalPolicy.PaymentDirection;
+                risk.LeviesA *= EGlobalPolicy.PaymentDirection;
+                risk.LeviesB *= EGlobalPolicy.PaymentDirection;
+                risk.GSTPremium *= EGlobalPolicy.PaymentDirection;
+
+                risk.BrokerAmountDue *= EGlobalPolicy.PaymentDirection;
+                risk.BrokerCeqDue *= EGlobalPolicy.PaymentDirection;
+                risk.GSTBrokerage *= EGlobalPolicy.PaymentDirection;
+
+                risk.DueByClient *= EGlobalPolicy.PaymentDirection;
+            }
+
+            EGlobalPolicy.PolicyRisks = risks;
+        }
+
+        protected virtual void GetReverseSubAgents()
+        {
+            List<EBixSubAgent> subAgents = EGlobalPolicy.SubAgents;
+
+            foreach (EBixSubAgent agent in subAgents)
+            {
+                agent.CalcAmount *= EGlobalPolicy.PaymentDirection;
+                agent.AmountCeded *= EGlobalPolicy.PaymentDirection;
+                agent.GSTCeded *= EGlobalPolicy.PaymentDirection;
+            }
+
+            EGlobalPolicy.SubAgents = subAgents;
+        }
+
+        #endregion
+
+        #region Cancel Invoice
+
+        /// <summary>
+        /// Creates the cancel policy invoice.
+        /// </summary>
+        public void CreateCancelPolicyInvoice()
+        {
+            //AutoDetectTransactionType();
+
+            //SetTransactionType(TransactionType.Cancel);
+            CreateCancelPolicyInvoice(GetCancelPolicyRisks());
+        }
+
+        /// <summary>
+        /// Creates the cancel policy invoice from the specified policy risks
+        /// </summary>
+        /// <param name="risks">Risks.</param>
+        public virtual void CreateCancelPolicyInvoice(List<EBixPolicyRisk> risks)
+        {
+            //PolicyRisks = risks;
+
+            GetInsurers();
+
+            // Create the Policy
+            GetPolicy();
+
+            // Update Policy fields
+            EGlobalPolicy.PaymentDirection = -1;
+            EGlobalPolicy.Policy.PolicyDateTime = DateTime.Now;
+
+            //            if (TCPolicy.CancelledEffectiveDate.Date == TCPolicy.InceptionDate.GetValueOrDefault().Date)
+            //                CalculateInvoiceSummary(Policy, -TCPolicy.BrokerFee.GetValueOrDefault());
+            //            else if (TCPolicy.CancelledEffectiveDate.Date > TCPolicy.InceptionDate.GetValueOrDefault().Date)
+            //                CalculateInvoiceSummary(Policy, 0M);
+        }
+
+        protected virtual List<EBixPolicyRisk> GetCancelPolicyRisks()
+        {
+            return new List<EBixPolicyRisk>();
+        }
+
+        #endregion
+
+        #region Lapse Invoice
+
+        public void CreateLapseInvoice()
+        {
+            //AutoDetectTransactionType();
+
+            //SetTransactionType(TransactionType.Lapse);
+            //CreatePolicyInvoice(GetLapsePolicyRisks());
+
+            GetLapseSubAgents();
+
+            EGlobalPolicy.Policy.StatementDescription = "";
+            EGlobalPolicy.Policy.Description = "";
+            // When a policy is lapsed the effective date is expected to be the expiry of the previous policy.
+            //Policy.EffectiveDate = Policy.RenewalDate;
+            EGlobalPolicy.Policy.EffectiveDate = EGlobalPolicy.Policy.InceptionDate;
+        }
+
+        /*protected virtual List<EBixPolicyRisk> GetLapsePolicyRisks()
+        {
+            List<EBixPolicyRisk> risks = GetPolicyRisks();
+
+            foreach (EBixPolicyRisk risk in risks)
+            {
+                risk.CoyPremium = 0;
+                risk.CEQuake = 0;
+                risk.LeviesA = 0;
+                risk.LeviesB = 0;
+                risk.GSTPremium = 0;
+
+                risk.BrokerAmountDue = 0;
+                risk.BrokerCeqDue = 0;
+                risk.GSTBrokerage = 0;
+
+                risk.DueByClient = 0;
+            }
+
+            return risks;
+        }*/
+
+        protected virtual void GetLapseSubAgents()
+        {
+            List<EBixSubAgent> subAgents = EGlobalPolicy.SubAgents;
+
+            foreach (EBixSubAgent agent in subAgents)
+            {
+                agent.AmountCeded = 0m;
+                agent.GSTCeded = 0m;
+                agent.Percent = 0m;
+            }
+
+            EGlobalPolicy.SubAgents = subAgents;
+        }
+
+        #endregion
+
+
+        #region Loading/Saving
+
+        public Guid LoadLatestTransaction()
+        {
+            throw new Exception("LoadLatestTransaction - Not yet implemented");
+            /*Guid responseID = Guid.Empty;
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "SELECT sub.invoiceid, sub.responseid FROM tbleglobalinvoicesubmission sub, tbleglobalinvoiceresponse res " +
+                                "WHERE sub.quoteid = @QuoteID AND sub.responseid IS NOT NULL AND sub.responseid = res.responseid " +
+                                "AND res.responsetype = 'update' ORDER BY datesubmitted DESC;";
+                using (NpgsqlCommand sqlCmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlCmd.Parameters.Add("@QuoteID", NpgsqlDbType.Uuid).Value = TCPolicy.ID;
+
+                    conn.Open();
+                    using (NpgsqlDataReader ndr = sqlCmd.ExecuteReader())
+                    {
+                        if (ndr.Read())
+                        {
+                            Guid id = TC_Shared.CNullGuid(ndr["invoiceid"]);
+                            responseID = TC_Shared.CNullGuid(ndr["responseid"]);
+
+                            LoadTransaction(id);
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            return responseID;*/
+        }
+
+        /// <summary>
+        /// Loads an existing transaction for viewing
+        /// </summary>
+        /// <returns><c>true</c>, if transaction was loaded, <c>false</c> otherwise.</returns>
+        /// <param name="invoiceID">ID of the invoice.</param>
+        public bool LoadTransaction(Guid invoiceID)
+        {
+            return LoadTransaction(invoiceID, true);
+        }
+
+        /// <summary>
+        /// Loads the transaction for submission
+        /// </summary>
+        /// <returns><c>true</c>, if transaction was loaded, <c>false</c> otherwise.</returns>
+        /// <param name="invoiceID">ID of the invoice.</param>
+        /// <param name="view">If set to <c>true</c> view.</param>
+        public bool LoadTransaction(Guid invoiceID, bool view)
+        {
+            throw new Exception("LoadTransaction - Not yet implemented");
+            /*bool result = false;
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "SELECT * FROM tbleglobalinvoicesubmission WHERE invoiceID = @InvoiceID;";
+                using (NpgsqlCommand cmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    cmd.Parameters.Add("@InvoiceID", NpgsqlDbType.Uuid).Value = invoiceID;
+                    try
+                    {
+                        conn.Open();
+
+                        using (var dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                SetPaymentType((PaymentType)TC_Shared.CNullInt(dr["paymenttype"], 0));
+                                SetTransactionType((TransactionType)TC_Shared.CNullInt(dr["trancode"], 0));
+
+                                result = LoadTransactionTerms(invoiceID);
+
+                                if (view)
+                                {
+                                    Policy.ExternalSystemContractID = TC_Shared.CNullStr(dr["contractno"]);
+                                    Policy.PolicyDateTime = TC_Shared.CNullableDate(dr["datesubmitted"]).GetValueOrDefault();
+                                    Policy.ExternalSystemVersionNumberString = TC_Shared.CNullStr(dr["versionno"]);
+                                }
+
+                                CalculateInvoiceSummary(Policy, TC_Shared.CNullDec(dr["brokerfee"], 0m));
+                                Policy.EffectiveDate = TC_Shared.CNullableDate(dr["effectivedate"]).GetValueOrDefault();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error loading EGlobal Transaction", ex.ToString());
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }
+            return result;*/
+        }
+
+        bool LoadTransactionTerms(Guid invoiceID)
+        {
+            throw new Exception("LoadTransactionTerms - Not yet implemented");
+            /*bool result = false;
+
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "SELECT * FROM tbleglobalinvoicesubmissionterm WHERE invoiceID = @InvoiceID;";
+                using (NpgsqlCommand cmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    cmd.Parameters.Add("@InvoiceID", NpgsqlDbType.Uuid).Value = invoiceID;
+                    try
+                    {
+                        conn.Open();
+
+                        using (var dr = cmd.ExecuteReader())
+                        {
+                            PolicyRisks = new List<EBixPolicyRisk>();
+                            List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
+
+                            while (dr.Read())
+                            {
+                                result = false;
+                                EBixPolicyRisk risk = new EBixPolicyRisk();
+                                // load from db
+                                risk.TCClassOfBusiness = TC_Shared.CNullGuid(dr["classOfBusinessID"]);
+                                risk.CoyPremium = TC_Shared.CNullDec(dr["premium"], 0m);
+                                risk.CEQuake = TC_Shared.CNullDec(dr["ndpremium"], 0m);
+                                risk.BrokerAmountDue = TC_Shared.CNullDec(dr["brokerage"], 0m);
+                                risk.BrokerAmountRate = TC_Shared.CNullDec(dr["brokeragerate"], 0m);
+                                risk.BrokerCeqDue = TC_Shared.CNullDec(dr["ndbrokerage"], 0m);
+                                risk.BrokerCeqDueRate = TC_Shared.CNullDec(dr["ndbrokeragerate"], 0m);
+                                risk.LeviesA = TC_Shared.CNullDec(dr["eqc"], 0m);
+                                risk.LeviesB = TC_Shared.CNullDec(dr["fsl"], 0m);
+                                // calculate remaining values
+                                risk.GSTPremium = (risk.CoyPremium + risk.CEQuake + risk.LeviesA + risk.LeviesB) *
+                                TCPolicy.Product.TaxRate.GetValueOrDefault();
+                                risk.GSTBrokerage = (risk.BrokerAmountDue + risk.BrokerCeqDue) *
+                                TCPolicy.Product.TaxRate.GetValueOrDefault();
+                                risk.BSCAmount = 0m;
+                                risk.BscGST = 0m;
+                                risk.DueByClient = TC_Shared.RoundDecimal(risk.CoyPremium + risk.GSTPremium + risk.CEQuake +
+                                risk.LeviesA + risk.LeviesB);
+                                // find subcover and riskcodes
+                                EGlobalPolicyRiskConfig config =
+                                    gv_objPolicyRisksConfigs.FirstOrDefault(c => c.ClassOfBusinessID == risk.TCClassOfBusiness);
+                                risk.RiskCode = config.RiskCode;
+                                risk.SubCoverString = config.SubCover;
+
+                                PolicyRisks.Add(risk);
+
+                                subAgents.AddRange(LoadTransactionSubAgents(TC_Shared.CNullGuid(dr["termid"]), risk));
+
+                                result = true;
+                            }
+
+                            CreatePolicyInvoice(PolicyRisks);
+
+                            SubAgents = subAgents;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error loading EGlobal Transaction Term", ex.ToString());
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }
+            return result;*/
+        }
+
+        List<EBixSubAgent> LoadTransactionSubAgents(Guid riskid, EBixPolicyRisk risk)
+        {
+            throw new Exception("LoadTransactionSubAgents - Not yet implemented");
+            /*List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
+
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "SELECT * FROM tbleglobalinvoicesubmissionsubagentterm WHERE risktermid = @RiskTermID;";
+                using (NpgsqlCommand cmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    cmd.Parameters.Add("@RiskTermID", NpgsqlDbType.Uuid).Value = riskid;
+
+                    conn.Open();
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            decimal amount = risk.CoyPremium + risk.CEQuake + risk.LeviesA + risk.LeviesB;
+                            EBixSubAgent agent = new EBixSubAgent();
+                            agent.ID = TC_Shared.CNullGuid(dr["subagenttermid"]);
+                            agent.CoverNumber = 0;
+                            agent.VerNo = 0;
+                            agent.SubCover = risk.SubCover;
+                            agent.Percent = TC_Shared.CNullDec(dr["subpercentcomm"], 0m);
+                            agent.GSTFlag = TC_Shared.CNullInt(dr["gstregistered"], 0);
+                            agent.SubAgent = TC_Shared.CNullStr(dr["subcode"]);
+                            agent.CalcAmount = TC_Shared.CNullDec(dr["subamount"], 0m);
+                            agent.AmountCeded = agent.CalcAmount * (agent.Percent / 100);
+                            if (agent.GSTFlag == -1)
+                                agent.GSTCeded = agent.AmountCeded * TCPolicy.Product.TaxRate.GetValueOrDefault();
+                            subAgents.Add(agent);
+                        }
+                    }
+
+                    if (conn.State != ConnectionState.Closed)
+                        conn.Close();
+                }
+            }
+
+            return subAgents;*/
+        }
+
+        /// <summary>
+        /// Saves the current policy transaction details
+        /// </summary>
+        public Guid SaveTransaction()
+        {
+            throw new Exception("SaveTransaction - Not yet implemented");
+            /*Guid id = Guid.NewGuid();
+            int result = 0;
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "INSERT INTO tbleglobalinvoicesubmission (invoiceID, quoteID, datesubmitted, contractno, " +
+                                "versionno, trancode, transactiondetail, paymenttype, brokerfee, effectivedate) VALUES (@InvoiceID, " +
+                                "@QuoteID, @DateSubmitted, @ContractNo, @VersionNo, @TranCode, @TransactionDetail, @PaymentType, @BrokerFee, " +
+                                "@EffectiveDate);";
+                using (NpgsqlCommand sqlcmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlcmd.Parameters.Add("@InvoiceID", NpgsqlDbType.Uuid).Value = id;
+                    sqlcmd.Parameters.Add("@QuoteID", NpgsqlDbType.Uuid).Value = TCPolicy.ID;
+                    sqlcmd.Parameters.Add("@DateSubmitted", NpgsqlDbType.Timestamp).Value = Policy.PolicyDateTime;
+                    sqlcmd.Parameters.Add("@ContractNo", NpgsqlDbType.Varchar).Value = Policy.ExternalSystemContractID;
+                    sqlcmd.Parameters.Add("@VersionNo", NpgsqlDbType.Integer).Value = Policy.ExternalSystemVersionNumber;
+                    sqlcmd.Parameters.Add("@TranCode", NpgsqlDbType.Varchar).Value = Policy.TransactionType.ToString();
+                    sqlcmd.Parameters.Add("@TransactionDetail", NpgsqlDbType.Varchar).Value = "";   // TODO
+                    sqlcmd.Parameters.Add("@PaymentType", NpgsqlDbType.Integer).Value = (int)gv_paymentType;
+                    sqlcmd.Parameters.Add("@BrokerFee", NpgsqlDbType.Integer).Value = Policy.BSCAmount;
+                    sqlcmd.Parameters.Add("@EffectiveDate", NpgsqlDbType.Timestamp).Value = Policy.EffectiveDate;
+                    try
+                    {
+                        conn.Open();
+                        result = sqlcmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction", ex.ToString());
+                        id = Guid.Empty;
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }
+            if (result == 1)
+                SaveTransactionTerms(id);
+            return id;*/
+        }
+
+        void SaveTransactionTerms(Guid transactionID)
+        {
+            throw new Exception("SaveTransactionTerms - Not yet implemented");
+            /*using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "INSERT INTO tbleglobalinvoicesubmissionterm (termID, invoiceID, classOfBusinessID, " +
+                                "premium, ndpremium, brokerage, ndbrokerage, eqc, fsl) VALUES (@TermID, @InvoiceID, @ClassOfBusinessID, " +
+                                "@Premium, @NDPremium, @Brokerage, @NDBrokerage, @EQC, @FSL);";
+                using (NpgsqlCommand sqlcmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlcmd.Parameters.Add("@InvoiceID", NpgsqlDbType.Uuid).Value = transactionID;
+                    foreach (EBixPolicyRisk pr in PolicyRisks)
+                    {
+                        pr.ID = Guid.NewGuid();
+                        sqlcmd.Parameters.Add("@TermID", NpgsqlDbType.Uuid).Value = pr.ID;
+                        sqlcmd.Parameters.Add("@ClassOfBusinessID", NpgsqlDbType.Uuid).Value = pr.TCClassOfBusiness;
+                        sqlcmd.Parameters.Add("@Premium", NpgsqlDbType.Numeric).Value = pr.CoyPremium;
+                        sqlcmd.Parameters.Add("@NDPremium", NpgsqlDbType.Numeric).Value = pr.CEQuake;
+                        sqlcmd.Parameters.Add("@Brokerage", NpgsqlDbType.Numeric).Value = pr.BrokerAmountDue;
+                        sqlcmd.Parameters.Add("@NDBrokerage", NpgsqlDbType.Numeric).Value = pr.BrokerCeqDue;
+                        sqlcmd.Parameters.Add("@EQC", NpgsqlDbType.Numeric).Value = pr.LeviesA;
+                        sqlcmd.Parameters.Add("@FSL", NpgsqlDbType.Numeric).Value = pr.LeviesB;
+                        try
+                        {
+                            conn.Open();
+                            sqlcmd.ExecuteNonQuery();
+
+                            if (SubAgents != null && SubAgents.Count > 0)
+                                SaveTransactionSubAgents(pr, transactionID);
+                        }
+                        catch (Exception ex)
+                        {
+                            TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction Terms", ex.ToString());
+                        }
+                        finally
+                        {
+                            if (conn.State != ConnectionState.Closed)
+                                conn.Close();
+                        }
+                    }
+                }
+            }*/
+        }
+
+        void SaveTransactionSubAgents(EBixPolicyRisk risk, Guid invoiceID)
+        {
+            throw new Exception("SaveTransactionSubAgents - Not yet implemented");
+            /*string strCmd = "INSERT INTO tbleglobalinvoicesubmissionsubagentterm (subagenttermid, subcode, invoiceid, " +
+                            "risktermid, gstregistered, subpercentcomm, subamount) VALUES (@ID, @SubCode, @InvoiceID, @RiskID, @GSTFlag, " +
+                "@PercentComm, @SubAmount);";
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                using (NpgsqlCommand sqlCmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlCmd.Parameters.Add("@RiskID", NpgsqlDbType.Uuid).Value = risk.ID;
+                    foreach (EBixSubAgent agent in SubAgents.Where(a => a.SubCover == risk.SubCover))
+                    {
+                        sqlCmd.Parameters.Add("@ID", NpgsqlDbType.Uuid).Value = Guid.NewGuid();
+                        sqlCmd.Parameters.Add("@SubCode", NpgsqlDbType.Varchar).Value = agent.SubAgent;
+                        sqlCmd.Parameters.Add("@InvoiceID", NpgsqlDbType.Uuid).Value = invoiceID;
+                        sqlCmd.Parameters.Add("@GSTFlag", NpgsqlDbType.Integer).Value = agent.GSTFlag;
+                        sqlCmd.Parameters.Add("@PercentComm", NpgsqlDbType.Numeric).Value = agent.Percent;
+                        sqlCmd.Parameters.Add("@SubAmount", NpgsqlDbType.Numeric).Value = agent.CalcAmount;
+
+                        try
+                        {
+                            conn.Open();
+                            sqlCmd.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction Subagent", ex.ToString());
+                        }
+                        finally
+                        {
+                            if (conn.State != ConnectionState.Closed)
+                                conn.Close();
+                        }
+                    }
+                }
+            }*/
+        }
+
+        #endregion
+
+
+        #region Utility functions
+
+        void GetPolicyRisks()
+        {
+            List<EBixPolicyRisk> risks = new List<EBixPolicyRisk>();
+
+            foreach (PackageProduct packageProduct in EGlobalPolicy.Package.PackageProducts)
+            {
+                EGlobalPolicy.EGlobalPolicyRiskConfig.Add(new EGlobalPolicyRiskConfig(packageProduct));
+                foreach(ClientAgreement clientAgreement in EGlobalPolicy.ClientProgramme.Agreements)
+                {
+                    foreach (ClientAgreementTerm clientAgreementTerm in clientAgreement.ClientAgreementTerms)
+                    {
+                        risks.Add(CreatePolicyRisk(packageProduct, clientAgreementTerm));
+                    }
+                }
+            }
+
+            EGlobalPolicy.PolicyRisks = risks;
+
+            /*   List<EGlobalPolicy.EGlobalPolicyConfig> riskConfigsInclude = gv_objPolicyRisksConfigs.Where(c => c.AlwaysInclude).ToList<EGlobalPolicy.EGlobalPolicyConfig>();
+               List<EGlobalPolicyRiskConfig> riskConfigsExclude = gv_objPolicyRisksConfigs.Where(c => !c.AlwaysInclude).ToList<EGlobalPolicyRiskConfig>();
+               foreach (EGlobalPolicyRiskConfig config in riskConfigsInclude)
+               {
+                   term = terms.FirstOrDefault(t => t.ClassOfBusinessID == config.ClassOfBusinessID);
+                   if (term != null)
+                       risks.Add(CreatePolicyRisk(policy, term, config));
+               }
+
+               foreach (EGlobalPolicyRiskConfig config in riskConfigsExclude)
+               {
+                   term = terms.FirstOrDefault(t => t.ClassOfBusinessID == config.ClassOfBusinessID);
+                   if (term != null)
+                   {
+                       if (config.MergeWithCOBID != Guid.Empty)
+                           MergePolicyRisks(risks, policy, term, new TCClassOfBusiness(config.MergeWithCOBID).MergeCode);
+                       else
+                           risks.Add(CreatePolicyRisk(policy, term, config));
+                   }
+               }
+           }
+
+           /*List<EBixPolicyRisk> risks = new List<EBixPolicyRisk>();
+
+           foreach (TCQuote quote in gv_objPolicies)
+           {
+               risks.AddRange(GetPolicyRisks(quote));
+           }*/
+        }
+
+        /*void AutoDetectTransactionType()
+        {
+            TCQuote objPolicy = TCPolicy;
+            TCQuote objNextPolicy = null;
+            // assume new transaction by default
+            gv_transactionType = TransactionType.New;
+
+            bool bolTransactionTypeCalculated = false;
+
+            // temp hack
+            //            if (policy.SchemeProjectID != new Guid("2c05174b-d7f8-46b2-ad8d-52ae0923ebee"))
+            //                return;
+            do
+            {
+                // try and find the original policy
+                if (objPolicy.Proposal.RenewedFromProposal != null)
+                {
+                    objNextPolicy = objPolicy.Proposal.RenewedFromProposal.ProposalPolicy;
+
+                    if (objNextPolicy == null)
+                        break;
+
+                    // if the previous policy's scheme project isn't using EGlobal, then stop 
+                    if (!objNextPolicy.SchemeProject.UsesEGlobal)
+                        break;
+
+
+                    if (objNextPolicy.Cancelled || objNextPolicy.Expired)
+                        break;
+
+                    // set the type to be renewal
+                    //                    if (objPolicy.InceptionDate != objNextPolicy.InceptionDate)
+                    //                        gv_transactionType = TransactionType.Renewal;
+                    //                    else
+
+                    if (!bolTransactionTypeCalculated)
+                    {
+                        if (objPolicy.InceptionDate != objNextPolicy.InceptionDate)
+                            gv_transactionType = TransactionType.Renewal;
+                        else
+                            gv_transactionType = TransactionType.Endorse;
+
+                        bolTransactionTypeCalculated = true;
+                    }
+                    // if there is a policy attached the the proposal's parent, set it as the current policy
+                    objPolicy = objNextPolicy;
+
+                    // otherise check to see if there if the current policy is the same as the original policy
+                    if (objPolicy.ID == TCPolicy.ID)
+                    {
+                        // and if so, set the transaction type to true (since any existing policies haven't been submitted)
+                        gv_transactionType = TransactionType.New;
+                        break;
+                    }
+
+                    // get its reference id
+                    gv_intPolicyReference = objPolicy.ReferenceID;
+
+                }
+                else
+                    objPolicy = null;
+            } while (objPolicy != null);
+        }
+
+        /// <summary>
+        /// Sets the type of the transaction.
+        /// </summary>
+        /// <param name="type">Enum transaction type</param>
+        public void SetTransactionType(TransactionType transType)
+        {
+            // if we are reversing, set type to endorse, and set the payment direction to be negative
+            if (transType == TransactionType.Reverse)
+            {
+                gv_decPaymentDirection = -1;
+                transType = TransactionType.Endorse;
+            }
+            gv_transactionType = transType;
+        }*/
+
+        public void Setup()
+        {
+
+            EGlobalPolicy.EGlobalPolicyConfig = new EGlobalPolicyConfig()
+            {
+
+                RiskCode = EGlobalPolicy.Package.RiskCode,
+                Branch = EGlobalPolicy.Package.Branch,
+                DescriptionNew = EGlobalPolicy.Package.DescriptionNew,
+                DescriptionChange = EGlobalPolicy.Package.DescriptionChange,
+                DescriptionRenew = EGlobalPolicy.Package.DescriptionRenew,
+                DescriptionCancel = EGlobalPolicy.Package.DescriptionCancel,
+                DescriptionLapse = EGlobalPolicy.Package.DescriptionLapse,
+                StatementNew = EGlobalPolicy.Package.StatementNew,
+                StatementChange = EGlobalPolicy.Package.StatementChange,
+                StatementRenew = EGlobalPolicy.Package.StatementRenew,
+                StatementCancel = EGlobalPolicy.Package.StatementCancel,
+                ContractCode = EGlobalPolicy.Package.ContractCode,
+                HasInvoicePayment = EGlobalPolicy.Package.HasInvoicePayment,
+                HasCCPayment = EGlobalPolicy.Package.HasCCPayment,
+                HasPremiumPayment = EGlobalPolicy.Package.HasPremiumPayment,
+                FTPFolder = EGlobalPolicy.Package.FTPFolder,
+            };
+
+            // set discount multipler to 1 - no discount
+            EGlobalPolicy.DiscountRate = 1m;
+
+            // Get Broker Info
+            EbixUser = CurrentUser.SalesPersonUserName;
+            EbixDepartment = CurrentUser.DefaultOU.EbixDepartmentCode;
+
+            // Create the Queue
+            EGlobalPolicy.Queue = new EBixQueue()
+            {
+                CustInv = 1,
+                User = EbixUser
+            };
+
+            // Create the PUF fields
+            EGlobalPolicy.PUF = new EBixPUF()
+            {
+                Element1 = new EBixPUFElement()
+                {
+                    Caption = "ISOType",
+                    Description = "ISOType",
+                    Sino = 1
+                },
+                Element2 = new EBixPUFElement()
+                {
+                    Caption = "ISOType",
+                    Description = "ISOType",
+                    Sino = 1
+                }
+            };
+
+            // Create the client
+            EGlobalPolicy.Client = new EBixClient()
+            {
+                ExtSystemFlag = "Q"
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice ID associated with the specified contractNo and version number
+        /// </summary>
+        /// <returns>The invoice ID.</returns>
+        /// <param name="contractNo">Contract no.</param>
+        /// <param name="version">Version.</param>
+        public Guid GetInvoiceID(string contractNo, int version)
+        {
+            if (EGlobalPolicy == null)
+            {
+                throw new Exception("EGlobalPolicy is empty");
+            }
+            return EGlobalPolicy.ClientProgramme.InformationSheet.Product.Id;
+
+            /*Guid invoiceGuid = Guid.Empty;
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "SELECT invoiceID FROM tbleglobalinvoicesubmission WHERE contractno = @ContractNo AND " +
+                                "versionno = @VersionNo ORDER BY datesubmitted DESC;";   // AND trancode = @TranCode;";
+                using (NpgsqlCommand sqlcmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlcmd.Parameters.Add("@ContractNo", NpgsqlDbType.Varchar).Value = contractNo;
+                    sqlcmd.Parameters.Add("@VersionNo", NpgsqlDbType.Integer).Value = version;
+                    //sqlcmd.Parameters.Add("@TranCode", NpgsqlDbType.Integer).Value = trancode;
+                    try
+                    {
+                        conn.Open();
+                        invoiceGuid = TC_Shared.CNullGuid(sqlcmd.ExecuteScalar());
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error while getting EGlobal Transaction ID", ex.ToString());
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }
+            return invoiceGuid;*/
+        }
+
+        public Guid GetQuoteID()
+        {
+            if (EGlobalPolicy == null)
+            {
+                throw new Exception("EGlobalPolicy is empty");
+            }
+            return EGlobalPolicy.ClientProgramme.InformationSheet.Product.Id;
+            /*Guid quoteGuid = Guid.Empty;
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "SELECT quoteid FROM tbleglobalinvoicesubmission WHERE contractno = @ContractNo AND " +
+                                "versionno = @VersionNo ORDER BY datesubmitted DESC;";   // AND trancode = @TranCode;";
+                using (NpgsqlCommand sqlcmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlcmd.Parameters.Add("@ContractNo", NpgsqlDbType.Varchar).Value = contractNo;
+                    sqlcmd.Parameters.Add("@VersionNo", NpgsqlDbType.Integer).Value = version;
+                    //sqlcmd.Parameters.Add("@TranCode", NpgsqlDbType.Integer).Value = trancode;
+                    try
+                    {
+                        conn.Open();
+                        quoteGuid = TC_Shared.CNullGuid(sqlcmd.ExecuteScalar());
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error while getting Quote ID from EGbolal Transaction", ex.ToString());
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }
+            return quoteGuid;*/
+        }
+
+        /// <summary>
+        /// Gets the current transaction version number for this policy
+        /// </summary>
+        /// <returns>The version count.</returns>
+        public int GetVersionCount()
+        {
+            if (EGlobalPolicy == null)
+            {
+                throw new Exception("EGlobalPolicy is empty");
+            }
+            
+            return EGlobalPolicy.ClientProgramme.InformationSheet.Product.OrderNumber; //placeholder
+            /*int version = 0;
+            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                //string strCmd = "SELECT COUNT(invoiceID) FROM tbleglobalinvoicesubmission WHERE quoteID = @QuoteID;";
+                string strCmd = "SELECT versionnumber FROM tbleglobalinvoiceresponse WHERE quoteid = @QuoteID AND " +
+                                "responsetype = 'update' ORDER BY datecreated DESC LIMIT 1";
+                using (NpgsqlCommand sqlCmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlCmd.Parameters.Add("@QuoteID", NpgsqlDbType.Uuid).Value = TCPolicy.ID;
+                    try
+                    {
+                        conn.Open();
+                        version = TC_Shared.CNullInt(sqlCmd.ExecuteScalar(), -1) + 1;
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug,
+                            "Error getting version # for EGlobal contract " + Policy.ExternalSystemContractID,
+                            ex.InnerException.ToString());
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }
+            return version;*/
+        }
+
+        public static void SetResponseID(Guid responseID, Guid invoiceID)
+        {
+            throw new Exception("SetResponseID - Not yet implemented");
+            /*using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+            {
+                string strCmd = "UPDATE tbleglobalinvoicesubmission SET responseid = @ResponseID WHERE invoiceID = @InvoiceID";
+                using (NpgsqlCommand sqlcmd = new NpgsqlCommand(strCmd, conn))
+                {
+                    sqlcmd.Parameters.Add("@ResponseID", NpgsqlDbType.Uuid).Value = responseID;
+                    sqlcmd.Parameters.Add("@InvoiceID", NpgsqlDbType.Uuid).Value = invoiceID;
+                    try
+                    {
+                        conn.Open();
+                        sqlcmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error while getting EGlobal Transaction ID", ex.ToString());
+                    }
+                    finally
+                    {
+                        if (conn.State != ConnectionState.Closed)
+                            conn.Close();
+                    }
+                }
+            }*/
+        }
+
+        #endregion
+
+
+        #region Section Assembly
+
+        protected virtual void GetPolicy()
+        {
+            EBixPolicy EBixPolicy = new EBixPolicy();
+
+            // Fill in its fields
+
+            // Dates
+            EBixPolicy.PolicyDateTime = (DateTime)EGlobalPolicy.Package.DateCreated;
+            EBixPolicy.EffectiveDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder 
+            EBixPolicy.ExpiryDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+            EBixPolicy.InceptionDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+            EBixPolicy.LastRenewalDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+            EBixPolicy.PolicyTime = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+            EBixPolicy.TermsofTradeDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+            EBixPolicy.RenewalDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+
+            // Set variables
+            EBixPolicy.Branch = EGlobalPolicy.ClientProgramme.EGlobalBranchCode;
+            EBixPolicy.IncomeClass = EGlobalPolicy.ClientProgramme.EGlobalClientStatus; //placeholder
+
+            EBixPolicy.Department = EbixDepartment; //placeholder
+            EBixPolicy.RiskCode = EGlobalPolicy.Package.RiskCode;
+            EBixPolicy.UserIDServ = EbixUser;
+            EBixPolicy.CreatedByUser = EbixUser;
+            EBixPolicy.StatementDescription = EGlobalPolicy.GetDescription2;    // Invoice description
+            EBixPolicy.MultiRisk = 1;                                   // placeholder
+            EBixPolicy.ExternalSystemContractID = String.Format("TC-{0}-{1}", EGlobalPolicy.PolicyReference, EGlobalPolicy.ExtensionCode); //placeholder
+            EBixPolicy.Description = EGlobalPolicy.GetDescription1;
+            EBixPolicy.ClientNumber = EGlobalPolicy.ClientProgramme.EGlobalClientNumber;
+            EBixPolicy.TransactionType = 1; //(int)gv_transactionType;
+            EBixPolicy.PremiumFunded = (int)EGlobalPolicy.PremiumFunding;
+
+            // Set defaults
+            EBixPolicy.Internal = "N";
+            EBixPolicy.Company = "NZL";
+            EBixPolicy.CountryCode = "NZL";
+            EBixPolicy.DirectCredit = 0;
+            EBixPolicy.BillingCurrencyRate = 1;
+            EBixPolicy.ExternalSystem = -1;
+            EBixPolicy.ExternalSystemVersionNumber = 000;// GetVersionCount();
+            EBixPolicy.VersionNumber = EBixPolicy.BillingCurrencyRate.ToString();
+            EBixPolicy.LastMajorTrans = "N";
+            EBixPolicy.TermsofTradeCode = "NRML";
+            EBixPolicy.Renewable = -1;
+            //ep.TransactionType = (int)TransactionTypes.New;
+
+            var BrokerFeeTotal = 0M;
+            // Sum all of the policy risks up
+            foreach (EBixPolicyRisk risk in EGlobalPolicy.PolicyRisks)
+            {
+                EBixPolicy.DueByClient += risk.DueByClient;
+                EBixPolicy.BrokerAmountDue += risk.BrokerAmountDue;
+                EBixPolicy.BrokerCeqDue += risk.BrokerCeqDue;
+                EBixPolicy.BSCAmount += risk.BSCAmount;
+                BrokerFeeTotal += EBixPolicy.BSCAmount;
+                EBixPolicy.CEQuake += risk.CEQuake;
+                EBixPolicy.BscGST += risk.BscGST;
+                EBixPolicy.GSTPremium += risk.GSTPremium;
+                EBixPolicy.LeviesA += risk.LeviesA;
+                EBixPolicy.LeviesB += risk.LeviesB;
+                EBixPolicy.CoyPremium += risk.CoyPremium;
+                EBixPolicy.GSTBrokerage += risk.GSTBrokerage;
+            }
+            //Marsh Real Estate calculate broker fee total
+            /*var BrokerFeeTotal = 0M;
+
+            if (TCPolicy.ProductID == new Guid("d5d29b57-cc40-4122-9515-de93d8f51ccb")) 
+            {
+                foreach (TCQuote quote in gv_objPolicies)
+                {
+                    BrokerFeeTotal += TC_Shared.CNullDec(quote.BrokerFee, 0M);
+                }
+
+                CalculateInvoiceSummary(ep, BrokerFeeTotal);
+            }
+            else
+            {*/
+            CalculateInvoiceSummary(EBixPolicy, BrokerFeeTotal);
+            //}
+            EGlobalPolicy.Policy = EBixPolicy;
+        }
+
+        public void CalculateInvoiceSummary(EBixPolicy ep, decimal brokerFee)
+        {
+            // Caculate the final few fields, and update where appropriate
+            decimal taxRate = EGlobalPolicy.ClientProgramme.InformationSheet.Product.TaxRate; //placeholder
+            decimal surchargeGST = EGlobalPolicy.SurchargeRate * (1 + taxRate);
+
+            ep.BSCAmount = brokerFee;
+
+            ep.BscGST = Math.Round(ep.BSCAmount * taxRate);
+            ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate);
+
+            decimal spcGST = Math.Round(ep.DueByClient * surchargeGST) - ep.SPCFee;
+
+            ep.BscGST += spcGST;
+            ep.DueByClient += (ep.SPCFee + spcGST);
+        }
+
+        protected virtual EBixPolicyRisk CreatePolicyRisk(PackageProduct packageProduct, ClientAgreementTerm clientAgreementTerm)
+        {
+            //string riskCode, subCover;
+            // Get the risk and subcover codes
+            //GetRiskAndSubCoverCodes(term.ClassOfBusiness.MergeCode, out riskCode, out subCover);
+            // Create a new Policy Risk
+            EBixPolicyRisk pr = new EBixPolicyRisk();
+            pr.TCMergeCode = clientAgreementTerm.MergeCode;
+            pr.TCClassOfBusiness = clientAgreementTerm.Id;
+            pr.RiskCode = clientAgreementTerm.RiskCode;
+            pr.SubCoverString = clientAgreementTerm.SubCoverString;
+            pr.CoyPremium = (clientAgreementTerm.Premium * EGlobalPolicy.DiscountRate);
+            pr.GSTPremium = (pr.CoyPremium * packageProduct.PackageProductProduct.TaxRate);
+            pr.BrokerAmountDue = ((clientAgreementTerm.Brokerage / 100m) * pr.CoyPremium);
+            pr.GSTBrokerage = (pr.BrokerAmountDue * packageProduct.PackageProductProduct.TaxRate);
+            pr.DueByClient = (pr.CoyPremium + pr.GSTPremium);
+            pr.BrokerCeqDue = 0m;
+            pr.BSCAmount = 0m;
+            pr.CEQuake = 0m;
+            pr.BscGST = 0m;
+            pr.LeviesA = 0m;     //eqc;
+            pr.LeviesB = 0m;     //fsl;
+            pr.BrokerAmountRate = pr.BrokerCeqDueRate = clientAgreementTerm.Brokerage;
+            /************************/
+            return pr;
+        }
+
+        /// <summary>
+        /// Merges a given policy risk into another policy risk.
+        /// </summary>
+        /// <param name="risks">The current policy risks</param>
+        /// <param name="policy">The current policy</param>
+        /// <param name="term">The quote term to be changed into a policy risk and merged</param>
+        /// <param name="code">The merge code of the line to </param>
+        /*protected virtual void MergePolicyRisks(List<EBixPolicyRisk> risks, TCQuote policy, TCQuoteTerm term, string code)
+        {
+            EBixPolicyRisk pr = risks.FirstOrDefault(risk => risk.TCMergeCode == code);
+            decimal premium = TC_Shared.RoundDecimal(gv_decPaymentDirection * term.Premium.GetValueOrDefault());
+            decimal gstPremium = TC_Shared.RoundDecimal(premium * policy.Product.TaxRate.GetValueOrDefault());
+            decimal brokerAmount = TC_Shared.RoundDecimal((policy.Brokerage.GetValueOrDefault() / 100m) * premium);
+            pr.CoyPremium += premium;
+            pr.GSTPremium += gstPremium;
+            pr.BrokerAmountDue += brokerAmount;
+            pr.GSTBrokerage += TC_Shared.RoundDecimal(brokerAmount * policy.Product.TaxRate.GetValueOrDefault());
+            pr.DueByClient += TC_Shared.RoundDecimal(premium + gstPremium);
+        }*/
+
+        /// <summary>
+        /// Gets a list of all of the insurers for this policy
+        /// </summary>
+        /// <returns>The insurers.</returns>
+        protected void GetInsurers()
+        {
+            List<EBixInsurer> Insurers = new List<EBixInsurer>();
+            foreach (EBixPolicyRisk risk in EGlobalPolicy.PolicyRisks)
+            {
+                foreach(EGlobalPolicyRiskConfig eGlobalPolicyRiskConfig in EGlobalPolicy.EGlobalPolicyRiskConfig)
+                {
+                    foreach(EGlobalInsurerConfig eGlobalInsurerConfig in eGlobalPolicyRiskConfig.Insurers)
+                    {
+                        Insurers.Add(GetInsurer(eGlobalInsurerConfig, risk));
+                    }
+                    
+                }
+            }
+               
+            EGlobalPolicy.Insurers = Insurers;
+
+            /*List<EBixInsurer> insurers = new List<EBixInsurer>();
+            EGlobalPolicyRiskConfig policyRisk;
+            foreach (EBixPolicyRisk risk in PolicyRisks)
+            {
+                policyRisk = gv_objPolicyRisksConfigs.FirstOrDefault(config => config.ClassOfBusinessID == risk.TCClassOfBusiness);
+                if (policyRisk != null)
+                {
+                    foreach (EGlobalInsurerConfig insurerConfig in policyRisk.InsurerConfigs)
+                    {
+                        insurers.Add(GetInsurer(insurerConfig, risk));
+                    }
+                }
+            }*/
+        }
+
+        /// <summary>
+        /// Gets the insurer for a given risk
+        /// </summary>
+        /// <returns>The insurer.</returns>
+        /// <param name="config">The insurer configuration and data for a given risk</param>
+        /// <param name="risk">The Risk to insure against</param>
+        protected virtual EBixInsurer GetInsurer(EGlobalInsurerConfig config, EBixPolicyRisk risk)
+        {
+            string riskCode, subCover;
+            // Get the risk and subcover codes
+            //GetRiskAndSubCoverCodes (code, out riskCode, out subCover);
+            // create a new insurer
+            EBixInsurer ir = new EBixInsurer();
+            // Fill in its feilds
+            //ir.PolicyNumber = TCPolicy.ReferenceID;
+            ir.AccountInsurerBranch = config.EGlobalInsurerConfig_Branch;
+            ir.AccountInsurerCode = config.EGlobalInsurerConfig_Code;
+            ir.RiskCode = risk.RiskCode;
+            ir.SubCoverString = risk.SubCoverString; 
+            ir.InsurerProportion = Convert.ToDecimal(config.EGlobalInsurerConfig_InsurerProportion * 100);            
+            ir.InsurerBranch = config.EGlobalInsurerConfig_Branch;
+            ir.InsurerCode = config.EGlobalInsurerConfig_Code;
+            ir.LeadInsurer = config.EGlobalInsurerConfig_tLeadOrder;
+            // TODO - Fill in IAC_T_ fields here once updated prop is released
+            /************************/
+            ir.CoyPremium = risk.CoyPremium * config.EGlobalInsurerConfig_InsurerProportion;
+            ir.GSTPremium = risk.GSTPremium * config.EGlobalInsurerConfig_InsurerProportion;
+            ir.BrokerAmountDue_T = risk.BrokerAmountDue * config.EGlobalInsurerConfig_InsurerProportion;
+            ir.GSTBrokerage = risk.GSTBrokerage * config.EGlobalInsurerConfig_InsurerProportion;
+            ir.BrokerCEQDue_T = risk.BrokerCeqDue * config.EGlobalInsurerConfig_InsurerProportion;
+            ir.CEQuake = 0m;//risk.CEQuake * config.InsurerProportion;
+            ir.LeviesA = 0m;//risk.LeviesA * config.InsurerProportion;
+            ir.LeviesB = 0m;//risk.LeviesB * config.InsurerProportion;
+            ir.BrokerCEQRate = 0m;
+            ir.NetPay = (ir.CoyPremium + ir.CEQuake + ir.LeviesA + ir.LeviesB + ir.GSTPremium) -
+                           (ir.BrokerAmountDue_T + ir.GSTBrokerage + ir.BrokerCEQDue_T);
+                           /************************/
+            ir.TermsofTradeCode = "80MF";   // Determine
+            ir.InsurerPerson = "Policy";    // Determine
+            ir.Broker = EbixUser;
+            ir.Placement = DateTime.Now; //placeholder
+            ir.NonRTax = 0m;
+            return ir;
+        }
+
+        protected void GetSubAgents()
+        {
+            List<EBixSubAgent> agents = new List<EBixSubAgent>();
+            agents.AddRange(GetDefaultSubAgents());
+            //agents.AddRange(GetQuoteSubAgents());
+            EGlobalPolicy.SubAgents = agents;            
+        }
+
+        List<EBixSubAgent> GetDefaultSubAgents()
+        {
+            List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
+            EGlobalPolicyRiskConfig policyRisk;
+            foreach (EBixPolicyRisk risk in EGlobalPolicy.PolicyRisks)
+            {
+                foreach (EGlobalPolicyRiskConfig eGlobalPolicyRiskConfig in EGlobalPolicy.EGlobalPolicyRiskConfig)
+                {
+                    foreach (EGlobalSubAgent eGlobalSubAgent in eGlobalPolicyRiskConfig.SubAgents)
+                    {
+                        subAgents.Add(eGlobalSubAgent.CalculateSubAgent(EGlobalPolicy.ClientProgramme.InformationSheet, risk));
+                    }
+
+                }              
+            }
+            return subAgents;
+        }
+
+        List<EBixSubAgent> GetQuoteSubAgents()
+        {
+            List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
+            EBixSubAgent subAgent;
+            EBixPolicyRisk risk;
+
+            throw new Exception("GetQuoteSubAgents() yet to be implemented");
+            /*using (NpgsqlConnection sqlConnection1 = TC_Shared.GetSqlConnection())
+            {
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(@"SELECT * FROM tblsubagentquote WHERE quoteid = @QuoteID 
+                    AND datedeleted IS NULL", sqlConnection1);
+                sqlcmd.Parameters.Add("@QuoteID", NpgsqlDbType.Uuid).Value = TCPolicy.ID;
+                Guid classOfBusinessID;
+                EGlobalPolicyRiskConfig config;
+                string subcover;
+                try
+                {
+                    sqlConnection1.Open();
+                    using (var dr = sqlcmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            classOfBusinessID = new Guid(TC_Shared.CNullStr(dr["classofbusinessid"]));
+                            risk = PolicyRisks.FirstOrDefault(r => r.TCClassOfBusiness == classOfBusinessID);
+                            config = gv_objPolicyRisksConfigs.FirstOrDefault(c => c.MergeWithCOBID != Guid.Empty
+                            && c.ClassOfBusinessID == classOfBusinessID);
+                            subcover = (risk != null) ? risk.SubCover.ToString() : ((config != null) ? config.SubCover : "");
+                            if (risk != null)
+                            {
+                                subAgent = subAgents.FirstOrDefault(s => s.SubCover.ToString() == subcover);
+                                if (subAgent == null)
+                                {
+                                    subAgent = new EBixSubAgent();
+                                    subAgent.CalcAmount = 0m;
+                                    subAgent.AmountCeded = 0m;
+                                    subAgent.CoverNumber = 0;
+                                    subAgent.GSTCeded = 0m;
+                                    subAgent.GSTFlag = TC_Shared.CNullInt(dr["subgstregistered"], 0);
+                                    subAgent.ID = TC_Shared.CNullGuid(dr["subagentquoteid"]);
+                                    subAgent.Percent = TC_Shared.CNullDec(dr["subpercentcomm"], 0m);
+                                    subAgent.SubAgent = TC_Shared.CNullStr(dr["subcode"]);
+                                    subAgent.SubCover = TC_Shared.CNullInt(subcover, 0);
+                                    subAgent.VerNo = 0;
+                                    subAgents.Add(subAgent);
+                                }
+                                subAgent.CalcAmount += (risk != null) ? risk.BrokerAmountDue + risk.BrokerCeqDue : 0m;
+                                subAgent.AmountCeded += TC_Shared.CNullDec(dr["subamount"], 0m) * gv_decPaymentDirection;
+                                subAgent.GSTCeded += TC_Shared.RoundDecimal(TC_Shared.CNullDec(dr["subgstamount"], 0m)) *
+                                gv_decPaymentDirection;
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Could not set up subagent for quote " + TCPolicy.ID, e.ToString());
+                }
+                finally
+                {
+                    sqlConnection1.Close();
+                }
+            }
+            return subAgents;*/
+        }
+
+        #endregion            
+
+    }
+}
+

@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="BaseLdapPackage.cs" />
+    <Compile Remove="ConfigurePackage.cs" />
+    <Compile Remove="IdentityPackage.cs" />
+    <Compile Remove="LdapPackage.cs" />
+    <Compile Remove="LoggingPackage.cs" />
+    <Compile Remove="RepositoryPackage.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.2" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="SimpleInjector" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DealEngine.Infrastructure.AppInitialize\DealEngine.Infrastructure.AppInitialize.csproj" />
+    <ProjectReference Include="..\DealEngine.Infrastructure.Identity\DealEngine.Infrastructure.Identity.csproj" />
+    <ProjectReference Include="..\TechCertain.Infrastructure.BaseLdap\TechCertain.Infrastructure.BaseLdap.csproj" />
+    <ProjectReference Include="..\TechCertain.Infrastructure.FluentNHibernate\TechCertain.Infrastructure.FluentNHibernate.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ServiceStack.Client" Version="5.6.0" />
+    <PackageReference Include="System.Linq.Dynamic" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TechCertain.Domain.Exceptions\TechCertain.Domain.Exceptions.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Services\TechCertain.Domain.Services.csproj" />
+    <ProjectReference Include="..\TechCertain.Infrastructure.Email\TechCertain.Infrastructure.Email.csproj" />
+    <ProjectReference Include="..\TechCertain.Infrastructure.Ldap\TechCertain.Infrastructure.Ldap.csproj" />
+    <ProjectReference Include="..\TechCertain.Infrastructure.Tasking\TechCertain.Infrastructure.Tasking.csproj" />
+    <ProjectReference Include="..\TechCertain.Services.Interfaces\TechCertain.Services.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

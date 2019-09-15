@@ -1,0 +1,27 @@
+﻿using System;
+
+namespace Bismuth.Ldap.Utils
+{
+	public class ByteArray
+	{
+		public static byte [] RemoveLeadingZeros (byte [] bytes)
+		{
+			int offset = 0;
+			for (offset = 0; offset < bytes.Length; offset++)
+				if (bytes [offset] != 0x0)
+					break;
+
+			byte [] newArray = new byte [bytes.Length - offset];
+			Array.Copy (bytes, offset, newArray, 0, newArray.Length);
+			return newArray;
+		}
+
+		public static byte [] AddTrailingZeros (byte [] bytes, int length)
+		{
+			byte [] newBytes = new byte [length];
+			Array.Copy (bytes, newBytes, bytes.Length);
+			return newBytes;
+		}
+	}
+}
+
