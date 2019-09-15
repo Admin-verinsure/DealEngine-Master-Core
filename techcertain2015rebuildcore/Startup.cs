@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SimpleInjector;
+using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Lifestyles;
 using TechCertain.Domain.Entities;
 
@@ -42,9 +43,6 @@ namespace techcertain2015rebuildcore
                 options.AddAspNetCore();                
             });           
 
-            //System.Web.Mvc.DependencyResolver.SetResolver(
-            //new SimpleInjectorDependencyResolver(container));
-
             services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
         }
@@ -72,6 +70,9 @@ namespace techcertain2015rebuildcore
             InitializeContainer();
 
             container.Verify();
+
+            System.Web.Mvc.DependencyResolver.SetResolver(
+                new SimpleInjectorDependencyResolver(container));
 
             app.UseMvc(routes =>
             {

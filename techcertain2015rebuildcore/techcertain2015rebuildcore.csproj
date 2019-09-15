@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DealEngine.Infrastructure.AppInitialize\DealEngine.Infrastructure.AppInitialize.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
     <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\TechCertain.Domain.Services\TechCertain.Domain.Services.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.DependecyResolution\TechCertain.Infrastructure.DependecyResolution.csproj" />

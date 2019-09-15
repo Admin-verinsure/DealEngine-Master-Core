@@ -77,12 +77,18 @@
 			</div>
 		</article>
 
-    	@using (var modal = Html.Bootstrap().Begin(new Modal().Id("viewPermissions").Closeable()))
-		{
-		    @modal.Header("View Effective Permissions")
-		    <div class="modal-body" id="viewPermissionsModalBody">
+        <div id="viewPermissions" class="modal" role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color:blue; font-size:22px">View Effective Permissions</h4>
+                </div>
+                <div class="modal-body" id="viewPermissionsModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="viewPermissions">Close</button>
+                </div>
             </div>
-		}
+        </div>
 	</div>
 </div>
 <!-- END MAIN CONTENT -->
