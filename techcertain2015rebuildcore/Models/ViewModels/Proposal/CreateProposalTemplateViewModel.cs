@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Proposal
+namespace techcertain2019core.Models.ViewModels.Proposal
 {
     public class CreateProposalTemplateViewModel
     {

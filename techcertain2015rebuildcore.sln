@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "techcertain2015rebuildcore", "techcertain2015rebuildcore\techcertain2015rebuildcore.csproj", "{C9F6C367-3A97-476C-A479-3E01C7D4244B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "techcertain2019core", "techcertain2015rebuildcore\techcertain2019core.csproj", "{C9F6C367-3A97-476C-A479-3E01C7D4244B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{D9F7FD19-6468-4A04-B372-BC84867ECE58}"
 EndProject

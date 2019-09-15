@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Helpers.CustomHtml.TableFor.Interfaces
+namespace techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces
 {
 	/// <summary>
 	/// Properties and methods used by the consumer to configure the TableBuilder.

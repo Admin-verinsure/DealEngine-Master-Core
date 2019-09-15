@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
-using techcertain2015rebuildcore.Helpers.CustomHtml.TableFor;
-using techcertain2015rebuildcore.Helpers.CustomHtml.TableFor.Interfaces;
+using techcertain2019core.Helpers.CustomHtml.TableFor;
+using techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces;
 
 //using TwitterBootstrapMVC;
 //using TwitterBootstrapMVC.Controls;
 
-namespace techcertain2015rebuildcore.Helpers.CustomHtml
+namespace techcertain2019core.Helpers.CustomHtml
 {
 	public static class RazorExtension
 	{

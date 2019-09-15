@@ -5,7 +5,7 @@ using System.Web;
 
 
 
-namespace techcertain2015rebuildcore.Helpers.CustomHtml.FixedHelpers
+namespace techcertain2019core.Helpers.CustomHtml.FixedHelpers
 {
 	public class FixedUrlAction 
 	{

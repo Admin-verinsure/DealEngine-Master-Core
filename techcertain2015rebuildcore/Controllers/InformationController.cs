@@ -10,11 +10,11 @@ using TechCertain.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
-using techcertain2015rebuildcore.Models.ViewModels.Programme;
+using techcertain2019core.Models.ViewModels;
+using techcertain2019core.Models.ViewModels.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     [Authorize]
     public class InformationController : BaseController

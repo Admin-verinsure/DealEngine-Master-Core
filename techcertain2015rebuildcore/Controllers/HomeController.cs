@@ -12,14 +12,15 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
-using techcertain2015rebuildcore.Models.ViewModels;
+using techcertain2019core.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using techcertain2019core.Controllers;
 
 #endregion
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
-    [Authorize]
+    [Route("Home")]
     public class HomeController : BaseController
     {
         ILogger _logger;
@@ -97,7 +98,9 @@ namespace techcertain2015rebuildcore.Controllers
         }
 
         // GET: home/index
-        [HttpGet]
+        [Route("")]
+        [Route("Index")]
+        [Route("/")]
         public ActionResult Index()
         {
             ViewBag.Title = "Proposalonline Dashboard";

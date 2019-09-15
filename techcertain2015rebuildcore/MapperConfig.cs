@@ -4,9 +4,9 @@
 //using System.Linq;
 //using System.Threading.Tasks;
 //using TechCertain.Domain.Entities;
-//using techcertain2015rebuildcore.Models.ViewModels;
+//using techcertain2019core.Models.ViewModels;
 
-//namespace techcertain2015rebuildcore
+//namespace techcertain2019core
 //{
 //    public static class MapperConfig
 //    {

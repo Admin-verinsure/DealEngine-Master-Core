@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Collections;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
 	public class CoverController 
 	{

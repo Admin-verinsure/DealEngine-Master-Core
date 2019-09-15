@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Services.Interfaces;
 
-namespace techcertain2015rebuildcore
+namespace techcertain2019core
 {
-    public class ErrorController : Microsoft.AspNetCore.Mvc.Controller
+    public class ErrorController : Controller
     {
         ICilentInformationService _clientInformationService;
         // GET: Error

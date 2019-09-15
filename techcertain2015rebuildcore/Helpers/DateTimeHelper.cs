@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace techcertain2015rebuildcore.Helpers
+namespace techcertain2019core.Helpers
 {
 	public static class DateTimeHelper
 	{

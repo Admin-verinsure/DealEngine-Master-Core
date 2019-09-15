@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2015rebuildcore.Models.ViewModels
+namespace techcertain2019core.Models.ViewModels
 {
     public class ClaimViewModel
     {

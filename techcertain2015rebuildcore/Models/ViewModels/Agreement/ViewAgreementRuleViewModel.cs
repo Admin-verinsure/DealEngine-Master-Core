@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Agreement
+namespace techcertain2019core.Models.ViewModels.Agreement
 {
     public class ViewAgreementRuleViewModel : BaseViewModel
     {

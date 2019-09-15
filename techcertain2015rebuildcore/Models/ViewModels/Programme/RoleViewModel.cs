@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Programme
+namespace techcertain2019core.Models.ViewModels.Programme
 {
 
     public class RoleViewModel : BaseViewModel

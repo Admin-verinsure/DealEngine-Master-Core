@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels
+namespace techcertain2019core.Models.ViewModels
 {
 	/// <summary>
 	/// Base view model containing global data such as user data &amp; permissions. Needs to be inherited by all other view models that get returned by an action.

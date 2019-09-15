@@ -7,9 +7,9 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
-    public class BaseController : Microsoft.AspNetCore.Mvc.Controller
+    public class BaseController : Controller
     {
         protected IUserService _userService;
 

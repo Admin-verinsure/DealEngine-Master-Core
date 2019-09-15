@@ -6,10 +6,10 @@ using System.Net;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2015rebuildcore.Models.ViewModels;
-using techcertain2015rebuildcore.Models.ViewModels.Permission;
+using techcertain2019core.Models.ViewModels;
+using techcertain2019core.Models.ViewModels.Permission;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     public class GroupsController : BaseController
     {

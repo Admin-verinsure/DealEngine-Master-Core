@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Programme
+namespace techcertain2019core.Models.ViewModels.Programme
 {
 
 

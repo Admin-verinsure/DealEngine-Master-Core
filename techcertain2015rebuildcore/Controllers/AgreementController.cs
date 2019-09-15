@@ -8,13 +8,13 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
 using Elmah;
-using techcertain2015rebuildcore.Models.ViewModels;
+using techcertain2019core.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using techcertain2015rebuildcore.Models.ViewModels.Agreement;
+using techcertain2019core.Models.ViewModels.Agreement;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     [Authorize]
     public class AgreementController : BaseController

@@ -2,7 +2,7 @@
 using System.Xml.Linq;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.ControlModels
+namespace techcertain2019core.Models.ViewModels.ControlModels
 {
 	/// <summary>
 	/// Defines a ViewModel for a jquery Grid (jqGrid).

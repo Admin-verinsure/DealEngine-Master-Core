@@ -5,9 +5,9 @@ using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
+using techcertain2019core.Models.ViewModels;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     public class OrganisationController : BaseController
     {

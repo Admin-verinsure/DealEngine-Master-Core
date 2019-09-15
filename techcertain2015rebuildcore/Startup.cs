@@ -15,7 +15,7 @@ using SimpleInjector.Lifestyles;
 using TechCertain.Domain.Entities;
 
 
-namespace techcertain2015rebuildcore
+namespace techcertain2019core
 {
     public class Startup
     {
@@ -37,11 +37,11 @@ namespace techcertain2015rebuildcore
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSimpleInjector(container, options =>
-            {
-                // AddAspNetCore() wraps web requests in a Simple Injector scope.
-                options.AddAspNetCore();                
-            });           
+            //services.AddSimpleInjector(container, options =>
+            //{
+            //    // AddAspNetCore() wraps web requests in a Simple Injector scope.
+            //    options.AddAspNetCore();                
+            //});           
 
             services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
@@ -50,37 +50,41 @@ namespace techcertain2015rebuildcore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            container.Options.DefaultScopedLifestyle = new ThreadScopedLifestyle();
+            //container.Options.DefaultScopedLifestyle = new ThreadScopedLifestyle();
           
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
+            //app.UseHttpsRedirection();
+            //app.UseStaticFiles();
+            //app.UseCookiePolicy();
 
-            app.UseAuthentication();
-            app.UseSimpleInjector(container, options =>
-            {
-                options.UseLogging();
-                options.CrossWire<IOptions<IdentityOptions>>();
-                options.CrossWire<IOptions<PasswordHasherOptions>>();
-                options.CrossWire<IServiceProvider>();
-                options.CrossWire<IEnumerable<IUserValidator<User>>>();
-                options.CrossWire<IEnumerable<IPasswordValidator<User>>>();
-                options.CrossWire<ILogger<UserManager<User>>>();
-            });
-            InitializeContainer();
+            //app.UseAuthentication();
+            //app.UseSimpleInjector(container, options =>
+            //{
+            //    options.UseLogging();
+            //    options.CrossWire<IOptions<IdentityOptions>>();
+            //    options.CrossWire<IOptions<PasswordHasherOptions>>();
+            //    options.CrossWire<IServiceProvider>();
+            //    options.CrossWire<IEnumerable<IUserValidator<User>>>();
+            //    options.CrossWire<IEnumerable<IPasswordValidator<User>>>();
+            //    options.CrossWire<ILogger<UserManager<User>>>();
+            //});
+            //InitializeContainer();
 
-            container.Verify();
+            //container.Verify();
 
-            System.Web.Mvc.DependencyResolver.SetResolver(
-                new SimpleInjectorDependencyResolver(container));
+            //System.Web.Mvc.DependencyResolver.SetResolver(
+            //    new SimpleInjectorDependencyResolver(container));
+
+            //app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute("default", "{controller=Home}/{action=Index}");
+                //routes.MapRoute(
+                //    name: "default",
+                //    template: "{controller=Home}/{action=Index}/{id?}",
+                //    //defaults: new { controller = "Home", action = "Index" });
             });
-         
+
         }
 
         private void InitializeContainer()

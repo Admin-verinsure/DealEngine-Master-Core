@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace techcertain2015rebuildcore
+namespace techcertain2019core
 {
     public class Program
     {

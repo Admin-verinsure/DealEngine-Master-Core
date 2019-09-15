@@ -8,12 +8,12 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using Elmah;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
+using techcertain2019core.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using techcertain2015rebuildcore.Models.ViewModels.ControlModels;
-using techcertain2015rebuildcore.Models.ViewModels.Policy;
+using techcertain2019core.Models.ViewModels.ControlModels;
+using techcertain2019core.Models.ViewModels.Policy;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     public class PolicyController : BaseController
     {

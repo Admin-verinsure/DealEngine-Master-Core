@@ -7,9 +7,9 @@ using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2015rebuildcore.Models.ViewModels;
+using techcertain2019core.Models.ViewModels;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     [AuthorizeRole("Admin")]
     public class AdminController : BaseController

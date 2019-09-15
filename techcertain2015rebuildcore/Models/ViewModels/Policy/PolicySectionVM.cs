@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Policy
+namespace techcertain2019core.Models.ViewModels.Policy
 {
 	public class PolicySectionVM : BaseViewModel
 	{

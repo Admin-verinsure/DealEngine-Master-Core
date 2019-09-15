@@ -1,5 +1,5 @@
 ﻿using System;
-namespace techcertain2015rebuildcore.Models.ViewModels.Account
+namespace techcertain2019core.Models.ViewModels.Account
 {
 	public class UserLockStatusViewModel : BaseViewModel
 	{

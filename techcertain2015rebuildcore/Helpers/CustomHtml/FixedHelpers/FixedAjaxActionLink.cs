@@ -7,7 +7,7 @@ using System.Web.Mvc.Ajax;
 using System.Web.Mvc;
 using System;
 
-namespace TechCertain.Web.UI.Helpers.CustomHtml.FixedHelpers
+namespace techcertain2019core.Helpers.CustomHtml.FixedHelpers
 {
 	public class FixedAjaxActionLink 
 	{

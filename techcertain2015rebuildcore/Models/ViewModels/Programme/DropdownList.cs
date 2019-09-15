@@ -1,5 +1,5 @@
 ﻿
-namespace techcertain2015rebuildcore.Models.ViewModels.Programme
+namespace techcertain2019core.Models.ViewModels.Programme
 { 
     public class DropdownList
     {

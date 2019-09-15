@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using techcertain2015rebuildcore.Helpers.CustomHtml.TableFor.Interfaces;
+using techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces;
 
-namespace techcertain2015rebuildcore.Helpers.CustomHtml.TableFor
+namespace techcertain2019core.Helpers.CustomHtml.TableFor
 {
 	public class TableCommand<TModel, TProperty> : ITableCommand, ITableCommandInternal<TModel> where TModel : class
 	{

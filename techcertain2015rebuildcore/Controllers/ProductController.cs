@@ -9,10 +9,10 @@ using System.Net.Http;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2015rebuildcore.Models.ViewModels;
-using techcertain2015rebuildcore.Models.ViewModels.Product;
+using techcertain2019core.Models.ViewModels;
+using techcertain2019core.Models.ViewModels.Product;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
 	//[Authorize]
 	public class ProductController : BaseController

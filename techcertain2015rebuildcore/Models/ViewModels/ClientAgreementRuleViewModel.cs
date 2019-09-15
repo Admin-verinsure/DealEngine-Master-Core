@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace techcertain2015rebuildcore.Models.ViewModels
+namespace techcertain2019core.Models.ViewModels
 {
     public class ClientAgreementRuleViewModel : BaseViewModel
     {

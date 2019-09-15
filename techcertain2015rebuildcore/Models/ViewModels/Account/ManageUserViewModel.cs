@@ -1,8 +1,8 @@
 ﻿using System;
 using TechCertain.Domain.Entities;
-using techcertain2015rebuildcore.Models.ViewModels.Permission;
+using techcertain2019core.Models.ViewModels.Permission;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Account
+namespace techcertain2019core.Models.ViewModels.Account
 {
 	public class ManageUserViewModel : BaseViewModel
 	{

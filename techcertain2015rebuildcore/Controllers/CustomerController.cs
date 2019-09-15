@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
-    public class CustomerController : Microsoft.AspNetCore.Mvc.Controller
+    public class CustomerController : Controller
     {
 		// GET: Customer
 		[HttpGet]

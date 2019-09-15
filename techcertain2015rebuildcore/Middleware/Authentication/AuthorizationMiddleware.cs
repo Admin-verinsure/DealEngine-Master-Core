@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace techcertain2015rebuildcore.Middleware.Authentication
+namespace techcertain2019core.Middleware.Authentication
 {
     public class AuthorizationMiddleware
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Product
+namespace techcertain2019core.Models.ViewModels.Product
 {
 	public class ProductInfoViewModel : BaseViewModel
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 
 
-namespace techcertain2015rebuildcore.Models.ViewModels
+namespace techcertain2019core.Models.ViewModels
 {
     public class MerchantViewModel : BaseViewModel
     {

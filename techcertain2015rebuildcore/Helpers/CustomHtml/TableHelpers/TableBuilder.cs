@@ -3,10 +3,10 @@ using System.Linq.Expressions;
 using System.Collections.Generic;
 
 using System.Xml.Linq;
-using techcertain2015rebuildcore.Helpers.CustomHtml.TableFor.Interfaces;
+using techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace techcertain2015rebuildcore.Helpers.CustomHtml.TableFor
+namespace techcertain2019core.Helpers.CustomHtml.TableFor
 {
 	/// <summary>
 	/// Build a table based on an enumerable list of model objects.

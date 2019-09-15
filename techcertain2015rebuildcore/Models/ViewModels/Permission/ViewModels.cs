@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Permission
+namespace techcertain2019core.Models.ViewModels.Permission
 {
 	// Used to display a single role with a checkbox, within a list structure:
 	public class SelectRoleEditorViewModel : BaseViewModel

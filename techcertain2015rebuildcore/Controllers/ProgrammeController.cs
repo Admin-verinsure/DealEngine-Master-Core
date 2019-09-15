@@ -9,12 +9,12 @@ using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
-using techcertain2015rebuildcore.Models.ViewModels.Programme;
+using techcertain2019core.Models.ViewModels;
+using techcertain2019core.Models.ViewModels.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using techcertain2015rebuildcore.Models.ViewModels.Product;
+using techcertain2019core.Models.ViewModels.Product;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     //[Authorize]
     public class ProgrammeController : BaseController

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Permission
+namespace techcertain2019core.Models.ViewModels.Permission
 {
 	public class RoleViewModel
 	{

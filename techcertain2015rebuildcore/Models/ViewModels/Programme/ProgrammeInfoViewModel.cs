@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using TechCertain.Domain.Entities;
-using techcertain2015rebuildcore.Models.ViewModels.Product;
+using techcertain2019core.Models.ViewModels.Product;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Programme
+namespace techcertain2019core.Models.ViewModels.Programme
 {
 
 

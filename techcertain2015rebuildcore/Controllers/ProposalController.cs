@@ -6,10 +6,10 @@ using System.Linq;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Domain.Services.Factories;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
-using techcertain2015rebuildcore.Models.ViewModels.Proposal;
+using techcertain2019core.Models.ViewModels;
+using techcertain2019core.Models.ViewModels.Proposal;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     public class ProposalController : BaseController
     {

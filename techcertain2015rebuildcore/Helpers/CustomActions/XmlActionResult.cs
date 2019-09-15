@@ -4,7 +4,7 @@ using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace techcertain2015rebuildcore
+namespace techcertain2019core
 {
 	public class XmlActionResult : ActionResult
 	{

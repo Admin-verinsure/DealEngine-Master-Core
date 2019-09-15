@@ -9,9 +9,9 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
+using techcertain2019core.Models.ViewModels;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
 	[Authorize]
     public class FileController : BaseController

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using techcertain2015rebuildcore.Helpers.CustomHtml.TableFor.Interfaces;
+using techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces;
 
-namespace techcertain2015rebuildcore.Helpers.CustomHtml.TableFor
+namespace techcertain2019core.Helpers.CustomHtml.TableFor
 {
 	/// <summary>
 	/// Represents a column in a table.

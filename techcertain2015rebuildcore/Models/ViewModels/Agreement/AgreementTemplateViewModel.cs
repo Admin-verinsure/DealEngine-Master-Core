@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Agreement
+namespace techcertain2019core.Models.ViewModels.Agreement
 {
 	public class AgreementTemplateViewModel : BaseViewModel
 	{

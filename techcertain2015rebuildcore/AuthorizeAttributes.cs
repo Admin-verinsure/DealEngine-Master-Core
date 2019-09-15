@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2015rebuildcore
+namespace techcertain2019core
 {
 	/**
 	 * I don't get it. Microsoft comes up with a web framework that needs DI to work correctly without a lot of boilerplate, 

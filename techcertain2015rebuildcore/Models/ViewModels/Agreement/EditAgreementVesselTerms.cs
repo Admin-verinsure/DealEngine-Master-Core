@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Agreement
+namespace techcertain2019core.Models.ViewModels.Agreement
 {
     public class EditAgreementVesselTerms : BaseViewModel
     {

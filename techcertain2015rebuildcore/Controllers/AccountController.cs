@@ -14,15 +14,15 @@ using System.Collections.Generic;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2015rebuildcore.Models.ViewModels;
-using techcertain2015rebuildcore.Models.ViewModels.Account;
-using techcertain2015rebuildcore.Models.ViewModels.Permission;
+using techcertain2019core.Models.ViewModels;
+using techcertain2019core.Models.ViewModels.Account;
+using techcertain2019core.Models.ViewModels.Permission;
 using Microsoft.AspNetCore.Identity;
 
 
 #endregion
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
     [Authorize]
     public class AccountController : BaseController

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Milestone
+namespace techcertain2019core.Models.ViewModels.Milestone
 {
     public class MilestoneListViewModel : BaseViewModel
     {

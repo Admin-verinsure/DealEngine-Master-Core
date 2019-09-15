@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace techcertain2015rebuildcore.Models.ViewModels.Policy
+namespace techcertain2019core.Models.ViewModels.Policy
 {
 	public class OptionsSectionVM
 	{

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace techcertain2015rebuildcore.Helpers
+namespace techcertain2019core.Helpers
 {
     public static class CustomHtmlHelper
     {

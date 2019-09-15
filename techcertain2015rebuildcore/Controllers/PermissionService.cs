@@ -2,7 +2,7 @@
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace techcertain2019core.Controllers
 {
 	public interface IPermissionsService
 	{
