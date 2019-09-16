@@ -27,28 +27,27 @@ namespace techcertain2019core.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
-        IAuthenticationService _authenticationService;
-		IRolePermissionsService _permissionsService;
+        //IAuthenticationService _authenticationService;
+		//IRolePermissionsService _permissionsService;
 
         ILogger _logger;
         IEmailService _emailService;
 		IFileService _fileService;
 
-		SignInManager<User> _signInManager;
+        ISignInManager _signInManager;
 
         IProgrammeService _programmeService;
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
 
-        public AccountController(IAuthenticationService authenticationService, SignInManager<User> signInManager,
-		    IRolePermissionsService permissionsService,
+        public AccountController(ISignInManager signInManager,		    
             IUserService userRepository,
             ILogger logger,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
 		{
-			_authenticationService = authenticationService;
-			_permissionsService = permissionsService;
+			//_authenticationService = authenticationService;
+			//_permissionsService = permissionsService;
             _userService = userRepository;
             _logger = logger;
             _emailService = emailService;
@@ -111,8 +110,8 @@ namespace techcertain2019core.Controllers
                     var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
                     _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(testuser, programme, sheet, organisation);*/
 
-                    SingleUseToken token = _authenticationService.GenerateSingleUseToken (viewModel.Email);
-                    User user = _userService.GetUser (token.UserID);
+                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken (viewModel.Email);
+                    //User user = _userService.GetUser (token.UserID);
                     // change the users password to an intermediate
                     //Membership.GetUser (user.UserName).ChangePassword ("", IntermediateChangePassword);
                     // get local domain
@@ -153,19 +152,19 @@ namespace techcertain2019core.Controllers
 		}
 
 		// GET: /account/changepassword
-		[HttpGet]
-		[AllowAnonymous]
-		public ActionResult ChangePassword(Guid id)
-		{
-			if (id != Guid.Empty && _authenticationService.GetToken (id) != null) {
-				if (_authenticationService.ValidSingleUseToken (id))
-					return View ();
-				// invalid token? display an error
-				return Redirect ("~/Error/InvalidPasswordReset");
-			}
-			// if we get here - either invalid guid or token doesn't exist - 404
-			return PageNotFound ();
-		}
+		//[HttpGet]
+		//[AllowAnonymous]
+		//public ActionResult ChangePassword(Guid id)
+		//{
+		//	if (id != Guid.Empty && _authenticationService.GetToken (id) != null) {
+		//		if (_authenticationService.ValidSingleUseToken (id))
+		//			return View ();
+		//		// invalid token? display an error
+		//		return Redirect ("~/Error/InvalidPasswordReset");
+		//	}
+		//	// if we get here - either invalid guid or token doesn't exist - 404
+		//	return PageNotFound ();
+		//}
 
 		// POST: /account/changepassword
 		[HttpPost]
@@ -193,11 +192,11 @@ namespace techcertain2019core.Controllers
 					ModelState.AddModelError ("passwordConfirm", "Passwords do not match");
 					return View ();
 				}
-				SingleUseToken st = _authenticationService.GetToken (id);
-				User user = _userService.GetUser (st.UserID);
-				if (user == null)
-					// in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
-					throw new Exception (string.Format ("Could not find user with ID {0}", st.UserID));
+				//SingleUseToken st = _authenticationService.GetToken (id);
+				//User user = _userService.GetUser (st.UserID);
+				//if (user == null)
+				//	// in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
+				//	throw new Exception (string.Format ("Could not find user with ID {0}", st.UserID));
 
 				//string username = user.UserName;
 				// change the users password as them using the intermediate password
@@ -237,16 +236,16 @@ namespace techcertain2019core.Controllers
 		{
 			User user = _userService.GetUser (id);
 
-			if (_permissionsService.DoesUserHaveRole(id, "Admin")) {
-				_logger.Info (" Attempt by [" + CurrentUser.UserName + "] to impersonate admin user [" + user.UserName + "]");
-			}
-			else {
-				//Session.Abandon ();
-				//FormsAuthentication.SetAuthCookie (user.UserName, true);
-				SetCookie ("ASP.NET_SessionId", "", DateTime.MinValue);
+			//if (_permissionsService.DoesUserHaveRole(id, "Admin")) {
+			//	_logger.Info (" Attempt by [" + CurrentUser.UserName + "] to impersonate admin user [" + user.UserName + "]");
+			//}
+			//else {
+			//	//Session.Abandon ();
+			//	//FormsAuthentication.SetAuthCookie (user.UserName, true);
+			//	SetCookie ("ASP.NET_SessionId", "", DateTime.MinValue);
 
-				_logger.Info ("[" + CurrentUser.UserName + "] is impersonating [" + user.UserName + "]");
-			}
+			//	_logger.Info ("[" + CurrentUser.UserName + "] is impersonating [" + user.UserName + "]");
+			//}
 
 			return Redirect ("~/Home/Index");
 		}
@@ -931,9 +930,9 @@ namespace techcertain2019core.Controllers
 		{
             var user = _userService.GetUser(Id);
             var accountModel = new ManageUserViewModel(user);
-            accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
+            //accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
 
-            SingleUseToken passwordToken = _authenticationService.GetTokensFor(Id).OrderByDescending(t => t.DateCreated.GetValueOrDefault()).FirstOrDefault();
+            SingleUseToken passwordToken = null;// _authenticationService.GetTokensFor(Id).OrderByDescending(t => t.DateCreated.GetValueOrDefault()).FirstOrDefault();
             if (passwordToken != null)
             {
                 accountModel.AccountStatus.LastPasswordResetIssued = passwordToken.DateCreated.GetValueOrDefault().ToString("f");
@@ -946,7 +945,7 @@ namespace techcertain2019core.Controllers
                     accountModel.AccountStatus.PasswordResetStatus = "Active";
             }
 
-            accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
+            //accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
             return View(accountModel);
         }
     }

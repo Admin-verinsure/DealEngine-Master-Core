@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using DealEngine.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using SimpleInjector;
 using SimpleInjector.Diagnostics;
 using TechCertain.Domain.Entities;
-using Microsoft.Extensions.Options;
-using DealEngine.Infrastructure.Identity.Subservices;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace DealEngine.Infrastructure.AppInitialize.ContainerServices
@@ -48,9 +42,9 @@ namespace DealEngine.Infrastructure.AppInitialize.ContainerServices
             registration1.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent,
                 "Ignore");
 
-            Registration registration2 = container.GetRegistration(typeof(DealEngineUserManager)).Registration;
-            registration2.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent,
-                "Ignore");
+            //Registration registration2 = container.GetRegistration(typeof(DealEngineUserManager)).Registration;
+            //registration2.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent,
+            //    "Ignore");
 
             Registration registration3 = container.GetRegistration(typeof(UserManager<User>)).Registration;
             registration3.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent,
