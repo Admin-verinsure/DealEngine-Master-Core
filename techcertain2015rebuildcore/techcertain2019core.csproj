@@ -36,7 +36,6 @@
     <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
     <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\TechCertain.Domain.Services\TechCertain.Domain.Services.csproj" />
-    <ProjectReference Include="..\TechCertain.Infrastructure.DependecyResolution\TechCertain.Infrastructure.DependecyResolution.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.FluentNHibernate\TechCertain.Infrastructure.FluentNHibernate.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.Payment\TechCertain.Infrastructure.Payment.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.Tasking\TechCertain.Infrastructure.Tasking.csproj" />

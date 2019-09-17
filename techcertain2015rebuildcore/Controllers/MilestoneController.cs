@@ -18,7 +18,7 @@ namespace techcertain2019core.Controllers
     {
 
         IUWMService _uWMService;
-        ITaskingService _taskingService;
+        //ITaskingService _taskingService;
         IEmailService _emailService;
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
@@ -32,14 +32,14 @@ namespace techcertain2019core.Controllers
             IProgrammeService programmeService,
             IRepository<Programme> programmeRepository,
             IUWMService uWMService,
-            ITaskingService taskingService,
+            //ITaskingService taskingService,
             IMilestoneService milestoneService)
             : base(userRepository)
         {
             _programmeService = programmeService;
             _programmeRepository = programmeRepository;
             _uWMService = uWMService;
-            _taskingService = taskingService;
+            //_taskingService = taskingService;
             _milestoneService = milestoneService;
             _emailService = emailService;
         }

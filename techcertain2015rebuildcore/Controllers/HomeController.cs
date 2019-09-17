@@ -20,7 +20,7 @@ using techcertain2019core.Controllers;
 
 namespace techcertain2019core.Controllers
 {
-    [Route("Home")]
+    //[Route("Home")]
     public class HomeController : BaseController
     {
         ILogger _logger;
@@ -28,14 +28,14 @@ namespace techcertain2019core.Controllers
         IInformationTemplateService _informationService;
         ICilentInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
-        ITaskingService _taskingService;
+        //ITaskingService _taskingService;
 
         IRepository<Product> _productRepositoy;
         IRepository<Programme> _programmeRepository;
 
         public HomeController(ILogger logger, IMapper mapper, IUserService userRepository, IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
-                              ITaskingService taskingService, IRepository<Product> productRepository, IRepository<Programme> programmeRepository)
+                              IRepository<Product> productRepository, IRepository<Programme> programmeRepository)
             : base(userRepository)
         {
             _logger = logger;
@@ -43,7 +43,7 @@ namespace techcertain2019core.Controllers
             _informationService = informationService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
-            _taskingService = taskingService;
+            //_taskingService = taskingService;
 
             _productRepositoy = productRepository;
             _programmeRepository = programmeRepository;
@@ -98,9 +98,9 @@ namespace techcertain2019core.Controllers
         }
 
         // GET: home/index
-        [Route("")]
-        [Route("Index")]
-        [Route("/")]
+        //[Route("")]
+        //[Route("Index")]
+        //[Route("/")]
         public ActionResult Index()
         {
             ViewBag.Title = "Proposalonline Dashboard";
@@ -171,20 +171,20 @@ namespace techcertain2019core.Controllers
                         //}
                     //}
 
-                    foreach (var task in _taskingService.GetAllTasksFor(CurrentUser))
-                    {
-                        var taskItem = _mapper.Map<TaskItem>(task);
-                        taskItem.DueDate = LocalizeTime(task.DueDate);
-                        if (task.Completed)
-                        {
-                            model.CompletedTaskItems.Add(taskItem);
-                            continue;
-                        }
-                        if (task.Priority == 1)
-                            model.CriticalTaskItems.Add(taskItem);
-                        else
-                            model.ImportantTaskItems.Add(taskItem);
-                    }
+                    //foreach (var task in _taskingService.GetAllTasksFor(CurrentUser))
+                    //{
+                    //    var taskItem = _mapper.Map<TaskItem>(task);
+                    //    taskItem.DueDate = LocalizeTime(task.DueDate);
+                    //    if (task.Completed)
+                    //    {
+                    //        model.CompletedTaskItems.Add(taskItem);
+                    //        continue;
+                    //    }
+                    //    if (task.Priority == 1)
+                    //        model.CriticalTaskItems.Add(taskItem);
+                    //    else
+                    //        model.ImportantTaskItems.Add(taskItem);
+                    //}
 
                     model.ProgrammeItems.Add(new ProgrammeItem
                     {
@@ -550,42 +550,42 @@ namespace techcertain2019core.Controllers
             return View();
         }
 
-        [HttpGet]
-        public ActionResult ViewTask(Guid Id)
-        {
-            UserTask task = _taskingService.GetTask(Id);
-            UserTaskViewModel model = new UserTaskViewModel
-            {
-                Details = task.Details,
-                Description = task.Description,
-                DueDate = task.DueDate,
-                Priority = task.Priority,
-                ClientName = task.ClientName,
-                Completed = task.Completed,
-                CompletedBy = task.CompletedBy,
-                For = task.For
-            };
+        //[HttpGet]
+        //public ActionResult ViewTask(Guid Id)
+        //{
+        //    UserTask task = _taskingService.GetTask(Id);
+        //    UserTaskViewModel model = new UserTaskViewModel
+        //    {
+        //        Details = task.Details,
+        //        Description = task.Description,
+        //        DueDate = task.DueDate,
+        //        Priority = task.Priority,
+        //        ClientName = task.ClientName,
+        //        Completed = task.Completed,
+        //        CompletedBy = task.CompletedBy,
+        //        For = task.For
+        //    };
 
-            return View("~/ViewTask/"+ task.Id.ToString(), model);
-        }
+        //    return View("~/ViewTask/"+ task.Id.ToString(), model);
+        //}
 
-        [HttpPost]
-        public ActionResult AddTask(string taskCategory, string taskDueDate, string taskDetail, string taskDescription )
-        {
-            User user = _userService.GetUser(CurrentUser.Id);
-            DateTime time = Convert.ToDateTime(taskDueDate, CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);
-            UserTask task = new UserTask(user, user.PrimaryOrganisation, user.FirstName, time)
-            {
-                Description = taskDescription,
-                Details = taskDetail,
-                Priority = Convert.ToInt32(taskCategory),
-                TaskUrl = "Home/Task/ViewTask",
-                IsActive = true,
+        //[HttpPost]
+        //public ActionResult AddTask(string taskCategory, string taskDueDate, string taskDetail, string taskDescription )
+        //{
+        //    User user = _userService.GetUser(CurrentUser.Id);
+        //    DateTime time = Convert.ToDateTime(taskDueDate, CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);
+        //    UserTask task = new UserTask(user, user.PrimaryOrganisation, user.FirstName, time)
+        //    {
+        //        Description = taskDescription,
+        //        Details = taskDetail,
+        //        Priority = Convert.ToInt32(taskCategory),
+        //        TaskUrl = "Home/Task/ViewTask",
+        //        IsActive = true,
                 
-            };
-            _taskingService.CreateTaskFor(task);
+        //    };
+        //    _taskingService.CreateTaskFor(task);
             
-            return Redirect("~/Home/Index");
-        }
+        //    return Redirect("~/Home/Index");
+        //}
     }
 }

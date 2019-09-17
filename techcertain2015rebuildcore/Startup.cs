@@ -39,6 +39,8 @@ namespace techcertain2019core
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddIdentityCore<IdentityUser>();
+
             services.AddControllersWithViews();
             services.AddSimpleInjector(container, options =>
             {
@@ -49,6 +51,7 @@ namespace techcertain2019core
                     .AddViewComponentActivation()
                     .AddPageModelActivation()                    
                     .AddTagHelperActivation();
+                
             });
             services.EnableSimpleInjectorCrossWiring(container);
 
@@ -78,6 +81,7 @@ namespace techcertain2019core
             });
 
             container.AutoCrossWireAspNetComponents(app);
+            container.RegisterInstance(MapperConfig.ConfigureMaps());
 
             InitializeContainer();
 
@@ -97,11 +101,8 @@ namespace techcertain2019core
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Account}/{action=Login}/{id?}");
             });
-
-            //System.Web.Mvc.DependencyResolver.SetResolver(
-            //    new SimpleInjectorDependencyResolver(container));
 
             //app.UseMvc(routes =>
             //{
@@ -116,14 +117,6 @@ namespace techcertain2019core
 
         private void InitializeContainer()
         {
-            RepositoryPackage.RegisterServices(container);            
-            BaseLdapPackage.RegisterServices(container);
-            LdapPackage.RegisterServices(container);
-            LoggingPackage.RegisterServices(container);
-            ConfigurePackage.RegisterServices(container);
-            IdentityPackage.RegisterServices(container);
-
-
             var repositoryAssembly = typeof(EmailService).Assembly;
             var registrations =
                 from type in repositoryAssembly.GetExportedTypes()
@@ -135,6 +128,13 @@ namespace techcertain2019core
             {
                 container.Register(reg.Service, reg.Implementation);
             }
+
+            RepositoryPackage.RegisterServices(container);            
+            BaseLdapPackage.RegisterServices(container);
+            LdapPackage.RegisterServices(container);
+            LoggingPackage.RegisterServices(container);
+            ConfigurePackage.RegisterServices(container);
+            IdentityPackage.RegisterServices(container);
         }
 
     }

@@ -13,20 +13,20 @@ namespace TechCertain.Services.Impl
         IUnitOfWorkFactory _unitOfWork;
         IRepository<Milestone> _milestoneRepository;
         ISystemEmailService _systemEmailRepository;
-        ITaskingService _taskingService;
+        //ITaskingService _taskingService;
         IMilestoneTemplateService _milestoneTemplateService;
 
 
         public MilestoneService(IUnitOfWorkFactory unitOfWork,
                                 IRepository<Milestone> milestoneRepository,
                                 ISystemEmailService systemEmailService,
-                                ITaskingService taskingService,
+                                //ITaskingService taskingService,
                                 IMilestoneTemplateService milestoneTemplateService)
         {
             _unitOfWork = unitOfWork;
             _milestoneRepository = milestoneRepository;
             _systemEmailRepository = systemEmailService;
-            _taskingService = taskingService;
+            //_taskingService = taskingService;
             _milestoneTemplateService = milestoneTemplateService;
         }
 
@@ -103,7 +103,7 @@ namespace TechCertain.Services.Impl
             if (userTask == null)
                 throw new ArgumentNullException(nameof(userTask));
 
-            milestone.Task = _taskingService.CreateTaskFor(userTask);
+           //milestone.Task = _taskingService.CreateTaskFor(userTask);
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 _milestoneRepository.Update(milestone);

@@ -21,7 +21,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
         {
             var fluentConfiguration =
                 Fluently.Configure()
-                .Database(databaseDriver)
+                .Database(databaseDriver)                
                 .CurrentSessionContext("web")
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())                
                 .Conventions.Add<CascadeConvention>()                 

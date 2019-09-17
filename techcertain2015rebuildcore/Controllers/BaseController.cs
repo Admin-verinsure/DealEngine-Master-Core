@@ -6,6 +6,9 @@ using TechCertain.Services.Interfaces;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNet.Identity;
+using System.Configuration;
 
 namespace techcertain2019core.Controllers
 {
@@ -16,15 +19,19 @@ namespace techcertain2019core.Controllers
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
 
+        public BaseController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         public User CurrentUser
         {
             get
             {
-                throw new Exception("Method will need to be re-written");
-    //            string userName = HttpContext.User.Identity.Name;
-				//if (string.IsNullOrWhiteSpace (userName))
-				//	return null;
-				//return _userService.GetUser(userName); 
+                var user = User.Identity.Name;
+                if (string.IsNullOrWhiteSpace (User.Identity.Name))
+                    return null;
+				return _userService.GetUser(user); 
             }
         }
 
@@ -66,16 +73,11 @@ namespace techcertain2019core.Controllers
 //            }
 //        }
 
-		public BaseController(IUserService userService)
-        {
-            _userService = userService;
-        }
-
         public bool DemoEnvironment
         {
             get
             {
-                throw new Exception("This method will need to be re-written");
+                return true;
             }// return WebConfigurationManager.AppSettings["DemoEnvironment"].ToLower() == "true"; }
         }
 

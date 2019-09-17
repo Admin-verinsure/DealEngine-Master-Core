@@ -30,7 +30,7 @@ namespace techcertain2019core.Controllers
         IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IUWMService _uWMService;
-        ITaskingService _taskingService;
+        //ITaskingService _taskingService;
         IRepository<PolicyDocumentTemplate> _documentRepository;
         IEmailService _emailService;
         IUnitOfWorkFactory _unitOfWorkFactory;
@@ -67,7 +67,7 @@ namespace techcertain2019core.Controllers
             IClientAgreementRuleService clientAgreementRuleService,
             IUWMService uWMService,
             IReferenceService referenceService,
-            ITaskingService taskingService,
+            //ITaskingService taskingService,
             IRepository<Organisation> organisationRepository,
             IRepository<InsuranceAttribute> insuranceAttributesRepository,
             IRepository<PolicyDocumentTemplate> documentRepository,
@@ -96,7 +96,7 @@ namespace techcertain2019core.Controllers
             _milestoneService = milestoneService;
             _roleService = roleService;
             _uWMService = uWMService;
-            _taskingService = taskingService;
+            //_taskingService = taskingService;
             _fileService = fileService;
             _businessActivityService = businessActivityService;
             _IDropdownListItem = dropdownListItem;

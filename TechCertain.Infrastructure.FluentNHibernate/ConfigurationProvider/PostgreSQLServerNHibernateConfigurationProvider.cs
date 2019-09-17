@@ -27,6 +27,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
                 PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString).
 					//Dialect("NHibernate.Dialect.PostgreSQL82Dialect")
 					Dialect<PostgreSQL82DialectIncreasedAlias> (),
+                
                     //.ShowSql(),
                 BuildDatabase);
         }
