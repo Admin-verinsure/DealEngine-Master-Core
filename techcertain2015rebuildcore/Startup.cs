@@ -67,8 +67,10 @@ namespace techcertain2019core
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseRouting();
+            app.UseAuthorization();
             app.UseAuthentication();
+
             app.UseSimpleInjector(container, options =>
             {
                 options.UseLogging();
@@ -87,12 +89,6 @@ namespace techcertain2019core
 
             container.Verify();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
 
             System.Web.Mvc.DependencyResolver.SetResolver(
                 new SimpleInjectorDependencyResolver(container));

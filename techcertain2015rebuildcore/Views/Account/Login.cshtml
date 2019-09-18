@@ -2,6 +2,8 @@
 @{
     ViewBag.PageId = "extr-page";
     ViewBag.PageClass = "animated fadeInDown";
+    Layout = "_Layout";
+
 }
 @section topright{
     @*<span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="~/Account/Register" class="btn btn-danger">Create account</a> </span>*@
@@ -10,7 +12,6 @@
 }
 
 <style>
-
 </style>
 <div id="content" class="container">
     <div class="row">
@@ -62,12 +63,12 @@
                             </div>
                         </section>
                         @*<section>
-                        <label class="checkbox">
-                            <input type="checkbox" name="rememberMe" value="true" checked="checked">
-                            <input type="hidden" name="rememberMe" value="false" />
-                            <i></i>Stay signed in
-                        </label>
-                    </section>*@
+                                <label class="checkbox">
+                                    <input type="checkbox" name="rememberMe" value="true" checked="checked">
+                                    <input type="hidden" name="rememberMe" value="false" />
+                                    <i></i>Stay signed in
+                                </label>
+                            </section>*@
                     </fieldset>
                     <footer>
                         <button type="submit" id="submitButton" class="btn btn-primary">
@@ -86,7 +87,7 @@
                 </div>
             </div>
             @*@{if (Html.DemoEnvironment()) { Html.RenderPartial("_SocialMedia"); }
-        }*@
+                }*@
         </div>
     </div>
 </div>
@@ -129,9 +130,9 @@
         $("#submitButton").click(function () {
             var $valid = $("#login-form").valid();
             if ($valid) {
-           		$('#loginModal').modal('show');
+                $('#loginModal').modal('show');
             }
-		});
+        });
 
     </script>
 }
