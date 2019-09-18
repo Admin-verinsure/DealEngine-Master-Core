@@ -13,64 +13,65 @@ using TechCertain.Infrastructure.Ldap.Interfaces;
 
 namespace DealEngine.Infrastructure.Identity
 {
-	public class DealEngineSignInManager : ISignInManager
+    public class DealEngineSignInManager : ISignInManager
     {
         protected IAuthenticationManager AuthenticationManager { get; set; }
         protected ILdapService LdapService { get; set; }
         protected UserManager<User> UserManager { get; set; }
 
-        public DealEngineSignInManager(UserManager<User> userManager, IHttpContextAccessor contextAccessor, 
-            IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor, 
-            ILogger<SignInManager<User>> logger, IAuthenticationSchemeProvider schemes, 
+        public DealEngineSignInManager(UserManager<User> userManager, IHttpContextAccessor contextAccessor,
+            IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor,
+            ILogger<SignInManager<User>> logger, IAuthenticationSchemeProvider schemes,
             IAuthenticationManager authenticationManager, ILdapService ldapService)
-                        
+
         {
             UserManager = userManager;
             AuthenticationManager = authenticationManager;
             LdapService = ldapService;
         }
 
-        public SignInResult SignIn (string username, string password, bool remember)
-		{
-			int resultCode = -1;
-			string resultMessage = "";
+        public SignInResult SignIn(string username, string password, bool remember)
+        {
+            int resultCode = -1;
+            string resultMessage = "";
 
-			LdapService.Validate (username, password, out resultCode, out resultMessage);
+            LdapService.Validate(username, password, out resultCode, out resultMessage);
 
-			if (resultCode == 0) {
-				AuthenticationManager.SignIn (username, remember);
-				return SignInResult.Success;
-			}
-			return SignInResult.Failed;
-		}
+            if (resultCode == 0)
+            {
+                AuthenticationManager.SignIn(username, remember);
+                return SignInResult.Success;
+            }
+            return SignInResult.Failed;
+        }
 
-		public void SignOut ()
-		{
-			AuthenticationManager.SignOut ();
-		}
+        public void SignOut()
+        {
+            AuthenticationManager.SignOut();
+        }
 
-		public async void SyncUserFromAuth(string username)
-		{
-			if (string.IsNullOrWhiteSpace (username))
-				return;
-			
-			var ldapUser = LdapService.GetUser (username);
-			var localUser = await UserManager.FindByNameAsync(username);
-			MapUserToUser (ldapUser, localUser);
-			await UserManager.UpdateAsync(localUser);
-		}
+        public async void SyncUserFromAuth(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return;
 
-		public void SyncUserToAuth (string username)
-		{
-			if (string.IsNullOrWhiteSpace (username))
-				return;
-			throw new NotImplementedException ();
-		}
+            var ldapUser = LdapService.GetUser(username);
+            var localUser = await UserManager.FindByNameAsync(username);
+            MapUserToUser(ldapUser, localUser);
+            await UserManager.UpdateAsync(localUser);
+        }
 
-		void MapUserToUser (User user1, User user2)
-		{
+        public void SyncUserToAuth(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return;
+            throw new NotImplementedException();
+        }
 
-		}
+        void MapUserToUser(User user1, User user2)
+        {
+
+        }
 
         public Task<bool> CanSignInAsync(User user)
         {
@@ -137,9 +138,29 @@ namespace DealEngine.Infrastructure.Identity
             throw new NotImplementedException();
         }
 
-        public Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
+        public async Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
         {
-            throw new NotImplementedException();
+            int resultCode = -1;
+            string resultMessage = "";
+
+            LdapService.Validate(userName, password, out resultCode, out resultMessage);
+
+            if (resultCode == 0)
+            {
+                AuthenticationManager.SignIn(userName, isPersistent);
+                if (string.IsNullOrWhiteSpace(userName))
+                {
+                    var ldapUser = LdapService.GetUser(userName);
+                    var localUser = await UserManager.FindByNameAsync(userName);
+                    MapUserToUser(ldapUser, localUser);
+                    UserManager.UpdateAsync(localUser);
+                }
+
+                return await Task.FromResult(SignInResult.Success);
+            }
+            return await Task.FromResult(SignInResult.Failed);
+
+            //throw new NotImplementedException();
         }
 
         public Task RefreshSignInAsync(User user)
@@ -228,4 +249,3 @@ namespace DealEngine.Infrastructure.Identity
         }
     }
 }
-

@@ -256,7 +256,7 @@ namespace techcertain2019core.Controllers
         public ActionResult Login(string returnUrl)
         {
             // We do not want to use any existing identity information
-            EnsureLoggedOut();            
+            //EnsureLoggedOut();            
 
             // Store the originating URL so we can attach it to a form field
             var viewModel = new AccountLoginModel { ReturnUrl = returnUrl };

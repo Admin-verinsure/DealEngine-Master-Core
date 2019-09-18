@@ -1,0 +1,81 @@
+﻿@{
+    // Set no fixed header
+    string fixedHeader = string.Empty;
+    string fixedFooter = string.Empty;
+    string currentTheme = string.Empty;
+
+    // If authenticated, set fixed header. The log on page does
+    // not like the fixed header attributes for some reason
+    if (User.Identity.IsAuthenticated)
+    {
+        // Set fixed header and fixed navigation
+        fixedHeader = "fixed-header fixed-navigation";
+        fixedFooter = "fixed-page-footer";
+        currentTheme = "smart-style-3";
+    }
+}
+<!DOCTYPE html>
+<html lang="en-us" id="@ViewBag.PageId" class="">
+<head>
+    <meta charset=" utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title> @ViewBag.Title </title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Basic Styles -->
+    <link href="~/css/app.bundle.css" rel="stylesheet" />
+    @*@Styles.Render("~/Content/css/smartadmin")*@
+    <!-- FAVICONS -->
+    <link rel="shortcut icon" href="~/Content/img/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="~/Content/img/favicon/favicon.ico" type="image/x-icon">
+    <!-- GOOGLE FONT -->
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+    <!-- Specifying a Webpage Icon for Web Clip
+         Ref:  -->
+    <link rel="apple-touch-icon" href="~/Content/img/splash/sptouch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/Content/img/splash/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/Content/img/splash/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/Content/img/splash/touch-icon-ipad-retina.png">
+    <!-- iOS web-app metas : hides Safari UI Components and Changes Status Bar Appearance -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Startup image for web apps -->
+    <link rel="apple-touch-startup-image" href="~/Content/img/splash/ipad-landscape.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
+    <link rel="apple-touch-startup-image" href="~/Content/img/splash/ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+    <link rel="apple-touch-startup-image" href="~/Content/img/splash/iphone.png" media="screen and (max-device-width: 320px)">
+
+    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" />
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/jquery/core.js"></script>
+</head>
+
+<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">
+    <!-- Google Tag Manager -->
+    @*<noscript>
+        <iframe src="//www.googletagmanager.com/ns.html?id=GTM-PTGLDG"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PTGLDG');</script>*@
+     <!-- End Google Tag Manager -->
+
+    @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
+    @*@{ Html.RenderPartialIf("_Aside", Request.IsAuthenticated); }*@
+    <div id="main" role="main">
+        @* If ribbon is required use on top of individual view or add come conditions*@
+        @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
+        @RenderBody()
+    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        await Html.RenderPartialAsync("_Footer");
+        await Html.RenderPartialAsync("_Tiles");
+    }
+    @{ await Html.RenderPartialAsync("_Scripts", RenderSection("pagespecific", false)); }
+</body>
+</html>
