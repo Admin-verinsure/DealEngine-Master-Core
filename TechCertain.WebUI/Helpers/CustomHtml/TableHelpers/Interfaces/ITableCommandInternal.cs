@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces
+namespace TechCertain.WebUI.Helpers.CustomHtml.TableFor.Interfaces
 {
 	public interface ITableCommandInternal<TModel> where TModel : class
 	{

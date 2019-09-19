@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class InformationBuilderController : BaseController
     {

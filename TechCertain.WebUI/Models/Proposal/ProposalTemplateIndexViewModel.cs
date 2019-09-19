@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace techcertain2019core.Models.ViewModels.Proposal
+namespace TechCertain.WebUI.Models.Proposal
 {
     public class ProposalTemplateIndexViewModel
     {

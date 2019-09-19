@@ -12,13 +12,13 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Controllers;
+using TechCertain.WebUI.Controllers;
 
 #endregion
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     //[Route("Home")]
     public class HomeController : BaseController

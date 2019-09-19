@@ -6,9 +6,9 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Domain.Services.Factories;
 using TechCertain.Services.Interfaces;
-using techcertain2019core.Models.ViewModels.Proposal;
+using TechCertain.WebUI.Models.Proposal;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class ProposalTemplateController : BaseController
     {

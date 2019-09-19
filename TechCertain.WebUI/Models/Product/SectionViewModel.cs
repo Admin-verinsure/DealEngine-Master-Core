@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2019core.Models.ViewModels.Product
+namespace TechCertain.WebUI.Models.Product
 {
     public class SectionViewModel : BaseViewModel
     {

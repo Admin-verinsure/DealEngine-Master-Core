@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace techcertain2019core.Helpers.CustomHtml.FixedHelpers
+namespace TechCertain.WebUI.Helpers.CustomHtml.FixedHelpers
 {
 	public class FixedActionLink
     {

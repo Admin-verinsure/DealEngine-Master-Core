@@ -4,10 +4,10 @@ using System.Net;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2019core.Models.ViewModels;
-using techcertain2019core.Models.ViewModels.Permission;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Models.Permission;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class RolesController : BaseController
     {
@@ -22,7 +22,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpGet]
-		[AuthorizeRole ("Admin", "CanEditRole")]
 		public ActionResult Index ()
 		{
 			var models = new BaseListViewModel<RoleViewModel> ();
@@ -39,7 +38,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpPost]
-		[AuthorizeRole ("Admin", "CanEditRole")]
 		public ActionResult Create (RoleViewModel roleViewModel)
 		{
 			try {
@@ -59,7 +57,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpPost]
-		[AuthorizeRole ("Admin", "CanEditRole")]
 		public ActionResult Edit (RoleViewModel roleViewModel)
 		{
 			try {
@@ -81,7 +78,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpPost]
-		[AuthorizeRole ("Admin", "CanEditRole")]
 		public ActionResult Delete (Guid Id)
 		{
 			try {

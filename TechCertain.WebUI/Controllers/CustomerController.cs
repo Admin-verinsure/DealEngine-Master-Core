@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class CustomerController : Controller
     {

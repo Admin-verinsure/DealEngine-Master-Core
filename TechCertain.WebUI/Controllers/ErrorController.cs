@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Services.Interfaces;
 
-namespace techcertain2019core
+namespace TechCertain.WebUI
 {
     public class ErrorController : Controller
     {

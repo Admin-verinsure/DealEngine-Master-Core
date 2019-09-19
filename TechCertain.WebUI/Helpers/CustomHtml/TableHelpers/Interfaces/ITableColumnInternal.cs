@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces
+namespace TechCertain.WebUI.Helpers.CustomHtml.TableFor.Interfaces
 {
 	/// <summary>
 	/// Properties and methods used within the TableBuilder class.

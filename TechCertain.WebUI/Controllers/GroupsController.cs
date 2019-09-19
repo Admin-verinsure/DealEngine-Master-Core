@@ -6,10 +6,10 @@ using System.Net;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2019core.Models.ViewModels;
-using techcertain2019core.Models.ViewModels.Permission;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Models.Permission;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class GroupsController : BaseController
     {
@@ -31,7 +31,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpGet]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
         public ActionResult Index()
         {
 			var models = new BaseListViewModel<GroupViewModel>();
@@ -49,14 +48,12 @@ namespace techcertain2019core.Controllers
         }
 
 		[HttpGet]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
         public ActionResult Create()
         {
             return View ();
         } 
 
         [HttpPost]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
 		public ActionResult Create(GroupViewModel model)
         {
             if (ModelState.IsValid) {
@@ -67,7 +64,6 @@ namespace techcertain2019core.Controllers
         }
         
 		[HttpGet]
-		[AuthorizeRole("Admin", "CanEditGroup")]
         public ActionResult Edit(Guid id)
         {
 			ApplicationGroup group = GetGroup (id);
@@ -79,7 +75,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
         public ActionResult Edit(Guid id, GroupViewModel group)
         {
             try {
@@ -90,7 +85,6 @@ namespace techcertain2019core.Controllers
         }
 
 		[HttpGet]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
         public ActionResult Delete(Guid id)
         {
 			if (id == Guid.Empty) {
@@ -106,7 +100,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost, ActionName ("Delete")]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
         public ActionResult DeleteConfirmed (Guid id)
         {
             try {
@@ -123,7 +116,6 @@ namespace techcertain2019core.Controllers
         }
 
 		[HttpGet]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
 		public ActionResult GroupRoles (Guid id)
 		{
 			ApplicationGroup group = GetGroup (id);
@@ -145,7 +137,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpPost]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
 		public ActionResult GroupRoles (SelectGroupRolesViewModel model)
 		{
 			try {
@@ -171,7 +162,6 @@ namespace techcertain2019core.Controllers
 		}
 
 		[HttpPost]
-		[AuthorizeRole ("Admin", "CanEditGroup")]
 		public ActionResult SetUserGroups (SelectUserGroupsViewModel model)
 		{
 			List<Guid> selectedGroupIds = new List<Guid> ();

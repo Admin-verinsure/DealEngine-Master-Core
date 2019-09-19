@@ -5,7 +5,7 @@ using System.Web;
 using TechCertain.Domain.Entities;
 
 
-namespace techcertain2019core.Models.ViewModels.Agreement
+namespace TechCertain.WebUI.Models.Agreement
 {
     public class ViewAgreementViewModel : BaseViewModel
     {

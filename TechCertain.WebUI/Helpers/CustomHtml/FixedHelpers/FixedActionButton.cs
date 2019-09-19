@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace techcertain2019core.Helpers.CustomHtml.FixedHelpers
+namespace TechCertain.WebUI.Helpers.CustomHtml.FixedHelpers
 {
 	public class FixedActionButton 
 	{

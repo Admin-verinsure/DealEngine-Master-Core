@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2019core.Models.ViewModels.Product
+namespace TechCertain.WebUI.Models.Product
 {
 
 	public class ProductViewModel : BaseViewModel

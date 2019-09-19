@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI
 {
@@ -115,7 +116,7 @@ namespace TechCertain.WebUI
             });
 
             container.AutoCrossWireAspNetComponents(app);
-            //container.RegisterInstance(MapperConfig.ConfigureMaps());
+            container.RegisterInstance(MapperConfig.ConfigureMaps());
 
             InitializeContainer();
 

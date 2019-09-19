@@ -8,11 +8,11 @@ using System.Xml.Linq;
 using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels;
-using techcertain2019core.Models.ViewModels.ControlModels;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class ServicesController : BaseController
     {

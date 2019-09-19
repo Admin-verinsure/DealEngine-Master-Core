@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
-using techcertain2019core.Helpers.CustomHtml.FixedHelpers;
+using TechCertain.WebUI.Helpers.CustomHtml.FixedHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace techcertain2019core.Helpers.CustomHtml
+namespace TechCertain.WebUI.Helpers.CustomHtml
 {
 	/// <summary>
 	/// Contains corrected helpers since the Mono ones currently don't work properly.

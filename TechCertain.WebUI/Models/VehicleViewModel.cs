@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2019core.Models.ViewModels
+namespace TechCertain.WebUI.Models
 {
 	public class VehicleViewModel : BaseViewModel
 	{

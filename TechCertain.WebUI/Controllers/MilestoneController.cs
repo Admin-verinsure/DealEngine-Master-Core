@@ -8,10 +8,10 @@ using TechCertain.Infrastructure.Tasking;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels.Milestone;
+using TechCertain.WebUI.Models.Milestone;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     [Authorize]
     public class MilestoneController : BaseController

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2019core.Models.ViewModels
+namespace TechCertain.WebUI.Models
 {
     public class InformationViewAllViewModel : BaseViewModel
     {

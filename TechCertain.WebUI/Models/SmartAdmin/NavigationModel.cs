@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace techcertain2019core.Models.ViewModels.SmartAdmin
+namespace TechCertain.WebUI.Models.SmartAdmin
 {
     public static class NavigationModel
     {

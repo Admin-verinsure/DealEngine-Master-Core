@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace techcertain2019core.Models.ViewModels
+namespace TechCertain.WebUI.Models
 {
 	public class DocumentViewModel : BaseViewModel
 	{

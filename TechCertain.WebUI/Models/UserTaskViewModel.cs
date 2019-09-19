@@ -1,7 +1,7 @@
 ﻿using System;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2019core.Models.ViewModels
+namespace TechCertain.WebUI.Models
 {
     public class UserTaskViewModel : BaseViewModel
     {
