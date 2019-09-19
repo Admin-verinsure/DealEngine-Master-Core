@@ -14,3 +14,7 @@
 /TechCertain.2015.Rebuild/.vs/
 /TechCertain.2015.Rebuild/TechCertain.Web.UI/Web.config
 /TechCertain.2015.Rebuild/bootstrap-datetimepicker
+sqlite3
+*.dtbcache
+/.vs/techcertain2015rebuildcore/config
+/.vs/techcertain2019core/config

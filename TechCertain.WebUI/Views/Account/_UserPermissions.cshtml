@@ -1,0 +1,27 @@
+﻿@model TechCertain.WebUI.Models.Permission.UserPermissionsViewModel
+
+<h4>Effective Role Permissions for user: @Html.DisplayFor(model => model.UserName)</h4>
+<br />
+
+<table class="table">
+    <tr>
+        <th>
+            Role Permission
+        </th>
+        <th>
+           Description
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Roles)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,290 @@
+﻿@model TechCertain.WebUI.Models.ProfileViewModel
+
+
+<script src="https://www.jqueryscript.net/demo/Bootstrap-Dropdown-Replacement-Plugin-DDL/js/bootstrap-ddl.js"></script>
+
+<!-- MAIN CONTENT -->
+<div id="content">
+
+    @{
+        bool isBroker = false;
+
+        if (Model.CurrentUser.PrimaryOrganisation.IsBroker || Model.CurrentUser.PrimaryOrganisation.IsInsurer || Model.CurrentUser.PrimaryOrganisation.IsTC)
+        {
+            isBroker = true;
+        }
+    }
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <!-- col -->
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-file-o"></i> Accounts <span>
+                    >
+                    Editing My Profile
+                </span>
+            </h1>
+        </div>
+        <!-- end col -->
+        <!-- right side of the page with the sparkline graphs -->
+        <!-- col -->
+        <div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+            <!-- sparks -->
+            <ul id="sparks"></ul>
+            <!-- end sparks -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+    <!-- row -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6">
+                        <div class="well well-light well-sm no-margin no-padding">
+                            <section class="row">
+                                <div class="col-sm-12">
+                                    <div id="myCarousel" class="carousel fade profile-carousel">
+                                        <div class="air air-bottom-right padding-10">
+                                            @if (Model.ViewingSelf)
+                                            {
+                                                @*<a href="javascript:void(0);" class="btn txt-color-white bg-color-red btn-sm"><i class="fa fa-edit"></i> Cancel</a>*@
+                                            }
+                                        </div>
+                                        <div class="air air-top-left padding-10">
+                                            <h4 class="txt-color-white font-md">Jan 1, 2014</h4>
+                                        </div>
+                                        <ol class="carousel-indicators">
+                                            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                            <li data-target="#myCarousel" data-slide-to="1" class=""></li>
+                                            <li data-target="#myCarousel" data-slide-to="2" class=""></li>
+                                        </ol>
+                                        <div class="carousel-inner">
+                                            <!-- Slide 1 -->
+                                            <div class="item active">
+                                                <img src="/Content/img/demo/s1.jpg" alt="demo user">
+                                            </div>
+                                            <!-- Slide 2 -->
+                                            <div class="item">
+                                                <img src="/Content/img/demo/s2.jpg" alt="demo user">
+                                            </div>
+                                            <!-- Slide 3 -->
+                                            <div class="item">
+                                                <img src="/Content/img/demo/m3.jpg" alt="demo user">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <section class="col-sm-12">
+
+                                    <section class="row">
+
+                                        <div class="col-sm-3 profile-pic">
+                                            @if (!string.IsNullOrWhiteSpace(Model.ProfilePicture))
+                                            {
+                                                <img src="/File/Image/@(Model.ProfilePicture)" alt="profile picture">
+                                            }
+                                            else
+                                            {
+                                                <img src="/Content/img/avatars/male.png" alt="profile picture">
+                                            }
+                                        </div>
+                                        <section class="col-sm-6">
+                                            <form action="~/Account/ProfileEditor" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                                                @Html.AntiForgeryToken()
+                                                <fieldset>
+                                                    @*@Html.ValidationBootstrap()*@
+                                                    <section>
+                                                        <label class="input">
+                                                            <i class="icon-append fa fa-user"></i>
+                                                            <input type="text" name="firstname" placeholder="First name" value="@(Model.FirstName)">
+                                                            <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter your first name</b>
+                                                        </label>
+                                                    </section>
+                                                    <section>
+                                                        <label class="input">
+                                                            <i class="icon-append fa fa-user"></i>
+                                                            <input type="text" name="lastname" placeholder="Last name" value="@(Model.LastName)">
+                                                        </label>
+                                                    </section>
+                                                    <section>
+                                                        <label class="input">
+                                                            <i class="icon-append fa fa-phone"></i>
+                                                            <input type="text" name="phone" placeholder="Phone Number" value="@(Model.Phone)">
+                                                        </label>
+                                                    </section>
+                                                    <section>
+                                                        <label class="input">
+                                                            <i class="icon-append fa fa-envelope"></i>
+                                                            <input type="text" name="email" placeholder="Email Address" value="@(Model.Email)">
+                                                        </label>
+                                                    </section>
+                                                    <section>
+                                                        <label class="input">
+                                                            <i class="icon-append fa fa-skype"></i>
+                                                            <input type="text" name="skype" placeholder="Skype" disabled="true">
+                                                        </label>
+                                                    </section>
+
+                                                    @if (isBroker)
+                                                    {
+                                                        <section>
+                                                            <label class="input">
+                                                                <select class="browser-default custom-select custom-select-lg mb-3 col-lg-12" name="branch">
+                                                                    @if (Model.DefaultOU != null)
+                                                                    {
+                                                                        <option selected value="@Model.DefaultOU.Id">@Model.DefaultOU.Name</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option selected>Branch:</option>
+                                                                    }
+                                                                    @foreach (var item in Model.OrganisationalUnitsVM)
+                                                                    {
+                                                                        <option value="@item.OrganisationalUnitId"> @item.Name</option>
+                                                                    }
+                                                                </select>
+                                                            </label>
+                                                        </section>
+
+                                                        <br />
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-envelope"></i>
+                                                                <input class="col-lg-12" type="text" name="EmployeeNumber" placeholder="Employee Number" value="@Model.EmployeeNumber">
+                                                            </label>
+                                                        </section>
+
+                                                        <br />
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-envelope"></i>
+                                                                <input class="col-lg-12" type="text" name="SalesPersonUserName" placeholder="EGlobal User Name" value="@Model.SalesPersonUserName">
+                                                            </label>
+                                                        </section>
+                                                        <br />
+
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fas fa-plus"></i>
+                                                                <input class="col-lg-12" type="text" name="JobTitle" placeholder="Job Title" value="@Model.JobTitle">
+                                                            </label>
+                                                        </section>
+
+                                                        <br />
+
+                                                    }
+
+                                                    <section>
+                                                        <label class="textarea">
+                                                            <textarea name="description" placeholder="About me...." rows="3">@Model.Description</textarea>
+                                                        </label>
+                                                    </section>
+                                                    @*@{if (Html.DemoEnvironment())
+                                                        {
+                                                            <section>
+                                                                <hr />
+                                                            </section>
+                                                            <section>
+                        Avatar Upload
+                    <input type="file" name="file" class="btn btn-default" title="Select Avatar"/>
+                    <label class="input">
+                        <i class="icon-append fa fa-file"></i>
+                        <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Supported Formats: JPEG</b>
+                    </label>
+                </section>
+                                                            <section>
+                                                                Upload new Profile Picture (10kb Maximum, JPEG only)
+                                                                <label class="input input-file" for="profileImageUp">
+                                                                    <div class="button">
+                                                                        <input id="profileImageUp" type="file" onchange="this.parentNode.nextElementSibling.value = this.value" name="profileImageUp">
+                                                                        Browse
+                                                                    </div>
+                                                                    <input type="text" readonly="" placeholder="No File Selected">
+                                                                </label>
+                                                            </section>
+                                                        }}*@
+                                                        <section>
+                                                            <div class="">
+                                                                <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Update</button>
+                                                                <a href="~/Account/Profile" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-edit"></i> Cancel</a>
+                                                            </div>
+                                                        </section>
+                                                    </fieldset>
+                                                    </form>
+                                                </section>
+                                    </section>
+                                </section>
+                            </section>
+
+                            <div class="col-sm-3">
+                                <h1><small>Connections</small></h1>
+                                <ul class="list-inline friends-list">
+                                    @*<li>
+                                            <img src="/Content/img/avatars/1.png" alt="friend-1">
+                                        </li>
+                                        <li>
+                                            <img src="/Content/img/avatars/2.png" alt="friend-2">
+                                        </li>
+                                        <li>
+                                            <img src="/Content/img/avatars/3.png" alt="friend-3">
+                                        </li>
+                                        <li>
+                                            <img src="/Content/img/avatars/4.png" alt="friend-4">
+                                        </li>
+                                        <li>
+                                            <img src="/Content/img/avatars/5.png" alt="friend-5">
+                                        </li>
+                                        <li>
+                                            <img src="/Content/img/avatars/male.png" alt="friend-6">
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);">413 more</a>
+                                        </li>*@
+                                </ul>
+
+                                <h1><small>Recent visitors</small></h1>
+                                <ul class="list-inline friends-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <hr>
+                        <div class="padding-10">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+            @*
+                <form method="post" class="well padding-bottom-10" onsubmit="return false;">
+                    <textarea rows="2" class="form-control" placeholder="What are you thinking?"></textarea>
+                    <div class="margin-top-10">
+                        <button type="submit" class="btn btn-sm btn-primary pull-right">
+                            Post
+                        </button>
+                        <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add Location"><i class="fa fa-location-arrow"></i></a>
+                        <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add Voice"><i class="fa fa-microphone"></i></a>
+                        <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add Photo"><i class="fa fa-camera"></i></a>
+                        <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add File"><i class="fa fa-file"></i></a>
+                    </div>
+                </form>*@
+
+
+
+        </div>
+    </div>
+</div>
+
