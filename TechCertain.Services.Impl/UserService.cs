@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Infrastructure.Ldap.Interfaces;
@@ -15,8 +17,10 @@ namespace TechCertain.Services.Impl
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
         IOrganisationTypeService _organisationTypeService;
+        UserManager<User> _userManager;
 
-        public UserService(IUnitOfWorkFactory unitOfWork, ILogger logger, IUserRepository userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService)
+
+        public UserService(IUnitOfWorkFactory unitOfWork, ILogger logger, IUserRepository userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
 			_logger = logger;
@@ -24,11 +28,25 @@ namespace TechCertain.Services.Impl
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
             _organisationTypeService = organisationTypeService;
+            _userManager = userManager;
         }
 
-		public User GetUser (string username)
+        //public async Task<User> GetCurrentUserAsync()
+        //{
+        //    //return await _userRepository.GetByIdAsync(_currentUserGuid);
+        //}
+
+        public User GetUser (string username)
 		{
-			User user = _userRepository.GetUser (username);
+            User user = null;
+            try
+            {
+                user = _userRepository.GetUser(username);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 			// have a repo user? Return them
 			if (user != null)
 				return user;
@@ -117,9 +135,9 @@ namespace TechCertain.Services.Impl
 
 		public void Delete (User user, User authorizingUser)
 		{
-			user.Delete (authorizingUser, DateTime.UtcNow);
-			Update (user);
-		}
+            user.Delete(authorizingUser, DateTime.UtcNow);
+            Update(user);
+        }
 
 		public void SetPasswordPolicyFor (User user, string passwordPolicyName)
 		{

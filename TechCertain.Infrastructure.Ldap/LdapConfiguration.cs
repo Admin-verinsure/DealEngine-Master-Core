@@ -1,38 +1,49 @@
-﻿using System;
-using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 
 namespace TechCertain.Infrastructure.Ldap
 {
 	public class LdapConfiguration : ILdapConfiguration
 	{
+        private IConfiguration _configuration { get; set; }
+        public LdapConfiguration(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
 		public string AdminDn {
 			get {
-				return string.Format (ConfigurationManager.AppSettings ["OpenLdapBindDN"], BaseDn);
+                return (_configuration.GetValue<string>("OpenLdapBindDN", BaseDn));
+                //return string.Format (ConfigurationManager.AppSettings ["OpenLdapBindDN"], BaseDn);
 			}
 		}
 
 		public string AdminPassword {
 			get {
-				return ConfigurationManager.AppSettings ["OpenLdapBindPW"];
-			}
+                return _configuration.GetValue<string>("OpenLdapBindPW");
+                //return ConfigurationManager.AppSettings ["OpenLdapBindPW"];
+            }
 		}
 
 		public string LdapHost {
 			get {
-				return ConfigurationManager.AppSettings ["OpenLdapServer"];
+                return _configuration.GetValue<string>("OpenLdapServer");
+                //return ConfigurationManager.AppSettings ["OpenLdapServer"];
 			}
 		}
 
 		public int LdapPort {
 			get {
-				return int.Parse (ConfigurationManager.AppSettings ["OpenLdapPort"]);
+                return _configuration.GetValue<int>("OpenLdapPort");
+                //return int.Parse (ConfigurationManager.AppSettings ["OpenLdapPort"]);
 			}
 		}
 
 		public string BaseDn {
 			get {
-				return ConfigurationManager.AppSettings ["OpenLdapBaseDN"];
+                return _configuration.GetValue<string>("OpenLdapBaseDN");
+                //return ConfigurationManager.AppSettings ["OpenLdapBaseDN"];
 			}
 		}
 	}

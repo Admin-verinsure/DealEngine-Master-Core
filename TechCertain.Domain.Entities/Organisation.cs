@@ -86,13 +86,13 @@ namespace TechCertain.Domain.Entities
             _organisationType = organisationType;
         }
 
-        public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType, string email)
+        public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType, string Email)
           : this(createdBy, organisationName, organisationType)
         {
             if (organisationType == null)
                 throw new ArgumentNullException(nameof(organisationType), "Not allowed to create an organisation without specifying a type.");
             Id = id;
-            Email = email;
+            _email = Email;
         }
 
         //     public Organisation(User createdBy, string organisationName, OrganisationType organisationType, string ownerFirstName, string ownerLastName, string ownerEmail)
@@ -168,7 +168,7 @@ namespace TechCertain.Domain.Entities
 
         public virtual string Domain { get; set; }
 
-        //public virtual string Email { get; set; }
+        public virtual string Email { get; set; }
 
         public virtual bool IsBroker { get; set; }
 

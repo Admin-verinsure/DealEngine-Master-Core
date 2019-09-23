@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TechCertain.Domain.Entities;
@@ -15,7 +14,7 @@ namespace DealEngine.Infrastructure.Identity
 {
     public class DealEngineSignInManager : ISignInManager
     {
-        protected IAuthenticationManager AuthenticationManager { get; set; }
+        //protected IAuthenticationManager AuthenticationManager { get; set; }
         protected ILdapService LdapService { get; set; }
         protected UserManager<User> UserManager { get; set; }
 
@@ -26,28 +25,7 @@ namespace DealEngine.Infrastructure.Identity
 
         {
             UserManager = userManager;
-            AuthenticationManager = authenticationManager;
             LdapService = ldapService;
-        }
-
-        public SignInResult SignIn(string username, string password, bool remember)
-        {
-            int resultCode = -1;
-            string resultMessage = "";
-
-            LdapService.Validate(username, password, out resultCode, out resultMessage);
-
-            if (resultCode == 0)
-            {
-                AuthenticationManager.SignIn(username, remember);
-                return SignInResult.Success;
-            }
-            return SignInResult.Failed;
-        }
-
-        public void SignOut()
-        {
-            AuthenticationManager.SignOut();
         }
 
         public async void SyncUserFromAuth(string username)
@@ -144,23 +122,21 @@ namespace DealEngine.Infrastructure.Identity
             string resultMessage = "";
 
             LdapService.Validate(userName, password, out resultCode, out resultMessage);
+            Console.WriteLine("Test");
 
             if (resultCode == 0)
-            {
-                AuthenticationManager.SignIn(userName, isPersistent);
+            {                
                 if (string.IsNullOrWhiteSpace(userName))
                 {
                     var ldapUser = LdapService.GetUser(userName);
                     var localUser = await UserManager.FindByNameAsync(userName);
                     MapUserToUser(ldapUser, localUser);
-                    UserManager.UpdateAsync(localUser);
+                    await UserManager.UpdateAsync(localUser);
                 }
 
                 return await Task.FromResult(SignInResult.Success);
             }
             return await Task.FromResult(SignInResult.Failed);
-
-            //throw new NotImplementedException();
         }
 
         public Task RefreshSignInAsync(User user)

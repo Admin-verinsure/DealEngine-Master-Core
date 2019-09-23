@@ -4,9 +4,9 @@ using System.ComponentModel;
 
 namespace TechCertain.Domain.Entities.Abstracts
 {
-    public abstract partial class EntityBase : IdentityUser<Guid>
+    public abstract partial class EntityBase 
     {
-        //public virtual Guid Id { get; protected set; }
+        public virtual Guid Id { get; protected set; }
 
         [DisplayName("Date Created")]
 		public virtual DateTime? DateCreated { get; protected set; }

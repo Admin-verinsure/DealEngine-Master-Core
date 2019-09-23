@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using TechCertain.Domain.Entities.Abstracts;
@@ -11,9 +12,9 @@ namespace TechCertain.Domain.Entities
     {
 		private Organisation _primaryOrganisation;
 
-		protected User () : this (null) { }
+        protected User() : this(null) { }
 
-		protected User (User createdBy)
+        protected User (User createdBy)
 			: base (null)
 		{
 			Organisations = new List<Organisation> ();
@@ -28,6 +29,48 @@ namespace TechCertain.Domain.Entities
             InvoiceConfigNotifyProgrammes = new List<Programme>();
         }
 
+
+        #region Identity Fields
+        //
+        // Summary:
+        //     Gets or sets a flag indicating if two factor authentication is enabled for this
+        //     user.
+        [PersonalData]
+        public virtual bool TwoFactorEnabled { get; set; }
+        //
+        // Summary:
+        //     A random value that must change whenever a user is persisted to the store
+        public virtual string ConcurrencyStamp { get; set; }
+        //
+        // Summary:
+        //     Gets or sets a salted and hashed representation of the password for this user.
+        public virtual string PasswordHash { get; set; }
+        //
+        // Summary:
+        //     Gets or sets a flag indicating if a user has confirmed their email address.
+        [PersonalData]
+        public virtual bool EmailConfirmed { get; set; }
+        //
+        // Summary:
+        //     Gets or sets the normalized email address for this user.
+        public virtual string NormalizedEmail { get; set; }
+        //
+        // Summary:
+        //     Gets or sets the normalized user name for this user.
+        public virtual string NormalizedUserName { get; set; }
+        //
+        // Summary:
+        //     Gets or sets the user name for this user.
+        [ProtectedPersonalData]
+        public virtual string UserName { get; set; }
+
+        //
+        // Summary:
+        //     Gets or sets the number of failed login attempts for the current user.
+        public virtual int AccessFailedCount { get; set; }
+
+        #endregion        
+
         public virtual OrganisationalUnit DefaultOU { get; set; }
 
         //public virtual string UserName { get; set; }
@@ -39,7 +82,7 @@ namespace TechCertain.Domain.Entities
 
         public virtual string LastName { get; set; }
 
-        //public virtual string Email { get; set; }
+        public virtual string Email { get; set; }
 
         public virtual string Phone { get; set; }
 
@@ -130,7 +173,7 @@ namespace TechCertain.Domain.Entities
             Id = id;
         }
 
-		public virtual void Lock()
+        public virtual void Lock()
 		{
 			Locked = true;
 			LockTime = DateTime.UtcNow;
@@ -231,8 +274,7 @@ namespace TechCertain.Domain.Entities
 
     public class Owner : User
     {
-
     }
-    
+
 }
 

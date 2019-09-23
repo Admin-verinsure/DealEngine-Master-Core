@@ -15,6 +15,7 @@ using TechCertain.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using TechCertain.WebUI.Models;
+using DealEngine.Infrastructure.Identity;
 
 namespace TechCertain.WebUI
 {
@@ -37,15 +38,21 @@ namespace TechCertain.WebUI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+
+
+
             // Note: The default connection string assumes that you have 'LocalDb' installed on your machine (either through SQL Server or Visual Studio installer)
             // If you followed the instructions in 'README.MD' and installed SQL Express then change the 'DefaultConnection' value in 'appSettings.json' with
             // "Server=localhost\\SQLEXPRESS;Database=aspnet-smartadmin;Trusted_Connection=True;MultipleActiveResultSets=true"
             //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            //services.AddIdentity<IdentityUser>()
+            //        .AddSignInManager<DealEngineSignInManager>()
+            //        .AddClaimsPrincipalFactory<IdentityUser>();
+                    
 
             services.AddControllersWithViews();
-
+            services.AddHttpContextAccessor();
             services.AddRouting(options =>
                 {
                     options.LowercaseUrls = true;
@@ -102,7 +109,7 @@ namespace TechCertain.WebUI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseSimpleInjector(container, options =>
             {

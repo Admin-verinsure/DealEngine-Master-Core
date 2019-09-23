@@ -1,8 +1,10 @@
 ﻿using FluentNHibernate.Cfg.Db;
 using Microsoft.Extensions.Configuration;
+using NHibernate.Dialect;
 using NHibernate.Tool.hbm2ddl;
 using Npgsql;
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using Configuration = NHibernate.Cfg.Configuration;
 
@@ -24,11 +26,11 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
             NpgsqlConnectionString = configuration.GetConnectionString("TechCertainConnection");
 
             return CreateCoreDatabaseConfiguration(
-                PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString).
-					//Dialect("NHibernate.Dialect.PostgreSQL82Dialect")
-					Dialect<PostgreSQL82DialectIncreasedAlias> (),
+                PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
+					.Dialect<PostgreSQL82Dialect>()
+					//Dialect<PostgreSQL82DialectIncreasedAlias> (),
                 
-                    //.ShowSql(),
+                    .ShowSql(),
                 BuildDatabase);
         }
 
@@ -46,8 +48,8 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
                     CreateLoggingTable();
                 }
 				finally
-				{                    
-                    ExportSchemaToDatabase(configuration);                    
+				{                   
+                    ExportSchemaToDatabase(configuration);
                 }
             }
         }
@@ -108,7 +110,43 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
         {
             //new SchemaExport(configuration).Create(script => System.Diagnostics.Debug.WriteLine(script), true);
 
-            new SchemaUpdate(configuration).Execute(false, true);
+            try
+            {
+                //try
+                //{
+                //    new SchemaValidator(configuration).Validate();
+                //}
+                //catch(NHibernate.HibernateException)
+                //{
+                //    throw new Exception("");
+                //}
+                
+                using (var file = new FileStream(@"C:\tmp\schema-update.sql",
+                                        FileMode.Create,
+                                            FileAccess.ReadWrite))
+                using (var sw = new StreamWriter(file))
+                {
+                    new SchemaUpdate(configuration)
+                        .Execute(sw.Write, true);
+                }
+
+        //        using (var file = new FileStream(@"C:\tmp\schema2-update.sql",
+        //FileMode.Create,
+        //    FileAccess.ReadWrite))
+        //        using (var sw = new StreamWriter(file))
+        //        {
+        //            new SchemaExport(configuration)
+        //                .Create(sw.Write, true);
+        //        }
+
+                new SchemaUpdate(configuration).Execute(false, true);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+           
         }
 
         private static string GetDatabaseName()

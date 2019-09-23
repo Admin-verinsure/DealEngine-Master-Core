@@ -18,6 +18,7 @@ using TechCertain.WebUI.Models;
 using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
+using System.Security.Claims;
 
 
 #endregion
@@ -271,7 +272,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(AccountLoginModel viewModel)
+        public async Task<IActionResult> Login(AccountLoginModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -287,44 +288,59 @@ namespace TechCertain.WebUI.Controllers
 				username = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
 
+                var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
 
-    //            if (_signInManager.SignIn(username, password, viewModel.RememberMe) == DealEngine.Infrastructure.Identity.SignInResult.Success)
-    //            {
-    //                _signInManager.SyncUserFromAuth(username);
-    //                var user = _userService.GetUser (username);
-				//	if (_userService.IsUserLocalBanned (user))
-				//		throw new Exception ("User [" + username + "] is currently locked on this server");
+                if (result.Succeeded)
+                {
+                    var user = _userService.GetUser(username);
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity();
+                    //claimsIdentity.Actor = user;
+                    //ClaimsPrincipal principal = user as ClaimsPrincipal;
+                }
+                else if(result.IsNotAllowed)
+                {
+                    throw new Exception("User [" + username + "] is currently locked on this server");
+                }
 
-				//	_permissionsService.SetDefaultPermissions (username);
-				//	_logger.Info ("Authentication succeeded for [" + username + "]");
+                return RedirectToLocal(viewModel.ReturnUrl);
+                //if (signInResult == Microsoft.AspNetCore.Identity.SignInResult.Success)
+                //if (_signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false) == Microsoft.AspNetCore.Identity.SignInResult.Success)
+                //{
+                //    _signInManager.SyncUserFromAuth(username);
+                //    var user = _userService.GetUser(username);
+                //    if (_userService.IsUserLocalBanned(user))
+                //        throw new Exception("User [" + username + "] is currently locked on this server");
 
-				//	return RedirectToLocal (viewModel.ReturnUrl);
-				//}
+                //    _permissionsService.SetDefaultPermissions(username);
+                //    _logger.Info("Authentication succeeded for [" + username + "]");
 
-				//User user = _authenticationService.ValidateUser (username, password);
+                //    return RedirectToLocal(viewModel.ReturnUrl);
+                //}
 
-				////if (Membership.ValidateUser(username, password))
-				//if (user != null)
-				//{
-				//	// hopefully this error should be raised by the ldap repository before we get here
-				//	//if (user == null)
-				//	//	throw new UserImportException(string.Format("Could not import user {0}", username));
+                //User user = _authenticationService.ValidateUser (username, password);
 
-				//	if (_userService.IsUserLocalBanned (user))
-				//		throw new Exception ("User [" + username + "] is currently locked on this server");
+                ////if (Membership.ValidateUser(username, password))
+                //if (user != null)
+                //{
+                //	// hopefully this error should be raised by the ldap repository before we get here
+                //	//if (user == null)
+                //	//	throw new UserImportException(string.Format("Could not import user {0}", username));
 
-				//	_permissionsService.SetDefaultPermissions (username);
+                //	if (_userService.IsUserLocalBanned (user))
+                //		throw new Exception ("User [" + username + "] is currently locked on this server");
 
-    //                //EnsureLoggedOut();
-				//	Session.Abandon();
-				//	FormsAuthentication.SetAuthCookie(user.UserName, true);
-				//	SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
+                //	_permissionsService.SetDefaultPermissions (username);
 
-				//	_logger.Info("Authentication succeeded for [" + username + "]");
+                //                //EnsureLoggedOut();
+                //	Session.Abandon();
+                //	FormsAuthentication.SetAuthCookie(user.UserName, true);
+                //	SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
 
-				//	return RedirectToLocal(viewModel.ReturnUrl);
-    //            }
-				////_logger.Info(string.Format("Login failed for {0}", username));
+                //	_logger.Info("Authentication succeeded for [" + username + "]");
+
+                //	return RedirectToLocal(viewModel.ReturnUrl);
+                //            }
+                ////_logger.Info(string.Format("Login failed for {0}", username));
             }
 			catch (UserImportException ex)
 			{

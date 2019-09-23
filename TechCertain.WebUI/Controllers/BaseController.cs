@@ -28,6 +28,8 @@ namespace TechCertain.WebUI.Controllers
         {
             get
             {
+                //UserManager<User>
+                var name = HttpContext.User.Identity.Name;
                 var user = User.Identity.Name;
                 if (string.IsNullOrWhiteSpace (User.Identity.Name))
                     return null;

@@ -26,9 +26,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())                
                 .Conventions.Add<CascadeConvention>()                 
                      .UseOverridesFromAssemblyOf<OrganisationMappingOverride>()));
-                     
-                
-
+            
             if (databaseBuilder != null)
             {
                 fluentConfiguration.ExposeConfiguration(databaseBuilder);

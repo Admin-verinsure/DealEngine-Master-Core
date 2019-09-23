@@ -53,12 +53,6 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
-        public virtual ProductTerm ProductTerm
-        {
-            get;
-            protected set;
-        }
-
         public virtual InformationTemplate InformationTemplate
         {
             get;
