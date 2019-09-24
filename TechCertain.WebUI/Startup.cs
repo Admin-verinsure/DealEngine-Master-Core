@@ -47,13 +47,13 @@ namespace TechCertain.WebUI
             //services.AddDbContext<DealEngineDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
             //    .AddIdentity<IdentityUser, IdentityRole>()
             //    .AddEntityFrameworkStores<DealEngineDBContext>();
-                
+
 
             //services.AddIdentity<IdentityUser>()
             //        .AddSignInManager<DealEngineSignInManager>()
             //        .AddClaimsPrincipalFactory<IdentityUser>();
 
-           // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
@@ -64,20 +64,20 @@ namespace TechCertain.WebUI
                     options.LowercaseQueryStrings = true;
                 })
                 .AddMvc(option => option.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Latest)                
-                .AddRazorPagesOptions(options =>
-                {
-                    //options.AllowAreas = true;
-                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-                });
+                .SetCompatibilityVersion(CompatibilityVersion.Latest);                
+                //.AddRazorPagesOptions(options =>
+                //{
+                //    //options.AllowAreas = true;
+                //    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                //    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                //});
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Identity/Account/Login";
-                options.LogoutPath = "/Identity/Account/Logout";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            });
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.LoginPath = "/Identity/Account/Login";
+            //    options.LogoutPath = "/Identity/Account/Logout";
+            //    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            //});
 
             services.AddSimpleInjector(container, options =>
             {
