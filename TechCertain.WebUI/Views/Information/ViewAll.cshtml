@@ -1,4 +1,4 @@
-﻿@model TechCertain.Web.UI.ViewModels.InformationViewAllViewModel
+﻿@model TechCertain.WebUI.Models.InformationViewAllViewModel
 
 <div id="content">
     <div class="row">
@@ -45,10 +45,10 @@
                                                 @item.Name
                                             </section>
                                             <section class="col-lg-2">
-                                            	<form method="post" action=@Url.FixedAction("EditInformation", "Information")>
+                                            	@*<form method="post" action=@Url.FixedAction("EditInformation", "Information")>*@
                                                     @Html.Hidden("id", item.Id)
-                                                    @Html.Bootstrap().SubmitButton().Name("Start").AppendIcon("fa fa-arrow-right").Class("btn btn-primary btn-xs")
-                                            	</form>
+                                                    @*@Html.Bootstrap().SubmitButton().Name("Start").AppendIcon("fa fa-arrow-right").Class("btn btn-primary btn-xs")*@
+                                            	@*</form>*@
                                             	@*
                                                 @using (Html.BeginForm("EditInformation", "Information", FormMethod.Post, new { id = item.Id }))
                                                 {
