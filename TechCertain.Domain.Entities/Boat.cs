@@ -13,7 +13,7 @@ namespace TechCertain.Domain.Entities
 
         public Boat(User createdBy)
             : base(createdBy)
-        {         
+        {
         }
 
         public virtual Boat OriginalBoat
@@ -27,7 +27,7 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-       
+
 
         public virtual string BoatName
         {
@@ -179,7 +179,7 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-        
+
         public virtual bool Removed
         {
             get;

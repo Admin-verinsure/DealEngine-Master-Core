@@ -58,7 +58,11 @@
                                                 @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
                                                 @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
                                                 <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
-                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                }
                                             }
                                             else if (item.Status == "Started")
                                             {
@@ -82,30 +86,30 @@
                                                 <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
                                             }
                                         </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </div>
-        </article>
-    </div>
-</div>
-<!-- END MAIN CONTENT -->
+            <!-- END MAIN CONTENT -->
 
-@section pagespecific {
-    <script src="/Scripts/datatables"></script>
+            @section pagespecific {
+                <script src="/Scripts/datatables"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#tableProgrammeItems').DataTable({
-                "sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
-                    "t" +
-                    "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
-                "autoWidth": true
-            })
-        });
-    </script>
-}
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#tableProgrammeItems').DataTable({
+                            "sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+                                "t" +
+                                "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+                            "autoWidth": true
+                        })
+                    });
+                </script>
+            }
 

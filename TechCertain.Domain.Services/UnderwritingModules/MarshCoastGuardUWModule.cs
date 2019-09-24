@@ -54,23 +54,27 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
             IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium",
-                "tc50k100kexcess250rate", "tc50k100kexcess500rate", "tc50k100kminpremium", "tc100k200kexcess500rate", "tc100k200kexcess1000rate", "tc100k200kminpremium", 
-                "tc200k250kexcess500rate", "tc200k250kexcess1000rate", "tc200k250kminpremium", "jbunder100kexcess500rate", "jbunder100kexcess1000rate", "jbunder100kminpremium", 
+                "tc50k100kexcess250rate", "tc50k100kexcess500rate", "tc50k100kminpremium", "tc100k200kexcess500rate", "tc100k200kexcess1000rate", "tc100k200kminpremium",
+                "tc200k250kexcess500rate", "tc200k250kexcess1000rate", "tc200k250kminpremium", "jbunder100kexcess500rate", "jbunder100kexcess1000rate", "jbunder100kminpremium",
                 "jsunder100kexcess500rate", "jsunder100kexcess1000rate", "jsunder100kminpremium",
                 "mcunder100kexcess250rate", "mcunder100kexcess500rate", "mcunder100kminpremium", "mc100k200kexcess500rate", "mc100k200kexcess1000rate", "mc100k200kminpremium",
                 "mc200k350kexcess1000rate", "mc200k350kexcess2000rate", "mc200k350kminpremium", "mc350k500kexcess1000rate", "mc350k500kexcess2000rate", "mc350k500kminpremium",
                 "fslfeefort", "fslratefortc", "loadingforcatandyc", "loadingforycraceusespinnakersuptp50nm", "loadingforycraceusespinnakersuptp200nm", "mvpremiumrate");
 
             //Create default referral points based on the clientagreementrules
-            if (agreement.ClientAgreementReferrals.Count == 0) {
+            if (agreement.ClientAgreementReferrals.Count == 0)
+            {
                 foreach (var clientagreementreferralrule in agreement.ClientAgreementRules.Where(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null))
                     agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, clientagreementreferralrule.Name, clientagreementreferralrule.Description, "", clientagreementreferralrule.Value, clientagreementreferralrule.OrderNumber));
-            } else
+            }
+            else
             {
                 foreach (var clientagreementreferral in agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null))
                     clientagreementreferral.Status = "";
             }
-               
+
+            int agreementperiodindays = 0;
+            agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
             int totalTermLimit = 0;
             decimal totalTermFsl = 0m;
@@ -90,6 +94,12 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             //calculate boat premium and FSL (BV Term)
             foreach (var boat in informationSheet.Boats.Where(v => !v.Removed && v.DateDeleted == null))
             {
+                boat.BoatInceptionDate = boat.BoatEffectiveDate;
+                boat.BoatExpireDate = agreement.ExpiryDate;
+
+                int boatperiodindays = 0;
+                boatperiodindays = (boat.BoatExpireDate - boat.BoatInceptionDate).Days;
+
                 decimal boatRate = 0m;
                 decimal boatMinPremium = 0m;
                 decimal boatFsl = 0m;
@@ -97,6 +107,9 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                 decimal boatPremium = 0m;
                 decimal boatBrokerage = 0m;
                 decimal boatBrokerageRate = 0m;
+                decimal boatproratedFsl = 0m;
+                decimal boatproratedPremium = 0m;
+                decimal boatproratedBrokerage = 0m;
 
                 GetFslRateForTraileredBoat(rates, boat, ref boatFslRate);
 
@@ -117,11 +130,12 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                     if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "YachtClubSocialRacingupto50nm")) //BoatUseRaceCategory (YachtClubSocialRacingupto50nm)
                     {
                         boatPremium = boatPremium * (1 + rates["loadingforycraceusespinnakersuptp50nm"]);
-                    } else if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Yachtracingupto200nm")) //BoatUseRaceCategory (Yachtracingupto200nm)
+                    }
+                    else if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Yachtracingupto200nm")) //BoatUseRaceCategory (Yachtracingupto200nm)
                     {
                         boatPremium = boatPremium * (1 + rates["loadingforycraceusespinnakersuptp200nm"]);
                     }
-                    
+
                 }
 
                 if (boatPremium < boatMinPremium)
@@ -129,11 +143,21 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                 boatPremium = boatPremium + boatFsl;
                 boatBrokerageRate = agreement.Brokerage;
                 boatBrokerage = boatPremium * boatBrokerageRate / 100;
+                boatproratedPremium = boatPremium;
+                boatproratedFsl = boatFsl;
+                boatproratedBrokerage = boatBrokerage;
+                //Pre-rate premium if the boat effective date is later than policy inception date
+                if (boat.BoatEffectiveDate > agreement.InceptionDate)
+                {
+                    boatproratedPremium = boatPremium * boatperiodindays / agreementperiodindays;
+                    boatproratedFsl = boatFsl * boatperiodindays / agreementperiodindays;
+                    boatproratedBrokerage = boatBrokerage * boatperiodindays / agreementperiodindays;
+                }
 
-                totalBoatFsl += boatFsl;
+                totalBoatFsl += boatproratedFsl;
                 totalBoatSumInsured += (boat.BoatCeaseDate > DateTime.MinValue) ? 0 : boat.MaxSumInsured;
-                totalBoatPremium += boatPremium;
-                totalBoatBrokerage += boatBrokerage;
+                totalBoatPremium += boatproratedPremium;
+                totalBoatBrokerage += boatproratedBrokerage;
 
                 ClientAgreementBVTerm bvTerm = null;
                 if (term.BoatTerms != null)
@@ -143,11 +167,14 @@ namespace TechCertain.Domain.Services.UnderwritingModules
 
                 if (bvTerm == null)
                 {
-                    bvTerm = new ClientAgreementBVTerm(underwritingUser, boat.BoatName, boat.YearOfManufacture, boat.BoatName, boat.BoatModel, boat.MaxSumInsured, boat.BoatQuoteExcessOption, boatPremium, boatFsl,
-                                                       boatBrokerageRate, boatBrokerage, term, boat);
+                    bvTerm = new ClientAgreementBVTerm(underwritingUser, boat.BoatName, boat.YearOfManufacture, boat.BoatName, boat.BoatModel, boat.MaxSumInsured, boat.BoatQuoteExcessOption, boatproratedPremium, boatproratedFsl,
+                                                       boatBrokerageRate, boatproratedBrokerage, term, boat);
                     bvTerm.BoatMake = boat.BoatMake;
                     bvTerm.BoatModel = boat.BoatModel;
                     bvTerm.TermCategory = "active";
+                    bvTerm.AnnualPremium = boatPremium;
+                    bvTerm.AnnualFSL = boatFsl;
+                    bvTerm.AnnualBrokerage = boatBrokerage;
                     term.BoatTerms.Add(bvTerm);
                 }
                 else
@@ -155,23 +182,26 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                     bvTerm.BoatName = boat.BoatName;
                     bvTerm.YearOfManufacture = boat.YearOfManufacture;
                     bvTerm.TermLimit = boat.MaxSumInsured;
-                    bvTerm.Premium = boatPremium;
+                    bvTerm.Premium = boatproratedPremium;
                     bvTerm.Excess = boat.BoatQuoteExcessOption;
-                    bvTerm.FSL = boatFsl;
+                    bvTerm.FSL = boatproratedFsl;
                     bvTerm.BoatMake = boat.BoatMake;
                     bvTerm.BoatModel = boat.BoatModel;
                     bvTerm.DateDeleted = null;
                     bvTerm.BrokerageRate = boatBrokerageRate;
-                    bvTerm.Brokerage = boatBrokerage;
+                    bvTerm.Brokerage = boatproratedBrokerage;
                     bvTerm.LastModifiedOn = DateTime.UtcNow;
                     bvTerm.LastModifiedBy = underwritingUser;
                     bvTerm.TermCategory = "active";
+                    bvTerm.AnnualPremium = boatPremium;
+                    bvTerm.AnnualFSL = boatFsl;
+                    bvTerm.AnnualBrokerage = boatBrokerage;
                 }
 
                 totalTermLimit += boat.MaxSumInsured;
-                totalTermFsl += boatFsl;
-                totalTermPremium += boatPremium;
-                totalTermBrokerage += boatBrokerage;
+                totalTermFsl += boatproratedFsl;
+                totalTermPremium += boatproratedPremium;
+                totalTermBrokerage += boatproratedBrokerage;
 
                 //Referral points per vessel
                 //Trailer Craft Sum Insured over $250k
@@ -198,8 +228,6 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                 uwrfmotormodified(underwritingUser, boat, agreement);
                 //Max speed over 60 knots
                 uwrfmaxspeedover60knots(underwritingUser, boat, agreement);
-                //Claim over $5k of losses
-                uwrfclaimover5koflosses(underwritingUser, agreement);
                 //Vessel use live on board
                 uwrfboatuseliveonboard(underwritingUser, boat, agreement);
                 //Vessel use race (Oceangoingracingover200nm, Category1Racing)
@@ -214,9 +242,15 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             }
 
 
-            //calculate trailer FSL (MV Term)
+            //calculate trailer premium and FSL (MV Term)
             foreach (var vehicle in informationSheet.Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
             {
+                vehicle.VehicleInceptionDate = vehicle.VehicleEffectiveDate;
+                vehicle.VehicleExpireDate = agreement.ExpiryDate;
+
+                int vehicleperiodindays = 0;
+                vehicleperiodindays = (vehicle.VehicleExpireDate - vehicle.VehicleInceptionDate).Days;
+
                 string vehicleCategory = null;
                 decimal vehicleFsl = 0m;
                 decimal vehiclePremium = 0m;
@@ -224,17 +258,30 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                 decimal vehicleExcess = 0m;
                 decimal vehicleBrokerage = 0m;
                 decimal vehicleBrokerageRate = 0m;
+                decimal vehicleproratedFsl = 0m;
+                decimal vehicleproratedPremium = 0m;
+                decimal vehicleproratedBrokerage = 0m;
 
                 GetFslFeeForTrailer(rates, vehicle, ref vehicleFsl);
 
                 vehiclePremium = (vehicle.GroupSumInsured * rates["mvpremiumrate"] / 100) + vehicleFsl;
                 vehicleBrokerageRate = agreement.Brokerage;
                 vehicleBrokerage = vehiclePremium * vehicleBrokerageRate / 100;
+                vehicleproratedPremium = vehiclePremium;
+                vehicleproratedFsl = vehicleFsl;
+                vehicleproratedBrokerage = vehicleBrokerage;
+                //Pre-rate premium if the vehicle effective date is later than policy inception date
+                if (vehicle.VehicleEffectiveDate > agreement.InceptionDate)
+                {
+                    vehicleproratedPremium = vehiclePremium * vehicleperiodindays / agreementperiodindays;
+                    vehicleproratedFsl = vehicleFsl * vehicleperiodindays / agreementperiodindays;
+                    vehicleproratedBrokerage = vehicleBrokerage * vehicleperiodindays / agreementperiodindays;
+                }
 
-                totalVehicleFsl += vehicleFsl;
+                totalVehicleFsl += vehicleproratedFsl;
                 totalVehicleSumInsured += (vehicle.VehicleCeaseDate > DateTime.MinValue) ? 0 : vehicle.GroupSumInsured;
-                totalVehiclePremium += vehiclePremium;
-                totalVehicleBrokerage += vehicleBrokerage;
+                totalVehiclePremium += vehicleproratedPremium;
+                totalVehicleBrokerage += vehicleproratedBrokerage;
 
                 ClientAgreementMVTerm mvTerm = null;
                 if (term.MotorTerms != null)
@@ -245,8 +292,11 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                 if (mvTerm == null)
                 {
                     mvTerm = new ClientAgreementMVTerm(underwritingUser, vehicle.Registration, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured,
-                                                       vehicleExcess, vehiclePremium, vehicleFsl, vehicleBrokerageRate, vehicleBrokerage, vehicleCategory, vehicle.FleetNumber, term, vehicle, vehicleBurnerPremium);
+                                                       vehicleExcess, vehicleproratedPremium, vehicleproratedFsl, vehicleBrokerageRate, vehicleproratedBrokerage, vehicleCategory, vehicle.FleetNumber, term, vehicle, vehicleBurnerPremium);
                     mvTerm.TermCategory = "active";
+                    mvTerm.AnnualPremium = vehiclePremium;
+                    mvTerm.AnnualFSL = vehicleFsl;
+                    mvTerm.AnnualBrokerage = vehicleBrokerage;
                     term.MotorTerms.Add(mvTerm);
                 }
                 else
@@ -256,23 +306,26 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                     mvTerm.Make = vehicle.Make;
                     mvTerm.Model = vehicle.Model;
                     mvTerm.TermLimit = vehicle.GroupSumInsured;
-                    mvTerm.Premium = vehiclePremium;
+                    mvTerm.Premium = vehicleproratedPremium;
                     mvTerm.BurnerPremium = vehicleBurnerPremium;
-                    mvTerm.FSL = vehicleFsl;
+                    mvTerm.FSL = vehicleproratedFsl;
                     mvTerm.DateDeleted = null;
                     mvTerm.BrokerageRate = vehicleBrokerageRate;
-                    mvTerm.Brokerage = vehicleBrokerage;
+                    mvTerm.Brokerage = vehicleproratedBrokerage;
                     mvTerm.VehicleCategory = vehicleCategory;
                     mvTerm.FleetNumber = vehicle.FleetNumber;
                     mvTerm.LastModifiedOn = DateTime.UtcNow;
                     mvTerm.LastModifiedBy = underwritingUser;
                     mvTerm.TermCategory = "active";
+                    mvTerm.AnnualPremium = vehiclePremium;
+                    mvTerm.AnnualFSL = vehicleFsl;
+                    mvTerm.AnnualBrokerage = vehicleBrokerage;
                 }
 
                 totalTermLimit += vehicle.GroupSumInsured;
-                totalTermFsl += vehicleFsl;
-                totalTermPremium += vehiclePremium;
-                totalTermBrokerage += vehicleBrokerage;
+                totalTermFsl += vehicleproratedFsl;
+                totalTermPremium += vehicleproratedPremium;
+                totalTermBrokerage += vehicleproratedBrokerage;
             }
 
             term.TermLimit = totalTermLimit;
@@ -281,11 +334,18 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             term.BrokerageRate = agreement.Brokerage;
             term.Brokerage = totalTermBrokerage;
 
+            //Referral points per agreement
+            //Claim over $5k of losses
+            uwrfclaimover5koflosses(underwritingUser, agreement);
+            //Prior insurance
+            uwrfpriorinsurance(underwritingUser, agreement);
+
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
             {
                 agreement.Status = "Referred";
-            } else
+            }
+            else
             {
                 agreement.Status = "Quoted";
             }
@@ -293,7 +353,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             string auditLogDetail = "Marsh Coastguard UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
-            
+
             return true;
 
         }
@@ -304,7 +364,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             if (clientAgreement == null)
             {
                 DateTime inceptionDate = DateTime.UtcNow;
-                DateTime expiryDate = DateTime.UtcNow.AddDays(365);
+                DateTime expiryDate = DateTime.UtcNow.AddYears(1);
                 clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
@@ -381,12 +441,12 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             {
                 throw new Exception(string.Format("Can not get BoatType for boat", boat.Id));
             }
-            
+
             switch (boatUWCategory)
             {
                 case 1:
                     {
-                        if(boat.MaxSumInsured > 0 && boat.MaxSumInsured <= 50000)
+                        if (boat.MaxSumInsured > 0 && boat.MaxSumInsured <= 50000)
                         {
                             boatMinPremium = rates["tcunder50kminpremium"];
                             switch (boat.BoatQuoteExcessOption)
@@ -406,7 +466,8 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                                         throw new Exception(string.Format("Can not get rate or min premium for boat", boat.Id));
                                     }
                             }
-                        } else if (boat.MaxSumInsured > 50000 && boat.MaxSumInsured <= 100000)
+                        }
+                        else if (boat.MaxSumInsured > 50000 && boat.MaxSumInsured <= 100000)
                         {
                             boatMinPremium = rates["tc50k100kminpremium"];
                             switch (boat.BoatQuoteExcessOption)
@@ -426,7 +487,8 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                                         throw new Exception(string.Format("Can not get rate or min premium for boat", boat.Id));
                                     }
                             }
-                        } else if (boat.MaxSumInsured > 100000 && boat.MaxSumInsured <= 200000)
+                        }
+                        else if (boat.MaxSumInsured > 100000 && boat.MaxSumInsured <= 200000)
                         {
                             boatMinPremium = rates["tc100k200kminpremium"];
                             switch (boat.BoatQuoteExcessOption)
@@ -584,7 +646,8 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                                         throw new Exception(string.Format("Can not get rate or min premium for boat", boat.Id));
                                     }
                             }
-                        } else if (boat.MaxSumInsured > 350000 && boat.MaxSumInsured <= 500000)
+                        }
+                        else if (boat.MaxSumInsured > 350000 && boat.MaxSumInsured <= 500000)
                         {
                             boatMinPremium = rates["mc350k500kminpremium"];
                             switch (boat.BoatQuoteExcessOption)
@@ -620,13 +683,15 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             {
                 if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrailercraftsuminsuredover250k") != null)
                     agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrailercraftsuminsuredover250k").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrailercraftsuminsuredover250k").Description, 
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrailercraftsuminsuredover250k").Description,
                         "",
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrailercraftsuminsuredover250k").Value,
                         agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrftrailercraftsuminsuredover250k").OrderNumber));
-            } else
+            }
+            else
             {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrftrailercraftsuminsuredover250k" && cref.DateDeleted == null).Status != "Pending") {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrftrailercraftsuminsuredover250k" && cref.DateDeleted == null).Status != "Pending")
+                {
                     if ((boat.BoatType2 == "Roadtrailer" || boat.BoatType2 == "Stored") && (boat.BoatType1 != "Jetboat" && boat.BoatType1 != "Jetski")) //Trailer Craft (excluding jetboats, jetskis)
                     {
                         if (boat.MaxSumInsured > 250000)
@@ -923,6 +988,33 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             }
         }
 
+        void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp2").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp3").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp4").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp5").First().Value == "true")
+                    {
+                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
+                    }
+                }
+            }
+        }
+
         void uwrfboatuseliveonboard(User underwritingUser, Boat boat, ClientAgreement agreement)
         {
             if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null) == null)
@@ -938,7 +1030,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if ((boat.BoatType1 == "CruisersandLaunches" || boat.BoatType1 == "YachtsandCatamarans") 
+                    if ((boat.BoatType1 == "CruisersandLaunches" || boat.BoatType1 == "YachtsandCatamarans")
                         && boat.BoatUse.Any(ycbu => ycbu.BoatUseCategory == "LiveOnBoard" && ycbu.DateDeleted == null && !ycbu.Removed))
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseliveonboard" && cref.DateDeleted == null).Status = "Pending";
@@ -964,7 +1056,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
                 {
                     if (boat.BoatType1 == "YachtsandCatamarans" && boat.BoatUse.Any(ycbu => ycbu.BoatUseCategory == "Race" && ycbu.BoatUseRaceUseSpinnakers == "True" && ycbu.DateDeleted == null && !ycbu.Removed))
                     {
-                        if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Oceangoingracingover200nm") || 
+                        if (boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Oceangoingracingover200nm") ||
                             boat.BoatUse.Any(ycbu => ycbu.BoatUseRaceCategory == "Category1Racing")) //BoatUseRaceCategory (Oceangoingracingover200nm, Category1Racing)
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfboatuseraceotheroption" && cref.DateDeleted == null).Status = "Pending";
@@ -1038,7 +1130,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfothermarina" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if ((boat.BoatType2 == "Berthed" || boat.BoatType2 == "Moored") && boat.BoatWaterLocation != null && !boat.BoatWaterLocation.IsApproved && 
+                    if ((boat.BoatType2 == "Berthed" || boat.BoatType2 == "Moored") && boat.BoatWaterLocation != null && !boat.BoatWaterLocation.IsApproved &&
                         boat.BoatWaterLocation.InsuranceAttributes.FirstOrDefault(bwlocia => bwlocia.InsuranceAttributeName == "Other Marina" && bwlocia.DateDeleted == null) != null)
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfothermarina" && cref.DateDeleted == null).Status = "Pending";
