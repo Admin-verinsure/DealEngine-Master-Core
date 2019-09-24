@@ -81,29 +81,33 @@ namespace TechCertain.Domain.Entities
 
         public virtual DateTime BoundDate { get; protected set; }
 
-        public virtual DateTime FinalacceptanceDate { get; protected set; }
+        public virtual DateTime FinalacceptanceDate { get;  set; }
 
-        public virtual DateTime ClientAgreementExpiredDate { get; protected set; }
+        public virtual DateTime ClientAgreementExpiredDate { get; set; }
 
-        public virtual bool InsurerDeclined { get; protected set; }
+        public virtual bool InsurerDeclined { get; set; }
 
-        public virtual string InsurerDeclinedComment { get; protected set; }
+        public virtual string InsurerDeclinedComment { get;  set; }
 
-        public virtual User InsurerDeclinedUserID { get; protected set; }
+        public virtual User InsurerDeclinedUserID { get; set; }
 
-        public virtual bool InsuredDeclined { get; protected set; }
+        public virtual bool InsuredDeclined { get; set; }
 
-        public virtual string InsuredDeclinedComment { get; protected set; }
+        public virtual string InsuredDeclinedComment { get; set; }
 
-        public virtual User InsuredDeclinedUserID { get; protected set; }
+        public virtual DateTime InsurerDeclinedDate { get; set; }
 
-        public virtual bool Cancelled { get; protected set; }
+        public virtual User UndeclinedUserID { get; set; }
 
-        public virtual string CancelledNote { get; protected set; }
+        public virtual DateTime UndeclinedDate { get; set; }
 
-        public virtual DateTime CancelledEffectiveDate { get; protected set; }
+        public virtual bool Cancelled { get; set; }
 
-        public virtual User CancelledByUserID { get; protected set; }
+        public virtual string CancelledNote { get; set; }
+
+        public virtual DateTime CancelledEffectiveDate { get; set; }
+
+        public virtual User CancelledByUserID { get; set; }
 
         public virtual string PolicyNumber { get; set; }
 
@@ -147,6 +151,7 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
+        public virtual DateTime CancelledDate { get; set; }
     }
 }
 

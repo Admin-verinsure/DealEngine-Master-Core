@@ -1,0 +1,24 @@
+﻿@model BaseListViewModel<TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel>
+
+
+    <div class="col col-12">
+        <div id="paymentSection" class="smart-form no-padding">
+            <div id="pxpaysection">
+                @foreach (var item in Model)
+                {
+                    @Html.Partial("Partials/ViewPxPayments", item);
+                }
+            </div>
+            <br />
+            @*<div id="eglobal">
+                @foreach (var item in Model)
+                {
+                    @Html.Partial("Partials/ViewEGlobalPayments", item);
+                }
+            </div>*@
+        </div>
+        <button onclick="submitPayment()" class="btn-sm AddupdateBoat" id="updateBoat">Pay now</button>
+
+        @*@Html.Button().Text("Pay now").HtmlAttributes(new { onclick = "submitPayment();" }).Class("btn-sm")*@
+    </div>
+

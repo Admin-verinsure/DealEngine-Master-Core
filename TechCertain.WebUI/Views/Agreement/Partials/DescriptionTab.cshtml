@@ -1,0 +1,39 @@
+﻿@model TechCertain.WebUI.Models.Agreement.AgreementTemplateViewModel
+
+<fieldset>
+	<div class="form-group">
+        <div class="row">
+        	@Html.HiddenFor(m => m.OriginalAgreementId)
+        	@Html.HiddenFor(m => m.CreatorOrganisation)
+        	@Html.HiddenFor(m => m.OwnerOrganisation)
+	    </div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label">Agreement Name</label>
+        <div class="col-md-10">
+	        <div class="input-group">
+	            @Html.TextBoxFor(m => m.Name)@*.HtmlAttributes(new { placeholder = "Please enter a name for your agreement" })*@
+	            <span class="input-group-addon">
+	            	@*@Html.Icon("fa fa-file-text")*@
+	            </span>
+	        </div>
+        </div>
+	</div>
+	<div class="form-group">
+        <label class="col-md-2 control-label">Agreement Description</label>
+        <div class="col-md-10">
+            <div class="input-group">
+	            @Html.TextBoxFor(m => m.Description)@*.HtmlAttributes(new { placeholder = "Please enter a description for your agreement" })*@
+                <span class="input-group-addon"><i class="fa fa-file-text"></i></span>
+            </div>
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-2 control-label">Agreement Languages</label>
+        <div class="col-md-10">
+            <div>
+				@Html.ListBoxFor(m => m.SelectedLanguages, Model.Languages)@*.Data(new { placeholder = "Select Languages" })*@
+	        </div>
+        </div>
+    </div>
+</fieldset>

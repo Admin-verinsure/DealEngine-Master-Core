@@ -161,11 +161,11 @@ namespace TechCertain.WebUI.Controllers
 			//return RedirectToAction ("Error500", "Error");
 		}
 
-		protected ActionResult Xml (XDocument document)
-		{
-            throw new Exception("This method will need to be re-written");
-            //return new XmlActionResult(document);
-		}
+        protected ActionResult Xml(XDocument document)
+        {
+            //throw new Exception("This method will need to be re-written");
+            return new XmlActionResult(document);
+        }
 
 		protected string LocalizeTime (DateTime dateTime)
 		{
@@ -175,8 +175,9 @@ namespace TechCertain.WebUI.Controllers
 		protected string LocalizeTime (DateTime dateTime, string format)
 		{
             //throw new Exception("This method will need to be re-written");
-            return dateTime.ToTimeZoneTime(UserTimeZone).ToString("G", UserCulture);
+            return dateTime.ToTimeZoneTime (UserTimeZone).ToString ("G", UserCulture);
         }
+
 
         protected string LocalizeTimeDate(DateTime dateTime, string format)
         {

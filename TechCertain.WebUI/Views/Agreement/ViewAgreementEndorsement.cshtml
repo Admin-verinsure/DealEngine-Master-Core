@@ -1,0 +1,104 @@
+﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementEndorsementViewModel
+
+@using TechCertain.WebUI.Helpers.CustomHtml
+
+<!-- NEW WIDGET START -->
+<div class="col col-12">
+    <!-- Widget ID (each widget will need unique ID)-->
+    <div class="jarviswidget" id="wid-id-10"
+         data="false"
+         data-widget-editbutton="false"
+         data-widget-togglebutton="false"
+         data-widget-deletebutton="false"
+         data-widget-custombutton="false"
+         data-widget-sortable="false">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+            <h2>@ViewBag.Title </h2>
+        </header>
+
+        <div class="col-md-10">
+        </div>
+
+        <!-- widget div-->
+        <form action="~/Agreement/ViewAgreementEndorsement/@Model.ClientAgreementID" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+
+            @if (Model.HasEndorsements)
+            {
+                <table class="table table-bordered table-responsive-md table-striped text-center" style="border: 1px solid black;" id="endorsements">
+                    <tr>
+                        <th class="text-center" width="25%" style="color:black">Endorsement Name</th>
+                        <th class="text-center" width="75%" style="color:black">Endorsement Text</th>
+                    </tr>
+                    @foreach (var item in Model.ClientAgreementEndorsements)
+                    {
+                        <tr>
+                            <td class="pt-3-half" width="25%" contenteditable="true" id="EndorsementName" style="color:black" align="left">
+                                @item.Name
+
+                            </td>
+                            <td class="pt-3-half" width="75%" contenteditable="true" style="color:black" align="left">
+                                @item.Value
+                            </td>
+                        </tr>
+
+                    }
+                </table>
+            }
+
+            <div>
+                @Html.HiddenFor(m => m.ClientAgreementID)
+                @Html.HiddenFor(m => m.ClientProgrammeID)
+                <!-- widget edit box -->
+                <div class="jarviswidget-editbox">
+                    <!-- This area used as drop downSS edit box -->
+                </div>
+
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Endorsement Name: </label>
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.EndorsementNameToAdd)
+                                <span class="input-group-addon"><i class="fa fa-file-text"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Endorsement Text: </label>
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                @Html.TextAreaFor(m => m.EndorsementTextToAdd)
+                                <span class="input-group-addon"><i class="fa fa-file-text"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <!-- end widget div -->
+            <div class="col-md-10">
+            </div>
+            <div class="col-md-10">
+                <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>
+            </div>
+        </form>
+    </div>
+    <!-- end widget -->
+</div>
+<!-- WIDGET END -->
+
+
+@section pagespecific {
+
+    <script type="text/javascript">
+
+
+    </script>
+
+}
+
+

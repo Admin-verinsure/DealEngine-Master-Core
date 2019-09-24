@@ -50,6 +50,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DealEngine.Infrastructure.AppInitialize\DealEngine.Infrastructure.AppInitialize.csproj" />
+    <ProjectReference Include="..\DealEngine.Infrastructure.Identity\DealEngine.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\TechCertain.Services.Impl\TechCertain.Services.Impl.csproj" />
   </ItemGroup>
 

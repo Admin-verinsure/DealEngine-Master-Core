@@ -253,6 +253,138 @@ namespace TechCertain.WebUI.Controllers
             // return RedirectToAction("ViewAcceptedAgreement", new { id = clientAgreementModel.InformationId });
         }
 
+        [HttpGet]
+        public ActionResult CancellAgreement(Guid id)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+            Organisation insured = answerSheet.Owner;
+            ClientProgramme programme = answerSheet.Programme;
+
+            model.InformationSheetId = answerSheet.Id;
+            model.ClientAgreementId = agreement.Id;
+
+            model.CancellNotes = agreement.CancelledNote;
+            model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
+
+            ViewBag.Title = "Cancel Agreement ";
+
+            return View("CancellAgreement", model);
+        }
+
+        [HttpPost]
+        public ActionResult CancellAgreement(AgreementViewModel clientAgreementModel)
+        {
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+
+            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            {
+                if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled") &&
+                    (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
+
+                    agreement.Status = "Cancelled";
+                agreement.CancelledNote = clientAgreementModel.CancellNotes;
+                agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
+                agreement.Cancelled = true;
+                agreement.CancelledByUserID = CurrentUser;
+                agreement.CancelledDate = DateTime.UtcNow;
+
+
+                string auditLogDetail = "Agreement has been cancelled by " + CurrentUser.FullName;
+                AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                uow.Commit();
+
+            }
+
+            var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+            return Json(new { Url = url });
+        }
+
+        [HttpGet]
+        public ActionResult DeclineAgreement(Guid id)
+        {
+            ViewAgreementViewModel model = new ViewAgreementViewModel();
+
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
+            Organisation insured = answerSheet.Owner;
+            ClientProgramme programme = answerSheet.Programme;
+
+            model.InformationSheetId = answerSheet.Id;
+            model.ClientAgreementId = agreement.Id;
+
+            model.DeclineNotes = agreement.InsurerDeclinedComment;
+
+            ViewBag.Title = "Decline Agreement ";
+
+            return View("DeclineAgreement", model);
+        }
+
+        [HttpPost]
+        public ActionResult DeclineAgreement(AgreementViewModel clientAgreementModel)
+        {
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+
+            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            {
+                if (agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled" ||
+                    agreement.Status != "Bound" || agreement.Status != "Bound and invoice pending" || agreement.Status != "Bound and invoiced")
+
+                    agreement.Status = "Declined by Insurer";
+                agreement.InsurerDeclinedComment = clientAgreementModel.DeclineNotes;
+                agreement.InsurerDeclined = true;
+                agreement.InsurerDeclinedUserID = CurrentUser;
+                agreement.InsurerDeclinedDate = DateTime.UtcNow;
+
+
+                string auditLogDetail = "Agreement has been declined by " + CurrentUser.FullName;
+                AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                uow.Commit();
+
+            }
+
+            var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+            return Json(new { Url = url });
+        }
+
+
+        [HttpGet]
+        public ActionResult UndeclineAgreement(Guid id)
+        {
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+
+            if (agreement != null)
+            {
+                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                {
+                    if (agreement.Status == "Declined by Insurer" || agreement.Status == "Declined by Insured")
+                    {
+                        agreement.Status = "Quoted";
+                        agreement.InsurerDeclined = false;
+                        agreement.InsuredDeclined = false;
+                        agreement.UndeclinedUserID = CurrentUser;
+                        agreement.UndeclinedDate = DateTime.UtcNow;
+                    }
+
+                    string auditLogDetail = "Agreement has been undeclined by " + CurrentUser.FullName;
+                    AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                    uow.Commit();
+
+                }
+            }
+
+            return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
+        }
+
+
 
         //[HttpPost]
         //public ActionResult AuthorisedReferrals(Guid clientAgreementId, Guid sheetId, string type)
@@ -1552,6 +1684,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 model.EditEnabled = false;
                 model.Documents = new List<AgreementDocumentViewModel>();
+                model.CurrentUser = CurrentUser;
 
                 ClientProgramme programme = _programmeRepository.GetById(id);
                 model.InformationSheetId = programme.InformationSheet.Id;

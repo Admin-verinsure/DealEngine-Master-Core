@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Exceptions;
 using TechCertain.Domain.Interfaces;
-using DealEngine.Infrastructure.Identity;
 using System.Collections.Generic;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -18,8 +17,8 @@ using TechCertain.WebUI.Models;
 using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
-using System.Security.Claims;
 using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity;
 
 
 #endregion
