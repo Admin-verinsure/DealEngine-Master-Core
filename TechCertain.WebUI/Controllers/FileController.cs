@@ -25,9 +25,9 @@ namespace TechCertain.WebUI.Controllers
 		string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, ILogger logger, IUnitOfWorkFactory unitOfWork, IFileService fileService,
+		public FileController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IUnitOfWorkFactory unitOfWork, IFileService fileService,
 		                      IRepository<SystemDocument> documentRepository, IRepository<Image> imageRepository)
-			: base (userRepository)
+			: base (userRepository, dealEngineDBContext)
 		{
 			_logger = logger;
 			_unitOfWork = unitOfWork;

@@ -1,18 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+using TechCertain.WebUI.Areas.Identity.Data;
 
-namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account
+namespace TechCertain.WebUI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<DealEngineUser> _userManager;
 
-        public ResetPasswordModel(UserManager<IdentityUser> userManager)
+        public ResetPasswordModel(UserManager<DealEngineUser> userManager)
         {
             _userManager = userManager;
         }
@@ -49,7 +55,7 @@ namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account
             {
                 Input = new InputModel
                 {
-                    Code = code
+                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
                 };
                 return Page();
             }

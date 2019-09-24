@@ -22,8 +22,8 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWorkFactory _unitOfWork;
 
         //public InformationBuilderController(IInformationBuilderService informationBuilderService)
-		public InformationBuilderController(IUserService userService, IMapper mapper, IRepository<InformationSection> informationSectionRepository, IRepository<InformationItem> informationItemRepository, IRepository<InformationTemplate> templateRepository, IUnitOfWorkFactory unitOfWork)
-			: base(userService)
+		public InformationBuilderController(IUserService userService, DealEngineDBContext dealEngineDBContext, IMapper mapper, IRepository<InformationSection> informationSectionRepository, IRepository<InformationItem> informationItemRepository, IRepository<InformationTemplate> templateRepository, IUnitOfWorkFactory unitOfWork)
+			: base(userService, dealEngineDBContext)
         {
             _informationBuilderService = new InformationBuilderService(new InformationBuilderFactory());
 			_mapper = mapper;

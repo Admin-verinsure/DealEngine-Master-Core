@@ -6,17 +6,18 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TechCertain.WebUI.Areas.Identity.Data;
 
-namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account.Manage
+namespace TechCertain.WebUI.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<DealEngineUser> _userManager;
+        private readonly SignInManager<DealEngineUser> _signInManager;
 
         public ExternalLoginsModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<DealEngineUser> userManager,
+            SignInManager<DealEngineUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -58,8 +59,8 @@ namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account.Manage
             var result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
             if (!result.Succeeded)
             {
-                var userId = await _userManager.GetUserIdAsync(user);
-                throw new InvalidOperationException($"Unexpected error occurred removing external login for user with ID '{userId}'.");
+                StatusMessage = "The external login was not removed.";
+                return RedirectToPage();
             }
 
             await _signInManager.RefreshSignInAsync(user);
@@ -95,7 +96,8 @@ namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account.Manage
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Unexpected error occurred adding external login for user with ID '{user.Id}'.");
+                StatusMessage = "The external login was not added. External logins can only be associated with one account.";
+                return RedirectToPage();
             }
 
             // Clear the existing external cookie to ensure a clean login process

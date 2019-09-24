@@ -26,12 +26,13 @@ namespace TechCertain.WebUI.Controllers
 		IMapper _mapper;
 
 		public PolicyController(IUserService userRepository,
-								IDocumentService policyDocumentService,
+                                DealEngineDBContext dealEngineDBContext,
+                                IDocumentService policyDocumentService,
 								ITermBuilderService termBuilderService,
 								IRepository<RiskCategory> riskRepository,
 								IUnitOfWorkFactory unitOfWorkFactory,
 								IMapper mapper)
-			: base(userRepository)
+			: base(userRepository, dealEngineDBContext)
 		{
 			_policyDocumentService = policyDocumentService;
 			_termBuilderService = termBuilderService;

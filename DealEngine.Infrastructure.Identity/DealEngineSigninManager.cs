@@ -132,7 +132,7 @@ namespace DealEngine.Infrastructure.Identity
                     var localUser = await UserManager.FindByNameAsync(userName);
                     MapUserToUser(ldapUser, localUser);
                     await UserManager.UpdateAsync(localUser);
-                }
+                }               
 
                 return await Task.FromResult(SignInResult.Success);
             }

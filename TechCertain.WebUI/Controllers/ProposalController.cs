@@ -17,7 +17,7 @@ namespace TechCertain.WebUI.Controllers
         ProposalTemplateFactory _proposalTemplateFactory;
 
         public ProposalController(
-			IUserService userRepository) : base(userRepository)
+			IUserService userRepository, DealEngineDBContext dealEngineDBContext) : base(userRepository, dealEngineDBContext)
         {
 
         }

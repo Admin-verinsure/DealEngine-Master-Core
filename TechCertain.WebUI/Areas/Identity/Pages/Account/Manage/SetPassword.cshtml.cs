@@ -1,19 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TechCertain.WebUI.Areas.Identity.Data;
 
-namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account.Manage
+namespace TechCertain.WebUI.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<DealEngineUser> _userManager;
+        private readonly SignInManager<DealEngineUser> _signInManager;
 
         public SetPasswordModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<DealEngineUser> userManager,
+            SignInManager<DealEngineUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

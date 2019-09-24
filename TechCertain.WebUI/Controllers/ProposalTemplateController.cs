@@ -6,6 +6,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Domain.Services.Factories;
 using TechCertain.Services.Interfaces;
+using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Proposal;
 
 namespace TechCertain.WebUI.Controllers
@@ -15,7 +16,7 @@ namespace TechCertain.WebUI.Controllers
         IRepository<ProposalTemplate> _proposalTemplateRepository;
         ProposalTemplateFactory _proposalTemplateFacory;
 
-		public ProposalTemplateController(IUserService userRepository) : base (userRepository)
+		public ProposalTemplateController(IUserService userRepository, DealEngineDBContext dealEngineDBContext) : base (userRepository, dealEngineDBContext)
         {
 
         }

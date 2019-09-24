@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models.Milestone;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -32,9 +33,10 @@ namespace TechCertain.WebUI.Controllers
             IProgrammeService programmeService,
             IRepository<Programme> programmeRepository,
             IUWMService uWMService,
+            DealEngineDBContext dealEngineDBContext,
             //ITaskingService taskingService,
             IMilestoneService milestoneService)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _programmeService = programmeService;
             _programmeRepository = programmeRepository;

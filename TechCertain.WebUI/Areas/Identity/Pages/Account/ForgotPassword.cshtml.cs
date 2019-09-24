@@ -1,26 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.WebUtilities;
+using TechCertain.WebUI.Areas.Identity.Data;
 
-namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account
+namespace TechCertain.WebUI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ILogger<LogoutModel> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<DealEngineUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger, UserManager<IdentityUser> userManager)
+        public ForgotPasswordModel(UserManager<DealEngineUser> userManager, IEmailSender emailSender)
         {
-            _signInManager = signInManager;
-            _logger = logger;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -31,13 +34,6 @@ namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
-        }
-
-        public async Task OnGet()
-        {
-            await _signInManager.SignOutAsync();
-
-            _logger.LogInformation("User logged out.");
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -54,13 +50,17 @@ namespace SmartAdmin.WebUI.Areas.Identity.Pages.Account
                 // For more information on how to enable account confirmation and password reset please 
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,
-                    values: new { code },
+                    values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-               
+                await _emailSender.SendEmailAsync(
+                    Input.Email,
+                    "Reset Password",
+                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
