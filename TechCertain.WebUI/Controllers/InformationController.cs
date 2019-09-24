@@ -10,11 +10,11 @@ using TechCertain.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels;
-using techcertain2019core.Models.ViewModels.Programme;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     [Authorize]
     public class InformationController : BaseController
@@ -80,8 +80,9 @@ namespace techcertain2019core.Controllers
             IClientInformationAnswerService clientInformationAnswer,
             IRepository<DropdownListItem> dropdownListItem,
             IMapper mapper,
+            DealEngineDBContext dealEngineDBContext,
             IUserRepository UserRepository)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;

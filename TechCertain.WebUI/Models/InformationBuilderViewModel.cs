@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2019core.Models.ViewModels
+namespace TechCertain.WebUI.Models
 {
     public class InformationBuilderViewModel : BaseViewModel
     {

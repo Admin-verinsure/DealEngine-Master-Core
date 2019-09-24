@@ -1,0 +1,112 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+<div class="col col-12">
+    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom:.5px solid #e5e5e5; padding-bottom:18px; margin-bottom:20px;">
+
+        <p hidden> @Html.HiddenFor(m => Model.Sections) </p>
+
+
+
+    </section>
+
+</div>
+
+
+@section pagespecific {
+    <script src="~/Scripts/insuranceicons.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var j = 0;
+                debugger;
+            var Panel = new Array();
+            var index = 0;
+            var index2 = 0;
+            var ItemType = new Array();
+            var options = new Array();
+            @*var model = @Html.Raw(Json.Encode(Model.Sections));*@
+            var items = new Array();
+
+            @*for (var i = 0; i < @Model.Items.length; i++) {
+
+            }*@
+
+            @*var i = 0;
+            @foreach (var item in Model.Items)
+            {
+                <text>items.push("@item.Type");</Text>
+                <text>items.push("@item.Label");</Text>
+                if(item.Type == "DropDownList")
+                {
+                   <text>items.push("@item.Options");</Text>
+                }
+                 <text>items.push("Next");</Text>
+                 <text>Panel.push(items);</Text>
+            }
+
+            for (var i = 0; i < Panel.length; i++) {
+            }*@
+
+
+            //for (var i = 0; i < items.length; i++) {
+            //    var element1 = document.getElementById('fooBar');
+            //    var section = document.createElement("Section");
+            //    section.setAttribute("class", "col col-xs-12 col-sm-6 col-md-6 col-lg-6");
+            //    if (items[i].Type == "DROPDOWNLIST") {
+
+            //        debugger;
+            //        var label = document.createElement("label");
+            //        var br = document.createElement("br");
+            //        var labelname = items[i].Label;
+            //        label.setAttribute("value", labelname);
+            //        label.innerHTML = labelname;
+            //        var op = items[i].Options;
+            //        var input = document.createElement("select");
+            //        input.setAttribute('type', 'DROPDOWN');
+            //        input.setAttribute('name', 'DROPDOWN');
+            //        section.appendChild(label);
+            //        section.appendChild(br);
+            //        section.appendChild(input);
+            //        fncCreateSelectOption(input,op);
+            //        element1.appendChild(section);
+
+            //    }else if (items[i].Type == "TEXTBOX") {
+            //        debugger;
+
+            //        var label1 = document.createElement("label");
+            //        var br = document.createElement("br");
+            //        var labelname = items[i].Label;
+            //        label1.setAttribute("value", labelname);
+            //        label1.innerHTML = labelname;
+            //        var input = document.createElement("input");
+            //        input.setAttribute('type', 'text');
+            //        input.setAttribute('name', 'TEXT');
+            //        section.appendChild(label1);
+            //        section.appendChild(br);
+            //        section.appendChild(input);
+            //        element1.appendChild(section);
+            //    }
+            //}
+
+
+                //function fncCreateSelectOption(ele, list) {
+                //debugger;
+                //   var objSelect = ele;
+                //    for (var i = 0; i < list.length; i++) {
+                //        var split = list[i].Text.split("\n");
+                //        for (var j = 0; j < split.length; j++) {
+                //            var Item = new Option(split[j], split[j]);
+                //            objSelect.options[objSelect.length] = Item;
+                //        }
+
+                //   }
+                //}
+
+        });
+    </script>
+}
+
+
+
+
+
+

@@ -1,0 +1,163 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate" name="sharedRevenueForm" onsubmit="return (SharedRevenueValidation());">
+        @*@using (var tabs = Html.Bootstrap().Begin(new Tabs("revenueTabs")))*@
+        {
+            @*@tabs.Tab("Territory")
+            @tabs.Tab("Activities")
+            @tabs.Tab("Territory Breakdown")
+            @tabs.Tab("Activity Breakdown")*@
+
+            using (tabs.BeginPanel())
+            {
+                <fieldset>
+                    <section class="col col-xs-12">
+                        <label class="label">Do you trade outside of New Zealand?</label>
+                        <div class="inline-group">
+                            <label class="radio">
+                                <input name="radio-outsideTradeNZ" type="radio" value="yes" onchange="toggleTerritoriesVisible('active')">
+                                <i></i>Yes
+                            </label>
+                            <label class="radio">
+                                <input name="radio-outsideTradeNZ" type="radio" value="no" onchange="toggleTerritoriesVisible('Inactive')">
+                                <i></i>No
+                            </label>
+                        </div>
+                    </section>
+
+                    <section class="col col-xs-12">
+                        <div id="sharedRevenueTerritories" name="sharedRevenueTerritories" hidden>
+                            <label class="label">Territories</label>
+                            <label class="input">
+                                <select class="cselect form-control" data-placeholder="Territories" id="SharedTerritories" multiple="multiple" name="Territories" style="display: none;">
+                                    @foreach (var territory in Model.RevenueByTerritories)
+                                    {
+                                        <option value="@territory.Territory">@territory.Territory</option>
+                                    }
+                                </select>
+                            </label>
+                        </div>
+                    </section>
+
+                    <section id="sharedRevenue" class="col col-xs-12">
+                        @*@Html.Bootstrap().Button().Text("Go to Activities").HtmlAttributes(new { onclick = "SetCurrentTab('revenueTabs-2');" }).Class("btn-sm")*@
+                    </section>
+
+
+                </fieldset>
+            }
+
+            using (tabs.BeginPanel())
+            {
+                <fieldset>
+                    <section class="col col-xs-12">
+                        <label class="label">Activities</label>
+                        <label class="input">
+                            <select class="cselect form-control" data-placeholder="Activities" id="sharedRevenueActivities" multiple="multiple" name="sharedRevenueActivities" style="display: none;">
+                                @foreach (var ou in Model.BusinessActivities)
+                                {
+                                    <option value="@ou.AnzsciCode">@ou.Description</option>
+                                }
+                            </select>
+                        </label>
+                    </section>
+
+
+                    <section id="sharedRevenueTerritoriesBreakdownTab" class="col col-xs-12" hidden>
+                        <button class="btn btn-default btn-sm" type="button" onclick="BuildRevenuesTable('true');SetCurrentTab('revenueTabs-3');">Go To Territory Breakdown</button>
+                    </section>
+
+                    <section id="sharedRevenueActivity" class="col col-xs-12" hidden>
+                        <button class="btn btn-default btn-sm" type="button" onclick="BuildRevenuesTable('false');SetCurrentTab('revenueTabs-4');">Go To Activity Breakdown</button>
+                    </section>
+
+                </fieldset>
+            }
+            using (tabs.BeginPanel())
+            {
+                <fieldset>
+                    <section class="col col-xs-12">
+                        <table id="sharedRevenueTerritoriesTable" class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                @foreach (var activity in Model.RevenueByActivity)
+                                {
+                                    <tr>
+                                        <td>@activity.Activity</td>
+                                        @foreach (var territory in Model.RevenueByTerritories)
+                                        {
+                                            <td>
+                                                <section>
+                                                    <label class="input">
+                                                        <input type="text" class="form-control" value="@territory.DeclaredRevenue" />
+                                                    </label>
+                                                </section>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="sharedRevenueActivity" class="col col-xs-12">
+                        <button class="btn btn-default btn-sm" type="button" onclick="BuildRevenuesTable('false');SetCurrentTab('revenueTabs-4');">Go To Activity Breakdown</button>
+                    </section>
+
+                </fieldset>
+
+            }
+
+            using (tabs.BeginPanel())
+            {
+                <fieldset>
+                    <section class="col col-xs-12">
+                        <table id="sharedRevenueActivityTable" class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                @foreach (var activity in Model.RevenueByActivity)
+                                {
+                                    <tr>
+                                        <td>@activity.Activity</td>
+                                        @foreach (var territory in Model.RevenueByTerritories)
+                                        {
+                                            <td>
+                                                <section>
+                                                    <label class="input">
+                                                        <input type="text" class="form-control" value="@territory.DeclaredRevenue" />
+                                                    </label>
+                                                </section>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section class="col col-xs-12">
+                        <div class="footer">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="return (SharedRevenueCalculation());">
+                            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+                        </div>
+                    </section>
+                </fieldset>
+
+            }
+
+
+        }
+
+    </div>
+</div>
+
+
+
+
+
+
+
+

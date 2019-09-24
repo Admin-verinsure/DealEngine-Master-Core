@@ -1,10 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Web.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace techcertain2019core
+namespace TechCertain.WebUI
 {
 	public class XmlActionResult : ActionResult
 	{
@@ -25,7 +24,7 @@ namespace techcertain2019core
 			Formatting = Formatting.None;
 		}
 
-		public override void ExecuteResult (ControllerContext context)
+		public void ExecuteResult (ControllerContext context)
 		{
             throw new Exception("This method needs to be re-written");
 			//context.HttpContext.Response.Clear();

@@ -1,13 +1,9 @@
-﻿
-
-
-
-using Microsoft.AspNetCore.Routing;
-using System.Web.Mvc.Ajax;
-using System.Web.Mvc;
+﻿using Microsoft.AspNetCore.Routing;
 using System;
+using System.Web.Mvc;
+using System.Web.Mvc.Ajax;
 
-namespace techcertain2019core.Helpers.CustomHtml.FixedHelpers
+namespace TechCertain.WebUI.Helpers.CustomHtml.FixedHelpers
 {
 	public class FixedAjaxActionLink 
 	{

@@ -3,7 +3,7 @@ using TechCertain.Domain.Entities;
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2019core.Models.ViewModels.Milestone
+namespace TechCertain.WebUI.Models.Milestone
 {
     public class MilestoneBuilderViewModel : BaseViewModel
     {

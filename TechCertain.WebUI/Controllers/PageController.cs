@@ -21,10 +21,10 @@ namespace TechCertain.WebUI.Controllers
         public IActionResult InboxRead() => View(_settings);
         public IActionResult InboxWrite() => View(_settings);
         public IActionResult Invoice() => View(_settings);
-        public IActionResult Forget() => Redirect("/identity/account/forgotpassword");
-        public IActionResult Locked() => Redirect("/identity/account/lockout");
-        public IActionResult Login() => Redirect("/identity/account/login");
-        public IActionResult Register() => Redirect("/identity/account/register");
+        //public IActionResult Forget() => Redirect("/identity/account/forgotpassword");
+        //public IActionResult Locked() => Redirect("/identity/account/lockout");
+        //public IActionResult Login() => Redirect("/identity/account/login");
+        //public IActionResult Register() => Redirect("/identity/account/register");
         public IActionResult Error() => View();
         public IActionResult Error404() => View();
         public IActionResult ErrorAnnounced() => View();

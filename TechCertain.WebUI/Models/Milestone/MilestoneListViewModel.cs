@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace techcertain2019core.Models.ViewModels.Milestone
+namespace TechCertain.WebUI.Models.Milestone
 {
     public class MilestoneListViewModel : BaseViewModel
     {

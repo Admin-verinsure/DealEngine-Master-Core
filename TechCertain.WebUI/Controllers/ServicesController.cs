@@ -8,11 +8,11 @@ using System.Xml.Linq;
 using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels;
-using techcertain2019core.Models.ViewModels.ControlModels;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class ServicesController : BaseController
     {
@@ -43,13 +43,13 @@ namespace techcertain2019core.Controllers
         IMapper _mapper;
 
 
-        public ServicesController(ILogger logger, IUserService userService, ICilentInformationService clientInformationService, IRepository<Vehicle> vehicleRepository, IRepository<BoatUse> boatUseRepository,
+        public ServicesController(ILogger logger, DealEngineDBContext dealEngineDBContext, IUserService userService, ICilentInformationService clientInformationService, IRepository<Vehicle> vehicleRepository, IRepository<BoatUse> boatUseRepository,
             IRepository<OrganisationalUnit> organisationalUnitRepository, IRepository<Location> locationRepository, IRepository<WaterLocation> waterLocationRepository, IRepository<Building> buildingRepository, IRepository<BusinessInterruption> businessInterruptionRepository,
             IRepository<MaterialDamage> materialDamageRepository, IRepository<Claim> claimRepository, IRepository<Product> productRepository, IVehicleService vehicleService, IRepository<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IRepository<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
             IRepository<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper,IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
-            : base(userService)
+            : base(userService, dealEngineDBContext)
         {
             _logger = logger;
             _clientInformationService = clientInformationService;

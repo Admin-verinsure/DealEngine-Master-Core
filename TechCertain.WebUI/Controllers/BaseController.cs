@@ -9,18 +9,25 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNet.Identity;
 using System.Configuration;
+using Microsoft.AspNetCore.Http;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Areas.Identity.Data;
+using System.Linq;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class BaseController : Controller
     {
         protected IUserService _userService;
+        protected DealEngineDBContext _dealEngineDBContext;
 
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
 
-        public BaseController(IUserService userService)
+        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext)
         {
+            _dealEngineDBContext = dealEngineDBContext;
             _userService = userService;
         }
 
@@ -28,8 +35,16 @@ namespace TechCertain.WebUI.Controllers
         {
             get
             {
-                var user = User.Identity.Name;
-                if (string.IsNullOrWhiteSpace (User.Identity.Name))
+                //UserManager<User>
+                var user = "";
+                try {
+                     user = _dealEngineDBContext.Users.FirstOrDefault().UserName;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+                if (string.IsNullOrWhiteSpace (user))
                     return null;
 				return _userService.GetUser(user); 
             }
@@ -159,9 +174,9 @@ namespace TechCertain.WebUI.Controllers
 
 		protected string LocalizeTime (DateTime dateTime, string format)
 		{
-            throw new Exception("This method will need to be re-written");
-            //return dateTime.ToTimeZoneTime (UserTimeZone).ToString ("G", UserCulture);
-		}
+            //throw new Exception("This method will need to be re-written");
+            return dateTime.ToTimeZoneTime(UserTimeZone).ToString("G", UserCulture);
+        }
 
         protected string LocalizeTimeDate(DateTime dateTime, string format)
         {

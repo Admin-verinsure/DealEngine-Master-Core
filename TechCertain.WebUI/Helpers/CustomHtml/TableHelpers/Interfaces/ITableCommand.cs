@@ -1,5 +1,5 @@
 ﻿using System;
-namespace techcertain2019core.Helpers.CustomHtml.TableFor.Interfaces
+namespace TechCertain.WebUI.Helpers.CustomHtml.TableFor.Interfaces
 {
 	public interface ITableCommand
 	{

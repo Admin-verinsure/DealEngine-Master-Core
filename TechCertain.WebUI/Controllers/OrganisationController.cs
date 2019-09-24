@@ -5,9 +5,9 @@ using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class OrganisationController : BaseController
     {
@@ -19,9 +19,9 @@ namespace techcertain2019core.Controllers
 
         //private readonly ICompanyService _companyService;
 
-        public OrganisationController(IOrganisationService organisationService, IOrganisationTypeService organisationTypeService, IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService,
+        public OrganisationController(IOrganisationService organisationService, DealEngineDBContext dealEngineDBContext, IOrganisationTypeService organisationTypeService, IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService,
             IUserService userRepository)//(ICompanyService companyService)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _organisationService = organisationService;
             _organisationTypeService = organisationTypeService;

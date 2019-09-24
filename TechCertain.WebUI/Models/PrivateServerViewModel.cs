@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 
 
-namespace techcertain2019core.Models.ViewModels
+namespace TechCertain.WebUI.Models
 {
     public class PrivateServerViewModel : BaseViewModel
     {

@@ -8,7 +8,7 @@ using System;
 using System.Configuration;
 using System.Web.WebPages;
 
-namespace techcertain2019core.Helpers
+namespace TechCertain.WebUI.Helpers
 {
     /// <summary>
     ///     Provides access to the current application's configuration file.

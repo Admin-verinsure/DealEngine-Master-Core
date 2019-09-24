@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
 
-namespace techcertain2019core.Helpers
+namespace TechCertain.WebUI.Helpers
 {
 	public static class BrowserHelper
 	{

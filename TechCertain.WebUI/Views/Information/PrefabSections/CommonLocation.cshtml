@@ -1,0 +1,592 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+        @*@tabs.Tab("List All")
+            @tabs.Tab("Edit")
+            @tabs.Tab("Add")
+            @tabs.Tab("List Removed").Class("LocRemoved")
+            //@tabs.Tab("Search")
+            using (tabs.BeginPanel())
+            {*@
+        <div id="tabs">
+            <ul id="tab" class="nav nav-tabs">
+                <li class="nav nav-tabs active"> <a href="#locTabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#locTabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#locTabs3"> Add </a> </li>
+                <li class="nav nav-tabs"> <a href="#locTabs4" Class="LocRemoved"> List Removed </a> </li>
+
+            </ul>
+
+            <div id="locTabs1" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                            <script type="text/javascript">
+                               // $(document).ready(function () {
+                                //$(document).ready(function () {
+
+                                //    setTimeout(function () {
+                                //         $('#getDetailsModal').modal('show');
+                                //      $('#getDetailsModal').modal('hide');
+                                //      }, 8000);
+                                //    //$('#getDetailsModal').modal('show');
+                                //});
+                                $(window).load(function () {
+                                        $("#tblLocation").jqGrid({
+                                            url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=false",
+                                            datatype: "xml",
+                                            mtype: "GET",
+                                            colNames: ["", "Location Type", "Common Name", "Street", "Suburb", "Postcode", "City", ""],
+                                            colModel: [
+                                                {
+                                                    name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                        return ('<button onclick="EditLocation(\'' + cellvalue + '\', \'#tblLocation\'); SetCurrentTab(\'locTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                                    }
+                                                },
+                                                { name: "LocationType", align: 'center', key: 'true' },
+                                                { name: "CommonName", align: 'center' },
+                                                { name: "Street", align: 'center' },
+                                                { name: "Suburb", align: 'center' },
+                                                { name: "Postcode", align: 'center' },
+                                                { name: "City", align: 'center' },
+                                                {
+                                                    name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                        return ('<button onclick="SetLocationRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblLocation\', \'#tblRemovedLocation\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="glyphicon glyphicon-trash"></span></button>');
+                                                    }
+                                                }
+                                            ],
+                                            autowidth: true,
+                                            shrinkToFit: true,
+                                            width: 300,
+                                            pager: "#pagerLocation",
+                                            rowNum: 10,
+                                            rowList: [10, 20, 30],
+                                            sortname: "LocationType",
+                                            sortorder: "desc",
+                                            viewrecords: true,
+                                            gridview: true,
+                                            autoencode: true
+                                        });
+                                        $("#tblLocation").jqGrid('navGrid',
+                                            '#pagerLocation',
+                                            { edit: false, add: false, del: false },
+                                            //options
+                                            { height: 280, reloadAfterSubmit: false },
+                                            // edit options
+                                            { height: 280, reloadAfterSubmit: false },
+                                            // add options
+                                            { reloadAfterSubmit: false },
+                                            // del options
+                                            { sopt: ['eq', 'bw', 'cn'] }
+                                            // search options
+                                        );
+
+
+							});
+                            </script>
+                            <table id="tblLocation"><tr><td></td></tr></table>
+
+
+
+                            <div id="pagerLocation"></div>
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="locTabs2" class="tab-content">
+
+                <fieldset id="fieldset">
+                    <input id="LocationId" name="LocationId" type="hidden" />
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label cgmodalLabel required">Location Type</label>
+                            <label class="input">
+                                <select class="form-control" id="LocationType" name="LocationType">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Residential">Residential</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="Industrial">Industrial</option>
+                                    <option value="Rural">Rural</option>
+                                    <option value="Postal">Postal Address</option>
+                                    <option value="Billing">Billing Address</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateLocation"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Street</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Street" id="Street" name="Street" placeholder="Street" value="">
+                            </label>
+                            <p class="validationContainer" id="validateStreet"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Suburb</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Suburb" id="Suburb" name="Suburb" placeholder="Suburb" value="">
+                            </label>
+                            <p class="validationContainer" id="validateSuburb"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Postcode</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Postcode" id="Postcode" name="Postcode" placeholder="Postcode" value="">
+                            </label>
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">City</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="City" id="City" name="City" placeholder="City" value="">
+                            </label>
+                            <p class="validationContainer" id="validateCity"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Country</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Country" id="Country" name="Country" placeholder="Country" value="">
+                            </label>
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Common Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="CommonName" id="CommonName" name="CommonName" placeholder="CommonName" value="">
+                            </label>
+                        </section>
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            <button onclick="validateLocation('#boatTabs-3', '#tblBoat','boatTabs-1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ClearBoats('#boatTabs-3','boatTabs-1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+
+                            @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "validateLocation('#locTabs-2', '#tblLocation' ,'locTabs-1' );" }).Class("btn-sm updateBoat").Id("updateBoat")*@
+                            @*@Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#locTabs-2','locTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="locTabs3" class="tab-content">
+
+                <fieldset id="fieldset">
+                    <input id="LocationId" name="LocationId" type="hidden" />
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label cgmodalLabel required">Location Type</label>
+                            <label class="input">
+                                <select class="form-control" id="AddLocationType" name="LocationType">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Residential">Residential</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="Industrial">Industrial</option>
+                                    <option value="Rural">Rural</option>
+                                    <option value="Postal">Postal Address</option>
+                                    <option value="Billing">Billing Address</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddLocation"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Street</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Street" id="AddStreet" name="Street" placeholder="Street" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddStreet"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Suburb</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Suburb" id="AddSuburb" name="Suburb" placeholder="Suburb" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddSuburb"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Postcode</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Postcode" id="AddPostcode" name="Postcode" placeholder="Postcode" value="">
+                            </label>
+                        </section>
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">City</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="City" id="AddCity" name="City" placeholder="City" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddCity"></p>
+
+                        </section>
+
+                        @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label">Region</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" data-name="State" id="AddState" name="State" placeholder="State/Region" value="">
+                                </label>
+                            </section>*@
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Country</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Country" id="AddCountry" name="Country" placeholder="Country" value="">
+                            </label>
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Common Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="CommonName" id="AddCommonName" name="CommonName" placeholder="CommonName" value="">
+                            </label>
+                        </section>
+                        @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label">Organisational Units</label>
+                                <label class="input w100">
+                                    <select class="cselect form-control rmv" data-placeholder="Organisational Units" id="AddSelectedOrganisationalUnits" multiple="multiple" name="SelectedOrganisationalUnits" style="display: none;">
+                                        @foreach (var ou in Model.OrganisationalUnits)
+                                        {
+                                            <option value="@ou.OrganisationalUnitId">@ou.Name</option>
+                                        }
+                                    </select>
+                                </label>
+                            </section>*@
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+
+                            <button onclick="validateAddLocation('#locTabs3', '#tblLocation','locTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ClearBoats('#locTabs-3','locTabs-1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+                            @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "validateAddLocation('#locTabs-3', '#tblLocation' ,'locTabs-1' );" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
+                                @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#locTabs-3','locTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="locTabs4" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script type="text/javascript">
+                                $(".LocRemoved").click(function () {
+						    $("#tblRemovedLocation").jqGrid({
+						        url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=true",
+						        datatype: "xml",
+						        mtype: "GET",
+                                colNames: ["", "Location Type", "Common Name", "Street", "Suburb", "Postcode", "City"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject)
+                                        { return '<button onclick="SetLocationRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedLocation\', \'#tblLocation\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                    },
+                                    { name: "LocationType", align: 'center', key: 'true' },
+						            { name: "CommonName", align: 'center' },
+							        { name: "Street", align: 'center' },
+							        { name: "Suburb", align: 'center' },
+							        { name: "Postcode", align: 'center' },
+							        { name: "City", align: 'center' }
+
+								],
+						        autowidth: true,
+						        pager: "#pagerRemovedLocation",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+                                sortname: "LocationType",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#tblRemovedLocation").jqGrid('navGrid',
+						    	'#pagerRemovedLocation',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                            </script>
+                            <table id="tblRemovedLocation"><tr><td></td></tr></table>
+
+
+                            <div id="pagerRemovedLocation"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+    function UpdateChosen() {
+    // find all multiselect items and apply Chosen
+	$('.cselect').each(function() {
+		$('#'+this.id).trigger("chosen:updated");
+	});
+    };
+
+    function validateAddLocation(tabId, tableId, currenttab) {
+        debugger;
+        var locationType = $('#AddLocationType').val();
+        var Street = $('#AddStreet').val();
+        var suburb = $('#AddSuburb').val();
+        var city = $('#AddCity').val();
+        var result = true;
+        if (locationType == "") {
+            $('#validateAddLocation').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddLocation').html("<font></font>");
+        }
+        if (Street == "") {
+            $('#validateAddStreet').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddStreet').html("<font></font>");
+        }
+        if (suburb == "") {
+            $('#validateAddSuburb').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddSuburb').html("<font></font>");
+        }
+        if (city == "") {
+            $('#validateAddCity').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddCity').html("<font></font>");
+        }
+
+        if (result) {
+            AddLocation(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return result;
+        }
+    }
+
+   function EditLocation(locationId, tableId) {
+       var _sheetId = $('#AnswerSheetId').val();
+       $('#getDetailsModal').modal('show');
+	    $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("GetLocation", "Services")',
+        type: "Post",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({ locationId : locationId, answerSheetId : _sheetId })
+        })
+            .done(function (data) {
+        $('#LocationId').val(data.LocationId);
+        $('#LocationType').val(data.LocationType);
+        $('#Street').val(data.Street);
+        $('#Suburb').val(data.Suburb);
+        $('#Postcode').val(data.Postcode);
+        $('#City').val(data.City);
+        $('#State').val(data.State);
+        $('#Country').val(data.Country);
+        $('#CommonName').val(data.CommonName);
+        $('#RiskZone').val(data.RiskZone);
+        $('#SelectedOrganisationalUnits').val(data.SelectedOrganisationalUnits);
+        $('#getDetailsModal').modal('hide');
+        UpdateChosen();
+        });
+    };
+
+    function UpdateChosen() {
+    // find all multiselect items and apply Chosen
+	$('.cselect').each(function() {
+		$('#'+this.id).trigger("chosen:updated");
+	});
+    };
+
+    function SetCurrentTab(tabPaneId) {
+        debugger;
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').toggleClass('active');
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').tab('refresh');
+    };
+
+        function SetLocationRemovedStatus(locationId, status, sourceTable, destTable) {
+        $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("SetLocationRemovedStatus", "Services")',
+            type: "Post",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ locationId: locationId, status: status })
+        })
+        .done(function (data) {
+            if (data === true) {
+                $(sourceTable).trigger('reloadGrid');
+                $(destTable).trigger('reloadGrid');
+                $.smallBox({
+                    title: "Location status has been updated",
+                    color: "#5F895F",
+                    iconSmall: "fa fa-check bounce animated",
+                    timeout: 4000
+                });
+            }
+        });
+    };
+
+
+    function validateLocation(tabId, tableId, currenttab) {
+        debugger;
+        var locationType = $('#LocationType').val();
+        var Street = $('#Street').val();
+        var suburb = $('#Suburb').val();
+        var city = $('#City').val();
+        var result = true;
+        if (locationType == "") {
+            $('#validateLocation').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateLocation').html("<font></font>");
+        }
+        if (Street == "") {
+            $('#validateStreet').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateStreet').html("<font></font>");
+        }
+        if (suburb == "") {
+            $('#validateSuburb').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateSuburb').html("<font></font>");
+        }
+        if (city == "") {
+            $('#validateCity').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateCity').html("<font></font>");
+        }
+
+        if (result) {
+            AddLocation(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return result;
+        }
+    }
+
+
+    function AddLocation(tabId, tableId) {
+        debugger;
+                 $('#getLandLocModal').modal('show');
+
+	var informationId = $('#AnswerSheetId').serialize();
+        var ous = $('#SelectedOrganisationalUnits').serialize();
+	$.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("AddLocation", "Services")',
+	    type: "POST",
+	    data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
+	})
+	.done(function (data) {
+		$.smallBox({
+		    title: "Location at ("+data.Street+") has been saved",
+		    color: "#5F895F",
+		    iconSmall: "fa fa-check bounce animated",
+		    timeout: 4000
+        });
+         $('#getLandLocModal').modal('hide');
+		var address = data.Street + ', ' + data.Suburb + ', ' + data.City;
+		$('#VehicleLocation.rmv').append($('<option>', { value: data.LocationId, text: address }));
+        $('#VehicleLocation.omv').append($('<option>', { value: data.LocationId, text: address }));
+        $('#BuildingLocationModal').append($('<option>', { value: data.LocationId, text: address }));
+        $("#BuildingLocationModal [value='add']").remove();
+        $('#BuildingLocationModal').append($('<option>', { value: "add", text: "Add Location" }));
+
+        $('#VehicleLocationModal').append($('<option>', { value: data.LocationId, text: address }));
+        $("#VehicleLocationModal [value='add']").remove();
+        $('#VehicleLocationModal').append($('<option>', { value: "add", text: "Add Location" }));
+
+		// reload grid
+		$(tableId).trigger( 'reloadGrid' );
+		$('#Location').val("");
+		$(tabId + " :input").val("");
+        $(tabId + ', #SelectedOrganisationalUnits').val('').trigger('chosen:updated');
+
+	})
+        .fail(function (jqXHR, textStatus) {
+         $('#getLandLocModal').modal('hide');
+		alert("There was an error while trying to save the Location.");
+	});
+    };
+
+
+</script>
+
+

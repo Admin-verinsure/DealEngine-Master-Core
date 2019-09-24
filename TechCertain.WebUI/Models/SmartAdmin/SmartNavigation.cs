@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable InconsistentNaming
 
-namespace techcertain2019core.Models.ViewModels.SmartAdmin
+namespace TechCertain.WebUI.Models.SmartAdmin
 {
     /// <summary>Provides easy-access to building the SmartAdmin Navigation using JSON text data.</summary>
     /// <remarks>These classes are solely created for Demo purposes, please do not use them in Production.</remarks>

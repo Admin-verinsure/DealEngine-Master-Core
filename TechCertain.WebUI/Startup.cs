@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using TechCertain.WebUI.Models;
+using DealEngine.Infrastructure.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace TechCertain.WebUI
 {
@@ -36,35 +39,45 @@ namespace TechCertain.WebUI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+
             // Note: The default connection string assumes that you have 'LocalDb' installed on your machine (either through SQL Server or Visual Studio installer)
             // If you followed the instructions in 'README.MD' and installed SQL Express then change the 'DefaultConnection' value in 'appSettings.json' with
             // "Server=localhost\\SQLEXPRESS;Database=aspnet-smartadmin;Trusted_Connection=True;MultipleActiveResultSets=true"
-            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            //services.AddDbContext<DealEngineDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
+            //    .AddIdentity<IdentityUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<DealEngineDBContext>();
+
+
+            //services.AddIdentity<IdentityUser>()
+            //        .AddSignInManager<DealEngineSignInManager>()
+            //        .AddClaimsPrincipalFactory<IdentityUser>();
+
+            // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
-
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddRouting(options =>
                 {
                     options.LowercaseUrls = true;
                     options.LowercaseQueryStrings = true;
                 })
                 .AddMvc(option => option.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Latest)
-                .AddRazorPagesOptions(options =>
-                {
-                    //options.AllowAreas = true;
-                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-                });
+                .SetCompatibilityVersion(CompatibilityVersion.Latest);                
+                //.AddRazorPagesOptions(options =>
+                //{
+                //    //options.AllowAreas = true;
+                //    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                //    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                //});
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Identity/Account/Login";
-                options.LogoutPath = "/Identity/Account/Logout";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            });
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.LoginPath = "/Identity/Account/Login";
+            //    options.LogoutPath = "/Identity/Account/Logout";
+            //    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            //});
 
             services.AddSimpleInjector(container, options =>
             {
@@ -96,12 +109,13 @@ namespace TechCertain.WebUI
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
+            }            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            //app.UseAuthentication();
+            app.UseAuthentication();
+            //app.UseRouting();
 
             app.UseSimpleInjector(container, options =>
             {
@@ -115,14 +129,21 @@ namespace TechCertain.WebUI
             });
 
             container.AutoCrossWireAspNetComponents(app);
-            //container.RegisterInstance(MapperConfig.ConfigureMaps());
+            container.RegisterInstance(MapperConfig.ConfigureMaps());
 
             InitializeContainer();
 
             container.Verify();
 
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //    endpoints.MapRazorPages();
+            //});
+
             app.UseMvc(routes =>
             {
+                //routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 routes.MapRoute("default", "{controller=Account}/{action=Login}/{id?}");
             });
 

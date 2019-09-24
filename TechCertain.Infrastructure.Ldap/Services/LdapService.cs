@@ -207,8 +207,8 @@ namespace TechCertain.Infrastructure.Ldap.Services
 		}
 
 		LdapClient GetLdapServer ()
-		{
-			return new LdapClient (_ldapConfiguration.LdapHost, _ldapConfiguration.LdapPort);
+        {
+            return new LdapClient (_ldapConfiguration.LdapHost, _ldapConfiguration.LdapPort);
 		}
 
 		LdapClient GetLdapServer (bool isAdmin)

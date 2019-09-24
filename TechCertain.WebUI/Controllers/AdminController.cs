@@ -7,11 +7,10 @@ using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
-    [AuthorizeRole("Admin")]
     public class AdminController : BaseController
 	{
 		ILogger _logger;
@@ -32,11 +31,11 @@ namespace techcertain2019core.Controllers
 
         IMapper _mapper;
 
-		public AdminController (IUserService userRepository, ILogger logger, IPrivateServerService privateServerService, IFileService fileService,
+		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IPrivateServerService privateServerService, IFileService fileService,
 			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWorkFactory unitOfWorkFactory, IInformationTemplateService informationTemplateService,
             ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
-			: base (userRepository)
+			: base (userRepository, dealEngineDBContext)
 		{
 			_logger = logger;
 			_privateServerService = privateServerService;
@@ -56,7 +55,6 @@ namespace techcertain2019core.Controllers
         }
 
 		[HttpGet]
-		[AuthorizeRole ("Admin")]
 		public ActionResult Index ()
 		{
 			Console.WriteLine ("Debug: " + _logger.IsDebugEnabled);
@@ -78,7 +76,6 @@ namespace techcertain2019core.Controllers
         }
         
         [HttpGet]
-		[AuthorizeRole ("Admin")]
         public ActionResult PrivateServerList()
         {
 			var privateServers = _privateServerService.GetAllPrivateServers().ToList();
@@ -88,7 +85,6 @@ namespace techcertain2019core.Controllers
         }
 
 		[HttpPost]
-		[AuthorizeRole ("Admin")]
         public ActionResult AddPrivateServer(PrivateServerViewModel privateServer)
         {
 			var privateServers = _privateServerService.GetAllPrivateServers ().ToList();
@@ -112,7 +108,6 @@ namespace techcertain2019core.Controllers
         }
 
 		[HttpPost]
-		[AuthorizeRole ("Admin")]
 		public ActionResult DeletePrivateServer(string id)
 		{
 			if (_privateServerService.RemoveServer (CurrentUser, id))
@@ -121,7 +116,6 @@ namespace techcertain2019core.Controllers
 		}
 
         [HttpGet]
-        [AuthorizeRole("Admin")]
         public ActionResult PaymentGatewayList()
         {
             var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
@@ -130,7 +124,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRole("Admin")]
         public ActionResult AddPaymentGateway(PaymentGatewayViewModel paymentGateway)
         {
             var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
@@ -155,7 +148,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRole("Admin")]
         public ActionResult DeletePaymentGateway(string id)
         {
             if (_paymentGatewayService.RemovePaymentGateway(CurrentUser, id))
@@ -164,7 +156,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpGet]
-        [AuthorizeRole("Admin")]
         public ActionResult MerchantList()
         {
             var merchants = _merchantService.GetAllMerchants().ToList();
@@ -180,7 +171,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRole("Admin")]
         public ActionResult AddMerchant(MerchantViewModel merchant)
         {
             var merchants = _merchantService.GetAllMerchants().ToList();
@@ -204,7 +194,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRole("Admin")]
         public ActionResult DeleteMerchant(string id)
         {
             if (_merchantService.RemoveMerchant(CurrentUser, id))
@@ -518,7 +507,6 @@ namespace techcertain2019core.Controllers
         //}
 
         [HttpPost]
-		[AuthorizeRole ("Admin")]
 		public ActionResult UnlockUser (string username)
 		{
 			_userService.RemoveGlobalBan (_userService.GetUser (username), CurrentUser);
@@ -526,7 +514,6 @@ namespace techcertain2019core.Controllers
 		}
 
         [HttpGet]
-        [AuthorizeRole("Admin")]
         public ActionResult SysEmailTemplate(String systemEmailType, String internalNotes)
         {
             SystemEmail systemEmailTemplate = _systemEmailService.GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == systemEmailType);
@@ -556,7 +543,6 @@ namespace techcertain2019core.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRole("Admin")]
         public ActionResult SysEmailTemplate(SystemEmailTemplateViewModel model)
         {
             SystemEmail systemEmailTemplate = _systemEmailService.GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == model.SystemEmailType);
@@ -656,14 +642,12 @@ namespace techcertain2019core.Controllers
 
 
         [HttpGet]
-        [AuthorizeRole("Admin")]
         public ActionResult SysExchange()
         {
             return View("SysExchange");
         }
 
         [HttpPost]
-        [AuthorizeRole("Admin")]
         public ActionResult SysExchange(OrganisationViewModel model)
         {
             Organisation org = _organisationService.GetOrganisationByEmail(model.Email);

@@ -18,6 +18,8 @@ using TechCertain.WebUI.Models;
 using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
+using System.Security.Claims;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 
 #endregion
@@ -35,6 +37,7 @@ namespace TechCertain.WebUI.Controllers
 		IFileService _fileService;
 
         ISignInManager _signInManager;
+        UserManager<User> _userManager;
 
         IProgrammeService _programmeService;
         ICilentInformationService _clientInformationService;
@@ -43,17 +46,22 @@ namespace TechCertain.WebUI.Controllers
 
         public AccountController(ISignInManager signInManager,		    
             IUserService userRepository,
+            DealEngineDBContext dealEngineDBContext,
             ILogger logger,
-			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
+			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, UserManager<User> userManager) : base (userRepository, dealEngineDBContext)
 		{
-			//_authenticationService = authenticationService;
-			//_permissionsService = permissionsService;
+            //_authenticationService = authenticationService;
+            //_permissionsService = permissionsService;
+
+            _dealEngineDBContext = dealEngineDBContext;
             _userService = userRepository;
             _logger = logger;
             _emailService = emailService;
 			_fileService = fileService;
 
 			_signInManager = signInManager;
+            _userManager = userManager;
 
             _programmeService = programeService;
             _clientInformationService = clientInformationService;
@@ -271,7 +279,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(AccountLoginModel viewModel)
+        public async Task<IActionResult> Login(AccountLoginModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -287,44 +295,75 @@ namespace TechCertain.WebUI.Controllers
 				username = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
 
+                var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
+                
 
-    //            if (_signInManager.SignIn(username, password, viewModel.RememberMe) == DealEngine.Infrastructure.Identity.SignInResult.Success)
-    //            {
-    //                _signInManager.SyncUserFromAuth(username);
-    //                var user = _userService.GetUser (username);
-				//	if (_userService.IsUserLocalBanned (user))
-				//		throw new Exception ("User [" + username + "] is currently locked on this server");
+                if (result.Succeeded)
+                {
+                    var user = _userService.GetUser(username);
+                    var user1 = new DealEngineUser(username);
+                    try
+                    {
+                        _dealEngineDBContext.Users.Add(user1);
+                        _dealEngineDBContext.SaveChanges();
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                    //var result1 = await UserManager<IdentityUser>.CreateAsync(user1, password);
+                    //var manager = new UserManager<IdentityUser>(new UserStore<IdentityUser>);
+                    //Task<IdentityResult> result1 = await UserManager<User>.AddClaimAsync(user, new System.Security.Claims.Claim(ClaimTypes.Name, username));
+                    
+                    //identity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, username));
+                    //await UserManager<User>.AddClaimAsync(user, identity);
+                    //claimsIdentity.Actor = user;
+                    //ClaimsPrincipal principal = user as ClaimsPrincipal;
+                }
+                else if(result.IsNotAllowed)
+                {
+                    throw new Exception("User [" + username + "] is currently locked on this server");
+                }
 
-				//	_permissionsService.SetDefaultPermissions (username);
-				//	_logger.Info ("Authentication succeeded for [" + username + "]");
+                return RedirectToLocal(viewModel.ReturnUrl);
+                //if (signInResult == Microsoft.AspNetCore.Identity.SignInResult.Success)
+                //if (_signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false) == Microsoft.AspNetCore.Identity.SignInResult.Success)
+                //{
+                //    _signInManager.SyncUserFromAuth(username);
+                //    var user = _userService.GetUser(username);
+                //    if (_userService.IsUserLocalBanned(user))
+                //        throw new Exception("User [" + username + "] is currently locked on this server");
 
-				//	return RedirectToLocal (viewModel.ReturnUrl);
-				//}
+                //    _permissionsService.SetDefaultPermissions(username);
+                //    _logger.Info("Authentication succeeded for [" + username + "]");
 
-				//User user = _authenticationService.ValidateUser (username, password);
+                //    return RedirectToLocal(viewModel.ReturnUrl);
+                //}
 
-				////if (Membership.ValidateUser(username, password))
-				//if (user != null)
-				//{
-				//	// hopefully this error should be raised by the ldap repository before we get here
-				//	//if (user == null)
-				//	//	throw new UserImportException(string.Format("Could not import user {0}", username));
+                //User user = _authenticationService.ValidateUser (username, password);
 
-				//	if (_userService.IsUserLocalBanned (user))
-				//		throw new Exception ("User [" + username + "] is currently locked on this server");
+                ////if (Membership.ValidateUser(username, password))
+                //if (user != null)
+                //{
+                //	// hopefully this error should be raised by the ldap repository before we get here
+                //	//if (user == null)
+                //	//	throw new UserImportException(string.Format("Could not import user {0}", username));
 
-				//	_permissionsService.SetDefaultPermissions (username);
+                //	if (_userService.IsUserLocalBanned (user))
+                //		throw new Exception ("User [" + username + "] is currently locked on this server");
 
-    //                //EnsureLoggedOut();
-				//	Session.Abandon();
-				//	FormsAuthentication.SetAuthCookie(user.UserName, true);
-				//	SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
+                //	_permissionsService.SetDefaultPermissions (username);
 
-				//	_logger.Info("Authentication succeeded for [" + username + "]");
+                //                //EnsureLoggedOut();
+                //	Session.Abandon();
+                //	FormsAuthentication.SetAuthCookie(user.UserName, true);
+                //	SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
 
-				//	return RedirectToLocal(viewModel.ReturnUrl);
-    //            }
-				////_logger.Info(string.Format("Login failed for {0}", username));
+                //	_logger.Info("Authentication succeeded for [" + username + "]");
+
+                //	return RedirectToLocal(viewModel.ReturnUrl);
+                //            }
+                ////_logger.Info(string.Format("Login failed for {0}", username));
             }
 			catch (UserImportException ex)
 			{

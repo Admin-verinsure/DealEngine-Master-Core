@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
 using Elmah;
-using techcertain2019core.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using techcertain2019core.Models.ViewModels.Agreement;
+using TechCertain.WebUI.Models.Agreement;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+
+namespace TechCertain.WebUI.Controllers
 {
     [Authorize]
     public class AgreementController : BaseController
@@ -47,12 +47,12 @@ namespace techcertain2019core.Controllers
         private IUnitOfWorkFactory _unitOfWorkFactory;
 
 
-        public AgreementController(IUserService userRepository, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IRepository<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IUnitOfWorkFactory unitOfWorkFactory,
                                    IOrganisationService organisationService, IRepository<Organisation> OrganisationRepository, IRepository<Rule> ruleRepository, IEmailService emailService, ILogger logger, IRepository<SystemDocument> documentRepository, IRepository<User> userRepository1,
                                    IRepository<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;

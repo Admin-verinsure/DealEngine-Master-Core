@@ -12,13 +12,13 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Controllers;
+using TechCertain.WebUI.Controllers;
 
 #endregion
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     //[Route("Home")]
     public class HomeController : BaseController
@@ -33,10 +33,10 @@ namespace techcertain2019core.Controllers
         IRepository<Product> _productRepositoy;
         IRepository<Programme> _programmeRepository;
 
-        public HomeController(ILogger logger, IMapper mapper, IUserService userRepository, IInformationTemplateService informationService,
+        public HomeController(ILogger logger, DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository, IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
                               IRepository<Product> productRepository, IRepository<Programme> programmeRepository)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _logger = logger;
             _mapper = mapper;

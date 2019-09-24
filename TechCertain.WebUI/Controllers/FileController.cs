@@ -9,9 +9,9 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
 	[Authorize]
     public class FileController : BaseController
@@ -25,9 +25,9 @@ namespace techcertain2019core.Controllers
 		string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, ILogger logger, IUnitOfWorkFactory unitOfWork, IFileService fileService,
+		public FileController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IUnitOfWorkFactory unitOfWork, IFileService fileService,
 		                      IRepository<SystemDocument> documentRepository, IRepository<Image> imageRepository)
-			: base (userRepository)
+			: base (userRepository, dealEngineDBContext)
 		{
 			_logger = logger;
 			_unitOfWork = unitOfWork;

@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2019core.Models.ViewModels;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class InformationBuilderController : BaseController
     {
@@ -22,8 +22,8 @@ namespace techcertain2019core.Controllers
         IUnitOfWorkFactory _unitOfWork;
 
         //public InformationBuilderController(IInformationBuilderService informationBuilderService)
-		public InformationBuilderController(IUserService userService, IMapper mapper, IRepository<InformationSection> informationSectionRepository, IRepository<InformationItem> informationItemRepository, IRepository<InformationTemplate> templateRepository, IUnitOfWorkFactory unitOfWork)
-			: base(userService)
+		public InformationBuilderController(IUserService userService, DealEngineDBContext dealEngineDBContext, IMapper mapper, IRepository<InformationSection> informationSectionRepository, IRepository<InformationItem> informationItemRepository, IRepository<InformationTemplate> templateRepository, IUnitOfWorkFactory unitOfWork)
+			: base(userService, dealEngineDBContext)
         {
             _informationBuilderService = new InformationBuilderService(new InformationBuilderFactory());
 			_mapper = mapper;

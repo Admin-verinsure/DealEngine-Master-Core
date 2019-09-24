@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace techcertain2019core.Models.ViewModels.SmartAdmin
+namespace TechCertain.WebUI.Models.SmartAdmin
 {
     public class EmailSender
     {

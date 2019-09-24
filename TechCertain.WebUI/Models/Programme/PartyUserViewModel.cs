@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using TechCertain.Domain.Entities;
 
-namespace techcertain2019core.Models.ViewModels.Programme
+namespace TechCertain.WebUI.Models.Programme
 {
 
 

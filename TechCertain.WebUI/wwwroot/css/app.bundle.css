@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 /* #GLOBAL IMPORTS
 ========================================================================== */
 /* #BOOTSTRAP AND MIXINS - Base Unmodified Bootstrap file with theme mixins
@@ -7671,6 +7671,14 @@ body:not(.mobile-detected).modal-open .modal::-webkit-scrollbar-thumb:vertical:h
     clear: both;
     display: table; } }
 
+   .paragraph-header {
+    color: #565656;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 22px;
+    margin-top: 15px;
+    width: 270px;
+}
 /* #OVERRIDE - You can override any of the variables through this file
 ========================================================================== */
 

@@ -8,10 +8,11 @@ using TechCertain.Infrastructure.Tasking;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels.Milestone;
+using TechCertain.WebUI.Models.Milestone;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     [Authorize]
     public class MilestoneController : BaseController
@@ -32,9 +33,10 @@ namespace techcertain2019core.Controllers
             IProgrammeService programmeService,
             IRepository<Programme> programmeRepository,
             IUWMService uWMService,
+            DealEngineDBContext dealEngineDBContext,
             //ITaskingService taskingService,
             IMilestoneService milestoneService)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _programmeService = programmeService;
             _programmeRepository = programmeRepository;

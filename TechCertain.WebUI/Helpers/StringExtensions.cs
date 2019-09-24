@@ -1,4 +1,4 @@
-namespace techcertain2019core.Helpers
+namespace TechCertain.WebUI.Helpers
 {
     public static class StringExtensions
     {

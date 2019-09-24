@@ -9,12 +9,12 @@ using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using techcertain2019core.Models.ViewModels;
-using techcertain2019core.Models.ViewModels.Programme;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using techcertain2019core.Models.ViewModels.Product;
+using TechCertain.WebUI.Models.Product;
 
-namespace techcertain2019core.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     //[Authorize]
     public class ProgrammeController : BaseController
@@ -39,12 +39,12 @@ namespace techcertain2019core.Controllers
 
         private IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public ProgrammeController(ILogger logger, IUserService userRepository, IInformationTemplateService informationService,
+        public ProgrammeController(ILogger logger, IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService,
                                  IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<RiskCategory> riskRepository,
                                  IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository, IRoleService roleService,
                                  IRuleService ruleService, IRepository<Document> documentRepository, IRepository<Programme> programmeRepository, IBusinessActivityService busActivityService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IUnitOfWorkFactory unitOfWorkFactory)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _logger = logger;
             _informationService = informationService;

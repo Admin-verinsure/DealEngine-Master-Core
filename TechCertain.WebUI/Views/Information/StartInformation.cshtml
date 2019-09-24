@@ -1,0 +1,63 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+@{ Html.RenderPartial("ViewInformation", Model); }
+
+@section pagespecific {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            // Accordian
+            var accordionIcons = {
+                header: "fa fa-circle-o",           // custom icon class
+                activeHeader: "fa fa-dot-circle-o"  // custom icon class
+            };
+
+            $("#accordion").accordion({
+                autoHeight: false,
+                heightStyle: "content",
+                collapsible: false,
+                animate: 300,
+                icons: accordionIcons,
+                header: "h4",
+                activate: function (event, ui) { }
+            });
+        })
+
+        $("#accordion").on("accordionactivate", function (event, ui) {
+
+            if (ui.oldPanel != null) {
+                
+                var data = $("#dataItems").serialize({ json:true });
+
+                $.ajax({
+                	// change back once mono decides to fix
+                    url: '@Url.Action("SaveInformation", "Information")',
+                    type: "POST",
+                    data: data
+                })
+                  .done(function (data) {
+                      
+                  })
+                  .fail(function () {
+                      alert("Unable to save.");
+                      $("#personModal").modal("hide");
+                  });
+
+            }
+        });
+               
+        function AddBusinessActivity(caller, dropDownId, tableId) {
+
+            var dropDownText = $(dropDownId + " option:selected").text();
+            var tBody = $(tableId).find('tbody:last');
+
+            var tableRow = $(tableId + " tr td").filter(function () {
+                return $(this).text() == dropDownText;
+            }).closest("tr");
+
+            if (tableRow != null && tableRow.length == 0)
+                tBody.append("<tr class = \"row\"><td class = \"col\" style=\"padding-top: 10px;\">" + dropDownText + "</td><td style=\"padding-top: 10px;\"><label class=\"input\"><input type = \"number\" /></label></td><td style=\"padding-top: 10px;\"> % </td></tr>");
+        };
+
+    </script>
+}

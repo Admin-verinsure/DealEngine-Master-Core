@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using techcertain2015rebuildcore.Models.ViewModels;
+using TechCertain.WebUI.Models;
 
-namespace techcertain2015rebuildcore.Controllers
+namespace TechCertain.WebUI.Controllers
 {
     public class InformationDemoController : BaseController
     {

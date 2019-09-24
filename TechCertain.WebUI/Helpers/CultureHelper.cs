@@ -3,7 +3,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace techcertain2019core.Helpers
+namespace TechCertain.WebUI.Helpers
 {
 	public static class CultureHelper
 	{
