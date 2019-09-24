@@ -8,7 +8,7 @@
 <script type="text/javascript">
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
 $(document).ready(function () {
-    $(".chosen-select").chosen({ width: "95%" });
+    //$(".chosen-select").chosen({ width: "95%" });
    
    $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
@@ -4999,7 +4999,7 @@ function AddMotorVehicle(tabId, tableId) {
     function AddaddNewSkipper() {
         var selectedBoatOperator = AddboatOperator.options[AddboatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            $('#addOperatorModal').modal('show');
+            $('#addOperatorModal').openModal;
             AddboatOperator.selectedIndex = 0;
         }
         selectedBoatOperator = "";
@@ -5759,9 +5759,10 @@ function AddMotorVehicle(tabId, tableId) {
     }
 
     function addNewSkipper() {
+        debugger;
         var selectedBoatOperator = boatOperator.options[boatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            $('#addOperatorModal').modal('show');
+            $('#addOperatorModal').openModal();
             boatOperator.selectedIndex = 0;
         }
         selectedBoatOperator = "";
