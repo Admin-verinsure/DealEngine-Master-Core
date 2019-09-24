@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Areas.Identity.Data;
 using System.Linq;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -173,8 +174,8 @@ namespace TechCertain.WebUI.Controllers
 
 		protected string LocalizeTime (DateTime dateTime, string format)
 		{
-            throw new Exception("This method will need to be re-written");
-            //return dateTime.ToTimeZoneTime (UserTimeZone).ToString ("G", UserCulture);
+            //throw new Exception("This method will need to be re-written");
+            return dateTime.ToTimeZoneTime (UserTimeZone).ToString ("G", UserCulture);
 		}
 
         protected string LocalizeTimeDate(DateTime dateTime, string format)
