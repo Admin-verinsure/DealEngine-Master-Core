@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Agreement;
 using TechCertain.WebUI.Models;
-
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -242,6 +242,10 @@ namespace TechCertain.WebUI.Controllers
 
                 if (agreement.Status != "Quoted")
                     agreement.Status = "Quoted";
+
+                string auditLogDetail = "Agreement Referrals have been authorised by " + CurrentUser.FullName;
+                AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                agreement.ClientAgreementAuditLogs.Add(auditLog);
 
                 uow.Commit();
 
@@ -832,6 +836,7 @@ namespace TechCertain.WebUI.Controllers
                 // Status
                 model.ProductName = agreement.Product.Name;
                 model.Status = agreement.Status;
+                model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.AdministrationFee = agreement.BrokerFee.ToString("C");
@@ -882,6 +887,34 @@ namespace TechCertain.WebUI.Controllers
                     Console.WriteLine(ex.InnerException);
                 }
 
+                try
+                {
+                    if (model.HasBoats)
+                    {
+                        var bvterms = new List<EditTermsViewModel>();
+                        foreach (ClientAgreementBVTerm bt in
+                            agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null).BoatTerms)
+                        {
+                            if (bt.DateDeleted == null)
+                            {
+                                bvterms.Add(new EditTermsViewModel
+                                {
+                                    BoatName = bt.BoatName,
+                                    BoatMake = bt.BoatMake,
+                                    BoatModel = bt.BoatModel,
+                                    TermLimit = bt.TermLimit,
+                                    Excess = bt.Excess
+                                });
+                            }
+                        }
+                        model.BVTerms = bvterms;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.InnerException);
+                }
+
                 model.InformationSheetId = answerSheet.Id;
 
                 models.Add(model);
@@ -904,12 +937,31 @@ namespace TechCertain.WebUI.Controllers
             {
                 // TODO - Convert to UTC
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
-                clientAgreement.InceptionDate = DateTime.Parse(Startdate, UserCulture).ToUniversalTime();
+                clientAgreement.InceptionDate = DateTime.Parse(Startdate, UserCulture).ToUniversalTime(tzi);
                 clientAgreement.ExpiryDate = clientAgreement.InceptionDate.AddYears(1);
                 clientAgreement.CustomInceptionDate = true;
 
-                //agreement.ExpiryDate = DateTime.Parse(model.EndDate, UserCulture).ToUniversalTime(tzi);
-               
+                //update boat effective date if the date is prior to the new start date or over 30 days after the new start date
+                foreach (var boat in clientAgreement.ClientInformationSheet.Boats.Where(b => !b.Removed && b.DateDeleted == null))
+                {
+                    if (boat.BoatEffectiveDate < clientAgreement.InceptionDate || boat.BoatEffectiveDate > clientAgreement.InceptionDate.AddDays(30))
+                    {
+                        boat.BoatEffectiveDate = clientAgreement.InceptionDate;
+                    }
+                }
+
+                //update vehicle effective date if the date is prior to the new start date or over 30 days after the new start date
+                foreach (var vehicle in clientAgreement.ClientInformationSheet.Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
+                {
+                    if (vehicle.VehicleEffectiveDate < clientAgreement.InceptionDate || vehicle.VehicleEffectiveDate > clientAgreement.InceptionDate.AddDays(30))
+                    {
+                        vehicle.VehicleEffectiveDate = clientAgreement.InceptionDate;
+                    }
+                }
+
+                string auditLogDetail = "Agreement start date and end date have been modified by " + CurrentUser.FullName;
+                AuditLog auditLog = new AuditLog(CurrentUser, clientAgreement.ClientInformationSheet, clientAgreement, auditLogDetail);
+                clientAgreement.ClientAgreementAuditLogs.Add(auditLog);
 
                 uow.Commit();
             }
