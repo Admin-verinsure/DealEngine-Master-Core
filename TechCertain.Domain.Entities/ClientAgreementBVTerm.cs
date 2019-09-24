@@ -55,9 +55,6 @@ namespace TechCertain.Domain.Entities
             Boat = boat;
         }
 
-      
-
-
         public virtual int TermLimit
         {
             get;
@@ -133,7 +130,7 @@ namespace TechCertain.Domain.Entities
         public virtual ClientAgreementTerm ClientAgreementTerm
         {
             get;
-             set;
+            set;
         }
 
         public virtual Boat Boat
@@ -166,7 +163,7 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-        
+
         public virtual int TermLimitPre
         {
             get;
@@ -220,7 +217,23 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-       
 
+        public virtual decimal AnnualPremium
+        {
+            get;
+            set;
+        }
+
+        public virtual decimal AnnualFSL
+        {
+            get;
+            set;
+        }
+
+        public virtual decimal AnnualBrokerage
+        {
+            get;
+            set;
+        }
     }
 }

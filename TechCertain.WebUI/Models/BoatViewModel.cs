@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Models
 {
@@ -142,7 +143,7 @@ namespace TechCertain.WebUI.Models
             boat.OtherHullConfiguration = OtherHullConfiguration;
             boat.BoatMake = BoatMake;
             boat.BoatModel = BoatModel;
-            boat.MaxSumInsured = Convert.ToInt32(Sum); 
+            boat.MaxSumInsured = Convert.ToInt32(Sum);
             boat.BuiltProfessionally = BuiltProfessionally;
             boat.MotorType = MotorType;
             boat.ModifiedMotor = ModifiedMotor;
@@ -159,10 +160,10 @@ namespace TechCertain.WebUI.Models
             boat.BoatQuoteExcessOption = BoatQuoteExcessOption;
             boat.VesselArea = VesselArea;
             //  boat.BoatOperator = BoatOperator;
-           
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
             if (!string.IsNullOrEmpty(BoatEffectiveDate))
             {
-                boat.BoatEffectiveDate = DateTime.Parse(BoatEffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                boat.BoatEffectiveDate = DateTime.Parse(BoatEffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
             }
             else
             {
@@ -170,7 +171,7 @@ namespace TechCertain.WebUI.Models
             }
             if (!string.IsNullOrEmpty(BoatIPEffectiveDate))
             {
-                boat.BoatIPEffectiveDate = DateTime.Parse(BoatIPEffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                boat.BoatIPEffectiveDate = DateTime.Parse(BoatIPEffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
             }
             else
             {
@@ -178,7 +179,7 @@ namespace TechCertain.WebUI.Models
             }
             if (!string.IsNullOrEmpty(BoatCeaseDate))
             {
-                boat.BoatCeaseDate = DateTime.Parse(BoatCeaseDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+                boat.BoatCeaseDate = DateTime.Parse(BoatCeaseDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
             }
             else
             {
@@ -216,10 +217,10 @@ namespace TechCertain.WebUI.Models
                 //InterestedParties = boat.InterestedParties.Select(v => v.Id).ToArray(),
                 NationalRegistration = boat.NationalRegistration,
                 //BoatUse.Add(boat.BoatUse.Select(v => v.Id)),
-                BoatIPEffectiveDate = (boat.BoatIPEffectiveDate > DateTime.MinValue) ? boat.BoatIPEffectiveDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",
-                WaterLocationMooringType=boat.WaterLocationMooringType,
-                BoatEffectiveDate = (boat.BoatEffectiveDate > DateTime.MinValue) ? boat.BoatEffectiveDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",
-                BoatCeaseDate = (boat.BoatCeaseDate > DateTime.MinValue) ? boat.BoatCeaseDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",
+                BoatIPEffectiveDate = (boat.BoatIPEffectiveDate > DateTime.MinValue) ? boat.BoatIPEffectiveDate.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",
+                WaterLocationMooringType = boat.WaterLocationMooringType,
+                BoatEffectiveDate = (boat.BoatEffectiveDate > DateTime.MinValue) ? boat.BoatEffectiveDate.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",
+                BoatCeaseDate = (boat.BoatCeaseDate > DateTime.MinValue) ? boat.BoatCeaseDate.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",
                 BoatCeaseReason = boat.BoatCeaseReason,
                 BoatQuickQuotePremium = boat.BoatQuickQuotePremium,
                 BoatQuoteExcessOption = boat.BoatQuoteExcessOption,

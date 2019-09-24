@@ -30,7 +30,21 @@ namespace TechCertain.WebUI.Models
 		{
 			return UserRoles.Contains (role);
 		}
-	}
+
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public static string UserTimeZone
+        {
+            get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
+        }
+    }
 
 	public class BaseListViewModel<ViewModel> : BaseViewModel, IList<ViewModel>
 	{
