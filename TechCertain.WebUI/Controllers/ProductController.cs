@@ -29,11 +29,11 @@ namespace TechCertain.WebUI.Controllers
 		IRepository<Document> _documentRepository;
 		IRepository<Programme> _programmeRepository;
 
-		public ProductController(ILogger logger, IUserService userRepository, IInformationTemplateService informationService, 
+		public ProductController(ILogger logger, IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService, 
 		                         IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<Territory> territoryRepository, IRepository<RiskCategory> riskRepository,
 		                         IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository,
 								 IRepository<Document> documentRepository, IRepository<Programme> programmeRepository)
-			: base(userRepository)
+			: base(userRepository, dealEngineDBContext)
 		{
 			_logger = logger;
 			_informationService = informationService;

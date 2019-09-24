@@ -19,9 +19,9 @@ namespace TechCertain.WebUI.Controllers
 
         //private readonly ICompanyService _companyService;
 
-        public OrganisationController(IOrganisationService organisationService, IOrganisationTypeService organisationTypeService, IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService,
+        public OrganisationController(IOrganisationService organisationService, DealEngineDBContext dealEngineDBContext, IOrganisationTypeService organisationTypeService, IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService,
             IUserService userRepository)//(ICompanyService companyService)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _organisationService = organisationService;
             _organisationTypeService = organisationTypeService;

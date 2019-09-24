@@ -80,8 +80,9 @@ namespace TechCertain.WebUI.Controllers
             IClientInformationAnswerService clientInformationAnswer,
             IRepository<DropdownListItem> dropdownListItem,
             IMapper mapper,
+            DealEngineDBContext dealEngineDBContext,
             IUserRepository UserRepository)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;

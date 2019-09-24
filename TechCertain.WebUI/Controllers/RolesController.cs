@@ -14,8 +14,8 @@ namespace TechCertain.WebUI.Controllers
 		IRolePermissionsService _roleService;
 		ILogger _logger;
 
-		public RolesController (IUserService userService, IRolePermissionsService rolePermissionsService, ILogger logger)
-			: base (userService)
+		public RolesController (IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService, ILogger logger)
+			: base (userService, dealEngineDBContext)
 		{
 			_roleService = rolePermissionsService;
 			_logger = logger;

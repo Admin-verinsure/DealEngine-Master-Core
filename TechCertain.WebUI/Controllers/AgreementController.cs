@@ -47,12 +47,12 @@ namespace TechCertain.WebUI.Controllers
         private IUnitOfWorkFactory _unitOfWorkFactory;
 
 
-        public AgreementController(IUserService userRepository, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IRepository<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IUnitOfWorkFactory unitOfWorkFactory,
                                    IOrganisationService organisationService, IRepository<Organisation> OrganisationRepository, IRepository<Rule> ruleRepository, IEmailService emailService, ILogger logger, IRepository<SystemDocument> documentRepository, IRepository<User> userRepository1,
                                    IRepository<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;

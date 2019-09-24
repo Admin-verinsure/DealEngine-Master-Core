@@ -9,18 +9,24 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNet.Identity;
 using System.Configuration;
+using Microsoft.AspNetCore.Http;
+using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Areas.Identity.Data;
+using System.Linq;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class BaseController : Controller
     {
         protected IUserService _userService;
+        protected DealEngineDBContext _dealEngineDBContext;
 
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
 
-        public BaseController(IUserService userService)
+        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext)
         {
+            _dealEngineDBContext = dealEngineDBContext;
             _userService = userService;
         }
 
@@ -28,10 +34,9 @@ namespace TechCertain.WebUI.Controllers
         {
             get
             {
-                //UserManager<User>
-                var name = HttpContext.User.Identity.Name;
-                var user = User.Identity.Name;
-                if (string.IsNullOrWhiteSpace (User.Identity.Name))
+                //UserManager<User>                
+                var user = _dealEngineDBContext.Users.FirstOrDefault().UserName;
+                if (string.IsNullOrWhiteSpace (user))
                     return null;
 				return _userService.GetUser(user); 
             }

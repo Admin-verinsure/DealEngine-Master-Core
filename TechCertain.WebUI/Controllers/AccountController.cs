@@ -19,6 +19,7 @@ using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
 using System.Security.Claims;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 
 #endregion
@@ -36,6 +37,7 @@ namespace TechCertain.WebUI.Controllers
 		IFileService _fileService;
 
         ISignInManager _signInManager;
+        UserManager<User> _userManager;
 
         IProgrammeService _programmeService;
         ICilentInformationService _clientInformationService;
@@ -44,17 +46,22 @@ namespace TechCertain.WebUI.Controllers
 
         public AccountController(ISignInManager signInManager,		    
             IUserService userRepository,
+            DealEngineDBContext dealEngineDBContext,
             ILogger logger,
-			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
+			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, UserManager<User> userManager) : base (userRepository, dealEngineDBContext)
 		{
-			//_authenticationService = authenticationService;
-			//_permissionsService = permissionsService;
+            //_authenticationService = authenticationService;
+            //_permissionsService = permissionsService;
+
+            _dealEngineDBContext = dealEngineDBContext;
             _userService = userRepository;
             _logger = logger;
             _emailService = emailService;
 			_fileService = fileService;
 
 			_signInManager = signInManager;
+            _userManager = userManager;
 
             _programmeService = programeService;
             _clientInformationService = clientInformationService;
@@ -289,11 +296,27 @@ namespace TechCertain.WebUI.Controllers
 				string password = viewModel.Password.Trim();
 
                 var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
+                
 
                 if (result.Succeeded)
                 {
                     var user = _userService.GetUser(username);
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity();
+                    var user1 = new DealEngineUser(username);
+                    try
+                    {
+                        _dealEngineDBContext.Users.Add(user1);
+                        _dealEngineDBContext.SaveChanges();
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                    //var result1 = await UserManager<IdentityUser>.CreateAsync(user1, password);
+                    //var manager = new UserManager<IdentityUser>(new UserStore<IdentityUser>);
+                    //Task<IdentityResult> result1 = await UserManager<User>.AddClaimAsync(user, new System.Security.Claims.Claim(ClaimTypes.Name, username));
+                    
+                    //identity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, username));
+                    //await UserManager<User>.AddClaimAsync(user, identity);
                     //claimsIdentity.Actor = user;
                     //ClaimsPrincipal principal = user as ClaimsPrincipal;
                 }

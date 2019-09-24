@@ -31,11 +31,11 @@ namespace TechCertain.WebUI.Controllers
 
         IMapper _mapper;
 
-		public AdminController (IUserService userRepository, ILogger logger, IPrivateServerService privateServerService, IFileService fileService,
+		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IPrivateServerService privateServerService, IFileService fileService,
 			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWorkFactory unitOfWorkFactory, IInformationTemplateService informationTemplateService,
             ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
-			: base (userRepository)
+			: base (userRepository, dealEngineDBContext)
 		{
 			_logger = logger;
 			_privateServerService = privateServerService;

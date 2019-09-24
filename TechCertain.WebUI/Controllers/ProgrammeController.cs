@@ -39,12 +39,12 @@ namespace TechCertain.WebUI.Controllers
 
         private IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public ProgrammeController(ILogger logger, IUserService userRepository, IInformationTemplateService informationService,
+        public ProgrammeController(ILogger logger, IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService,
                                  IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<RiskCategory> riskRepository,
                                  IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository, IRoleService roleService,
                                  IRuleService ruleService, IRepository<Document> documentRepository, IRepository<Programme> programmeRepository, IBusinessActivityService busActivityService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IUnitOfWorkFactory unitOfWorkFactory)
-            : base(userRepository)
+            : base(userRepository, dealEngineDBContext)
         {
             _logger = logger;
             _informationService = informationService;
