@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq.Dynamic;
+using ServiceStack;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -271,24 +273,23 @@ namespace TechCertain.WebUI.Controllers
                 vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate == DateTime.MinValue).ToList();
             }
 
+            if (_search)
+            {
+                switch (searchOper)
+                {
+                    case "eq":
+                        vehicles = vehicles.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        vehicles = vehicles.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        vehicles = vehicles.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
+            }
+            vehicles = vehicles.OrderBy(sidx + " " + sord).ToList();
 
-            //throw new Exception("Method needs to be re-written");
-            //if (_search)
-            //{
-            //    switch (searchOper)
-            //    {
-            //        case "eq":
-            //            vehicles = vehicles.Where(searchField + " = \"" + searchString + "\"").ToList();
-            //            break;
-            //        case "bw":
-            //            vehicles = vehicles.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-            //            break;
-            //        case "cn":
-            //            vehicles = vehicles.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-            //            break;
-            //    }
-            //}
-            //vehicles = vehicles.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -352,44 +353,44 @@ namespace TechCertain.WebUI.Controllers
             
             try
             {
-                //throw new Exception("Method needs to be re-written");
-                //if (_search)
-                //{
-                //    switch (searchOper)
-                //    {
-                //        case "eq":
-                //            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //            break;
-                //        case "bw":
-                //            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //            break;
-                //        case "cn":
-                //            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //            break;
-                //    }
-                //}
-                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
-                //model.Page = page;
-                //model.TotalRecords = organisations.Count;
-                //model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                //JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                //row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
-                //model.AddRow(row1);
-                //int offset = rows * (page - 1);
-                //for (int i = offset; i < offset + rows; i++)
-                //{
-                //    if (i == model.TotalRecords)
-                //    break;
-                //    Organisation organisation = organisations[i];
-                //    JqGridRow row = new JqGridRow(organisation.Id);
 
-                //    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
-                //    {
-                //        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
-                //    }
-                //    model.AddRow(row);
-                //}
-              
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                model.Page = page;
+                model.TotalRecords = organisations.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
+                model.AddRow(row1);
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+                    Organisation organisation = organisations[i];
+                    JqGridRow row = new JqGridRow(organisation.Id);
+
+                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    {
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
+                    }
+                    model.AddRow(row);
+                }
+
 
                 //// convert model to XDocument for rendering.
                 //document = model.ToXml();
@@ -549,21 +550,21 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-            //    switch (searchOper)
-            //    {
-            //        case "eq":
-            //            organisationalUnits = organisationalUnits.Where(searchField + " = \"" + searchString + "\"").ToList();
-            //            break;
-            //        case "bw":
-            //            organisationalUnits = organisationalUnits.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-            //            break;
-            //        case "cn":
-            //            organisationalUnits = organisationalUnits.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-            //            break;
-            //    }
+
+                switch (searchOper)
+                {
+                    case "eq":
+                        organisationalUnits = organisationalUnits.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        organisationalUnits = organisationalUnits.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        organisationalUnits = organisationalUnits.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //organisationalUnits = organisationalUnits.OrderBy(sidx + " " + sord).ToList();
+            organisationalUnits = organisationalUnits.OrderBy(sidx + " " + sord).ToList();
 
 
             XDocument document = null;
@@ -591,12 +592,12 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetOrganisationalUnitName(string term)
+        public IActionResult GetOrganisationalUnitName(string term)
         {
             var organisationalUnitNameList = _organisationalUnitRepository.FindAll().Select(ou => ou.Name);
             var results = organisationalUnitNameList.Where(n => n.ToLower().Contains(term.ToLower()));
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult()
+
+            return new JsonResult(results.ToArray());
             //{
             //    Data = results.ToArray(),
             //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
@@ -682,21 +683,20 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-            //    switch (searchOper)
-            //    {
-            //        case "eq":
-            //            locations = locations.Where(searchField + " = \"" + searchString + "\"").ToList();
-            //            break;
-            //        case "bw":
-            //            locations = locations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-            //            break;
-            //        case "cn":
-            //            locations = locations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-            //            break;
-            //    }
+                switch (searchOper)
+                {
+                    case "eq":
+                        locations = locations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        locations = locations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        locations = locations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //locations = locations.OrderBy(sidx + " " + sord).ToList();
+            locations = locations.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -768,12 +768,7 @@ namespace TechCertain.WebUI.Controllers
         {
             var locationStreetList = _locationRepository.FindAll().Select(l => l.Street);
             var results = locationStreetList.Where(n => n.ToLower().Contains(term.ToLower()));
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult()
-            //{
-            //    Data = results.ToArray(),
-            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            //};
+            return new JsonResult(results.ToArray());
         }
 
         [HttpPost]
@@ -785,13 +780,7 @@ namespace TechCertain.WebUI.Controllers
             foreach (var location in sheet.Locations)
                 models.Add(LocationViewModel.FromEntity(location));
 
-
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult
-            //{
-            //    Data = models.ToArray(),
-            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            //};
+            return new JsonResult(models.ToArray());
         }
 
         [HttpPost]
@@ -807,12 +796,7 @@ namespace TechCertain.WebUI.Controllers
             foreach (var location in countries)
                 models.Add(LocationViewModel.FromEntity(location));
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult
-            //{
-            //    Data = models.ToArray(),
-            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            //};
+            return new JsonResult(models.ToArray());
         }
 
         [HttpPost]
@@ -826,8 +810,7 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true);
         }
 
         #endregion
@@ -899,21 +882,20 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        buildings = buildings.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        buildings = buildings.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        buildings = buildings.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+                switch (searchOper)
+                {
+                    case "eq":
+                        buildings = buildings.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        buildings = buildings.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        buildings = buildings.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //buildings = buildings.OrderBy(sidx + " " + sord).ToList();
+            buildings = buildings.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -949,8 +931,7 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true);
         }
 
         #endregion
@@ -1088,22 +1069,21 @@ namespace TechCertain.WebUI.Controllers
             waterLocations = sheet.WaterLocations.Where(wl => wl.Removed == removed && wl.DateDeleted == null).ToList();
 
             if (_search)
-            {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        waterLocations = waterLocations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        waterLocations = waterLocations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        waterLocations = waterLocations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+            {               
+                switch (searchOper)
+                {
+                    case "eq":
+                        waterLocations = waterLocations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        waterLocations = waterLocations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        waterLocations = waterLocations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
+            waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1142,12 +1122,7 @@ namespace TechCertain.WebUI.Controllers
         {
             var waterLocationNameList = _waterLocationRepository.FindAll().Select(wl => wl.WaterLocationName);
             var results = waterLocationNameList.Where(n => n.ToLower().Contains(term.ToLower()));
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult()
-            //{
-            //    Data = results.ToArray(),
-            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            //};
+            return new JsonResult(results.ToArray());
         }
 
         [HttpPost]
@@ -1159,12 +1134,7 @@ namespace TechCertain.WebUI.Controllers
             foreach (var waterLocation in sheet.WaterLocations)
                 models.Add(WaterLocationViewModel.FromEntity(waterLocation));
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult
-            //{
-            //    Data = models.ToArray(),
-            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            //};
+            return new JsonResult(models.ToArray());
         }
 
         [HttpPost]
@@ -1178,8 +1148,7 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true); 
         }
 
         #endregion
@@ -1244,21 +1213,20 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        businessInterruptions = businessInterruptions.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        businessInterruptions = businessInterruptions.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        businessInterruptions = businessInterruptions.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+                switch (searchOper)
+                {
+                    case "eq":
+                        businessInterruptions = businessInterruptions.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        businessInterruptions = businessInterruptions.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        businessInterruptions = businessInterruptions.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //businessInterruptions = businessInterruptions.OrderBy(sidx + " " + sord).ToList();
+            businessInterruptions = businessInterruptions.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1295,8 +1263,8 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+
+            return new JsonResult(true);
         }
 
         #endregion
@@ -1361,21 +1329,21 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        materialDamages = materialDamages.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        materialDamages = materialDamages.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        materialDamages = materialDamages.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+                
+                switch (searchOper)
+                {
+                    case "eq":
+                        materialDamages = materialDamages.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        materialDamages = materialDamages.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        materialDamages = materialDamages.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //materialDamages = materialDamages.OrderBy(sidx + " " + sord).ToList();
+            materialDamages = materialDamages.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1411,8 +1379,8 @@ namespace TechCertain.WebUI.Controllers
                 materialDamage.Removed = status;
                 uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+
+            return new JsonResult(true);
         }
 
         #endregion
@@ -1726,21 +1694,21 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        boats = boats.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        boats = boats.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        boats = boats.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+                switch (searchOper)
+                {
+                    case "eq":
+                        boats = boats.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        boats = boats.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        boats = boats.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //boats = boats.OrderBy(sidx + " " + sord).ToList();
+
+            boats = boats.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1778,8 +1746,7 @@ namespace TechCertain.WebUI.Controllers
                 boat.Removed = status;
                 uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true);
         }
 
         [HttpPost]
@@ -1793,8 +1760,8 @@ namespace TechCertain.WebUI.Controllers
                 boat.BoatCeaseReason = '0';
                 uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+
+            return new JsonResult(true);
         }
 
         [HttpPost]
@@ -1808,8 +1775,8 @@ namespace TechCertain.WebUI.Controllers
                 boat.BoatCeaseReason = '0';
                 uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+
+            return new JsonResult(true);
         }
 
         #endregion
@@ -2154,69 +2121,67 @@ namespace TechCertain.WebUI.Controllers
                 }
                 //}
 
+                if (model.InsuranceAttribute.EqualsIgnoreCase("Private") || model.InsuranceAttribute.EqualsIgnoreCase("CoOwner"))
+                {
+                    try
+                    {
+                        if (model.IsAdmin.EqualsIgnoreCase("Yes"))
+                        {
+                            user = _userService.GetUserByEmail(CurrentUser.Email);
+                        }
+                        else
+                        {
+                            user = _userService.GetUserByEmail(model.Email);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
+                        user.FirstName = model.FirstName;
+                        user.LastName = model.LastName;
+                        user.FullName = model.FirstName + " " + model.LastName;
+                        user.Email = model.Email;
+                        user.Phone = model.Phone;
+                        user.Password = "";
+                        _userService.Create(user);
 
-                throw new Exception("Method needs to be re-written");
-                //if (model.InsuranceAttribute.EqualsIgnoreCase("Private") || model.InsuranceAttribute.EqualsIgnoreCase("CoOwner"))
-                //{
-                //    try
-                //    {
-                //        if (model.IsAdmin.EqualsIgnoreCase("Yes"))
-                //        {
-                //            user = _userService.GetUserByEmail(CurrentUser.Email);
-                //        }
-                //        else
-                //        {
-                //            user = _userService.GetUserByEmail(model.Email);
-                //        }
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
-                //        user.FirstName = model.FirstName;
-                //        user.LastName = model.LastName;
-                //        user.FullName = model.FirstName + " " + model.LastName;
-                //        user.Email = model.Email;
-                //        user.Phone = model.Phone;
-                //        user.Password = "";
-                //        _userService.Create(user);
+                    }
 
-                //    }
+                    //    //if (user == null)
+                    //    //{
+                    //    //    user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
+                    //    //    user.FirstName = model.FirstName;
+                    //    //    user.LastName = model.LastName;
+                    //    //    user.Email = model.Email;
+                    //    //    user.Phone = model.Phone;
+                    //    //    _userService.Create(user);
+                    //    //}
+                    //    //organisation = _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
+                    //    //if (organisation == null)
+                    //    //{
+                    //    //    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName, organisationType, user);
+                    //    //    organisation.Phone = model.OrganisationPhone;
+                    //    //    organisation.Email = model.OrganisationEmail;
+                    //    //    _organisationService.CreateNewOrganisation(organisation);
+                    //    //    user.SetPrimaryOrganisation(organisation);
+                    //    //    user.Organisations.Add(organisation);
 
-                //    //if (user == null)
-                //    //{
-                //    //    user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
-                //    //    user.FirstName = model.FirstName;
-                //    //    user.LastName = model.LastName;
-                //    //    user.Email = model.Email;
-                //    //    user.Phone = model.Phone;
-                //    //    _userService.Create(user);
-                //    //}
-                //    //organisation = _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
-                //    //if (organisation == null)
-                //    //{
-                //    //    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName, organisationType, user);
-                //    //    organisation.Phone = model.OrganisationPhone;
-                //    //    organisation.Email = model.OrganisationEmail;
-                //    //    _organisationService.CreateNewOrganisation(organisation);
-                //    //    user.SetPrimaryOrganisation(organisation);
-                //    //    user.Organisations.Add(organisation);
+                    //    //}
 
-                //    //}
+                    }
 
-                //}
+                    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    {
+                        CurrentUser.Organisations.Add(organisation);
+                        sheet.Organisation.Add(organisation);
+                        model.ID = organisation.Id;
 
-                //using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
-                //{
-                //    CurrentUser.Organisations.Add(organisation);
-                //    sheet.Organisation.Add(organisation);
-                //    model.ID = organisation.Id;
+                        //NewMethod(uow);
+                        uow.Commit();
+                    }
 
-                //    //NewMethod(uow);
-                //    uow.Commit();
-                //}
-
-                //model.PartyUseId = organisation.Id;
-            }
+                    //model.PartyUseId = organisation.Id;
+                }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
@@ -2274,21 +2239,21 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        boatUses = boatUses.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        boatUses = boatUses.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        boatUses = boatUses.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+
+                switch (searchOper)
+                {
+                    case "eq":
+                        boatUses = boatUses.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        boatUses = boatUses.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        boatUses = boatUses.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //boatUses = boatUses.OrderBy(sidx + " " + sord).ToList();
+            boatUses = boatUses.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -2323,8 +2288,7 @@ namespace TechCertain.WebUI.Controllers
                 boatUse.Removed = status;
                 uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true);
         }
 
         [HttpPost]
@@ -2339,8 +2303,7 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true);
         }
 
         #endregion
@@ -2410,21 +2373,21 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                throw new Exception("Method needs to be re-written");
-                //switch (searchOper)
-                //{
-                //    case "eq":
-                //        claims = claims.Where(searchField + " = \"" + searchString + "\"").ToList();
-                //        break;
-                //    case "bw":
-                //        claims = claims.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                //        break;
-                //    case "cn":
-                //        claims = claims.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                //        break;
-                //}
+               
+                switch (searchOper)
+                {
+                    case "eq":
+                        claims = claims.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        claims = claims.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        claims = claims.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
             }
-            //claims = claims.OrderBy(sidx + " " + sord).ToList();
+            claims = claims.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -2460,8 +2423,7 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = true };
+            return new JsonResult(true);
         }
 
         #endregion
@@ -2853,13 +2815,12 @@ namespace TechCertain.WebUI.Controllers
 
             if (hasAccount)
             {
-                throw new Exception("Method needs to be re-written");
-                //return new JsonResult { Data = true };
+
+                return new JsonResult(true);
             }
             else
             {
-                throw new Exception("Method needs to be re-written");
-                //return new JsonResult { Data = false };
+                return new JsonResult(false);
             }
         }
 
