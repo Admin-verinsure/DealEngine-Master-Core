@@ -1,0 +1,135 @@
+﻿@model TechCertain.WebUI.Models.EmailTemplateViewModel
+
+@using TechCertain.WebUI.Helpers.CustomHtml
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Agreement <span>> @ViewBag.Title</span></h1>
+        </div>
+		<section class="col-xs-12">
+			<a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeID">Back to Agreement</a>
+		</section>
+    </div>
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+		<!-- NEW WIDGET START -->
+		<div class="col col-12">
+		    <!-- Widget ID (each widget will need unique ID)-->
+		    <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+		    <div class="jarviswidget" id="wid-id-10"
+		         data="false"
+		         data-widget-editbutton="false"
+		         data-widget-togglebutton="false"
+		         data-widget-deletebutton="false"
+		         data-widget-custombutton="false"
+		         data-widget-sortable="false">
+		        <header>
+		            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+		            <h2>@ViewBag.Title </h2>
+		        </header>
+		        <!-- widget div-->
+		        <div>
+		            <!-- widget content -->
+					<div class="smart-form no-padding">
+						<div class="widget-body widget-hide-overflow">
+					        <form action="~/Agreement/SendPolicyDocuments/@Model.ClientProgrammeID" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                                <div>
+                                    @Html.HiddenFor(m => m.ClientProgrammeID)
+                                    <!-- widget edit box -->
+                                    <div class="jarviswidget-editbox">
+                                        <!-- This area used as drop downSS edit box -->
+                                    </div>
+                                    <!-- end widget edit box -->
+                                    <!-- widget content -->
+
+                                    <div class="col col-10">
+                                        <div class="alert alert-info">
+                                            <p>Send Policy Documents Email Template to go here</p>
+                                        </div>
+                                        @Html.TextBoxFor(m => m.Subject)@*.HtmlAttributes(new { placeholder = "Please enter a subject" })*@
+                                        <br />
+                                        @Html.TextAreaFor(m => m.Body)@*.Rows(10)*@
+                                        <script>CKEDITOR.replace("@Html.IdFor(m => m.Body)");</script>
+                                        <br />
+                                    </div>
+
+                                    <div class="col col-6">
+                                                <div class="row">
+                                                    <section class="col col-6">
+                                                        <label class="label">Send Policy Documents To:</label>
+                                                        <label class="input">
+                                                            <select class="form-control r" id="Recipent" name="Recipent">
+                                                                <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
+                                                                @foreach (var recipent in Model.Recipents)
+                                                                {
+                                                                    <option value="@recipent.ID">@string.Join(", ", recipent.FullName)</option>
+                                                                }
+                                                            </select>
+                                                        </label>
+                                                        <br />
+                                                    </section>
+                                                </div>
+                                                <div class="row">
+                                                    <section class="col col-6">
+                                                        <button onclick="javascript:SendPolicyDocuments()" class="btn txt-color-white bg-color-green btn-sm" id="updateBoat">Save and Send Policy Documents</button>
+                                                        @*@Html.Bootstrap().Button().Text("Save and Send Policy Documents").HtmlAttributes(new { onclick = "javascript:SendPolicyDocuments()" }).Class("btn txt-color-white bg-color-green btn-sm")*@
+                                                    </section>
+                                                </div>
+                                        </div>
+
+                                        <!-- end widget content -->
+                                    </div>
+</form>
+						</div>
+						
+
+                        
+
+				    </div>
+				    <!-- end widget content -->
+				</div>
+		        <!-- end widget div -->
+		    </div>
+		    <!-- end widget -->
+		</div>
+		<!-- WIDGET END -->
+	</section>
+</div>
+
+
+@section pagespecific {
+
+    <script type="text/javascript">
+
+        function SendPolicyDocuments() {
+            var body = CKEDITOR.instances['@Html.IdFor(m => m.Body)'].getData();
+			var bodyElement = $("#@Html.IdFor(m => m.Body)");
+			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
+			// using hack because escape(...) was deprecated
+            bodyElement.text(bodyElement.text(body).html());
+
+			$.ajax({
+				type: "POST",
+				url: '@Url.Action("SendPolicyDocuments", "Agreement")',
+			    data: $("#update-form").serialize() // serializes the form's elements.
+			})
+	        .done(function (json) {
+	            //$('#Recipent.' + classId).val(data.Recipent);
+                $('#Recipent.r').val(data.Recipent);
+				console.log(json);
+	        })
+	        .fail(function (err, ajaxOptions, thrownError) {
+				alert("Unable to save." + err.responseText );
+				console.log(err);
+				console.log(ajaxOptions);
+				console.log(thrownError);
+	        });
+        };
+
+    </script>
+
+}
+
+

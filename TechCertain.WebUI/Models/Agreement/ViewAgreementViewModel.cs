@@ -63,11 +63,16 @@ namespace TechCertain.WebUI.Models.Agreement
         public List<ClientAgreementReferral> Referrals { get; set; }
         //public IEnumerable<ClientAgreementBVTerm> BVTerms { get; set; }
         //public IEnumerable<ClientAgreementMVTerm>MVTerms { get; set; }
+        public User CurrentUser { get; set; }
+        public DateTime CancellEffectiveDate { get; set; }
+        public string InformationSheetStatus { get; set; }
 
         public decimal ReferralAmount { get; set; }
         public decimal ReferralLoading { get; set; }
         public string AuthorisationNotes { get; set; }
         public bool EGlobalIsActive { get; set; }
+        public string CancellNotes { get; set; }
+        public string DeclineNotes { get; set; }
 
     }
 

@@ -1,0 +1,505 @@
+﻿<script src="/Scripts/bootstrapmvc"></script>
+<!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
+<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+<script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js"></script>
+<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
+<script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
+<script src="~/Scripts/libs/jquery-ui-1.10.3.js"></script>
+
+<script type="text/javascript">
+
+    $('#boatTable').on('click', '.clickable-row', function (event) {
+        $(this).addClass('active').siblings().removeClass('active');
+    });
+
+   
+    $('#hiddenInput').on('click', function () {
+        debugger;
+  var $input = $('.datepicker').pickadate();
+  var picker = $input.pickadate('picker');
+
+  event.stopPropagation()
+  event.preventDefault()
+  picker.open();
+    });
+
+
+
+
+    $('#button').datepicker()
+	.on('changeDate', function(ev){
+        $('#button').datepicker('hide');
+        alert(ev.date.valueOf());
+    });
+
+
+
+   
+    $('#myModal').on('show.bs.modal', function (e) {
+        $('.modal').css('width', '600px');
+        var BoatPremium = $(e.relatedTarget).data('boat-Premium');
+        var BoatName = $(e.relatedTarget).data('boat-name');
+
+        var BoatMake = $(e.relatedTarget).data('boat-make');
+        var BoatModel = $(e.relatedTarget).data('boat-model');
+
+        var SumInsured = $(e.relatedTarget).data('boat-Sum');
+        var BoatExcess = $(e.relatedTarget).data('boat-Excess');
+        var BoatFSL = $(e.relatedTarget).data('boat-fsl');
+        $(e.currentTarget).find('input[name="BoatMake"]').val(BoatMake);
+        $(e.currentTarget).find('input[name="BoatModel"]').val(BoatModel);
+        $(e.currentTarget).find('input[name="SumInsured"]').val(SumInsured);
+        $(e.currentTarget).find('input[name="Boat_Name"]').val(BoatName);
+        $(e.currentTarget).find('input[name="Excess"]').val(BoatExcess);
+        $(e.currentTarget).find('input[name="Premium"]').val(BoatPremium);
+        $(e.currentTarget).find('input[name="FSL"]').val(BoatFSL);
+
+    });
+    $('#VesselModal').on('show.bs.modal', function (e) {
+        $('.modal').css('width', '600px');
+        debugger;
+        var MotorMake = $(e.relatedTarget).data('motor-make');
+        var MotorRego = $(e.relatedTarget).data('motor-registration');
+        var SumInsured = $(e.relatedTarget).data('motor-Sum');
+        var BoatPremium = $(e.relatedTarget).data('motor-Premium');
+        var SumInsured = $(e.relatedTarget).data('motor-Sum');
+        var VesselModel = $(e.relatedTarget).data('motor-model');
+        var BoatExcess = $(e.relatedTarget).data('motor-Excess');
+        var BoatFSL = $(e.relatedTarget).data('motor-motorfsl');
+
+        $(e.currentTarget).find('input[name="MotorRego"]').val(MotorRego);
+        $(e.currentTarget).find('input[name="MotorMake"]').val(MotorMake);
+        $(e.currentTarget).find('input[name="MotorSumInsured"]').val(SumInsured);
+        $(e.currentTarget).find('input[name="MotorModel"]').val(VesselModel);
+        $(e.currentTarget).find('input[name="MotorExcess"]').val(BoatExcess);
+        $(e.currentTarget).find('input[name="MotorPremium"]').val(BoatPremium);
+        $(e.currentTarget).find('input[name="MotorFSL"]').val(BoatFSL);
+
+    });
+
+    $('#LoadModal').on('show.bs.modal', function (e) {
+
+        //clientAgreementId = @Model.ClientAgreementId
+        $('.modal').css('width', '600px');
+        var type = $(e.relatedTarget).data('type');
+        $(e.currentTarget).find('input[name="AutoriseType"]').val(type);
+
+    });
+
+    $('#confirmDelete').on('show.bs.modal', function (e) {
+        $('.modal .modal-body').css('height', 'auto');
+        var delBoatName = $(e.relatedTarget).data('boat-delname');
+        $(e.currentTarget).find('input[name="BoatName"]').val(delBoatName);
+    });
+
+    $(document).ready(function () {
+        debugger;
+        $("#btnSubmit").click(function () {
+            debugger;
+            var valid = ValidateVesselTerm();
+            if (valid) {
+                vesselSubmit();
+            }
+
+        });
+
+        $("#btnMotorSubmit").click(function () {
+            var valid = ValidateMotorTerm();
+            if (valid) {
+                motorSubmit();
+            }
+
+        });
+
+        $("#btnDelete").click(function () {
+            var agreement = $("#ClientAgreementId").val();
+            var boatName = $("#BoatName").val();
+            var boatFSL = $("#FSL").val();
+            var prodData = {
+                "BoatName": boatName,
+                "FSL": boatFSL
+            };
+            $.ajax({
+                type: "Post",
+                data: JSON.stringify({ clientAgreementId: agreement, SelectedBoatUse: prodData }),
+                url: "/Agreement/DeleteTerm",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    $("#myModal").modal("hide");
+                    location.reload(true);
+                    alert("Deleted Successfully!");
+
+                }
+            });
+        });
+    });
+
+    
+
+    function LoadSubmit() {
+        debugger;
+        var ClientAgreementId = $('#ClientAgreementId').val();
+        var SheetId = $('#InformationSheetId').val();
+        var Type = "Authorise";
+
+        if (!$('#Authorize').is(":checked")) {
+            Type = "Authorise";
+
+            return false;
+        } else if (!$('#Payment').is(":checked")) {
+            agree = "Payment";
+
+        } else if (!$('#Details').is(":checked")) {
+            agree = "MoreDetails";
+        }
+                $.ajax({
+                    url: '@Url.Action("AuthorisedReferrals", "Agreement")',
+                    type: "POST",
+                    data: JSON.stringify({ clientAgreementId: ClientAgreementId , sheetId: SheetId, type: Type}),
+                    contentType: "application/json; charset=utf-8"
+                }).done(function (json) {
+                    $.smallBox({
+                        title: "Email has been saved",
+                        color: "#5F895F",
+                        iconSmall: "fa fa-check bounce animated",
+                        timeout: 4000
+                    })
+                        console.log(json);
+                    })
+    }
+        function ValidateVesselTerm() {
+            debugger;
+            var boatExcess = $("#Excess").val();
+            var boatPremium = $("#Premium").val();
+            var boatFSL = $("#FSL").val();
+            var validation = true;
+
+            var result = validate(boatExcess);
+
+            if (boatExcess == "") {
+                $('#validateBoatExcess').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else if (!result) {
+                $('#validateBoatExcess').html("<font color='red'>Please enter the number.</font>")
+                if (validation) {
+                    validation = result;
+                }
+            } else {
+                $('#validateBoatExcess').html("");
+            }
+            var result = validate(boatPremium);
+
+            if (boatPremium == "") {
+                $('#validateBoatPremium').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else if (!result) {
+                $('#validateBoatPremium').html("<font color='red'>Please enter the number.</font>")
+                if (validation) {
+                    validation = result;
+                }
+            } else {
+                $('#validateBoatPremium').html("");
+            }
+            var result = validate(boatFSL);
+            if (boatFSL == "") {
+                $('#validateBoatFSL').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else if (!result) {
+                $('#validateBoatFSL').html("<font color='red'>Please enter the number.</font>")
+                if (validation) {
+                    validation = result;
+                }
+            } else {
+                $('#validateBoatFSL').html("");
+            }
+            return validation;
+        }
+        function ValidateMotorTerm() {
+            debugger;
+            var motorExcess = $("#MotorExcess").val();
+            var motorPremium = $("#MotorPremium").val();
+            var motorFSL = $("#MotorFSL").val();
+            var validation = true;
+            var result = validate(motorExcess);
+
+            if (motorExcess == "") {
+                $('#validateMotorExcess').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else if (!result) {
+                $('#validateMotorExcess').html("<font color='red'>Please enter the number.</font>")
+                if (validation) {
+                    validation = result;
+                }
+            } else {
+                $('#validateMotorExcess').html("");
+            }
+            var result = validate(motorPremium);
+
+            if (motorPremium == "") {
+                $('#validateMotorPremium').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else if (!result) {
+                $('#validateMotorPremium').html("<font color='red'>Please enter the number.</font>")
+                if (validation) {
+                    validation = result;
+                }
+            } else {
+                $('#validateMotorPremium').html("");
+            }
+            var result = validate(motorFSL);
+            if (motorFSL == "") {
+                $('#validateMotorFSL').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else if (!result) {
+                $('#validateMotorFSL').html("<font color='red'>Please enter the number.</font>")
+                if (validation) {
+                    validation = result;
+                }
+            } else {
+                $('#validateMotorFSL').html("");
+            }
+            return validation;
+        }
+
+   
+
+        function validate(value) {
+            var r = /^\d+(\.\d+)?$/;
+            value = value.replace("$", " ").replace(/,/g, '').trim();
+            var result = r.test(value.trim());
+            return result;
+        }
+
+        function vesselSubmit() {
+            debugger;
+            var agreement = $("#ClientAgreementId").val();
+            var boatName = $("#Boat_Name").val();
+            var boatSumInsured = $("#SumInsured").val().replace("$", " ");
+            var boatExcess = $("#Excess").val().replace("$", " ");
+            var boatPremium = $("#Premium").val().replace("$", " ");
+            var boatFSL = $("#FSL").val().replace("$", " ");
+            var prodData = {
+                "BoatName": boatName,
+                "TermLimit": boatSumInsured.replace(/,/g, '').trim(),
+                "Excess": boatExcess.replace(/,/g, '').trim(),
+                "Premium": boatPremium.replace(/,/g, '').trim(),
+                "FSL": boatFSL.replace(/,/g, '').trim()
+            };
+            $.ajax({
+                type: "Post",
+                data: JSON.stringify({ clientAgreementId: agreement, clientAgreementBVTerm: prodData }),
+                url: "/Agreement/EditTerm",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    $("#myModal").modal("hide");
+                    alert("Saved Successfully!");
+                    location.reload(true);
+
+                }
+            });
+        }
+
+    function SendReferralsEmail() {
+          var ClientAgreementId = $('#ClientAgreementId').val();
+        var SheetId = $('#AnswerSheetId').val();
+        var Type = "Authorise";
+
+        if (!$('#Authorize').is(":checked")) {
+            Type = "Authorise";
+
+            return false;
+        } else if (!$('#Payment').is(":checked")) {
+            agree = "Payment";
+
+        } else if (!$('#Details').is(":checked")) {
+            agree = "MoreDetails";
+
+        }
+          $.ajax({
+              url: '@Url.Action("SendReferralsEmail", "Agreement")',
+              type: "Get",
+              data: JSON.stringify({ sheetId: SheetId ,clientAgreementId: ClientAgreementId ,type:Type}),
+              contentType: "application/json; charset=utf-8"
+          })
+    }
+
+
+    function selectorgUser() {
+        debugger;
+        var selectedParty = $('input[name=Parties]:checked').val();
+        var informationId = $('#AnswerSheetId').serialize();
+
+        var z = $.grep([selectedParty,informationId], Boolean).join("&");
+            console.log(z);
+            $.ajax({
+                url: '@Url.Action("AddselectedParty", "Programme")',
+                type: "POST",
+                data: z
+            })
+                .done(function (data) {
+                    $.smallBox({
+                        title: "Boat Use has been saved",
+                        color: "#5F895F",
+                        iconSmall: "fa fa-check bounce animated",
+                        timeout: 4000
+                    });
+                    console.log(data);
+                    $('#SelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory.substring(0, 4) + "</option>")
+                    $('#SelectedBoatUse').trigger('chosen:updated');
+                    $('#AddSelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory.substring(0, 4) + "</option>")
+                    $('#AddSelectedBoatUse').trigger('chosen:updated');
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("There was an error while trying to save the Boat Use.");
+                });
+
+    }
+
+    function Authorise() {
+        debugger;
+        //var loadValPerc = $('#LoadValPerc').val();
+        //var loadValAmou = $('#LoadValAmou').val();
+        var loadValPerc = $('#ReferralLoading').val();
+        var loadValAmou = $('#ReferralAmount').val();
+        var sheetId = $('#InformationSheetId').val();
+        var agreementid = $('#ClientAgreementId').val();
+        //var notes = $('#AuthorisedComment').val();
+        var notes = $('#AuthorisationNotes').val();
+
+         var prodData = {
+                "InformationId": sheetId,
+                "AgreementId": agreementid,
+                "RefferLodPrc": loadValPerc,
+                "RefferLodAmt": loadValAmou,
+                "AdditionalNotes" : notes
+        };
+          $.ajax({
+                url: '@Url.Action("AuthorisedReferral", "Agreement")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+	            data: JSON.stringify({clientAgreementModel: prodData })
+            })
+           .done(function (data) {
+               //alert("Saved Successfully!");
+               //debugger;
+               $.smallBox({
+                   title: "Referrals have been authorised",
+                   color: "#5F895F",
+                   iconSmall: "fa fa-check bounce animated",
+                   timeout: 4000
+               });
+               window.location.href = data.Url;
+           })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+            //debugger;
+        alert("There was an error while trying to authorise referrals.");
+               });
+    }
+
+    function Decline() {
+        var sheetId = $('#InformationSheetId').val();
+        var agreementid = $('#ClientAgreementId').val();
+        var notes = $('#DeclineNotes').val();
+
+         var prodData = {
+                "InformationId": sheetId,
+                "AgreementId": agreementid,
+                "DeclineNotes" : notes
+        };
+          $.ajax({
+                url: '@Url.Action("DeclineAgreement", "Agreement")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+	            data: JSON.stringify({clientAgreementModel: prodData })
+            })
+           .done(function (data) {
+               $.smallBox({
+                   title: "Agreement has been declined",
+                   color: "#5F895F",
+                   iconSmall: "fa fa-check bounce animated",
+                   timeout: 4000
+               });
+               window.location.href = data.Url;
+           })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+            //debugger;
+        alert("There was an error while trying to decline agreement.");
+               });
+    }
+
+    function Cancell() {
+        var sheetId = $('#InformationSheetId').val();
+        var agreementid = $('#ClientAgreementId').val();
+        var notes = $('#CancellNotes').val();
+        var cancelleffectivedate = $('#CancellEffectiveDate').val();
+
+         var prodData = {
+                "InformationId": sheetId,
+                "AgreementId": agreementid,
+                "CancellNotes": notes,
+                "CancellEffectiveDate" : cancelleffectivedate
+        };
+          $.ajax({
+                url: '@Url.Action("CancellAgreement", "Agreement")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+	            data: JSON.stringify({clientAgreementModel: prodData })
+            })
+           .done(function (data) {
+               $.smallBox({
+                   title: "Agreement has been cancelled",
+                   color: "#5F895F",
+                   iconSmall: "fa fa-check bounce animated",
+                   timeout: 4000
+               });
+               window.location.href = data.Url;
+           })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+            //debugger;
+        alert("There was an error while trying to cancel agreement.");
+               });
+    }
+
+        function motorSubmit() {
+            debugger;
+            var agreement = $("#ClientAgreementId").val();
+            var boatSumInsured = $("#MotorSumInsured").val().replace("$", " ");
+            var boatExcess = $("#MotorExcess").val().replace("$", " ");
+            var boatPremium = $("#MotorPremium").val().replace("$", " ");
+            var boatFSL = $("#MotorFSL").val().replace("$", " ");
+            var motorModel = $("#MotorModel").val();
+
+            var prodData = {
+                "TermLimit": boatSumInsured.replace(/,/g, '').trim(),
+                "Excess": boatExcess.replace(/,/g, '').trim(),
+                "Premium": boatPremium.replace(/,/g, '').trim(),
+                "FSL": boatFSL.replace(/,/g, '').trim(),
+                "Model": motorModel
+            };
+            $.ajax({
+                type: "Post",
+                data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
+                url: "/Agreement/EditMotorTerm",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    $("#myModal").modal("hide");
+                    alert("Saved Successfully!");
+                    location.reload(true);
+
+                }
+            });
+        }
+
+</script>

@@ -1,0 +1,14 @@
+﻿@model List<TechCertain.WebUI.Models.Agreement.AgreementDocumentViewModel>
+
+<div class="widget-body widget-hide-overflow">
+@foreach (var doc in Model)
+{
+    <fieldset>
+        <div class="row">
+            <section class="col col-12 font-md">
+                <a href="@(doc.Url + "?format=docx")">@doc.DisplayName</a>
+            </section>
+        </div>
+    </fieldset>
+}
+</div>

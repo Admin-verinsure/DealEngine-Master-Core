@@ -47,13 +47,13 @@ namespace TechCertain.WebUI
             //services.AddDbContext<DealEngineDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
             //    .AddIdentity<IdentityUser, IdentityRole>()
             //    .AddEntityFrameworkStores<DealEngineDBContext>();
-                
+
 
             //services.AddIdentity<IdentityUser>()
             //        .AddSignInManager<DealEngineSignInManager>()
             //        .AddClaimsPrincipalFactory<IdentityUser>();
 
-           // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
@@ -78,6 +78,7 @@ namespace TechCertain.WebUI
                 //options.LogoutPath = "/Identity/Account/Logout";
                 //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+
 
             services.AddSimpleInjector(container, options =>
             {

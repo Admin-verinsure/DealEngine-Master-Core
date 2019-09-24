@@ -165,6 +165,8 @@
                                         <tbody>
                                             @*@if (Model.HasRole("CanEditProduct"))*@
                                             {
+
+
                                                 <tr onclick="location.href='#';" style="cursor:pointer">
                                                     <td>Move Policy to new Product</td>
 
@@ -186,7 +188,7 @@
                                                 <tr onclick="location.href='/Organisation/ManageOrganisations';" style="cursor:pointer">
                                                     <td>Manage Organisations</td>
                                                 </tr>
-                                            }
+                                            @*}*@
                                         </tbody>
                                     </table>
 
@@ -783,9 +785,9 @@
                                             @*@if (Model.HasRole("CanEditProduct"))
                                             {*@
 
-                                                //<tr onclick="location.href='/InformationBuilder/Index';" style="cursor:pointer">
+                                                @*//<tr onclick="location.href='/InformationBuilder/Index';" style="cursor:pointer">
                                                 //    <td>Information Builder (Old)</td>
-                                                //</tr>
+                                                //</tr>*@
 
                                                 <tr onclick="location.href='/InformationBuilder/StagingBuilder';" style="cursor:pointer">
                                                     <td>Information Builder</td>
