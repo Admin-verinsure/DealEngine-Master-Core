@@ -1,0 +1,73 @@
+﻿@model InformationItemViewModel
+
+@*@var items = informationSection.Items;*@
+
+@if (Model != null)
+{
+    var item = Model;
+    <section class="col col-@item.Width">
+        @Html.HiddenFor(x => x.Id)
+        @switch (item.Type)
+        {
+            case ItemType.TEXTBOX:
+                <label class="label">@item.Label</label>
+                <label class="input">
+                    <i class="@item.Icon"></i>
+                    @Html.TextBoxFor(m => m.Value)
+                    <input id="@item.Name" type="@item.Control" name="@item.Name" placeholder="@item.Label" value="@item.Value" />
+                </label>
+
+                break;
+
+            case ItemType.TEXTAREA:
+
+                break;
+
+            case ItemType.LABEL:
+
+                <article class="col col-@item.Width">
+                    @Html.Raw(@item.Label)
+                </article>
+
+                break;
+
+            case ItemType.DROPDOWNLIST:
+
+                <label class="control-label">@item.Label</label>
+                @Html.DropDownList(@item.Name, @item.Options, @item.DefaultText, new { @id = @item.Name })
+
+                @*@Html.DropDownList(@item.Name, @item.Options).OptionLabel(@item.DefaultText).Id(@item.Name)*@
+
+
+
+                break;
+
+            case ItemType.PERCENTAGEBREAKDOWN:
+
+                <div class="row">
+                    <div class="col col-12"><label class="label">@item.Label</label></div>
+                    <div class="col col-10">
+                        @Html.DropDownList(@item.Name, @item.Options, @item.DefaultText, new { @class = "form-control" })
+                    </div>
+                    <div class="col col-2">
+                        <button id="clickMe" onclick="AddBusinessActivity(this, '#@item.Name', '#tableResult');" class="btn btn-sm btn-success" style="width:100px">
+                            Add
+                        </button>
+                    </div>
+                    <div class="col col-12">
+                        <table id="tableResult" cellpadding="4" cellspacing="0">
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                break;
+        }
+
+    </section>
+
+}
+else
+{
+    @Html.Raw("</div><div class=\"row\">")
+}

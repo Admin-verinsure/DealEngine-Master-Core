@@ -1,0 +1,32 @@
+﻿@model TechCertain.WebUI.Models.InformationItemViewModel
+
+<div id="content">
+    <section id="widget-grid">
+        <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+            <fieldset>
+
+                @Html.DisplayFor(m => m.LabelPercentageValue, "LabelPercentage")
+
+            </fieldset>
+
+        </div>
+    </section>
+</div>
+
+@section pagespecific {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            // PAGE RELATED SCRIPTS
+
+            // Spinners
+
+            $(".spinner").spinner({ min: 0, max: 100, step: 0.5, start: 0, numberFormat: "C" });
+        })
+
+    </script>
+
+}

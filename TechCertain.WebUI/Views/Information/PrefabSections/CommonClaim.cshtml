@@ -1,0 +1,490 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+        @*@tabs.Tab("List All")
+            @tabs.Tab("Edit")
+            @tabs.Tab("Add")
+
+            @tabs.Tab("List Removed").Class("ClaimRemoved")*@
+        <div id="Claimtabs">
+
+            <ul id="tab" class="nav nav-tabs">
+                <li class="nav nav-tabs active"> <a href="#clTabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#clTabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#clTabs3"> Add </a> </li>
+                <li class="nav nav-tabs"> <a href="#clTabs4" Class="ClaimRemoved"> List Removed </a> </li>
+
+            </ul>
+
+            <div id="clTabs1" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                            <script type="text/javascript">
+                                $(window).load(function () {
+							    $("#tblClaim").jqGrid({
+							        url: "/Services/GetClaims?informationId=@Model.AnswerSheetId&removed=false",
+							        datatype: "xml",
+							        mtype: "GET",
+							        colNames: ["","Claim Title", "Claim Description", "Claim Reference", "Name of Claimant", ""],
+                                    colModel: [
+                                        {
+                                            name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
+                                                return ('<button onclick="EditClaim(\'' + cellvalue + '\', \'#tblClaim\'); SetCurrentTab(\'clTabs2\');" type="button"class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                            }
+                                        },
+							            { name: "ClaimTitle", align: 'center', key: 'true' },
+                                        { name: "ClaimDescription", align: 'center' },
+							            { name: "ClaimReference", align: 'center' },
+							            { name: "Claimant", align: 'center' },
+							            { name: "update", align: 'center', search: false, formatter: function(cellvalue, options, rowobject)
+                                        {
+                                            return ('<button onclick="SetClaimRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblClaim\', \'#tblRemovedClaim\');" type="button"class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>');
+							            }
+										}
+									],
+							        autowidth: true,
+							        pager: "#pagerClaim",
+							        rowNum: 10,
+							        rowList: [10, 20, 30],
+							        sortname: "ClaimTitle",
+							        sortorder: "desc",
+							        viewrecords: true,
+							        gridview: true,
+							        autoencode: true
+							    });
+                                $("#tblClaim").jqGrid('navGrid',
+							    	'#pagerClaim',
+							    	{edit: false, add: false, del: false},
+							    	//options
+							    	{height:280,reloadAfterSubmit:false},
+							    	// edit options
+							    	{height:280,reloadAfterSubmit:false},
+							    	// add options
+							    	{reloadAfterSubmit:false},
+							    	// del options
+						    		{sopt:['eq','bw','cn']}
+							    	// search options
+							    );
+							});
+                            </script>
+                            <table id="tblClaim"><tr><td></td></tr></table>
+                            <div id="pagerClaim"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="clTabs2" class="tab-content">
+
+                <fieldset id="fieldset">
+                    <input id="ClaimId" name="ClaimId" type="hidden" />
+                    <input id="OrganisationId" name="OrganisationId" type="hidden" />
+                    <!-- 1st rows -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Title</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimTitle" id="ClaimTitle" name="ClaimTitle" placeholder="Claim Title" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimTitle"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Description</label>
+                            <label class="textarea">
+                                <textarea class="form-control cl" data-type="TEXTAREA" data-name="ClaimDescription" id="ClaimDescription" name="ClaimDescription" placeholder="Claim Description" value=""></textarea>
+                            </label>
+                            <p class="validationContainer" id="validateClaimDescription"></p>
+
+                        </section>
+                        @*<section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                                <label class="label">Product</label>
+                                <label class="input">
+                                    <select class="cselect form-control cl" data-placeholder="Product" id="ClaimProducts" multiple="multiple" name="ClaimProducts" style="display: none;">
+                                        @foreach (var pro in Model.AvailableProducts)
+                                        {
+                                            //<option value="@pro.ID">@pro.Name</option>
+                                        }
+                                    </select>
+                                </label>
+                            </section>*@
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Status</label>
+                            <label class="input">
+                                <select class="form-control bui" id="ClaimStatus" name="ClaimStatus">
+                                    <option selected="selected" value="Precautionary notification only">Precautionary notification only</option>
+                                    <option value="Withdrawn by insured">Withdrawn by insured</option>
+                                    <option value="Formal claim filed">Formal claim filed</option>
+                                    <option value="Information request to insured">Information request to insured</option>
+                                    <option value="Third party has made formal demand">Third party has made formal demand</option>
+                                    <option value="Solicitors instructed for claimant">Solicitors instructed for claimant</option>
+                                    <option value="Subrogated to insurer">Subrogated to insurer</option>
+                                    <option value="In discussions">In discussions</option>
+                                    <option value="In agreed alternative process">In agreed alternative process</option>
+                                    <option value="Proceedings issued">Proceedings issued</option>
+                                    <option value="Settled">Settled</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateClaimStatus"></p>
+
+                        </section>
+
+                    </div>
+
+                    <!-- 2nd rows -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Reference</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimReference" id="ClaimReference" name="ClaimReference" placeholder="Claim Reference" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimReference"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Policy Reference</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimPolicyReference" id="ClaimPolicyReference" name="ClaimPolicyReference" placeholder="Policy Reference" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimPolicyReference"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Policy Insurer Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsurerName" id="ClaimInsurerName" name="ClaimInsurerName" placeholder="Policy Insurer Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimInsurerName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Policy Insured Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsuredName" id="ClaimInsuredName" name="ClaimInsuredName" placeholder="Policy Insured Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimInsuredName"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Name of Claimant</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="Claimant" id="Claimant" name="Claimant" placeholder="Name of Claimant" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimant"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Approx Date of Loss</label>
+                            <label class="input">
+                                <i class="icon-append fa fa-calendar"></i>
+                                <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="ClaimDateOfLoss" type="text">
+                            </label>
+                            <p class="validationContainer" id="validateClaimDateOfLoss"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Notification Date</label>
+                            <label class="input">
+                                <i class="icon-append fa fa-calendar"></i>
+                                <input name="ClaimNotifiedDate" placeholder="Notification Date" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="ClaimNotifiedDate" type="text">
+                            </label>
+                            <p class="validationContainer" id="validateClaimNotifiedDate"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">$ Estimate of Liability</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimEstimateInsuredLiability" id="ClaimEstimateInsuredLiability" name="ClaimEstimateInsuredLiability" placeholder="$ Estimate of Liability" value="">
+                            </label>
+                            <p class="validationContainer" id="validateClaimEstimateInsuredLiability"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Broker Reference (Read-Only)</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" type="text" data-type="TEXTBOX" data-name="ClaimBrokerReference" id="ClaimBrokerReference" name="ClaimBrokerReference" placeholder="Broker Reference (Read-Only)" readonly="true" value="">
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Insurer Reference (Read-Only)</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" type="text" data-type="TEXTBOX" data-name="ClaimInsurerReference" id="ClaimInsurerReference" name="ClaimInsurerReference" placeholder="Insurer Reference (Read-Only)" readonly="true" value="">
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">$ Paid (Read-Only)</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" type="text" data-type="TEXTBOX" data-name="ClaimPaid" id="ClaimPaid" name="ClaimPaid" placeholder="$ Paid (Read-Only)" readonly="true" value="">
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">$ Reserve (Read-Only)</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" type="text" data-type="TEXTBOX" data-name="ClaimReserve" id="ClaimReserve" name="ClaimReserve" placeholder="$ Reserve (Read-Only)" readonly="true" value="">
+                            </label>
+                        </section>
+
+                    </div>
+
+                    <!-- 3rd row -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Notes</label>
+                            <label class="textarea">
+                                <textarea class="form-control cl" data-type="TEXTAREA" data-name="ClaimNotes" id="ClaimNotes" name="ClaimNotes" placeholder="Notes" value=""></textarea>
+                            </label>
+                        </section>
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateClaim('#clTabs-2', '#tblClaim','clTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
+
+                            @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-2','clTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
+                          
+                            <button onclick="ValidateClaim('#clTabs2', '#tblClaim','clTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats('#clTabs2','clTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="clTabs3" class="tab-content">
+
+                <fieldset id="fieldset">
+                    <input id="ClaimId" name="ClaimId" type="hidden" />
+                    <input id="OrganisationId" name="OrganisationId" type="hidden" />
+                    <!-- 1st rows -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Title</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimTitle" id="AddClaimTitle" name="ClaimTitle" placeholder="Claim Title" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimTitle"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Description</label>
+                            <label class="textarea">
+                                <textarea class="form-control cl" data-type="TEXTAREA" data-name="ClaimDescription" id="AddClaimDescription" name="ClaimDescription" placeholder="Claim Description" value=""></textarea>
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimDescription"></p>
+
+                        </section>
+                        @*<section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                                <label class="label">Product</label>
+                                <label class="input">
+                                    <select class="cselect form-control cl" data-placeholder="Product" id="ClaimProducts" multiple="multiple" name="ClaimProducts" style="display: none;">
+                                        @foreach (var pro in Model.AvailableProducts)
+                                        {
+                                            //<option value="@pro.ID">@pro.Name</option>
+                                        }
+                                    </select>
+                                </label>
+                            </section>*@
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Status</label>
+                            <label class="input">
+                                <select class="form-control bui" id="AddClaimStatus" name="ClaimStatus">
+                                    <option selected="selected" value="Precautionary notification only">Precautionary notification only</option>
+                                    <option value="Withdrawn by insured">Withdrawn by insured</option>
+                                    <option value="Formal claim filed">Formal claim filed</option>
+                                    <option value="Information request to insured">Information request to insured</option>
+                                    <option value="Third party has made formal demand">Third party has made formal demand</option>
+                                    <option value="Solicitors instructed for claimant">Solicitors instructed for claimant</option>
+                                    <option value="Subrogated to insurer">Subrogated to insurer</option>
+                                    <option value="In discussions">In discussions</option>
+                                    <option value="In agreed alternative process">In agreed alternative process</option>
+                                    <option value="Proceedings issued">Proceedings issued</option>
+                                    <option value="Settled">Settled</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimStatus"></p>
+
+                        </section>
+
+                    </div>
+
+                    <!-- 2nd rows -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Claim Reference</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimReference" id="AddClaimReference" name="ClaimReference" placeholder="Claim Reference" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimReference"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Policy Reference</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimPolicyReference" id="AddClaimPolicyReference" name="ClaimPolicyReference" placeholder="Policy Reference" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimPolicyReference"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Policy Insurer Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsurerName" id="AddClaimInsurerName" name="ClaimInsurerName" placeholder="Policy Insurer Name" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimInsurerName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Policy Insured Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimInsuredName" id="AddClaimInsuredName" name="ClaimInsuredName" placeholder="Policy Insured Name" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimInsuredName"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Name of Claimant</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="Claimant" id="AddClaimant" name="Claimant" placeholder="Name of Claimant" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimant"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Approx Date of Loss</label>
+                            <label class="input">
+                                <i class="icon-append fa fa-calendar"></i>
+                                <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="AddClaimDateOfLoss" type="text">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimDateOfLoss"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Notification Date</label>
+                            <label class="input">
+                                <i class="icon-append fa fa-calendar"></i>
+                                <input name="ClaimNotifiedDate" placeholder="Notification Date" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="AddClaimNotifiedDate" type="text">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimNotifiedDate"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">$ Estimate of Liability</label>
+                            <label class="input">
+                                <i></i>
+                                <input class="form-control cl" data-type="TEXTBOX" data-name="ClaimEstimateInsuredLiability" id="AddClaimEstimateInsuredLiability" name="ClaimEstimateInsuredLiability" placeholder="$ Estimate of Liability" value="">
+                            </label>
+                            <p class="validationContainer" id="AddvalidateClaimEstimateInsuredLiability"></p>
+
+                        </section>
+
+                    </div>
+
+                    <!-- 3rd row -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Notes</label>
+                            <label class="textarea">
+                                <textarea class="form-control cl" data-type="TEXTAREA" data-name="ClaimNotes" id="AddClaimNotes" name="ClaimNotes" placeholder="Notes" value=""></textarea>
+                            </label>
+                        </section>
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            <button onclick="ValidateAddClaim('#clTabs3', '#tblClaim','clTabs1')" class="btn-sm AddupdateBoat" id="AddupdateBoat">Add</button>
+                            <button onclick="ClearBoats('#tblClaim3','tblClaim1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+
+
+                            @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddClaim('#clTabs-3', '#tblClaim','clTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
+
+                            @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-3','clTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
+                        
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="clTabs4" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script type="text/javascript">
+                                $(".ClaimRemoved").click(function () {
+						    $("#tblRemovedClaim").jqGrid({
+						        url: "/Services/GetClaims?informationId=@Model.AnswerSheetId&removed=true",
+						        datatype: "xml",
+						        mtype: "GET",
+						        colNames: ["","Claim Title", "Claim Description", "Claim Reference", "Name of Claimant"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetClaimRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedClaim\', \'#tblClaim\');" type="button"class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                    },
+                                    { name: "ClaimTitle", align: 'center', key: 'true' },
+                                    { name: "ClaimDescription", align: 'center' },
+                                    { name: "ClaimReference", align: 'center' },
+                                    { name: "Claimant", align: 'center' }
+
+								],
+						        autowidth: true,
+						        pager: "#pagerRemovedClaim",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+						        sortname: "ClaimTitle",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#tblRemovedClaim").jqGrid('navGrid',
+						    	'#pagerRemovedClaim',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                            </script>
+                            <table id="tblRemovedClaim"><tr><td></td></tr></table>
+                            <div id="pagerRemovedClaim"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+
+        </div>
+    </div>
+
+</div>

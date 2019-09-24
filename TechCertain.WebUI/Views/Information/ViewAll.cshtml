@@ -1,0 +1,137 @@
+﻿@model TechCertain.Web.UI.ViewModels.InformationViewAllViewModel
+
+<div id="content">
+    <div class="row">
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-pencil"></i> View All</h1>
+        </div>
+    </div>
+    <!-- widget grid -->
+    <section id="widget-grid">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-6">
+                <!-- Widget ID (each widget will need unique ID)-->
+                @if (Model != null)
+                {
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-my-information"
+                         data-widget-colorbutton="false"
+                         data-widget-editbutton="false"
+                         data-widget-togglebutton="false"
+                         data-widget-deletebutton="false"
+                         data-widget-custombutton="false"
+                         data-widget-sortable="false">
+                        <header>
+                            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                            <h2>Information Sheet Templates</h2>
+                        </header>
+                        <div>
+                            <!-- widget div-->
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <!-- This area used as drop downSS edit box -->
+                            </div>
+                            <!-- end widget edit box -->
+                            <!-- widget content -->
+                            <div class="widget-body widget-hide-overflow no-padding">
+                                <!-- content goes here -->
+                                <div class="smart-form">
+                                    <fieldset>
+                                        @{ foreach (var item in Model.InformationTemplates)
+                                        {
+                                        <div class="row">
+                                            <section class="col-lg-push-1 col-lg-9">
+                                                @item.Name
+                                            </section>
+                                            <section class="col-lg-2">
+                                            	<form method="post" action=@Url.FixedAction("EditInformation", "Information")>
+                                                    @Html.Hidden("id", item.Id)
+                                                    @Html.Bootstrap().SubmitButton().Name("Start").AppendIcon("fa fa-arrow-right").Class("btn btn-primary btn-xs")
+                                            	</form>
+                                            	@*
+                                                @using (Html.BeginForm("EditInformation", "Information", FormMethod.Post, new { id = item.Id }))
+                                                {
+                                                    @Html.Hidden("id", item.Id)
+                                                    @Html.Bootstrap().SubmitButton().Name("Start").AppendIcon("fa fa-arrow-right").Class("btn btn-primary btn-xs")
+
+                                                }*@
+                                        		@*<a href="~/Information/EditInformation/@(item.Id)" class="btn btn-primary btn-xs">Start <i class="fa fa-arrow-right"></i></a>*@
+
+                                                @* <a class="btn btn-primary btn-xs" href="@Url.Action("",) " Start <i class="fa fa-arrow-right"></i></a>*@
+                                            </section>
+                                        </div>
+                                        }
+                                        }
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <!-- end widget content -->
+                        </div>
+                        <!-- end widget div -->
+                    </div>
+                                            }
+                <!-- end widget -->
+            </article>
+            <!-- WIDGET END -->
+        </div>
+        <!-- Row End-->
+    </section>
+    <!-- Section END-->
+</div>
+
+@section pagespecific {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            // Accordian
+            var accordionIcons = {
+                header: "fa fa-circle-o",           // custom icon class
+                activeHeader: "fa fa-dot-circle-o"  // custom icon class
+            };
+
+            $("#accordion").accordion({
+                autoHeight: false,
+                heightStyle: "content",
+                collapsible: false,
+                animate: 300,
+                icons: accordionIcons,
+                header: "h4",
+                activate: function (event, ui) { }
+            });
+
+
+        })
+
+        $("#accordion").on("accordionactivate", function (event, ui) {
+
+            if (ui.oldPanel != null) {
+                alert("Saving");
+            }
+        });
+
+        function AddBusinessActivity(caller, dropDownId, tableId) {
+
+            var dropDownText = $(dropDownId + " option:selected").text();
+            var tBody = $(tableId).find('tbody:last');
+
+            var tableRow = $(tableId + " tr td").filter(function () {
+                return $(this).text() == dropDownText;
+            }).closest("tr");
+
+            if (tableRow != null && tableRow.length == 0)
+                tBody.append("<tr class = \"row\"><td class = \"col\" style=\"padding-top: 10px;\">" + dropDownText + "</td><td style=\"padding-top: 10px;\"><label class=\"input\"><input type = \"number\" /></label></td><td style=\"padding-top: 10px;\"> % </td></tr>");
+        };
+
+
+    </script>
+}
+
+
+
+
+
+
+
+

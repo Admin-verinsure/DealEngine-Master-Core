@@ -1,0 +1,487 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+@*@using TechCertain.Web.UI.Helpers.CustomHtml*@
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form buildtab" novalidate="novalidate">
+
+        @*@tabs.Tab("List All").Class("listall")
+            @tabs.Tab("Edit")
+            @tabs.Tab("Add")
+
+            @tabs.Tab("List Removed").Class("LandRemoved")*@
+
+        <div id="Landtabs">
+
+            <ul id="tab" class="nav nav-tabs">
+                <li class="nav nav-tabs active"> <a href="#buiTabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#buiTabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#buiTabs3"> Add </a> </li>
+                <li class="nav nav-tabs"> <a href="#buiTabs4" Class="LocRemoved"> List Removed </a> </li>
+
+            </ul>
+
+            <div id="buiTabs1" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                            <script type="text/javascript">
+
+                                $(window).load(function () {
+                                 //$('#getDetailsModal').modal('hide');
+
+							    $("#tblBuilding").jqGrid({
+							        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=false",
+							        datatype: "xml",
+							        mtype: "GET",
+                                    colNames: ["", "Storage Description", "Storage Type", "Street", "Suburb", "City", ""],
+                                    colModel: [
+                                        {
+                                            name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                return ('<button onclick="EditBuilding(\'' + cellvalue + '\', \'#tblBuilding\'); SetCurrentTab(\'buiTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                            }
+                                        },
+                                        { name: "BuildingName", align: 'center', key: 'true' },
+                                        { name: "BuildingCategory", align: 'center' },
+							            { name: "Street", align: 'center' },
+							            { name: "Suburb", align: 'center' },
+							            { name: "City", align: 'center' },
+							            { name: "update", align: 'center',width:60, search: false, formatter: function(cellvalue, options, rowobject)
+                                        {
+                                            return ('<button onclick="SetBuildingRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblBuilding\', \'#tblRemovedBuilding\');" type="button" class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>');
+							            }
+										}
+									],
+							        autowidth: true,
+							        pager: "#pagerBuilding",
+							        rowNum: 10,
+							        rowList: [10, 20, 30],
+							        sortname: "BuildingName",
+							        sortorder: "desc",
+							        viewrecords: true,
+							        gridview: true,
+							        autoencode: true
+							    });
+							    $("#tblBuilding").jqGrid('navGrid',
+							    	'#pagerBuilding',
+							    	{edit: false, add: false, del: false},
+							    	//options
+							    	{height:280,reloadAfterSubmit:false},
+							    	// edit options
+							    	{height:280,reloadAfterSubmit:false},
+							    	// add options
+							    	{reloadAfterSubmit:false},
+							    	// del options
+						    		{sopt:['eq','bw','cn']}
+							    	// search options
+							    );
+							});
+                            </script>
+                            <table id="tblBuilding"><tr><td></td></tr></table>
+                            <div id="pagerBuilding"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="buiTabs2" class="tab-content">
+                <fieldset id="fieldset">
+                    <input id="BuildingId" name="BuildingId" type="hidden" />
+                    <!-- 1st rows -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label class="label cgmodalLabel required">Storage Type</label>
+                            <label class="input">
+                                <select class="form-control bui" id="BuildingCategory" name="BuildingCategory">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Lockup">Lockup At Address</option>
+                                    <option value="OpenPark">Open Park At Address</option>
+                                    <option value="On Road">On Road</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateBuildingCategory"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label class="label cgmodalLabel required">Storage Description</label>
+                            <label class="input" style="width:100%;">
+                                <textarea rows="4" data-name="BuildingName" id="BuildingName" name="BuildingName" placeholder="Storage Description" value="" style="width:100%;"></textarea>
+                            </label>
+                            <p class="validationContainer" id="validateBuildingName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label class="label required">Location</label>
+                            <label class="input">
+                                <select onchange="addLandLoc()" class="form-control bui" id="BuildingLocation" name="BuildingLocation">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    @foreach (var clloc in Model.Locations)
+                                    {
+                                        <option value="@clloc.LocationId">@string.Join(", ", clloc.Street, clloc.Suburb, clloc.City)</option>
+                                    }
+                                    <option value="add">Add Location</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateBuildingLocation"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+
+                            <button onclick="validateLocation('#buiTabs2', '#tblBuilding','buiTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats('#buiTabs2','buiTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
+
+                            @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateBuilding('#buiTabs-2', '#tblBuilding','buiTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
+                                @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#buiTabs-2','buiTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="buiTabs3" class="tab-content">
+                <fieldset id="fieldset">
+                    <input id="BuildingId" name="BuildingId" type="hidden" />
+                    <!-- 1st rows -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label class="label cgmodalLabel required">Storage Type</label>
+                            <label class="input">
+                                <select class="form-control bui" id="AddBuildingCategory" name="BuildingCategory">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Lockup">Lockup At Address</option>
+                                    <option value="OpenPark">Open Park At Address</option>
+                                    <option value="On Road">On Road</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddBuildingCategory"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label class="label cgmodalLabel required">Storage Description</label>
+                            <label class="input" style="width:100%;">
+                                <textarea rows="4" data-name="BuildingName" id="AddBuildingName" name="BuildingName" placeholder="Storage Description" value="" style="width:100%;"></textarea>
+                            </label>
+                            <p class="validationContainer" id="validateAddBuildingName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label class="label required">Location</label>
+                            <label class="input">
+                                <select onchange="AddaddLandLoc()" class="form-control bui" id="AddBuildingLocation" name="BuildingLocation">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    @foreach (var clloc in Model.Locations)
+                                    {
+                                        <option value="@clloc.LocationId">@string.Join(", ", clloc.Street, clloc.Suburb, clloc.City)</option>
+                                    }
+                                    <option value="add">Add Location</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddBuildingLocation"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+
+                            <button onclick="validateAddLocation('#buiTabs3', '#tblBuilding','buiTabs1')" class="btn-sm AddupdateBoat" id="AddupdateBoat">Add</button>
+                            <button onclick="ClearBoats('#buiTabs3','buiTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+
+                            @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddBuilding('#buiTabs-3', '#tblBuilding' , 'buiTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
+                                @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#buiTabs-3','buiTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="buiTabs4" class="tab-content">
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script type="text/javascript">
+                                 $(".LandRemoved").click(function () {
+						    $("#tblRemovedBuilding").jqGrid({
+						        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=true",
+						        datatype: "xml",
+						        mtype: "GET",
+                                colNames: ["", "Storage Description", "Storage Type", "Street", "Suburb", "City"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetBuildingRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBuilding\', \'#tblBuilding\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                    },
+                                    { name: "BuildingName", align: 'center', key: 'true' },
+                                    { name: "BuildingCategory", align: 'center' },
+                                    { name: "Street", align: 'center' },
+                                    { name: "Suburb", align: 'center' },
+                                    { name: "City", align: 'center' }
+								],
+						        autowidth: true,
+						        pager: "#pagerRemovedBuilding",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+						        sortname: "BuildingName",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#tblRemovedBuilding").jqGrid('navGrid',
+						    	'#pagerRemovedBuilding',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                            </script>
+                            <table id="tblRemovedBuilding"><tr><td></td></tr></table>
+                            <div id="pagerRemovedBuilding"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+    function EditBuilding(buildingId, tableId) {
+        debugger;
+    var _sheetId = $('#AnswerSheetId').val();
+    $('#getDetailsModal').modal('show');
+    $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.Action("GetBuilding", "Services")',
+        type: "Post",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({ buildingId: buildingId, answerSheetId: _sheetId })
+    })
+        .done(function (data) {
+             $('#getDetailsModal').modal('hide');
+
+	    $('#BuildingId').val(data.BuildingId);
+	    $('#BuildingName').val(data.BuildingName);
+	    $('#OwnerOrTenant').val(data.OwnerOrTenant);
+	    $('#BuildingLastValuationDate').val(data.BuildingLastValuationDate);
+	    $('#BuildingRVValue').val(data.BuildingRVValue);
+	    $('#BuildingRIVValue').val(data.BuildingRIVValue);
+	    $('#BuildingDValue').val(data.BuildingDValue);
+	    $('#BuildingIVValue').val(data.BuildingIVValue);
+	    $('#BuildingIIVValue').val(data.BuildingIIVValue);
+	    $('#ConstructionLimit').val(data.ConstructionLimit);
+	    $('#CapitalAdditions').val(data.CapitalAdditions);
+	    $('#CreditConstruction').val(data.CreditConstruction);
+	    $('#CreditCapAdds').val(data.CreditCapAdds);
+	    $('#DomesticUnits').val(data.DomesticUnits);
+	    $('#BuildingFRVValue').val(data.BuildingFRVValue);
+	    $('#BuildingFRIVValue').val(data.BuildingFRIVValue);
+	    $('#ConstructionType').val(data.ConstructionType);
+	    $('#ConstructionYear').val(data.ConstructionYear);
+	    $('#ResidentialProportion').val(data.ResidentialProportion);
+	    $('#NumOfUnits').val(data.NumOfUnits);
+	    $('#NumberOfStoreys').val(data.NumberOfStoreys);
+	    $('#PercentOfInsuSandwichPanels').val(data.PercentOfInsuSandwichPanels);
+	    $('#HasSprinklers').val(data.HasSprinklers);
+	    $('#NZS4541Compliant').val(data.NZS4541Compliant);
+	    $('#BuildingLocation').val(data.BuildingLocation);
+	    $('#BuildingNotes').val(data.BuildingNotes);
+	    $('#HasHoseReels').val(data.HasHoseReels);
+	    $('#HasFireExtinguishers').val(data.HasFireExtinguishers);
+	    $('#IsTownWaterSupplied').val(data.IsTownWaterSupplied);
+	    $('#IsHalfOrMoreUnOccupied').val(data.IsHalfOrMoreUnOccupied);
+	    $('#HasAlarm').val(data.HasAlarm);
+	    $('#HasSecurityGuard').val(data.HasSecurityGuard);
+	    $('#HasFlammableLiquidsOrGases').val(data.HasFlammableLiquidsOrGases);
+	    $('#FlammableLiquidsOrGasesDesc').val(data.FlammableLiquidsOrGasesDesc);
+	    $('#HasNBSExceed').val(data.HasNBSExceed);
+	    $('#HasSafe').val(data.HasSafe);
+	    $('#HasSafeAlarm').val(data.HasSafeAlarm);
+	    $('#HasSafeBolted').val(data.HasSafeBolted);
+        $('#BuildingCategory').val(data.BuildingCategory);
+	    UpdateChosen();
+    });
+};
+
+
+    function ValidateBuilding(tabId, tableId, currenttab) {
+        var buildingCategory = $('#BuildingCategory').val();
+        var buildingName = $('#BuildingName').val();
+        var buildingLocation = $('#BuildingLocation').val();
+        var result = true;
+        if (buildingCategory == "") {
+            $('#validateBuildingCategory').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateBuildingCategory').html("<font></font>");
+        }
+        if (buildingName == "") {
+            $('#validateBuildingName').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateBuildingName').html("<font></font>");
+        }
+        if (buildingLocation == "") {
+            $('#validateBuildingLocation').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateBuildingLocation').html("<font></font>");
+        }
+        if (result) {
+            debugger;
+            AddBuilding(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return result;
+        }
+    };
+
+    function ValidateAddBuilding(tabId, tableId, currenttab) {
+        var buildingCategory = $('#AddBuildingCategory').val();
+        var buildingName = $('#AddBuildingName').val();
+        var buildingLocation = $('#AddBuildingLocation').val();
+        var result = true;
+        debugger;
+        if (buildingCategory == "") {
+            $('#validateAddBuildingCategory').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddBuildingCategory').html("<font></font>");
+        }
+        if (buildingName == "") {
+            $('#validateAddBuildingName').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddBuildingName').html("<font></font>");
+        }
+        if (buildingLocation == "") {
+            $('#validateAddBuildingLocation').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddBuildingLocation').html("<font></font>");
+        }
+        if (result) {
+            AddBuilding(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return result;
+        }
+    };
+
+function AddBuilding(tabId, tableId) {
+    var informationId = $('#AnswerSheetId').serialize();
+    var loc = $('#SelectedLocation').serialize();
+    $('#getLandLocModal').modal('show');
+    var x = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+    console.log(x);
+    $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.Action("AddBuilding", "Services")',
+        type: "POST",
+        data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
+    })
+	.done(function (data) {
+	    $.smallBox({
+	        title: "Building named (" + data.BuildingName + ") has been saved",
+	        color: "#5F895F",
+	        iconSmall: "fa fa-check bounce animated",
+	        timeout: 4000
+	    });
+	    // reload grid
+	    $(tableId).trigger('reloadGrid');
+
+        $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+        $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+            $('#getLandLocModal').modal('hide');
+
+	    $('#Building').val("");
+        $(tabId + " :input").val("");
+         $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+        $(tabId + ', #InterestedParties').val('').trigger('chosen:updated');
+	})
+        .fail(function (jqXHR, textStatus) {
+            $('#getLandLocModal').modal('hide');
+
+	    alert("There was an error while trying to save the Building.");
+    });
+};
+
+
+    @*function AddAddBuilding(tabId, tableId) {
+    var informationId = $('#AnswerSheetId').serialize();
+    var loc = $('#AddSelectedLocation').serialize();
+    var x = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+    console.log(x);
+    $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.FixedAction("AddBuilding", "Services")',
+        type: "POST",
+        data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
+    })
+	.done(function (data) {
+	    $.smallBox({
+	        title: "Building named (" + data.BuildingName + ") has been saved",
+	        color: "#5F895F",
+	        iconSmall: "fa fa-check bounce animated",
+	        timeout: 4000
+	    });
+	    // reload grid
+	    $(tableId).trigger('reloadGrid');
+        $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+        $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+	    $('#Building').val("");
+	    $(tabId + " :input").val("");
+	    $(tabId + ', #InterestedParties').val('').trigger('chosen:updated');
+	})
+	.fail(function (jqXHR, textStatus) {
+	    alert("There was an error while trying to save the Building.");
+	});
+};*@
+
+    function SetBuildingRemovedStatus(buildingId, status, sourceTable, destTable) {
+    $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.Action("SetBuildingRemovedStatus", "Services")',
+        type: "Post",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({ buildingId: buildingId, status: status })
+    })
+    .done(function (data) {
+        if (data === true) {
+            $(sourceTable).trigger('reloadGrid');
+            $(destTable).trigger('reloadGrid');
+            $.smallBox({
+                title: "Building status has been updated",
+                color: "#5F895F",
+                iconSmall: "fa fa-check bounce animated",
+                timeout: 4000
+            });
+        }
+    });
+};
+
+</script>

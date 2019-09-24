@@ -121,14 +121,14 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
                 //    throw new Exception("");
                 //}
                 
-                using (var file = new FileStream(@"C:\tmp\schema-update.sql",
-                                        FileMode.Create,
-                                            FileAccess.ReadWrite))
-                using (var sw = new StreamWriter(file))
-                {
-                    new SchemaUpdate(configuration)
-                        .Execute(sw.Write, true);
-                }
+                //using (var file = new FileStream(@"C:\tmp\schema-update.sql",
+                //                        FileMode.Create,
+                //                            FileAccess.ReadWrite))
+                //using (var sw = new StreamWriter(file))
+                //{
+                //    new SchemaUpdate(configuration)
+                //        .Execute(sw.Write, true);
+                //}
 
         //        using (var file = new FileStream(@"C:\tmp\schema2-update.sql",
         //FileMode.Create,

@@ -1,0 +1,533 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+@using TechCertain.WebUI.Helpers.CustomHtml
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+        @*@using (var tabs = Html.Bootstrap().Begin(new Tabs("wlocTabs")))*@
+        {
+        @*@tabs.Tab("List All")
+            @tabs.Tab("Edit")
+            @tabs.Tab("Add")
+            @tabs.Tab("List Removed")
+            //@tabs.Tab("Search")*@
+        using (tabs.BeginPanel())
+        {
+        <fieldset>
+            <div class="row">
+                <section class="col col-xs-12">
+                    <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                    <script type="text/javascript">
+							$(document).ready(function () {
+                                $("#tblWaterLocation").jqGrid({
+							        url: "/Services/GetWaterLocations?informationId=@Model.AnswerSheetId&removed=false",
+							        datatype: "xml",
+							        mtype: "GET",
+                                    colNames: ["", "Your Short Name", "Marina Location", "Moored Type", ""],
+                                    colModel: [
+                                        {
+                                            name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
+                                                return ('<button onclick="EditWaterLocation(\'' + cellvalue + '\', \'#tblWaterLocation\'); SetCurrentTab(\'wlocTabs-2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                            }
+                                        },
+                                        { name: "WaterLocationName", align: 'center', key: 'true' },
+                                        { name: "Marina Location", align: 'center' },
+                                        { name: "Moored Type", align: 'center' },
+							            { name: "update", align: 'center', search: false, formatter: function(cellvalue, options, rowobject)
+                                        {
+                                            return ('<button onclick="SetWaterLocationRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblWaterLocation\', \'#tblRemovedWaterLocation\');" type="button" class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>');
+							            }
+										}
+									],
+							        autowidth: true,
+							        pager: "#pagerWaterLocation",
+							        rowNum: 10,
+							        rowList: [10, 20, 30],
+                                    sortname: "WaterLocationName",
+							        sortorder: "desc",
+							        viewrecords: true,
+							        gridview: true,
+							        autoencode: true
+							    });
+							    $("#tblWaterLocation").jqGrid('navGrid',
+							    	'#pagerWaterLocation',
+							    	{edit: false, add: false, del: false},
+							    	//options
+							    	{height:280,reloadAfterSubmit:false},
+							    	// edit options
+							    	{height:280,reloadAfterSubmit:false},
+							    	// add options
+							    	{reloadAfterSubmit:false},
+							    	// del options
+						    		{sopt:['eq','bw','cn']}
+							    	// search options
+							    );
+							});
+                    </script>
+                    <table id="tblWaterLocation"><tr><td></td></tr></table>
+                    <div id="pagerWaterLocation"></div>
+                </section>
+            </div>
+        </fieldset>
+        }
+        //EditPanel
+        using (tabs.BeginPanel())
+        {
+        <fieldset id="fieldset">
+            <input id="WaterLocationId" name="WaterLocationId" type="hidden" />
+            <div class="row">
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 " id="MarinaLocSec">
+                    <label class="label required required">Marina Location</label>
+                    <label class="input form-group">
+                        <select onchange="MarinaLocSelected()" class="form-control b" id="WaterLocationMarinaLocation" name="WaterLocationMarinaLocation" required>
+                            <option selected="selected" value="">-- Select --</option>
+                            @foreach (var bwloc in Model.MarinaLocations)
+                            {
+                                <option value="@bwloc.ID">@string.Join(", ", bwloc.OrganisationName)</option>
+                            }
+                            <option value="add">Add Marina Location</option>
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateMarinaLocSec"></p>
+
+                </section>
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 " id="MarinaLocSec">
+                    <label class="label required required">Organisational Unit</label>
+                    <label class="input form-group">
+                        <select onchange="OUSelected()" class="form-control b" id="OrgUnit" name="OrganisationalUnit" required>
+                            <option selected="selected" value="">-- Select --</option>
+
+                            @*<option value="add">Add Marina Location</option>*@
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateMarinaLocSec"></p>
+
+                </section>
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <label class="label required">Location</label>
+                    <label class="input">
+                        <select class="form-control rmv" id="WaterLocationLocation" name="WaterLocationLocation" required>
+                            <option selected="selected" value="">-- Select --</option>
+                            @*@foreach (var wloc in Model.Locations)
+                                {
+                                    <option value="@wloc.LocationId">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                }*@
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateWaterLocationLocation"></p>
+
+                </section>
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <label class="label required">Your Short Name</label>
+                    <label class="input">
+                        <i></i>
+                        <input data-type="TEXTBOX" data-name="WaterLocationName" id="WaterLocationName" name="WaterLocationName" placeholder="Water Location Name" value="" required>
+                    </label>
+                    <p class="validationContainer" id="validateWaterLocationName"></p>
+
+                </section>
+
+
+
+
+
+                <section class="col col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    <label class="label cgmodalLabel required">Moored Type</label>
+                    <label class="input w100">
+                        <select class="form-control b" data-name="WaterLocationMooringType" id="MooringTypeModal" name="WaterLocationMooringType" required>
+                            <option selected="selected" value="">-- Select --</option>
+                            <option value="Pile">Pile</option>
+                            <option id="MooredTypeMarina" value="Marina">Marina</option>
+                            <option value="Swing">Swing</option>
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateMooringType"></p>
+
+                </section>
+
+            </div>
+
+            <div class="row" id="update">
+                <section class="col col-xs-12">
+                    @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateWaterLocation('#wlocTabs-2', '#tblWaterLocation','wlocTabs-1');" }).Class("btn-sm").Id("updateBoat")
+
+                        @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#wlocTabs-2','wlocTabs-1');" }).Class("btn-sm").Id("ClearBoat")*@
+
+                </section>
+            </div>
+        </fieldset>
+        }
+
+        //AddPanel
+
+        using (tabs.BeginPanel())
+        {
+        <fieldset id="fieldset">
+            <input id="WaterLocationId" name="WaterLocationId" type="hidden" />
+            <div class="row">
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 " id="AddMarinaLocSec">
+                    <label class="label required required">Marina Location</label>
+                    <label class="input form-group">
+                        <select onchange="AddMarinaLocSelected()" class="form-control b" id="AddWaterLocationMarinaLocation" name="WaterLocationMarinaLocation" required>
+                            <option selected="selected" value="">-- Select --</option>
+                            @foreach (var bwloc in Model.MarinaLocations)
+                            {
+                                <option value="@bwloc.ID">@string.Join(", ", bwloc.OrganisationName)</option>
+                            }
+                            <option value="add">Add Marina Location</option>
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateAddMarinaLocSec"></p>
+
+                </section>
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 " id="MarinaLocSec">
+                    <label class="label required required">Organisational Unit</label>
+                    <label class="input form-group">
+                        <select onchange="AddOUSelected()" class="form-control b" id="AddOrgUnit" name="OrganisationalUnit" required>
+                            <option selected="selected" value="">-- Select --</option>
+
+                            <option value="add">Add Marina Location</option>
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateMarinaLocSec"></p>
+
+                </section>
+
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <label class="label required">Location</label>
+                    <label class="input">
+                        <select class="form-control rmv" id="AddWaterLocationLocation" name="WaterLocationLocation" required>
+                            <option selected="selected" value="">-- Select --</option>
+                            @*@foreach (var wloc in Model.Locations)
+                                {
+                                    <option value="@wloc.LocationId">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                }*@
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateAddWaterLocationLocation"></p>
+
+                </section>
+
+                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <label class="label required">Your Short Name</label>
+                    <label class="input">
+                        <i></i>
+                        <input data-type="TEXTBOX" data-name="WaterLocationName" id="AddWaterLocationName" name="WaterLocationName" placeholder="Water Location Name" value="" required>
+                    </label>
+                    <p class="validationContainer" id="validateAddWaterLocationName"></p>
+
+                </section>
+
+
+
+
+
+                <section class="col col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    <label class="label cgmodalLabel required">Moored Type</label>
+                    <label class="input w100">
+                        <select class="form-control b" data-name="WaterLocationMooringType" id="AddMooringTypeModal" name="WaterLocationMooringType" required>
+                            <option selected="selected" value="">-- Select --</option>
+                            <option value="Pile">Pile</option>
+                            <option id="MooredTypeMarina" value="Marina">Marina</option>
+                            <option value="Swing">Swing</option>
+                        </select>
+                    </label>
+                    <p class="validationContainer" id="validateAddMooringTypeModal"></p>
+
+                </section>
+
+            </div>
+
+            <div class="row" id="update">
+                <section class="col col-xs-12">
+                    @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddWaterLocation('#wlocTabs-3', '#tblWaterLocation','wlocTabs-1');" }).Class("btn-sm").Id("AddupdateBoat")
+
+                        @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#wlocTabs-3','wlocTabs-1');" }).Class("btn-sm").Id("AddClearBoat")*@
+
+                </section>
+            </div>
+        </fieldset>
+        }
+
+        using (tabs.BeginPanel())
+        {
+        <fieldset>
+            <div class="row">
+                <section class="col col-xs-12">
+                    <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                    <script type="text/javascript">
+						$(document).ready(function () {
+						    $("#tblRemovedWaterLocation").jqGrid({
+						        url: "/Services/GetWaterLocations?informationId=@Model.AnswerSheetId&removed=true",
+						        datatype: "xml",
+						        mtype: "GET",
+                                colNames: ["","Water Location Name", "Latitude", "Longitude"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetWaterLocationRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedWaterLocation\', \'#tblWaterLocation\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                    },
+                                    { name: "WaterLocationName", align: 'center', key: 'true' },
+                                    { name: "Latitude", align: 'center' },
+                                    { name: "Longitude", align: 'center' }
+
+								],
+						        autowidth: true,
+						        pager: "#pagerRemovedWaterLocation",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+                                sortname: "WaterLocationName",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#tblRemovedWaterLocation").jqGrid('navGrid',
+						    	'#pagerRemovedWaterLocation',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                    </script>
+                    <table id="tblRemovedWaterLocation"><tr><td></td></tr></table>
+                    <div id="pagerRemovedWaterLocation"></div>
+                </section>
+            </div>
+        </fieldset>
+        }
+
+        /*using (tabs.BeginPanel())
+        {
+        <fieldset>
+            <div class="row">
+                <section class="col col-6">
+                    <label class="label">Enter Water Location Name:</label>
+                    <label class="input">
+                        <input autocomplete="off" class="form-control" data-provide="typeahead" data-url="/Services/GetWaterLocationName" id="WaterLocation" name="WaterLocation" type="text" placeholder="WaterLocationName" value="">
+                    </label>
+                    @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "GetWaterLocationDetails('#WaterLocation'); SetCurrentTab('wlocTabs-2');" }).Class("btn-sm")*@
+                </section>
+            </div>
+        </fieldset>
+        }*/
+        }
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    function EditWaterLocation(waterLocationId, tableId) {
+        var _sheetId = $('#AnswerSheetId').val();
+        $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("GetWaterLocation", "Services")',
+            type: "Post",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ waterLocationId: waterLocationId, answerSheetId: _sheetId })
+        })
+            .done(function (data) {
+            $('#WaterLocationId').val(data.WaterLocationId);
+            $('#WaterLocationName').val(data.WaterLocationName);
+            $('#WaterLocationLatitude').val(data.WaterLocationLatitude);
+            $('#WaterLocationLongitude').val(data.WaterLocationLongitude);
+            $('#WaterLocationLocation').val(data.WaterLocationLocation);
+            $('#WaterLocationMarinaLocation').val(data.WaterLocationMarinaLocation);
+            $('#MooringTypeModal').val(data.WaterLocationMooringType);
+            $('#OrgUnit').val(data.OrganisationalUnit);
+            $("#OrgUnit").empty();
+            $("#WaterLocationLocation").empty();
+
+                $.each(data.LOrganisationalUnits, function (i, item) {
+                    debugger;
+                    if (item.OrganisationalUnitId == data.OrganisationalUnit) {
+                         $('#OrgUnit').append("<option selected value=\"" + item.OrganisationalUnitId + "\">" + item.Name + "</option>")
+                        $('#OrgUnit').trigger('chosen:updated');
+                    } else {
+                        $('#OrgUnit').append($('<option>', { value: item.OrganisationalUnitId, text: item.Name }))
+                    }
+
+                });
+
+                 $.each(data.lLocation, function (i, item) {
+                    if (item.OrganisationalUnitId == data.OrganisationalUnit) {
+                         $('#WaterLocationLocation').append("<option selected value=\"" + item.LocationId + "\">" + item.Street + "</option>")
+                        $('#WaterLocationLocation').trigger('chosen:updated');
+                    } else {
+                        $('#WaterLocationLocation').append($('<option>', { value: item.LocationId, text: item.Street }))
+                    }
+
+                });
+
+            UpdateChosen();
+            }).fail(function (jqXHR, textStatus) {
+                debugger;
+            alert("There was an error while trying to save the Water Location.");
+        });
+    };
+
+    function SetWaterLocationRemovedStatus(waterLocationId, status, sourceTable, destTable) {
+        $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("SetWaterLocationRemovedStatus", "Services")',
+            type: "Post",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ waterLocationId: waterLocationId, status: status })
+        })
+        .done(function (data) {
+            if (data === true) {
+                $(sourceTable).trigger('reloadGrid');
+                $(destTable).trigger('reloadGrid');
+                $.smallBox({
+                    title: "Water Location status has been updated",
+                    color: "#5F895F",
+                    iconSmall: "fa fa-check bounce animated",
+                    timeout: 4000
+                });
+            }
+        });
+    };
+
+
+    function ValidateWaterLocation(tabId, tableId, currenttab) {
+
+        var validity = true;
+        var waterLocationLocation = $('#WaterLocationLocation').val();
+        var waterLocationName = $('#WaterLocationName').val();
+        var waterLocationMarinaLocation = $('#WaterLocationMarinaLocation').val();
+        var mooringTypeModal = $('#MooringTypeModal').val();
+
+        if (waterLocationLocation == "") {
+            $('#validateWaterLocationLocation').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateWaterLocationLocation').html("<i></i>");
+        }
+        if (waterLocationName == "") {
+            $('#validateWaterLocationName').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateWaterLocationName').html("<i></i>");
+        }
+        if (waterLocationMarinaLocation == "") {
+            $('#validateMarinaLocSec').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateMarinaLocSec').html("<i></i>");
+        }
+        if (mooringTypeModal == "") {
+            $('#validateMooringType').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateMooringType').html("<i></i>");
+        }
+
+        if (validity) {
+            AddWaterLocation(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return validity;
+        }
+
+    }
+
+    function ValidateAddWaterLocation(tabId, tableId, currenttab) {
+        var validity = true;
+        var waterLocationLocation = $('#AddWaterLocationLocation').val();
+        var waterLocationName = $('#AddWaterLocationName').val();
+        var waterLocationMarinaLocation = $('#AddWaterLocationMarinaLocation').val();
+        var mooringTypeModal = $('#AddMooringTypeModal').val();
+
+        if (waterLocationLocation == "") {
+            $('#validateAddWaterLocationLocation').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateAddWaterLocationLocation').html("<i></i>");
+        }
+        if (waterLocationName == "") {
+            $('#validateAddWaterLocationName').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateAddWaterLocationName').html("<i></i>");
+        }
+        if (waterLocationMarinaLocation == "") {
+            $('#validateAddMarinaLocSec').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateAddMarinaLocSec').html("<i></i>");
+        }
+        if (mooringTypeModal == "") {
+            $('#validateAddMooringTypeModal').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#validateAddMooringTypeModal').html("<i></i>");
+        }
+        if (validity) {
+            AddWaterLocation(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return validity;
+        }
+    }
+
+    function AddWaterLocation(tabId, tableId) {
+        // NEED TO ADD MOORED TYPE HERE
+        var informationId = $('#AnswerSheetId').serialize();
+        var wloc = $('#SelectedLocation').serialize();
+        $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("AddWaterLocation", "Services")',
+            type: "POST",
+            data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
+        })
+        .done(function (data) {
+            $.smallBox({
+                title: "Water Location has been saved",
+                color: "#5F895F",
+                iconSmall: "fa fa-check bounce animated",
+                timeout: 4000
+            });
+            var waterlocationaddress = data.WaterLocationName;
+            $('#BoatWaterLocation.b').append($('<option>', { value: data.WaterLocationId, text: waterlocationaddress }));
+            $(tableId).trigger('reloadGrid');
+            $('#AddBoatWaterLocation.b').append($('<option>', { value: data.WaterLocationId, text: data.WaterLocationName }));
+            $('#WaterLocation').val("");
+            $(tabId + " :input").val("");
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("There was an error while trying to save the Water Location.");
+        });
+    };
+
+
+</script>

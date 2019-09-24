@@ -1,0 +1,200 @@
+﻿@model TechCertain.WebUI.Models.Programme.Information
+
+<div class="row">
+    <article class="col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 sortable-grid ui-sortable">
+
+        <div role="contentinfo">
+            <div class="widget-body">
+                <div class="row">
+
+                    <div class="col col-12">
+                        <div id="accordion">
+                            <!-- NEW WIDGET START -->
+                            <!-- Widget ID (each widget will need unique ID)-->
+                            <div id="wid-id-2" class="padding-10 jarviswidget jarviswidget-color-blue jarviswidget-sortable">
+
+                                <!-- widget div-->
+                                <div>
+
+                                    <h3>
+                                        <Strong>Details</Strong>
+                                        -Complete Information
+
+                                    </h3>
+
+                                    @*<div id="later" class="hidden">
+            @foreach (var Section in Model.Sections.OrderBy(s => s.Position).Where(s => s.Position > 5))
+            {
+                <h4 style="background-color:#00A8C8; color:white" id="@Section.Name">@Section.Name</h4>
+                if (!string.IsNullOrWhiteSpace(Section.CustomView))
+                {
+                    @Html.Partial("PrefabSections/" + Section.CustomView, Model)
+
+                }
+            }
+        </div>*@
+                                    
+                                    @foreach (var item in Model.informationitem)
+                                    {
+
+                                        <h4 style="background-color:#00A8C8; color:white" id="@item.Name" onclick="CreateSection('@item.Id');">@item.Name</h4>
+
+                                        @*<button class="btn btn-primary text-align-left" style="background-color:#00A8C8; color:white ;height:35px;width:800px;" onclick="CreateSection('@item.Id');">@item.Name</button>*@
+                                        <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+                                            <fieldset id="fieldset">
+                                                <form data-toggle="validator" role="form" id="boatForm" class="needs-validation">
+                                                    <input id="BoatId" class="b" name="BoatId" type="hidden">
+                                                    <input id="openModal" class="b" name="openModal" type="hidden">
+                                                    <!-- 1st group -->
+
+
+                                                    <div class="row ">
+
+                                                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                            <div id="@item.Id">
+
+                                                            </div>
+
+                                                        </section>
+
+                                                    </div>
+
+                                                </form>
+
+
+                                            </fieldset>
+
+                                        </div>
+
+
+
+                                    }
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+</div>
+<!-- END MAIN CONTENT -->
+
+@section pagespecific {
+    <script src="/Scripts/datatables"></script>
+
+    <script type="text/javascript">
+
+
+    function CreateSection(information) {
+        debugger;
+
+         $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.Action("SectionBuilder", "Information")',
+        type: "Post",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({ SectionId: information})
+    })
+             .done(function (data) {
+
+                 for (var i = 0; i < data.length; i++) {
+                     debugger;
+                  var element1 = document.getElementById(data[i].Id);
+                  var childcount = document.getElementById(data[i].Id).childElementCount;
+
+                var section = document.createElement("Section");
+                     section.setAttribute("class", "col col-xs-12 col-sm-6 col-md-6 col-lg-6");
+                     if (data[i].Type == "DROPDOWNLIST" && childcount < data.length) {
+                    var label = document.createElement("label");
+                    var br = document.createElement("br");
+                    var labelname = data[i].Label;
+                    label.setAttribute("value", labelname);
+                    label.innerHTML = labelname;
+                    var op = data[i].option;
+                    var input = document.createElement("select");
+                    input.setAttribute('type', 'DROPDOWN');
+                    input.setAttribute('name', 'DROPDOWN');
+                    input.setAttribute('id', data[i].ControlId);
+                    section.appendChild(label);
+                    section.appendChild(br);
+                    section.appendChild(input);
+                    fncCreateSelectOption(input, op);
+                    element1.appendChild(section);
+
+                }else if (data[i].Type == "TEXTBOX" && childcount < data.length) {
+                    debugger;
+
+                    var label1 = document.createElement("label");
+                    var br = document.createElement("br");
+                    var labelname = data[i].Label;
+                    label1.setAttribute("value", labelname);
+                    label1.innerHTML = labelname;
+                    var input = document.createElement("input");
+                    input.setAttribute('type', 'text');
+                    input.setAttribute('name', 'TEXT');
+                    input.setAttribute('id', data[i].ControlId);
+                    section.appendChild(label1);
+                    section.appendChild(br);
+                    section.appendChild(input);
+                    element1.appendChild(section);
+                }
+
+                   function fncCreateSelectOption(ele, list) {
+                        debugger;
+                       var objSelect = ele;
+
+                      for (var i = 0; i < list.length; i++) {
+                        var split = list[i].Text.split("\n");
+                        for (var j = 0; j < split.length; j++) {
+                            var Item = new Option(split[j], split[j]);
+                            objSelect.options[objSelect.length] = Item;
+                        }
+
+                      }
+                   }
+            }
+             })
+             .fail(function (jqXHR, textStatus, errorThrown) {
+	                  alert("There was an error while trying to save the Claim.");
+	          });
+
+    };
+
+        $(document).ready(function () {
+            $('#tableProgrammeItems').DataTable({
+                "sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+                    "t" +
+                    "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+                "autoWidth": true
+            })
+        });
+
+
+    var accordionIcons = {
+    header: "fa fa-circle-o",           // custom icon class
+    activeHeader: "fa fa-dot-circle-o"  // custom icon class
+    };
+
+    $("#accordion").accordion({
+    autoHeight: false,
+    heightStyle: "content",
+    collapsible: false,
+    animate: 300,
+    icons: accordionIcons,
+    header: "h4",
+    activate: function (event, ui) { }
+    });
+
+    </script>
+
+
+}
+

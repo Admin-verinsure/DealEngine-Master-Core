@@ -1,0 +1,31 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+        <fieldset>
+            <div class="row">
+                <section class="col col-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Status</th>
+                                <th />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model.AvailableProducts)
+                            {
+                                <tr>
+                                    <td>@product.Name</td>
+                                    <td>@product.Status</td>
+                                    <td><a class="btn btn-primary btn-xs" href="@product.RedirectLink"><i class="fa fa-arrow-right"></i> Go </a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </fieldset>
+    </div>
+</div>
