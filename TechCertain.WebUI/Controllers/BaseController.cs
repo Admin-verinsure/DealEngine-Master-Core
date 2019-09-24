@@ -163,9 +163,9 @@ namespace TechCertain.WebUI.Controllers
 
 		protected ActionResult Xml (XDocument document)
 		{
-            throw new Exception("This method will need to be re-written");
-            //return new XmlActionResult(document);
-		}
+            //throw new Exception("This method will need to be re-written");
+            return new XmlActionResult(document);
+        }
 
 		protected string LocalizeTime (DateTime dateTime)
 		{

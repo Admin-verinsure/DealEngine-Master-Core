@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TechCertain.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class InformationController : BaseController
     {
 
