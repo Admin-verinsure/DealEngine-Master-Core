@@ -5,6 +5,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using System.Collections.Specialized;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.Services.Impl
 {
@@ -65,16 +66,16 @@ namespace TechCertain.Services.Impl
             _customerInformationRepository.Add(sheet);
         }
 
-        public void SaveAnswersFor(ClientInformationSheet sheet, NameValueCollection collection)
+        public void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
         {
             if (sheet == null)
                 throw new ArgumentNullException(nameof(sheet));
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            foreach (var key in collection.AllKeys)
+            foreach (var key in collection.Keys)
             {
-                foreach (string value in collection.GetValues(key))
+                foreach (string value in collection[key])
                 {
                     sheet.AddAnswer(key, value);
                     //Console.WriteLine (key + ": " + value);
@@ -82,17 +83,17 @@ namespace TechCertain.Services.Impl
             }
 
             // get activity/revenue data
-            var activityRevenue = collection.AllKeys.Where(s => s.StartsWith("actRevMat", StringComparison.CurrentCulture));
+            var activityRevenue = collection.Keys.Where(s => s.StartsWith("actRevMat", StringComparison.CurrentCulture));
             NameValueCollection activityRevenueData = new NameValueCollection();
             foreach (string key in activityRevenue)
-                activityRevenueData.Add(key, collection.GetValues(key).FirstOrDefault());
+                activityRevenueData.Add(key, collection[key].FirstOrDefault());
             SaveRevenueData(sheet, activityRevenueData, null);
 
             // get shared data
-            var sharedKeys = collection.AllKeys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
+            var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
             NameValueCollection sharedData = new NameValueCollection();
             foreach (string key in sharedKeys)
-                sharedData.Add(key, collection.GetValues(key).FirstOrDefault());
+                sharedData.Add(key, collection[key].FirstOrDefault());
 
             // setup the shared data just in case it doesn't exist for some reasons
             //ConfigureSharedData (sheet);

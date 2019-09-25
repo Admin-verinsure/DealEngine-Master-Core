@@ -22,8 +22,9 @@ namespace TechCertain.WebUI.Models.ControlModels
 		public JqGridViewModel ()
 		{
 			_rows = new List<JqGridRow> ();
-			_document = new XDocument (new XElement ("rows"));
-			_root = _document.Root;
+            _document = new XDocument(new XElement("rows"));           
+
+            _root = _document.Root;
 			Page = 1;
 			TotalPages = 1;
 			TotalRecords = 0;

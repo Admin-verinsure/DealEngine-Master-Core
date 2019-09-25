@@ -85,7 +85,7 @@
                                             <br />
                                             <h3><strong>Details </strong> - Complete Information</h3>
                                             <div class="row">
-                                                @{ Html.RenderPartial("_ViewInformation"); }
+                                                @{ await Html.RenderPartialAsync("_ViewInformation"); }
                                                 <div class="modal" id="addOperatorModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -946,7 +946,7 @@
                                         @* Tab 2 *@
                                         <div class="tab-pane" id="tab2">
                                             <br />
-                                            <h3><strong>Quote </strong></h3>
+                                            <h3><strong>Quote </strong></h3>                                  
                                             <div id="agreementView" class="row">
                                             </div>
                                         </div>
@@ -1315,7 +1315,6 @@
         data: postData
     })
                 .done(function (data) {
-                    debugger;
             if (data != "") {
                 for (var item = 0; item < data.length; item++){
 
@@ -1333,7 +1332,7 @@
                     }
             }
 
-            };
+                    };
             
     })
         .fail(function (a,s,d) {

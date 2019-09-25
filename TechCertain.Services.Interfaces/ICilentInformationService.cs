@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Specialized;
 using System.Linq;
 using TechCertain.Domain.Entities;
@@ -20,7 +21,7 @@ namespace TechCertain.Services.Interfaces
 
 		void UpdateInformation (ClientInformationSheet sheet);
 
-		void SaveAnswersFor(ClientInformationSheet sheet, NameValueCollection collection);
+		void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
 	}
 }
 

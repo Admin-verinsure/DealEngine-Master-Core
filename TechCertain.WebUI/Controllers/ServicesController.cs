@@ -289,7 +289,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             //vehicles = vehicles.OrderBy(sidx + " " + sord).ToList();
-
+            vehicles = vehicles.ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -697,6 +697,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             //locations = locations.OrderBy(sidx + " " + sord).ToList();
+            locations = locations.ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();

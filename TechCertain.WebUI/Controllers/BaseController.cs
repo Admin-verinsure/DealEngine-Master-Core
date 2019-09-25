@@ -14,6 +14,7 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Areas.Identity.Data;
 using System.Linq;
 using TechCertain.WebUI.Helpers;
+using TechCertain.WebUI.Helpers.CustomActions;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -162,8 +163,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
         protected ActionResult Xml(XDocument document)
-        {
-            //throw new Exception("This method will need to be re-written");
+        {            
             return new XmlActionResult(document);
         }
 
@@ -174,15 +174,13 @@ namespace TechCertain.WebUI.Controllers
 
 		protected string LocalizeTime (DateTime dateTime, string format)
 		{
-            //throw new Exception("This method will need to be re-written");
             return dateTime.ToTimeZoneTime (UserTimeZone).ToString ("G", UserCulture);
         }
 
 
         protected string LocalizeTimeDate(DateTime dateTime, string format)
-        {
-            throw new Exception("This method will need to be re-written");
-            //return dateTime.ToTimeZoneTime(UserTimeZone).ToString("d", UserCulture);
+        {            
+            return dateTime.ToTimeZoneTime(UserTimeZone).ToString("d", UserCulture);
         }
     }
 }

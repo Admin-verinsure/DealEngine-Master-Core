@@ -1,16 +1,22 @@
 ﻿<!-- PAGE RELATED PLUGIN(S) -->
+@*<script src="/Scripts/bootstrapmvc" defer></script>*@
+<!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 <!-- <script src="/Scripts/bootstrapmvc" defer></script>-->
 <!-- <script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
+    
 <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
 <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
 <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js" defer></script>
+<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer ></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
+<script src="~/Scripts/plugin/chosen/chosen.jquery.js"defer></script>
+<script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js"></script>
+
 <script type="text/javascript">
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
 $(document).ready(function () {
-    //$(".chosen-select").chosen({ width: "95%" });
 
-   $('#Nonregisteredtabs').tabs();
+	$('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
     $('#registeredtrailertabs').tabs();
@@ -19,7 +25,7 @@ $(document).ready(function () {
     $('#BoatUsetabs').tabs();
     $('#NamedPartiestabs').tabs();
 
-     $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
+    $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
     $('#ClearBoat').css({ "background-color": "red", "color": "White" });
     $('#AddClearBoat').css({ "background-color": "red", "color": "White" });
     $('#UpdateNRVehicle').css({ "background-color": "#339933", "color": "White" });
@@ -167,9 +173,9 @@ $(document).ready(function () {
         }
     });
 
-    $('.cselect').each(function() {
-        $('#'+this.id).chosen( { width: '100%' } );
-    });
+    //$('.cselect').each(function() {
+    //    $('#'+this.id).chosen( { width: '100%' } );
+    //});
 
     $('.datepicker').each(function () {
         $('#'+this.id).datepicker();
@@ -187,7 +193,6 @@ $(document).ready(function () {
             $('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
             $('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
             if (index === 1) {
-                debugger;
                 var informationsheetstatus = $('#Status').val();
                 var clientInformationSheet = $('#AnswerSheetId').val();
                 var claim1 = $('#Claimexp1').val();
@@ -222,53 +227,48 @@ $(document).ready(function () {
                  stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
 
                 var postData = { Claims : stringArray , ClientInformationSheet : clientInformationSheet};
-
-                debugger;
                 if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                        $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("UpdateClaim", "Information")',
-        type: "POST",
-        data: postData
-    })
-        .done(function (data) {
-            debugger;
+                    $.ajax({
+                        url: '@Url.Action("UpdateClaim", "Information")',
+                        type: "POST",
+                        data: postData
+                    })
+                        .done(function (data) {
+
         //alert("Success");
-        $.smallBox({
-            title: "Success",
-            content: "Claim Experience and Prior Insurance details have been updated",
-            color: "#5F895F",
-            iconSmall: "fa fa-check bounce animated",
-            timeout: 4000
-        });
-    })
-        .fail(function (a,s,d) {
-            debugger;
-        alert("Unable to save.");
-        });
+        //$.smallBox({
+        //    title: "Success",
+        //    content: "Claim Experience and Prior Insurance details have been updated",
+        //    color: "#5F895F",
+        //    iconSmall: "fa fa-check bounce animated",
+        //    timeout: 4000
+        //});
+                        })
+                            .fail(function (a,s,d) {
+                            alert("Unable to save.");
+                        });
                 }
-
-
-                debugger;
-
-
-                console.log($('#MilestoneStatus').val());
-                if ($('#MilestoneStatus').val() === 'Active'){
-                    $('#getMilestoneModal').modal('show');
-                }
-                $('#getAgreementModal').modal('show');
+               
+                //console.log($('#MilestoneStatus').val());
+                //if ($('#MilestoneStatus').val() === 'Active'){
+                //    $('#getMilestoneModal').modal('show');
+                //}
+                //$('#getAgreementModal').modal('show');
+                
                 $.ajax({
                     url: '@Url.Action("SubmitInformation", "Information")',
                     type: "POST",
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
+                        '@Url.Link(url)';
                         $("#agreementView").load(url, function () {
-                            $('#getAgreementModal').modal('hide');
+                            //$('#getAgreementModal').modal('hide');
                         });
                     })
-                    .fail(function () {
-                        $('#getAgreementModal').modal('hide');
+                    .fail(function (data) {
+                        //$('#getAgreementModal').modal('hide');
+                        console.log(data);
                         alert("There was an error getting your agreement.");
                     });
             } else if (index === 2) {
@@ -3247,9 +3247,7 @@ function EditClaim(claimId, tableId) {
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#getPartyModal').modal('hide');
            alert("There was an error while trying to save the Boat Use.");
-         });
-
-
+                });
 
         } else {
 
@@ -3817,8 +3815,6 @@ function EditClaim(claimId, tableId) {
         $('#NPOrgPhone').val(data.OrganisationPhone);
         $('#NPOrgWebsite').val(data.Website);
         $('#NPOrgEmail').val(data.Email);
-
-
     });
     }
 
@@ -3852,8 +3848,7 @@ function EditClaim(claimId, tableId) {
         $('#NPOrgWebsite').val(data.Website);
         $('#NPOrgEmail').val(data.Email);
         $('#getDetailsModal').modal('hide');
-
-    });
+	});
     };
 
 
@@ -4028,13 +4023,15 @@ function EditClaim(claimId, tableId) {
                 debugger;
                      $.smallBox({
                           title: "User Not Found ",
-                          color: "#5F895F",
-                          iconSmall: "fa fa-check bounce animated",
-                          timeout: 4000
+		                  color: "#5F895F",
+		                  iconSmall: "fa fa-check bounce animated",
+		                  timeout: 4000
                      });
 
+
     })
-            .fail(function (jqXHR, textStatus, errorThrown) {
+
+       .fail(function (jqXHR, textStatus, errorThrown) {
                 debugger;
         alert("Unable to get Vehicle details.");
     });
@@ -4063,6 +4060,7 @@ function EditClaim(claimId, tableId) {
                           color: "#5F895F",
                           iconSmall: "fa fa-check bounce animated",
                           timeout: 4000
+
                      });
                     $('#firstnameSec').removeClass("hidden");
                     $('#LastnameSec').removeClass("hidden");
@@ -4074,7 +4072,6 @@ function EditClaim(claimId, tableId) {
                     $('#LastnameSec').addClass("hidden");
                     $('#PhoneSec').addClass("hidden");
                 }
-
     })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 debugger;
@@ -5001,7 +4998,7 @@ function AddMotorVehicle(tabId, tableId) {
     function AddaddNewSkipper() {
         var selectedBoatOperator = AddboatOperator.options[AddboatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            $('#addOperatorModal').openModal;
+            $('#addOperatorModal').modal('show');
             AddboatOperator.selectedIndex = 0;
         }
         selectedBoatOperator = "";
@@ -5761,10 +5758,9 @@ function AddMotorVehicle(tabId, tableId) {
     }
 
     function addNewSkipper() {
-        debugger;
         var selectedBoatOperator = boatOperator.options[boatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            $('#addOperatorModal').openModal();
+            $('#addOperatorModal').modal('show');
             boatOperator.selectedIndex = 0;
         }
         selectedBoatOperator = "";
