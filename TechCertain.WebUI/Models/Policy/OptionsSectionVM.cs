@@ -11,8 +11,11 @@ namespace TechCertain.WebUI.Models.Policy
 		public IEnumerable<SelectListItem> Jurisdictions { get; set; }
 
 		public IEnumerable<SelectListItem> Clauses { get; set; }
+        public IEnumerable<SelectListItem> Products { get; set; }
 
-		public string Territory { get; set; }
+        public Guid Product { get; set; }
+
+        public string Territory { get; set; }
 
 		public string Jurisdiction { get; set; }
 

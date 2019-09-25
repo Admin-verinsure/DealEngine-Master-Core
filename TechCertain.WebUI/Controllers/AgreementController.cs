@@ -1696,7 +1696,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public ActionResult ProcessedAgreements(Guid id)
         {
-            ViewResult result = (ViewResult)ViewAgreement(id);
+            PartialViewResult result = (PartialViewResult)ViewAgreement(id);
 
             var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
             foreach (ViewAgreementViewModel model in models)
@@ -1729,9 +1729,10 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public ActionResult ViewAcceptedAgreement(Guid id)
         {
-            ViewResult result = (ViewResult)ViewAgreement(id);
+            PartialViewResult result = (PartialViewResult)ViewAgreement(id);
 
             var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
+
             foreach (ViewAgreementViewModel model in models)
             {
                 model.EditEnabled = false;

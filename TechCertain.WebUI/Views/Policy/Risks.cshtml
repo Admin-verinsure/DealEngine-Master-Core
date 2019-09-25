@@ -1,0 +1,84 @@
+﻿@model InsuranceRiskCategories
+
+<div id="content">
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1" 
+                     data-widget-colorbutton="false" 
+                     data-widget-editbutton="false" 
+                     data-widget-togglebutton="false" 
+                     data-widget-deletebutton="false" 
+                     data-widget-custombutton="false" 
+                     data-widget-sortable="false">
+                    <!-- widget options:
+                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+                    data-widget-colorbutton="false"
+                    data-widget-editbutton="false"
+                    data-widget-togglebutton="false"
+                    data-widget-deletebutton="false"
+                    data-widget-fullscreenbutton="false"
+                    data-widget-custombutton="false"
+                    data-widget-collapsed="true"
+                    data-widget-sortable="false"
+
+                    -->
+                    <header>
+                        <h2>Risk Categories</h2>
+                    </header>
+
+                    <div role="content">
+                        <div class="widget-body no-padding">
+                			<form action="~/Policy/Risks" method="POST" class="smart-form client-form">
+                    			@*@Html.ValidationBootstrap()*@
+	                            <fieldset>
+				                    <section>
+				                        <label class="input">
+				                            @*@Html.Bootstrap().Icon("icon-append fa fa-user")*@
+				                            @Html.TextBox("Name")
+				                            <b class="tooltip tooltip-bottom-right">Nice tooltip here</b>
+				                        </label>
+				                    <section>
+				                    </section>
+				                        <label class="input">
+				                            @*@Html.Bootstrap().Icon("icon-append fa fa-user")*@
+				                            @Html.TextBox("Description")
+				                            <b class="tooltip tooltip-bottom-right">Nice tooltip here</b>
+				                        </label>
+				                    </section>
+			                        <section>
+										@Html.DropDownListFor(m => m.SelectedCategory, Model.CategoryItems)
+			                        </section>
+	                            </fieldset>
+			                    <footer>
+			                        <button type="submit" id="submitButton" class="btn btn-primary" >
+			                            Submit
+			                        </button>
+			                    </footer>
+							</form>
+						</div>
+                    </div>
+					
+                    <div class="padding-10">
+                    	<h4>Current Risk Categories</h4>
+                    	<ul>
+						    @if (Model.CategoriesList != null)
+						    {
+						        foreach (var category in Model.CategoriesList)
+						        {
+						            <li>@category.Name</li>
+						        }
+						    }
+						</ul>
+                    </div>
+                </div>
+			</article>
+		</div>
+	</section>
+</div>
+

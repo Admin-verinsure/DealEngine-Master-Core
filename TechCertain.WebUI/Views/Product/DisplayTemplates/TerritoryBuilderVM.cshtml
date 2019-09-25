@@ -1,0 +1,69 @@
+﻿@model TechCertain.WebUI.Models.Product.TerritoryBuilderVM
+
+
+<div class="tab-pane active" id="tab1">
+    <br />
+    <h3><strong>Setup </strong> - New Territory</h3>
+    <div class="row">
+        @*@Html.HiddenFor(m => m.OriginalProductId)
+            @Html.HiddenFor(m => m.CreatorOrganisation)
+            @Html.HiddenFor(m => m.OwnerOrganisation)*@
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label><strong>Location</strong></label>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                    @Html.TextBoxFor(m => m.Location)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label><strong>InclorExcl</strong></label>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                    @Html.DropDownListFor(m => m.SelectedInclorExcl, Model.BaseExclIncl)
+
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label><strong>Ispublic</strong></label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                        @Html.Bootstrap().TextBoxFor(m => m.Description).HtmlAttributes(new { placeholder = "Product Description" }).Size(InputSize.Large)
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label><strong>Zone Order</strong></label>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-globe fa-lg fa-fw"></i></span>
+                    @Html.TextBoxFor(m => m.Zoneorder)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="smart-form">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(m => m.Ispublic)
+                        <i></i>I want this territory to be publicly available.
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

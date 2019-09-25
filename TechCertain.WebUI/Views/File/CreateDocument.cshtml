@@ -1,0 +1,301 @@
+﻿@model TechCertain.WebUI.Models.DocumentViewModel
+
+<div id="content">
+	<script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
+                     data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+
+                    <header>
+                        <h2>Create Document</h2>
+                    </header>
+
+                    <div role="content">
+                        <!-- widget content -->
+
+                        <div class="widget-body">
+                            <div class="row">
+                                <form id="wizard-1" class="" method="post">
+                                    <div id="bootstrap-wizard-1" class="col-sm-12">
+                                        <div class="form-bootstrapWizard">
+                                            <ul class="bootstrapWizard form-wizard">
+                                                <li class="active" data-target="#step1">
+                                                    <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
+                                                </li>
+                                                <li data-target="#step2">
+                                                    <a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">Content</span> </a>
+                                                </li>
+                                                <li data-target="#step3">
+                                                    <a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Review</span> </a>
+                                                </li>
+                                            </ul>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="tab-content">
+                                            @* Tab 1 *@
+                                            <div class="tab-pane active" id="tab1">
+                                                @Html.HiddenFor(m => m.DocumentId)
+                                                <br />
+                                                <h3><strong>Setup </strong> - New Document</h3>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                                                                @Html.TextBoxFor(m => m.Name)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                                                                @Html.TextAreaFor(m => m.Description)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                                                                <select id="documentType" name="DocumentType" class="form-control input-lg">
+                                                                    <option value="" selected="">-- Select --</option>
+                                                                    <option value="0">Wording</option>
+                                                                    <option value="1">Certificate</option>
+                                                                    <option value="2">Schedule</option>
+                                                                    <option value="3">Payment Confirmation</option>
+                                                                    <option value="4">Invoice</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Tab 2 *@
+                                            <div class="tab-pane" id="tab2">
+                                                <br />
+                                                <h3><strong>Content </strong> - Create Document</h3>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                @Html.TextAreaFor(m => m.Content)
+                                                                <script>CKEDITOR.replace(@Html.IdFor(m => m.Content), {
+                                                                        extraPlugins: 'token',
+                                                                        availableTokens: [
+                                                                            ["", ""],
+                                                                            ["Insured Name", "InsuredName"],
+                                                                            ["Broker Name", "BrokerName"],
+                                                                            ["Broker Job Title", "BrokerJobTitle"],
+                                                                            ["Broker Phone", "BrokerPhone"],
+                                                                            ["Broker Email", "BrokerEmail"],
+                                                                            ["Inception Date", "InceptionDate"],
+                                                                            ["Expiry Date", "ExpiryDate"],
+                                                                            ["Information Sheet Reference", "Reference"],
+                                                                            ["Bound or Quote Date", "BoundOrQuoteDate"],
+                                                                            ["Brokerage", "Brokerage"],
+                                                                            ["Administration Fee", "AdministrationFee"],
+                                                                            ["Limit (Motor Vehicle)", "BoundLimit_MV"],
+                                                                            ["Excess (Motor Vehicle)", "BoundExcess_MV"],
+                                                                            ["Vessel Details", "BVDetailsTable2"],
+                                                                            ["Vessel Excess Details", "BVExcessDetailsTable"],
+                                                                            ["Vessel Race Use Details", "BVRaceDetailsTable"],
+                                                                            ["Vessel Interest Party Details", "BVInterestPartyTable"],
+                                                                            ["Trailer Details", "BVMVDetailsTable"],
+                                                                            ["Bound Limit (Vessel)", "BoundLimit_BV"],
+                                                                            ["Bound Premium (Vessel)", "BoundPremiumAdjustment_BV"],
+                                                                            ["Bound FSL (Vessel)", "BoundFSL_BV"],
+                                                                            ["Bound Premium GST Admin Fee Incl (Vessel)", "BoundPremiumInclFeeGST_BV"],
+                                                                            ["Bound Total Premium Admin Fee Incl (Vessel)", "BoundPremiumInclFeeInclGST_BV"],
+                                                                            ["Credit Card Surcharge (Vessel)", "CreditCardSurcharge_BV"],
+                                                                            ["Credit Card Type", "CreditCardType"],
+                                                                            ["Credit Card Number ()", "CreditCardNumber"],
+                                                                            ["Bound Premium GST Admin Fee CC Surcharge Incl (Vessel)", "BoundPremiumInclFeeCCSurchargeGST_BV"],
+                                                                            ["Bound Total Premium Admin Fee CC Surcharge Incl (Vessel)", "BoundPremiumInclGSTCreditCardCharge_BV"],
+                                                                            ["EGlobal Client Branch Code", "ClientBranchCode"],
+                                                                            ["EGlobal Client Number", "ClientNumber"],
+                                                                            ["EGlobal Invoice Number", "InvoiceReference"],
+                                                                            ["EGlobal Invoice Cover Number", "CoverNo"],
+                                                                            ["EGlobal Invoice Version Number", "Version"],
+                                                                        ]
+                                                                    });</script>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Tab 3 *@
+                                            <div class="tab-pane" id="tab3">
+                                                <br />
+                                                <h3><strong>Setup </strong> - New Product</h3>
+                                                <div class="row">
+                                                </div>
+                                            </div>
+
+                                            @* Button controls *@
+                                            <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <ul class="pager wizard no-margin">
+                                                            <li class="previous disabled">
+                                                                <a href="javascript:void(0);" class="btn btn-lg btn-default"> Previous </a>
+                                                            </li>
+                                                            <li class="next">
+                                                                <a href="javascript:void(0);" class="btn btn-lg txt-color-darken"> Next </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                @*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("successModal")))
+                                {
+                                    @modal.Header("Success!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>Your document has been successfully created. You can either create a new document, or view your current documents</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        <a class="btn btn-primary" href="~/File/CreateDocument">Create New</a>
+                                        <a class="btn btn-primary" href="~/File/ManageDocuments">My Documents <i class="fa fa-arrow-right"></i></a>
+                                    }
+                                }
+                                @using (var modal = Html.Bootstrap().Begin(new Modal().Id("failureModal")))
+                                {
+                                    @modal.Header("Oops!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>It looks like something has gone wrong. A more detailed explaination is available on the page.</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
+                                    }
+                                }*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</article>
+		</div>
+	</section>
+</div>
+
+@section pagespecific {
+<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
+<script type="text/javascript">
+
+// DO NOT REMOVE : GLOBAL FUNCTIONS!
+
+$(document).ready(function () {
+
+    // fuelux wizard
+    var wizard = $('.wizard').wizard();
+
+    wizard.on('finished', function (e, data) {
+    	if (confirm("Are you sure you want to submit this document?"))
+    	{
+	        console.log("submitted!");
+	        $.smallBox({
+	            title: "Congratulations! Your form was submitted",
+	            content: "<i class='fa fa-clock-o'></i> <i>1 seconds ago...</i>",
+	            color: "#5F895F",
+	            iconSmall: "fa fa-check bounce animated",
+	            timeout: 4000
+	        });
+	        //$("#fuelux-wizard").submit();
+
+			var content = CKEDITOR.instances['@Html.IdFor(m => m.Content)'].getData();
+			var contentElement = $("#@Html.IdFor(m => m.Content)");
+			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
+			// using hack because escape(...) was deprecated
+	        contentElement.text(contentElement.text(content).html());
+			
+	
+			$.ajax({
+				type: "POST",
+				url: '@Url.Action("CreateDocument", "File")',
+				data: $("#documentBuilderWizard").serialize() // serializes the form's elements.
+			})
+	        .done(function (json) {
+	        	//var model = JSON.parse(json);
+				$("#productAutoReview")
+				console.log(json);
+	        })
+	        .fail(function (err, ajaxOptions, thrownError) {
+				alert("Unable to save." + err.responseText );
+				console.log(err);
+				console.log(ajaxOptions);
+				console.log(thrownError);
+	        });
+        }
+    });
+
+
+
+	$('#bootstrap-wizard-1').bootstrapWizard({
+
+		'tabClass' : 'form-wizard',
+		'onNext' : function(tab, navigation, index) {
+			var $valid = $("#wizard-1").valid();
+        	var numTabs = $('#wizard-1').find('.tab-pane').length;
+			if (!$valid) {
+				$validator.focusInvalid();
+				return false;
+			}
+			$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
+			$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
+
+			if (index === numTabs) {
+	            // We are at the last tab
+
+				var content = CKEDITOR.instances['@Html.IdFor(m => m.Content)'].getData();
+				var contentElement = $("#@Html.IdFor(m => m.Content)");
+				// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
+				// using hack because escape(...) was deprecated
+		        contentElement.text(contentElement.text(content).html());
+	
+				$.ajax({
+					type: "POST",
+					url: '@Url.Action("CreateDocument", "File")',
+					data: $("#wizard-1").serialize() // serializes the form's elements.
+				}) 	
+				.done(function (json) {
+					//var model = JSON.parse(json);
+	                $('#successModal').modal();
+					console.log(json);
+				})
+				.fail(function (err, ajaxOptions, thrownError) {
+	                $('#failureModal').modal();
+					$('#productAutoReview').text(err.responseText);
+				});
+	        }
+		},
+		onTabShow: function(tab, navigation, index) {
+			// Update the label of Next button when we are at the last tab
+			var numTabs = $('#wizard-1').find('.tab-pane').length;
+			$('#wizard-1')
+			    .find('.next')
+			        .removeClass('disabled')    // Enable the Next button
+			        .find('a')
+			        .html(index === numTabs - 1 ? 'Submit' : 'Next');
+	    }
+	});
+});
+</script>
+
+}

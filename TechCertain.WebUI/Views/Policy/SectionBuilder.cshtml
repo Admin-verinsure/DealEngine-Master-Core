@@ -1,0 +1,305 @@
+﻿@model TechCertain.WebUI.Models.Policy.PolicySectionVM
+
+@using TechCertain.WebUI.Helpers.CustomHtml
+
+<div id="content">
+
+    <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1"
+                     data-widget-colorbutton="false"
+                     data-widget-editbutton="false"
+                     data-widget-togglebutton="false"
+                     data-widget-deletebutton="false"
+                     data-widget-custombutton="false"
+                     data-widget-sortable="false">
+                    <!-- widget options:
+                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+                    data-widget-colorbutton="false"
+                    data-widget-editbutton="false"
+                    data-widget-togglebutton="false"
+                    data-widget-deletebutton="false"
+                    data-widget-fullscreenbutton="false"
+                    data-widget-custombutton="false"
+                    data-widget-collapsed="true"
+                    data-widget-sortable="false"
+
+                    -->
+                    <header>
+                        <h2>Create a new Territory</h2>
+                    </header>
+
+                    <div role="content">
+                        <!-- widget edit box -->
+                        <div class="jarviswidget-editbox">
+                            <!-- This area used as dropdown edit box -->
+                        </div>
+                        <!-- end widget edit box -->
+                        <!-- widget content -->
+                        <div class="widget-body">
+                            <div class="row">
+                                <form id="wizard-1" class="" method="post">
+                                    <div id="bootstrap-wizard-1" class="col-sm-12">
+                                        <div class="form-bootstrapWizard">
+                                            <ul class="bootstrapWizard form-wizard">
+                                                <li class="active" data-target="#step1">
+                                                    <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
+                                                </li>
+                                                <li data-target="#step2">
+                                                    <a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">Attach to Programme</span> </a>
+                                                </li>
+                                                <li data-target="#step3">
+                                                        <a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Settings</span> </a>
+                                                    </li>
+                                                <li data-target="#step4">
+                                                        <a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Complete</span> </a>
+                                                    </li>
+                                                @*<li class="active" data-target="#step1">
+                                                        <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
+                                                    </li>
+                                                    <li data-target="#step2">
+                                                        <a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">attach to Programme</span> </a>
+                                                    </li>
+                                                    <li data-target="#step3">
+                                                        <a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Review</span> </a>
+                                                    </li>*@
+                                                @*<li data-target="#step4">
+                                                        <a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Review</span> </a>
+                                                    </li>*@
+                                            </ul>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="tab-content">
+
+
+                                            @Html.DisplayFor(m => m.Description)
+
+                                            <div class="tab-pane" id="tab2">
+                                                <br />
+                                                <h3><strong>Details </strong> - Enter Term Text</h3>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+
+                                                            <div class="col-md-10">
+                                                                @Html.DisplayFor(m => m.Content)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="tab-pane" id="tab3">
+                                                <br />
+                                                <h3><strong>Options </strong> - Select Term Options</h3>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+
+                                                            <div class="col-md-10">
+                                                                @Html.DisplayFor(m => m.Options)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="tab-pane" id="tab4">
+                                                <h3><strong>Success </strong> - New Policy Section created!</h3>
+                                                <fieldset>
+                                                    <div class="form-group">
+                                                        <div class="col-md-2">
+                                                            <div class="">
+                                                                <h4></h4>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-10">
+                                                            <div id="policydocstart-form" class="smart-form" novalidate="novalidate">
+                                                                <div class="row">
+                                                                    <h2>Congratulations</h2>
+                                                                    <p>Your policy section has been successfully created.</p>
+                                                                    <p>Click <a href="/Policy/SectionBuilder">here</a> to create a new section, or click <a href="/Policy/PolicyIndex">here</a> to view all available policy sections.</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+
+
+                                            @* Button controls *@
+                                            <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <ul class="pager wizard no-margin">
+                                                            <!--<li class="previous first disabled">
+                    <a href="javascript:void(0);" class="btn btn-lg btn-default"> First </a>
+                    </li>-->
+                                                            <li class="previous disabled">
+                                                                <a href="javascript:void(0);" class="btn btn-lg btn-default"> Previous </a>
+                                                            </li>
+                                                            <!--<li class="next last">
+                    <a href="javascript:void(0);" class="btn btn-lg btn-primary"> Last </a>
+                    </li>-->
+                                                            <li class="next">
+                                                                <a href="javascript:void(0);" class="btn btn-lg txt-color-darken"> Next </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                </form>
+                                @*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("successModal")))
+                                {
+                                    @modal.Header("Success!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>Your product has been successfully created. You can either start a new product, or view your current products</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        <a class="btn btn-primary" href="~/Product/CreateTerritory">Create New</a>
+                                        <a class="btn btn-primary" href="~/Product/MyProducts">My Products <i class="fa fa-arrow-right"></i></a>
+                                    }
+                                }
+                                @using (var modal = Html.Bootstrap().Begin(new Modal().Id("failureModal")))
+                                {
+                                    @modal.Header("Oops!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>It looks like something has gone wrong. A more detailed explaination is available on the page, and the error has been logged.</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
+                                    }
+                                }*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+
+
+@section pagespecific {
+    <script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
+    <script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
+    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
+    <!-- PAGE RELATED PLUGIN(S) -->
+    <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
+    <script type="text/javascript">
+
+    // DO NOT REMOVE : GLOBAL FUNCTIONS!
+
+    $(document).ready(function () {
+
+	    // find all multiselect items and apply Chosen
+		$('.cselect').each(function() {
+			$('#'+this.id).chosen( { width: '100%' } ).change(checkerrors);
+		});
+
+		$('#bootstrap-wizard-1').bootstrapWizard({
+			'tabClass' : 'form-wizard',
+            'onNext': function (tab, navigation, index) {
+                debugger;
+				var $valid = $("#wizard-1").valid();
+            	var numTabs = $('#wizard-1').find('.tab-pane').length;
+				if (!$valid) {
+					$validator.focusInvalid();
+					return false;
+				}
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
+
+				if (index === numTabs-1) {
+                    // We are at the last tab
+                    var gdf = $("#wizard-1").serialize();
+                    
+                    //var editorData = CKEDITOR.instances['Content'].getData();
+
+                    //CKEDITOR.instances['Content'].updateElement();
+                    //var hgfdd = document.getElementById('Content').value; 
+                    var hgshfds = GetContentJson();
+
+                   var mergedData = { Description: GetDescriptionJson(), Content: GetContentJson(), Options: GetOptionsJson() };
+        	       var postData = JSON.stringify(mergedData);
+
+            // DO Ajax call to create the policy document
+                  $.ajax({ url: "/Policy/SubmitTermSection", type: "POST", contentType: "application/json; charset=utf-8", data: postData })
+            	   .done(function (json) {
+            		//var model = JSON.parse(json);
+					$('.wizard').wizard('next');
+            	      })
+            	   .fail(function (err) {
+					alert("Unable to save." + err.responseText );
+					$("#playerModal").modal("hide");
+                    });
+
+
+
+                    @*var mergedData = { Description: GetDescriptionJson(), Content: GetContentJson(), Options: GetOptionsJson() };
+                    var postData = JSON.stringify(mergedData);
+
+                       //var hjh= $(editorData).find('#footer').html();
+
+					$.ajax({
+						type: "POST",
+						url: '@Url.FixedAction("SubmitTermSection", "Policy")',
+						data: $("#wizard-1").serialize() // serializes the form's elements.
+					})
+					.done(function (json) {
+						//var model = JSON.parse(json);
+	                    $('#successModal').modal();
+						$('#productAutoReview').text("");
+					})
+					.fail(function (err, ajaxOptions, thrownError) {
+	                    $('#failureModal').modal();
+						$('#productAutoReview').text(err.responseText);
+                    });*@
+
+                }
+			},
+			onTabClick : function(tab, navigation, index) {
+				var $valid = $("#wizard-1").valid();
+				if (!$valid) {
+					validator.focusInvalid();
+					return false;
+				}
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).addClass('complete');
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).find('.step').html('<i class="fa fa-check"></i>');
+				return true;
+			},
+			onTabShow: function(tab, navigation, index) {
+				// Update the label of Next button when we are at the last tab
+				var numTabs = $('#wizard-1').find('.tab-pane').length;
+				$('#wizard-1')
+				    .find('.next')
+				        .removeClass('disabled')    // Enable the Next button
+				        .find('a')
+				        .html(index === numTabs-1 ? 'Submit' : 'Next');
+            }
+        });
+
+         
+    });
+    </script>
+}

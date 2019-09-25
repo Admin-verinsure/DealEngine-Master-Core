@@ -13,7 +13,7 @@ using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI.Controllers
 {
-	[Authorize]
+	//[Authorize]
     public class FileController : BaseController
     {
 		ILogger _logger;
@@ -21,12 +21,13 @@ namespace TechCertain.WebUI.Controllers
 		IFileService _fileService;
 		IRepository<SystemDocument> _documentRepository;
 		IRepository<Image> _imageRepository;
+        IRepository<Product> _productRepository;
 
-		string _appData = "~/App_Data/";
+        string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
 		public FileController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IUnitOfWorkFactory unitOfWork, IFileService fileService,
-		                      IRepository<SystemDocument> documentRepository, IRepository<Image> imageRepository)
+		                      IRepository<SystemDocument> documentRepository, IRepository<Image> imageRepository, IRepository<Product> productRepository)
 			: base (userRepository, dealEngineDBContext)
 		{
 			_logger = logger;
@@ -34,7 +35,8 @@ namespace TechCertain.WebUI.Controllers
 			_fileService = fileService;
 			_documentRepository = documentRepository;
 			_imageRepository = imageRepository;
-		}
+            _productRepository = productRepository;
+        }
 
 		[HttpGet]
 		[AllowAnonymous]
@@ -192,7 +194,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsTC || CurrentUser.PrimaryOrganisation.IsInsurer)
             {
-                docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue);
+                docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
             }
             
 			foreach (SystemDocument doc in docs) {
@@ -229,8 +231,10 @@ namespace TechCertain.WebUI.Controllers
                             throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
                         }
                 }
+                var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
                 models.Add(new DocumentInfoViewModel {
                     DisplayName = doc.Name,
+                    ProductName = product.Name,
                     Type = documentType,
                     Owner = doc.OwnerOrganisation.Name,
 					Id = doc.Id

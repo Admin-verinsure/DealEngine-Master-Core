@@ -1,0 +1,74 @@
+﻿@model TechCertain.WebUI.Models.Policy.DescriptionSectionVM
+
+    <div class="tab-pane smart-form active" id="tab1">
+        <br />
+        <h3><strong>Setup </strong> - Section Details</h3>
+        <div class="row">
+            @Html.HiddenFor(m => m.Revision)
+            @Html.HiddenFor(m => m.Creator)
+            @Html.HiddenFor(m => m.Owner)
+        </div>
+        <div class="row">
+            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                    <div class="col col-1 ">
+                        <label><strong>Term Name</strong></label>
+                    </div>
+                    <div class="input-group col col-6">
+                        <label class="textarea">
+                            @Html.TextBoxFor(m => m.Name)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                    <div class="col col-1 ">
+                        <label><strong>Term Description</strong></label>
+                    </div>
+                    <div class="input-group col col-6">
+                        <label class="textarea">
+                            @Html.TextAreaFor(m => m.Description)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                    <div class="col col-1 ">
+                        <label><strong>Term Version</strong></label>
+                    </div>
+
+                    <div class="input-group col col-6">
+                        <label class="input">
+                            @Html.TextBoxFor(m => m.Version)
+                            <b class="tooltip tooltip-bottom-right">Enter</b>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+        <script type="text/javascript">
+    function GetDescriptionJson()
+    {
+    	return {
+    		Name: $("#@(Html.IdFor(m => m.Name))").val(),
+    		Description: $("#@(Html.IdFor(m => m.Description))").val(),
+    		Version: $("#@(Html.IdFor(m => m.Version))").val(),
+    		Revision: $("#@(Html.IdFor(m => m.Revision))").val(),
+    		Creator: $("#@(Html.IdFor(m => m.Creator))").val(),
+    		Owner: $("#@(Html.IdFor(m => m.Owner))").val()
+    	};
+    }
+        </script>
