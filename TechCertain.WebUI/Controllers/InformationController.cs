@@ -1441,22 +1441,35 @@ namespace TechCertain.WebUI.Controllers
             model.Boats = boats;
 
             var operators = new List<OrganisationViewModel>();
-            try { 
-            foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Skipper"))
-            {
-                foreach(var org in IA.IAOrganisations)
-                {
-                    if(org.OrganisationType.Name== "Person - Individual")
-                    {
-                        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                        ovm.OrganisationName = org.Name;
-                        ovm.OrganisationEmail = org.Email;
-                        ovm.ID = org.Id;
-                        operators.Add(ovm);
+            try {
+
+                foreach (Organisation skipperorg in sheet.Organisation.Where(o => o.OrganisationType.Name == "Person - Individual"))
+                { 
+                    if (skipperorg.InsuranceAttributes.FirstOrDefault(ia => ia.InsuranceAttributeName == "Skipper") != null)
+                        {
+                            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(skipperorg);
+                            ovm.OrganisationName = skipperorg.Name;
+                            ovm.OrganisationEmail = skipperorg.Email;
+                            ovm.ID = skipperorg.Id;
+                            operators.Add(ovm);
+                        }
                     }
-                }
+
+            //foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Skipper"))
+            //{
+            //    foreach(var org in IA.IAOrganisations)
+            //    {
+            //        if(org.OrganisationType.Name== "Person - Individual")
+            //        {
+            //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+            //            ovm.OrganisationName = org.Name;
+            //            ovm.OrganisationEmail = org.Email;
+            //            ovm.ID = org.Id;
+            //            operators.Add(ovm);
+            //        }
+            //    }
+            //}
             }
-           }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
