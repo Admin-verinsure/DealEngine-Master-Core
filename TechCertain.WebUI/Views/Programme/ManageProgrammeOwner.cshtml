@@ -1,4 +1,4 @@
-﻿@model TechCertain.WebUI.Models.InformationViewModel
+﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
 
 
 <!-- MAIN CONTENT -->
@@ -8,22 +8,20 @@
     <div class="row">
         <!-- col -->
         <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
                 <i class="fa-fw fa fa-file-o"></i><a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
                 <span>
-                    <a href="~/Programme/TermSheetTemplate/@Model.Id"> > Package Term Sheet</a>
-                    <a href="~/Programme/ManageClient/@Model.Id"> > Programme Owner</a>
-                    > Client Programmes
+                    > Clients Programmes
+                    >Programme owner
                 </span>
             </h1>
         </div>
         <!-- end col -->
     </div>
     <div>
-        @*<a onclick="location.href='@Url.Action("ManageClient", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>
-        *@
+        <a onclick="location.href='@Url.Action("MyProgrammes", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>
+
     </div>
 
 
@@ -35,7 +33,7 @@
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
                     <header>
                         <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2> Client Programmes  </h2>
+                        <h2> Programme Owner </h2>
                     </header>
                     <!-- widget div-->
                     @*<div>*@
@@ -46,43 +44,33 @@
                     <table class="table table-bordered table-striped table-hover table-condensed">
 
                         <thead>
-                            <tr align="center">
-                                <th align="center">Client Programmes Section </th>
-
-
+                            <tr>
+                                <th>Owner Name </th>
                             </tr>
-
                         </thead>
                         <tbody>
-
-                            @foreach (var Section in Model.Sections.OrderBy(s => s.Position))
+                            @foreach (var owner in Model.Owner)
                             {
+                                <tr onclick="location.href='@Url.Action("ownerlist", "Programme",new { owner = @owner.Name,Id=Model.Id })'" style="cursor:pointer">
 
-                                if (!string.IsNullOrWhiteSpace(Section.CustomView))
-                                {
-                            <tr>
+                                    <td align="center">
 
-                                @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
+                                        @owner.Name
+                                    </td>
 
+                                    <td align="center" style="word-wrap: break-word">
+                                        Sent to members from the "Send Emails" page.This Template can be used to send message to all members in a project.
+                                    </td>
 
-                                <td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new { name = Section.CustomView , id = Model.Id})'" style="cursor:pointer" align="left">
-                                   @Section.Name  </td>
+                                </tr>
 
-                            </tr>
-
-                                }
                             }
-
                         </tbody>
                     </table>
+                    @*</div>
+                        </div>*@
+                </div>
             </article>
         </div>
     </section>
 </div>
-
-
-@section pagespecific {
-
-    @Html.Partial("_InformationWizardScripts")
-
-}

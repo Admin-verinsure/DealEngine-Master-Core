@@ -1,4 +1,4 @@
-﻿@model TechCertain.WebUI.Models.InformationViewModel
+﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
 
 
 <!-- MAIN CONTENT -->
@@ -8,7 +8,6 @@
     <div class="row">
         <!-- col -->
         <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
                 <i class="fa-fw fa fa-file-o"></i><a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
@@ -22,8 +21,8 @@
         <!-- end col -->
     </div>
     <div>
-        @*<a onclick="location.href='@Url.Action("ManageClient", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>
-        *@
+        <a onclick="location.href='@Url.Action("ManageClient", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>
+
     </div>
 
 
@@ -46,43 +45,28 @@
                     <table class="table table-bordered table-striped table-hover table-condensed">
 
                         <thead>
-                            <tr align="center">
-                                <th align="center">Client Programmes Section </th>
-
+                            <tr>
+                                <th>Client Programmes </th>
 
                             </tr>
-
+                            
                         </thead>
                         <tbody>
-
-                            @foreach (var Section in Model.Sections.OrderBy(s => s.Position))
+                            @foreach (var programme in Model.clientProgrammes)
                             {
-
-                                if (!string.IsNullOrWhiteSpace(Section.CustomView))
-                                {
                             <tr>
-
-                                @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
-
-
-                                <td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new { name = Section.CustomView , id = Model.Id})'" style="cursor:pointer" align="left">
-                                   @Section.Name  </td>
+                                <td onclick="location.href='@Url.Action("ClientProgrammeDetails", "Programme",new { programmeId = programme.Id,Id=Model.Id ,ownerId=Model.OwnerId})'" style="cursor:pointer" align="left">
+                                @programme.BaseProgramme.Name for @programme </td>
 
                             </tr>
 
-                                }
                             }
-
                         </tbody>
                     </table>
+                    @*</div>
+                        </div>*@
+                </div>
             </article>
         </div>
     </section>
 </div>
-
-
-@section pagespecific {
-
-    @Html.Partial("_InformationWizardScripts")
-
-}

@@ -1,0 +1,80 @@
+﻿@model TechCertain.WebUI.Models.Programme.RoleBuilderVM
+
+
+<div class="tab-pane active" id="tab1">
+    <br />
+    <h3><strong>Setup </strong> - New Role</h3>
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label><strong>Public Roles</strong></label>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                    <select class="cselect form-control" data-placeholder="Roles" id="Roles" multiple="multiple" name="@Html.NameFor(m => m.SelectedRoles)" style="display: none;" >
+                        @foreach (var Role in Model.Roles)
+                        {
+                            <option value="@Role.Value">@Role.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="smart-form">
+                    <div class="input-group">
+                        <label class="button">
+                            @*@Html.Bootstrap().Button().Text("").HtmlAttributes(new { onclick = "ShowRoleModel();" }).Class("btn-md")*@
+                            <button onclick="ShowRoleModel()" class="btn-md" id="ShowRoleModel">Add Role</button>
+                            <i></i>Add Role
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="smart-form">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(m => m.Ispublic)
+                        <i></i>I want this role to be publicly available.
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="myRoleModal" class="modal fade " role="dialog">
+
+    <!-- Modal content-->
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h4 class="modal-title" style="color:blue; font-size:22px">Add Role</h4>
+        </div>
+        <div class="modal-body col-10">
+            <form id="ProdForm">
+
+                <div class="row">
+                    <div class="col-sm-3 form-group">
+                            <label for="RoleName">Role Name</label>
+                            <input type="text" class="form-control " id="RoleName" name="RoleName" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <input type="Reset" value="Submit" class="btn btn-success" id="btnRoleSubmit" onclick="SubmitRole()">
+            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+        </div>
+    </div>
+</div>

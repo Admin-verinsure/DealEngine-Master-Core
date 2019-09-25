@@ -1,0 +1,149 @@
+﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
+
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <!-- col -->
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-file-o"></i>  <span>
+                    <a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
+
+                    <a href="~/Programme/TermSheetTemplate/@Model.Id">> Package Term Sheet</a>
+                    > Programme Email Templates
+
+                </span>
+
+
+            </h1>
+        </div>
+        <!-- end col -->
+    </div>
+    <span>
+        <a onclick="location.href='@Url.Action("TermSheetTemplate", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
+    </span>
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <div class="row">
+            <article class="col-sm-12 col-md-12 col-lg-6">
+                <!-- new widget -->
+                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                        <h2>Programme Email Templates </h2>
+                    </header>
+                    <!-- widget div-->
+                    <div>
+                        <div class="widget-body no-padding smart-form">
+                            <!-- content goes here -->
+                            <table class="table table-bordered table-striped ">
+
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" width="30%">Email Template</th>
+                                        <th scope="col" width="70%">Description</th>
+                                    </tr>
+                                </thead>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Scheme Email", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendSchemeEmail", description = "Scheme Email -- Sent to clients from the 'Send Emails' page. This template can be used to send messages to all clients in a programme." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients from the "Send Emails" page. This template can be used to send messages to all clients in a programme.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Information Sheet Instruction", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendInformationSheetInstruction", description = "Information Sheet Instruction -- Sent to clients when a information sheet is issued, containing information and instructions about the online information sheet / renewal. Can also be resent to a specific client using the 'Resend Information Sheet Instructions' option. Login details are automatically resent with this email (as separate email)." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients when a information sheet is issued, containing information and instructions about the online information sheet / renewal. Can also be resent to a specific client using the "Resend Information Sheet Instructions" option. Login details are automatically resent with this email (as separate email).
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Information Sheet Reminder", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendInformationSheetReminder", description = "Information Sheet Reminder -- Sent to clients who have been issued a proposal but not yet submitted when using the 'Send Reminders' page. Login details are automatically resent with this email (as separate email)." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients who have been issued a proposal but not yet submitted when using the "Send Reminders" page. Login details are automatically resent with this email (as separate email).
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Information Sheet Instructions For Renewals", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendInformationSheetRenewalInstruction", description = "Sent to clients who are being renewed from the previous Programme when a information sheet is issued - instead of the Default Information Sheet Instructions email. This email is optional, and cannot be sent to non-renewing clients. If not set, the main Information Sheet Instructions email template will be used for all clients." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients who are being renewed from the previous Programme when a information sheet is issued - instead of the Default Information Sheet Instructions email. This email is optional, and cannot be sent to non-renewing clients. If not set, the main Information Sheet Instructions email template will be used for all clients.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Agreement Policy Documents Covering Text", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendPolicyDocuments", description = "Agreement Policy Documents Covering Text -- Sent to clients with Agreement documents attached. This is used when sending agreement documents from the 'Send Policy Documents', and when sending/resending a specific member's Agreement documents from the Agreement details page." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients with Agreement documents attached. This is used when sending agreement documents from the "Send Policy Documents", and when sending/resending a specific member's Agreement documents from the Agreement details page.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Agreement Quote Documents Covering Text", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendQuoteDocuments", description = "Agreement Quote Documents Covering Text -- Sent to clients with Agreement Quote documents attached. This is used when sending Agreement Quote documents from the 'Send Quotes', and when sending/resending a specific client's Quote documents." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients with Agreement Quote documents attached. This is used when sending Agreement Quote documents from the "Send Quotes", and when sending/resending a specific client's Quote documents.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Agreement Online Acceptance Instructions", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendAgreementOnlineAcceptanceInstructions", description = "Agreement Online Acceptance Instructions -- Sent to clients when a agreemnt is issued to them online which they can log on and view/accept. Login details are automatically resent with this email (as separate email)." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients when a agreemnt is issued to them online which they can log on and view/accept. Login details are automatically resent with this email (as separate email).
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Agreement Policy Documents Resend Covering Text", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "ResendPolicyDocuments", description = "Agreement Policy Documents Resend Covering Text -- Sent to clients with Agreement documents attached. This is used only when sending Agreement documents from the 'Resend Agreement Documents', and includes only the Agreement documents specified by the user." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients with Agreement documents attached. This is used only when sending Agreement documents from the "Resend Agreement Documents", and includes only the Agreement documents specified by the user.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Agreement Acceptance Confirmation", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendAgreementAcceptanceConfirmation", description = "Agreement Acceptance Confirmation -- Sent when a client accepts their agreement online (i.e. confirmation only). Does not include any agreement documents as attachments." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent when a client accepts their agreement online (i.e. confirmation only). Does not include any agreement documents as attachments.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Online Payment Instructions", "SendEmailTemplates", "Programme", new { Id = @Model.Id, type = "SendOnlinePaymentInstructions", description = "Online Payment Instructions -- Sent to clients when a agreement is issued to them for payment online which they can log on and view the agreement/make the payment. Login details are automatically resent with this email (as separate email)." }, null)
+                                    </td>
+                                    <td align="left" style="word-wrap: break-word">
+                                        Sent to clients when a agreement is issued to them for payment online which they can log on and view the agreement/make the payment. Login details are automatically resent with this email (as separate email).
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>

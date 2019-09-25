@@ -1,0 +1,135 @@
+﻿@model TechCertain.WebUI.Models.EmailTemplateViewModel
+
+@using TechCertain.WebUI.Helpers.CustomHtml
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <div class="row">
+        <div class="row">
+            <!-- col -->
+            <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+                <h1 class="page-title txt-color-blueDark">
+                    <!-- PAGE HEADER -->
+                    <i class="fa-fw fa fa-file-o"></i>  <span>
+                        <a href="~/Programme/MyProgrammes/@Model.BaseProgrammeID"> Programmes</a>
+
+                        <a href="~/Programme/TermSheetTemplate/@Model.BaseProgrammeID">> Package Term Sheet</a>
+
+                        <a href="~/Programme/EmailTemplate/@Model.BaseProgrammeID">> Programme Email Templates</a>
+                        > Add/Edit Email Template
+
+                    </span>
+
+
+                </h1>
+            </div>
+            <!-- end col -->
+        </div>
+        <span>
+            <a onclick="location.href='@Url.Action("EmailTemplate", "Programme",new { Id =@Model.BaseProgrammeID })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
+        </span>
+        <section class="col-xs-12"></section>
+    </div>
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- NEW WIDGET START -->
+        <div class="col col-12">
+            <!-- Widget ID (each widget will need unique ID)-->
+            <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+            <div class="jarviswidget" id="wid-id-10"
+                 data="false"
+                 data-widget-editbutton="false"
+                 data-widget-togglebutton="false"
+                 data-widget-deletebutton="false"
+                 data-widget-custombutton="false"
+                 data-widget-sortable="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                    <h2>@ViewBag.Title </h2>
+                </header>
+
+                <!-- widget div-->
+                <div>
+                    <!-- widget content -->
+                    <div class="smart-form no-padding">
+                        <div class="widget-body widget-hide-overflow">
+                            <form action="~/Programme/SendEmailTemplates/@Model.BaseProgrammeID" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                                <div>
+                                    @Html.HiddenFor(m => m.BaseProgrammeID)
+                                    @Html.HiddenFor(m => m.Type)
+                                    @Html.HiddenFor(m => m.Description)
+                                    <!-- widget edit box -->
+                                    <div class="jarviswidget-editbox">
+                                        <!-- This area used as drop downSS edit box -->
+                                    </div>
+                                    <!-- end widget edit box -->
+                                    <!-- widget content -->
+
+                                    <div class="col col-10">
+                                        <div class="alert alert-info">
+                                            <p>@Model.Description</p>
+                                        </div>
+                                        @Html.TextBoxFor(m => m.Subject)
+                                        <br />
+                                        @Html.TextAreaFor(m => m.Body)
+                                        <script>CKEDITOR.replace("@Html.IdFor(m => m.Body)");</script>
+                                        <br />
+                                    </div>
+                                    <!-- end widget content -->
+                                </div>
+                            </form>
+                        </div>
+                        <div class="widget-body widget-hide-overflow">
+                            <fieldset>
+                                <div class="row">
+                                    <section class="col col-12">
+                                        @*@Html.Bootstrap().Button().Text("Save Email Template").HtmlAttributes(new { onclick = "javascript:SaveEmailTemplate()" }).Class("btn txt-color-white bg-color-green btn-sm")*@
+                                        <button onclick="SaveEmailTemplate()" class="btn txt-color-white bg-color-green btn-sm" id="SaveEmailTemplate">Save Email Template</button>
+                                    </section>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+                </div>
+                <!-- end widget div -->
+            </div>
+            <!-- end widget -->
+        </div>
+        <!-- WIDGET END -->
+    </section>
+</div>
+
+
+@section pagespecific {
+
+    <script type="text/javascript">
+
+        function SaveEmailTemplate() {
+            var body = CKEDITOR.instances['@Html.IdFor(m => m.Body)'].getData();
+			var bodyElement = $("#@Html.IdFor(m => m.Body)");
+			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
+			// using hack because escape(...) was deprecated
+            bodyElement.text(bodyElement.text(body).html());
+
+			$.ajax({
+				type: "POST",
+				url: '@Url.Action("SendEmailTemplates", "Programme")',
+			    data: $("#update-form").serialize() // serializes the form's elements.
+			})
+	        .done(function (json) {
+				console.log(json);
+	        })
+	        .fail(function (err, ajaxOptions, thrownError) {
+				alert("Unable to save." + err.responseText );
+				console.log(err);
+				console.log(ajaxOptions);
+				console.log(thrownError);
+	        });
+        };
+
+    </script>
+
+}
+
+

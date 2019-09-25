@@ -1,0 +1,115 @@
+﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <!-- col -->
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-file-o"></i>  <span>
+                    <a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
+
+                    <a href="~/Programme/TermSheetTemplate/@Model.Id">> Package Term Sheet</a>
+                    > Programme Email Templates
+
+                </span>
+
+            </h1>
+        </div>
+        <!-- end col -->
+    </div>
+    <span>
+        <a onclick="location.href='@Url.Action("TermSheetTemplate", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
+    </span>
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <div class="row">
+            <article class="col-sm-12 col-md-12 col-lg-6">
+                <!-- new widget -->
+                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                        <h2>Manage Rules </h2>
+                    </header>
+                    <!-- widget div-->
+                    <div>
+                        <div class="widget-body no-padding smart-form">
+                            <!-- content goes here -->
+                            <h2>CoastGuard </h2>
+                            <div> </div>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
+                                @if (Model.BrokerContactUser == null)
+                                {
+                                    <label class="label">Broker User: Broker FirstName</label>
+
+                                }
+                                else
+                                {
+                                    <label class="label">Broker User: @Model.BrokerContactUser.FirstName</label>
+
+                                }
+
+                            </section>
+
+                            <table class="table table-bordered table-striped ">
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Manage UIS Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id }, null)
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Manage UIS Submission Notification Users", " SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Manage Agreement Refer Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Manage Agreement Issue Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+                                        @Html.ActionLink("Manage Agreement Bound Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
+                                    </td>
+                                </tr>
+
+                                @foreach (var product in Model.Product)
+                                {
+                                    <tr>
+                                        <td align="left">
+                                            @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id ,productId = product.Id}, null)
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td align="left"></td>
+                                </tr>
+                            </table>
+                            @*@foreach (var product in Model.ProductName)
+                            {
+                                @Html.ActionLink("Product Rules for "+product, "/ProductRules", "Programme", new { Id = @Model.Id }, null)
+
+                            }*@
+
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+

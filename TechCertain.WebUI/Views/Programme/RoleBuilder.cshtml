@@ -1,0 +1,235 @@
+﻿@model TechCertain.WebUI.Models.Programme.RoleViewModel
+
+@using TechCertain.WebUI.Helpers.CustomHtml
+
+<div id="content">
+
+    <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1"
+                     data-widget-colorbutton="false"
+                     data-widget-editbutton="false"
+                     data-widget-togglebutton="false"
+                     data-widget-deletebutton="false"
+                     data-widget-custombutton="false"
+                     data-widget-sortable="false">
+                    <header>
+                        <h2>Create a new Activity</h2>
+                    </header>
+
+                    <div role="content">
+                        <!-- widget edit box -->
+                        <div class="jarviswidget-editbox">
+                            <!-- This area used as dropdown edit box -->
+                        </div>
+                        <!-- end widget edit box -->
+                        <!-- widget content -->
+                        <div class="widget-body">
+                            <div class="row">
+                                <form id="wizard-1" class="" method="post">
+                                    <div id="bootstrap-wizard-1" class="col-sm-12">
+                                        <div class="form-bootstrapWizard">
+                                            <ul class="bootstrapWizard form-wizard">
+                                                <li class="active" data-target="#step1">
+                                                    <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
+                                                </li>
+                                                <li data-target="#step2">
+                                                    <a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">Attach to Programme</span> </a>
+                                                </li>
+                                            </ul>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="tab-content">
+                                            @* Tab 1 *@
+                                            @Html.DisplayFor(m => m.Builder)
+                                            @* Tab 2 *@
+                                            @Html.DisplayFor(m => m.RoleAttach)
+                                            @*Tab 3*@
+                                            @* Tab 4 *@
+
+                                            <div class="tab-pane" id="tab2">
+                                                <br />
+                                                <h3><strong>Setup </strong> - Programme Activities</h3>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><strong>InclorExcl</strong></label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                                                                @Html.DropDownListFor(m => m.RoleAttach.SelectedProgramme, Model.RoleAttach.BaseProgList)
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            @* Button controls *@
+                                            <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <ul class="pager wizard no-margin">
+                                                            <li class="previous disabled">
+                                                                <a href="javascript:void(0);" class="btn btn-lg btn-default"> Previous </a>
+                                                            </li>
+                                                            <li class="next">
+                                                                <a href="javascript:void(0);" class="btn btn-lg txt-color-darken"> Next </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                @*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("successActivityModal")))
+                                {
+                                    @modal.Header("Success!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>Your Role has been successfully created. You can now select it from the list of Roles</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
+                                    }
+
+                                }
+                                @using (var modal = Html.Bootstrap().Begin(new Modal().Id("successModal")))
+                                {
+                                    @modal.Header("Success!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>Your Roles has been successfully attached to the programme.</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
+                                    }
+                                }
+                                @using (var modal = Html.Bootstrap().Begin(new Modal().Id("failureModal")))
+                                {
+                                    @modal.Header("Oops!")
+                                    using (modal.BeginBody())
+                                    {
+                                        <p>It looks like something has gone wrong. A more detailed explaination is available on the page, and the error has been logged.</p>
+                                    }
+                                    using (modal.BeginFooter())
+                                    {
+                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
+                                    }
+                                }*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>           
+        </div>
+    </section>
+</div>
+
+
+@section pagespecific {
+    <script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
+    <script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
+    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
+    <!-- PAGE RELATED PLUGIN(S) -->
+    <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
+    <script type="text/javascript">
+
+    // DO NOT REMOVE : GLOBAL FUNCTIONS!
+
+    function ShowRoleModel() {
+         $("#myRoleModal").modal("show");
+    }        
+
+        function SubmitRole() {
+            debugger;
+        console.log($("#RoleName").val())
+
+            var mergeData = { title: $("#RoleName").val() };
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("CreateRole", "Programme")',
+            data: mergeData,
+	    })
+		.done(function (json) {
+            //var model = JSON.parse(json);
+            //$('#submitRoleModal').modal().show();
+            //$('#myRoleModal').modal().cl();
+        })
+		.fail(function (err, ajaxOptions, thrownError) {
+	        $('#failureModal').modal().show();
+        });
+    }
+
+    $(document).ready(function () {
+
+	    // find all multiselect items and apply Chosen
+		$('.cselect').each(function() {
+			$('#'+this.id).chosen( { width: '100%' } );
+		});
+
+		$('#bootstrap-wizard-1').bootstrapWizard({
+			'tabClass' : 'form-wizard',
+            'onNext': function (tab, navigation, index) {
+                var $valid = $("#wizard-1").valid();
+                var numTabs = $('#wizard-1').find('.tab-pane').length - 1;
+				if (!$valid) {
+					$validator.focusInvalid();
+					return false;
+				}
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
+				if (index === numTabs) {
+                    // We are at the last tab
+					$.ajax({
+						type: "POST",
+						url: '@Url.Action("CreateProgrammeRoles", "Programme")',
+						data: $("#wizard-1").serialize() // serializes the form's elements.
+					})
+					.done(function (json) {
+						//var model = JSON.parse(json);
+	                    $('#successModal').modal();
+						//$('#productAutoReview').text("");
+					})
+					.fail(function (err, ajaxOptions, thrownError) {
+	                    $('#failureModal').modal();
+						$('#productAutoReview').text(err.responseText);
+					});
+                }
+			},
+			onTabClick : function(tab, navigation, index) {
+				var $valid = $("#wizard-1").valid();
+				if (!$valid) {
+					validator.focusInvalid();
+					return false;
+				}
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).addClass('complete');
+				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).find('.step').html('<i class="fa fa-check"></i>');
+				return true;
+			},
+			onTabShow: function(tab, navigation, index) {
+				// Update the label of Next button when we are at the last tab
+				var numTabs = $('#wizard-1').find('.tab-pane').length;
+				$('#wizard-1')
+				    .find('.next')
+				        .removeClass('disabled')    // Enable the Next button
+				        .find('a')
+				        .html(index === numTabs-1 ? 'Submit' : 'Next');
+            }
+		});
+    });
+    </script>
+}
