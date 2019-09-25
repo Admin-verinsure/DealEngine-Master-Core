@@ -288,7 +288,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            vehicles = vehicles.OrderBy(sidx + " " + sord).ToList();
+            //vehicles = vehicles.OrderBy(sidx + " " + sord).ToList();
 
 
             XDocument document = null;
@@ -369,7 +369,7 @@ namespace TechCertain.WebUI.Controllers
                             break;
                     }
                 }
-                organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
                 model.Page = page;
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
@@ -564,7 +564,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            organisationalUnits = organisationalUnits.OrderBy(sidx + " " + sord).ToList();
+            //organisationalUnits = organisationalUnits.OrderBy(sidx + " " + sord).ToList();
 
 
             XDocument document = null;
@@ -696,7 +696,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            locations = locations.OrderBy(sidx + " " + sord).ToList();
+            //locations = locations.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -895,7 +895,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            buildings = buildings.OrderBy(sidx + " " + sord).ToList();
+            //buildings = buildings.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1083,7 +1083,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
+            //waterLocations = waterLocations.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1226,7 +1226,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            businessInterruptions = businessInterruptions.OrderBy(sidx + " " + sord).ToList();
+            //businessInterruptions = businessInterruptions.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1343,7 +1343,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            materialDamages = materialDamages.OrderBy(sidx + " " + sord).ToList();
+            //materialDamages = materialDamages.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -1708,7 +1708,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
 
-            boats = boats.OrderBy(sidx + " " + sord).ToList();
+            //boats = boats.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -2253,7 +2253,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            boatUses = boatUses.OrderBy(sidx + " " + sord).ToList();
+            //boatUses = boatUses.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
@@ -2387,7 +2387,7 @@ namespace TechCertain.WebUI.Controllers
                         break;
                 }
             }
-            claims = claims.OrderBy(sidx + " " + sord).ToList();
+            //claims = claims.OrderBy(sidx + " " + sord).ToList();
 
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
