@@ -25,7 +25,7 @@
 
 			<div class="smart-form no-padding">
 			@foreach (var item in Model) {
-				@Html.Partial("Partials/ViewAgreement", item);
+				@await Html.PartialAsync("Partials/ViewAgreement", item);
 			}
             </div>
             <!-- end widget content -->

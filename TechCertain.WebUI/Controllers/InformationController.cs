@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using static System.Net.WebRequestMethods;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -1972,15 +1974,13 @@ namespace TechCertain.WebUI.Controllers
             return Redirect(url);
         }
 
-
-        //throw new Exception("Method will need to be re-written");
-        //[HttpPost]
-        //public ActionResult EditInformation(FormCollection formcollection)
-        //{
-        //    // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
-        //    // so just reroute the call
-        //    return SaveInformation(formcollection);
-        //}
+        [HttpPost]
+        public ActionResult EditInformation(FormCollection formcollection)
+        {
+            // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
+            // so just reroute the call
+            return SaveInformation(formcollection);
+        }
         //
         //            InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == id);
         //
@@ -2010,27 +2010,26 @@ namespace TechCertain.WebUI.Controllers
         //            return View("ViewInformation", model);
         //        }
 
-        //throw new Exception("Method will need to be re-written");
-        //[HttpPost]
-        //public ActionResult SaveInformation(FormCollection collection)
-        //{
-        //    Guid sheetId = Guid.Empty;
-        //    if (Guid.TryParse(Request.Form.Get("AnswerSheetId"), out sheetId))
-        //    {
-        //        ClientInformationSheet sheet = _clientInformationService.GetInformation(sheetId);
-        //        if (sheet == null)
-        //            return Json("Failure");
+        [HttpPost]
+        public ActionResult SaveInformation(IFormCollection collection)
+        {
+            Guid sheetId = Guid.Empty;
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
+                ClientInformationSheet sheet = _clientInformationService.GetInformation(sheetId);
+                if (sheet == null)
+                    return Json("Failure");
 
-        //        using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-        //        {
-        //            _clientInformationService.SaveAnswersFor(sheet, collection);
-        //            _clientInformationService.UpdateInformation(sheet);
-        //            uow.Commit();
-        //        }
-        //    }
+                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                {
+                    _clientInformationService.SaveAnswersFor(sheet, collection);
+                    _clientInformationService.UpdateInformation(sheet);
+                    uow.Commit();
+                }
+            }
 
-        //    return Json("Success");
-        //}
+            return Json("Success");
+        }
 
 
 
@@ -2093,41 +2092,40 @@ namespace TechCertain.WebUI.Controllers
         }
 
 
-        //throw new Exception("Method will need to be re-written");
-        //[HttpPost]
-        //public ActionResult SubmitInformation(FormCollection collection)
-        //{
-        //    Guid sheetId = Guid.Empty;
-        //    ClientInformationSheet sheet = null;
-        //    if (Guid.TryParse(Request.Form.Get("AnswerSheetId"), out sheetId))
-        //    {
+        [HttpPost]
+        public IActionResult SubmitInformation(IFormCollection collection)
+        {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
 
-        //        sheet = _clientInformationService.GetInformation(sheetId);
+                sheet = _clientInformationService.GetInformation(sheetId);
 
-        //        var reference = _referenceService.GetLatestReferenceId();
+                var reference = _referenceService.GetLatestReferenceId();
 
-        //        using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-        //        {
-        //            if (sheet.Status != "Submitted" && sheet.Status != "Bound")
-        //            {
-        //                //UWM ICIB
-        //                _uWMService.UWM_ICIBNZIMV(CurrentUser, sheet, reference);
+                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                {
+                    if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+                    {
+                        //UWM ICIB
+                        _uWMService.UWM_ICIBNZIMV(CurrentUser, sheet, reference);
 
-        //                //sheet.Status = "Submitted";
-        //                uow.Commit();
-        //            }
+                        //sheet.Status = "Submitted";
+                        uow.Commit();
+                    }
 
-        //        }
-        //        foreach (ClientAgreement agreement in sheet.Programme.Agreements)
-        //        {
-        //            _referenceService.CreateClientAgreementReference(reference, agreement.Id);
-        //        }
-        //    }
+                }
+                foreach (ClientAgreement agreement in sheet.Programme.Agreements)
+                {
+                    _referenceService.CreateClientAgreementReference(reference, agreement.Id);
+                }
+            }
 
-        //    //return View();
-        //    return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
-        //    //return Content (sheet.Id.ToString());
-        //}
+            //return View();
+            return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
+            //return Content (sheet.Id.ToString());
+        }
 
         //[HttpPost]
         //public ActionResult QuoteToAgree(FormCollection collection)
@@ -2178,20 +2176,19 @@ namespace TechCertain.WebUI.Controllers
 
         //}
 
-        //throw new Exception("Method will need to be re-written");
-        //[HttpPost]
-        //public ActionResult PaymentInformation(FormCollection collection)
-        //{
-        //    Guid sheetId = Guid.Empty;
-        //    ClientInformationSheet sheet = null;
+        [HttpPost]
+        public ActionResult PaymentInformation(FormCollection collection)
+        {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
 
-        //    if (Guid.TryParse(Request.Form.Get("AnswerSheetId"), out sheetId))
-        //    {
-        //        sheet = _clientInformationService.GetInformation(sheetId);
-        //    }
-            
-        //    return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
-        //}
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
+                sheet = _clientInformationService.GetInformation(sheetId);
+            }
+
+            return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
+        }
 
         [HttpGet]
         public ActionResult UpdateInformation(Guid id)

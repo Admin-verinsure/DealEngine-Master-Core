@@ -3,15 +3,14 @@
 <!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 <!-- <script src="/Scripts/bootstrapmvc" defer></script>-->
 <!-- <script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
-
+    
 <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
 <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
 <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js" defer></script>
-<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js"></script>
+<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer ></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
-<script src="~/Scripts/plugin/chosen/chosen.jquery.js"></script>
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
-
+<script src="~/Scripts/plugin/chosen/chosen.jquery.js"defer></script>
+<script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js"></script>
 
 <script type="text/javascript">
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -194,7 +193,6 @@ $(document).ready(function () {
             $('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
             $('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
             if (index === 1) {
-                debugger;
                 var informationsheetstatus = $('#Status').val();
                 var clientInformationSheet = $('#AnswerSheetId').val();
                 var claim1 = $('#Claimexp1').val();
@@ -229,54 +227,48 @@ $(document).ready(function () {
                  stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
 
                 var postData = { Claims : stringArray , ClientInformationSheet : clientInformationSheet};
-
-                debugger;
-
-
                 if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                    $.ajax({
+                        url: '@Url.Action("UpdateClaim", "Information")',
+                        type: "POST",
+                        data: postData
+                    })
+                        .done(function (data) {
 
-
-        $.ajax({
-        url: '@Url.Action("UpdateClaim", "Information")',
-        type: "POST",
-        data: postData
-    })
-        .done(function (data) {
-            debugger;
         //alert("Success");
-        $.smallBox({
-            title: "Success",
-            content: "Claim Experience and Prior Insurance details have been updated",
-            color: "#5F895F",
-            iconSmall: "fa fa-check bounce animated",
-            timeout: 4000
-        });
-    })
-        .fail(function (a,s,d) {
-            debugger;
-        alert("Unable to save.");
-        });
-               }
-
-                debugger;
-
-                console.log($('#MilestoneStatus').val());
-                if ($('#MilestoneStatus').val() === 'Active'){
-                    $('#getMilestoneModal').modal('show');
+        //$.smallBox({
+        //    title: "Success",
+        //    content: "Claim Experience and Prior Insurance details have been updated",
+        //    color: "#5F895F",
+        //    iconSmall: "fa fa-check bounce animated",
+        //    timeout: 4000
+        //});
+                        })
+                            .fail(function (a,s,d) {
+                            alert("Unable to save.");
+                        });
                 }
-                $('#getAgreementModal').modal('show');
+               
+                //console.log($('#MilestoneStatus').val());
+                //if ($('#MilestoneStatus').val() === 'Active'){
+                //    $('#getMilestoneModal').modal('show');
+                //}
+                //$('#getAgreementModal').modal('show');
+                
                 $.ajax({
                     url: '@Url.Action("SubmitInformation", "Information")',
                     type: "POST",
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
+                        '@Url.Link(url)';
                         $("#agreementView").load(url, function () {
-                            $('#getAgreementModal').modal('hide');
+                            //$('#getAgreementModal').modal('hide');
                         });
                     })
-                    .fail(function () {
-                        $('#getAgreementModal').modal('hide');
+                    .fail(function (data) {
+                        //$('#getAgreementModal').modal('hide');
+                        console.log(data);
                         alert("There was an error getting your agreement.");
                     });
             } else if (index === 2) {

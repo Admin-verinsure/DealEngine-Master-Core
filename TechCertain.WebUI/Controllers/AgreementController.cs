@@ -16,7 +16,7 @@ using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AgreementController : BaseController
     {
         IInformationTemplateService _informationService;
@@ -715,7 +715,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult ViewAgreement(Guid id)
+        public IActionResult ViewAgreement(Guid id)
         {
             var models = new BaseListViewModel<ViewAgreementViewModel>();
 

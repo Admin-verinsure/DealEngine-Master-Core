@@ -22,7 +22,7 @@
                     @if (!string.IsNullOrWhiteSpace(informationSection.CustomView))
                     {
 
-                        @Html.Partial("PrefabSections/" + informationSection.CustomView, Model)
+                        @await Html.PartialAsync("PrefabSections/" + informationSection.CustomView, Model)
                         count++;
 
                         if (count == 5)
@@ -33,7 +33,7 @@
                                     <h4 style="background-color:#00A8C8; color:white" id="@Section.Name">@Section.Name</h4>
                                     if (!string.IsNullOrWhiteSpace(Section.CustomView))
                                     {
-                                        @Html.Partial("PrefabSections/" + Section.CustomView, Model)
+                                        @await Html.PartialAsync("PrefabSections/" + Section.CustomView, Model)
 
                                     }
                                 }
