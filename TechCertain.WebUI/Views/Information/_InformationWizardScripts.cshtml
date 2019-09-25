@@ -1,15 +1,18 @@
 ﻿<!-- PAGE RELATED PLUGIN(S) -->
-<script src="/Scripts/bootstrapmvc" defer></script>
+@*<script src="/Scripts/bootstrapmvc" defer></script>*@
 <!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
 <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
 <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js" defer></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
+<script src="~/Scripts/plugin/chosen/chosen.jquery.js"></script>
+
+
 <script type="text/javascript">
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
 $(document).ready(function () {
     //$(".chosen-select").chosen({ width: "95%" });
-   
+
    $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
@@ -18,7 +21,7 @@ $(document).ready(function () {
     $('#Claimtabs').tabs();
     $('#BoatUsetabs').tabs();
     $('#NamedPartiestabs').tabs();
-    
+
      $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
     $('#ClearBoat').css({ "background-color": "red", "color": "White" });
     $('#AddClearBoat').css({ "background-color": "red", "color": "White" });
@@ -33,7 +36,7 @@ $(document).ready(function () {
     $('.ClearBoat').css({ "background-color": "red", "color": "White" });
     $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
     $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
-   
+
 
     $('.overlay').css({
     "position": "fixed",
@@ -74,7 +77,7 @@ $(document).ready(function () {
     //    select: function () {
     //        formatDate($(this));
     //    },
-        
+
     // });
 
     $('.Effectivedate').datepicker({
@@ -167,9 +170,9 @@ $(document).ready(function () {
         }
     });
 
-	$('.cselect').each(function() {
-		$('#'+this.id).chosen( { width: '100%' } );
-	});
+	//$('.cselect').each(function() {
+	//	$('#'+this.id).chosen( { width: '100%' } );
+	//});
 
 	$('.datepicker').each(function () {
 	    $('#'+this.id).datepicker();
@@ -188,7 +191,7 @@ $(document).ready(function () {
             $('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
             if (index === 1) {
                 debugger;
-
+                var informationsheetstatus = $('#Status').val();
                 var clientInformationSheet = $('#AnswerSheetId').val();
                 var claim1 = $('#Claimexp1').val();
                 var claim2 = $('#Claimexp2').val();
@@ -198,18 +201,18 @@ $(document).ready(function () {
                var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]')!== null;
 
                //if (hghg == "false" || hghg =="" ||hghg == null || hghg === "undefined" ||  hghg == "&nbsp;") {
-               if (Isboatexist == "false") {
+               if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
 
                   window.alert("Please Add Atleast One Boat to proceed for policy. ");
                 $("#Vessel").trigger("click");
                 return false;
 
-                }else if (! validateClaim(claim1, claim2, claim3, claim4, claim5)) {
+                }else if (! validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                     //$("#Vessel").trigger("click");
                     window.alert("Please Add Claims Experience to proceed for policy. ");
-                   
+
                    $("#more").trigger("click");
-                   $("[id='Claimsexperience/Prior Insurance']").trigger("click");
+                   $("[id='Claims Experience / Insurance History']").trigger("click");
                     return false;
 
                 }
@@ -223,9 +226,9 @@ $(document).ready(function () {
 
                 var postData = { Claims : stringArray , ClientInformationSheet : clientInformationSheet};
 
-                debugger;
                 
-	$.ajax({
+                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                    	$.ajax({
      	// change back once mono decides to fix
         url: '@Url.Action("UpdateClaim", "Information")',
         type: "POST",
@@ -246,13 +249,15 @@ $(document).ready(function () {
             debugger;
         alert("Unable to save.");
         });
+                }
+
 
                 debugger;
 
 
                 console.log($('#MilestoneStatus').val());
                 if ($('#MilestoneStatus').val() === 'Active'){
-                    $('#getMilestoneModal').modal('show');                    
+                    $('#getMilestoneModal').modal('show');
                 }
                 $('#getAgreementModal').modal('show');
                 $.ajax({
@@ -276,7 +281,7 @@ $(document).ready(function () {
                 else {
                     return false;
                 }
-                $('#getAgreementDecModal').modal('show');
+                //$('#getAgreementDecModal').modal('show');
                 $.ajax({
                     url: '@Url.Action("QuoteToAgree", "Information")',
                     type: "POST",
@@ -284,11 +289,11 @@ $(document).ready(function () {
                 })
                     .done(function (url) {
                         $("#agreementDeclarationView").load(url, function () {
-                            $('#getAgreementDecModal').modal('hide');
+                            //$('#getAgreementDecModal').modal('hide');
                         });
                     })
                     .fail(function () {
-                        $('#getAgreementDecModal').modal('hide');
+                        //$('#getAgreementDecModal').modal('hide');
                         alert("There was an error getting your agreement declaration.");
                     });
                 if (status == "Bound") {
@@ -445,8 +450,7 @@ $(document).ready(function () {
     });
 
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
-        debugger;
-        
+
         var validity = true;
 
         if (claim1 == "") {
@@ -466,7 +470,7 @@ $(document).ready(function () {
                       $('#Claimexp1Details').val("");
 
                     }
-                
+
                             $('#ValidateClaimcond1').html("<i></i>");
                             $('#ValidateClaimDetails1').html("<i></i>");
 
@@ -568,7 +572,7 @@ $(document).ready(function () {
         return validity;
     }
 
-    
+
     function validateClaimDetails(Claim) {
         debugger;
           var claim = document.getElementById(Claim);
@@ -579,7 +583,7 @@ $(document).ready(function () {
             $("#" + Claim + "Sec").addClass('hidden');
 
         }
-        
+
     }
 
 
@@ -605,7 +609,7 @@ $(document).ready(function () {
     }
 
     function CloseAdvisory(method) {
-        $('#getMilestoneModal').modal('hide');  
+        $('#getMilestoneModal').modal('hide');
 
         var mergeData = { MilestoneAdvisoryVM: GetMilestoneContentJson(method) };
         var postData = JSON.stringify(mergeData);
@@ -692,7 +696,7 @@ $(document).ready(function () {
         var Addeffectivedate = $("#AddBoatEffectiveDate").val();
 
         var validity = true;
-      
+
         //debugger;
         // if (Addeffectivedate == "") {
         //    $('#validateAddboateffectivedate').html("<font color='red'>Field is required</font>")
@@ -2279,7 +2283,7 @@ function EditClaim(claimId, tableId) {
         } else {
             $('#validateAddYearsOFExp').html("<font></font>");
         }
-      
+
         if (result) {
             AddOperator(tabId, tableId);
             SetCurrentTab(currenttab);
@@ -2321,7 +2325,7 @@ function EditClaim(claimId, tableId) {
 
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
-        
+
             AddOperatorModal(firstName, lastName, yearsXP, Email);
             $('#addOperatorModal').modal('hide');
         }
@@ -2685,7 +2689,7 @@ function EditClaim(claimId, tableId) {
                  $('#getLandLocModal').modal('hide');
 
                 }
-                
+
             })
 
             .fail(function (jqXHR, textStatus, errorThrown) {
@@ -3192,8 +3196,8 @@ function EditClaim(claimId, tableId) {
         var adminLName = $('#LastNameAdd').val();
         var adminPhone = $('#PhoneAdd').val();
         var adminEmail = $('#EmailAdd').val();
-        
-       
+
+
 
         if (partyIA != "Skipper") {
 
@@ -3216,7 +3220,7 @@ function EditClaim(claimId, tableId) {
                 data: JSON.stringify({ model: proddata }),
                 url: '@Url.Action("AddInterestedParty", "Services")',
                 contentType: "application/json; charset=utf-8"
-                     
+
             })
                 .done(function (data) {
                  $.smallBox({
@@ -3230,8 +3234,8 @@ function EditClaim(claimId, tableId) {
                 $('#AddAdminUserSec').addClass('hidden');
                 $('#UserSec').addClass('hidden');
                 $('#useremailSec').addClass('hidden');
-                    
-                    
+
+
 
                 $(tableId).trigger('reloadGrid');
                 $(tabId + " :input").val("");
@@ -3248,7 +3252,7 @@ function EditClaim(claimId, tableId) {
 	     });
 
 
-           
+
         } else {
 
              var proddata = {
@@ -3264,13 +3268,13 @@ function EditClaim(claimId, tableId) {
             "ID": partyid
             };
 
-           
+
             $.ajax({
                 type: "Post",
                 data: JSON.stringify({ model: proddata }),
                 url: '@Url.Action("AddOperator", "Services")',
                 contentType: "application/json; charset=utf-8"
-                     
+
             })
                 .done(function (data) {
                  $.smallBox({
@@ -3284,7 +3288,7 @@ function EditClaim(claimId, tableId) {
                 $("#BoatOperator.b [value='add']").remove();
                 $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
                 $('#BoatOperator.b').trigger('chosen:updated');
-               
+
                 $('#AddBoatOperator.b').append("<option value=\"" + data.ID + "\">" + data.FirstName + " " + data.LastName + "</option>")
                 $("#AddBoatOperator.b [value='add']").remove();
                 $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
@@ -3302,7 +3306,7 @@ function EditClaim(claimId, tableId) {
                 $(tabId + " :input").val("");
                 $('#getPartyModal').modal('hide');
 
-           
+
 
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#getPartyModal').modal('hide');
@@ -3816,14 +3820,14 @@ function EditClaim(claimId, tableId) {
         $('#NPOrgWebsite').val(data.Website);
         $('#NPOrgEmail').val(data.Email);
 
-      
+
 	});
     }
 
 
     function EditNamedParties(classId, boatUseId) {
         var _sheetId = $('#AnswerSheetId').val();
-        
+
         $('#getDetailsModal').modal('show');
         debugger;
 	$.ajax({
@@ -3850,7 +3854,7 @@ function EditClaim(claimId, tableId) {
         $('#NPOrgWebsite').val(data.Website);
         $('#NPOrgEmail').val(data.Email);
         $('#getDetailsModal').modal('hide');
-      
+
 	});
     };
 
@@ -3938,7 +3942,7 @@ function EditClaim(claimId, tableId) {
         });
        };
 
-    
+
 
     function UpdateChosen() {
         // find all multiselect items and apply Chosen
@@ -4014,7 +4018,7 @@ function EditClaim(claimId, tableId) {
     function CreateProgramme() {
         debugger;
         var programmeName = $("#ProgName").val();
-        
+
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("ProgrammeBuilder", "Information")',
@@ -4029,8 +4033,8 @@ function EditClaim(claimId, tableId) {
 		                  color: "#5F895F",
 		                  iconSmall: "fa fa-check bounce animated",
 		                  timeout: 4000
-                     }); 
-            
+                     });
+
 	})
             .fail(function (jqXHR, textStatus, errorThrown) {
                 debugger;
@@ -4040,11 +4044,11 @@ function EditClaim(claimId, tableId) {
 
     }
 
-    
+
     function GetUser(email) {
         debugger;
         var UserEmail = $(email).val();
-       
+
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("getUserEmail", "Services")',
@@ -4061,7 +4065,7 @@ function EditClaim(claimId, tableId) {
 		                  color: "#5F895F",
 		                  iconSmall: "fa fa-check bounce animated",
 		                  timeout: 4000
-                     }); 
+                     });
                     $('#firstnameSec').removeClass("hidden");
                     $('#LastnameSec').removeClass("hidden");
                     $('#PhoneSec').removeClass("hidden");
@@ -4072,7 +4076,7 @@ function EditClaim(claimId, tableId) {
                     $('#LastnameSec').addClass("hidden");
                     $('#PhoneSec').addClass("hidden");
                 }
-            
+
 	})
             .fail(function (jqXHR, textStatus, errorThrown) {
                 debugger;
@@ -4104,7 +4108,7 @@ function EditClaim(claimId, tableId) {
 		                  color: "#5F895F",
 		                  iconSmall: "fa fa-check bounce animated",
 		                  timeout: 4000
-                     }); 
+                     });
                      var user = document.getElementById("userfound");
                      $('#userfound').html("User NotFound. Enter Admin Details");
                      user.style.color = "Red";
@@ -4710,7 +4714,7 @@ function AddMotorVehicle(tabId, tableId) {
 
         $('#HullConfiguration').prop("disabled", false);
         $('#AddHullConfiguration').prop("disabled", false);
-        $('#BuiltProfessionally').val("").trigger('chosen:updated'); 
+        $('#BuiltProfessionally').val("").trigger('chosen:updated');
         $('#AddBuiltProfessionally').val("").trigger('chosen:updated');
         $('#MotorType').val("").trigger('chosen:updated');
         $('#AddMotorType').val("").trigger('chosen:updated');
@@ -4778,7 +4782,7 @@ function AddMotorVehicle(tabId, tableId) {
             $('#AddNPOrgNameSec').addClass("hidden");
             $('#AddAdminUserSec').addClass("hidden");
             $('#AddupdateParty').removeClass('hidden');
-            
+
 
         } else {
             if (IA == "Private" || IA == "CoOwner" ) {
@@ -5890,7 +5894,7 @@ function AddMotorVehicle(tabId, tableId) {
                     $('#AddMooredType').append($('<option>', { value: item.Value, text: item.Text }));
                     $('#MooredType').append($('<option>', { value: item.Value, text: item.Text }));
                 });
-                  
+
 
 
 	})
@@ -6053,7 +6057,7 @@ function AddMotorVehicle(tabId, tableId) {
         selectedBoatUse = "";
     }
 
-   
+
 
     function addNewParty() {
         $('#addInterestedPartyModal').modal('show');

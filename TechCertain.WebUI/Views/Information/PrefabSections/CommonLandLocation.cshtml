@@ -1,14 +1,7 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
-@*@using TechCertain.Web.UI.Helpers.CustomHtml*@
 
 <div class="padding-10">
     <div id="proposalcreate-form" class="smart-form buildtab" novalidate="novalidate">
-
-        @*@tabs.Tab("List All").Class("listall")
-            @tabs.Tab("Edit")
-            @tabs.Tab("Add")
-
-            @tabs.Tab("List Removed").Class("LandRemoved")*@
 
         <div id="Landtabs">
 
@@ -52,13 +45,13 @@
                                             return ('<button onclick="SetBuildingRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblBuilding\', \'#tblRemovedBuilding\');" type="button" class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>');
 							            }
 										}
-									],
+                                    ],                                                                      
 							        autowidth: true,
 							        pager: "#pagerBuilding",
 							        rowNum: 10,
 							        rowList: [10, 20, 30],
 							        sortname: "BuildingName",
-							        sortorder: "desc",
+							        //sortorder: "desc",
 							        viewrecords: true,
 							        gridview: true,
 							        autoencode: true
@@ -202,10 +195,12 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
+                            <script src="~/Scripts/libs/jquery-3.1.1.js"></script>
+                           
                             <script type="text/javascript">
-                                 $(".LandRemoved").click(function () {
-						    $("#tblRemovedBuilding").jqGrid({
+                                $(".LandRemoved").click(function () {
+						        $("#tblRemovedBuilding").jqGrid({
 						        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
 						        mtype: "GET",

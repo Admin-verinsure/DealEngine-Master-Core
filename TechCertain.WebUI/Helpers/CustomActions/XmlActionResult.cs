@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace TechCertain.WebUI
+namespace TechCertain.WebUI.Helpers.CustomActions
 {
 	public class XmlActionResult : ActionResult
 	{
@@ -24,15 +27,27 @@ namespace TechCertain.WebUI
 			Formatting = Formatting.None;
 		}
 
-		public void ExecuteResult (ControllerContext context)
+		public override void ExecuteResult (ActionContext context)
 		{
-            throw new Exception("This method needs to be re-written");
-			//context.HttpContext.Response.Clear();
-			//context.HttpContext.Response.ContentType = MimeType;
+            var syncIOFeature = context.HttpContext.Features.Get<IHttpBodyControlFeature>();
+            if (syncIOFeature != null)
+            {
+                syncIOFeature.AllowSynchronousIO = true;
+            }
 
-			//using (var writer = new XmlTextWriter(context.HttpContext.Response.OutputStream, Encoding.UTF8) { Formatting = Formatting })
-			//	_document.WriteTo(writer);
-		}
-	}
+            context.HttpContext.Response.Headers.Clear();
+            context.HttpContext.Response.ContentType = MimeType;
+
+           
+            using (var writer = new XmlTextWriter(context.HttpContext.Response.Body, Encoding.UTF8) { Formatting = Formatting })
+            	_document.WriteTo(writer);
+
+
+                //context.HttpContext.Response.ContentType = MimeType;
+
+                //using (var writer = new XmlTextWriter(context.HttpContext.Response.OutputStream, Encoding.UTF8) { Formatting = Formatting })
+                //	_document.WriteTo(writer);
+        }
+    }
 }
 
