@@ -261,7 +261,6 @@ $(document).ready(function () {
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
-                        '@Url.Link(url)';
                         $("#agreementView").load(url, function () {
                             //$('#getAgreementModal').modal('hide');
                         });
