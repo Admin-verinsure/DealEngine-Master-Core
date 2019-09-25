@@ -1,19 +1,20 @@
 ﻿<!-- PAGE RELATED PLUGIN(S) -->
 @*<script src="/Scripts/bootstrapmvc" defer></script>*@
 <!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
+
 <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
 <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js" defer></script>
+<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js"></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
 <script src="~/Scripts/plugin/chosen/chosen.jquery.js"></script>
+<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
 
 
 <script type="text/javascript">
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
 $(document).ready(function () {
-    //$(".chosen-select").chosen({ width: "95%" });
 
-   $('#Nonregisteredtabs').tabs();
+	$('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
     $('#registeredtrailertabs').tabs();
@@ -22,7 +23,7 @@ $(document).ready(function () {
     $('#BoatUsetabs').tabs();
     $('#NamedPartiestabs').tabs();
 
-     $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
+    $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
     $('#ClearBoat').css({ "background-color": "red", "color": "White" });
     $('#AddClearBoat').css({ "background-color": "red", "color": "White" });
     $('#UpdateNRVehicle').css({ "background-color": "#339933", "color": "White" });
@@ -226,9 +227,12 @@ $(document).ready(function () {
 
                 var postData = { Claims : stringArray , ClientInformationSheet : clientInformationSheet};
 
-                
+                debugger;
+
+
                 if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                    	$.ajax({
+
+                    $.ajax({
      	// change back once mono decides to fix
         url: '@Url.Action("UpdateClaim", "Information")',
         type: "POST",
@@ -249,11 +253,9 @@ $(document).ready(function () {
             debugger;
         alert("Unable to save.");
         });
-                }
-
+               }
 
                 debugger;
-
 
                 console.log($('#MilestoneStatus').val());
                 if ($('#MilestoneStatus').val() === 'Active'){
@@ -281,7 +283,7 @@ $(document).ready(function () {
                 else {
                     return false;
                 }
-                //$('#getAgreementDecModal').modal('show');
+                $('#getAgreementDecModal').modal('show');
                 $.ajax({
                     url: '@Url.Action("QuoteToAgree", "Information")',
                     type: "POST",
@@ -289,11 +291,11 @@ $(document).ready(function () {
                 })
                     .done(function (url) {
                         $("#agreementDeclarationView").load(url, function () {
-                            //$('#getAgreementDecModal').modal('hide');
+                            $('#getAgreementDecModal').modal('hide');
                         });
                     })
                     .fail(function () {
-                        //$('#getAgreementDecModal').modal('hide');
+                        $('#getAgreementDecModal').modal('hide');
                         alert("There was an error getting your agreement declaration.");
                     });
                 if (status == "Bound") {
@@ -450,6 +452,7 @@ $(document).ready(function () {
     });
 
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
+        debugger;
 
         var validity = true;
 
@@ -5003,7 +5006,7 @@ function AddMotorVehicle(tabId, tableId) {
     function AddaddNewSkipper() {
         var selectedBoatOperator = AddboatOperator.options[AddboatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            $('#addOperatorModal').openModal;
+            $('#addOperatorModal').modal('show');
             AddboatOperator.selectedIndex = 0;
         }
         selectedBoatOperator = "";
@@ -5763,10 +5766,9 @@ function AddMotorVehicle(tabId, tableId) {
     }
 
     function addNewSkipper() {
-        debugger;
         var selectedBoatOperator = boatOperator.options[boatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            $('#addOperatorModal').openModal();
+            $('#addOperatorModal').modal('show');
             boatOperator.selectedIndex = 0;
         }
         selectedBoatOperator = "";

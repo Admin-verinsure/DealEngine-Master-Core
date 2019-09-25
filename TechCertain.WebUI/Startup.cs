@@ -56,8 +56,6 @@ namespace TechCertain.WebUI
             // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
-            services.AddHttpContextAccessor();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddRouting(options =>
                 {
                     options.LowercaseUrls = true;
@@ -91,9 +89,8 @@ namespace TechCertain.WebUI
                     .AddTagHelperActivation();
 
             });
-            services.EnableSimpleInjectorCrossWiring(container);
 
-            //services.AddSingleton<IEmailSender, EmailSender>();
+            services.EnableSimpleInjectorCrossWiring(container);
             services.AddResponseCaching();
         }
 
@@ -115,7 +112,7 @@ namespace TechCertain.WebUI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication();
+            //app.UseAuthentication();
             //app.UseRouting();
 
             app.UseSimpleInjector(container, options =>
