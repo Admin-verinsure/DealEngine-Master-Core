@@ -3,14 +3,19 @@
 <!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 <!-- <script src="/Scripts/bootstrapmvc" defer></script>-->
 <!-- <script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
-    
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
+
+
 <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
-<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js" defer></script>
-<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer ></script>
+<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
-<script src="~/Scripts/plugin/chosen/chosen.jquery.js"defer></script>
-<script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js"></script>
+<script src="~/Scripts/plugin/chosen/chosen.jquery.js" defer></script>
+<script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
+<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
+@*<script type="text/javascript" src="../dist/js/jquery.smartWizard.min.js"></script>*@
+<script src="~/jqueryui/jquery-ui.min.js" defer></script>
+@*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>*@
 
 <script type="text/javascript">
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -92,7 +97,7 @@ $(document).ready(function () {
 
      function showmore() {
                 var _sheetId = $('#AnswerSheetId').val();
-                $('#MarshCoastGuardMotor').load('Html.Partial("PrefabSections/CommonClaim" , _sheetId);');
+                $('#MarshCoastGuardMotor').on('load', 'Html.Partial("PrefabSections/CommonClaim" , _sheetId);');
 
     };
 
@@ -248,19 +253,20 @@ $(document).ready(function () {
                             alert("Unable to save.");
                         });
                 }
-               
+
                 //console.log($('#MilestoneStatus').val());
                 //if ($('#MilestoneStatus').val() === 'Active'){
                 //    $('#getMilestoneModal').modal('show');
                 //}
                 //$('#getAgreementModal').modal('show');
-                
+
                 $.ajax({
                     url: '@Url.Action("SubmitInformation", "Information")',
                     type: "POST",
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
+                        //$("#agreementView").on('load', url, function () {
                         $("#agreementView").load(url, function () {
                             //$('#getAgreementModal').modal('hide');
                         });
@@ -284,7 +290,7 @@ $(document).ready(function () {
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
-                        $("#agreementDeclarationView").load(url, function () {
+                        $("#agreementDeclarationView").on('load', url, function () {
                             $('#getAgreementDecModal').modal('hide');
                         });
                     })
@@ -314,7 +320,7 @@ $(document).ready(function () {
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
-                        $("#pxpaymentView").load(url, function () {
+                        $("#pxpaymentView").on('load', url, function () {
                             $('#getAgreementPaymentModal').modal('hide');
                             $('#getErrorModal').modal('hide');
                         });
@@ -4044,7 +4050,7 @@ async: true
                 timeout: 4000
             });
         }
-        
+
         var selectElement = document.getElementById("AddBoatTrailer");
                     //location.reload(true);
 
@@ -6398,7 +6404,7 @@ async: true
 
             })
                 .done(function (url) {
-                    $("#documentsSection").load(url, function () {
+                    $("#documentsSection").on('load', url, function () {
                     });
                 });
         }

@@ -24,9 +24,9 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
-                                $(window).load(function () {
+                                $(window).on('load',function () {
 							    $("#tblClaim").jqGrid({
 							        url: "/Services/GetClaims?informationId=@Model.AnswerSheetId&removed=false",
 							        datatype: "xml",
@@ -434,7 +434,7 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
                                 $(".ClaimRemoved").click(function () {
 						    $("#tblRemovedClaim").jqGrid({

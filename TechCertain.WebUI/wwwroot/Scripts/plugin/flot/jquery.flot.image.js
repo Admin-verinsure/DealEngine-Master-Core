@@ -19,7 +19,7 @@ the URLs in the data with the corresponding images and calls "callback" when
 all images are loaded (or failed loading). In the callback, you can then call
 $.plot with the data set. See the included example.
 
-A more low-level helper, $.plot.image.load(urls, callback) is also included.
+A more low-level helper, $.plot.image.on('load',urls, callback) is also included.
 Given a list of URLs, it calls callback with an object mapping from URL to
 Image object when all images are loaded or have failed loading.
 
@@ -85,7 +85,7 @@ Google Maps).
             });
         });
 
-        $.plot.image.load(urls, function (loadedImages) {
+        $.plot.image.on('load',urls, function (loadedImages) {
             $.each(points, function (i, p) {
                 var url = p[0];
                 if (loadedImages[url])
@@ -111,7 +111,7 @@ Google Maps).
                     callback(loaded);
             };
 
-            $('<img />').load(handler).error(handler).attr('src', url);
+            $('<img />').on('load',handler).error(handler).attr('src', url);
         });
     };
     

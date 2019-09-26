@@ -24,9 +24,9 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
-                                $(window).load(function () {
+                                $(window).on('load',function () {
                             $("#tblBoatUse").jqGrid({
                                 url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
 						        datatype: "xml",
@@ -232,7 +232,7 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
                                 $(".UseRemoved").click(function () {
                             $("#tblRemovedBoatUse").jqGrid({
@@ -286,7 +286,7 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
                         $(document).ready(function () {
                             $("#tblCeasedBoatUse").jqGrid({

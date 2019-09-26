@@ -4,7 +4,7 @@
 
 <div id="content">
 
-	<script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+    <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
 
     <!-- widget grid -->
     <section id="widget-grid" class="">
@@ -13,26 +13,26 @@
             <!-- NEW WIDGET START -->
             <article class="col-sm-12 col-md-12 col-lg-12">
                 <!-- Widget ID (each widget will need unique ID)-->
-                <div class="jarviswidget" id="wid-id-1" 
-                     data-widget-colorbutton="false" 
-                     data-widget-editbutton="false" 
-                     data-widget-togglebutton="false" 
-                     data-widget-deletebutton="false" 
-                     data-widget-custombutton="false" 
+                <div class="jarviswidget" id="wid-id-1"
+                     data-widget-colorbutton="false"
+                     data-widget-editbutton="false"
+                     data-widget-togglebutton="false"
+                     data-widget-deletebutton="false"
+                     data-widget-custombutton="false"
                      data-widget-sortable="false">
                     <!-- widget options:
-                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
-                    data-widget-colorbutton="false"
-                    data-widget-editbutton="false"
-                    data-widget-togglebutton="false"
-                    data-widget-deletebutton="false"
-                    data-widget-fullscreenbutton="false"
-                    data-widget-custombutton="false"
-                    data-widget-collapsed="true"
-                    data-widget-sortable="false"
+        data-widget-colorbutton="false"
+        data-widget-editbutton="false"
+        data-widget-togglebutton="false"
+        data-widget-deletebutton="false"
+        data-widget-fullscreenbutton="false"
+        data-widget-custombutton="false"
+        data-widget-collapsed="true"
+        data-widget-sortable="false"
 
-                    -->
+        -->
                     <header>
                         <h2>Create a new Product</h2>
                     </header>
@@ -45,97 +45,144 @@
                         <!-- end widget edit box -->
                         <!-- widget content -->
                         <div class="widget-body">
-                        	<div class="row">
-                            	<form id="wizard-1" class="" method="post">
-                            		<div id="bootstrap-wizard-1" class="col-sm-12">
-                            			<div class="form-bootstrapWizard">
-											<ul class="bootstrapWizard form-wizard">
-												<li class="active" data-target="#step1">
-													<a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
-												</li>
-												<li data-target="#step2">
-													<a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">Covers</span> </a>
-												</li>
-												<li data-target="#step3">
-													<a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Settings</span> </a>
-												</li>
-												<li data-target="#step4">
-													<a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Review</span> </a>
-												</li>
-											</ul>
-											<div class="clearfix"></div>
-										</div>
-										<div class="tab-content">
-											@* Tab 1 *@
-                                        	@Html.DisplayFor(m => m.Description)
-											@* Tab 2 *@
-                                        	@Html.DisplayFor(m => m.Risks)
-											@* Tab 3 *@
-											@Html.DisplayFor(m => m.Settings)
-											@* Tab 4 *@
-											<div class="tab-pane" id="tab4">
-												<br/>
-											    <h3><strong>Finish </strong> - Review & Confirm</h3>
-												<div class="row">
-													<div class="col-sm-12">
-													    <div id="productAutoReview">
+                            <div class="row">
 
-														</div>
-													</div>
-												</div>
-											</div>
-											@* Button controls *@
-											<div class="form-actions">
-												<div class="row">
-													<div class="col-sm-12">
-														<ul class="pager wizard no-margin">
-															<!--<li class="previous first disabled">
-															<a href="javascript:void(0);" class="btn btn-lg btn-default"> First </a>
-															</li>-->
-															<li class="previous disabled">
-																<a href="javascript:void(0);" class="btn btn-lg btn-default"> Previous </a>
-															</li>
-															<!--<li class="next last">
-															<a href="javascript:void(0);" class="btn btn-lg btn-primary"> Last </a>
-															</li>-->
-															<li class="next">
-																<a href="javascript:void(0);" class="btn btn-lg txt-color-darken"> Next </a>
-															</li>
-														</ul>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-                            	</form>
-								@*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("successModal")))
-								{
-								    @modal.Header("Success!")
-								    using (modal.BeginBody())
-								    {
-								        <p>Your product has been successfully created. You can either start a new product, or view your current products</p>
-								    }
-								    using (modal.BeginFooter())
-								    {
-                                         <a class="btn btn-primary" href="~/Product/CreateNew">Create New</a>
-                                         <a class="btn btn-primary" href="~/Product/MyProducts">My Products <i class="fa fa-arrow-right"></i></a>
-								    }
-								}
-								@using (var modal = Html.Bootstrap().Begin(new Modal().Id("failureModal")))
-								{
-								    @modal.Header("Oops!")
-								    using (modal.BeginBody())
-								    {
-								        <p>It looks like something has gone wrong. A more detailed explaination is available on the page, and the error has been logged.</p>
-								    }
-								    using (modal.BeginFooter())
-								    {
-                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
-								    }
-								}*@
-							</div>
-						</div>
-                    </div>
+                                <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
+
+                                    <!-- SmartWizard html -->
+                                    <div id="smartwizard" class="sw-main sw-theme-dots">
+                                        <ul class="nav nav-tabs step-anchor">
+                                            <li class="nav-item active"><a href="#step-1" class="nav-link">Step 1<br><small>Email Address</small></a></li>
+                                            <li class="nav-item"><a href="#step-2" class="nav-link">Step 2<br><small>Name</small></a></li>
+                                            <li class="nav-item"><a href="#step-3" class="nav-link">Step 3<br><small>Address</small></a></li>
+                                            <li class="nav-item"><a href="#step-4" class="nav-link">Step 4<br><small>Terms and Conditions</small></a></li>
+                                        </ul>
+
+                                        <div class="sw-container tab-content" style="min-height: 152px;">
+                                            <div id="step-1" class="tab-pane step-content" style="display: block;">
+                                                <h2>Your Email Address</h2>
+                                                <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
+                                                    <div class="form-group">
+                                                        @Html.DisplayFor(m => m.Description)
+                                                        <label for="email">Email address:</label>
+                                                        <input type="email" class="form-control" name="email" id="email" placeholder="Write your email address" required="">
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div id="step-2" class="tab-pane step-content" style="display: none;">
+                                                <h2>Your Name</h2>
+                                                <div id="form-step-1" role="form" data-toggle="validator" novalidate="true">
+                                                    <div class="form-group">
+                                                        <label for="name">Name:</label>
+                                                        <input type="text" class="form-control" name="name" id="email" placeholder="Write your name" required="">
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="step-3" class="tab-pane step-content" style="display: none;">
+                                                <h2>Your Address</h2>
+                                                <div id="form-step-2" role="form" data-toggle="validator">
+                                                    <div class="form-group">
+                                                        <label for="address">Address</label>
+                                                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Write your address..." required=""></textarea>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="step-4" class="tab-pane step-content">
+                                                <h2>Terms and Conditions</h2>
+                                                <p>
+                                                    Terms and conditions: Keep your smile :)
+                                                </p>
+                                                <div id="form-step-3" role="form" data-toggle="validator">
+                                                    <div class="form-group">
+                                                        <label for="terms">I agree with the T&amp;C</label>
+                                                        <input type="checkbox" id="terms" data-error="Please accept the Terms and Conditions" required="">
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div><div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end"><div class="btn-group mr-2 sw-btn-group" role="group"><button class="btn btn-secondary sw-btn-prev disabled" type="button">Previous</button><button class="btn btn-secondary sw-btn-next" type="button">Next</button></div><div class="btn-group mr-2 sw-btn-group-extra" role="group"><button class="btn btn-info">Finish</button><button class="btn btn-danger">Cancel</button></div></div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="row">
+                                <div class="container">
+                                    <br>
+                                    <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
+
+                                        <!-- SmartWizard html -->
+                                        <div id="smartwizard" class="sw-main sw-theme-dots">
+                                            <ul class="nav nav-tabs step-anchor">
+                                                <li class="nav-item active"><a href="#step-1" class="nav-link">Step 1<br><small>Email Address</small></a></li>
+                                                <li class="nav-item"><a href="#step-2" class="nav-link">Step 2<br><small>Name</small></a></li>
+                                                <li class="nav-item"><a href="#step-3" class="nav-link">Step 3<br><small>Address</small></a></li>
+                                                <li class="nav-item"><a href="#step-4" class="nav-link">Step 4<br><small>Terms and Conditions</small></a></li>
+                                            </ul>
+
+                                            <div class="sw-container tab-content" style="min-height: 152px;">
+                                                <div id="step-1" class="tab-pane step-content" style="display: none;">
+                                                    <h2>Your Email Address</h2>
+                                                    <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
+                                                        <div class="form-group">
+                                                            @*@Html.DisplayFor(m => m.Description)*@
+                                                            <label for="email">Email address:</label>
+                                                            <input type="email" class="form-control" name="email" id="email" placeholder="Write your email address" required="">
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div id="step-2" class="tab-pane step-content" style="display: block;">
+                                                    <h2>Your Name</h2>
+                                                    <div id="form-step-1" role="form" data-toggle="validator">
+                                                        <div class="form-group">
+                                                            <label for="name">Name:</label>
+                                                            <input type="text" class="form-control" name="name" id="email" placeholder="Write your name" required="">
+                                                            <div class="help-block with-errors"></div>
+                                                            @*@Html.DisplayFor(m => m.Risks)*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="step-3" class="tab-pane step-content">
+                                                    <h2>Your Address</h2>
+                                                    <div id="form-step-2" role="form" data-toggle="validator">
+                                                        <div class="form-group">
+                                                            <label for="address">Address</label>
+                                                            <textarea class="form-control" name="address" id="address" rows="3" placeholder="Write your address..." required=""></textarea>
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="step-4" class="tab-pane step-content">
+                                                    <h2>Terms and Conditions</h2>
+                                                    <p>
+                                                        Terms and conditions: Keep your smile :)
+                                                    </p>
+                                                    <div id="form-step-3" role="form" data-toggle="validator">
+                                                        <div class="form-group">
+                                                            <label for="terms">I agree with the T&amp;C</label>
+                                                            <input type="checkbox" id="terms" data-error="Please accept the Terms and Conditions" required="">
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div><div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end"><div class="btn-group mr-2 sw-btn-group" role="group"><button class="btn btn-secondary sw-btn-prev" type="button">Previous</button><button class="btn btn-secondary sw-btn-next" type="button">Next</button></div></div>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+                            </div>
+
+                        </div>
                 </div>
             </article>
         </div>
@@ -144,72 +191,22 @@
 
 
 @section pagespecific {
-<script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
-<script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
-<link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
-<!-- PAGE RELATED PLUGIN(S) -->
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
-<script type="text/javascript">
+    <script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
+    <script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
+    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
+    <link href="~/smartwizard/cc/smart_wizard_theme_dots.css" rel="stylesheet" />
+
+    <!-- PAGE RELATED PLUGIN(S) -->
+    @*<script src="https://code.jquery.com/jquery-3.3.1.min.js" defer integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+    <script type="text/javascript">
 
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
-    
-    $(document).ready(function () {
-		var validator = $("#wizard-1").validate({
-        	ignore: ':hidden:not(.cselect)',
-            rules: {
-                "@(Html.NameFor(m => m.Description.Name))": {
-                    required: true,
-  					maxlength: 255
-                },
-                "@(Html.NameFor(m => m.Description.Description))": {
-                    required: true,
-  					maxlength: 255
-                },
-                "@(Html.NameFor(m => m.Description.SelectedLanguages))": {
-                    required: true
-                },
-                "@(Html.NameFor(m => m.Description.SelectedBaseProduct))": {
-                    required: true
-                },
-				// Need to try and get the chosen stuff working better
-                //"@(Html.NameFor(m => m.Settings.SelectedDocuments))": {
-                //    required: function () { if($("#@(Html.IdFor(m => m.Description.SelectedBaseProduct))").val() == "00000000-0000-0000-0000-000000000000") { return false; } else { return true; } }
-                //},
-                "@(Html.NameFor(m => m.Settings.SelectedInformationSheet))": {
-                    required: function () { if($("#@(Html.IdFor(m => m.Description.SelectedBaseProduct))").val() == "00000000-0000-0000-0000-000000000000") { return false; } else { return false; } }
-                },
-            },
-            messages: {
-                "@(Html.NameFor(m => m.Description.Name))": {
-                    required: 'Please provide a name for your product'
-                },
-                "@(Html.NameFor(m => m.Description.Description))": {
-                    required: 'Please provide a description for your product'
-                },
-                "@(Html.NameFor(m => m.Description.SelectedLanguages))": {
-                    required: 'Please select at least one language'
-                },
-                "@(Html.NameFor(m => m.Description.SelectedBaseProduct))": {
-                    required: 'Please select a base product'
-                },
-                "@(Html.NameFor(m => m.Settings.SelectedInformationSheet))": {
-                    required: 'Please select an information sheet'
-                },
-            },
-            highlight: function (element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            unhighlight: function (element) {
-                $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-            },
-            errorElement: 'span',
-            errorClass: 'help-block',
-            errorPlacement: function (error, element) {
-                error.insertAfter(element.parent());
-            }
-        });
 
+    $(document).ready(function () {
+	
         var checkerrors = function() {
 	        validator.form();
 	    };
@@ -217,59 +214,40 @@
 	    // find all multiselect items and apply Chosen
 		$('.cselect').each(function() {
 			$('#'+this.id).chosen( { width: '100%' } ).change(checkerrors);
-		});
+        });
 
-		$('#bootstrap-wizard-1').bootstrapWizard({
-			'tabClass' : 'form-wizard',
-			'onNext' : function(tab, navigation, index) {
-                var $valid = $("#wizard-1").valid();
-                debugger;
-            	var numTabs = $('#wizard-1').find('.tab-pane').length;
-				if (!$valid) {
-					$validator.focusInvalid();
-					return false;
-				}
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
+           $('#smartwizard').smartWizard({
+            selected: 0,  // Initial selected step, 0 = first step
+            keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+            autoAdjustHeight:true, // Automatically adjust content height
+            cycleSteps: false, // Allows to cycle the navigation of steps
+            backButtonSupport: true, // Enable the back button support
+            useURLhash: true, // Enable selection of the step based on url hash
+            lang: {  // Language variables
+                next: 'Next',
+                previous: 'Previous'
+            },
+            toolbarSettings: {
+                toolbarPosition: 'bottom', // none, top, bottom, both
+                toolbarButtonPosition: 'right', // left, right
+                showNextButton: true, // show/hide a Next button
+                showPreviousButton: true, // show/hide a Previous button
+                
+            },
+            anchorSettings: {
+                anchorClickable: true, // Enable/Disable anchor navigation
+                enableAllAnchors: false, // Activates all anchors clickable all times
+                markDoneStep: true, // add done css
+                enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+            },
+            contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+            disabledSteps: [],    // Array Steps disabled
+            errorSteps: [],    // Highlight step with errors
+            theme: 'dots',
+            transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+            transitionSpeed: '400'
+      });
+        });
 
-				if (index === numTabs) {
-                    // We are at the last tab
-					$.ajax({
-						type: "POST",
-						url: '@Url.Action("CreateNew", "Product")',
-						data: $("#wizard-1").serialize() // serializes the form's elements.
-					}) 	
-					.done(function (json) {
-						//var model = JSON.parse(json);
-	                    $('#successModal').modal();
-						$('#productAutoReview').text("");
-					})
-					.fail(function (err, ajaxOptions, thrownError) {
-	                    $('#failureModal').modal();
-						$('#productAutoReview').text(err.responseText);
-					});
-                }
-			},
-			onTabClick : function(tab, navigation, index) {
-				var $valid = $("#wizard-1").valid();
-				if (!$valid) {
-					validator.focusInvalid();
-					return false;
-				}
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).addClass('complete');
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).find('.step').html('<i class="fa fa-check"></i>');
-				return true;
-			},
-			onTabShow: function(tab, navigation, index) {
-				// Update the label of Next button when we are at the last tab
-				var numTabs = $('#wizard-1').find('.tab-pane').length;
-				$('#wizard-1')
-				    .find('.next')
-				        .removeClass('disabled')    // Enable the Next button
-				        .find('a')
-				        .html(index === numTabs - 1 ? 'Submit' : 'Next');
-            }
-		});
-    });
-</script>
+    </script>
 }

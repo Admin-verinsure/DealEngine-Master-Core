@@ -14,9 +14,9 @@
                     <div class="row">
                         <section class="col col-xs-12">
                             <!-- Since OU's are just a single feild, could probably replace this tabbed control with the jqGrid and its default add/edit/search functions -->
-                            <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
-                                $(window).load(function () {
+                                $(window).on('load',function () {
 							    $("#tblOU").jqGrid({
 							        url: "/Services/GetOrganisationalUnits?informationId=@Model.AnswerSheetId",
 							        datatype: "xml",
