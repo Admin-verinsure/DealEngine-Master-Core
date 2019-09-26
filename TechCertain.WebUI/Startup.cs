@@ -17,6 +17,7 @@ using System.Linq;
 using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace TechCertain.WebUI
 {
@@ -146,6 +147,12 @@ namespace TechCertain.WebUI
             });
 
             app.UseResponseCaching();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
         }
 
         private void InitializeContainer()
