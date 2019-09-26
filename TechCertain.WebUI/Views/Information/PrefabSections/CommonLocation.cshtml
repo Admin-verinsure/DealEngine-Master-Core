@@ -24,7 +24,7 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <script src="/Scripts/libs/jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
                                // $(document).ready(function () {
                                 //$(document).ready(function () {
@@ -35,7 +35,7 @@
                                 //      }, 8000);
                                 //    //$('#getDetailsModal').modal('show');
                                 //});
-                                $(window).load(function () {
+                                $(window).on('load',function () {
                                         $("#tblLocation").jqGrid({
                                             url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=false",
                                             datatype: "xml",
@@ -313,7 +313,7 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
                                 $(".LocRemoved").click(function () {
 						    $("#tblRemovedLocation").jqGrid({

@@ -113,7 +113,7 @@ function ShowEffectivePermissionsModal(userId)
 {
 	$('#viewPermissions').modal('show');
 	$('#viewPermissionsModalBody').html('<p><img src="/Content/img/loading.gif"/> Loading Permissions. Please wait...</p>');
-	$('#viewPermissionsModalBody').load("UserPermissions/" + userId);
+	$('#viewPermissionsModalBody').on('load',"UserPermissions/" + userId);
 }
 
 function DeleteUser(userId)

@@ -994,7 +994,7 @@
         }
     
         // else load them
-        i18n.sync.load(lngsToLoad, o, function(err, store) {
+        i18n.sync.on('load',lngsToLoad, o, function(err, store) {
             resStore = store;
             initialized = true;
     
@@ -1673,7 +1673,7 @@
                 var oldAsync = o.getAsync;
                 o.getAsync = false;
     
-                i18n.sync.load(lngs, o, function(err, store) {
+                i18n.sync.on('load',lngs, o, function(err, store) {
                     f.extend(resStore, store);
                     o.getAsync = oldAsync;
                 });

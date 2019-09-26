@@ -143,7 +143,7 @@
             var self = this;
 
             awidget.find('.widget-body')
-                .load(file, function (response, status, xhr) {
+                .on('load',file, function (response, status, xhr) {
 
                     var $this = $(this);
 

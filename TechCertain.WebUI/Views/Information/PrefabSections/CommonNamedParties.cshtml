@@ -19,9 +19,9 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="/Scripts/libs//jquery-2.1.1.js"></script>
+                            <script src="~/jquery/jquery.min.js"></script>
                             <script type="text/javascript">
-                                $(window).load(function () {
+                                $(window).on('load',function () {
                             $("#NamedParties").jqGrid({
                                 url: "/Services/GetNamedParties?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
 						        datatype: "xml",

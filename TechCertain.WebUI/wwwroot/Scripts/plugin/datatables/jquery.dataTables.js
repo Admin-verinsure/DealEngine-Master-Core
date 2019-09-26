@@ -7516,7 +7516,7 @@
 	 *
 	 * @returns {DataTables.Api} this
 	 */
-	_api_register( 'ajax.url().load()', function ( callback, resetPaging ) {
+	_api_register( 'ajax.url().on('load',)', function ( callback, resetPaging ) {
 		// Same as a reload, but makes sense to present it for easy access after a
 		// url change
 		return this.iterator( 'table', function ( ctx ) {
