@@ -10,6 +10,10 @@ using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml;
+using HtmlToOpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -66,34 +70,38 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public ActionResult GetDocument (Guid id, string format)
 		{
-            throw new Exception("This method needs to be re-written");
-   //         if (id == Guid.Empty)
-			//	return new HttpNotFoundResult ();
+            //throw new Exception("This method needs to be re-written");
+            //if (id == Guid.Empty)
+            //    return new HttpNotFoundResult();
 
-			//SystemDocument doc = _documentRepository.GetById (id);
-			//string extension = "";
-			//if (doc.ContentType == MediaTypeNames.Text.Html) {
-			//	extension = ".html";
+            SystemDocument doc = _documentRepository.GetById(id);
+            string extension = "";
+            if (doc.ContentType == MediaTypeNames.Text.Html)
+            {
+                extension = ".html";
 
-			//	if (format == "docx") {
-			//		// Testing HtmlToOpenXml
-			//		string html = _fileService.FromBytes (doc.Contents);
-			//		using (MemoryStream virtualFile = new MemoryStream ()) {
-			//			using (WordprocessingDocument wordDocument = WordprocessingDocument.Create (virtualFile, WordprocessingDocumentType.Document)) {
-			//				// Add a main document part. 
-			//				MainDocumentPart mainPart = wordDocument.AddMainDocumentPart ();
-			//				new DocumentFormat.OpenXml.Wordprocessing.Document (new Body ()).Save (mainPart);
+                if (format == "docx")
+                {
+                    // Testing HtmlToOpenXml
+                    string html = _fileService.FromBytes(doc.Contents);
+                    using (MemoryStream virtualFile = new MemoryStream())
+                    {
+                        using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
+                        {
+                            // Add a main document part. 
+                            MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                            new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
 
-			//				HtmlConverter converter = new HtmlConverter (mainPart);
-			//				converter.ImageProcessing = ImageProcessing.AutomaticDownload;
-			//				converter.ParseHtml (html);
-			//			}
-			//			return File (virtualFile.ToArray (), MediaTypeNames.Application.Octet, doc.Name + ".docx");
-			//		}
-			//	}
-			//}
-			//return File (doc.Contents, doc.ContentType, doc.Name + extension);
-		}
+                            HtmlConverter converter = new HtmlConverter(mainPart);
+                            converter.ImageProcessing = ImageProcessing.AutomaticDownload;
+                            converter.ParseHtml(html);
+                        }
+                        return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
+                    }
+                }
+            }
+            return File(doc.Contents, doc.ContentType, doc.Name + extension);
+        }
 
 		//void UploadFile(string folder, HttpPostedFile file)
 		//{
