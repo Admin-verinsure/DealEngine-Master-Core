@@ -239,10 +239,10 @@ namespace TechCertain.WebUI.Controllers
                             throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
                         }
                 }
-                var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
+                //var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
                 models.Add(new DocumentInfoViewModel {
                     DisplayName = doc.Name,
-                    ProductName = product.Name,
+                    //ProductName = product.Name,
                     Type = documentType,
                     Owner = doc.OwnerOrganisation.Name,
 					Id = doc.Id

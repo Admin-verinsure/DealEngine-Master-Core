@@ -1213,8 +1213,8 @@ $(document).ready(function () {
     }
 
     function SetCurrentTab(tabPaneId) {
-        $('.nav-tabs a[href="#' + tabPaneId + '"]').tab('show');
-        $('.nav-tabs a[href="#' + tabPaneId + '"]').tab('refresh');
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
+        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
 };
 
 function UpdateChosen() {
@@ -3954,9 +3954,9 @@ function EditClaim(claimId, tableId) {
         }
     };
 
-     function SetCurrentTab(tabPaneId) {
-        $('.nav-tabs a[href="#' + tabPaneId + '"]').tab('show');
-        $('.nav-tabs a[href="#' + tabPaneId + '"]').tab('refresh');
+    function SetCurrentTab(tabPaneId) {
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
+        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
     };
 
       function SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable) {

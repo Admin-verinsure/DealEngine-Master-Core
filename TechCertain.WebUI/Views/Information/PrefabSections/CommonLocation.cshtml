@@ -433,27 +433,35 @@
 
    function EditLocation(locationId, tableId) {
        var _sheetId = $('#AnswerSheetId').val();
-       $('#getDetailsModal').modal('show');
+
+       var postData = {
+		'locationId': locationId,
+		'answerSheetId': _sheetId
+	};
+
+        $('#getDetailsModal').show();
 	    $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("GetLocation", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ locationId : locationId, answerSheetId : _sheetId })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ locationId : locationId, answerSheetId : _sheetId })
+        data: postData
         })
             .done(function (data) {
-        $('#LocationId').val(data.LocationId);
-        $('#LocationType').val(data.LocationType);
-        $('#Street').val(data.Street);
-        $('#Suburb').val(data.Suburb);
-        $('#Postcode').val(data.Postcode);
-        $('#City').val(data.City);
-        $('#State').val(data.State);
-        $('#Country').val(data.Country);
-        $('#CommonName').val(data.CommonName);
-        $('#RiskZone').val(data.RiskZone);
-        $('#SelectedOrganisationalUnits').val(data.SelectedOrganisationalUnits);
-        $('#getDetailsModal').modal('hide');
+                debugger;
+        $('#LocationId').val(data.locationId);
+        $('#LocationType').val(data.locationType);
+        $('#Street').val(data.street);
+        $('#Suburb').val(data.suburb);
+        $('#Postcode').val(data.postcode);
+        $('#City').val(data.city);
+        $('#State').val(data.state);
+        $('#Country').val(data.country);
+        $('#CommonName').val(data.commonName);
+        $('#RiskZone').val(data.riskZone);
+        $('#SelectedOrganisationalUnits').val(data.selectedOrganisationalUnits);
+        $('#getDetailsModal').hide();
         UpdateChosen();
         });
     };
@@ -467,8 +475,8 @@
 
     function SetCurrentTab(tabPaneId) {
         debugger;
-        $('.nav-tabs a[href="#' + tabPaneId + '"]').toggleClass('active');
-        $('.nav-tabs a[href="#' + tabPaneId + '"]').tab('refresh');
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
+        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reloadAfterSubmit();
     };
 
         function SetLocationRemovedStatus(locationId, status, sourceTable, destTable) {
@@ -545,7 +553,7 @@
 
     function AddLocation(tabId, tableId) {
         debugger;
-                 $('#getLandLocModal').modal('show');
+                 $('#getLandLocModal').show();
 
 	var informationId = $('#AnswerSheetId').serialize();
         var ous = $('#SelectedOrganisationalUnits').serialize();
