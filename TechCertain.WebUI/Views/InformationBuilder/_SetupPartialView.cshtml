@@ -1,0 +1,71 @@
+﻿@model TechCertain.WebUI.Models.InformationBuilderViewModel
+
+<div id="accordion">
+    <div>
+        <h4>Setup new information sheet</h4>
+        <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+            <form id="frmNewInformationSheet">
+
+
+                @{
+                    if (Model.Id != null)
+                    {
+                        Html.Partial("_Results", Model);
+                    }
+                }
+
+                <fieldset>
+                    <section>
+                        <label class="label">Lets give it a name: </label>
+                        <label class="input">
+                            @Html.HiddenFor(p => p.Id)
+                            @*@Html.Bootstrap().Icon("icon-append fa fa-user")*@
+                            @Html.TextBoxFor(p => p.Name)
+                            <b class="tooltip tooltip-bottom-right">The information sheet name will be used for identification purposes.</b>
+                        </label>
+                    </section>
+                </fieldset>
+                <footer>
+                    @*@Ajax.Bootstrap().ActionLinkButton(
+                                    linkText: "Lets Start",
+                                    actionName: "CreateInformationSheet",
+                                    ajaxOptions: new AjaxOptions
+                                    {
+                                        HttpMethod = "POST",
+                                        OnSuccess = "letsStartResponse",
+                                        OnFailure = "function() { alert ('An error occured'); }"
+                                    }
+        ).Id("btnNext").Class("btn btn-next").AppendIcon("fa fa-arrow-right").RouteValues(Model.InformationName)*@
+
+                    @*@Html.Bootstrap().Button().Id("btnNext").Class("btn btn-next").Text("Lets Start").AppendIcon("fa fa-arrow-right")*@
+                    <button class="btn btn-next" id="btnNext">Lets Start</button>
+                </footer>
+            </form>
+        </div>
+    </div>
+    <div>
+
+        <div class="smart-form">
+            <h4>Clone and edit an existing information sheet</h4>
+            <div class="padding-10">
+                <fieldset>
+                    <div class="row">
+                        <div class="col col-6">
+                            <label class="select">
+                                <select>
+                                    <option>Select Information Sheet</option>
+                                    <option>Wellness and Health Associated Professionals</option>
+                                </select><i></i>
+                            </label>
+                        </div>
+
+                    </div>
+                </fieldset>
+                <footer class="left">
+                    @*@Html.Bootstrap().Button().Class("btn btn-success").Text("Clone").PrependIcon("fa fa-copy")*@
+                    <button class="btn btn-success" id="Clone">Clone</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>

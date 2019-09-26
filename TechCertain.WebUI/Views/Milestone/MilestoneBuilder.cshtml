@@ -1,0 +1,272 @@
+﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
+
+<div id="content">
+
+    <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+
+    @Html.HiddenFor(m => m.ProgrammeId)
+
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1"
+                     data-widget-colorbutton="false"
+                     data-widget-editbutton="false"
+                     data-widget-togglebutton="false"
+                     data-widget-deletebutton="false"
+                     data-widget-custombutton="false"
+                     data-widget-sortable="false">
+
+                    <header>
+                        <h2>Create Milestones @Model.MilestoneTemplate.Activity</h2>
+                    </header>
+
+                    <div>
+                        <!-- widget edit box -->
+                        <div class="jarviswidget-editbox">
+                            <!-- This area used as dropdown edit box -->
+                        </div>
+                        <!-- end widget edit box -->
+                        <!-- widget content -->
+                        <div class="widget-body fuelux">
+                            <div class="wizard" data-initialize="wizard" id="myWizard">
+                                <ul class="steps">
+                                    <li data-target="#step1" class="active">
+                                        <span class="badge badge-info">1</span>Activity Selection<span class="chevron"></span>
+                                    </li>
+                                    <li data-target="#step2">
+                                        <span class="badge">2</span>Create Milestones<span class="chevron"></span>
+                                    </li>
+                                    <li data-target="#step3">
+                                        <span class="badge">3</span>Complete<span class="chevron"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="step-content">
+                                <form class="form-horizontal" id="fuelux-wizard" method="post">
+
+                                    <div class="step-pane active" id="step1">
+                                        <h3><strong>Details </strong> - Enter Milestone</h3>
+                                        @foreach (string template in Model.MilestoneTemplate.Templates)
+                                        {
+
+                                            <!-- wizard form starts here -->
+                                            <fieldset>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        <div class="">
+                                                            <h4>@template</h4>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="btn btn-next" onclick="NextTab();">
+                                                        Add Milestones                                                        
+                                                    </button>
+
+                                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                        <label class="btn btn-secondary active">
+                                                            <input type="radio" name="options" id="option1" autocomplete="off" > In Use
+                                                        </label>
+                                                        <label class="btn btn-secondary">
+                                                            <input type="radio" name="options" id="option2" autocomplete="off" checked="checked"> Inactive
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+                                            </fieldset>
+                                        }
+                                    </div>
+
+                                    <div class="step-pane" id="step2">
+                                        <h3><strong>Details </strong> - Create Milestone</h3>                                        
+                                        <fieldset>
+                                            <div class="form-group col-lg-12">                                                
+                                                <div class="inline-group col-md-12">
+                                                    <label>Please Select What To Add:</label>
+                                                    <label class="radio">
+                                                        <input name="radio-Advisory" type="radio" value="yes" onchange="AdvisoryView()">
+                                                        <i></i>Advisory
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input name="radio-Email" type="radio" value="yes" onchange="EmailView()">
+                                                        <i></i>Email
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input name="radio-Task" type="radio" value="yes" onchange="TaskView()">
+                                                        <i></i>Task
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div id="AdvisoryPartial" hidden="hidden">
+                                                        @Html.Partial("ViewMilestoneAdvisoryContent", Model)
+                                                        <hr />
+                                                    </div>
+                                                    <div id="EmailPartial" hidden="hidden">
+                                                        @Html.Partial("ViewMilestoneEmailContent", Model)
+                                                        <hr />
+                                                    </div>
+                                                    <div id="TaskPartial" hidden="hidden">
+                                                        @Html.Partial("ViewMilestoneTaskContent", Model)
+                                                    </div>
+                                                </div>
+
+                                                <footer>
+                                                    <div class="col-md-12">
+                                                        <button type="button" class="btn btn-next" onclick="Submit();">
+                                                            Complete Milestone!
+                                                            <i class="fa fa-check"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-prev" onclick="PreviousTab();">
+                                                            Back
+                                                            <i class="fa fa-arrow-left"></i>
+                                                        </button>
+                                                    </div>
+                                                </footer>
+
+                                            </div>
+                                        </fieldset>
+                                    </div>
+
+                                    <div class="step-pane" id="step3">
+                                        <h3><strong>Success </strong> - New Milestone created!</h3>
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <div class="col-md-2">
+                                                    <div class="">
+                                                        <h4></h4>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-10">
+                                                    <div id="fuelux-wizard" class="smart-form" novalidate="novalidate">
+                                                        <div class="row">
+                                                            <h2>Congratulations</h2>
+                                                            <p>Your Milestone has been successfully created.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <footer>
+                                                    <button type="button" class="btn btn-metro" onclick="RedirectBuilder()">
+                                                        Add Another Milestone Event
+                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-metro" onclick="RedirectList()">
+                                                        Milestone List
+                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                </footer>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+
+
+@section pagespecific {
+    <!-- PAGE RELATED PLUGIN(S) -->
+    <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
+    <script type="text/javascript">
+        // DO NOT REMOVE : GLOBAL FUNCTIONS!
+
+        var processEventHandler = [];
+        var index = 0;
+
+        $(document).ready(function () {
+
+            index += 1;
+            var wizard = $('.wizard').bootstrapWizard();
+
+            wizard.on('finished', function (e, data) {
+                //$("#fuelux-wizard").submit();
+                //console.log("submitted!");
+                $.smallBox({
+                    title: "Congratulations! Your form was submitted",
+                    content: "<i class='fa fa-clock-o'></i> <i>1 seconds ago...</i>",
+                    color: "#5F895F",
+                    iconSmall: "fa fa-check bounce animated",
+                    timeout: 4000
+                });
+
+            });
+
+            // Accordian
+            var accordionIcons = {
+                header: "fa fa-circle-o",           // custom icon class
+                activeHeader: "fa fa-dot-circle-o"  // custom icon class
+            };
+
+            $("#accordion").accordion({
+                autoHeight: false,
+                heightStyle: "content",
+                collapsible: true,
+                animate: 300,
+                icons: accordionIcons,
+                header: "h4",
+            });
+
+
+        })
+
+        function AdvisoryView() {
+            $("#AdvisoryPartial").show();
+        }
+
+        function TaskView() {
+            $("#TaskPartial").show();
+        }
+
+        function EmailView() {
+            $("#EmailPartial").show();
+        }
+
+        function NextTab() {
+            $('.wizard').wizard('next');
+        }
+
+        function PreviousTab() {
+            $('.wizard').wizard('previous');
+    }
+
+    function RedirectBuilder() {
+        $('.wizard').wizard('previous');
+        $('.wizard').wizard('previous');
+    }
+
+    function RedirectList() {
+        location.href='@Url.Action("MilestoneList", "Milestone")'
+    }
+        
+        function Submit() {
+            console.log($('#ClientProgrammeId').val());
+             
+            
+            debugger;
+            var mergedData = { EmailTemplate: GetEmailContentJson(), AdvisoryContent: GetAdvisoryContentJson(), Type: processEventHandler[0], UserTask: GetUserTaskContentJson(), UserTasks: GetUserTaskContentJson(), ProgrammeId : $('#ProgrammeId').val() };
+            var postData = JSON.stringify(mergedData);
+
+            console.log(mergedData);
+            console.log(postData);
+
+            debugger;
+
+            $.ajax({ url: "/Milestone/SubmitMilestone", type: "POST", contentType: "application/json; charset=utf-8", data: postData })
+                .done(function (json) {
+                    NextTab();
+                })
+                .fail(function (err) {
+                    alert("Unable to save." + err.responseText);
+                });
+        }
+    </script>
+}

@@ -1,0 +1,22 @@
+﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
+
+
+@*@foreach (var item in Model.MilestoneItems)
+    {
+        <fieldset>
+            <div class="row">
+
+                <section class="col col-3 font-md">
+                    <strong>
+                        @item.MilestoneName
+                    </strong>
+                </section>
+                <section class="col col-9 font-md">
+                    <a class="btn btn-primary btn-sm" onclick="NextTab('Task', '@item.MilestoneName')" id="Task"><i class="fa fa-tasks"></i> Create Milestone Task</a>
+                    <a class="btn btn-primary btn-sm" onclick="NextTab('Email', '@item.MilestoneName')" id="Email"><i class="fa fa-mail-forward"></i> Create Milestone Email</a>
+                    <a class="btn btn-primary btn-sm" onclick="NextTab('Advisory', '@item.MilestoneName')" id="Advisory"><i class="fa fa-file-text"></i> Create Milestone Advisory</a>
+                </section>
+            </div>
+        </fieldset>
+    }*@
+

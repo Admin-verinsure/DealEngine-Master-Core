@@ -1,0 +1,79 @@
+﻿@model IEnumerable<TechCertain.WebUI.Models.MerchantViewModel>
+
+
+    <!-- Header Start-->
+    <header>
+        <span class="widget-icon"> <i class="fa fa-desktop txt-color-white"></i> </span>
+        <h2> Payment Merchants </h2>
+    </header>
+    <!-- Header End -->
+    <!-- widget div-->
+    <div>
+        <!-- widget edit box -->
+        <div class="jarviswidget-editbox">
+            <div>
+                <label>Title:</label>
+                <input type="text" />
+            </div>
+        </div>
+        <!-- end widget edit box -->
+        <!-- widget content -->
+        <div class="widget-body no-padding">
+            <div class="table-responsive custom-scroll" style="max-height:290px; overflow-y: auto;">
+                <table id="merchantsTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Merchant Payment Gateway</th>
+                            <th>Merchant User Name</th>
+                            <th>Merchant Password</th>
+                            <th>Merchant Key</th>
+                            <th>Merchant Reference</th>
+                            <th>@*@Ajax.FixedActionLink("Refresh", "MerchantList", new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "merchantList" })*@</th>
+                        </tr>
+                    </thead>
+                    <tbody id="merchantList">
+
+                        @{ Html.RenderPartial("_MerchantList", Model); }
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <form action="/Admin/AddMerchant" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#merchantList"
+                                  data-ajax-success="ClearMerchantForm();" id="merchantform" method="post">
+                                <td>
+                                    <label class="input">
+                                        <select class="form-control b" id="PaymentGateway" name="PaymentGateway">
+                                            <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
+                                            @foreach (var pg in Model)
+                                            {
+                                                <option value="@pg.AllPaymentGateways">@string.Join(", ", pg.PaymentGateway)</option>
+                                            }
+                                        </select>
+                                    </label>
+                                </td>
+                                <td>@Html.TextBox("merchantUserName") </td>
+                                <td>@Html.TextBox("merchantPassword") </td>
+                                <td>@Html.TextBox("merchantKey") </td>
+                                <td>@Html.TextBox("merchantReference") </td>
+                                <td><button type="submit" class="btn btn-success">Add</button></td>
+                            </form>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <!-- end widget content -->
+    </div>
+    <!-- end widget div -->
+
+    <script type="text/javascript">
+        function ClearMerchantForm() {
+            $("#merchantUserName").val("");
+            $("#merchantPassword").val("");
+            $("#merchantKey").val("");
+            $("#merchantReference").val("");
+        }
+    </script>
+
+
+

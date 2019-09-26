@@ -655,7 +655,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetLocation(Guid answerSheetId, Guid locationId)
+        public ActionResult GetLocation(Guid answerSheetId, Guid locationId)
         {
             LocationViewModel model = new LocationViewModel();
             ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId);
