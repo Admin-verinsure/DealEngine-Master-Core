@@ -1,0 +1,135 @@
+﻿@model IEnumerable<TechCertain.WebUI.Models.Permission.GroupViewModel>
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <div class="row">
+    	<!-- NEW WIDGET START -->
+        <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+
+            <!-- Widget ID (each widget will need unique ID)-->
+            <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                    <h2>Manage Groups </h2>
+
+                </header>
+
+                <!-- widget div-->
+                <div>
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
+                    </div>
+                    <!-- end widget edit box -->
+                    <!-- widget content -->
+                    <div class="widget-body no-padding">
+                        <table id="tableGroups" class="table table-striped table-bordered table-hover" width="100%">
+                            <thead>
+                                <tr>
+									<th>Name</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							@foreach (var item in Model) {
+								<tr>
+							        <td>
+							            @Html.DisplayFor(modelItem => item.Name)
+							        </td>
+							        <td>
+							            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+							            @Html.ActionLink("Permissions", "GroupRoles", new { id=item.Id }) |
+										<a href="javascript:void(0);" onclick="DeleteGroup('@item.Id');">Delete</a>
+									</td>
+								</tr>
+							}
+							</tbody>
+							<tfoot>
+								<tr>
+									@*<td colspan="2">@Html.ActionLink("Create New Group", "Create")</td>*@
+									<td colspan="2"><a href="javascript:void(0);" onclick = "ShowCreateModal();">Create New Group</a></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</article>
+
+    	@*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("newGroupModal").Closeable()))
+		{
+		    @modal.Header("Add New Group")
+		    using (modal.BeginBody())
+		    {
+		        using (Html.BeginForm("Create", "Groups"))
+				{
+					@Html.AntiForgeryToken()
+
+					<div class="form-horizontal">
+				        @Html.ValidationSummary(true)
+
+				        <div class="form-group">
+				            <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Name)</label>
+				            <div class="col-md-10">
+								<input class="form-control" name="Name" value="" placeholder="Enter Group name here" type="text">
+				            </div>
+				        </div>
+
+				        <div class="form-group">
+				            <div class="col-md-offset-2 col-md-10">
+				                <input type="submit" value="Add" class="btn btn-default" />
+				            </div>
+				        </div>
+					</div>
+				}
+		    }
+		}*@
+	</div>
+</div>
+<!-- END MAIN CONTENT -->
+
+@section pagespecific {
+<script src="/Scripts/datatables"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+	$('#tableGroups').DataTable({
+		"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+                "t" +
+                "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+            	"autoWidth": true
+	})
+});
+
+function ShowCreateModal()
+{
+	$('#newGroupModal').show();
+}
+
+function DeleteGroup(groupId)
+{
+	if (confirm("Delete this Group?") == false)
+		return;
+	
+	$.ajax({
+     	// change back once mono decides to fix
+        url: '@Url.Action("Delete", "Groups")',
+        type: "POST",
+	    data: { Id: groupId}
+    })
+    .done(function (data) {
+        $.smallBox({
+            title: "Success",
+            content: "The group has been removed",
+            color: "#5F895F",
+            iconSmall: "fa fa-check bounce animated",
+            timeout: 4000
+        });
+		location.reload();
+    })
+    .fail(function (xhr, httpStatusMessage, customErrorMessage) {
+        alert(customErrorMessage);
+    });
+}
+</script>
+}

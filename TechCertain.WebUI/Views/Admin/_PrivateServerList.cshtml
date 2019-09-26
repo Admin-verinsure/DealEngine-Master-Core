@@ -1,0 +1,16 @@
+﻿@model IEnumerable<TechCertain.WebUI.Models.PrivateServerViewModel>
+
+<!-- List Start-->
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.ServerName)</td>
+        <td>@Html.DisplayFor(modelItem => item.ServerAddress)</td>
+        <td>@*@Ajax.FixedActionLink("Delete", "DeletePrivateServer", new RouteValueDictionary (new {serverAddress = item.ServerAddress}), 
+        	new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "serverList"})*@</td>
+    </tr>
+}
+<!-- List End-->
+
+
+

@@ -1,0 +1,124 @@
+﻿@model TechCertain.WebUI.Models.OrganisationViewModel
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <div class="row">
+            <!-- col -->
+            <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+                <h1 class="page-title txt-color-blueDark">
+                    <!-- PAGE HEADER -->
+                    <i class="fa-fw fa fa-file-o"></i>  <span>
+                        <a href="~/Admin"> Admin Panel</a>
+                    </span>
+                </h1>
+            </div>
+            <!-- end col -->
+        </div>
+        <span>
+            <a onclick="location.href='/Admin';" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
+        </span>
+        <section class="col-xs-12"></section>
+        <!-- end row -->
+        <!-- row -->
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="well well-sm">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                            <div class="well well-light well-sm no-margin no-padding">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <form action="~/Admin/SysExchange" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                                                    <fieldset>
+                                                        <section>
+                                                            <label class="label required">Organisation Type:</label>
+                                                            <label class="input form-group">
+                                                                <select onchange="orgtypeSelected()" class="form-control" id="orgtype" name="orgtype">
+                                                                    <option selected="selected" value="">-- Select here --</option>
+                                                                    <option value="Marina">Marina</option>
+                                                                </select>
+
+                                                            </label>
+                                                        </section>
+                                                        <section>
+                                                            <label class="label required">Organisation:</label>
+                                                            <label class="input form-group">
+                                                                <select class="form-control" id="ddlorgname" name="ddlorgname">
+                                                                    <option selected="selected" value="">-- Select here --</option>
+
+                                                                </select>
+
+                                                            </label>
+                                                        </section>
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-user"></i>
+                                                                <input type="text" name="orgname" placeholder="Organisation name">
+                                                            </label>
+                                                        </section>
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-user"></i>
+                                                                <input type="text" name="userfirstname" placeholder="Organisation Admin User's First name">
+                                                            </label>
+                                                        </section>
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-user"></i>
+                                                                <input type="text" name="userlastname" placeholder="Organisation Admin User's Last name">
+                                                            </label>
+                                                        </section>
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-phone"></i>
+                                                                <input type="text" name="userphone" placeholder="Organisation Admin User's Phone Number">
+                                                            </label>
+                                                        </section>
+                                                        <section>
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-envelope"></i>
+                                                                <input type="text" name="useremail" placeholder="Organisation Admin User's Email Address">
+                                                            </label>
+                                                        </section>
+
+                                                        <section>
+                                                            <div class="">
+                                                                <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Add</button>
+                                                                <a href="~/Admin" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                                                            </div>
+                                                        </section>
+                                                    </fieldset>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end row -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- END MAIN CONTENT -->
+
+    @section pagespecific {
+
+        <script type="text/javascript">
+
+            function orgtypeSelected() {
+
+
+            }
+
+        </script>
+
+    }

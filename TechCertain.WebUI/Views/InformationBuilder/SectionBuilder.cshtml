@@ -1,0 +1,40 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+<div id="content">
+    @Model.Sections
+</div>
+
+
+@*@section pagespecific {
+    <script src="~/Scripts/insuranceicons.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            /*
+            * TODO: add a way to add more todo's to list
+            */
+            // initialize sortable
+            debugger;
+            $(function () {
+                debugger;
+                var container = document.getElementById("content");
+                while (container.hasChildNodes()) {
+                    container.removeChild(container.lastChild);
+                }
+                 container.appendChild(@Model.Sections);
+                //for (i = 0; i < 4; i++) {
+                //    container.appendChild(document.createTextNode("Member " + (i + 1)));
+                //    var input = document.createElement("input");
+                //    input.type = "text";
+                //    container.appendChild(input);
+                //    container.appendChild(document.createElement("br"));
+                //}
+            });
+
+
+
+        })
+
+
+    </script>
+}*@

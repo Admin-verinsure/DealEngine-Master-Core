@@ -1,0 +1,60 @@
+﻿@model TechCertain.WebUI.Models.Permission.GroupViewModel
+
+@{ ViewBag.Title = "Create Groups"; }
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <div class="row">
+    	<!-- NEW WIDGET START -->
+        <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+
+            <!-- Widget ID (each widget will need unique ID)-->
+            <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                    <h2>Delete </h2>
+
+                </header>
+
+                <!-- widget div-->
+                <div>
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
+                    </div>
+                    <!-- end widget edit box -->
+                    <!-- widget content -->
+                    <div class="widget-body">
+						<h2>Create a new Group</h2>
+
+						@using (Html.BeginForm()) 
+						{
+						    @Html.AntiForgeryToken()
+						    <div class="form-horizontal">
+						        <h4>Group</h4>
+						        <hr />
+						        @Html.ValidationSummary(true)
+						        <div class="form-group">
+						            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+						            <div class="col-md-10">
+						                @Html.EditorFor(model => model.Name)
+						                @Html.ValidationMessageFor(model => model.Name)
+						            </div>
+						        </div>
+						        <div class="form-group">
+						            <div class="col-md-offset-2 col-md-10">
+						                <input type="submit" value="Create" class="btn btn-default" />
+						            </div>
+						        </div>
+						    </div>
+						}
+						<div>
+						    @Html.ActionLink("Back to List", "Index")
+						</div>
+					</div>
+				</div>
+			</div>
+		</article>
+	</div>
+</div>
+<!-- END MAIN CONTENT -->

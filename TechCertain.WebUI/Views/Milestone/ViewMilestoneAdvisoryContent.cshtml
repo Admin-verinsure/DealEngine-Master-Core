@@ -1,0 +1,18 @@
+﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
+
+    <div id="fuelux-wizard" class="smart-form" novalidate="novalidate">
+        @Html.TextAreaFor(m => m.AdvisoryContent.Advisory)
+        <script>CKEDITOR.replace('@(Html.IdFor(m => m.AdvisoryContent.Advisory))')</script>
+
+    </div>
+
+
+
+<script type="text/javascript">
+    function GetAdvisoryContentJson()
+    {
+    	return {
+            Advisory: CKEDITOR.instances["@(Html.IdFor(m => m.AdvisoryContent.Advisory))"].getData()
+    	};
+    }
+</script>
