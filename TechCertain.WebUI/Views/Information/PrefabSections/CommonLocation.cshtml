@@ -446,7 +446,8 @@
         type: "Post",
         //contentType: "application/json; charset=utf-8",
         //data: JSON.stringify({ locationId : locationId, answerSheetId : _sheetId })
-        data: postData
+        data: postData,
+            async: true
         })
             .done(function (data) {
                 debugger;
@@ -480,12 +481,20 @@
     };
 
         function SetLocationRemovedStatus(locationId, status, sourceTable, destTable) {
-        $.ajax({
+
+            var postData = {
+		'locationId': locationId,
+		'status': status
+	};
+
+            $.ajax({
             // change back once mono decides to fix
             url: '@Url.Action("SetLocationRemovedStatus", "Services")',
             type: "Post",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ locationId: locationId, status: status })
+            //contentType: "application/json; charset=utf-8",
+            //data: JSON.stringify({ locationId: locationId, status: status })
+            data: postData,
+            async: true
         })
         .done(function (data) {
             if (data === true) {

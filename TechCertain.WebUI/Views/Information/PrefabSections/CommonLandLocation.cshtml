@@ -255,57 +255,66 @@
 
     function EditBuilding(buildingId, tableId) {
         debugger;
-    var _sheetId = $('#AnswerSheetId').val();
-    $('#getDetailsModal').modal('show');
+        var _sheetId = $('#AnswerSheetId').val();
+
+        var postData = {
+		'buildingId': buildingId,
+		'answerSheetId': _sheetId
+	};
+
+    $('#getDetailsModal').show();
+
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("GetBuilding", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ buildingId: buildingId, answerSheetId: _sheetId })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ buildingId: buildingId, answerSheetId: _sheetId })
+        data: postData,
+        async: true
     })
         .done(function (data) {
-             $('#getDetailsModal').modal('hide');
+             $('#getDetailsModal').hide();
 
-	    $('#BuildingId').val(data.BuildingId);
-	    $('#BuildingName').val(data.BuildingName);
-	    $('#OwnerOrTenant').val(data.OwnerOrTenant);
-	    $('#BuildingLastValuationDate').val(data.BuildingLastValuationDate);
-	    $('#BuildingRVValue').val(data.BuildingRVValue);
-	    $('#BuildingRIVValue').val(data.BuildingRIVValue);
-	    $('#BuildingDValue').val(data.BuildingDValue);
-	    $('#BuildingIVValue').val(data.BuildingIVValue);
-	    $('#BuildingIIVValue').val(data.BuildingIIVValue);
-	    $('#ConstructionLimit').val(data.ConstructionLimit);
-	    $('#CapitalAdditions').val(data.CapitalAdditions);
-	    $('#CreditConstruction').val(data.CreditConstruction);
-	    $('#CreditCapAdds').val(data.CreditCapAdds);
-	    $('#DomesticUnits').val(data.DomesticUnits);
-	    $('#BuildingFRVValue').val(data.BuildingFRVValue);
-	    $('#BuildingFRIVValue').val(data.BuildingFRIVValue);
-	    $('#ConstructionType').val(data.ConstructionType);
-	    $('#ConstructionYear').val(data.ConstructionYear);
-	    $('#ResidentialProportion').val(data.ResidentialProportion);
-	    $('#NumOfUnits').val(data.NumOfUnits);
-	    $('#NumberOfStoreys').val(data.NumberOfStoreys);
-	    $('#PercentOfInsuSandwichPanels').val(data.PercentOfInsuSandwichPanels);
-	    $('#HasSprinklers').val(data.HasSprinklers);
-	    $('#NZS4541Compliant').val(data.NZS4541Compliant);
-	    $('#BuildingLocation').val(data.BuildingLocation);
-	    $('#BuildingNotes').val(data.BuildingNotes);
-	    $('#HasHoseReels').val(data.HasHoseReels);
-	    $('#HasFireExtinguishers').val(data.HasFireExtinguishers);
-	    $('#IsTownWaterSupplied').val(data.IsTownWaterSupplied);
-	    $('#IsHalfOrMoreUnOccupied').val(data.IsHalfOrMoreUnOccupied);
-	    $('#HasAlarm').val(data.HasAlarm);
-	    $('#HasSecurityGuard').val(data.HasSecurityGuard);
-	    $('#HasFlammableLiquidsOrGases').val(data.HasFlammableLiquidsOrGases);
-	    $('#FlammableLiquidsOrGasesDesc').val(data.FlammableLiquidsOrGasesDesc);
-	    $('#HasNBSExceed').val(data.HasNBSExceed);
-	    $('#HasSafe').val(data.HasSafe);
-	    $('#HasSafeAlarm').val(data.HasSafeAlarm);
-	    $('#HasSafeBolted').val(data.HasSafeBolted);
-        $('#BuildingCategory').val(data.BuildingCategory);
+	    $('#BuildingId').val(data.buildingId);
+	    $('#BuildingName').val(data.buildingName);
+	    $('#OwnerOrTenant').val(data.ownerOrTenant);
+	    $('#BuildingLastValuationDate').val(data.buildingLastValuationDate);
+	    $('#BuildingRVValue').val(data.buildingRVValue);
+	    $('#BuildingRIVValue').val(data.buildingRIVValue);
+	    $('#BuildingDValue').val(data.buildingDValue);
+	    $('#BuildingIVValue').val(data.buildingIVValue);
+	    $('#BuildingIIVValue').val(data.buildingIIVValue);
+	    $('#ConstructionLimit').val(data.constructionLimit);
+	    $('#CapitalAdditions').val(data.capitalAdditions);
+	    $('#CreditConstruction').val(data.creditConstruction);
+	    $('#CreditCapAdds').val(data.creditCapAdds);
+	    $('#DomesticUnits').val(data.domesticUnits);
+	    $('#BuildingFRVValue').val(data.buildingFRVValue);
+	    $('#BuildingFRIVValue').val(data.buildingFRIVValue);
+	    $('#ConstructionType').val(data.constructionType);
+	    $('#ConstructionYear').val(data.constructionYear);
+	    $('#ResidentialProportion').val(data.residentialProportion);
+	    $('#NumOfUnits').val(data.numOfUnits);
+	    $('#NumberOfStoreys').val(data.numberOfStoreys);
+	    $('#PercentOfInsuSandwichPanels').val(data.percentOfInsuSandwichPanels);
+	    $('#HasSprinklers').val(data.hasSprinklers);
+	    $('#NZS4541Compliant').val(data.nZS4541Compliant);
+	    $('#BuildingLocation').val(data.buildingLocation);
+	    $('#BuildingNotes').val(data.buildingNotes);
+	    $('#HasHoseReels').val(data.hasHoseReels);
+	    $('#HasFireExtinguishers').val(data.hasFireExtinguishers);
+	    $('#IsTownWaterSupplied').val(data.isTownWaterSupplied);
+	    $('#IsHalfOrMoreUnOccupied').val(data.isHalfOrMoreUnOccupied);
+	    $('#HasAlarm').val(data.hasAlarm);
+	    $('#HasSecurityGuard').val(data.hasSecurityGuard);
+	    $('#HasFlammableLiquidsOrGases').val(data.hasFlammableLiquidsOrGases);
+	    $('#FlammableLiquidsOrGasesDesc').val(data.flammableLiquidsOrGasesDesc);
+	    $('#HasNBSExceed').val(data.hasNBSExceed);
+	    $('#HasSafe').val(data.hasSafe);
+	    $('#HasSafeAlarm').val(data.hasSafeAlarm);
+	    $('#HasSafeBolted').val(data.hasSafeBolted);
+        $('#BuildingCategory').val(data.buildingCategory);
 	    UpdateChosen();
     });
 };
@@ -390,7 +399,7 @@
 function AddBuilding(tabId, tableId) {
     var informationId = $('#AnswerSheetId').serialize();
     var loc = $('#SelectedLocation').serialize();
-    $('#getLandLocModal').modal('show');
+    $('#getLandLocModal').show();
     var x = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
     console.log(x);
     $.ajax({
@@ -458,12 +467,18 @@ function AddBuilding(tabId, tableId) {
 };*@
 
     function SetBuildingRemovedStatus(buildingId, status, sourceTable, destTable) {
+        var postData = {
+		'buildingId': buildingId,
+		'status': status
+	};
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetBuildingRemovedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ buildingId: buildingId, status: status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ buildingId: buildingId, status: status })
+        data: postData,
+async: true
     })
     .done(function (data) {
         if (data === true) {

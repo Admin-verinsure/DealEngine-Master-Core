@@ -2171,42 +2171,58 @@ function AddClaim(tabId, tableId) {
 };
 
 function EditClaim(claimId, tableId) {
-        var _sheetId = $('#AnswerSheetId').val();
+    var _sheetId = $('#AnswerSheetId').val();
+
+    var postData = {
+		'claimId': claimId,
+		'answerSheetId': _sheetId
+	};
+
         $.ajax({
             url: '@Url.Action("GetClaim", "Services")',
             type: "Post",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ claimId: claimId, answerSheetId: _sheetId })
+            //contentType: "application/json; charset=utf-8",
+            //data: JSON.stringify({ claimId: claimId, answerSheetId: _sheetId })
+            data: postData,
+            async: true
         })
     .done(function (data) {
-        $('#ClaimId').val(data.ClaimId);
-        $('#ClaimTitle').val(data.ClaimTitle);
-        $('#ClaimDescription').val(data.ClaimDescription);
-        $('#ClaimReference').val(data.ClaimReference);
-        $('#ClaimPolicyReference').val(data.ClaimPolicyReference);
-        $('#ClaimInsurerName').val(data.ClaimInsurerName);
-        $('#ClaimInsuredName').val(data.ClaimInsuredName);
-        $('#Claimant').val(data.Claimant);
-        $('#ClaimDateOfLoss').val(data.ClaimDateOfLoss);
-        $('#ClaimNotifiedDate').val(data.ClaimNotifiedDate);
-        $('#ClaimEstimateInsuredLiability').val(data.ClaimEstimateInsuredLiability);
-        $('#ClaimStatus').val(data.ClaimStatus);
-        $('#ClaimBrokerReference').val(data.ClaimBrokerReference);
-        $('#ClaimInsurerReference').val(data.ClaimInsurerReference);
-        $('#ClaimPaid').val(data.ClaimPaid);
-        $('#ClaimReserve').val(data.ClaimReserve);
-        $('#ClaimNotes').val(data.ClaimNotes);
+        $('#ClaimId').val(data.claimId);
+        $('#ClaimTitle').val(data.claimTitle);
+        $('#ClaimDescription').val(data.claimDescription);
+        $('#ClaimReference').val(data.claimReference);
+        $('#ClaimPolicyReference').val(data.claimPolicyReference);
+        $('#ClaimInsurerName').val(data.claimInsurerName);
+        $('#ClaimInsuredName').val(data.claimInsuredName);
+        $('#Claimant').val(data.claimant);
+        $('#ClaimDateOfLoss').val(data.claimDateOfLoss);
+        $('#ClaimNotifiedDate').val(data.claimNotifiedDate);
+        $('#ClaimEstimateInsuredLiability').val(data.claimEstimateInsuredLiability);
+        $('#ClaimStatus').val(data.claimStatus);
+        $('#ClaimBrokerReference').val(data.claimBrokerReference);
+        $('#ClaimInsurerReference').val(data.claimInsurerReference);
+        $('#ClaimPaid').val(data.claimPaid);
+        $('#ClaimReserve').val(data.claimReserve);
+        $('#ClaimNotes').val(data.claimNotes);
         UpdateChosen();
     });
 };
 
     function SetClaimRemovedStatus(claimId, status, sourceTable, destTable) {
-    $.ajax({
+
+        var postData = {
+		'claimId': claimId,
+		'status': status
+	};
+
+        $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetClaimRemovedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ claimId : claimId, status : status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ claimId : claimId, status : status })
+        data: postData,
+        async: true
     })
     .done(function (data) {
         if (data === true) {
@@ -2803,52 +2819,60 @@ function EditClaim(claimId, tableId) {
     function EditBoat(classId, boatId) {
         debugger;
         var _sheetId = $('#AnswerSheetId').val();
-        $('#getDetailsModal').modal('show');
+        $('#getDetailsModal').show();
+
+        var postData = {
+		'boatId': boatId,
+		'answerSheetId': _sheetId
+	};
+
         $.ajax({
 
         url: '@Url.Action("GetBoat", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+        data: postData,
+async: true
     })
             .done(function (data) {
             console.log(data);
-            if (data.BoatType1 == "CruisersandLaunches" || data.BoatType1 == "YachtsandCatamarans") {
+            if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
-                $('#SelectedBoatUse').val(data.BoatselectedText).trigger('chosen:updated');
+                $('#SelectedBoatUse').val(data.boatselectedText).trigger('chosen:updated');
                 }
-            $('#SelectedInterestedParty').val(data.BoatpartyText).trigger('chosen:updated');
-            $('#BoatId.' + classId).val(data.BoatId);
-            $('#BoatName.' + classId).val(data.BoatName);
-            $('#BoatType1.' + classId).val(data.BoatType1);
-            $('#OtherConstructionType.' + classId).val(data.OtherHullConstruction);
-            $('#OtherHullConfiguration.' + classId).val(data.OtherHullConfiguration);
-            $('#MaxSumInsured.' + classId).val("$"+(data.MaxSumInsured).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-            $('#excess.' + classId).val(data.BoatQuoteExcessOption);
-            $('#YearOfManufacture.' + classId).val(data.YearOfManufacture);
-            $('#BoatMake.' + classId).val(data.BoatMake);
-            $('#BoatModel.' + classId).val(data.BoatModel);
-            $('#BuiltProfessionally.' + classId).val(data.BuiltProfessionally);
-            $('#MotorType.' + classId).val(data.MotorType);
-            $('#ModifiedMotor.' + classId).val(data.ModifiedMotor);
-            $('#MaxRatedSpeed.' + classId).val(data.MaxRatedSpeed);
-            $('#AucklandRegistration.' + classId).val(data.AucklandRegistration);
-            $('#chooseBoat_chosen.' + classId).val(data.BoatUseslist);
-            $('#BoatIsTrailered.' + classId).val(data.BoatIsTrailered);
-            $('#BoatTrailer.' + classId).val(data.BoatTrailer);
-            $('#BoatLandLocation.' + classId).val(data.BoatLandLocation);
-            $('#BoatOperator.' + classId).val(data.BoatOperator);
-            $('#BoatEffectiveDate.' + classId).val(data.BoatEffectiveDate);
-            $('#BoatIPEffectiveDate.' + classId).val(data.BoatIPEffectiveDate);
-            $('#BoatCeaseDate.' + classId).val(data.BoatCeaseDate);
-            $('#BoatCeaseReason.' + classId).val(data.BoatCeaseReason);
-            $('#InterestedParties3.' + classId).val(data.InterestedParties3);
-            $('#BoatNotes.' + classId).val(data.BoatNotes);
-                $('#VesselArea.' + classId).val(data.VesselArea);
+            $('#SelectedInterestedParty').val(data.boatpartyText).trigger('chosen:updated');
+            $('#BoatId.' + classId).val(data.boatId);
+            $('#BoatName.' + classId).val(data.boatName);
+            $('#BoatType1.' + classId).val(data.boatType1);
+            $('#OtherConstructionType.' + classId).val(data.otherHullConstruction);
+            $('#OtherHullConfiguration.' + classId).val(data.otherHullConfiguration);
+            $('#MaxSumInsured.' + classId).val("$"+(data.maxSumInsured).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+            $('#excess.' + classId).val(data.boatQuoteExcessOption);
+            $('#YearOfManufacture.' + classId).val(data.yearOfManufacture);
+            $('#BoatMake.' + classId).val(data.boatMake);
+            $('#BoatModel.' + classId).val(data.boatModel);
+            $('#BuiltProfessionally.' + classId).val(data.builtProfessionally);
+            $('#MotorType.' + classId).val(data.motorType);
+            $('#ModifiedMotor.' + classId).val(data.modifiedMotor);
+            $('#MaxRatedSpeed.' + classId).val(data.maxRatedSpeed);
+            $('#AucklandRegistration.' + classId).val(data.aucklandRegistration);
+            $('#chooseBoat_chosen.' + classId).val(data.boatUseslist);
+            $('#BoatIsTrailered.' + classId).val(data.boatIsTrailered);
+            $('#BoatTrailer.' + classId).val(data.boatTrailer);
+            $('#BoatLandLocation.' + classId).val(data.boatLandLocation);
+            $('#BoatOperator.' + classId).val(data.boatOperator);
+            $('#BoatEffectiveDate.' + classId).val(data.boatEffectiveDate);
+            $('#BoatIPEffectiveDate.' + classId).val(data.boatIPEffectiveDate);
+            $('#BoatCeaseDate.' + classId).val(data.boatCeaseDate);
+            $('#BoatCeaseReason.' + classId).val(data.boatCeaseReason);
+            $('#InterestedParties3.' + classId).val(data.interestedParties3);
+            $('#BoatNotes.' + classId).val(data.boatNotes);
+                $('#VesselArea.' + classId).val(data.vesselArea);
 
-                if (data.BoatType2 == "Berthed" || data.BoatType2 == "Moored") {
+                if (data.boatType2 == "Berthed" || data.boatType2 == "Moored") {
 
-                    if (data.BoatWaterLocation == "00000000-0000-0000-0000-000000000000") {
+                    if (data.boatWaterLocation == "00000000-0000-0000-0000-000000000000") {
 
                          if (!($('#MooredType option:selected'))) {
                         $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
@@ -2861,38 +2885,38 @@ function EditClaim(claimId, tableId) {
                     }
                 };
 
-                if (data.BoatWaterLocation != null && data.BoatWaterLocation != "00000000-0000-0000-0000-000000000000") {
+                if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
                     debugger;
-                    $('#BoatWaterLocation.b').val(data.BoatWaterLocation);
+                    $('#BoatWaterLocation.b').val(data.boatWaterLocation);
                     $('#othermarinSection').addClass("hidden");
                     $('#BoatMooredTypeSection').addClass("hidden");
-                                        GetMooredType(data.BoatWaterLocation);
+                                        GetMooredType(data.boatWaterLocation);
 
                 } else {
                     debugger;
                     $('#BoatWaterLocation.' + classId).val("add");
                     $('#othermarinSection').removeClass("hidden");
                     $('#BoatMooredTypeSection').removeClass("hidden");
-                    $('#othermarina.b').val(data.OtherMarinaName);
+                    $('#othermarina.b').val(data.otherMarinaName);
                      //GetMooredType(data.BoatWaterLocation);
                 }
 
-                if (data.BoatType2 == "Roadtrailer" && data.BoatType2 != "Stored") {
+                if (data.boatType2 == "Roadtrailer" && data.boatType2 != "Stored") {
                       $('#othermarinSection').addClass("hidden");
                     $('#BoatMooredTypeSection').addClass("hidden");
                 }
 
 
-            $('#MooredType.' + classId).val(data.WaterLocationMooringType);
+            $('#MooredType.' + classId).val(data.waterLocationMooringType);
             vesselType1Selected();
-                $('#BoatType2.b').val(data.BoatType2);
+                $('#BoatType2.b').val(data.boatType2);
 
                 vesselType2Selected();
                 updateExcess();
             updateEditBoat(data);
                // $('#MooredType.b').val(data.WaterLocationMooringType);
             UpdateChosen();
-                $('#getDetailsModal').modal('hide');
+                $('#getDetailsModal').hide();
             });
 };
 
@@ -2960,15 +2984,21 @@ function EditClaim(claimId, tableId) {
 
     function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
         debugger;
+        var postData = {
+		'boatIdboatId': locationId,
+		'status': status
+	};
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetBoatRemovedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatId: boatId, status : status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, status : status })
+        data: postData,
+async: true
     })
         .done(function (data) {
-             $('#getDetailsModal').modal('hide');
+             $('#getDetailsModal').hide();
             debugger;
         if (data === true) {
             $(sourceTable).trigger( 'reloadGrid' );
@@ -2984,12 +3014,19 @@ function EditClaim(claimId, tableId) {
 };
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
-    $.ajax({
+        var postData = {
+		'boatIdboatId': locationId,
+		'status': status
+	};
+
+        $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetBoatCeasedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatId: boatId, status: status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, status: status })
+        data: postData,
+async: true
     })
         .done(function (data) {
             if (data === true) {
@@ -3006,12 +3043,18 @@ function EditClaim(claimId, tableId) {
 };
 
     function SetBoatTransferedStatus(boatId, status, sourceTable, destTable) {
-    $.ajax({
+        var postData = {
+		'boatIdboatId': locationId,
+		'status': status
+	};
+        $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetBoatTransferedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatId: boatId, status: status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, status: status })
+        data: postData,
+async: true
     })
             .done(function (data) {
                 if (data === true) {
@@ -3821,14 +3864,21 @@ function EditClaim(claimId, tableId) {
     function EditNamedParties(classId, boatUseId) {
         var _sheetId = $('#AnswerSheetId').val();
 
-        $('#getDetailsModal').modal('show');
+        $('#getDetailsModal').show();
+
+        var postData = {
+		'partyID': boatUseId,
+		'answerSheetId': _sheetId
+	};
         debugger;
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("GetNamedParty", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ partyID: boatUseId, answerSheetId : _sheetId })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ partyID: boatUseId, answerSheetId : _sheetId })
+        data: postData,
+async: true
     })
         .done(function (data) {
             debugger;
@@ -3841,94 +3891,104 @@ function EditClaim(claimId, tableId) {
             //    $('#SkprExpSec').addClass("hidden");
             //    $('#OperatorYearsOfExpModal').val("");
             //}
-        $('#OrganisationId').val(data.ID);
-        $('#NPOrgName').val(data.OrganisationName);
-        $('#NPOrgPhone').val(data.OrganisationPhone);
-        $('#NPOrgWebsite').val(data.Website);
-        $('#NPOrgEmail').val(data.Email);
-        $('#getDetailsModal').modal('hide');
+        $('#OrganisationId').val(data.iD);
+        $('#NPOrgName').val(data.organisationName);
+        $('#NPOrgPhone').val(data.organisationPhone);
+        $('#NPOrgWebsite').val(data.website);
+        $('#NPOrgEmail').val(data.email);
+        $('#getDetailsModal').hide();
 	});
     };
 
 
 
     function EditBoatUse(classId, boatUseId) {
-        debugger;
         var _sheetId = $('#AnswerSheetId').val();
-        $('#getDetailsModal').modal('show');
+        $('#getDetailsModal').show();
+        var postData = {
+		'boatUseId': boatUseId,
+		'answerSheetId': _sheetId
+	};
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("GetBoatUse", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatUseId: boatUseId, answerSheetId : _sheetId })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatUseId: boatUseId, answerSheetId : _sheetId })
+        data: postData,
+        async: true
     })
         .done(function (data) {
             debugger;
-        $('#BoatUseId.' + classId).val(data.BoatUseId);
-        $('#BoatUseCategory.' + classId).val(data.BoatUseCategory);
-        $('#BoatUseLiveOnBoard.' + classId).val(data.BoatUseLiveOnBoard);
-        $('#BoatUseRace.' + classId).val(data.BoatUseRace);
-        $('#BoatUseRaceCategory.' + classId).val(data.BoatUseRaceCategory);
-        $('#BoatUseRaceUseSpinnakers.' + classId).val(data.BoatUseRaceUseSpinnakers);
-        $('#BoatUseRaceNotes.' + classId).val(data.BoatUseRaceNotes);
-        $('#BoatUseLiveNotes.' + classId).val(data.BoatUseLiveNotes);
-        $('#BoatUseEffectiveDate.' + classId).val(data.BoatUseEffectiveDate);
-        $('#BoatUseCeaseDate.' + classId).val(data.BoatUseCeaseDate);
-            $('#BoatUseCeaseReason.' + classId).val(data.BoatUseCeaseReason);
+        $('#BoatUseId.' + classId).val(data.boatUseId);
+        $('#BoatUseCategory.' + classId).val(data.boatUseCategory);
+        $('#BoatUseLiveOnBoard.' + classId).val(data.boatUseLiveOnBoard);
+        $('#BoatUseRace.' + classId).val(data.boatUseRace);
+        $('#BoatUseRaceCategory.' + classId).val(data.boatUseRaceCategory);
+        $('#BoatUseRaceUseSpinnakers.' + classId).val(data.boatUseRaceUseSpinnakers);
+        $('#BoatUseRaceNotes.' + classId).val(data.boatUseRaceNotes);
+        $('#BoatUseLiveNotes.' + classId).val(data.boatUseLiveNotes);
+        $('#BoatUseEffectiveDate.' + classId).val(data.boatUseEffectiveDate);
+        $('#BoatUseCeaseDate.' + classId).val(data.boatUseCeaseDate);
+            $('#BoatUseCeaseReason.' + classId).val(data.boatUseCeaseReason);
 
             UpdateChosen();
             vesselUseCategory();
-                    $('#getDetailsModal').modal('hide');
+                    $('#getDetailsModal').hide();
 
         });
-                    debugger;
 
 };
 
     function EditRegisteredMotorVehicle(classId, vehicleId) {
-        debugger;
-             var _sheetId = $('#AnswerSheetId').val();
-               $('#getDetailsModal').modal('show');
+        var _sheetId = $('#AnswerSheetId').val();
+        var postData = {
+		'vehicleId': vehicleId,
+		'answerSheetId': _sheetId
+	};
+               $('#getDetailsModal').show();
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("GetVehicle", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ vehicleId : vehicleId, answerSheetId : _sheetId })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ vehicleId : vehicleId, answerSheetId : _sheetId })
+        data: postData,
+        async: true
     })
         .done(function (data) {
-                          $('#getDetailsModal').modal('hide');
+                    debugger;
+        $('#getDetailsModal').hide();
 
-        $('#Registration').val(data.Registration);
-        $('#Validated.'+classId).val(data.Validated);
-        $('#VehicleId.'+classId).val(data.VehicleId);
-        $('#Year.'+classId).val(data.Year);
-        $('#Make.'+classId).val(data.Make);
-        $('#VehicleModel.'+classId).val(data.VehicleModel);
-        $('#VIN.'+classId).val(data.VIN);
-        $('#ChassisNumber.'+classId).val(data.ChassisNumber);
-        $('#EngineNumber.' + classId).val(data.EngineNumber);
-        $('#SerialNumber.' + classId).val(data.SerialNumber);
-        $('#GrossVehicleMass.' + classId).val(data.GrossVehicleMass);
-        $('#SumInsured.'+classId).val(data.SumInsured);
-        $('#FleetNumber.'+classId).val(data.FleetNumber);
-        $('#AreaOfOperation.'+classId).val(data.AreaOfOperation);
-        $('#VehicleType.'+classId).val(data.VehicleType);
-        $('#Use.'+classId).val(data.Use);
-        $('#SubUse.'+classId).val(data.SubUse);
-        $('#VehicleLocation.' + classId).val(data.VehicleLocation);
-        $('#EffectiveDate.' + classId).val(data.EffectiveDate);
-        $('#CeaseDate.' + classId).val(data.CeaseDate);
-        $('#CeaseReason.' + classId).val(data.CeaseReason);
-        $('#InterestedParties.'+classId).val(data.InterestedParties);
-        $('#InterestedParties2.'+classId).val(data.InterestedParties2);
-        $('#Notes.'+classId).val(data.Notes);
-            $('#MotorYear.' + classId).val(data.Year);
-            $('#MotorMake.' + classId).val(data.Make);
-            $('#MotorModel.' + classId).val(data.VehicleModel);
-            $('#MotorSumInsured.' + classId).val(data.SumInsured);
-            $('#MotorLocation.' + classId).val(data.VehicleLocation);
+        $('#Registration').val(data.registration);
+        $('#Validated.'+classId).val(data.validated);
+        $('#VehicleId.'+classId).val(data.vehicleId);
+        $('#Year.'+classId).val(data.year);
+        $('#Make.'+classId).val(data.make);
+        $('#VehicleModel.'+classId).val(data.vehicleModel);
+        $('#VIN.'+classId).val(data.vIN);
+        $('#ChassisNumber.'+classId).val(data.chassisNumber);
+        $('#EngineNumber.' + classId).val(data.engineNumber);
+        $('#SerialNumber.' + classId).val(data.serialNumber);
+        $('#GrossVehicleMass.' + classId).val(data.grossVehicleMass);
+        $('#SumInsured.'+classId).val(data.sumInsured);
+        $('#FleetNumber.'+classId).val(data.fleetNumber);
+        $('#AreaOfOperation.'+classId).val(data.areaOfOperation);
+        $('#VehicleType.'+classId).val(data.vehicleType);
+        $('#Use.'+classId).val(data.use);
+        $('#SubUse.'+classId).val(data.subUse);
+        $('#VehicleLocation.' + classId).val(data.vehicleLocation);
+        $('#EffectiveDate.' + classId).val(data.effectiveDate);
+        $('#CeaseDate.' + classId).val(data.ceaseDate);
+        $('#CeaseReason.' + classId).val(data.ceaseReason);
+        $('#InterestedParties.'+classId).val(data.interestedParties);
+        $('#InterestedParties2.'+classId).val(data.interestedParties2);
+        $('#Notes.'+classId).val(data.notes);
+            $('#MotorYear.' + classId).val(data.year);
+            $('#MotorMake.' + classId).val(data.make);
+            $('#MotorModel.' + classId).val(data.vehicleModel);
+            $('#MotorSumInsured.' + classId).val(data.sumInsured);
+            $('#MotorLocation.' + classId).val(data.vehicleLocation);
 
             UpdateChosen();
         });
@@ -3959,13 +4019,19 @@ function EditClaim(claimId, tableId) {
         //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
     };
 
-      function SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable) {
+    function SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable) {
+        var postData = {
+		'vehicleId': vehicleId,
+		'status': status
+	};
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetVehicleRemovedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ vehicleId : vehicleId, status : status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ vehicleId : vehicleId, status : status })
+        data: postData,
+        async: true
     })
     .done(function (data) {
         if (data.status === true) {
@@ -3978,8 +4044,7 @@ function EditClaim(claimId, tableId) {
                 timeout: 4000
             });
         }
-        debugger;
-
+        
         var selectElement = document.getElementById("AddBoatTrailer");
                     //location.reload(true);
 
@@ -4357,12 +4422,18 @@ function AddMotorVehicle(tabId, tableId) {
     };
 
     function SetBoatUseRemovedStatus(boatUseId, status, sourceTable, destTable) {
+        var postData = {
+		'boatUseId': boatUseId,
+		'status': status
+	};
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetBoatUseRemovedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatUseId: boatUseId, status : status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatUseId: boatUseId, status : status })
+        data: postData,
+async: true
     })
     .done(function (data) {
         if (data === true) {
@@ -4380,12 +4451,18 @@ function AddMotorVehicle(tabId, tableId) {
 };
 
     function SetBoatUseCeasedStatus(boatUseId, status, sourceTable, destTable) {
-    $.ajax({
+        var postData = {
+		'boatUseId': boatUseId,
+		'status': status
+	};
+        $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetBoatUseCeasedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ boatUseId: boatUseId, status: status })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatUseId: boatUseId, status: status })
+        data: postData,
+async: true
     })
         .done(function (data) {
             if (data === true) {
