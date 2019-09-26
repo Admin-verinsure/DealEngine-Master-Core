@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TechCertain.WebUI.Models.Product
@@ -7,6 +8,7 @@ namespace TechCertain.WebUI.Models.Product
 
 	public class ProductViewModel : BaseViewModel
 	{
+        [Required]
 		public ProductDescriptionVM Description { get; set; }
 
 		public ProductRisksVM Risks { get; set; }
