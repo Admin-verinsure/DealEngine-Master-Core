@@ -40,6 +40,7 @@
                                             url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=false",
                                             datatype: "xml",
                                             mtype: "GET",
+                                            async: true,
                                             colNames: ["", "Location Type", "Common Name", "Street", "Suburb", "Postcode", "City", ""],
                                             colModel: [
                                                 {
@@ -319,7 +320,8 @@
 						    $("#tblRemovedLocation").jqGrid({
 						        url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
                                 colNames: ["", "Location Type", "Common Name", "Street", "Suburb", "Postcode", "City"],
                                 colModel: [
                                     {
