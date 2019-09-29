@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NHibernate" Version="5.2.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
   </ItemGroup>
 
