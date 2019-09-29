@@ -27,7 +27,8 @@
 							    $("#tblBuilding").jqGrid({
 							        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=false",
 							        datatype: "xml",
-							        mtype: "GET",
+                                    mtype: "GET",
+                                    async: true,
                                     colNames: ["", "Storage Description", "Storage Type", "Street", "Suburb", "City", ""],
                                     colModel: [
                                         {
@@ -203,7 +204,8 @@
 						        $("#tblRemovedBuilding").jqGrid({
 						        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
-						        mtype: "GET",
+                                    mtype: "GET",
+                                async: true,
                                 colNames: ["", "Storage Description", "Storage Type", "Street", "Suburb", "City"],
                                 colModel: [
                                     {

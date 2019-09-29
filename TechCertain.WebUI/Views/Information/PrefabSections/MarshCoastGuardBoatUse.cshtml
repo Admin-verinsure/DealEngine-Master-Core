@@ -30,7 +30,8 @@
                             $("#tblBoatUse").jqGrid({
                                 url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
                                 colNames: ["","Vessel Use Category", ""],
                                 colModel: [
                                     {
@@ -238,7 +239,8 @@
                             $("#tblRemovedBoatUse").jqGrid({
                                 url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
                                 colNames: ["","Vessel Use Category"],
                                 colModel: [
                                     {
