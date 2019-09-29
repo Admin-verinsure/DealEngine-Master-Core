@@ -2,10 +2,10 @@
 
 @using TechCertain.WebUI.Helpers.CustomHtml
 
-<div id="content">
+<div id="content" style="background-color:#FFFFE0">
 
     <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
-
+   
     <!-- widget grid -->
     <section id="widget-grid" class="">
         <!-- row -->
@@ -21,23 +21,23 @@
                      data-widget-custombutton="false"
                      data-widget-sortable="false">
                     <!-- widget options:
-        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
-        data-widget-colorbutton="false"
-        data-widget-editbutton="false"
-        data-widget-togglebutton="false"
-        data-widget-deletebutton="false"
-        data-widget-fullscreenbutton="false"
-        data-widget-custombutton="false"
-        data-widget-collapsed="true"
-        data-widget-sortable="false"
+                    data-widget-colorbutton="false"
+                    data-widget-editbutton="false"
+                    data-widget-togglebutton="false"
+                    data-widget-deletebutton="false"
+                    data-widget-fullscreenbutton="false"
+                    data-widget-custombutton="false"
+                    data-widget-collapsed="true"
+                    data-widget-sortable="false"
 
-        -->
-                    <header>
+                    -->
+                    <header style="width: 85%;" class="col-sm-11 col-md-11 col-lg-11 pull-left">
                         <h2>Create a new Product</h2>
                     </header>
 
-                    <div role="content">
+                    <div role="content" style="width: 85%;" class="col-sm-11 col-md-11 col-lg-11 pull-left">
                         <!-- widget edit box -->
                         <div class="jarviswidget-editbox">
                             <!-- This area used as dropdown edit box -->
@@ -86,19 +86,19 @@
                                             </div>
 
                                         </div>
-                                        <div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end">
+                                        @*<div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end">
                                             <div class="btn-group mr-2 sw-btn-group" role="group">
                                                 <button class="btn btn-secondary sw-btn-prev disabled" type="button">Previous</button>
                                                 <button class="btn btn-secondary sw-btn-next" type="button">Next</button>
                                             </div>
-                                        </div>
+                                        </div>*@
                                     </div>
 
                                 </form>
-                            </div>                            
+                            </div>
 
                         </div>
-                </div>
+                    </div>
             </article>
         </div>
     </section>
@@ -106,61 +106,74 @@
 
 
 @section pagespecific {
-    <script src="~/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
-    <script src="~/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
-    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
+    @*<script src="~/Scripts/plugin/chosen/chosen.jquery.min.js"></script>*@
+    @*<link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />*@
     <link href="~/smartwizard/cc/smart_wizard_theme_dots.css" rel="stylesheet" />
 
+
+    @*<link href="~/css/bootstrap.min.css" rel="stylesheet" />*@
+    @*<script src="~/jquery/jquery.min.js"></script>*@
+    @*<script src="~/Scripts/bootstrap/bootstrap.min.js"></script>*@
+
+    <!-- Include the plugin's CSS and JS: -->
+    @*<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css" />*@
     <!-- PAGE RELATED PLUGIN(S) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+
+
+
     <script type="text/javascript">
 
-    // DO NOT REMOVE : GLOBAL FUNCTIONS!
+        // DO NOT REMOVE : GLOBAL FUNCTIONS!
 
-    $(document).ready(function () {
-	
-        var checkerrors = function() {
-	        validator.form();
-	    };
 
-	    // find all multiselect items and apply Chosen
-		$('.cselect').each(function() {
-			$('#'+this.id).chosen( { width: '100%' } ).change(checkerrors);
-        });
+        $(document).ready(function () {
 
-           $('#smartwizard').smartWizard({
-            selected: 0,  // Initial selected step, 0 = first step
-            keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
-            autoAdjustHeight:true, // Automatically adjust content height
-            cycleSteps: false, // Allows to cycle the navigation of steps
-            backButtonSupport: true, // Enable the back button support
-            useURLhash: true, // Enable selection of the step based on url hash
-            lang: {  // Language variables
-                next: 'Next',
-                previous: 'Previous'
-            },
-            toolbarSettings: {
-                toolbarPosition: 'bottom', // none, top, bottom, both
-                toolbarButtonPosition: 'right', // left, right
-                showNextButton: true, // show/hide a Next button
-                showPreviousButton: true, // show/hide a Previous button
-                
-            },
-            anchorSettings: {
-                anchorClickable: true, // Enable/Disable anchor navigation
-                enableAllAnchors: false, // Activates all anchors clickable all times
-                markDoneStep: true, // add done css
-                enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
-            },
-            contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
-            disabledSteps: [],    // Array Steps disabled
-            errorSteps: [],    // Highlight step with errors
-            theme: 'dots',
-            transitionEffect: 'fade', // Effect on navigation, none/slide/fade
-            transitionSpeed: '400'
-      });
+            //$('#multiple').multiselect();
+
+
+            var checkerrors = function () {
+                validator.form();
+            };
+
+            // find all multiselect items and apply Chosen
+            $('.cselect').each(function () {
+                $('#' + this.id).chosen({ width: '100%' }).change(checkerrors);
+            });
+
+            $('#smartwizard').smartWizard({
+                selected: 0,  // Initial selected step, 0 = first step
+                keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                autoAdjustHeight: true, // Automatically adjust content height
+                cycleSteps: false, // Allows to cycle the navigation of steps
+                backButtonSupport: true, // Enable the back button support
+                useURLhash: true, // Enable selection of the step based on url hash
+                lang: {  // Language variables
+                    next: 'Next',
+                    previous: 'Previous'
+                },
+                toolbarSettings: {
+                    toolbarPosition: 'bottom', // none, top, bottom, both
+                    toolbarButtonPosition: 'right', // left, right
+                    showNextButton: true, // show/hide a Next button
+                    showPreviousButton: true, // show/hide a Previous button
+
+                },
+                anchorSettings: {
+                    anchorClickable: true, // Enable/Disable anchor navigation
+                    enableAllAnchors: false, // Activates all anchors clickable all times
+                    markDoneStep: true, // add done css
+                    enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+                },
+                contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+                disabledSteps: [],    // Array Steps disabled
+                errorSteps: [],    // Highlight step with errors
+                theme: 'dots',
+                transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+                transitionSpeed: '400'
+            });
         });
 
     </script>
