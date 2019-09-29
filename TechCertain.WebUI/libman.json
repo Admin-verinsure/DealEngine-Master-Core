@@ -9,10 +9,14 @@
     {
       "library": "twitter-bootstrap@4.3.1",
       "destination": "Areas/twitter-bootstrap/"
-    },    
+    },
     {
       "library": "jqueryui@1.12.1",
       "destination": "wwwroot/jqueryui/"
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.11",
+      "destination": "wwwroot/jquery-validation-unobtrusive/"
     }
   ]
 }

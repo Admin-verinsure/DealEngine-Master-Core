@@ -60,127 +60,42 @@
 
                                         <div class="sw-container tab-content" style="min-height: 152px;">
                                             <div id="step-1" class="tab-pane step-content" style="display: block;">
-                                                <h2>Your Email Address</h2>
                                                 <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
                                                     <div class="form-group">
                                                         @Html.DisplayFor(m => m.Description)
-                                                        <label for="email">Email address:</label>
-                                                        <input type="email" class="form-control" name="email" id="email" placeholder="Write your email address" required="">
-                                                        <div class="help-block with-errors"></div>
                                                     </div>
                                                 </div>
 
                                             </div>
                                             <div id="step-2" class="tab-pane step-content" style="display: none;">
-                                                <h2>Your Name</h2>
+
                                                 <div id="form-step-1" role="form" data-toggle="validator" novalidate="true">
                                                     <div class="form-group">
-                                                        <label for="name">Name:</label>
-                                                        <input type="text" class="form-control" name="name" id="email" placeholder="Write your name" required="">
+                                                        @Html.DisplayFor(m => m.Risks)
                                                         <div class="help-block with-errors"></div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div id="step-3" class="tab-pane step-content" style="display: none;">
-                                                <h2>Your Address</h2>
                                                 <div id="form-step-2" role="form" data-toggle="validator">
                                                     <div class="form-group">
-                                                        <label for="address">Address</label>
-                                                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Write your address..." required=""></textarea>
+                                                        @Html.DisplayFor(m => m.Settings)
                                                         <div class="help-block with-errors"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="step-4" class="tab-pane step-content">
-                                                <h2>Terms and Conditions</h2>
-                                                <p>
-                                                    Terms and conditions: Keep your smile :)
-                                                </p>
-                                                <div id="form-step-3" role="form" data-toggle="validator">
-                                                    <div class="form-group">
-                                                        <label for="terms">I agree with the T&amp;C</label>
-                                                        <input type="checkbox" id="terms" data-error="Please accept the Terms and Conditions" required="">
-                                                        <div class="help-block with-errors"></div>
-                                                    </div>
-                                                </div>
 
-
+                                        </div>
+                                        <div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end">
+                                            <div class="btn-group mr-2 sw-btn-group" role="group">
+                                                <button class="btn btn-secondary sw-btn-prev disabled" type="button">Previous</button>
+                                                <button class="btn btn-secondary sw-btn-next" type="button">Next</button>
                                             </div>
-                                        </div><div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end"><div class="btn-group mr-2 sw-btn-group" role="group"><button class="btn btn-secondary sw-btn-prev disabled" type="button">Previous</button><button class="btn btn-secondary sw-btn-next" type="button">Next</button></div><div class="btn-group mr-2 sw-btn-group-extra" role="group"><button class="btn btn-info">Finish</button><button class="btn btn-danger">Cancel</button></div></div>
+                                        </div>
                                     </div>
 
                                 </form>
-                            </div>
-                            <div class="row">
-                                <div class="container">
-                                    <br>
-                                    <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
-
-                                        <!-- SmartWizard html -->
-                                        <div id="smartwizard" class="sw-main sw-theme-dots">
-                                            <ul class="nav nav-tabs step-anchor">
-                                                <li class="nav-item active"><a href="#step-1" class="nav-link">Step 1<br><small>Email Address</small></a></li>
-                                                <li class="nav-item"><a href="#step-2" class="nav-link">Step 2<br><small>Name</small></a></li>
-                                                <li class="nav-item"><a href="#step-3" class="nav-link">Step 3<br><small>Address</small></a></li>
-                                                <li class="nav-item"><a href="#step-4" class="nav-link">Step 4<br><small>Terms and Conditions</small></a></li>
-                                            </ul>
-
-                                            <div class="sw-container tab-content" style="min-height: 152px;">
-                                                <div id="step-1" class="tab-pane step-content" style="display: none;">
-                                                    <h2>Your Email Address</h2>
-                                                    <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
-                                                        <div class="form-group">
-                                                            @*@Html.DisplayFor(m => m.Description)*@
-                                                            <label for="email">Email address:</label>
-                                                            <input type="email" class="form-control" name="email" id="email" placeholder="Write your email address" required="">
-                                                            <div class="help-block with-errors"></div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div id="step-2" class="tab-pane step-content" style="display: block;">
-                                                    <h2>Your Name</h2>
-                                                    <div id="form-step-1" role="form" data-toggle="validator">
-                                                        <div class="form-group">
-                                                            <label for="name">Name:</label>
-                                                            <input type="text" class="form-control" name="name" id="email" placeholder="Write your name" required="">
-                                                            <div class="help-block with-errors"></div>
-                                                            @*@Html.DisplayFor(m => m.Risks)*@
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="step-3" class="tab-pane step-content">
-                                                    <h2>Your Address</h2>
-                                                    <div id="form-step-2" role="form" data-toggle="validator">
-                                                        <div class="form-group">
-                                                            <label for="address">Address</label>
-                                                            <textarea class="form-control" name="address" id="address" rows="3" placeholder="Write your address..." required=""></textarea>
-                                                            <div class="help-block with-errors"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="step-4" class="tab-pane step-content">
-                                                    <h2>Terms and Conditions</h2>
-                                                    <p>
-                                                        Terms and conditions: Keep your smile :)
-                                                    </p>
-                                                    <div id="form-step-3" role="form" data-toggle="validator">
-                                                        <div class="form-group">
-                                                            <label for="terms">I agree with the T&amp;C</label>
-                                                            <input type="checkbox" id="terms" data-error="Please accept the Terms and Conditions" required="">
-                                                            <div class="help-block with-errors"></div>
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-                                            </div><div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end"><div class="btn-group mr-2 sw-btn-group" role="group"><button class="btn btn-secondary sw-btn-prev" type="button">Previous</button><button class="btn btn-secondary sw-btn-next" type="button">Next</button></div></div>
-                                        </div>
-
-                                    </form>
-
-                                </div>
-                            </div>
+                            </div>                            
 
                         </div>
                 </div>
@@ -191,13 +106,12 @@
 
 
 @section pagespecific {
-    <script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
-    <script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
+    <script src="~/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
+    <script src="~/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
     <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
     <link href="~/smartwizard/cc/smart_wizard_theme_dots.css" rel="stylesheet" />
 
     <!-- PAGE RELATED PLUGIN(S) -->
-    @*<script src="https://code.jquery.com/jquery-3.3.1.min.js" defer integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>*@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
