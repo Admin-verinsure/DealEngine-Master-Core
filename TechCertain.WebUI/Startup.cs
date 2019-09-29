@@ -18,6 +18,7 @@ using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpOverrides;
+using DealEngine.Infrastructure.AppInitialize.Nhibernate;
 
 namespace TechCertain.WebUI
 {
@@ -43,16 +44,6 @@ namespace TechCertain.WebUI
             // If you followed the instructions in 'README.MD' and installed SQL Express then change the 'DefaultConnection' value in 'appSettings.json' with
             // "Server=localhost\\SQLEXPRESS;Database=aspnet-smartadmin;Trusted_Connection=True;MultipleActiveResultSets=true"
 
-            //services.AddDbContext<DealEngineDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
-            //    .AddIdentity<IdentityUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<DealEngineDBContext>();
-
-
-            //services.AddIdentity<IdentityUser>()
-            //        .AddSignInManager<DealEngineSignInManager>()
-            //        .AddClaimsPrincipalFactory<IdentityUser>();
-
-            // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
             services.AddRouting(options =>
@@ -69,13 +60,7 @@ namespace TechCertain.WebUI
                     //options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                //options.LoginPath = "/Identity/Account/Login";
-                //options.LogoutPath = "/Identity/Account/Logout";
-                //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            });
-
+            services.AddNHibernate();
 
             services.AddSimpleInjector(container, options =>
             {

@@ -29,7 +29,8 @@
 						    $("#tblRegisteredMV").jqGrid({
 						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false&transfered=false",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
 								colNames: ["","Year", "Registration", "Make", "Model", "Sum Insured", ""],
                                 colModel: [
                                     {
@@ -484,7 +485,8 @@
 						    $("#tblRemovedRegisteredMV").jqGrid({
 						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false&transfered=false",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
 								colNames: ["","Registration", "Make", "Model", "Sum Insured"],
                                 colModel: [
                                     {

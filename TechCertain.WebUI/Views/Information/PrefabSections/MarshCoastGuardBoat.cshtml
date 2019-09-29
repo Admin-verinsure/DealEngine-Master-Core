@@ -31,7 +31,8 @@
                               $("#tblBoat").jqGrid({
                                 url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false&transfered=false",
                                 datatype: "xml",
-                                mytpe: "GET",
+                                  mytpe: "GET",
+                                async: true,
                                 colNames: ["Edit Vessel", "Boat Name", "Year", "Sum Insured", "Delete Vessel"],
                                 colModel: [
                                     //{ name: "edit", template: "actions", width: 60 },
@@ -1634,7 +1635,8 @@
                                $("#tblRemovedBoat").jqGrid({
                                 url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false&transfered=false",
                                 datatype: "xml",
-                                mtype: "GET",
+                                   mtype: "GET",
+                                async: true,
                                 colNames: ["", "Boat Name", "Year", "Sum Insured"],
                                 colModel: [
 

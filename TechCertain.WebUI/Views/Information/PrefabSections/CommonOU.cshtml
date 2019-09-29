@@ -20,7 +20,8 @@
 							    $("#tblOU").jqGrid({
 							        url: "/Services/GetOrganisationalUnits?informationId=@Model.AnswerSheetId",
 							        datatype: "xml",
-							        mtype: "GET",
+                                    mtype: "GET",
+                                    async: true,
 									colNames: ["","Name"],
                                     colModel: [
                                         {
@@ -167,6 +168,7 @@ function AddOU(tabId, tableId) {
         // change back once mono decides to fix
         url: '@Url.Action("AddOrganisationalUnit", "Services")',
         type: "POST",
+        async: true,
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({ name: _unitName, answerSheetId : _sheetId, organisationalUnitId : _ouId })
     })
@@ -221,6 +223,7 @@ function AddAddOU(tabId, tableId) {
         // change back once mono decides to fix
         url: '@Url.Action("AddOrganisationalUnit", "Services")',
         type: "POST",
+        async: true,
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({ name: _unitName, answerSheetId : _sheetId, organisationalUnitId : _ouId })
     })
@@ -250,7 +253,8 @@ function AddAddOU(tabId, tableId) {
 	$.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("GetOrganisationalUnit", "Services")',
-	    type: "Post",
+        type: "Post",
+        async: true,
 		contentType: "application/json; charset=utf-8",
 	    data: JSON.stringify({ unitId : unitId, answerSheetId : _sheetId })
 	})
