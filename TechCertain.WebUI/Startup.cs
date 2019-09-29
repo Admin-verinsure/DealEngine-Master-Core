@@ -31,8 +31,6 @@ namespace TechCertain.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ApplicationSettings>(Configuration.GetSection(ApplicationSettings.SectionKey));
-            services.AddSingleton(s => s.GetRequiredService<IOptions<ApplicationSettings>>().Value);
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -178,13 +176,4 @@ namespace TechCertain.WebUI
         }
     }
 
-    public class ApplicationSettings
-    {
-        public const string SectionKey = "Application";
-        public string Name { get; set; }
-        public string Flavor { get; set; }
-        public string User { get; set; } = "Dr. Codex Lantern";
-        public string Email { get; set; } = "drlantern@gotbootstrap.com";
-        public string Version { get; set; }
-    }
 }
