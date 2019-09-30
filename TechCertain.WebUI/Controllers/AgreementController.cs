@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Agreement;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Helpers;
+using TechCertain.Infrastructure.Payment.PxpayAPI;
+using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -1055,27 +1058,27 @@ namespace TechCertain.WebUI.Controllers
                 
                 //new implementation using httpclient
                 //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-                try
-                {
-                    throw new Exception("method needs to use new httpclient");
-                    //if (eGlobalSerializer.SiteActive())
-                    //{
-                    //    _logger.Info("Active");
-                    //    isActive = true;
+                //try
+                //{
+                //    throw new Exception("method needs to use new httpclient");
+                //    //if (eGlobalSerializer.SiteActive())
+                //    //{
+                //    //    _logger.Info("Active");
+                //    //    isActive = true;
+                //    //}
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.Info("Inactive");
+                //    isActive = false;
+                //    ErrorSignal.FromCurrentContext().Raise(ex);
+                //    _emailService.ContactSupport(_emailService.DefaultSender, "eglobal API inactive", ex.Message);
+                //    //if (ex != null)
+                //    //{
+                //    //    _logger.Error(ex.InnerException.Message);
+                //    //    _logger.Error(ex.Message);
                     //}
-                }
-                catch (Exception ex)
-                {
-                    _logger.Info("Inactive");
-                    isActive = false;
-                    ErrorSignal.FromCurrentContext().Raise(ex);
-                    _emailService.ContactSupport(_emailService.DefaultSender, "eglobal API inactive", ex.Message);
-                    //if (ex != null)
-                    //{
-                    //    _logger.Error(ex.InnerException.Message);
-                    //    _logger.Error(ex.Message);
-                    //}
-                }
+               // }
                 model.EGlobalIsActive = isActive;
 
                 // Populate the ViewModel
@@ -1443,254 +1446,343 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult GeneratePxPayment()
+        public IActionResult GeneratePxPayment1(IFormCollection collection)
         {
-
+            Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
-            throw new Exception("Method will need to be re-written");
-            //if (Guid.TryParse(Request.Form.Get("AnswerSheetId"), out Guid sheetId))
-            //{
-            //    sheet = _customerInformationService.GetInformation(sheetId);
-            //}
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
 
-            //ClientProgramme programme = sheet.Programme;
-            //programme.PaymentType = "Credit Card";
-            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-            ////eGlobalSerializer.SiteActive();
-            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
-            ////Hardcoded variables
-            //decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
-            //Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
-            //Payment payment = _paymentService.GetPayment(programme.Id);
-            //if (payment == null)
-            //{
-            //    payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
-            //}
+                sheet = _customerInformationService.GetInformation(sheetId);
+            }
 
-            //using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-            //{
-            //    programme.PaymentType = "Credit Card";
-            //    programme.Payment = payment;
-            //    programme.InformationSheet.Status = "Bound";                
-            //    uow.Commit();
-            //}
+               ClientProgramme programme = sheet.Programme;
+               programme.PaymentType = "Credit Card";
 
-            ////add check to count how many failed payments
-            //var ProgrammeId = sheetId;
-            //foreach (ClientAgreement clientAgreement in programme.Agreements)
-            //{
-            //    ProgrammeId = programme.Id;
-            //    brokerFee += clientAgreement.BrokerFee;
-            //    var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
-            //    foreach (ClientAgreementTerm clientAgreementTerm in terms)
-            //    {
-            //        totalPremium += clientAgreementTerm.Premium;
-            //    }
-            //}
-            //totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
-
-            //PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
-
-            //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            //RequestInput input = new RequestInput
-            //{
-            //    AmountInput = totalPayment.ToString("0.00"),
-            //    CurrencyInput = "NZD",
-            //    TxnType = "Purchase",
-            //    UrlFail = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),                
-            //    UrlSuccess = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
-            //    TxnId = payment.Id.ToString("N").Substring(0, 16),
-            //};
-
-            //RequestOutput requestOutput = pxPay.GenerateRequest(input);    
-
-            ////opens on same page - hard to return back to current process
-            //return Json(new { url = requestOutput.Url });
-
+            //return View();
+            return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
+            //return Content (sheet.Id.ToString());
         }
 
         [HttpPost]
-        public ActionResult GenerateEGlobal()
+        public IActionResult GeneratePxPayment(IFormCollection collection)
+        {
+            Guid sheetId = Guid.Empty;
+
+            ClientInformationSheet sheet = null;
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
+                sheet = _customerInformationService.GetInformation(sheetId);
+            }
+
+            ClientProgramme programme = sheet.Programme;
+            programme.PaymentType = "Credit Card";
+            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
+            //eGlobalSerializer.SiteActive();
+            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
+            //Hardcoded variables
+            decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+            Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
+            Payment payment = _paymentService.GetPayment(programme.Id);
+            if (payment == null)
+            {
+                payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
+            }
+
+            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            {
+                programme.PaymentType = "Credit Card";
+                programme.Payment = payment;
+                programme.InformationSheet.Status = "Bound";
+                uow.Commit();
+            }
+
+            //add check to count how many failed payments
+            var ProgrammeId = sheetId;
+            foreach (ClientAgreement clientAgreement in programme.Agreements)
+            {
+                ProgrammeId = programme.Id;
+                brokerFee += clientAgreement.BrokerFee;
+                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
+                foreach (ClientAgreementTerm clientAgreementTerm in terms)
+                {
+                    totalPremium += clientAgreementTerm.Premium;
+                }
+            }
+            totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
+
+            PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
+
+            //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
+            string domainQueryString = "localhost:44323";
+            RequestInput input = new RequestInput
+            {
+                AmountInput = totalPayment.ToString("0.00"),
+                CurrencyInput = "NZD",
+                TxnType = "Purchase",
+                UrlFail = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
+                UrlSuccess = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
+                TxnId = payment.Id.ToString("N").Substring(0, 16),
+            };
+
+            RequestOutput requestOutput = pxPay.GenerateRequest(input);
+
+            //opens on same page - hard to return back to current process
+            return Json(new { url = requestOutput.Url });
+
+        }
+
+
+        //[HttpPost]
+        //public ActionResult GeneratePxPayment(IFormCollection collection)
+        //{
+
+        //    ClientInformationSheet sheet = null;
+
+        //    if (answerSheetId != null)
+        //    {
+        //        sheet = _customerInformationService.GetInformation(answerSheetId);
+        //    }
+
+        //    ClientProgramme programme = sheet.Programme;
+        //    programme.PaymentType = "Credit Card";
+        //    //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
+        //    //eGlobalSerializer.SiteActive();
+        //    //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
+        //    //Hardcoded variables
+        //    decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+        //    Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
+        //    Payment payment = _paymentService.GetPayment(programme.Id);
+        //    if (payment == null)
+        //    {
+        //        payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
+        //    }
+
+        //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    {
+        //        programme.PaymentType = "Credit Card";
+        //        programme.Payment = payment;
+        //        programme.InformationSheet.Status = "Bound";
+        //        uow.Commit();
+        //    }
+
+        //    //add check to count how many failed payments
+        //    var ProgrammeId = answerSheetId;
+        //    foreach (ClientAgreement clientAgreement in programme.Agreements)
+        //    {
+        //        ProgrammeId = programme.Id;
+        //        brokerFee += clientAgreement.BrokerFee;
+        //        var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
+        //        foreach (ClientAgreementTerm clientAgreementTerm in terms)
+        //        {
+        //            totalPremium += clientAgreementTerm.Premium;
+        //        }
+        //    }
+        //    totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
+
+        //    PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
+
+        //    //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
+        //    string domainQueryString = "localhost:44323";
+        //    RequestInput input = new RequestInput
+        //    {
+        //        AmountInput = totalPayment.ToString("0.00"),
+        //        CurrencyInput = "NZD",
+        //        TxnType = "Purchase",
+        //        UrlFail = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
+        //        UrlSuccess = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
+        //        TxnId = payment.Id.ToString("N").Substring(0, 16),
+        //    };
+
+        //    RequestOutput requestOutput = pxPay.GenerateRequest(input);
+
+        //    //opens on same page - hard to return back to current process
+        //    return Json(new { url = requestOutput.Url });
+
+        //}
+
+        [HttpPost]
+        public IActionResult GenerateEGlobal(IFormCollection collection)
         {
             ClientInformationSheet sheet = null;
-            throw new Exception("Method will need to be re-written");
-            //if (Guid.TryParse(Request.Form.Get("AnswerSheetId"), out Guid sheetId))
-            //{
-            //    sheet = _customerInformationService.GetInformation(sheetId);
-            //}
+            //throw new Exception("Method will need to be re-written");
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out Guid sheetId))
+            {
+                sheet = _customerInformationService.GetInformation(sheetId);
+            }
 
-            ////Hardcoded variables
-            //ClientProgramme programme = sheet.Programme;
-            //programme.PaymentType = "Invoice";
+            //Hardcoded variables
+            ClientProgramme programme = sheet.Programme;
+            programme.PaymentType = "Invoice";
             //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
 
-            ////check Eglobal parameters
-            //if(programme.EGlobalClientNumber == "")
-            //{
-            //    throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
-            //}
+            //check Eglobal parameters
+            if (programme.EGlobalClientNumber == "")
+            {
+                throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
+            }
 
             //if (!eGlobalSerializer.SiteActive())
             //{
             //    var xmlBody = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
             //    _emailService.SendSystemEmailEGlobalTCNotify(xmlBody);
-            //}            
-
-            //decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m;
-
-            ////add check to count how many failed payments
-            //var ProgrammeId = sheetId;
-            //foreach (ClientAgreement clientAgreement in programme.Agreements)
-            //{
-            //    ProgrammeId = programme.Id;
-            //    brokerFee += clientAgreement.BrokerFee;
-            //    var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
-            //    foreach (ClientAgreementTerm clientAgreementTerm in terms)
-            //    {
-            //        totalPremium += clientAgreementTerm.Premium;
-            //    }
             //}
 
-            //var status = "bound";
-            //using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-            //{
-            //    if (programme.InformationSheet.Status != status)
-            //    {
-            //        programme.PaymentType = "Invoice";
-            //        programme.InformationSheet.Status = status;
-            //        uow.Commit();
-            //    }
-            //}
+            decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m;
 
-            //return Redirect("~/Agreement/ViewAcceptedAgreement/" + ProgrammeId.ToString());
+            //add check to count how many failed payments
+            var ProgrammeId = sheetId;
+            foreach (ClientAgreement clientAgreement in programme.Agreements)
+            {
+                ProgrammeId = programme.Id;
+                brokerFee += clientAgreement.BrokerFee;
+                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
+                foreach (ClientAgreementTerm clientAgreementTerm in terms)
+                {
+                    totalPremium += clientAgreementTerm.Premium;
+                }
+            }
+
+            var status = "bound";
+            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            {
+                if (programme.InformationSheet.Status != status)
+                {
+                    programme.PaymentType = "Invoice";
+                    programme.InformationSheet.Status = status;
+                    uow.Commit();
+                }
+            }
+
+            return Redirect("~/Agreement/ViewAcceptedAgreement/" + ProgrammeId.ToString());
         }
 
 
         [HttpGet]
         public ActionResult ProcessRequestConfiguration(Guid Id)
         {
-            throw new Exception("Method will need to be re-written");
-            //string url = Request. Url.AbsoluteUri;
-            //string queryString = Request.QueryString["result"];
-            //var status = "Bound";
 
-            //ClientProgramme programme = _programmeRepository.GetById(Id);
-            //Payment payment = _paymentService.GetPayment(programme.Id);
+            //string url = this.Url;
+            QueryString queryString = HttpContext.Request.QueryString;
+            var status = "Bound";
 
-
-            //PxPay pxPay = new PxPay(payment.PaymentMerchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, payment.PaymentMerchant.MerchantPaymentGateway.PxpayUserId, payment.PaymentMerchant.MerchantPaymentGateway.PxpayKey);
-            //ResponseOutput responseOutput = pxPay.ProcessResponse(queryString);
-
-            //payment.PaymentAttempts += 1;
-            //payment.CreditCardType = responseOutput.CardName;
-            //payment.CreditCardNumber = responseOutput.CardNumber;
-            //payment.IsPaid = responseOutput.Success == "1" ? true : false;
-            //payment.PaymentAmount = Convert.ToDecimal(responseOutput.AmountSettlement);
-            //_paymentService.Update(payment);
-
-            //if (!payment.IsPaid)
-            //{
-            //    //Payment failed
-            //    status = "Bound and pending payment";
-            //    _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-            //    return Redirect("~/Agreement/ProccessedAgreements/" + Id.ToString());
-            //}
-            //else
-            //{
-            //    //Payment successed
-            //    _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-
-            //    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-
-            //    if (emailTemplate == null)
-            //    {
-            //        //default email or send them somewhere??
-
-            //        using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-            //        {
-            //            emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
-            //            programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
-            //            uow.Commit();
-            //        }
-            //    }
+            ClientProgramme programme = _programmeRepository.GetById(Id);
+            Payment payment = _paymentService.GetPayment(programme.Id);
 
 
-            //    var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
+            PxPay pxPay = new PxPay(payment.PaymentMerchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, payment.PaymentMerchant.MerchantPaymentGateway.PxpayUserId, payment.PaymentMerchant.MerchantPaymentGateway.PxpayKey);
+            ResponseOutput responseOutput = pxPay.ProcessResponse(queryString.ToString());
 
-            //    if (hasEglobalNo)
-            //    {
-            //        status = "Bound and invoiced";
-            //    }
-            //    else
-            //        status = "Bound and invoice pending";
+            payment.PaymentAttempts += 1;
+            payment.CreditCardType = responseOutput.CardName;
+            payment.CreditCardNumber = responseOutput.CardNumber;
+            payment.IsPaid = responseOutput.Success == "1" ? true : false;
+            payment.PaymentAmount = Convert.ToDecimal(responseOutput.AmountSettlement);
+            _paymentService.Update(payment);
 
-            //    var documents = new List<SystemDocument>();
-            //    foreach (ClientAgreement agreement in programme.Agreements)
-            //    {
-            //        using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-            //        {
-            //            if (agreement.Status != status)
-            //            {
-            //                agreement.Status = status;
-            //                uow.Commit();
-            //            }
-            //        }
+            if (!payment.IsPaid)
+            {
+                //Payment failed
+                status = "Bound and pending payment";
+                _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                return Redirect("~/Agreement/ProccessedAgreements/" + Id.ToString());
+            }
+            else
+            {
+                //Payment successed
+                _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
 
+                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
 
-            //        agreement.Status = status;
+                if (emailTemplate == null)
+                {
+                    //default email or send them somewhere??
 
-            //        foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
-            //        {
-            //            doc.Delete(CurrentUser);
-            //        }
-            //        foreach (SystemDocument template in agreement.Product.Documents)
-            //        {
-            //            //render docs except invoice
-            //            if (template.DocumentType != 4)
-            //            {
-            //                SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement);
-            //                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-            //                agreement.Documents.Add(renderedDoc);
-            //                documents.Add(renderedDoc);
-            //                _fileService.UploadFile(renderedDoc);
-            //            }
-
-            //        }
-            //        //else
-            //        //{
-            //        //    agreement.Documents.Add(renderedDoc);
-            //        //    documents.Add(renderedDoc);
-            //        //    _fileService.UploadFile(renderedDoc);
-            //        //}
-
-            //        //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-            //        _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    {
+                        emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
+                        programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
+                        uow.Commit();
+                    }
+                }
 
 
-            //        _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-            //        _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
-            //    }
+                var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
 
-            //    if (hasEglobalNo)
-            //    {
-            //        _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-            //    }
-            //    else
-            //    {
-            //        _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-            //    }
+                if (hasEglobalNo)
+                {
+                    status = "Bound and invoiced";
+                }
+                else
+                    status = "Bound and invoice pending";
 
-            //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-            //    {
-            //        if (programme.InformationSheet.Status != status)
-            //        {
-            //            programme.InformationSheet.Status = status;
-            //            uow.Commit();
-            //        }
-            //    }
-            //}
+                var documents = new List<SystemDocument>();
+                foreach (ClientAgreement agreement in programme.Agreements)
+                {
+                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    {
+                        if (agreement.Status != status)
+                        {
+                            agreement.Status = status;
+                            uow.Commit();
+                        }
+                    }
 
-            //return Redirect("~/Agreement/ProcessedAgreements/" + Id.ToString());        
+
+                    agreement.Status = status;
+
+                    foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                    {
+                        doc.Delete(CurrentUser);
+                    }
+                    foreach (SystemDocument template in agreement.Product.Documents)
+                    {
+                        //render docs except invoice
+                        if (template.DocumentType != 4)
+                        {
+                            SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement);
+                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                            agreement.Documents.Add(renderedDoc);
+                            documents.Add(renderedDoc);
+                            _fileService.UploadFile(renderedDoc);
+                        }
+
+                    }
+                    //else
+                    //{
+                    //    agreement.Documents.Add(renderedDoc);
+                    //    documents.Add(renderedDoc);
+                    //    _fileService.UploadFile(renderedDoc);
+                    //}
+
+                    //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                    _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+
+
+                    _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                    _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                }
+
+                if (hasEglobalNo)
+                {
+                    _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                }
+                else
+                {
+                    _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                }
+
+                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                {
+                    if (programme.InformationSheet.Status != status)
+                    {
+                        programme.InformationSheet.Status = status;
+                        uow.Commit();
+                    }
+                }
+            }
+
+            return Redirect("~/Agreement/ProcessedAgreements/" + Id.ToString());
         }
 
         [HttpGet]

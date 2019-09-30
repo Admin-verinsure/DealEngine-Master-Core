@@ -1975,7 +1975,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditInformation(IFormCollection formcollection)
+        public IActionResult EditInformation(IFormCollection formcollection)
         {
             // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
             // so just reroute the call
@@ -2127,57 +2127,58 @@ namespace TechCertain.WebUI.Controllers
             //return Content (sheet.Id.ToString());
         }
 
-        //[HttpPost]
-        //public ActionResult QuoteToAgree(FormCollection collection)
-        //{
-        //    Guid sheetId = Guid.Empty;
-        //    ClientInformationSheet sheet = null;
-        //    if (Guid.TryParse(Request.Form.Get("AnswerSheetId"), out sheetId))
-        //    {
-        //        sheet = _clientInformationService.GetInformation(sheetId);
-        //        if (sheet.Status != "Submitted" && sheet.Status != "Bound")
-        //        {
-        //            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-        //            {
-        //                sheet.Status = "Submitted";
-        //                sheet.SubmitDate = DateTime.UtcNow;
-        //                sheet.SubmittedBy = CurrentUser;
-        //                uow.Commit();
-        //            }
+        [HttpPost]
+        public ActionResult QuoteToAgree(IFormCollection collection)
+        {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
+                sheet = _clientInformationService.GetInformation(sheetId);
+                if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+                {
+                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    {
+                        sheet.Status = "Submitted";
+                        sheet.SubmitDate = DateTime.UtcNow;
+                        sheet.SubmittedBy = CurrentUser;
+                        uow.Commit();
+                    }
 
-        //            //send out uis submission confirmation email to insured
-        //            _emailService.SendSystemEmailUISSubmissionConfirmationNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-        //            //send out information sheet submission notification email
-        //            _emailService.SendSystemEmailUISSubmissionNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-        //            //send out agreement referral notification email
-        //            string agreementStatus = "Quoted";
-        //            bool agreementReferToTC = false;
-        //            foreach (ClientAgreement agreement in sheet.Programme.Agreements)
-        //            {
-        //                if (agreementStatus != "Referred" && agreement.Status == "Referred")
-        //                {
-        //                    agreementStatus = "Referred";
-        //                    if (!agreementReferToTC && agreement.ReferToTC)
-        //                    {
-        //                        agreementReferToTC = true;
-        //                        _emailService.SendSystemEmailOtherMarinaTCNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-        //                    } else
-        //                    {
-        //                        _emailService.SendSystemEmailAgreementReferNotify(CurrentUser, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
-        //                    }
+                    ////send out uis submission confirmation email to insured
+                    //_emailService.SendSystemEmailUISSubmissionConfirmationNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    ////send out information sheet submission notification email
+                    //_emailService.SendSystemEmailUISSubmissionNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    ////send out agreement referral notification email
+                    //string agreementStatus = "Quoted";
+                    //bool agreementReferToTC = false;
+                    //foreach (ClientAgreement agreement in sheet.Programme.Agreements)
+                    //{
+                    //    if (agreementStatus != "Referred" && agreement.Status == "Referred")
+                    //    {
+                    //        agreementStatus = "Referred";
+                    //        if (!agreementReferToTC && agreement.ReferToTC)
+                    //        {
+                    //            agreementReferToTC = true;
+                    //            _emailService.SendSystemEmailOtherMarinaTCNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //        }
+                    //        else
+                    //        {
+                    //            _emailService.SendSystemEmailAgreementReferNotify(CurrentUser, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
+                    //        }
 
-        //                }
-        //            }
+                    //    }
+                    //}
 
-        //        }
-        //    }
+                }
+            }
 
-        //    return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
+            return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
 
-        //}
+        }
 
         [HttpPost]
-        public ActionResult PaymentInformation(FormCollection collection)
+        public ActionResult PaymentInformation(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
