@@ -18,6 +18,7 @@ using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpOverrides;
+using DealEngine.Infrastructure.AppInitialize.Nhibernate;
 
 namespace TechCertain.WebUI
 {
@@ -31,8 +32,6 @@ namespace TechCertain.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ApplicationSettings>(Configuration.GetSection(ApplicationSettings.SectionKey));
-            services.AddSingleton(s => s.GetRequiredService<IOptions<ApplicationSettings>>().Value);
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -45,16 +44,6 @@ namespace TechCertain.WebUI
             // If you followed the instructions in 'README.MD' and installed SQL Express then change the 'DefaultConnection' value in 'appSettings.json' with
             // "Server=localhost\\SQLEXPRESS;Database=aspnet-smartadmin;Trusted_Connection=True;MultipleActiveResultSets=true"
 
-            //services.AddDbContext<DealEngineDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
-            //    .AddIdentity<IdentityUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<DealEngineDBContext>();
-
-
-            //services.AddIdentity<IdentityUser>()
-            //        .AddSignInManager<DealEngineSignInManager>()
-            //        .AddClaimsPrincipalFactory<IdentityUser>();
-
-            // services.AddDbContext<ApplicationDbContext>().AddEntityFrameworkNpgsql().AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
             services.AddRouting(options =>
@@ -71,13 +60,7 @@ namespace TechCertain.WebUI
                     //options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                //options.LoginPath = "/Identity/Account/Login";
-                //options.LogoutPath = "/Identity/Account/Logout";
-                //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            });
-
+            services.AddNHibernate();
 
             services.AddSimpleInjector(container, options =>
             {
@@ -178,13 +161,4 @@ namespace TechCertain.WebUI
         }
     }
 
-    public class ApplicationSettings
-    {
-        public const string SectionKey = "Application";
-        public string Name { get; set; }
-        public string Flavor { get; set; }
-        public string User { get; set; } = "Dr. Codex Lantern";
-        public string Email { get; set; } = "drlantern@gotbootstrap.com";
-        public string Version { get; set; }
-    }
 }

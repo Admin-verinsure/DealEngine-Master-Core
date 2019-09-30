@@ -30,7 +30,8 @@
 							    $("#tblClaim").jqGrid({
 							        url: "/Services/GetClaims?informationId=@Model.AnswerSheetId&removed=false",
 							        datatype: "xml",
-							        mtype: "GET",
+                                    mtype: "GET",
+                                    async: true,
 							        colNames: ["","Claim Title", "Claim Description", "Claim Reference", "Name of Claimant", ""],
                                     colModel: [
                                         {
@@ -440,7 +441,8 @@
 						    $("#tblRemovedClaim").jqGrid({
 						        url: "/Services/GetClaims?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
 						        colNames: ["","Claim Title", "Claim Description", "Claim Reference", "Name of Claimant"],
                                 colModel: [
                                     {

@@ -50,8 +50,9 @@
 				<label><strong>Select Languages</strong></label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-globe fa-lg fa-fw"></i></span>
-                    @Html.ListBoxFor(m => m.SelectedLanguages, Model.Languages , new { id = "multiple", @class = "multiselect", style = "width: 80%;" })
+                    @Html.ListBoxFor(m => m.SelectedLanguages, Model.Languages, new {  @class = "listbox", style = "width: 80%;" })
 
+                    @*@Html.ListBoxFor(m => m.FruitIds, Model.Fruits, new { @class = "listbox" })*@
 
                     @*@Html.ListBoxFor(m => m.SelectedLanguages, Model.Languages as MultiSelectList);*@
                     @*@Html.ListBoxFor(m => m.SelectedLanguages, (MultiSelectList)Model.LanguagesList)*@

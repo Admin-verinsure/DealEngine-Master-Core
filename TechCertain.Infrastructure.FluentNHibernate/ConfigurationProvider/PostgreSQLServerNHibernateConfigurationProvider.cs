@@ -108,37 +108,8 @@ namespace TechCertain.Infrastructure.FluentNHibernate.ConfigurationProvider
 
         private static void ExportSchemaToDatabase(Configuration configuration)
         {
-            //new SchemaExport(configuration).Create(script => System.Diagnostics.Debug.WriteLine(script), true);
-
             try
             {
-                //try
-                //{
-                //    new SchemaValidator(configuration).Validate();
-                //}
-                //catch(NHibernate.HibernateException)
-                //{
-                //    throw new Exception("");
-                //}
-                
-                //using (var file = new FileStream(@"C:\tmp\schema-update.sql",
-                //                        FileMode.Create,
-                //                            FileAccess.ReadWrite))
-                //using (var sw = new StreamWriter(file))
-                //{
-                //    new SchemaUpdate(configuration)
-                //        .Execute(sw.Write, true);
-                //}
-
-        //        using (var file = new FileStream(@"C:\tmp\schema2-update.sql",
-        //FileMode.Create,
-        //    FileAccess.ReadWrite))
-        //        using (var sw = new StreamWriter(file))
-        //        {
-        //            new SchemaExport(configuration)
-        //                .Create(sw.Write, true);
-        //        }
-
                 new SchemaUpdate(configuration).Execute(false, true);
             }
             catch (Exception ex)

@@ -25,7 +25,8 @@
                             $("#NamedParties").jqGrid({
                                 url: "/Services/GetNamedParties?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
                                 colNames: ["","Organisation Name","Organisation Type"],
                                 colModel: [
                                     {

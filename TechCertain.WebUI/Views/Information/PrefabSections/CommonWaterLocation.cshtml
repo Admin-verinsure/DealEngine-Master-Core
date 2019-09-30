@@ -22,7 +22,8 @@
                                 $("#tblWaterLocation").jqGrid({
 							        url: "/Services/GetWaterLocations?informationId=@Model.AnswerSheetId&removed=false",
 							        datatype: "xml",
-							        mtype: "GET",
+                                    mtype: "GET",
+                                    async: true,
                                     colNames: ["", "Your Short Name", "Marina Location", "Moored Type", ""],
                                     colModel: [
                                         {
@@ -266,7 +267,8 @@
 						    $("#tblRemovedWaterLocation").jqGrid({
 						        url: "/Services/GetWaterLocations?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
-						        mtype: "GET",
+                                mtype: "GET",
+                                async: true,
                                 colNames: ["","Water Location Name", "Latitude", "Longitude"],
                                 colModel: [
                                     {
@@ -337,6 +339,7 @@
             // change back once mono decides to fix
             url: '@Url.Action("GetWaterLocation", "Services")',
             type: "Post",
+            async: true,
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({ waterLocationId: waterLocationId, answerSheetId: _sheetId })
         })
@@ -385,6 +388,7 @@
             // change back once mono decides to fix
             url: '@Url.Action("SetWaterLocationRemovedStatus", "Services")',
             type: "Post",
+            async: true,
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({ waterLocationId: waterLocationId, status: status })
         })
@@ -508,6 +512,7 @@
             // change back once mono decides to fix
             url: '@Url.Action("AddWaterLocation", "Services")',
             type: "POST",
+            async: true,
             data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
         })
         .done(function (data) {

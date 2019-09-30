@@ -10,14 +10,135 @@
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
 <script src="~/Scripts/plugin/chosen/chosen.jquery.js" defer></script>
 <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js" defer></script>
-@*<script type="text/javascript" src="../dist/js/jquery.smartWizard.min.js"></script>*@
 <script src="~/jqueryui/jquery-ui.min.js" defer></script>
-@*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>*@
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+<link href="~/smartwizard/cc/smart_wizard_theme_dots.css" rel="stylesheet" />
+
+
 
 <script type="text/javascript">
+
+   $(document).ready(function () {
+
+           $('#smartwizard').smartWizard({
+            selected: 0,  // Initial selected step, 0 = first step
+            keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+            autoAdjustHeight:true, // Automatically adjust content height
+            cycleSteps: false, // Allows to cycle the navigation of steps
+            backButtonSupport: true, // Enable the back button support
+            useURLhash: true, // Enable selection of the step based on url hash
+            lang: {  // Language variables
+                next: 'Next',
+                previous: 'Previous'
+            },
+            toolbarSettings: {
+                toolbarPosition: 'bottom', // none, top, bottom, both
+                toolbarButtonPosition: 'right', // left, right
+                showNextButton: true, // show/hide a Next button
+                showPreviousButton: true, // show/hide a Previous button
+
+            },
+            anchorSettings: {
+                anchorClickable: true, // Enable/Disable anchor navigation
+                enableAllAnchors: false, // Activates all anchors clickable all times
+                markDoneStep: true, // add done css
+                enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+            },
+            contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+            disabledSteps: [],    // Array Steps disabled
+            errorSteps: [],    // Highlight step with errors
+            theme: 'dots',
+            transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+            transitionSpeed: '400'
+           });
+
+       $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+    var informationsheetstatus = $('#Status').val();
+                var clientInformationSheet = $('#AnswerSheetId').val();
+                var claim1 = $('#Claimexp1').val();
+                var claim2 = $('#Claimexp2').val();
+                var claim3 = $('#Claimexp3').val();
+                var claim4 = $('#Claimexp4').val();
+                var claim5 = $('#Claimexp5').val();
+               var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]')!== null;
+
+               //if (hghg == "false" || hghg =="" ||hghg == null || hghg === "undefined" ||  hghg == "&nbsp;") {
+               if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+
+                  window.alert("Please Add Atleast One Boat to proceed for policy. ");
+                $("#Vessel").trigger("click");
+                return false;
+
+                }else if (! validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                    //$("#Vessel").trigger("click");
+                    window.alert("Please Add Claims Experience to proceed for policy. ");
+
+                   $("#more").trigger("click");
+                   $("[id='Claims Experience / Insurance History']").trigger("click");
+                    return false;
+
+                }
+
+                var stringArray = new Array();
+                 stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
+                 stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
+                 stringArray[2] = ["Claimexp3", claim3, $('#Claimexp3Details').val()];
+                 stringArray[3] = ["Claimexp4", claim4, $('#Claimexp4Details').val()];
+                 stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
+
+                var postData = { Claims : stringArray , ClientInformationSheet : clientInformationSheet};
+                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                    $.ajax({
+                        url: '@Url.Action("UpdateClaim", "Information")',
+                        type: "POST",
+                        data: postData
+                    })
+                        .done(function (data) {
+                            debugger;
+        //alert("Success");
+        //$.smallBox({
+        //    title: "Success",
+        //    content: "Claim Experience and Prior Insurance details have been updated",
+        //    color: "#5F895F",
+        //    iconSmall: "fa fa-check bounce animated",
+        //    timeout: 4000
+        //});
+                        })
+                        .fail(function (a, s, d) {
+                           debugger;
+
+                            alert("Unable to save.");
+                        });
+                }
+
+                //console.log($('#MilestoneStatus').val());
+                //if ($('#MilestoneStatus').val() === 'Active'){
+                //    $('#getMilestoneModal').modal('show');
+                //}
+                //$('#getAgreementModal').modal('show');
+
+                $.ajax({
+                    url: '@Url.Action("SubmitInformation", "Information")',
+                    type: "POST",
+                    data: $("#tab1 :input").serialize({ json: true })
+                })
+                    .done(function (url) {
+                        debugger;
+                        //$("#agreementView").on('load', url, function () {
+                        $("#agreementView").load(url, function () {
+                            //$('#getAgreementModal').modal('hide');
+                        });
+                    })
+                    .fail(function (data) {
+                        debugger;
+                        //$('#getAgreementModal').modal('hide');
+                        console.log(data);
+                        alert("There was an error getting your agreement.");
+                    });
+      });
+        });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
 $(document).ready(function () {
 
