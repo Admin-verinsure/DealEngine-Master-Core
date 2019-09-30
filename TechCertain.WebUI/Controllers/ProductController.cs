@@ -126,6 +126,7 @@ namespace TechCertain.WebUI.Controllers
 				},
 				BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
 			};
+
 			//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
 				model.Description.BaseProducts.Add (new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString () });
 

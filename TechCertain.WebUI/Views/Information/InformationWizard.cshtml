@@ -67,7 +67,7 @@
                                         <li class="nav-item"><a href="#tab5" class="nav-link">5<br><small>Documents</small></a></li>
                                     </ul>
 
-                                    <div class="sw-container tab-content">
+                                    <div class="sw-container tab-content" style="min-height: 500px;">
                                         <div id="step-1" class="tab-pane step-content" style="display: block;">
                                             <h3><strong>Details </strong> - Complete Information</h3>
                                             <div id="form-step-0" role="form" data-toggle="validator">
@@ -76,7 +76,7 @@
                                                     <div class="row">
                                                         @{ await Html.RenderPartialAsync("_ViewInformation"); }
                                                         <div class="modal" id="addOperatorModal" tabindex="-1" role="dialog" data-backdrop="static">
-                                                            <div class="modal-dialog">
+                                                            <div class="modal-dialog">@*  *@
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
                                                                         <button type="button" class="close" data-dismiss="modal">&times;</button>

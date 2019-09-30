@@ -45,7 +45,9 @@ namespace TechCertain.WebUI.Models.Product
 
 		public IList<SelectListItem> Languages { get; set; }
 
-		public string[] SelectedLanguages { get; set; }
+        public MultiSelectList LanguagesList { get; set; }
+
+        public string[] SelectedLanguages { get; set; }
 
 		public Guid OwnerOrganisation { get; set; }
 
