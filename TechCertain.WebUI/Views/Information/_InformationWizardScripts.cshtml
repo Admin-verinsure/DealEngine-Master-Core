@@ -56,88 +56,181 @@
 
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
            debugger;
-         var informationsheetstatus = $('#Status').val();
-                var clientInformationSheet = $('#AnswerSheetId').val();
-                var claim1 = $('#Claimexp1').val();
-                var claim2 = $('#Claimexp2').val();
-                var claim3 = $('#Claimexp3').val();
-                var claim4 = $('#Claimexp4').val();
-                var claim5 = $('#Claimexp5').val();
-               var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]')!== null;
+           var informationsheetstatus = $('#Status').val();
+                          var clientInformationSheet = $('#AnswerSheetId').val();
+
+           if (stepNumber === 0) {
+               var claim1 = $('#Claimexp1').val();
+               var claim2 = $('#Claimexp2').val();
+               var claim3 = $('#Claimexp3').val();
+               var claim4 = $('#Claimexp4').val();
+               var claim5 = $('#Claimexp5').val();
+               var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
 
                //if (hghg == "false" || hghg =="" ||hghg == null || hghg === "undefined" ||  hghg == "&nbsp;") {
+
+
                if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
 
-                  window.alert("Please Add Atleast One Boat to proceed for policy. ");
-                $("#Vessel").trigger("click");
-                return false;
+                   window.alert("Please Add Atleast One Boat to proceed for policy. ");
+                   $("#Vessel").trigger("click");
+                   return false;
 
-                }else if (! validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                    //$("#Vessel").trigger("click");
-                    window.alert("Please Add Claims Experience to proceed for policy. ");
+               } else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   //$("#Vessel").trigger("click");
+                   window.alert("Please Add Claims Experience to proceed for policy. ");
 
                    $("#more").trigger("click");
                    $("[id='Claims Experience / Insurance History']").trigger("click");
-                    return false;
+                   return false;
 
-                }
+               }
 
-                var stringArray = new Array();
-                 stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
-                 stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
-                 stringArray[2] = ["Claimexp3", claim3, $('#Claimexp3Details').val()];
-                 stringArray[3] = ["Claimexp4", claim4, $('#Claimexp4Details').val()];
-                 stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
+               var stringArray = new Array();
+               stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
+               stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
+               stringArray[2] = ["Claimexp3", claim3, $('#Claimexp3Details').val()];
+               stringArray[3] = ["Claimexp4", claim4, $('#Claimexp4Details').val()];
+               stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
 
-                var postData = { Claims : stringArray , ClientInformationSheet : clientInformationSheet};
-                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                    $.ajax({
-                        url: '@Url.Action("UpdateClaim", "Information")',
-                        type: "POST",
-                        data: postData
-                    })
-                        .done(function (data) {
+               var postData = { Claims: stringArray, ClientInformationSheet: clientInformationSheet };
+               if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   $.ajax({
+                       url: '@Url.Action("UpdateClaim", "Information")',
+                       type: "POST",
+                       data: postData
+                   })
+                       .done(function (data) {
 
-        //alert("Success");
-        //$.smallBox({
-        //    title: "Success",
-        //    content: "Claim Experience and Prior Insurance details have been updated",
-        //    color: "#5F895F",
-        //    iconSmall: "fa fa-check bounce animated",
-        //    timeout: 4000
-        //});
-                        })
-                        .fail(function (a, s, d) {
+                           //alert("Success");
+                           //$.smallBox({
+                           //    title: "Success",
+                           //    content: "Claim Experience and Prior Insurance details have been updated",
+                           //    color: "#5F895F",
+                           //    iconSmall: "fa fa-check bounce animated",
+                           //    timeout: 4000
+                           //});
+                       })
+                       .fail(function (a, s, d) {
                            debugger;
 
-                            alert("Unable to save.");
-                        });
+                           alert("Unable to save.");
+                       });
+               }
+
+               //console.log($('#MilestoneStatus').val());
+               //if ($('#MilestoneStatus').val() === 'Active'){
+               //    $('#getMilestoneModal').modal('show');
+               //}
+               //$('#getAgreementModal').modal('show');
+
+               $.ajax({
+                   url: '@Url.Action("SubmitInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+                       debugger;
+                       //$("#agreementView").on('load', url, function () {
+                       $("#agreementView").load(url, function () {
+                           //$('#getAgreementModal').modal('hide');
+                       });
+                   })
+                   .fail(function (data) {
+                       debugger;
+                       //$('#getAgreementModal').modal('hide');
+                       console.log(data);
+                       alert("There was an error getting your agreement.");
+                   });
+           } else if (stepNumber === 1) {
+                var status = $('#Status').val();
+                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                 }
-
-                //console.log($('#MilestoneStatus').val());
-                //if ($('#MilestoneStatus').val() === 'Active'){
-                //    $('#getMilestoneModal').modal('show');
-                //}
-                //$('#getAgreementModal').modal('show');
-
+                else {
+                    return false;
+                }
+                $('#getAgreementDecModal').show();
                 $.ajax({
-                    url: '@Url.Action("SubmitInformation", "Information")',
+                    url: '@Url.Action("QuoteToAgree", "Information")',
                     type: "POST",
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
-                        debugger;
-                        //$("#agreementView").on('load', url, function () {
-                        $("#agreementView").load(url, function () {
-                            //$('#getAgreementModal').modal('hide');
+                        $("#agreementDeclarationView").load(url, function () {
+                            $('#getAgreementDecModal').hide();
                         });
                     })
-                    .fail(function (data) {
+                    .fail(function (jqXHR, textStatus, errorThrown) {
                         debugger;
-                        //$('#getAgreementModal').modal('hide');
-                        console.log(data);
-                        alert("There was an error getting your agreement.");
+                        $('#getAgreementDecModal').hide();
+                        alert("There was an error getting your agreement declaration.");
                     });
+                if (status == "Bound") {
+                    var nextbutton = document.getElementsByClassName("next");
+                    $(nextbutton).addClass("hidden");
+                    $(nextbutton).hide();
+                    var prevbutton = document.getElementsByClassName("previous");
+                    $(prevbutton).addClass("hidden");
+                    $(prevbutton).hide();
+                }
+            } else if (stepNumber === 2) {
+                if (!$('#agreementAccept').is(":checked")) {
+                    return false;
+                }
+                $('#getAgreementPaymentModal').show();
+                var nextbutton = document.getElementsByClassName("next");
+                $(nextbutton).addClass("hidden");
+                $(nextbutton).hide();
+                $.ajax({
+                    url: '@Url.Action("PaymentInformation", "Information")',
+                    type: "POST",
+                    data: $("#tab1 :input").serialize({ json: true })
+                })
+                    .done(function (url) {
+                        $("#pxpaymentView").load(url, function () {
+                            $('#getAgreementPaymentModal').hide();
+                            $('#getErrorModal').hide();
+                        });
+                    });
+            } else if (stepNumber === 3) {
+                var status = $('#Status').val();
+                if (status == "Bound") {
+                    var nextbutton = document.getElementsByClassName("next");
+                    $(nextbutton).addClass("hidden");
+                    $(nextbutton).hide();
+                    var prevbutton = document.getElementsByClassName("previous");
+                    $(prevbutton).addClass("hidden");
+                    $(prevbutton).hide();
+                }
+                var AnswerSheetId = $('#AnswerSheetId').val();
+				var array = $("#tab2 :input").serializeArray();
+				var ids = [];
+				$.each (array, function(i, pair) {
+					ids.push (pair.value);
+				});
+				console.log($("#tab2 :input").serialize({ json:true }));
+           		$('#getDocumentsModal').show();
+				$.ajax({
+	            	// change back once mono decides to fix
+	                url: '@Url.Action("AcceptAgreement", "Agreement")',
+	                type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status:status })
+	            })
+                    .done(function (response) {
+	            	$("#documentsSection").replaceWith(response);
+                    $('#getDocumentsModal').hide();
+                    var prevbutton = document.getElementsByClassName("previous");
+                    $(prevbutton).hide();
+				})
+				.fail(function () {
+                    $('#getDocumentsModal');
+	            	alert("There was an error getting your documents.");
+				});
+            } else if (stepNumber === 4) {
+	        } else if (stepNumber === 5) {
+	        }
+
       });
         });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -6533,5 +6626,45 @@ async: true
                 });
         }
     }
+
+    @*function submitPayment() {
+
+            var answerSheetId = $('#AnswerSheetId').val();
+        debugger;
+        var AnswerSheetId = $('#AnswerSheetId').val();
+        if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
+            return false;
+         var postData = {
+		'locationId': locationId,
+		'answerSheetId': _sheetId
+	};
+       
+        if ($('#paymentCreditCard').is(":checked")) {
+            debugger;
+            $.ajax({
+                type: "Post",
+
+                url: '@Url.Action("GeneratePxPayment", "Agreement")',
+                data: answerSheetId
+            })
+                .done(function (data) {
+                    window.location = data.url;
+                });
+        }
+        else if ($('#paymentEGlobal').is(":checked")) {
+                        debugger;
+
+            $.ajax({
+                type: "Post",
+                url: '@Url.Action("GenerateEGlobal", "Agreement")',
+                data: $("#tab1 :input").serialize({ json: true })
+
+            })
+                .done(function (url) {
+                    $("#documentsSection").on('load', url, function () {
+                    });
+                });
+        }
+    }*@
 </script>
 
