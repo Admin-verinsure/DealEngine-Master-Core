@@ -88,7 +88,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult SearchVehicle(string registration)
         {
             // TODO - move to web.config or DB
-            string apiKey = "6C2FC149A76FF9F13152D0837A236645D242275E"; // TC Development key
+            //string apiKey = "6C2FC149A76FF9F13152D0837A236645D242275E"; // TC Development key
             //string apiKey = "E2EE901D4322EA7F808C99AB7644BA8B1CB71249"; // ICIB Production Key
 
             VehicleViewModel model = new VehicleViewModel();

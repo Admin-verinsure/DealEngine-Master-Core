@@ -371,7 +371,6 @@ $(document).ready(function () {
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",
-                //contentType: "application/json; charset=utf-8",
                 data: $("#tab1 :input").serialize({ json:true })
             })
            .done(function (data) {
@@ -1436,7 +1435,7 @@ $(document).ready(function () {
 
     function SetCurrentTab(tabPaneId) {
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
 };
 
 function UpdateChosen() {
@@ -4238,7 +4237,7 @@ async: true
 
     function SetCurrentTab(tabPaneId) {
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
     };
 
     function SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable) {

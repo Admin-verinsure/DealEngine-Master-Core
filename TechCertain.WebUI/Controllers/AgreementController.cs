@@ -1682,6 +1682,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public ActionResult ProcessRequestConfiguration(Guid Id)
         {
+
             //string url = this.Url;
             QueryString queryString = HttpContext.Request.QueryString;
             var status = "Bound";

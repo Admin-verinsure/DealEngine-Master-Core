@@ -1,7 +1,5 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
-@using System.Linq
-
 <div class="padding-10">
     <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
 
@@ -152,8 +150,8 @@
                         </label>
                     </section>
                     <!-- <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        Html.Bootstrap().Button().Text("Revalidate").HtmlAttributes(new { onclick = "RevalidateMotorVehicle('#rmvTabs-0', '#tblRegisteredMV'); SetCurrentTab('rmvTabs-2');" }).Class("btn-sm")
-                    <!--</section>  -->
+            Html.Bootstrap().Button().Text("Revalidate").HtmlAttributes(new { onclick = "RevalidateMotorVehicle('#rmvTabs-0', '#tblRegisteredMV'); SetCurrentTab('rmvTabs-2');" }).Class("btn-sm")
+        <!--</section>  -->
                 </div>
                 <!-- 2nd rows -->
                 <div class="row">
@@ -167,41 +165,41 @@
 
                     </section>
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Fleet Number</label>
-                        <label class="input">
-                            <i></i>
-                            <input class="form-control rmv" type="text" data-type="TEXTBOX" data-name="FleetNumber" id="FleetNumber" name="FleetNumber" placeholder="Fleet Number" value="">
-                        </label>
-                    </section-->
+            <label class="label">Fleet Number</label>
+            <label class="input">
+                <i></i>
+                <input class="form-control rmv" type="text" data-type="TEXTBOX" data-name="FleetNumber" id="FleetNumber" name="FleetNumber" placeholder="Fleet Number" value="">
+            </label>
+        </section-->
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Area of Operation</label>
-                        <label class="input">
-                            <select class="form-control rmv" id="AreaOfOperation" name="AreaOfOperation">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="1">Auckland</option>
-                                <option value="2">Wellington</option>
-                                <option value="3">Rest of North Island</option>
-                                <option value="4">Christchurch</option>
-                                <option value="5">Rest of South Island</option>
-                            </select>
-                        </label>
-                    </section-->
+            <label class="label">Area of Operation</label>
+            <label class="input">
+                <select class="form-control rmv" id="AreaOfOperation" name="AreaOfOperation">
+                    <option selected="selected" value="">-- Select --</option>
+                    <option value="1">Auckland</option>
+                    <option value="2">Wellington</option>
+                    <option value="3">Rest of North Island</option>
+                    <option value="4">Christchurch</option>
+                    <option value="5">Rest of South Island</option>
+                </select>
+            </label>
+        </section-->
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Type of Vehicle</label>
-                        <label class="input">
-                            <select class="form-control rmv" id="VehicleType" name="VehicleType">
-                                <option value="8">Registered Trailer</option>
-                            </select>
-                        </label>
-                    </section-->
+            <label class="label">Type of Vehicle</label>
+            <label class="input">
+                <select class="form-control rmv" id="VehicleType" name="VehicleType">
+                    <option value="8">Registered Trailer</option>
+                </select>
+            </label>
+        </section-->
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Use</label>
-                        <label class="input">
-                            <select class="form-control rmv" id="Use" name="Use">
-                                <option value="4">Boat Trailer</option>
-                            </select>
-                        </label>
-                    </section-->
+            <label class="label">Use</label>
+            <label class="input">
+                <select class="form-control rmv" id="Use" name="Use">
+                    <option value="4">Boat Trailer</option>
+                </select>
+            </label>
+        </section-->
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="label required">Location</label>
                         <label class="input">
@@ -256,16 +254,16 @@
 
                     <!-- 4th row -->
                     @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label">Interested Parties</label>
-                            <label class="input">
-                                <select class="cselect form-control rmv" data-placeholder="Interested Parties" id="InterestedParties" multiple="multiple" name="InterestedParties" style="display: none;">
-                                    @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationType == "financial"))
-                                    {
-                                        <option value="@trip.ID">@trip.OrganisationName</option>
-                                    }
-                                </select>
-                            </label>
-                        </section>*@
+                <label class="label">Interested Parties</label>
+                <label class="input">
+                    <select class="cselect form-control rmv" data-placeholder="Interested Parties" id="InterestedParties" multiple="multiple" name="InterestedParties" style="display: none;">
+                        @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationType == "financial"))
+                        {
+                            <option value="@trip.ID">@trip.OrganisationName</option>
+                        }
+                    </select>
+                </label>
+            </section>*@
 
                     <!-- 5th row -->
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -274,21 +272,21 @@
                             <textarea class="form-control rmv" data-type="TEXTAREA" data-name="Notes" id="Notes" name="Notes" placeholder="Additional Information about Registered Trailer" value=""></textarea>
                         </label>
                     </section>
+                </div>
 
-                    <!-- 6th row -->
-                    <div class="row" id="update">
-                        <section class="col col-xs-12">
+                <!-- 6th row -->
+                <div class="row" id="update">
+                    <section class="col col-xs-12">
 
 
-                            <button onclick="ValidateMotorVehicle('#rmvTabs3', '#tblRegisteredMV','rmvTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
-                            <button onclick="ClearBoats('#rmvTabs2','rmvTabs1')" class="btn-sm ClearBoat" id="AddClearBoat">Cancel Update</button>
+                        <button onclick="ValidateMotorVehicle('#rmvTabs3', '#tblRegisteredMV','rmvTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                        <button onclick="ClearBoats('#rmvTabs2','rmvTabs1')" class="btn-sm ClearBoat" id="AddClearBoat">Cancel Update</button>
 
-                            @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateMotorVehicle('#rmvTabs-3', '#tblRegisteredMV','rmvTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
+                        @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateMotorVehicle('#rmvTabs-3', '#tblRegisteredMV','rmvTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
 
-                                @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#rmvTabs-2','rmvTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
+                @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#rmvTabs-2','rmvTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
 
-                        </section>
-                    </div>
+                    </section>
                 </div>
 
             </fieldset>
@@ -337,10 +335,10 @@
                         </label>
                     </section>
                     <!-- <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                        <button onclick="ClearBoats('#rmvTabs2','rmvTabs1')" class="btn-sm ClearBoat" id="AddClearBoat">Cancel Update</button>
+                                            <button onclick="ClearBoats('#rmvTabs2','rmvTabs1')" class="btn-sm ClearBoat" id="AddClearBoat">Cancel Update</button>
 
-                        Html.Bootstrap().Button().Text("Revalidate").HtmlAttributes(new { onclick = "RevalidateMotorVehicle('#rmvTabs-0', '#tblRegisteredMV'); SetCurrentTab('rmvTabs-2');" }).Class("btn-sm")
-                    <!--</section>  -->
+            Html.Bootstrap().Button().Text("Revalidate").HtmlAttributes(new { onclick = "RevalidateMotorVehicle('#rmvTabs-0', '#tblRegisteredMV'); SetCurrentTab('rmvTabs-2');" }).Class("btn-sm")
+        <!--</section>  -->
                 </div>
                 <!-- 2nd rows -->
                 <div class="row">
@@ -354,41 +352,41 @@
 
                     </section>
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Fleet Number</label>
-                        <label class="input">
-                            <i></i>
-                            <input class="form-control rmv" type="text" data-type="TEXTBOX" data-name="FleetNumber" id="FleetNumber" name="FleetNumber" placeholder="Fleet Number" value="">
-                        </label>
-                    </section-->
+            <label class="label">Fleet Number</label>
+            <label class="input">
+                <i></i>
+                <input class="form-control rmv" type="text" data-type="TEXTBOX" data-name="FleetNumber" id="FleetNumber" name="FleetNumber" placeholder="Fleet Number" value="">
+            </label>
+        </section-->
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Area of Operation</label>
-                        <label class="input">
-                            <select class="form-control rmv" id="AreaOfOperation" name="AreaOfOperation">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="1">Auckland</option>
-                                <option value="2">Wellington</option>
-                                <option value="3">Rest of North Island</option>
-                                <option value="4">Christchurch</option>
-                                <option value="5">Rest of South Island</option>
-                            </select>
-                        </label>
-                    </section-->
+            <label class="label">Area of Operation</label>
+            <label class="input">
+                <select class="form-control rmv" id="AreaOfOperation" name="AreaOfOperation">
+                    <option selected="selected" value="">-- Select --</option>
+                    <option value="1">Auckland</option>
+                    <option value="2">Wellington</option>
+                    <option value="3">Rest of North Island</option>
+                    <option value="4">Christchurch</option>
+                    <option value="5">Rest of South Island</option>
+                </select>
+            </label>
+        </section-->
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Type of Vehicle</label>
-                        <label class="input">
-                            <select class="form-control rmv" id="VehicleType" name="VehicleType">
-                                <option value="8">Registered Trailer</option>
-                            </select>
-                        </label>
-                    </section-->
+            <label class="label">Type of Vehicle</label>
+            <label class="input">
+                <select class="form-control rmv" id="VehicleType" name="VehicleType">
+                    <option value="8">Registered Trailer</option>
+                </select>
+            </label>
+        </section-->
                     <!--section class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                        <label class="label">Use</label>
-                        <label class="input">
-                            <select class="form-control rmv" id="Use" name="Use">
-                                <option value="4">Boat Trailer</option>
-                            </select>
-                        </label>
-                    </section-->
+            <label class="label">Use</label>
+            <label class="input">
+                <select class="form-control rmv" id="Use" name="Use">
+                    <option value="4">Boat Trailer</option>
+                </select>
+            </label>
+        </section-->
 
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="label required">Location</label>
@@ -441,16 +439,16 @@
 
                     <!-- 4th row -->
                     @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label">Interested Parties</label>
-                            <label class="input">
-                                <select class="cselect form-control rmv" data-placeholder="Interested Parties" id="InterestedParties" multiple="multiple" name="InterestedParties" style="display: none;">
-                                    @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationType == "financial"))
-                                    {
-                                        <option value="@trip.ID">@trip.OrganisationName</option>
-                                    }
-                                </select>
-                            </label>
-                        </section>*@
+                <label class="label">Interested Parties</label>
+                <label class="input">
+                    <select class="cselect form-control rmv" data-placeholder="Interested Parties" id="InterestedParties" multiple="multiple" name="InterestedParties" style="display: none;">
+                        @foreach (var trip in Model.InterestedParties.Where(o => o.OrganisationType == "financial"))
+                        {
+                            <option value="@trip.ID">@trip.OrganisationName</option>
+                        }
+                    </select>
+                </label>
+            </section>*@
 
                     <!-- 5th row -->
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -460,16 +458,16 @@
                         </label>
                     </section>
 
-                    <!-- 6th row -->
-                    <div class="row" id="update">
-                        <section class="col col-xs-12">
+                </div>
+                <!-- 6th row -->
+                <div class="row" id="update">
+                    <section class="col col-xs-12">
 
-                            <button onclick="ValidateAddMotorVehicle('#rmvTabs4', '#tblRegisteredMV','rmvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
-                            <button onclick="ClearBoats('#rmvTabs3','rmvTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
-                            @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddMotorVehicle('#rmvTabs-4', '#tblRegisteredMV','rmvTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
-                                @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#rmvTabs-3','rmvTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
-                        </section>
-                    </div>
+                        <button onclick="ValidateAddMotorVehicle('#rmvTabs4', '#tblRegisteredMV','rmvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                        <button onclick="ClearBoats('#rmvTabs3','rmvTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+                        @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddMotorVehicle('#rmvTabs-4', '#tblRegisteredMV','rmvTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
+                @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#rmvTabs-3','rmvTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
+                    </section>
                 </div>
 
             </fieldset>
@@ -944,4 +942,4 @@
             alert("There was an error while trying to save the Vehicle.");
         });
     };
-    @*</script>*@
+    </script>*@
