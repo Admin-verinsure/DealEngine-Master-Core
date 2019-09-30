@@ -479,7 +479,7 @@
     function SetCurrentTab(tabPaneId) {
         debugger;
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reloadAfterSubmit();
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').reloadAfterSubmit();
     };
 
         function SetLocationRemovedStatus(locationId, status, sourceTable, destTable) {
@@ -581,7 +581,7 @@
 		    iconSmall: "fa fa-check bounce animated",
 		    timeout: 4000
         });
-         $('#getLandLocModal').modal('hide');
+         $('#getLandLocModal').hide();
 		var address = data.Street + ', ' + data.Suburb + ', ' + data.City;
 		$('#VehicleLocation.rmv').append($('<option>', { value: data.LocationId, text: address }));
         $('#VehicleLocation.omv').append($('<option>', { value: data.LocationId, text: address }));
@@ -601,7 +601,7 @@
 
 	})
         .fail(function (jqXHR, textStatus) {
-         $('#getLandLocModal').modal('hide');
+         $('#getLandLocModal').hide();
 		alert("There was an error while trying to save the Location.");
 	});
     };

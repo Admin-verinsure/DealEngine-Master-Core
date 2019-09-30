@@ -1570,7 +1570,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult ProcessRequestConfiguration(Guid Id)
         {
             throw new Exception("Method will need to be re-written");
-            //string url = Request.Url.AbsoluteUri;
+            //string url = Request. Url.AbsoluteUri;
             //string queryString = Request.QueryString["result"];
             //var status = "Bound";
 

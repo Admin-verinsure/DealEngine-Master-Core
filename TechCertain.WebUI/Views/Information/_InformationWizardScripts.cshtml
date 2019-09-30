@@ -1342,7 +1342,7 @@ $(document).ready(function () {
 
     function SetCurrentTab(tabPaneId) {
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
 };
 
 function UpdateChosen() {
@@ -4144,7 +4144,7 @@ async: true
 
     function SetCurrentTab(tabPaneId) {
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
     };
 
     function SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable) {

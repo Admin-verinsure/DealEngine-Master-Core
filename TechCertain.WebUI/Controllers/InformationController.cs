@@ -1975,7 +1975,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditInformation(FormCollection formcollection)
+        public ActionResult EditInformation(IFormCollection formcollection)
         {
             // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
             // so just reroute the call
