@@ -96,7 +96,7 @@
                         data: postData
                     })
                         .done(function (data) {
-                            debugger;
+
         //alert("Success");
         //$.smallBox({
         //    title: "Success",
@@ -277,6 +277,7 @@ $(document).ready(function () {
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",
+                contentType: "application/json; charset=utf-8",
                 data: $("#tab1 :input").serialize({ json:true })
             })
            .done(function (data) {
@@ -6509,6 +6510,7 @@ async: true
         if ($('#paymentCreditCard').is(":checked")) {
             $.ajax({
                 type: "Post",
+
                 url: '@Url.Action("GeneratePxPayment", "Agreement")',
                 data: $("#tab1 :input").serialize({ json: true })
 
