@@ -1459,6 +1459,27 @@ namespace TechCertain.WebUI.Controllers
                ClientProgramme programme = sheet.Programme;
                programme.PaymentType = "Credit Card";
 
+           
+            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
+            //eGlobalSerializer.SiteActive();
+            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
+            //Hardcoded variables
+            //decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+            Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
+            Payment payment = _paymentService.GetPayment(programme.Id);
+            if (payment == null)
+            {
+                payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
+            }
+
+            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            {
+                programme.PaymentType = "Credit Card";
+                programme.Payment = payment;
+                programme.InformationSheet.Status = "Bound";
+                uow.Commit();
+            }
+
             //return View();
             return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
             //return Content (sheet.Id.ToString());

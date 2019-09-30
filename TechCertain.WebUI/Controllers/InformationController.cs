@@ -1974,13 +1974,16 @@ namespace TechCertain.WebUI.Controllers
             return Redirect(url);
         }
 
-        [HttpPost]
-        public IActionResult EditInformation(IFormCollection formcollection)
-        {
-            // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
-            // so just reroute the call
-            return SaveInformation(formcollection);
-        }
+        //[HttpPost]
+        //public IActionResult EditInformation(IFormCollection formcollection)
+        //{
+        //    // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
+        //    // so just reroute the call
+        //    return SaveInformation(formcollection);
+        //}
+
+
+
         //
         //            InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == id);
         //
