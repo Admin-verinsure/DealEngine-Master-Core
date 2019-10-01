@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,12 @@ namespace TechCertain.WebUI.Areas.Identity.Data
 {
     public class DealEngineDBContext : IdentityDbContext<DealEngineUser>
     {
-        public DealEngineDBContext(DbContextOptions<DealEngineDBContext> options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public DealEngineDBContext(DbContextOptions<DealEngineDBContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -20,8 +20,10 @@ namespace TechCertain.WebUI.Areas.Identity
                         context.Configuration.GetConnectionString("TechCertainConnection")));
 
                 services.AddDefaultIdentity<DealEngineUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
                     .AddEntityFrameworkStores<DealEngineDBContext>();
             });
         }
     }
+
 }
