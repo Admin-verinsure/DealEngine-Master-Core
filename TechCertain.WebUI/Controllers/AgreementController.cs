@@ -1459,12 +1459,12 @@ namespace TechCertain.WebUI.Controllers
                ClientProgramme programme = sheet.Programme;
                programme.PaymentType = "Credit Card";
 
-           
+
             //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
             //eGlobalSerializer.SiteActive();
             //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
             //Hardcoded variables
-            //decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
+            decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
             Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
             Payment payment = _paymentService.GetPayment(programme.Id);
             if (payment == null)
@@ -1480,9 +1480,39 @@ namespace TechCertain.WebUI.Controllers
                 uow.Commit();
             }
 
-            //return View();
-            return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
-            //return Content (sheet.Id.ToString());
+
+            //add check to count how many failed payments
+            var ProgrammeId = sheetId;
+            foreach (ClientAgreement clientAgreement in programme.Agreements)
+            {
+                ProgrammeId = programme.Id;
+                brokerFee += clientAgreement.BrokerFee;
+                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
+                foreach (ClientAgreementTerm clientAgreementTerm in terms)
+                {
+                    totalPremium += clientAgreementTerm.Premium;
+                }
+            }
+            totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
+
+            PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
+
+            //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
+            string domainQueryString = "localhost:44323";
+            RequestInput input = new RequestInput
+            {
+                AmountInput = totalPayment.ToString("0.00"),
+                CurrencyInput = "NZD",
+                TxnType = "Purchase",
+                UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
+                UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
+                TxnId = payment.Id.ToString("N").Substring(0, 16),
+            };
+
+            RequestOutput requestOutput = pxPay.GenerateRequest(input);
+
+            //opens on same page - hard to return back to current process
+            return Json(new { url = requestOutput.Url });
         }
 
         [HttpPost]
@@ -1541,8 +1571,8 @@ namespace TechCertain.WebUI.Controllers
                 AmountInput = totalPayment.ToString("0.00"),
                 CurrencyInput = "NZD",
                 TxnType = "Purchase",
-                UrlFail = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
-                UrlSuccess = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
+                UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
+                UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
                 TxnId = payment.Id.ToString("N").Substring(0, 16),
             };
 
@@ -1706,7 +1736,9 @@ namespace TechCertain.WebUI.Controllers
                 //Payment failed
                 status = "Bound and pending payment";
                 _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                return Redirect("~/Agreement/ProccessedAgreements/" + Id.ToString());
+                //return Redirect("~/Agreement/ProccessedAgreements/" + Id.ToString());
+                return RedirectToAction("ProcessedAgreements", new { id = Id });
+
             }
             else
             {
@@ -1802,12 +1834,12 @@ namespace TechCertain.WebUI.Controllers
                     }
                 }
             }
-
-            return Redirect("~/Agreement/ProcessedAgreements/" + Id.ToString());
+           return RedirectToAction("ProcessedAgreements", new { id = Id });
+           // return Redirect("~/Agreement/ProcessedAgreements/" + Id);
         }
 
         [HttpGet]
-        public ActionResult ProcessedAgreements(Guid id)
+        public IActionResult ProcessedAgreements(Guid id)
         {
             PartialViewResult result = (PartialViewResult)ViewAgreement(id);
 

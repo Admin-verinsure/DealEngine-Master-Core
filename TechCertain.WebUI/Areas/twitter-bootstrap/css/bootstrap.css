@@ -4137,7 +4137,8 @@ input[type="button"].btn-block {
 }
 
 .tab-content > .tab-pane {
-  display: none;
+    display: none;
+    min-height: 0px !important;
 }
 
 .tab-content > .active {
