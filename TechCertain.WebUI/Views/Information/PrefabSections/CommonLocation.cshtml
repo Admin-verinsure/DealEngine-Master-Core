@@ -433,7 +433,7 @@
         }
     }
 
-   function EditLocation(locationId, tableId) {
+    function EditLocation(locationId, tableId) {
        var _sheetId = $('#AnswerSheetId').val();
 
        var postData = {
@@ -448,8 +448,7 @@
         type: "Post",
         //contentType: "application/json; charset=utf-8",
         //data: JSON.stringify({ locationId : locationId, answerSheetId : _sheetId })
-        data: postData,
-            async: true
+        data: postData
         })
             .done(function (data) {
                 debugger;
@@ -478,6 +477,7 @@
 
     function SetCurrentTab(tabPaneId) {
         debugger;
+        event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         //$('.nav-tabs a[href="#' + tabPaneId + '"]').reloadAfterSubmit();
     };
