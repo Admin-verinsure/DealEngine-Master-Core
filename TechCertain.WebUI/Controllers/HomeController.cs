@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Controllers;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 #endregion
 

@@ -8,6 +8,7 @@ using TechCertain.Domain.Services.Factories;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Proposal;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {

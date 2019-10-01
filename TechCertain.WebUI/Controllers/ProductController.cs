@@ -9,6 +9,7 @@ using System.Net.Http;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
+using TechCertain.WebUI.Areas.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
 
@@ -29,7 +30,7 @@ namespace TechCertain.WebUI.Controllers
 		IRepository<Document> _documentRepository;
 		IRepository<Programme> _programmeRepository;
 
-		public ProductController(ILogger logger, IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService, 
+		public ProductController(ILogger logger, DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService, 
 		                         IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<Territory> territoryRepository, IRepository<RiskCategory> riskRepository,
 		                         IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository,
 								 IRepository<Document> documentRepository, IRepository<Programme> programmeRepository)

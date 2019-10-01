@@ -21,6 +21,7 @@
     <ProjectReference Include="..\TechCertain.Infrastructure.BaseLdap\TechCertain.Infrastructure.BaseLdap.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.FluentNHibernate\TechCertain.Infrastructure.FluentNHibernate.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.Logging\TechCertain.Infrastructure.Logging.csproj" />
+    <ProjectReference Include="..\TechCertain.Services.Impl\TechCertain.Services.Impl.csproj" />
   </ItemGroup>
 
 </Project>

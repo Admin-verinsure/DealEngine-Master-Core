@@ -13,6 +13,7 @@ using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -45,7 +46,7 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 
-        public ServicesController(ILogger logger, DealEngineDBContext dealEngineDBContext, IUserService userService, ICilentInformationService clientInformationService, IRepository<Vehicle> vehicleRepository, IRepository<BoatUse> boatUseRepository,
+        public ServicesController(ILogger logger, IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IRepository<Vehicle> vehicleRepository, IRepository<BoatUse> boatUseRepository,
             IRepository<OrganisationalUnit> organisationalUnitRepository, IRepository<Location> locationRepository, IRepository<WaterLocation> waterLocationRepository, IRepository<Building> buildingRepository, IRepository<BusinessInterruption> businessInterruptionRepository,
             IRepository<MaterialDamage> materialDamageRepository, IRepository<Claim> claimRepository, IRepository<Product> productRepository, IVehicleService vehicleService, IRepository<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IRepository<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,

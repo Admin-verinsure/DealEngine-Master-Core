@@ -6,6 +6,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Domain.Services.Factories;
 using TechCertain.Services.Interfaces;
+using TechCertain.WebUI.Areas.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Proposal;
 

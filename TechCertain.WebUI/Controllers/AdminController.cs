@@ -7,6 +7,7 @@ using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
+using TechCertain.WebUI.Areas.Identity.Data;
 using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI.Controllers
