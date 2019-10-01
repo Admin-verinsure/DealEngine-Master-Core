@@ -13,6 +13,7 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Product;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -39,7 +40,7 @@ namespace TechCertain.WebUI.Controllers
 
         private IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public ProgrammeController(ILogger logger, IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService,
+        public ProgrammeController(ILogger logger, DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService,
                                  IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<RiskCategory> riskRepository,
                                  IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository, IRoleService roleService,
                                  IRuleService ruleService, IRepository<Document> documentRepository, IRepository<Programme> programmeRepository, IBusinessActivityService busActivityService,

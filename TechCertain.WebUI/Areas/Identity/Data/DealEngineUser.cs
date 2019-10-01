@@ -12,8 +12,5 @@ namespace TechCertain.WebUI.Areas.Identity.Data
         public DealEngineUser(string userName) : base(userName)
         {
         }
-        public DealEngineUser() : base(null)
-        {
-        }
     }
 }

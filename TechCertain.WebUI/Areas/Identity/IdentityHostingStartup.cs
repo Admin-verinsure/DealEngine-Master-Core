@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechCertain.WebUI.Areas.Identity.Data;
-using TechCertain.WebUI.Models;
 
 [assembly: HostingStartup(typeof(TechCertain.WebUI.Areas.Identity.IdentityHostingStartup))]
 namespace TechCertain.WebUI.Areas.Identity
@@ -17,8 +16,8 @@ namespace TechCertain.WebUI.Areas.Identity
         {
             builder.ConfigureServices((context, services) => {
                 services.AddDbContext<DealEngineDBContext>(options =>
-                    options.UseSqlServer(
-                        context.Configuration.GetConnectionString("DealEngineDBContextConnection")), ServiceLifetime.Singleton);
+                    options.UseNpgsql(
+                        context.Configuration.GetConnectionString("TechCertainConnection")));
 
                 services.AddDefaultIdentity<DealEngineUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<DealEngineDBContext>();

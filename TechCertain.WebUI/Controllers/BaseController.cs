@@ -11,10 +11,10 @@ using Microsoft.AspNet.Identity;
 using System.Configuration;
 using Microsoft.AspNetCore.Http;
 using TechCertain.WebUI.Models;
-using TechCertain.WebUI.Areas.Identity.Data;
 using System.Linq;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -22,14 +22,13 @@ namespace TechCertain.WebUI.Controllers
     {
         protected IUserService _userService;
         protected DealEngineDBContext _dealEngineDBContext;
-
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
 
         public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext)
         {
-            _dealEngineDBContext = dealEngineDBContext;
             _userService = userService;
+            _dealEngineDBContext = dealEngineDBContext;
         }
 
         public User CurrentUser
@@ -39,7 +38,7 @@ namespace TechCertain.WebUI.Controllers
                 //UserManager<User>
                 var user = "";
                 try {
-                     user = _dealEngineDBContext.Users.FirstOrDefault().UserName;
+                    user = _dealEngineDBContext.Users.FirstOrDefault().UserName;
                 }
                 catch (Exception ex)
                 {

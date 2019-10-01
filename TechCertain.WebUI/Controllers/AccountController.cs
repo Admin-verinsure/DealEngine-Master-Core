@@ -17,8 +17,8 @@ using TechCertain.WebUI.Models;
 using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
-using TechCertain.WebUI.Areas.Identity.Data;
 using DealEngine.Infrastructure.Identity;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 
 #endregion
@@ -37,15 +37,16 @@ namespace TechCertain.WebUI.Controllers
 
         ISignInManager _signInManager;
         UserManager<User> _userManager;
-
+        DealEngineDBContext _context;
         IProgrammeService _programmeService;
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
 
-        public AccountController(ISignInManager signInManager,		    
-            IUserService userRepository,
+        public AccountController(ISignInManager signInManager,
             DealEngineDBContext dealEngineDBContext,
+            IUserService userRepository,
+            DealEngineDBContext context,
             ILogger logger,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
             IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, UserManager<User> userManager) : base (userRepository, dealEngineDBContext)
@@ -53,13 +54,13 @@ namespace TechCertain.WebUI.Controllers
             //_authenticationService = authenticationService;
             //_permissionsService = permissionsService;
 
-            _dealEngineDBContext = dealEngineDBContext;
+             
             _userService = userRepository;
             _logger = logger;
             _emailService = emailService;
 			_fileService = fileService;
-
-			_signInManager = signInManager;
+            _context = context;
+            _signInManager = signInManager;
             _userManager = userManager;
 
             _programmeService = programeService;
@@ -303,8 +304,8 @@ namespace TechCertain.WebUI.Controllers
                     var user1 = new DealEngineUser(username);
                     try
                     {
-                        _dealEngineDBContext.Users.Add(user1);
-                        _dealEngineDBContext.SaveChanges();
+                        _context.Users.Add(user1);
+                        _context.SaveChanges();
                     }
                     catch(Exception ex)
                     {

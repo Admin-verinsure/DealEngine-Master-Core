@@ -12,6 +12,7 @@ using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.ControlModels;
 using TechCertain.WebUI.Models.Policy;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {

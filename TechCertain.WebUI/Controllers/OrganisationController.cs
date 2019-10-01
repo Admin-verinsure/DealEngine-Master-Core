@@ -6,6 +6,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
+using TechCertain.WebUI.Areas.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {

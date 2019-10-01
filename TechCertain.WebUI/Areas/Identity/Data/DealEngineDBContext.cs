@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TechCertain.WebUI.Areas.Identity.Data;
 
-namespace TechCertain.WebUI.Models
+namespace TechCertain.WebUI.Areas.Identity.Data
 {
     public class DealEngineDBContext : IdentityDbContext<DealEngineUser>
     {
