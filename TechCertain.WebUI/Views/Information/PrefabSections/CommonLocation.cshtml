@@ -575,12 +575,12 @@
 	    data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
 	})
 	.done(function (data) {
-		$.smallBox({
-		    title: "Location at ("+data.Street+") has been saved",
-		    color: "#5F895F",
-		    iconSmall: "fa fa-check bounce animated",
-		    timeout: 4000
-        });
+		//$.smallBox({
+		//    title: "Location at ("+data.Street+") has been saved",
+		//    color: "#5F895F",
+		//    iconSmall: "fa fa-check bounce animated",
+		//    timeout: 4000
+  //      });
          $('#getLandLocModal').hide();
 		var address = data.Street + ', ' + data.Suburb + ', ' + data.City;
 		$('#VehicleLocation.rmv').append($('<option>', { value: data.LocationId, text: address }));
