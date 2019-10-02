@@ -94,6 +94,11 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             //calculate boat premium and FSL (BV Term)
             foreach (var boat in informationSheet.Boats.Where(v => !v.Removed && v.DateDeleted == null))
             {
+                if (boat.BoatEffectiveDate < agreement.InceptionDate || boat.BoatEffectiveDate > agreement.InceptionDate.AddDays(30))
+                {
+                    boat.BoatEffectiveDate = agreement.InceptionDate;
+                }
+
                 boat.BoatInceptionDate = boat.BoatEffectiveDate;
                 boat.BoatExpireDate = agreement.ExpiryDate;
 
@@ -245,6 +250,11 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             //calculate trailer premium and FSL (MV Term)
             foreach (var vehicle in informationSheet.Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
             {
+                if (vehicle.VehicleEffectiveDate < agreement.InceptionDate || vehicle.VehicleEffectiveDate > agreement.InceptionDate.AddDays(30))
+                {
+                    vehicle.VehicleEffectiveDate = agreement.InceptionDate;
+                }
+
                 vehicle.VehicleInceptionDate = vehicle.VehicleEffectiveDate;
                 vehicle.VehicleExpireDate = agreement.ExpiryDate;
 
