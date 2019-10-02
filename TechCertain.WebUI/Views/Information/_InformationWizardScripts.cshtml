@@ -4424,27 +4424,34 @@ async: true
 
 function GetRegisteredMVDetails(elementBaseName)
 {
+    debugger;
     var TrailerModal = false;
     if (elementBaseName == "#RegistrationModal") {
         TrailerModal = true;
     }
     var plate = $(elementBaseName).val();
+    var postData = {
+		'registration': plate
+	};
     // Get info from Carjam here
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SearchVehicle", "Services")',
         type: "POST",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ registration : plate })
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ registration: plate })
+        data: postData,
+async: true
     })
         .done(function (data) {
-            if (TrailerModal) {
-                $('#ValidatedTrailer.b').val(data.Validated);
-                $('#YearModal.b').val(data.Year);
-                $('#MakeModal.b').val(data.Make);
-                $('#ModelModal.b').val(data.VehicleModel);
-                $('#VINModal.b').val(data.VIN);
-                $('#ChassisNumberModal.b').val(data.ChassisNumber);
+            if (TrailerModal==true) {
+                debugger;
+                $('#ValidatedTrailer.b').val(data.validated);
+                $('#YearModal.b').val(data.year);
+                $('#MakeModal.b').val(data.make);
+                $('#ModelModal.b').val(data.vehicleModel);
+                $('#VINModal.b').val(data.vin);
+                $('#ChassisNumberModal.b').val(data.chassisNumber);
                 $("#trailerModalHairline, #trailerModalHairline2, #trailerModalHairline3, #trailerModalHairline4").show('2000');
                 $(vesselTrailerChassis).show('2000');
                 $(vesselTrailerEffective).show('2000');
@@ -4462,21 +4469,21 @@ function GetRegisteredMVDetails(elementBaseName)
                 $('#addSection').removeClass('hidden');
             }
             else {
-
-                $('#AddValidated.rmv').val(data.Validated);
-                $('#AddYear.rmv').val(data.Year);
-                $('#AddMake.rmv').val(data.Make);
-                $('#AddVehicleModel.rmv').val(data.VehicleModel);
-                $('#AddVIN.rmv').val(data.VIN);
-                $('#AddChassisNumber.rmv').val(data.ChassisNumber);
-                $('#EngineNumber.rmv').val(data.EngineNumber);
-                $('#GrossVehicleMass.rmv').val(data.GrossVehicleMass);
+                debugger;
+                $('#AddValidated.rmv').val(data.validated);
+                $('#AddYear.rmv').val(data.year);
+                $('#AddMake.rmv').val(data.make);
+                $('#AddVehicleModel.rmv').val(data.vehicleModel);
+                $('#AddVIN.rmv').val(data.vin);
+                $('#AddChassisNumber.rmv').val(data.chassisNumber);
+                $('#EngineNumber.rmv').val(data.engineNumber);
+                $('#GrossVehicleMass.rmv').val(data.grossVehicleMass);
             }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         alert("Unable to get Vehicle details.");
     });
-    };
+};
 
    function ValidateMotorVehicle(tabId, tableId, currenttab) {
         var sumInsured = $('#SumInsured').val();
