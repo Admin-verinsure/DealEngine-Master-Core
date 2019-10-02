@@ -649,7 +649,6 @@ namespace TechCertain.WebUI.Controllers
 
             using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
             {
-                //TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
                 term.Premium -= mvTerm.Premium;
                 term.Premium += clientAgreementMVTerm.Premium;
                 mvTerm.TermLimit = clientAgreementMVTerm.TermLimit;
@@ -1715,7 +1714,8 @@ namespace TechCertain.WebUI.Controllers
         {
 
             //string url = this.Url;
-            QueryString queryString = HttpContext.Request.QueryString;
+            //QueryString queryString = HttpContext.Request.QueryString;
+            string queryString = HttpContext.Request.Query["result"].ToString();
             var status = "Bound";
 
             ClientProgramme programme = _programmeRepository.GetById(Id);
@@ -1730,35 +1730,58 @@ namespace TechCertain.WebUI.Controllers
             payment.CreditCardNumber = responseOutput.CardNumber;
             payment.IsPaid = responseOutput.Success == "1" ? true : false;
             payment.PaymentAmount = Convert.ToDecimal(responseOutput.AmountSettlement);
+            payment.PaymentCurrency = "NZD";
             _paymentService.Update(payment);
 
             if (!payment.IsPaid)
             {
                 //Payment failed
                 status = "Bound and pending payment";
-                _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                //return Redirect("~/Agreement/ProccessedAgreements/" + Id.ToString());
+                foreach (ClientAgreement agreement in programme.Agreements)
+                {
+                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    {
+                        if (agreement.Status != status)
+                        {
+                            agreement.Status = status;
+                            uow.Commit();
+                        }
+                    }
+
+                    agreement.Status = status;
+
+                }
+
+                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                {
+                    if (programme.InformationSheet.Status != status)
+                    {
+                        programme.InformationSheet.Status = status;
+                        uow.Commit();
+                    }
+                }
+                //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                 return RedirectToAction("ProcessedAgreements", new { id = Id });
 
             }
             else
             {
                 //Payment successed
-                _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                //_emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
 
-                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                //EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
 
-                if (emailTemplate == null)
-                {
-                    //default email or send them somewhere??
+                //if (emailTemplate == null)
+                //{
+                //    //default email or send them somewhere??
 
-                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-                    {
-                        emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
-                        programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
-                        uow.Commit();
-                    }
-                }
+                //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                //    {
+                //        emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
+                //        programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
+                //        uow.Commit();
+                //    }
+                //}
 
 
                 var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
@@ -1810,21 +1833,21 @@ namespace TechCertain.WebUI.Controllers
                     //}
 
                     //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                    _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                    //_emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
 
 
-                    _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                    _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                    //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                    //_emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
                 }
 
-                if (hasEglobalNo)
-                {
-                    _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                }
-                else
-                {
-                    _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                }
+                //if (hasEglobalNo)
+                //{
+                //    _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                //}
+                //else
+                //{
+                //    _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                //}
 
                 using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
                 {

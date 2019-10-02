@@ -118,7 +118,7 @@
                //if ($('#MilestoneStatus').val() === 'Active'){
                //    $('#getMilestoneModal').show();
                //}
-               //$('#getAgreementModal').show();
+               $('#getAgreementModal').show();
 
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
@@ -129,12 +129,12 @@
                        debugger;
                        //$("#agreementView").on('load', url, function () {
                        $("#agreementView").load(url, function () {
-                           //$('#getAgreementModal').hide();
+                           $('#getAgreementModal').hide();
                        });
                    })
                    .fail(function (data) {
                        debugger;
-                       //$('#getAgreementModal').hide();
+                       $('#getAgreementModal').hide();
                        console.log(data);
                        alert("There was an error getting your agreement.");
                    });

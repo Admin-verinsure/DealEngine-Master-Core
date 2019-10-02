@@ -567,7 +567,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult CoastguardReg()
         {
             //if (Request.IsAuthenticated)
-                return RedirectToLocal();
+                //return RedirectToLocal();
 
             // We do not want to use any existing identity information
             //EnsureLoggedOut();
@@ -582,10 +582,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<ActionResult> CoastguardReg(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
-            if (!ModelState.IsValid)
+            //if (!ModelState.IsValid)
                 return View(model);
 
-            return RedirectToLocal();
+            //return RedirectToLocal();
 
 
         }
@@ -596,7 +596,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult CoastguardForm()
         {
             //if (Request.IsAuthenticated)
-                return RedirectToLocal();
+                //return RedirectToLocal();
 
             // We do not want to use any existing identity information
             //EnsureLoggedOut();
@@ -611,10 +611,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<ActionResult> CoastguardForm(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
-            if (!ModelState.IsValid)
+            //if (!ModelState.IsValid)
                 return View(model);
 
-            return RedirectToLocal();
+            //return RedirectToLocal();
 
 
         }

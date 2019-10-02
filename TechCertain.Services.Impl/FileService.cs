@@ -32,7 +32,7 @@ namespace TechCertain.Services.Impl
 
         ILogger _logger;
 
-		public FileService (IUnitOfWorkFactory unitOfWork, IRepository<Image> imageRepository, IRepository<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, ILogger logger)
+        public FileService (IUnitOfWorkFactory unitOfWork, IRepository<Image> imageRepository, IRepository<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, ILogger logger)
 		{
 			_unitOfWork = unitOfWork;
 			_imageRepository = imageRepository;
@@ -163,7 +163,7 @@ namespace TechCertain.Services.Impl
 			} else {
 				mergeFields.Add (new KeyValuePair<string, string> ("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
 			}
-			mergeFields.Add (new KeyValuePair<string, string> ("[[BoundDate]]", agreement.BoundDate.ToString ("dd/MM/yyyy")));
+			mergeFields.Add (new KeyValuePair<string, string> ("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[QuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[PolicyNumber]]", agreement.PolicyNumber));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[Brokerage]]", (agreement.Brokerage / 100).ToString ("P2")));
