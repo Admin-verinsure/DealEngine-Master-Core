@@ -479,7 +479,7 @@
         debugger;
         event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reloadAfterSubmit();
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger('reloadGrid');
     };
 
         function SetLocationRemovedStatus(locationId, status, sourceTable, destTable) {
@@ -502,12 +502,12 @@
             if (data === true) {
                 $(sourceTable).trigger('reloadGrid');
                 $(destTable).trigger('reloadGrid');
-                $.smallBox({
-                    title: "Location status has been updated",
-                    color: "#5F895F",
-                    iconSmall: "fa fa-check bounce animated",
-                    timeout: 4000
-                });
+                //$.smallBox({
+                //    title: "Location status has been updated",
+                //    color: "#5F895F",
+                //    iconSmall: "fa fa-check bounce animated",
+                //    timeout: 4000
+                //});
             }
         });
     };
@@ -582,14 +582,14 @@
 		//    timeout: 4000
   //      });
          $('#getLandLocModal').hide();
-		var address = data.Street + ', ' + data.Suburb + ', ' + data.City;
-		$('#VehicleLocation.rmv').append($('<option>', { value: data.LocationId, text: address }));
-        $('#VehicleLocation.omv').append($('<option>', { value: data.LocationId, text: address }));
-        $('#BuildingLocationModal').append($('<option>', { value: data.LocationId, text: address }));
+		var address = data.Street + ', ' + data.Suburb + ', ' + data.city;
+		$('#VehicleLocation.rmv').append($('<option>', { value: data.locationId, text: address }));
+        $('#VehicleLocation.omv').append($('<option>', { value: data.locationId, text: address }));
+        $('#BuildingLocationModal').append($('<option>', { value: data.locationId, text: address }));
         $("#BuildingLocationModal [value='add']").remove();
         $('#BuildingLocationModal').append($('<option>', { value: "add", text: "Add Location" }));
 
-        $('#VehicleLocationModal').append($('<option>', { value: data.LocationId, text: address }));
+        $('#VehicleLocationModal').append($('<option>', { value: data.locationId, text: address }));
         $("#VehicleLocationModal [value='add']").remove();
         $('#VehicleLocationModal').append($('<option>', { value: "add", text: "Add Location" }));
 

@@ -58,7 +58,7 @@
                                     <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
 
                                         <!-- SmartWizard html -->
-                                        <div id="smartwizard" class="sw-main sw-theme-dots">
+                                        <div id="smartwizard" class="sw-main sw-theme-circles">
                                             <ul class="nav nav-tabs step-anchor">
                                                 <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Details</small></a></li>
                                                 <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Quote</small></a></li>
@@ -140,7 +140,7 @@
                                                                     <div class="modal-dialog">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <button type="button" class="close" onclick="$('#addWaterLocModal'.hide())">&times;</button>
+                                                                                <button type="button" class="close" onclick="$('#addWaterLocModal').hide()">&times;</button>
                                                                                 <h4 class="modal-title">Add Water Location</h4>
                                                                             </div>
                                                                             <input id="WaterLocationId" name="WaterLocationId" type="hidden" />
@@ -256,7 +256,7 @@
                                                                     <div class="modal-dialog">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <button type="button" class="close" onclick="$('#addLandLocModal'.hide())">&times;</button>
+                                                                                <button type="button" class="close" onclick="$('#addLandLocModal').hide()">&times;</button>
                                                                                 <h4 class="modal-title">Add Land Storage</h4>
                                                                             </div>
                                                                             <div class="modal-body">
@@ -310,7 +310,7 @@
                                                                     <div class="modal-dialog">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <button type="button" class="close" onclick="$('#addMarinaModal'.hide())">&times;</button>
+                                                                                <button type="button" class="close" onclick="$('#addMarinaModal').hide()">&times;</button>
                                                                                 <h4 class="modal-title">Add Marina</h4>
                                                                             </div>
                                                                             <div class="modal-body">
@@ -334,7 +334,7 @@
                                                                             </div>
                                                                             <div class="modal-footer">
                                                                                 <section class="col col-xs-12">
-                                                                                    <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').modal('hide');" class="btn-sm ">Add</button>
+                                                                                    <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').hide();" class="btn-sm ">Add</button>
 
                                                                                     @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "AddMarinaLocModal('#marinaName'); $('#addMarinaModal').modal('hide');" }).Class("btn-sm")*@
                                                                                 </section>
@@ -348,7 +348,7 @@
                                                                     <div class="modal-dialog">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <button type="button" class="close" onclick="$('#addInterestedPartyModal'.hide())">&times;</button>
+                                                                                <button type="button" class="close" onclick="$('#addInterestedPartyModal').hide()">&times;</button>
                                                                                 <h4 class="modal-title">Add Interested Party</h4>
                                                                             </div>
                                                                             <div class="modal-body">
@@ -535,7 +535,7 @@
                                                                     <div class="modal-dialog">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <button type="button" class="close"  onclick="$('#addBoatUseModal'.hide())">&times;</button>
+                                                                                <button type="button" class="close"  onclick="$('#addBoatUseModal').hide()">&times;</button>
                                                                                 <h4 class="modal-title">Add a Vessel Use</h4>
                                                                             </div>
                                                                             <div class="modal-body">
@@ -657,7 +657,7 @@
                                                                     <div class="modal-dialog">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
-                                                                                <button type="button" class="close" onclick="$('#addTrailerModal'.hide())">&times;</button>
+                                                                                <button type="button" class="close" onclick="$('#addTrailerModal').hide()">&times;</button>
                                                                                 <h4 class="modal-title">Add a Trailer</h4>
                                                                             </div>
                                                                             <div class="modal-body">
