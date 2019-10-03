@@ -281,80 +281,16 @@ namespace TechCertain.WebUI.Controllers
 				string password = viewModel.Password.Trim();
 
                 var user1 = new DealEngineUser { UserName = username };
-                var createUser = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
+                
                 //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
-                //var createUser = await _userManager.CreateAsync(user1, password);
+                var createUser = await _userManager.CreateAsync(user1, password);
                 if(createUser.Succeeded)
                 {
-
+                    await _signInManager.SignInAsync(user1, viewModel.RememberMe);
                 }
 
-
-                //var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
-                //var result = await _signInManager.SignInAsync(user1, viewModel.RememberMe, false);
-
-                //if (result.)
-                //{
-                //    var user = _userService.GetUser(username);
-                //    //var user1 = new DealEngineUser(username);
-                //    try
-                //    {
-                //        _context.Users.Add(user1);
-                //        _context.SaveChanges();
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        throw new Exception(ex.Message);
-                //    }
-                //    //var result1 = await UserManager<IdentityUser>.CreateAsync(user1, password);
-                //    //var manager = new UserManager<IdentityUser>(new UserStore<IdentityUser>);
-                //    //Task<IdentityResult> result1 = await UserManager<User>.AddClaimAsync(user, new System.Security.Claims.Claim(ClaimTypes.Name, username));
-
-                //    //identity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, username));
-                //    //await UserManager<User>.AddClaimAsync(user, identity);
-                //    //claimsIdentity.Actor = user;
-                //    //ClaimsPrincipal principal = user as ClaimsPrincipal;
-                //}
-
                 return RedirectToLocal(viewModel.ReturnUrl);
-                //if (signInResult == Microsoft.AspNetCore.Identity.SignInResult.Success)
-                //if (_signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false) == Microsoft.AspNetCore.Identity.SignInResult.Success)
-                //{
-                //    _signInManager.SyncUserFromAuth(username);
-                //    var user = _userService.GetUser(username);
-                //    if (_userService.IsUserLocalBanned(user))
-                //        throw new Exception("User [" + username + "] is currently locked on this server");
-
-                //    _permissionsService.SetDefaultPermissions(username);
-                //    _logger.Info("Authentication succeeded for [" + username + "]");
-
-                //    return RedirectToLocal(viewModel.ReturnUrl);
-                //}
-
-                //User user = _authenticationService.ValidateUser (username, password);
-
-                ////if (Membership.ValidateUser(username, password))
-                //if (user != null)
-                //{
-                //	// hopefully this error should be raised by the ldap repository before we get here
-                //	//if (user == null)
-                //	//	throw new UserImportException(string.Format("Could not import user {0}", username));
-
-                //	if (_userService.IsUserLocalBanned (user))
-                //		throw new Exception ("User [" + username + "] is currently locked on this server");
-
-                //	_permissionsService.SetDefaultPermissions (username);
-
-                //                //EnsureLoggedOut();
-                //	Session.Abandon();
-                //	FormsAuthentication.SetAuthCookie(user.UserName, true);
-                //	SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
-
-                //	_logger.Info("Authentication succeeded for [" + username + "]");
-
-                //	return RedirectToLocal(viewModel.ReturnUrl);
-                //            }
-                ////_logger.Info(string.Format("Login failed for {0}", username));
+ 
             }
 			catch (UserImportException ex)
 			{
