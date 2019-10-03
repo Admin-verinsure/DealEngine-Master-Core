@@ -7,22 +7,20 @@ using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class AdminController : BaseController
-	{
-		ILogger _logger;
-
+	{		
 		IPrivateServerService _privateServerService;
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
         IFileService _fileService;
 		IOrganisationService _organisationService;
 		IOrganisationRepository _organisationRepository;
-		IUnitOfWorkFactory _unitOfWorkFactory;
+		IUnitOfWork _unitOfWork;
 		IInformationTemplateService _informationTemplateService;
         ICilentInformationService _clientInformationService;
 		IProgrammeService _programmeService;
@@ -32,18 +30,17 @@ namespace TechCertain.WebUI.Controllers
 
         IMapper _mapper;
 
-		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IPrivateServerService privateServerService, IFileService fileService,
-			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWorkFactory unitOfWorkFactory, IInformationTemplateService informationTemplateService,
+		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, IPrivateServerService privateServerService, IFileService fileService,
+			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
             ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
 			: base (userRepository, dealEngineDBContext)
-		{
-			_logger = logger;
+		{		
 			_privateServerService = privateServerService;
 			_fileService = fileService;
 			_organisationService = organisationService;
 			_organisationRepository = organisationRepository;
-			_unitOfWorkFactory = unitOfWorkFactory;
+			_unitOfWork = unitOfWork;
 			_informationTemplateService = informationTemplateService;
 			_clientInformationService = clientInformationService;
 			_programmeService = programeService;
@@ -58,12 +55,6 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public ActionResult Index ()
 		{
-			Console.WriteLine ("Debug: " + _logger.IsDebugEnabled);
-			Console.WriteLine ("Error: " + _logger.IsFatalEnabled);
-			Console.WriteLine ("Fatal: " + _logger.IsFatalEnabled);
-			Console.WriteLine ("Info: " + _logger.IsInfoEnabled);
-			Console.WriteLine ("Trace: " + _logger.IsTraceEnabled);
-			Console.WriteLine ("Warn: " + _logger.IsWarnEnabled);
 
             var privateServers = _privateServerService.GetAllPrivateServers ().ToList();
             var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
@@ -315,7 +306,7 @@ namespace TechCertain.WebUI.Controllers
         //                organisation = _organisationService.GetOrganisationByName(parts[0]);
         //                if (organisation != null)
         //                {
-        //                    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //                    {
         //                        OrganisationalUnit ou = new OrganisationalUnit(CurrentUser, parts[2]);
         //                        organisation.OrganisationalUnits.Add(ou);
@@ -366,7 +357,7 @@ namespace TechCertain.WebUI.Controllers
         //                organisation = _organisationService.GetOrganisationByName(parts[0]);
         //                if (organisation != null)
         //                {
-        //                    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //                    {
         //                        var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, CurrentUser, organisation);
         //                        var reference = _referenceService.GetLatestReferenceId();
@@ -406,7 +397,7 @@ namespace TechCertain.WebUI.Controllers
         //                    {
         //                        if (parts[3] == "")
         //                        {
-        //                            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //                            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //                            {
         //                                Vehicle v = new Vehicle(CurrentUser, "", "", "")
         //                                {
@@ -429,7 +420,7 @@ namespace TechCertain.WebUI.Controllers
         //                                Vehicle vehicle = _vehicleService.GetValidatedVehicle(parts[3]);
         //                                if (vehicle != null)
         //                                {
-        //                                    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //                                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //                                    {
         //                                        Vehicle regv = new Vehicle(CurrentUser, vehicle.Registration, vehicle.Make, vehicle.Model)
         //                                        {
@@ -452,7 +443,7 @@ namespace TechCertain.WebUI.Controllers
         //                            }
         //                            catch (Exception ex)
         //                            {
-        //                                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //                                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //                                {
         //                                    Vehicle v = new Vehicle(CurrentUser, "", "", "")
         //                                    {
@@ -620,7 +611,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (systemEmailTemplate != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     systemEmailTemplate.Subject = model.Subject;
                     systemEmailTemplate.Body = model.Body;
@@ -634,9 +625,7 @@ namespace TechCertain.WebUI.Controllers
             {
                _systemEmailService.AddNewSystemEmail(CurrentUser, systememailtemplatename, model.InternalNotes, model.Subject, model.Body, model.SystemEmailType);
             }
-
-            _logger.Info("System email template " + systememailtemplatename + " updated");
-
+           
             return Redirect("~/Admin/Index");
 
         }
@@ -651,20 +640,8 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SysExchange(OrganisationViewModel model)
         {
-            Organisation org = _organisationService.GetOrganisationByEmail(model.Email);
-
-            if (org == null)
-            {
-                _logger.Info("Create Org");
-            }
-
+            Organisation org = _organisationService.GetOrganisationByEmail(model.Email);            
             User user = _userService.GetUserByEmail(model.Email);
-
-            if (org == null)
-            {
-                _logger.Info("Create User");
-            }
-
 
             return Redirect("~/Admin/Index");
 

@@ -24,22 +24,19 @@ namespace TechCertain.Services.Impl
 		const uint _tiffMagicNumberIntel = 0x002A4949;
 		const uint _tiffMagicNumberMotorola = 0x2A004D4D;
 
-		IUnitOfWorkFactory _unitOfWork;
-		IRepository<Image> _imageRepository;
-		IRepository<Document> _documentRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<Image> _imageRepository;
+		IMapperSession<Document> _documentRepository;
 		IClientAgreementMVTermService _clientAgreementMVTermService;
-        IClientAgreementBVTermService _clientAgreementBVTermService;
+        IClientAgreementBVTermService _clientAgreementBVTermService;        
 
-        ILogger _logger;
-
-		public FileService (IUnitOfWorkFactory unitOfWork, IRepository<Image> imageRepository, IRepository<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService, ILogger logger)
+		public FileService (IUnitOfWork unitOfWork, IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
 		{
 			_unitOfWork = unitOfWork;
 			_imageRepository = imageRepository;
 			_documentRepository = documentRepository;
 			_clientAgreementMVTermService = clientAgreementMVTermService;
-            _clientAgreementBVTermService = clientAgreementBVTermService;
-            _logger = logger;
+            _clientAgreementBVTermService = clientAgreementBVTermService;            
 
 			FileDirectory = Path.Combine (
 				Directory.GetCurrentDirectory (),

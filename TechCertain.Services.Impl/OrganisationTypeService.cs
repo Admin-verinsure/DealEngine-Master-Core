@@ -10,14 +10,12 @@ namespace TechCertain.Services.Impl
 	public class OrganisationTypeService : IOrganisationTypeService
 	{
 
-        IUnitOfWorkFactory _unitOfWork;
-        ILogger _logging;
-        IRepository<OrganisationType> _organisationTypeRepository;
+        IUnitOfWork _unitOfWork;        
+        IMapperSession<OrganisationType> _organisationTypeRepository;
 
-        public OrganisationTypeService(IUnitOfWorkFactory unitOfWork, ILogger logging, IRepository<OrganisationType> organisationTypeRepository)
+        public OrganisationTypeService(IUnitOfWork unitOfWork, IMapperSession<OrganisationType> organisationTypeRepository)
         {
-            _unitOfWork = unitOfWork;
-            _logging = logging;
+            _unitOfWork = unitOfWork;            
             _organisationTypeRepository = organisationTypeRepository;
         }
 		#region IOrganisationTypeService implementation

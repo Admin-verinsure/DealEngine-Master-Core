@@ -11,11 +11,11 @@ namespace TechCertain.Services.Impl
     {
         public InformationSectionFactory _informationSectionFactory;
 
-        public IRepository<InformationSection> _informationSectionRepository;
+        public IMapperSession<InformationSection> _informationSectionRepository;
 
         public InformationSectionService(
             InformationSectionFactory informationSectionFactory,
-            IRepository<InformationSection> informationSectionRepository)
+            IMapperSession<InformationSection> informationSectionRepository)
         {
             _informationSectionFactory = informationSectionFactory;
             _informationSectionRepository = informationSectionRepository;

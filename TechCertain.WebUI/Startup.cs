@@ -5,26 +5,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using SimpleInjector;
-using TechCertain.Services.Impl;
-using DealEngine.Infrastructure.AppInitialize.ContainerServices;
-using System;
-using System.Collections.Generic;
-using TechCertain.Domain.Entities;
-using Microsoft.Extensions.Logging;
-using System.Linq;
-using TechCertain.WebUI.Models;
-using DealEngine.Infrastructure.Identity;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.AspNetCore.HttpOverrides;
 using DealEngine.Infrastructure.AppInitialize.Nhibernate;
+using DealEngine.Infrastructure.Identity.Data;
+using DealEngine.Infrastructure.AppInitialize.BaseLdapPackage;
+using DealEngine.Infrastructure.AppInitialize.Services;
+using DealEngine.Infrastructure.AppInitialize.Repositories;
+using Microsoft.Extensions.Logging;
+using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI
 {
     public class Startup
     {
-        private Container container = new Container();
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         private IConfiguration Configuration { get; }
@@ -60,21 +54,14 @@ namespace TechCertain.WebUI
                     //options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 });
 
+            //start of removing simpleinjector
             services.AddNHibernate();
-
-            services.AddSimpleInjector(container, options =>
-            {
-                // Wraps web requests in a Simple Injector scope.
-                options.AddAspNetCore()
-                    // Ensure activation of a specific framework type to be created by Simple Injector instead of the built-in configuration system.
-                    .AddControllerActivation()
-                    .AddViewComponentActivation()
-                    .AddPageModelActivation()
-                    .AddTagHelperActivation();
-
-            });
-
-            services.EnableSimpleInjectorCrossWiring(container);
+            services.AddSingleton(MapperConfig.ConfigureMaps());
+            services.AddLogging();
+            services.AddServices();
+            services.AddRepositories();
+            services.AddBaseLdap();
+            services.AddBaseLdapPackage();
             services.AddResponseCaching();
         }
 
@@ -99,24 +86,6 @@ namespace TechCertain.WebUI
             //app.UseAuthentication();
             //app.UseRouting();
 
-            app.UseSimpleInjector(container, options =>
-            {
-                options.UseLogging();
-                options.CrossWire<IOptions<IdentityOptions>>();
-                options.CrossWire<IOptions<PasswordHasherOptions>>();
-                options.CrossWire<IServiceProvider>();
-                options.CrossWire<IEnumerable<IUserValidator<User>>>();
-                options.CrossWire<IEnumerable<IPasswordValidator<User>>>();
-                options.CrossWire<ILogger<UserManager<User>>>();
-            });
-
-            container.AutoCrossWireAspNetComponents(app);
-            container.RegisterInstance(MapperConfig.ConfigureMaps());
-
-            InitializeContainer();
-
-            container.Verify();
-
             //app.UseEndpoints(endpoints =>
             //{
             //    endpoints.MapControllers();
@@ -136,28 +105,6 @@ namespace TechCertain.WebUI
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-        }
-
-        private void InitializeContainer()
-        {
-            var repositoryAssembly = typeof(EmailService).Assembly;
-            var registrations =
-                from type in repositoryAssembly.GetExportedTypes()
-                where type.Namespace == "TechCertain.Services.Impl"
-                where type.GetInterfaces().Any()
-                select new { Service = type.GetInterfaces().Single(), Implementation = type };
-
-            foreach (var reg in registrations)
-            {
-                container.Register(reg.Service, reg.Implementation);
-            }
-
-            RepositoryPackage.RegisterServices(container);
-            BaseLdapPackage.RegisterServices(container);
-            LdapPackage.RegisterServices(container);
-            LoggingPackage.RegisterServices(container);
-            ConfigurePackage.RegisterServices(container);
-            IdentityPackage.RegisterServices(container);
         }
     }
 

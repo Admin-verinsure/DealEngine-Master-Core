@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class ReferenceService : IReferenceService
 	{
-		IUnitOfWorkFactory _unitOfWork;
-        IRepository<Reference> _referenceRepository;
+		IUnitOfWork _unitOfWork;
+        IMapperSession<Reference> _referenceRepository;
 
-		public ReferenceService(IUnitOfWorkFactory unitOfWork, IRepository<Reference> referenceRepository)
+		public ReferenceService(IUnitOfWork unitOfWork, IMapperSession<Reference> referenceRepository)
         {
 			_unitOfWork = unitOfWork;
             _referenceRepository = referenceRepository;

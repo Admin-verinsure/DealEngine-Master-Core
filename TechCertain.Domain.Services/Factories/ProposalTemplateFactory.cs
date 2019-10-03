@@ -7,9 +7,9 @@ namespace TechCertain.Domain.Services.Factories
 {
     public class ProposalTemplateFactory : IEntityFactory
     {
-        readonly IRepository<ProposalTemplate> _proposalTemplateRepository;
+        readonly IMapperSession<ProposalTemplate> _proposalTemplateRepository;
 
-        public ProposalTemplateFactory(IRepository<ProposalTemplate> proposalTemplateRepository)
+        public ProposalTemplateFactory(IMapperSession<ProposalTemplate> proposalTemplateRepository)
         {
             _proposalTemplateRepository = proposalTemplateRepository;
         }

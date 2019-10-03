@@ -11,11 +11,11 @@ namespace TechCertain.Services.Impl
     public class InformationTemplateService : IInformationTemplateService
     {
         private InformationTemplateFactory _informationTemplateFactory;
-        private IRepository<InformationTemplate> _informationTemplateRepository;
+        private IMapperSession<InformationTemplate> _informationTemplateRepository;
 
         public InformationTemplateService(
             InformationTemplateFactory informationTemplateFactory,
-            IRepository<InformationTemplate> informationTemplateRepository)
+            IMapperSession<InformationTemplate> informationTemplateRepository)
         {
             _informationTemplateFactory = informationTemplateFactory;
             _informationTemplateRepository = informationTemplateRepository;

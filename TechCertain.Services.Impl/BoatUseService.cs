@@ -8,14 +8,12 @@ namespace TechCertain.Services.Impl
 {
     public class BoatUseService : IBoatUseService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        ILogger _logging;
-        IRepository<BoatUse> _boatUseRepository;
+        IUnitOfWork _unitOfWork;        
+        IMapperSession<BoatUse> _boatUseRepository;
 
-        public BoatUseService(IUnitOfWorkFactory unitOfWork, ILogger logging, IRepository<BoatUse> boatUseRepository)
+        public BoatUseService(IUnitOfWork unitOfWork, IMapperSession<BoatUse> boatUseRepository)
         {
-            _unitOfWork = unitOfWork;
-            _logging = logging;
+            _unitOfWork = unitOfWork;            
             _boatUseRepository = boatUseRepository;            
         }
 

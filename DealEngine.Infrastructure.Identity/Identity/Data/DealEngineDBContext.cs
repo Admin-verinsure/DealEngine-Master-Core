@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TechCertain.WebUI.Areas.Identity.Data;
 
-namespace TechCertain.WebUI.Areas.Identity.Data
+
+namespace DealEngine.Infrastructure.Identity.Data
 {
     public class DealEngineDBContext : IdentityDbContext<DealEngineUser>
     {

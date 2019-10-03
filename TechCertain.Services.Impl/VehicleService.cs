@@ -14,14 +14,13 @@ namespace TechCertain.Services.Impl
 {
 	public class VehicleService : IVehicleService
 	{
-		ILogger _logging;
-
+		
 		string _apiEndpoint;
 		string _apiKey;
 
-		public VehicleService (ILogger logging)
+		public VehicleService ()
 		{
-			_logging = logging;
+			
 
             //_apiEndpoint = ConfigurationManager.AppSettings ["CarJamEndpoint"];
             //_apiKey = ConfigurationManager.AppSettings ["CarJamApiKey"];

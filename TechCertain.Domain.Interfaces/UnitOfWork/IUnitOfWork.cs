@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace TechCertain.Domain.Interfaces
 {
-    public interface IUnitOfWorkFactory
+    public interface IUnitOfWork : IDisposable
     {
-        IUnitOfWork BeginUnitOfWork();
+        Task Commit();
+
+        public IUnitOfWork BeginUnitOfWork();
     }
 }

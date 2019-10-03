@@ -4,7 +4,7 @@ using System.Net;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
 
@@ -13,13 +13,11 @@ namespace TechCertain.WebUI.Controllers
     public class RolesController : BaseController
     {
 		IRolePermissionsService _roleService;
-		ILogger _logger;
-
-		public RolesController (IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService, ILogger logger)
+		
+		public RolesController (IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService)
 			: base (userService, dealEngineDBContext)
 		{
-			_roleService = rolePermissionsService;
-			_logger = logger;
+			_roleService = rolePermissionsService;			
 		}
 
 		[HttpGet]
@@ -71,9 +69,8 @@ namespace TechCertain.WebUI.Controllers
 
 				return Json (true);
 			}
-			catch (Exception ex) {
-				_logger.Error (ex);
-                throw new Exception("Method will need to be re-written");
+			catch (Exception ex) {				
+                throw new Exception("Method will need to be re-written " + ex.Message);
 				//return new HttpStatusCodeResult (HttpStatusCode.InternalServerError, "Unable to save role with Id: [" + roleViewModel.Id + "]");
 			}
 		}
@@ -87,9 +84,8 @@ namespace TechCertain.WebUI.Controllers
 
 				return Json (true);
 			}
-			catch (Exception ex) {
-				_logger.Error (ex);
-                throw new Exception("Method will need to be re-written");
+			catch (Exception ex) {				
+                throw new Exception("Method will need to be re-written " + ex.Message);
                 //return new HttpStatusCodeResult (HttpStatusCode.InternalServerError, ex.Message);
 			}
 		}

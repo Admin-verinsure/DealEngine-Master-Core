@@ -9,15 +9,15 @@ namespace TechCertain.Services.Impl
 {
 	public class RolePermissionsService : IRolePermissionsService
 	{
-		IRepository<ApplicationGroup> _groupRespoitory;
-		IRepository<ApplicationRole> _roleRepository;
+		IMapperSession<ApplicationGroup> _groupRespoitory;
+		IMapperSession<ApplicationRole> _roleRepository;
 
 		IUserService _userService;
-		IRepository<User> _userRepository;
+		IMapperSession<User> _userRepository;
 
-		IUnitOfWorkFactory _uowFactory;
+		IUnitOfWork _uowFactory;
 
-		public RolePermissionsService (IUserService userService, IRepository<User> userRepository, IRepository<ApplicationGroup> groupRepository, IRepository<ApplicationRole> roleRepository, IUnitOfWorkFactory uowFactory)
+		public RolePermissionsService (IUserService userService, IMapperSession<User> userRepository, IMapperSession<ApplicationGroup> groupRepository, IMapperSession<ApplicationRole> roleRepository, IUnitOfWork uowFactory)
 		{
 			_groupRespoitory = groupRepository;
 			_roleRepository = roleRepository;

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models.Milestone;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -24,7 +24,7 @@ namespace TechCertain.WebUI.Controllers
         IEmailService _emailService;
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
-        IRepository<Programme> _programmeRepository;
+        IMapperSession<Programme> _programmeRepository;
         //IPaymentGatewayService _paymentGatewayService;
 
 
@@ -32,7 +32,7 @@ namespace TechCertain.WebUI.Controllers
             IUserService userRepository,
             IEmailService emailService,
             IProgrammeService programmeService,
-            IRepository<Programme> programmeRepository,
+            IMapperSession<Programme> programmeRepository,
             IUWMService uWMService,
             DealEngineDBContext dealEngineDBContext,
             //ITaskingService taskingService,
