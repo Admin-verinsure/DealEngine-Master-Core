@@ -53,67 +53,78 @@
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
            debugger;
            var informationsheetstatus = $('#Status').val();
-                          var clientInformationSheet = $('#AnswerSheetId').val();
+           var clientInformationSheet = $('#AnswerSheetId').val();
+
+           if (stepDirection == "backward") {
+               var stepNumber = stepNumber - 2;
+           };
+
+           if (stepNumber == -1) {
+               $('tab1').click();
+           }
+            
 
            if (stepNumber === 0) {
-               var claim1 = $('#Claimexp1').val();
-               var claim2 = $('#Claimexp2').val();
-               var claim3 = $('#Claimexp3').val();
-               var claim4 = $('#Claimexp4').val();
-               var claim5 = $('#Claimexp5').val();
-               var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
 
-               //if (hghg == "false" || hghg =="" ||hghg == null || hghg === "undefined" ||  hghg == "&nbsp;") {
+               if (stepDirection == "forward") {
+                   var claim1 = $('#Claimexp1').val();
+                   var claim2 = $('#Claimexp2').val();
+                   var claim3 = $('#Claimexp3').val();
+                   var claim4 = $('#Claimexp4').val();
+                   var claim5 = $('#Claimexp5').val();
+                   var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
+
+                   //if (hghg == "false" || hghg =="" ||hghg == null || hghg === "undefined" ||  hghg == "&nbsp;") {
 
 
-               if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
 
-                   window.alert("Please Add Atleast One Boat to proceed for policy. ");
-                   $("#Vessel").trigger("click");
-                   return false;
+                       window.alert("Please Add Atleast One Boat to proceed for policy. ");
+                       $("#Vessel").trigger("click");
+                       return false;
 
-               } else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                   //$("#Vessel").trigger("click");
-                   window.alert("Please Add Claims Experience to proceed for policy. ");
+                   } else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                       //$("#Vessel").trigger("click");
+                       window.alert("Please Add Claims Experience to proceed for policy. ");
 
-                   $("#more").trigger("click");
-                   $("[id='Claims Experience / Insurance History']").trigger("click");
-                   return false;
+                       $("#more").trigger("click");
+                       $("[id='Claims Experience / Insurance History']").trigger("click");
+                       return false;
 
-               }
+                   }
 
-               var stringArray = new Array();
-               stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
-               stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
-               stringArray[2] = ["Claimexp3", claim3, $('#Claimexp3Details').val()];
-               stringArray[3] = ["Claimexp4", claim4, $('#Claimexp4Details').val()];
-               stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
+                   var stringArray = new Array();
+                   stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
+                   stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
+                   stringArray[2] = ["Claimexp3", claim3, $('#Claimexp3Details').val()];
+                   stringArray[3] = ["Claimexp4", claim4, $('#Claimexp4Details').val()];
+                   stringArray[4] = ["Claimexp5", claim5, $('#Claimexp5Details').val()];
 
-               var postData = { Claims: stringArray, ClientInformationSheet: clientInformationSheet };
-               if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                   $.ajax({
-                       url: '@Url.Action("UpdateClaim", "Information")',
-                       type: "POST",
-                       data: postData
-                   })
-                       .done(function (data) {
-
-                           //alert("Success");
-                           //$.smallBox({
-                           //    title: "Success",
-                           //    content: "Claim Experience and Prior Insurance details have been updated",
-                           //    color: "#5F895F",
-                           //    iconSmall: "fa fa-check bounce animated",
-                           //    timeout: 4000
-                           //});
+                   var postData = { Claims: stringArray, ClientInformationSheet: clientInformationSheet };
+                   if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                       $.ajax({
+                           url: '@Url.Action("UpdateClaim", "Information")',
+                           type: "POST",
+                           data: postData
                        })
-                       .fail(function (a, s, d) {
-                           debugger;
+                           .done(function (data) {
 
-                           alert("Unable to save.");
-                       });
+                               //alert("Success");
+                               //$.smallBox({
+                               //    title: "Success",
+                               //    content: "Claim Experience and Prior Insurance details have been updated",
+                               //    color: "#5F895F",
+                               //    iconSmall: "fa fa-check bounce animated",
+                               //    timeout: 4000
+                               //});
+                           })
+                           .fail(function (a, s, d) {
+                               debugger;
+
+                               alert("Unable to save.");
+                           });
+                   }
                }
-
                //console.log($('#MilestoneStatus').val());
                //if ($('#MilestoneStatus').val() === 'Active'){
                //    $('#getMilestoneModal').show();
@@ -139,12 +150,16 @@
                        alert("There was an error getting your agreement.");
                    });
            } else if (stepNumber === 1) {
-                var status = $('#Status').val();
+               var status = $('#Status').val();
+
                 if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                 }
                 else {
                     return false;
-                }
+               }
+               $('.sw-btn-prev').hide();
+
+               
                 $('#getAgreementDecModal').show();
                 $.ajax({
                     url: '@Url.Action("QuoteToAgree", "Information")',
@@ -1429,10 +1444,12 @@ $(document).ready(function () {
         return result;
     }
 
-    function SetCurrentTab(tabPaneId) {
+    function SetCurrentTab(tabPaneId) { 
+        debugger;
         event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-       $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger('reloadGrid');
+        //$('#tblLocation').trigger('reloadGrid
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
 
         //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
 };
