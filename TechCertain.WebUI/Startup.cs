@@ -14,6 +14,7 @@ using DealEngine.Infrastructure.AppInitialize.Services;
 using DealEngine.Infrastructure.AppInitialize.Repositories;
 using Microsoft.Extensions.Logging;
 using TechCertain.WebUI.Models;
+using DealEngine.Infrastructure.AppInitialize;
 
 namespace TechCertain.WebUI
 {
@@ -55,6 +56,7 @@ namespace TechCertain.WebUI
                 });
 
             //start of removing simpleinjector
+            services.AddFactories();
             services.AddNHibernate();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
