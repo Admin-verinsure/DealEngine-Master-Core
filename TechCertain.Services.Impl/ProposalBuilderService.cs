@@ -7,10 +7,10 @@ namespace TechCertain.Services.Impl
 {
     public class ProposalBuilderService : IProposalBuilderService
     {
-        private readonly IUnitOfWorkFactory _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ProposalTemplateFactory _proposalTemplateFactory;
 
-        public ProposalBuilderService(IUnitOfWorkFactory unitOfWork, ProposalTemplateFactory proposalTemplateFactory)
+        public ProposalBuilderService(IUnitOfWork unitOfWork, ProposalTemplateFactory proposalTemplateFactory)
         {
             _unitOfWork = unitOfWork;
             _proposalTemplateFactory = proposalTemplateFactory;

@@ -13,7 +13,7 @@ namespace TechCertain.Services.Impl
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
-        IUnitOfWorkFactory _unitOfWork;
+        IUnitOfWork _unitOfWork;
 		Domain.Services.Factories.UWMFactory _uwmFactory;
 
         public UWMService(IClientAgreementService clientAgreementService, 
@@ -22,7 +22,7 @@ namespace TechCertain.Services.Impl
             IClientAgreementMVTermService clientAgreementMVTermService,
             IClientAgreementEndorsementService clientAgreementEndorsementService,
 			Domain.Services.Factories.UWMFactory uwmFactory,
-            IUnitOfWorkFactory unitOfWork)
+            IUnitOfWork unitOfWork)
         {
             _clientAgreementService = clientAgreementService;
             _clientAgreementRuleService = clientAgreementRuleService;

@@ -10,12 +10,12 @@ namespace TechCertain.Services.Impl
 {
 	public class TermBuilderService : ITermBuilderService
 	{
-		IUnitOfWorkFactory _unitOfWork;
-		IRepository<PolicyTermSection> _policyTermRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<PolicyTermSection> _policyTermRepository;
 
 		#region ITermBuilderService implementation
 
-		public TermBuilderService(IUnitOfWorkFactory unitOfWork, IRepository<PolicyTermSection> policyTermRepository)
+		public TermBuilderService(IUnitOfWork unitOfWork, IMapperSession<PolicyTermSection> policyTermRepository)
 		{
 			_unitOfWork = unitOfWork;
 			_policyTermRepository = policyTermRepository;

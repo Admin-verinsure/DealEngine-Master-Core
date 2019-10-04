@@ -12,7 +12,7 @@ using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.ControlModels;
 using TechCertain.WebUI.Models.Policy;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -20,9 +20,9 @@ namespace TechCertain.WebUI.Controllers
     {
 		IDocumentService _policyDocumentService;
 		ITermBuilderService _termBuilderService;
-		IRepository<RiskCategory> _riskRepository;
+		IMapperSession<RiskCategory> _riskRepository;
 
-		IUnitOfWorkFactory _unitOfWorkFactory;
+		IUnitOfWork _unitOfWork;
 
 		IMapper _mapper;
 
@@ -30,8 +30,8 @@ namespace TechCertain.WebUI.Controllers
                                 DealEngineDBContext dealEngineDBContext,
                                 IDocumentService policyDocumentService,
 								ITermBuilderService termBuilderService,
-								IRepository<RiskCategory> riskRepository,
-								IUnitOfWorkFactory unitOfWorkFactory,
+								IMapperSession<RiskCategory> riskRepository,
+								IUnitOfWork unitOfWork,
 								IMapper mapper)
 			: base(userRepository, dealEngineDBContext)
 		{
@@ -40,7 +40,7 @@ namespace TechCertain.WebUI.Controllers
 
 			_riskRepository = riskRepository;
 
-			_unitOfWorkFactory = unitOfWorkFactory;
+			_unitOfWork = unitOfWork;
 
 			_mapper = mapper;
 
@@ -176,7 +176,7 @@ namespace TechCertain.WebUI.Controllers
 				return Risks ();
 
 			RiskCategory risk = new RiskCategory (CurrentUser, category.Name, category.Description);
-			using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork ()) {
+			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
 				_riskRepository.Add (risk);
 
 				uow.Commit ();

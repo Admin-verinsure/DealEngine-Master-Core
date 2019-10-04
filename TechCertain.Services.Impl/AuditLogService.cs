@@ -8,14 +8,12 @@ namespace TechCertain.Services.Impl
 {
     public class AuditLogService : IAuditLogService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        ILogger _logging;
-        IRepository<AuditLog> _auditLogRepository;
+        IUnitOfWork _unitOfWork;        
+        IMapperSession<AuditLog> _auditLogRepository;
 
-        public AuditLogService(IUnitOfWorkFactory unitOfWork, ILogger logging, IRepository<AuditLog> auditLogRepository)
+        public AuditLogService(IUnitOfWork unitOfWork, IMapperSession<AuditLog> auditLogRepository)
         {
-            _unitOfWork = unitOfWork;
-            _logging = logging;
+            _unitOfWork = unitOfWork;            
             _auditLogRepository = auditLogRepository;
         }
 

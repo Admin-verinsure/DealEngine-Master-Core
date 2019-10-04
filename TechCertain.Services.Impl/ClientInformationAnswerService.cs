@@ -9,15 +9,13 @@ namespace TechCertain.Services.Impl
 {
 	public class ClientInformationAnswerService : IClientInformationAnswerService
     {
-		IUnitOfWorkFactory _unitOfWork;
-		ILogger _logging;
-		IRepository<ClientInformationAnswer> _clientInfomationsheetAnswer;
+		IUnitOfWork _unitOfWork;		
+		IMapperSession<ClientInformationAnswer> _clientInfomationsheetAnswer;
 		ILdapService _ldapService;
 
-		public ClientInformationAnswerService(IUnitOfWorkFactory unitOfWork, ILogger logging, IRepository<ClientInformationAnswer> clientInfomationsheetAnswer, ILdapService ldapService)
+		public ClientInformationAnswerService(IUnitOfWork unitOfWork, IMapperSession<ClientInformationAnswer> clientInfomationsheetAnswer, ILdapService ldapService)
         {
-			_unitOfWork = unitOfWork;
-			_logging = logging;
+			_unitOfWork = unitOfWork;			
             _clientInfomationsheetAnswer = clientInfomationsheetAnswer;
 			_ldapService = ldapService;
 		}

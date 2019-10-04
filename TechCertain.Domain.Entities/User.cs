@@ -27,53 +27,10 @@ namespace TechCertain.Domain.Entities
             AgreementBoundNotifyProgrammes = new List<Programme>();
             PaymentConfigNotifyProgrammes = new List<Programme>();
             InvoiceConfigNotifyProgrammes = new List<Programme>();
-        }
-
-
-        #region Identity Fields
-        //
-        // Summary:
-        //     Gets or sets a flag indicating if two factor authentication is enabled for this
-        //     user.
-        [PersonalData]
-        public virtual bool TwoFactorEnabled { get; set; }
-        //
-        // Summary:
-        //     A random value that must change whenever a user is persisted to the store
-        public virtual string ConcurrencyStamp { get; set; }
-        //
-        // Summary:
-        //     Gets or sets a salted and hashed representation of the password for this user.
-        public virtual string PasswordHash { get; set; }
-        //
-        // Summary:
-        //     Gets or sets a flag indicating if a user has confirmed their email address.
-        [PersonalData]
-        public virtual bool EmailConfirmed { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the normalized email address for this user.
-        public virtual string NormalizedEmail { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the normalized user name for this user.
-        public virtual string NormalizedUserName { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the user name for this user.
-        [ProtectedPersonalData]
-        public virtual string UserName { get; set; }
-
-        //
-        // Summary:
-        //     Gets or sets the number of failed login attempts for the current user.
-        public virtual int AccessFailedCount { get; set; }
-
-        #endregion        
+        }               
 
         public virtual OrganisationalUnit DefaultOU { get; set; }
-
-        //public virtual string UserName { get; set; }
+        public virtual string UserName { get; set; }
         public virtual string SalesPersonUserName { get; set; }
         public virtual string JobTitle { get; set; }
         public virtual string EmployeeNumber { get; set; }

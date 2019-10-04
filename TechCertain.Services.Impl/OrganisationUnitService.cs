@@ -8,11 +8,11 @@ namespace TechCertain.Services.Impl
 {
 	public class OrganisationalUnitService : IOrganisationalUnitService
     {
-		IUnitOfWorkFactory _unitOfWork;
-		IRepository<OrganisationalUnit> _organisationUnitRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<OrganisationalUnit> _organisationUnitRepository;
 
 
-        public OrganisationalUnitService(IUnitOfWorkFactory unitOfWork, IRepository<OrganisationalUnit> organisationUnitRepository)
+        public OrganisationalUnitService(IUnitOfWork unitOfWork, IMapperSession<OrganisationalUnit> organisationUnitRepository)
         {
             _organisationUnitRepository = organisationUnitRepository;
             _unitOfWork = unitOfWork;

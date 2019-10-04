@@ -9,10 +9,10 @@ namespace TechCertain.Services.Impl
 {
     public class ClientAgreementBVTermService : IClientAgreementBVTermService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<ClientAgreementBVTerm> _clientAgreementBVTermRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<ClientAgreementBVTerm> _clientAgreementBVTermRepository;
 
-        public ClientAgreementBVTermService(IUnitOfWorkFactory unitOfWork, IRepository<ClientAgreementBVTerm> clientAgreementBVTermRepository)
+        public ClientAgreementBVTermService(IUnitOfWork unitOfWork, IMapperSession<ClientAgreementBVTerm> clientAgreementBVTermRepository)
         {
             _unitOfWork = unitOfWork;
             _clientAgreementBVTermRepository = clientAgreementBVTermRepository;

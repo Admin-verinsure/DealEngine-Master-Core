@@ -1,11 +1,11 @@
-﻿using System;
+﻿using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TechCertain.WebUI.Areas.Identity.Data;
+
 
 [assembly: HostingStartup(typeof(TechCertain.WebUI.Areas.Identity.IdentityHostingStartup))]
 namespace TechCertain.WebUI.Areas.Identity
@@ -19,9 +19,24 @@ namespace TechCertain.WebUI.Areas.Identity
                     options.UseNpgsql(
                         context.Configuration.GetConnectionString("TechCertainConnection")));
 
-                services.AddDefaultIdentity<DealEngineUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                services.AddIdentity<DealEngineUser, IdentityRole>(options =>
+                    {
+                        options.SignIn.RequireConfirmedAccount = true;
+                        options.Password.RequireNonAlphanumeric = false;
+                    })
+                    .AddUserStore<DealEngineUserStore>()
+                    .AddUserManager<DealEngineUserManager>()
+                    .AddRoleStore<DealEngineRoleStore>()
+                    //.AddRoleManager<DealEngineRoleManager>()                    
+                    //.AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
+                    .AddSignInManager<SignInManager<DealEngineUser>>()
                     .AddEntityFrameworkStores<DealEngineDBContext>();
+
+                services.AddTransient<IUserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();
+                services.AddTransient<UserManager<DealEngineUser>, DealEngineUserManager>();
+                //services.AddTransient(typeof(SignInManager<DealEngineUser>), typeof(DealEngineSignInManager));
             });
         }
     }
+
 }

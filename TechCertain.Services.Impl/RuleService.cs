@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class RuleService : IRuleService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<Rule> _ruleRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<Rule> _ruleRepository;
 
-        public RuleService(IUnitOfWorkFactory unitOfWork, IRepository<Rule> ruleRepository)
+        public RuleService(IUnitOfWork unitOfWork, IMapperSession<Rule> ruleRepository)
         {
             _unitOfWork = unitOfWork;
             _ruleRepository = ruleRepository;

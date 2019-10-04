@@ -14,28 +14,26 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
 using HtmlToOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
 	//[Authorize]
     public class FileController : BaseController
-    {
-		ILogger _logger;
-		IUnitOfWorkFactory _unitOfWork;
+    {		
+		IUnitOfWork _unitOfWork;
 		IFileService _fileService;
-		IRepository<SystemDocument> _documentRepository;
-		IRepository<Image> _imageRepository;
-        IRepository<Product> _productRepository;
+		IMapperSession<SystemDocument> _documentRepository;
+		IMapperSession<Image> _imageRepository;
+        IMapperSession<Product> _productRepository;
 
         string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, ILogger logger, IUnitOfWorkFactory unitOfWork, IFileService fileService,
-		                      IRepository<SystemDocument> documentRepository, IRepository<Image> imageRepository, IRepository<Product> productRepository)
+		public FileController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IUnitOfWork unitOfWork, IFileService fileService,
+		                      IMapperSession<SystemDocument> documentRepository, IMapperSession<Image> imageRepository, IMapperSession<Product> productRepository)
 			: base (userRepository, dealEngineDBContext)
-		{
-			_logger = logger;
+		{			
 			_unitOfWork = unitOfWork;
 			_fileService = fileService;
 			_documentRepository = documentRepository;

@@ -10,26 +10,26 @@ namespace TechCertain.Services.Impl
     {
         InformationItemFactory _informationItemFactory;
 
-        IRepository<DropdownListItem> _dropdownListItemRepository;
-        IRepository<TextboxItem> _textboxItemRepository;
-        IRepository<LabelItem> _labelItemRepository;
-		IRepository<TextAreaItem> _textareaItemRepository;
-		IRepository<JSButtonItem> _jsButtonRepository;
-		IRepository<SubmitButtonItem> _submitButtonRepository;
-		IRepository<SectionBreakItem> _sectionBreakItemRepository;
-		IRepository<MotorVehicleListItem> _motorVehicleListItemRepository;
+        IMapperSession<DropdownListItem> _dropdownListItemRepository;
+        IMapperSession<TextboxItem> _textboxItemRepository;
+        IMapperSession<LabelItem> _labelItemRepository;
+		IMapperSession<TextAreaItem> _textareaItemRepository;
+		IMapperSession<JSButtonItem> _jsButtonRepository;
+		IMapperSession<SubmitButtonItem> _submitButtonRepository;
+		IMapperSession<SectionBreakItem> _sectionBreakItemRepository;
+		IMapperSession<MotorVehicleListItem> _motorVehicleListItemRepository;
 
 
         public InformationItemService(
             InformationItemFactory informationItemFactory,
-            IRepository<DropdownListItem> dropdownListItemRepository,
-            IRepository<TextboxItem> textboxItemRepository,
-            IRepository<LabelItem> labelItemRepository,
-			IRepository<TextAreaItem> textareaItemRepository,
-			IRepository<JSButtonItem> jsButtonRepository,
-			IRepository<SubmitButtonItem> submitButtonRepository,
-			IRepository<SectionBreakItem> sectionBreakItemRepository,
-			IRepository<MotorVehicleListItem> motorVehicleListItemRepository)
+            IMapperSession<DropdownListItem> dropdownListItemRepository,
+            IMapperSession<TextboxItem> textboxItemRepository,
+            IMapperSession<LabelItem> labelItemRepository,
+			IMapperSession<TextAreaItem> textareaItemRepository,
+			IMapperSession<JSButtonItem> jsButtonRepository,
+			IMapperSession<SubmitButtonItem> submitButtonRepository,
+			IMapperSession<SectionBreakItem> sectionBreakItemRepository,
+			IMapperSession<MotorVehicleListItem> motorVehicleListItemRepository)
         {
             _informationItemFactory = informationItemFactory;
             _dropdownListItemRepository = dropdownListItemRepository;

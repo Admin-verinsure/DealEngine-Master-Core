@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Threading;
 using System.Xml.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNet.Identity;
-using System.Configuration;
-using Microsoft.AspNetCore.Http;
-using TechCertain.WebUI.Models;
 using System.Linq;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {

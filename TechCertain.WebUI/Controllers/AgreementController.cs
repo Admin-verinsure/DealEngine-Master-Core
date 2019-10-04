@@ -16,7 +16,8 @@ using TechCertain.WebUI.Helpers;
 using TechCertain.Infrastructure.Payment.PxpayAPI;
 using Microsoft.AspNetCore.Http;
 using System.Net;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
+using TechCertain.Domain.Entities.Abstracts;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -30,32 +31,28 @@ namespace TechCertain.WebUI.Controllers
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
 
-        IRepository<Product> _productRepository;
-        IRepository<Rule> _ruleRepository;
-        IRepository<User> _userRepository1;
+        IMapperSession<Product> _productRepository;
+        IMapperSession<Rule> _ruleRepository;
+        IMapperSession<User> _userRepository1;
 
         IClientAgreementService _clientAgreementService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
         IFileService _fileService;
         IEmailService _emailService;
-        IRepository<Organisation> _OrganisationRepository;
-        ILogger _logger;
-        IRepository<SystemDocument> _documentRepository;
+        IMapperSession<Organisation> _OrganisationRepository;        
+        IMapperSession<SystemDocument> _documentRepository;
         IOrganisationService _organisationService;
 
-        IRepository<ClientProgramme> _programmeRepository;
+        IMapperSession<ClientProgramme> _programmeRepository;
+        IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
 
-
-        private IUnitOfWorkFactory _unitOfWorkFactory;
-
-
-        public AgreementController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
-                                   IRepository<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
-                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IUnitOfWorkFactory unitOfWorkFactory,
-                                   IOrganisationService organisationService, IRepository<Organisation> OrganisationRepository, IRepository<Rule> ruleRepository, IEmailService emailService, ILogger logger, IRepository<SystemDocument> documentRepository, IRepository<User> userRepository1,
-                                   IRepository<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
+        public AgreementController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+                                   IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
+                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService,
+                                   IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
+                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
             : base(userRepository, dealEngineDBContext)
         {
             _informationService = informationService;
@@ -67,9 +64,8 @@ namespace TechCertain.WebUI.Controllers
             _clientAgreementRuleService = clientAgreementRuleService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
             _fileService = fileService;
-            _emailService = emailService;
-            _logger = logger;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _emailService = emailService;            
+            _unitOfWork = unitOfWork;
             // temp
             _ruleRepository = ruleRepository;
             _documentRepository = documentRepository;
@@ -191,7 +187,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
 
             var premium = 0.0m;
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
                 {
@@ -287,7 +283,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled") &&
                     (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
@@ -337,7 +333,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 if (agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled" ||
                     agreement.Status != "Bound" || agreement.Status != "Bound and invoice pending" || agreement.Status != "Bound and invoiced")
@@ -369,7 +365,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (agreement != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     if (agreement.Status == "Declined by Insurer" || agreement.Status == "Declined by Insured")
                     {
@@ -399,7 +395,7 @@ namespace TechCertain.WebUI.Controllers
         //{
         //    ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
 
-        //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    using (var uow = _unitOfWork.BeginUnitOfWork())
         //    {
         //        foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
         //        {
@@ -427,7 +423,7 @@ namespace TechCertain.WebUI.Controllers
 
         //    //ClientAgreement agreement = _clientAgreementService.GetAgreement(sheetId);
 
-        //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    using (var uow = _unitOfWork.BeginUnitOfWork())
         //    {
         //        foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
         //        {
@@ -494,7 +490,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (emailTemplate != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     emailTemplate.Subject = model.Subject;
                     emailTemplate.Body = model.Body;
@@ -506,7 +502,7 @@ namespace TechCertain.WebUI.Controllers
             }
             else
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
@@ -538,8 +534,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.Recipent != null)
             {
                 var user = _userRepository1.GetById(model.Recipent);
-                strrecipentemail = user.Email;
-                _logger.Info(user.Email.ToString());
+                strrecipentemail = user.Email;                
             }
 
             _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
@@ -619,7 +614,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
                
             }
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 term.Premium -= bvTerm.Premium;
                 term.Premium += clientAgreementBVTerm.Premium;
@@ -647,7 +642,7 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm = term.MotorTerms.FirstOrDefault(bvt => bvt.Model == clientAgreementMVTerm.Model);
             }
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 term.Premium -= mvTerm.Premium;
                 term.Premium += clientAgreementMVTerm.Premium;
@@ -670,7 +665,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             ClientAgreementBVTerm bvTerm = null;
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
 
                 if (term.BoatTerms != null)
@@ -697,7 +692,7 @@ namespace TechCertain.WebUI.Controllers
         //    ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
         //    ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
 
-        //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    using (var uow = _unitOfWork.BeginUnitOfWork())
         //    {
 
         //        if (term.BoatTerms != null)
@@ -936,7 +931,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement clientAgreement = _clientAgreementService.GetAgreement(id);
 
             var date = true;
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 // TODO - Convert to UTC
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
@@ -1139,7 +1134,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementId);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 // TODO - Convert to UTC
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
@@ -1195,7 +1190,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID);
             if (model.ClientAgreementRules.Any(mcr => mcr != null && mcr.Value != null))
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     foreach (ClientAgreementRuleViewModel crv in model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
                     {
@@ -1259,7 +1254,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClientAgreementEndorsements != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
                     {
@@ -1391,7 +1386,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (emailTemplate != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     emailTemplate.Subject = model.Subject;
                     emailTemplate.Body = model.Body;
@@ -1403,7 +1398,7 @@ namespace TechCertain.WebUI.Controllers
             }
             else
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
@@ -1435,8 +1430,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.Recipent != null)
             {
                 var user = _userRepository1.GetById(model.Recipent);
-                strrecipentemail = user.Email;
-                _logger.Info(user.Email.ToString());
+                strrecipentemail = user.Email;                
             }
 
             _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
@@ -1472,7 +1466,7 @@ namespace TechCertain.WebUI.Controllers
                 payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
             }
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
@@ -1541,7 +1535,7 @@ namespace TechCertain.WebUI.Controllers
                 payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
             }
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
@@ -1610,7 +1604,7 @@ namespace TechCertain.WebUI.Controllers
         //        payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
         //    }
 
-        //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    using (var uow = _unitOfWork.BeginUnitOfWork())
         //    {
         //        programme.PaymentType = "Credit Card";
         //        programme.Payment = payment;
@@ -1696,7 +1690,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             var status = "bound";
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 if (programme.InformationSheet.Status != status)
                 {
@@ -1740,7 +1734,7 @@ namespace TechCertain.WebUI.Controllers
                 status = "Bound and pending payment";
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
-                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (agreement.Status != status)
                         {
@@ -1753,9 +1747,10 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     if (programme.InformationSheet.Status != status)
+
                     {
                         programme.InformationSheet.Status = status;
                         uow.Commit();
@@ -1797,7 +1792,7 @@ namespace TechCertain.WebUI.Controllers
                 var documents = new List<SystemDocument>();
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
-                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (agreement.Status != status)
                         {
@@ -1850,7 +1845,7 @@ namespace TechCertain.WebUI.Controllers
                 //    _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                 //}
 
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     if (programme.InformationSheet.Status != status)
                     {
@@ -2000,7 +1995,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Product product = _productRepository.FindAll().FirstOrDefault(p => p.IsBaseProduct == false);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 if (product != null)
                 {

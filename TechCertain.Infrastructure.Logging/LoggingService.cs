@@ -3,7 +3,7 @@ using NLog;
 
 namespace TechCertain.Infrastructure.Logging
 {
-	public class LoggingService : Logger, Domain.Interfaces.ILogger
+	public class LoggingService : Logger
     {
 		private const string _LoggerName = "NLog";
 

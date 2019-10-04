@@ -9,14 +9,12 @@ namespace TechCertain.Services.Impl
 	public class InsuranceAttributeService : IInsuranceAttributeService
 	{
 
-        IUnitOfWorkFactory _unitOfWork;
-        ILogger _logging;
-        IRepository<InsuranceAttribute> _InsuranceAttributeRepository;
+        IUnitOfWork _unitOfWork;        
+        IMapperSession<InsuranceAttribute> _InsuranceAttributeRepository;
 
-        public InsuranceAttributeService(IUnitOfWorkFactory unitOfWork, ILogger logging, IRepository<InsuranceAttribute> insuranceAttributeRepository)
+        public InsuranceAttributeService(IUnitOfWork unitOfWork, IMapperSession<InsuranceAttribute> insuranceAttributeRepository)
         {
-            _unitOfWork = unitOfWork;
-            _logging = logging;
+            _unitOfWork = unitOfWork;            
             _InsuranceAttributeRepository = insuranceAttributeRepository;
         }
 
