@@ -30,7 +30,7 @@ namespace TechCertain.Services.Impl
 		IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementBVTermService _clientAgreementBVTermService;        
 
-		public FileService (IUnitOfWork unitOfWork, IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
+        public FileService (IUnitOfWork unitOfWork, IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
 		{
 			_unitOfWork = unitOfWork;
 			_imageRepository = imageRepository;
@@ -160,7 +160,7 @@ namespace TechCertain.Services.Impl
 			} else {
 				mergeFields.Add (new KeyValuePair<string, string> ("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
 			}
-			mergeFields.Add (new KeyValuePair<string, string> ("[[BoundDate]]", agreement.BoundDate.ToString ("dd/MM/yyyy")));
+			mergeFields.Add (new KeyValuePair<string, string> ("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[QuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[PolicyNumber]]", agreement.PolicyNumber));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[Brokerage]]", (agreement.Brokerage / 100).ToString ("P2")));

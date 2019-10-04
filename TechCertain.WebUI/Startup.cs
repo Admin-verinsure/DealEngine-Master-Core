@@ -14,6 +14,7 @@ using DealEngine.Infrastructure.AppInitialize.Services;
 using DealEngine.Infrastructure.AppInitialize.Repositories;
 using Microsoft.Extensions.Logging;
 using TechCertain.WebUI.Models;
+using DealEngine.Infrastructure.AppInitialize;
 
 namespace TechCertain.WebUI
 {
@@ -50,6 +51,8 @@ namespace TechCertain.WebUI
              );
 
             //registering services in DI <-- see AppInitialize for process
+            //start of removing simpleinjector
+            services.AddFactories();
             services.AddNHibernate();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
@@ -58,6 +61,9 @@ namespace TechCertain.WebUI
             services.AddBaseLdap();
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
+            services.AddServices();
+
+            //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

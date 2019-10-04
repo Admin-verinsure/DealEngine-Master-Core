@@ -68,12 +68,16 @@
                 </section>
                 <section class="col col-9">
                     @Html.DisplayFor(m => m.StartDate) 4pm local time
-                    @if (Model.InformationSheetStatus != "Submitted" && Model.InformationSheetStatus != "Bound")
-                    {
-                        <a href="#getStartDate" aria-hidden="true" style="color:green" data-toggle="modal"><span _ngcontent-c7="" class="glyphicon glyphicon-edit"></span></a> 
-                    }
-                        
-                    </section>
+                    @*@if (Model.InformationSheetStatus != "Submitted" && Model.InformationSheetStatus != "Bound")
+        {*@
+                    @*<a href="#getStartDate" style="color:green">
+            <i class="fa fa-edit" aria-hidden="true"></i>
+        </a>*@
+                    <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
+
+                    @*}*@
+
+                </section>
             </div>
             <div class="row">
                 <section class="col col-3">
@@ -313,14 +317,14 @@
 
 
 <!-- Edit Start Date -->
-<div id="getStartDate" class="modal fade " role="dialog">
+<div id="getStartDate" style="width:350px;  margin-left:800px;" class="modal" role="dialog" >
 
     <!-- Modal content-->
 
     <div class="modal-content">
 
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" class="close" onclick="$('#getStartDate').hide()">&times;</button>
             <h3 class="modal-title" style="color:blue; font-size:22px">Edit Start Date</h3>
         </div>
         <div class="modal-body">
@@ -336,7 +340,7 @@
         <div class="modal-footer">
             <input type="Reset" value="Submit" class="btn btn-success" id="StartDateSubmit" onclick="dateChange()">
 
-            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+            <a href="#" class="btn btn-danger" onclick="$('#getStartDate').hide()">Cancel<i class="fa fa-close"></i></a>
         </div>
     </div>
 </div>
@@ -367,19 +371,23 @@
     function dateChange() {
         var agreementId = $("#ClientAgreementId").val();
         var StartDate = $("#StartDate").val();
+         var postData = {
+		'id': agreementId,
+		'Startdate': StartDate
+	      };
 
             debugger;
 
           $.ajax({
                 url: '@Url.Action("SaveDate", "Agreement")',
                 type: "POST",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({ id: agreementId, Startdate: StartDate})
+                data: postData
             })
               .done(function (data) {
                   debugger;
-                  $('#getStartDate').modal('hide');
-                location.reload(true);
+                  $('#getStartDate').hide();
+
+                    
            })
               .fail(function (jqXHR, textStatus, errorThrown) {
                   debugger;

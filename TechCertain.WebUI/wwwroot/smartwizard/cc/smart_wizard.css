@@ -43,7 +43,7 @@
 }
 
 .sw-theme-default .sw-container {
-    min-height: 250px;
+    height: 1000px;
 }
 
 .sw-theme-default .step-content {
@@ -51,6 +51,7 @@
     border: 0px solid #D4D4D4;
     background-color: #FFF;
     text-align: left;
+    height: auto;
 }
 
 .sw-theme-default .sw-toolbar {

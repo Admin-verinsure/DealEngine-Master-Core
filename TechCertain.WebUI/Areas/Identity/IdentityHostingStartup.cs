@@ -22,7 +22,8 @@ namespace TechCertain.WebUI.Areas.Identity
                 services.AddIdentity<DealEngineUser, IdentityRole>(options =>
                     {
                         options.SignIn.RequireConfirmedAccount = true;
-                        options.Password.RequireNonAlphanumeric = false;                        
+                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireUppercase = false;
                     })
                     .AddUserStore<DealEngineUserStore>()
                     .AddUserManager<DealEngineUserManager>()

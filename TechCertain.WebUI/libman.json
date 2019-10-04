@@ -7,10 +7,6 @@
       "destination": "wwwroot/jquery/"
     },
     {
-      "library": "twitter-bootstrap@4.3.1",
-      "destination": "Areas/twitter-bootstrap/"
-    },
-    {
       "library": "jqueryui@1.12.1",
       "destination": "wwwroot/jqueryui/"
     },
@@ -21,6 +17,14 @@
     {
       "library": "bootstrap-multiselect@0.9.15",
       "destination": "wwwroot/bootstrap-multiselect/"
+    },
+    {
+      "library": "twitter-bootstrap@4.3.1",
+      "destination": "wwwroot/twitter-bootstrap/"
+    },
+    {
+      "library": "popper.js@1.15.0",
+      "destination": "wwwroot/lib/popper.js/"
     }
   ]
 }

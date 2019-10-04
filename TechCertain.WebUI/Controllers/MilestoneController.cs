@@ -15,7 +15,7 @@ using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class MilestoneController : BaseController
     {
 
