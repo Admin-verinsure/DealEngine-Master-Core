@@ -7,5 +7,6 @@ namespace DealEngine.Infrastructure.Identity.Data
     public class DealEngineUser : IdentityUser
     {
         //public User ApplicationUser { get; internal set; }
+        public User ApplicationUser { get; set; }
     }
 }

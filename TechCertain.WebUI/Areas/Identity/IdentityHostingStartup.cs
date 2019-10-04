@@ -22,19 +22,19 @@ namespace TechCertain.WebUI.Areas.Identity
                 services.AddIdentity<DealEngineUser, IdentityRole>(options =>
                     {
                         options.SignIn.RequireConfirmedAccount = true;
-                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireNonAlphanumeric = false;                        
                     })
                     .AddUserStore<DealEngineUserStore>()
                     .AddUserManager<DealEngineUserManager>()
                     .AddRoleStore<DealEngineRoleStore>()
                     //.AddRoleManager<DealEngineRoleManager>()                    
                     //.AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
-                    .AddSignInManager<SignInManager<DealEngineUser>>()
+                    //.AddSignInManager<SignInManager<DealEngineUser>>()
                     .AddEntityFrameworkStores<DealEngineDBContext>();
 
                 services.AddTransient<IUserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();
                 services.AddTransient<UserManager<DealEngineUser>, DealEngineUserManager>();
-                //services.AddTransient(typeof(SignInManager<DealEngineUser>), typeof(DealEngineSignInManager));
+                services.AddTransient<ISignInManager<DealEngineUser>, DealEngineSignInManager>();
             });
         }
     }

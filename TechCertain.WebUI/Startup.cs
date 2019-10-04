@@ -33,12 +33,6 @@ namespace TechCertain.WebUI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
-            // Note: The default connection string assumes that you have 'LocalDb' installed on your machine (either through SQL Server or Visual Studio installer)
-            // If you followed the instructions in 'README.MD' and installed SQL Express then change the 'DefaultConnection' value in 'appSettings.json' with
-            // "Server=localhost\\SQLEXPRESS;Database=aspnet-smartadmin;Trusted_Connection=True;MultipleActiveResultSets=true"
-
-
             services.AddControllersWithViews();
             services.AddRouting(options =>
                 {
@@ -52,9 +46,10 @@ namespace TechCertain.WebUI
                     //options.AllowAreas = true;
                     //options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
                     //options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-                });
+                }
+             );
 
-            //start of removing simpleinjector
+            //registering services in DI <-- see AppInitialize for process
             services.AddNHibernate();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();

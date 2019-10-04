@@ -2,13 +2,11 @@
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Configuration;
 using System.Xml.Linq;
 using ServiceStack;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
+
 
 namespace TechCertain.Services.Impl
 {

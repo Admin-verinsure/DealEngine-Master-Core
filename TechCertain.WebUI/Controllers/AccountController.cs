@@ -26,7 +26,7 @@ namespace TechCertain.WebUI.Controllers
     {
         IEmailService _emailService;
 		IFileService _fileService;
-        SignInManager<DealEngineUser> _signInManager;
+        ISignInManager<DealEngineUser> _signInManager;
         UserManager<DealEngineUser> _userManager;
 
         DealEngineDBContext _context;
@@ -36,7 +36,7 @@ namespace TechCertain.WebUI.Controllers
         IOrganisationalUnitService _organisationalUnitService;
         
         public AccountController(
-            SignInManager<DealEngineUser> signInManager,
+            ISignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             IUserService userRepository,
             DealEngineDBContext dealEngineDBContext,
@@ -279,14 +279,15 @@ namespace TechCertain.WebUI.Controllers
             {
 				username = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
-
+                await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
                 var user1 = new DealEngineUser { UserName = username };
                 
                 //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
                 var createUser = await _userManager.CreateAsync(user1, password);
                 if(createUser.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user1, viewModel.RememberMe);
+                    //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
+                    await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
                 }
 
                 return RedirectToLocal(viewModel.ReturnUrl);
