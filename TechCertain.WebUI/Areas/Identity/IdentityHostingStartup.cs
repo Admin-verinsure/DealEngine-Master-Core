@@ -23,6 +23,7 @@ namespace TechCertain.WebUI.Areas.Identity
                     {
                         options.SignIn.RequireConfirmedAccount = true;
                         options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireUppercase = false;
                     })
                     .AddUserStore<DealEngineUserStore>()
                     .AddUserManager<DealEngineUserManager>()

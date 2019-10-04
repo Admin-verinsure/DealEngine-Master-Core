@@ -25,7 +25,7 @@ namespace TechCertain.WebUI.Controllers
     public class HomeController : BaseController
     {        
         IMapper _mapper;
-        IInformationTemplateService _informationService;
+        //IInformationTemplateService _informationService;
         ICilentInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
@@ -33,13 +33,13 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
 
-        public HomeController(DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository, IInformationTemplateService informationService,
+        public HomeController(DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
                               IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base(userRepository, dealEngineDBContext)
         {            
             _mapper = mapper;
-            _informationService = informationService;
+            //_informationService = informationService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;

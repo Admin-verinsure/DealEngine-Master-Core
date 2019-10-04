@@ -65,6 +65,7 @@ namespace TechCertain.WebUI
             services.AddBaseLdap();
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
+            services.AddServices();
 
             //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
