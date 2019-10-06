@@ -418,7 +418,7 @@ namespace TechCertain.Domain.Entities
             newBuilding.BuildingNotes = BuildingNotes;
             newBuilding.BuildingLatitude = BuildingLatitude;
             newBuilding.BuildingLongitude = BuildingLongitude;
-            newBuilding.Location = newSheet.Locations.FirstOrDefault(l => l.OriginalLocation.Id == Id);
+            newBuilding.Location = newSheet.Locations.FirstOrDefault(l => l.OriginalLocation.Id == Location.Id);
             newBuilding.BuildingApproved = BuildingApproved;
             newBuilding.BuildingCategory = BuildingCategory;
 

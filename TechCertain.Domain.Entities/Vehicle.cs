@@ -246,7 +246,7 @@ namespace TechCertain.Domain.Entities
 			newVehicle.InterestedParties = new List<Organisation> (InterestedParties);
 			newVehicle.Notes = Notes;
 			newVehicle.Validated = Validated;
-			newVehicle.GarageLocation = newSheet.Locations.FirstOrDefault (l => l.OriginalLocation.Id == Id);
+			newVehicle.GarageLocation = newSheet.Locations.FirstOrDefault (l => l.OriginalLocation.Id == GarageLocation.Id);
 			if (VehicleEffectiveDate > DateTime.MinValue)
 				newVehicle.VehicleEffectiveDate = VehicleEffectiveDate;
 			if (VehicleCeaseDate > DateTime.MinValue)

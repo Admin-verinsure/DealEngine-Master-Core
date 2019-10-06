@@ -2206,7 +2206,7 @@ namespace TechCertain.WebUI.Controllers
 
             _programmeService.Update(newClientProgramme);
 
-            return Redirect("/Information/StartInformation/" + newClientProgramme.Id);
+            return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
         }
 
         [HttpGet]

@@ -308,10 +308,12 @@ namespace TechCertain.Domain.Entities
             //newBoat.BoatUse = BoatUse;
 
             newBoat.BoatNotes = BoatNotes;
-            newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
-            newBoat.BoatLandLocation = newSheet.Buildings.FirstOrDefault(ll => ll.OriginalBuilding.Id == Id);
-            newBoat.BoatTrailer = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == Id);
-            newBoat.BoatOperator = newSheet.Organisation.FirstOrDefault(boper => boper.Id == Id);
+            //newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
+            newBoat.BoatWaterLocation = BoatWaterLocation;
+            newBoat.BoatLandLocation = newSheet.Buildings.FirstOrDefault(ll => ll.OriginalBuilding.Id == BoatLandLocation.Id);
+            newBoat.BoatTrailer = newSheet.Vehicles.FirstOrDefault(bv => bv.OriginalVehicle.Id == BoatTrailer.Id);
+            //newBoat.BoatOperator = newSheet.Organisation.FirstOrDefault(boper => boper.Id == Id);
+            newBoat.BoatOperator = BoatOperator;
             if (BoatEffectiveDate > DateTime.MinValue)
                 newBoat.BoatEffectiveDate = BoatEffectiveDate;
             if (BoatCeaseDate > DateTime.MinValue)
@@ -324,6 +326,10 @@ namespace TechCertain.Domain.Entities
             newBoat.BoatIsTrailered = BoatIsTrailered;
             newBoat.BoatQuickQuotePremium = BoatQuickQuotePremium;
             newBoat.BoatQuoteExcessOption = BoatQuoteExcessOption;
+            newBoat.OtherMarinaName = OtherMarinaName;
+            newBoat.OtherMarina = OtherMarina;
+            newBoat.VesselArea = VesselArea;
+            newBoat.WaterLocationMooringType = WaterLocationMooringType;
             newBoat.OriginalBoat = this;
             return newBoat;
         }
