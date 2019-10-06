@@ -1,35 +1,39 @@
 ﻿using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
-using TechCertain.Domain.Services.Factories;
+using System.Linq;
 using TechCertain.Services.Interfaces;
+using System;
 
 namespace TechCertain.Services.Impl
 {
     public class ProposalBuilderService : IProposalBuilderService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ProposalTemplateFactory _proposalTemplateFactory;
+        readonly IMapperSession<ProposalTemplate> _proposalTemplateRepository;
 
-        public ProposalBuilderService(IUnitOfWork unitOfWork, ProposalTemplateFactory proposalTemplateFactory)
+        public ProposalBuilderService(IUnitOfWork unitOfWork, IMapperSession<ProposalTemplate> proposalTemplateRepository)
         {
             _unitOfWork = unitOfWork;
-            _proposalTemplateFactory = proposalTemplateFactory;
+            _proposalTemplateRepository = proposalTemplateRepository;
         }
 
         public ProposalTemplate CreateProposalTemplate(Owner owner, string proposalTemplateName, bool isPrivate, Organisation organisation)
         {
             ProposalTemplate proposalTemplate = null;
 
+            if (_proposalTemplateRepository.FindAll().Any(c => c.Name == proposalTemplateName))
+            {
+                throw new ArgumentException("There is already a proposal template with that name!");
+            }
+
             using (var uow = _unitOfWork.BeginUnitOfWork()) {               
 
-                //proposalTemplate = _proposalTemplateFactory.CreateProposalTemplate(owner, proposalTemplateName, false);
-
-                //uow.Add<ProposalTemplate>(proposalTemplate);
-
-                //uow.Complete();
+                proposalTemplate = new ProposalTemplate(owner, owner, proposalTemplateName, isPrivate);
+                _proposalTemplateRepository.Add(proposalTemplate);
+                uow.Commit();
             }
 
             return proposalTemplate;
-        }        
+        }
     }
 }

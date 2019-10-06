@@ -2631,7 +2631,7 @@ namespace TechCertain.WebUI.Controllers
         #region CoastGuardSelfReg
 
         [HttpPost]
-        public ActionResult CoastGuardSelfReg(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+        public async System.Threading.Tasks.Task<ActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
 
@@ -2691,7 +2691,7 @@ namespace TechCertain.WebUI.Controllers
             organisationType = _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
             if (organisationType == null)
             {
-                organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, orgTypeName);               
+                organisationType = _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);               
             }
             Organisation organisation = null;
             organisation = _organisationService.GetOrganisationByEmail(email);
@@ -2699,7 +2699,7 @@ namespace TechCertain.WebUI.Controllers
             //condition for organisation exists
             if (organisation == null)
             {
-                organisation = new Organisation(CurrentUser, Guid.NewGuid(), organisationName, organisationType);
+                organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
                 organisation.Phone = phonenumber;
                 organisation.Email = email;
                 _organisationService.CreateNewOrganisation(organisation);                
@@ -2732,7 +2732,7 @@ namespace TechCertain.WebUI.Controllers
                         //var personalOrganisation = new Organisation (CurrentUser, Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser, "personal"));
                         //_organisationService.CreateNewOrganisation (personalOrganisation);
                         // create user object
-                        user = new User(CurrentUser, Guid.NewGuid(), username);
+                        user = new User(null, Guid.NewGuid(), username);
                         user.FirstName = firstName;
                         user.LastName = lastName;
                         user.FullName = firstName + " " + lastName;

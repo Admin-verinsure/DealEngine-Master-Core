@@ -13,15 +13,15 @@ namespace TechCertain.Domain.Interfaces
         public NHibernateUnitOfWork(ISession session)
         {
             if (session == null) throw new ArgumentNullException("session");
-
             _session = session;
-            _transaction = session.BeginTransaction();
+            _transaction = _session.BeginTransaction();
+
         }
 
         public async Task Commit()
         {
             try
-            {
+            {               
                 await _transaction.CommitAsync();
             }
             catch(Exception ex)
@@ -46,7 +46,7 @@ namespace TechCertain.Domain.Interfaces
         {
             if (_transaction != null)
             {
-                 Dispose();                
+                Dispose();
             }
         }
 

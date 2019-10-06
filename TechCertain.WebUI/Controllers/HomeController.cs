@@ -24,7 +24,7 @@ namespace TechCertain.WebUI.Controllers
     //[Route("Home")]
     public class HomeController : BaseController
     {        
-        IMapper _mapper;
+        //IMapper _mapper;
         //IInformationTemplateService _informationService;
         ICilentInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
@@ -38,7 +38,7 @@ namespace TechCertain.WebUI.Controllers
                               IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base(userRepository, dealEngineDBContext)
         {            
-            _mapper = mapper;
+            //_mapper = mapper;
             //_informationService = informationService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;

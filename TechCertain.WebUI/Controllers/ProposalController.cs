@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Web;
-using System.Collections.Generic;
 using TechCertain.Services.Interfaces;
-using System.Linq;
-using TechCertain.Domain.Interfaces;
-using TechCertain.Domain.Services.Factories;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Proposal;
@@ -15,10 +10,7 @@ namespace TechCertain.WebUI.Controllers
     public class ProposalController : BaseController
     {
         IProposalBuilderService _proposalBuilderService;
-        ProposalTemplateFactory _proposalTemplateFactory;
-
-        public ProposalController(
-			IUserService userRepository, DealEngineDBContext dealEngineDBContext) : base(userRepository, dealEngineDBContext)
+        public ProposalController(IUserService userRepository, DealEngineDBContext dealEngineDBContext) : base(userRepository, dealEngineDBContext)
         {
 
         }

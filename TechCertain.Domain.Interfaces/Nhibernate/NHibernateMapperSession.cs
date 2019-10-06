@@ -21,7 +21,7 @@ namespace TechCertain.Domain.Interfaces
         {
             if (entity == null) throw new ArgumentNullException("entity");
             // not, not SaveOrUpdate as we don't need Update if we use Unit of Work semantics            
-            _session.SaveOrUpdateAsync(entity);
+            _session.SaveAsync(entity);
         }
 
         public IQueryable<TEntity> FindAll()
@@ -47,7 +47,7 @@ namespace TechCertain.Domain.Interfaces
 
         public void Update(TEntity entity)
         {
-            _session.UpdateAsync(entity);
+            _session.SaveOrUpdateAsync(entity);
         }
     }
 }

@@ -1,20 +1,17 @@
 ﻿﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 using Microsoft.AspNetCore.HttpOverrides;
 using DealEngine.Infrastructure.AppInitialize.Nhibernate;
-using DealEngine.Infrastructure.Identity.Data;
 using DealEngine.Infrastructure.AppInitialize.BaseLdapPackage;
 using DealEngine.Infrastructure.AppInitialize.Services;
 using DealEngine.Infrastructure.AppInitialize.Repositories;
-using Microsoft.Extensions.Logging;
 using TechCertain.WebUI.Models;
-using DealEngine.Infrastructure.AppInitialize;
+using TechCertain.Domain.Interfaces;
+using TechCertain.Services.Impl;
 
 namespace TechCertain.WebUI
 {
@@ -52,16 +49,17 @@ namespace TechCertain.WebUI
 
             //registering services in DI <-- see AppInitialize for process
             //start of removing simpleinjector
-            services.AddFactories();
+            
             services.AddNHibernate();
             services.AddSingleton(MapperConfig.ConfigureMaps());
-            services.AddLogging();
-            services.AddServices();
+            services.AddLogging();            
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddBaseLdapPackage();
-            services.AddResponseCaching();
+            services.AddResponseCaching();            
             services.AddServices();
+            //services.AddSingleton<IUnderwritingModule>(); // We must explicitly register Foo
+            
 
             //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
