@@ -1,6 +1,6 @@
 ﻿<!-- collapse menu button -->
 <div id="hide-menu" class="btn-header pull-right">
-    <span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+    @*<span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>*@
 </div>
 <!-- end collapse menu -->
 <!-- #MOBILE -->
@@ -28,7 +28,7 @@
             </li>
             <li class="divider"></li>
             <li>
-                <a href="~/Account/Login" class="padding-10 padding-top-5 padding-bottom-5" data-action="userLogout"><i class="fa fa-sign-out fa-lg"></i> <strong><>L</>ogout</strong></a>
+                <a href="~/Account/Login" class="padding-10 padding-top-5 padding-bottom-5" data-action="userLogout"><i class="fa fa-sign-out fa-lg "></i> <strong><>L</>ogout</strong></a>
                 @*TODO Change back when mono 4.3 or later is installed*@
                 @*<a href="@Url.Action("login", "account")" class="padding-10 padding-top-5 padding-bottom-5" data-action="userLogout"><i class="fa fa-sign-out fa-lg"></i> <strong><>L</>ogout</strong></a>*@
             </li>
@@ -37,11 +37,26 @@
 </ul>
 <!-- logout button -->
 <div id="logout" class="btn-header transparent pull-right">
-    <span>
-        <a href="~/Account/Login" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"></i></a>
-        @*TODO Change back when mono 4.3 or later is installed*@
-        @*<a href="@Url.Action("login", "account")" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"></i></a>*@
-    </span>
+
+      
+            <a href="~/Account/Profile"><i class="fa fa-user" style="font-size:28px; margin-top:13px;"></i></a>
+            <a href="~/Home/Index"><i class="fa fa-home"  style="font-size:28px; margin-top:13px;"></i></a>
+            <a href="~/Account/Profile"><i class="fa fa-search"  style="font-size:28px;margin-top:13px;"></i></a>
+            <a href="~/Account/Login" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"  style="font-size:28px;margin-top:13px;"></i></a>
+
+
+    @*<div>
+        <ul>
+            <li><a href="~/Account/Profile"><i class="fa fa-user txt-color-orangeDark"></i></a></li>
+            <li><a href="~/Home/Index"><i class="fa fa-home txt-color-orangeDark"></i></a></li>
+            <li><a href="~/Account/Profile"><i class="fa fa-search txt-color-orangeDark"></i></a></li>
+            <li><a href="~/Account/Login" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out txt-color-orangeDark"></i></a></li>
+        </ul>
+    </div>*@
+
+
+    @*TODO Change back when mono 4.3 or later is installed*@
+    @*<a href="@Url.Action("login", "account")" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"></i></a>*@
 </div>
 <!-- end logout button -->
 @if (false@*Html.DemoEnvironment()*@)

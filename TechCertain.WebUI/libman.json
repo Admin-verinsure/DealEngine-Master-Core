@@ -25,6 +25,10 @@
     {
       "library": "popper.js@1.15.0",
       "destination": "wwwroot/lib/popper.js/"
+    },
+    {
+      "library": "multiselect@2.2.9",
+      "destination": "wwwroot/lib/multiselect/"
     }
   ]
 }
