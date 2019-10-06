@@ -8,7 +8,6 @@ using ServiceStack;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
 
 namespace TechCertain.Services.Impl
 {
@@ -16,10 +15,17 @@ namespace TechCertain.Services.Impl
 	{
 		ILogger _logging;
 
-		string _apiEndpoint;
+        string _apiEndpoint;
 		string _apiKey;
 
-		public VehicleService (ILogger logging)
+        //private readonly AppSettings _appSettings;
+
+        //public VehicleService(IOptions<AppSettings> appSettings)
+        //{
+        //    _appSettings = appSettings.Value;
+        //}
+
+        public VehicleService (ILogger logging)
 		{
 			_logging = logging;
 
@@ -28,6 +34,9 @@ namespace TechCertain.Services.Impl
 
             _apiEndpoint = "https://test.carjam.co.nz/api/";
             _apiKey = "6C2FC149A76FF9F13152D0837A236645D242275E";
+
+            //_apiEndpoint = _appSettings.CarJamEndpoint;
+            //_apiKey = _appSettings.CarJamApiKey;
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}

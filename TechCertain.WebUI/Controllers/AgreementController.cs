@@ -1498,7 +1498,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = "localhost:44323";
+            //string domainQueryString = "localhost:44323";
+            string domainQueryString = "staging.mydealslive.com";
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
