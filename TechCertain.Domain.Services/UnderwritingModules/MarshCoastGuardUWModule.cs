@@ -348,7 +348,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             //Claim over $5k of losses
             uwrfclaimover5koflosses(underwritingUser, agreement);
             //Prior insurance
-            uwrfpriorinsurance(underwritingUser, agreement);
+            //uwrfpriorinsurance(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)

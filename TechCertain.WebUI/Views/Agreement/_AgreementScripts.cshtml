@@ -378,7 +378,7 @@
         //var notes = $('#AuthorisedComment').val();
         var notes = $('#AuthorisationNotes').val();
 
-         var prodData = {
+         var postData = {
                 "InformationId": sheetId,
                 "AgreementId": agreementid,
                 "RefferLodPrc": loadValPerc,
@@ -388,18 +388,20 @@
           $.ajax({
                 url: '@Url.Action("AuthorisedReferral", "Agreement")',
                 type: "POST",
-                contentType: "application/json; charset=utf-8",
-	            data: JSON.stringify({clientAgreementModel: prodData })
+              //  contentType: "application/json; charset=utf-8",
+              //data: JSON.stringify({ clientAgreementModel: prodData })
+                data: postData,
+                async: true
             })
            .done(function (data) {
                //alert("Saved Successfully!");
-               //debugger;
-               $.smallBox({
-                   title: "Referrals have been authorised",
-                   color: "#5F895F",
-                   iconSmall: "fa fa-check bounce animated",
-                   timeout: 4000
-               });
+               debugger;
+               //$.smallBox({
+               //    title: "Referrals have been authorised",
+               //    color: "#5F895F",
+               //    iconSmall: "fa fa-check bounce animated",
+               //    timeout: 4000
+               //});
                window.location.href = data.Url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
@@ -431,7 +433,7 @@
                    iconSmall: "fa fa-check bounce animated",
                    timeout: 4000
                });
-               window.location.href = data.Url;
+               window.location.href = data.url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
             //debugger;
