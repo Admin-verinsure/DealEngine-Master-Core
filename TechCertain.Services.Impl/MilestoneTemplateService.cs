@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class MilestoneTemplateService : IMilestoneTemplateService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<MilestoneTemplate> _milestoneTemplateRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<MilestoneTemplate> _milestoneTemplateRepository;
 
-        public MilestoneTemplateService(IUnitOfWorkFactory unitOfWork, IRepository<MilestoneTemplate> milestoneTemplateRepository)
+        public MilestoneTemplateService(IUnitOfWork unitOfWork, IMapperSession<MilestoneTemplate> milestoneTemplateRepository)
         {
             _unitOfWork = unitOfWork;
             _milestoneTemplateRepository = milestoneTemplateRepository;

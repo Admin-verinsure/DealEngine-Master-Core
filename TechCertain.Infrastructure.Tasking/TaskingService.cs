@@ -9,10 +9,10 @@ namespace TechCertain.Infrastructure.Tasking
 {
 	public class TaskingService : ITaskingService
 	{
-		IUnitOfWorkFactory _unitOfWork;
-		IRepository<UserTask> _taskRespository;
+		IUnitOfWork _unitOfWork;
+        IMapperSession<UserTask> _taskRespository;
 
-		public TaskingService (IUnitOfWorkFactory unitOfWork, IRepository<UserTask> taskRespository)
+		public TaskingService (IUnitOfWork unitOfWork, IMapperSession<UserTask> taskRespository)
 		{
 			_unitOfWork = unitOfWork;
 			_taskRespository = taskRespository;

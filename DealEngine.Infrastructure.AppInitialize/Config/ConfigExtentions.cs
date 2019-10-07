@@ -1,14 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.Ldap;
-using TechCertain.Infrastructure.Ldap.Interfaces;
-using TechCertain.Infrastructure.Ldap.Mapping;
-using TechCertain.Infrastructure.Ldap.Services;
+using Microsoft.Extensions.Logging;
 
-namespace DealEngine.Infrastructure.AppInitialize.BaseLdapPackage
+namespace DealEngine.Infrastructure.AppInitialize
 {
     public static class ConfigExtentions
     {
@@ -18,7 +11,9 @@ namespace DealEngine.Infrastructure.AppInitialize.BaseLdapPackage
             //    typeof(ProductConfigure),
             //    typeof(AppRolesGroupsConfigure) });
 
-            //services.AddScoped<ILogger>();
+            //services.AddScoped<ILogger>();           
+            services.AddSingleton(typeof(ILogger));
+
 
             return services;
         }

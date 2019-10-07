@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class PaymentGatewayService : IPaymentGatewayService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<PaymentGateway> _paymentGatewayRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<PaymentGateway> _paymentGatewayRepository;
 
-        public PaymentGatewayService(IUnitOfWorkFactory unitOfWork, IRepository<PaymentGateway> paymentGatewayRepository)
+        public PaymentGatewayService(IUnitOfWork unitOfWork, IMapperSession<PaymentGateway> paymentGatewayRepository)
         {
             _unitOfWork = unitOfWork;
             _paymentGatewayRepository = paymentGatewayRepository;

@@ -2,18 +2,15 @@
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Configuration;
 using System.Xml.Linq;
 using ServiceStack;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
 	public class VehicleService : IVehicleService
 	{
-		ILogger _logging;
 
         string _apiEndpoint;
 		string _apiKey;
@@ -25,10 +22,8 @@ namespace TechCertain.Services.Impl
         //    _appSettings = appSettings.Value;
         //}
 
-        public VehicleService (ILogger logging)
+        public VehicleService ()
 		{
-			_logging = logging;
-
             //_apiEndpoint = ConfigurationManager.AppSettings ["CarJamEndpoint"];
             //_apiKey = ConfigurationManager.AppSettings ["CarJamApiKey"];
 

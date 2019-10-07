@@ -9,14 +9,15 @@ namespace TechCertain.Services.Impl
 {
 	public class ProgrammeService : IProgrammeService
 	{
-		IUnitOfWorkFactory _unitOfWorkFactory;
-		IRepository<Programme> _programmeRepository;
-		IRepository<ClientProgramme> _clientProgrammeRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<Programme> _programmeRepository;
+		IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IReferenceService _referenceService;
 
-        public ProgrammeService (IUnitOfWorkFactory unitOfWorkFactory, IRepository<Programme> programmeRepository, IRepository<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
-		{
-			_unitOfWorkFactory = unitOfWorkFactory;
+
+        public ProgrammeService (IUnitOfWork unitOfWork, IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
+        {
+            _unitOfWork = unitOfWork;
 			_programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
@@ -69,7 +70,7 @@ namespace TechCertain.Services.Impl
 
 		public void Update (params ClientProgramme [] clientProgrammes)
 		{
-			using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork ()) {
+			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
 				foreach (ClientProgramme clientProgramme in clientProgrammes)
 					_clientProgrammeRepository.Add (clientProgramme);
 				uow.Commit ();

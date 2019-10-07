@@ -8,12 +8,12 @@ namespace DealEngine.Infrastructure.AppInitialize
 {
     public class ProductConfigure : IAppConfigure
     {
-        IUnitOfWorkFactory _uowFactory;
-        IRepository<Product> _productRepository;
-        IRepository<RiskCategory> _riskCategoryRepository;
-        IRepository<Organisation> _organisationRepository;
+        IUnitOfWork _uowFactory;
+        IMapperSession<Product> _productRepository;
+        IMapperSession<RiskCategory> _riskCategoryRepository;
+        IMapperSession<Organisation> _organisationRepository;
 
-        public ProductConfigure(IUnitOfWorkFactory uowFactory, IRepository<Product> productRepository, IRepository<RiskCategory> riskCategoryRepository, IRepository<Organisation> organisationRepository)
+        public ProductConfigure(IUnitOfWork uowFactory, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskCategoryRepository, IMapperSession<Organisation> organisationRepository)
         {
             _uowFactory = uowFactory;
             _productRepository = productRepository;

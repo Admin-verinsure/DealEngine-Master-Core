@@ -12,19 +12,17 @@ namespace TechCertain.Services.Impl
 
 	public class AuthenticationService : IAuthenticationService
 	{
-		IUnitOfWorkFactory _unitOfWork;
+		IUnitOfWork _unitOfWork;
 		IUserService _userService;
-		IRepository<SingleUseToken> _singleTokenRepository;
-		ILdapService _ldapService;
-		ILogger _logger;
+		IMapperSession<SingleUseToken> _singleTokenRepository;
+		ILdapService _ldapService;		
 
-		public AuthenticationService (IUnitOfWorkFactory unitOfWork, IUserService userRepository, IRepository<SingleUseToken> singleTokenRepository, ILdapService ldapService, ILogger logger)
+		public AuthenticationService (IUnitOfWork unitOfWork, IUserService userRepository, IMapperSession<SingleUseToken> singleTokenRepository, ILdapService ldapService)
 		{
 			_unitOfWork = unitOfWork;
             _userService = userRepository;
 			_singleTokenRepository = singleTokenRepository;
-			_ldapService = ldapService;
-			_logger = logger;
+			_ldapService = ldapService;		
 		}
 
 		#region IAuthenticationService implementation
@@ -45,7 +43,7 @@ namespace TechCertain.Services.Impl
 				throw new AuthenticationException (resultMessage) { ErrorCode = resultCode, User = username };
 			}
 			catch (Exception ex) {
-				_logger.Error (ex);
+				throw new Exception(ex.Message);
 			}
 
 			return null;

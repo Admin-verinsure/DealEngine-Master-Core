@@ -11,24 +11,20 @@ namespace TechCertain.Services.Impl
 {
     public class UserService : IUserService
     {
-        IUnitOfWorkFactory _unitOfWork;
-		ILogger _logger;
+        IUnitOfWork _unitOfWork;
 		IUserRepository _userRepository;
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
         IOrganisationTypeService _organisationTypeService;
-        UserManager<User> _userManager;
 
 
-        public UserService(IUnitOfWorkFactory unitOfWork, ILogger logger, IUserRepository userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService, UserManager<User> userManager)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService)
         {
             _unitOfWork = unitOfWork;
-			_logger = logger;
 			_userRepository = userRepository;
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
             _organisationTypeService = organisationTypeService;
-            _userManager = userManager;
         }
 
         //public async Task<User> GetCurrentUserAsync()
@@ -146,14 +142,12 @@ namespace TechCertain.Services.Impl
 
 		public void IssueLocalBan (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been locked locally by [" + banningUser.UserName + "]");
 			user.Lock ();
 			Update (user);
 		}
 
 		public void RemoveLocalban (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been unlocked locally by [" + banningUser.UserName + "]");
 			user.Unlock ();
 			Update (user);
 		}
@@ -165,13 +159,11 @@ namespace TechCertain.Services.Impl
 
 		public void IssueGlobalBan (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been locked globally by [" + banningUser.UserName + "]");
 			_ldapService.GlobalBan (user);
 		}
 
 		public void RemoveGlobalBan (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been unlocked globally by [" + banningUser.UserName + "]");
 			_ldapService.RemoveGlobalBan (user);
 		}
 

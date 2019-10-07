@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 
 namespace TechCertain.WebUI.Controllers
@@ -15,15 +15,15 @@ namespace TechCertain.WebUI.Controllers
     {
         private IInformationBuilderService _informationBuilderService;
 		IMapper _mapper;
-		IRepository<InformationTemplate> _templateRepository;
-        IRepository<InformationItem> _informationItemRepository;
-        IRepository<InformationSection> _informationSectionRepository;
+		IMapperSession<InformationTemplate> _templateRepository;
+        IMapperSession<InformationItem> _informationItemRepository;
+        IMapperSession<InformationSection> _informationSectionRepository;
 
 
-        IUnitOfWorkFactory _unitOfWork;
+        IUnitOfWork _unitOfWork;
 
         //public InformationBuilderController(IInformationBuilderService informationBuilderService)
-		public InformationBuilderController(IUserService userService, DealEngineDBContext dealEngineDBContext, IMapper mapper, IRepository<InformationSection> informationSectionRepository, IRepository<InformationItem> informationItemRepository, IRepository<InformationTemplate> templateRepository, IUnitOfWorkFactory unitOfWork)
+		public InformationBuilderController(IUserService userService, DealEngineDBContext dealEngineDBContext, IMapper mapper, IMapperSession<InformationSection> informationSectionRepository, IMapperSession<InformationItem> informationItemRepository, IMapperSession<InformationTemplate> templateRepository, IUnitOfWork unitOfWork)
 			: base(userService, dealEngineDBContext)
         {
             _informationBuilderService = new InformationBuilderService(new InformationBuilderFactory());

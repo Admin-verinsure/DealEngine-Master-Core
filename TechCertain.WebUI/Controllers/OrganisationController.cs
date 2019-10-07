@@ -6,7 +6,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -16,18 +16,18 @@ namespace TechCertain.WebUI.Controllers
         private readonly IOrganisationTypeService _organisationTypeService;
         IInsuranceAttributeService _insuranceAttributeService;
 
-        IUnitOfWorkFactory _unitOfWork;
+        IUnitOfWork _unitOfWork;
 
         //private readonly ICompanyService _companyService;
 
-        public OrganisationController(IOrganisationService organisationService, DealEngineDBContext dealEngineDBContext, IOrganisationTypeService organisationTypeService, IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService,
+        public OrganisationController(IOrganisationService organisationService, DealEngineDBContext dealEngineDBContext, IOrganisationTypeService organisationTypeService, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService,
             IUserService userRepository)//(ICompanyService companyService)
             : base(userRepository, dealEngineDBContext)
         {
             _organisationService = organisationService;
             _organisationTypeService = organisationTypeService;
             _insuranceAttributeService = insuranceAttributeService;
-            _unitOfWork = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
             _insuranceAttributeService = insuranceAttributeService;
             //_companyService = companyService;
         }

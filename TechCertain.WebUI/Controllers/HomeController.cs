@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Controllers;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 #endregion
 
@@ -23,25 +23,23 @@ namespace TechCertain.WebUI.Controllers
 {
     //[Route("Home")]
     public class HomeController : BaseController
-    {
-        ILogger _logger;
-        IMapper _mapper;
-        IInformationTemplateService _informationService;
+    {        
+        //IMapper _mapper;
+        //IInformationTemplateService _informationService;
         ICilentInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
 
-        IRepository<Product> _productRepositoy;
-        IRepository<Programme> _programmeRepository;
+        IMapperSession<Product> _productRepositoy;
+        IMapperSession<Programme> _programmeRepository;
 
-        public HomeController(ILogger logger, DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository, IInformationTemplateService informationService,
+        public HomeController(DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
-                              IRepository<Product> productRepository, IRepository<Programme> programmeRepository)
+                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base(userRepository, dealEngineDBContext)
-        {
-            _logger = logger;
-            _mapper = mapper;
-            _informationService = informationService;
+        {            
+            //_mapper = mapper;
+            //_informationService = informationService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;

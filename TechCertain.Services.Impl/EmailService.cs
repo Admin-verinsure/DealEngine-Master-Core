@@ -19,19 +19,17 @@ namespace TechCertain.Services.Impl
 {
 	public class EmailService : IEmailService
 	{
-		IUserService _userService;
-		ILogger _logger;
+		IUserService _userService;		
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
-        IUnitOfWorkFactory _unitOfWorkFactory;
+        IUnitOfWork _unitOfWork;
 
-        public EmailService (IUserService userService, ILogger logger, IFileService fileService, ISystemEmailService systemEmailService, IUnitOfWorkFactory unitOfWorkFactory)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IUnitOfWork unitOfWork)
 		{
-			_userService = userService;
-			_logger = logger;
+			_userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
         }
 
 		#region IEmailService implementation
@@ -273,7 +271,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
                     uow.Commit();
@@ -318,7 +316,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment Fail config Notification Sent"));
                     uow.Commit();
@@ -363,7 +361,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Invoice fail config Notification Sent"));
                     uow.Commit();
@@ -409,7 +407,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Invoice success config Notification Sent"));
                     uow.Commit();
@@ -454,7 +452,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Information Sheet Issue Notification Sent"));
                     uow.Commit();
@@ -500,7 +498,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
                     uow.Commit();
@@ -543,7 +541,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Notification Sent"));
                     uow.Commit();
@@ -589,7 +587,7 @@ namespace TechCertain.Services.Impl
 
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, agreement, "Agreement Referral Notification Sent"));
                     uow.Commit();
@@ -635,7 +633,7 @@ namespace TechCertain.Services.Impl
 
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(issuer, sheet, agreement, "Agreement Issue Notification Sent"));
                     uow.Commit();
@@ -682,7 +680,7 @@ namespace TechCertain.Services.Impl
 
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(binder, sheet, agreement, "Agreement Bound Notification Sent"));
                     uow.Commit();
@@ -727,7 +725,7 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Create Other Marina Notification Email to TC Sent"));
                     uow.Commit();

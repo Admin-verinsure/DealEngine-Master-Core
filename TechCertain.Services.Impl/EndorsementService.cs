@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
     {
         public class EndorsementService : IEndorsementService
     {
-            IUnitOfWorkFactory _unitOfWork;
-            IRepository<Endorsement> _endorsementRepository;
+            IUnitOfWork _unitOfWork;
+            IMapperSession<Endorsement> _endorsementRepository;
 
-            public EndorsementService(IUnitOfWorkFactory unitOfWork, IRepository<Endorsement> endorsementRepository)
+            public EndorsementService(IUnitOfWork unitOfWork, IMapperSession<Endorsement> endorsementRepository)
             {
                 _unitOfWork = unitOfWork;
                 _endorsementRepository = endorsementRepository;

@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class EmailTemplateService : IEmailTemplateService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<EmailTemplate> _emailTemplateRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<EmailTemplate> _emailTemplateRepository;
 
-        public EmailTemplateService(IUnitOfWorkFactory unitOfWork, IRepository<EmailTemplate> emailTemplateRepository)
+        public EmailTemplateService(IUnitOfWork unitOfWork, IMapperSession<EmailTemplate> emailTemplateRepository)
         {
             _unitOfWork = unitOfWork;
             _emailTemplateRepository = emailTemplateRepository;

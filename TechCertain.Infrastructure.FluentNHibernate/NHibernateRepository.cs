@@ -14,7 +14,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
     /// If we Delete an entity it should be deleted from the db.
     /// No need for Update() or Save() or Write() or nonsense like that!
     /// </remarks>
-    public class NHibernateRepository<TEntity> : IRepository<TEntity> where TEntity : class, IAggregateRoot
+    public class NHibernateRepository<TEntity> : IMapperSession<TEntity> where TEntity : class, IAggregateRoot
     {
         private readonly ISession session;
 
@@ -48,9 +48,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
         {
             if (entity == null) throw new ArgumentNullException("entity");
             // not, not SaveOrUpdate as we don't need Update if we use Unit of Work semantics            
-
-            
-
+           
             session.SaveOrUpdate(entity);
         }
 

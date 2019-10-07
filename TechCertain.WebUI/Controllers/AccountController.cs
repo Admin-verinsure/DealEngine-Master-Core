@@ -1,24 +1,20 @@
 ﻿#region Using
 
 using System;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Exceptions;
-using TechCertain.Domain.Interfaces;
 using System.Collections.Generic;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using TechCertain.WebUI.Models;
 using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
-using DealEngine.Infrastructure.Identity;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Identity;
+
 
 
 #endregion
@@ -28,41 +24,31 @@ namespace TechCertain.WebUI.Controllers
     //[Authorize]
     public class AccountController : BaseController
     {
-        //IAuthenticationService _authenticationService;
-		//IRolePermissionsService _permissionsService;
-
-        ILogger _logger;
         IEmailService _emailService;
 		IFileService _fileService;
+        ISignInManager<DealEngineUser> _signInManager;
+        UserManager<DealEngineUser> _userManager;
 
-        ISignInManager _signInManager;
-        UserManager<User> _userManager;
         DealEngineDBContext _context;
         IProgrammeService _programmeService;
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
-
-        public AccountController(ISignInManager signInManager,
-            DealEngineDBContext dealEngineDBContext,
+        
+        public AccountController(
+            ISignInManager<DealEngineUser> signInManager,
+            UserManager<DealEngineUser> userManager,
             IUserService userRepository,
-            DealEngineDBContext context,
-            ILogger logger,
+            DealEngineDBContext dealEngineDBContext,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, UserManager<User> userManager) : base (userRepository, dealEngineDBContext)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository, dealEngineDBContext)
 		{
-            //_authenticationService = authenticationService;
-            //_permissionsService = permissionsService;
-
-             
+            _userManager = userManager;
+            _signInManager = signInManager;
             _userService = userRepository;
-            _logger = logger;
             _emailService = emailService;
 			_fileService = fileService;
-            _context = context;
-            _signInManager = signInManager;
-            _userManager = userManager;
-
+            _context = dealEngineDBContext;
             _programmeService = programeService;
             _clientInformationService = clientInformationService;
             _organisationService = organisationService;
@@ -131,13 +117,12 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (System.Net.Mail.SmtpFailedRecipientsException exception) {
                 ErrorSignal.FromCurrentContext ().Raise (exception);
-                _logger.Error (string.Format ("Error sending email to {0}. Reason: {1}" + Environment.NewLine + "{2}", exception.FailedRecipient, exception.StatusCode, exception));
+               
 
                 ModelState.AddModelError ("FailureMessage", errorMessage);
                 return View(viewModel);
             }
-            catch (MailKit.Net.Smtp.SmtpCommandException ex) {
-                _logger.Error (ex, "Error sending Password Reset Email. Email system is most likely down");
+            catch (MailKit.Net.Smtp.SmtpCommandException ex) {               
 
                 ModelState.AddModelError ("FailureMessage", "Oops, Email services are currently unavailable. The techinical support staff have also been notified, and your password reset email will be sent once services have been restored.");
 				return View (viewModel);
@@ -221,11 +206,11 @@ namespace TechCertain.WebUI.Controllers
 			}
 			catch (AuthenticationException ex) {
 				ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");
-				_logger.Error (ex);
+				
 			}
 			catch (Exception ex) {
 				ModelState.AddModelError ("passwordConfirm", "There was an error while trying to change your password.");
-				_logger.Error (ex);
+				
 			}
 
 			return View ();
@@ -294,76 +279,19 @@ namespace TechCertain.WebUI.Controllers
             {
 				username = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
-
-                var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
+                await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
+                //var user1 = new DealEngineUser { UserName = username };
                 
-
-                if (result.Succeeded)
-                {
-                    var user = _userService.GetUser(username);
-                    var user1 = new DealEngineUser(username);
-                    try
-                    {
-                        _context.Users.Add(user1);
-                        _context.SaveChanges();
-                    }
-                    catch(Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
-                    //var result1 = await UserManager<IdentityUser>.CreateAsync(user1, password);
-                    //var manager = new UserManager<IdentityUser>(new UserStore<IdentityUser>);
-                    //Task<IdentityResult> result1 = await UserManager<User>.AddClaimAsync(user, new System.Security.Claims.Claim(ClaimTypes.Name, username));
-                    
-                    //identity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, username));
-                    //await UserManager<User>.AddClaimAsync(user, identity);
-                    //claimsIdentity.Actor = user;
-                    //ClaimsPrincipal principal = user as ClaimsPrincipal;
-                }
-                else if(result.IsNotAllowed)
-                {
-                    throw new Exception("User [" + username + "] is currently locked on this server");
-                }
-
-                return RedirectToLocal(viewModel.ReturnUrl);
-                //if (signInResult == Microsoft.AspNetCore.Identity.SignInResult.Success)
-                //if (_signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false) == Microsoft.AspNetCore.Identity.SignInResult.Success)
+                //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
+                //var createUser = await _userManager.CreateAsync(user1, password);
+                //if(createUser.Succeeded)
                 //{
-                //    _signInManager.SyncUserFromAuth(username);
-                //    var user = _userService.GetUser(username);
-                //    if (_userService.IsUserLocalBanned(user))
-                //        throw new Exception("User [" + username + "] is currently locked on this server");
-
-                //    _permissionsService.SetDefaultPermissions(username);
-                //    _logger.Info("Authentication succeeded for [" + username + "]");
-
-                //    return RedirectToLocal(viewModel.ReturnUrl);
+                //    //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
+                //    await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
                 //}
 
-                //User user = _authenticationService.ValidateUser (username, password);
-
-                ////if (Membership.ValidateUser(username, password))
-                //if (user != null)
-                //{
-                //	// hopefully this error should be raised by the ldap repository before we get here
-                //	//if (user == null)
-                //	//	throw new UserImportException(string.Format("Could not import user {0}", username));
-
-                //	if (_userService.IsUserLocalBanned (user))
-                //		throw new Exception ("User [" + username + "] is currently locked on this server");
-
-                //	_permissionsService.SetDefaultPermissions (username);
-
-                //                //EnsureLoggedOut();
-                //	Session.Abandon();
-                //	FormsAuthentication.SetAuthCookie(user.UserName, true);
-                //	SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
-
-                //	_logger.Info("Authentication succeeded for [" + username + "]");
-
-                //	return RedirectToLocal(viewModel.ReturnUrl);
-                //            }
-                ////_logger.Info(string.Format("Login failed for {0}", username));
+                return RedirectToLocal(viewModel.ReturnUrl);
+ 
             }
 			catch (UserImportException ex)
 			{
@@ -374,7 +302,7 @@ namespace TechCertain.WebUI.Controllers
 			}
 			catch(Exception ex)
             {
-				_logger.Error(ex);
+                throw new Exception(ex.Message);
             }
 
             ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
@@ -440,8 +368,7 @@ namespace TechCertain.WebUI.Controllers
 			//	}
 			//}
 
-			//// If we got this far, something failed, redisplay form
-			_logger.Info (string.Format ("Login failed for {0}", username));
+			//// If we got this far, something failed, redisplay form			
 			ModelState.AddModelError ("", "The user name or password provided is incorrect.");
 			return View (viewModel);
 		}
@@ -624,12 +551,12 @@ namespace TechCertain.WebUI.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
-			_logger.Info ("[" + CurrentUser.UserName + "] has logged out.");
+			
 
-			//FormsAuthentication.SignOut();
-			//Session.Abandon();
+            //FormsAuthentication.SignOut();
+            //Session.Abandon();
 
-			_signInManager.SignOutAsync();
+            //_dealEngineSignInManager.SignOutAsync();
 
 			//HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
 
