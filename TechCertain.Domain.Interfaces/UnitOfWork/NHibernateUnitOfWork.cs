@@ -22,7 +22,7 @@ namespace TechCertain.Domain.Interfaces
         {
             try
             {               
-                await _transaction.CommitAsync();
+              _transaction.Commit();
             }
             catch(Exception ex)
             {

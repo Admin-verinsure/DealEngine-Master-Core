@@ -87,12 +87,12 @@ namespace TechCertain.Services.Impl
 			throw new Exception ("User with Id '" + userId + "' does not exist in the system");
 		}
 
-		public User GetUserByEmail (string email)
+		public async Task<User> GetUserByEmailAsync (string email)
 		{
             User user = null;
             try
             {
-                user = _userRepository.GetUserByEmail(email);
+                user = await _userRepository.GetUserByEmailAsync(email);
             }
             catch(Exception ex)
             {
@@ -111,12 +111,43 @@ namespace TechCertain.Services.Impl
 			//user = _legacyLdapService.GetLegacyUserByEmail (email);
 			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
 			if (user != null) {
-				Create (user);
-				return user;
+				Create (user);				
 			}
-			throw new Exception ("User with email '" + email + "' does not exist in the system");
+            return user;            
 		}
-      
+
+        public User GetUserByEmail(string email)
+        {
+            User user = null;
+            try
+            {
+                user = _userRepository.GetUserByEmail(email);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            // have a repo user? Return them
+            if (user != null)
+                return user;
+            user = _ldapService.GetUserByEmail(email);
+            // have a ldap user but no repo? Update NHibernate & return them
+            if (user != null)
+            {
+                Update(user);
+                return user;
+            }
+            //user = _legacyLdapService.GetLegacyUserByEmail (email);
+            // have a legacy ldap user only? Create them in Ldap & NHibernate & return them
+            if (user != null)
+            {
+                Create(user);
+                return user;
+            }
+            throw new Exception("User with email '" + email + "' does not exist in the system");
+        }
+
         public IEnumerable<User> GetAllUsers ()
 		{
 			return _userRepository.GetUsers ();
@@ -197,5 +228,10 @@ namespace TechCertain.Services.Impl
 			Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation (user, user, personalOrganisationType);
 			user.Organisations.Add (defaultOrganisation);
 		}
-	}
+
+        User IUserService.GetUserByEmailAsync(string email)
+        {
+            return GetUserByEmailAsync(email).Result;
+        }
+    }
 }

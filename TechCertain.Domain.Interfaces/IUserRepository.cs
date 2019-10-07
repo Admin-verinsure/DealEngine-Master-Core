@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Domain.Interfaces
@@ -41,7 +42,7 @@ namespace TechCertain.Domain.Interfaces
 		/// </summary>
 		/// <returns>The user.</returns>
 		/// <param name="userName">User name.</param>
-		User GetUserByEmail(string email);
+        User GetUserByEmail(string email);
 
         IEnumerable<User> GetUsers ();
 
@@ -69,5 +70,6 @@ namespace TechCertain.Domain.Interfaces
 		/// <param name="user">User.</param>
         bool Delete(User user);
         
+        Task<User> GetUserByEmailAsync(string email);
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
 using DealEngine.Infrastructure.Identity.Data;
+using System.Threading;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -45,11 +46,12 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 
+
         public ServicesController(IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
-            IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper,IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
+            IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
             : base(userService, dealEngineDBContext)
         {
@@ -2759,9 +2761,17 @@ namespace TechCertain.WebUI.Controllers
                 var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme"); //Marsh Coastguard
                 var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
 
-                User user3 = _userService.GetUserByEmail(email);
+                Thread.Sleep(2000);
+               
+                User user3 = _userService.GetUserByEmailAsync(email);
+                //Thread.Sleep(4000);
+
                 var reference = _referenceService.GetLatestReferenceId();
+                Thread.Sleep(2000);
+
                 var sheet = _clientInformationService.IssueInformationFor(user3, organisation, clientProgramme, reference);
+                Thread.Sleep(2000);
+
                 _referenceService.CreateClientInformationReference(sheet);
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
