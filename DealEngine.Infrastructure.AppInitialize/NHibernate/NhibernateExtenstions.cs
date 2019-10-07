@@ -17,7 +17,6 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
             services.AddScoped(factory => sessionFactory.OpenSession());
             services.AddTransient(typeof(IMapperSession<>), typeof(NHibernateMapperSession<>));
             services.AddTransient<IUnitOfWork, NHibernateUnitOfWork>();
-            services.AddTransient<IUnitOfWorkFactory, NHibernateUnitOfWorkFactory>();
 
             return services;
         }

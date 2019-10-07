@@ -121,7 +121,7 @@ namespace DealEngine.Infrastructure.Identity.Data
                     MapUserToUser(ldapUser, localUser);                    
                 }
 
-                return Task.FromResult(SignInResult.Success);
+                 return Task.FromResult(SignInResult.Success);
             }
             return Task.FromResult(SignInResult.Failed);
         }
