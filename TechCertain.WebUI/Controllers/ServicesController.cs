@@ -38,7 +38,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Product> _productRepository;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
-        IUnitOfWorkFactory _unitOfWork;
+        IUnitOfWork _unitOfWork;
         IMapperSession<Organisation> _OrganisationRepository;
         IReferenceService _referenceService;
         IEmailService _emailService;
@@ -51,7 +51,7 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
-            IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWorkFactory unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
+            IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
             : base(userService, dealEngineDBContext)
         {
