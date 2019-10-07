@@ -1125,7 +1125,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 Console.WriteLine(ex);
             }
-            ViewBag.Title = "Programme Email Template ";
+            ViewBag.Title = "View Information Sheet ";
             return View(model);
 
         }

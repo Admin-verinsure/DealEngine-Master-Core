@@ -158,12 +158,12 @@
                     data: JSON.stringify({ clientAgreementId: ClientAgreementId , sheetId: SheetId, type: Type}),
                     contentType: "application/json; charset=utf-8"
                 }).done(function (json) {
-                    $.smallBox({
-                        title: "Email has been saved",
-                        color: "#5F895F",
-                        iconSmall: "fa fa-check bounce animated",
-                        timeout: 4000
-                    })
+                    //$.smallBox({
+                    //    title: "Email has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //})
                         console.log(json);
                     })
     }
@@ -349,12 +349,12 @@
                 data: z
             })
                 .done(function (data) {
-                    $.smallBox({
-                        title: "Boat Use has been saved",
-                        color: "#5F895F",
-                        iconSmall: "fa fa-check bounce animated",
-                        timeout: 4000
-                    });
+                    //$.smallBox({
+                    //    title: "Boat Use has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
                     console.log(data);
                     $('#SelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory.substring(0, 4) + "</option>")
                     $('#SelectedBoatUse').trigger('chosen:updated');
@@ -368,14 +368,11 @@
     }
 
     function Authorise() {
-        debugger;
-        //var loadValPerc = $('#LoadValPerc').val();
-        //var loadValAmou = $('#LoadValAmou').val();
+        //debugger;
         var loadValPerc = $('#ReferralLoading').val();
         var loadValAmou = $('#ReferralAmount').val();
         var sheetId = $('#InformationSheetId').val();
         var agreementid = $('#ClientAgreementId').val();
-        //var notes = $('#AuthorisedComment').val();
         var notes = $('#AuthorisationNotes').val();
 
          var postData = {
@@ -395,14 +392,14 @@
             })
            .done(function (data) {
                //alert("Saved Successfully!");
-               debugger;
+               //debugger;
                //$.smallBox({
                //    title: "Referrals have been authorised",
                //    color: "#5F895F",
                //    iconSmall: "fa fa-check bounce animated",
                //    timeout: 4000
                //});
-               window.location.href = data.Url;
+               window.location.href = data.url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
             //debugger;
@@ -415,7 +412,7 @@
         var agreementid = $('#ClientAgreementId').val();
         var notes = $('#DeclineNotes').val();
 
-         var prodData = {
+         var postData = {
                 "InformationId": sheetId,
                 "AgreementId": agreementid,
                 "DeclineNotes" : notes
@@ -423,16 +420,18 @@
           $.ajax({
                 url: '@Url.Action("DeclineAgreement", "Agreement")',
                 type: "POST",
-                contentType: "application/json; charset=utf-8",
-	            data: JSON.stringify({clientAgreementModel: prodData })
+              //  contentType: "application/json; charset=utf-8",
+              //data: JSON.stringify({ clientAgreementModel: prodData })
+                data: postData,
+                async: true
             })
            .done(function (data) {
-               $.smallBox({
-                   title: "Agreement has been declined",
-                   color: "#5F895F",
-                   iconSmall: "fa fa-check bounce animated",
-                   timeout: 4000
-               });
+               //$.smallBox({
+               //    title: "Agreement has been declined",
+               //    color: "#5F895F",
+               //    iconSmall: "fa fa-check bounce animated",
+               //    timeout: 4000
+               //});
                window.location.href = data.url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
@@ -447,7 +446,7 @@
         var notes = $('#CancellNotes').val();
         var cancelleffectivedate = $('#CancellEffectiveDate').val();
 
-         var prodData = {
+         var postData = {
                 "InformationId": sheetId,
                 "AgreementId": agreementid,
                 "CancellNotes": notes,
@@ -456,17 +455,19 @@
           $.ajax({
                 url: '@Url.Action("CancellAgreement", "Agreement")',
                 type: "POST",
-                contentType: "application/json; charset=utf-8",
-	            data: JSON.stringify({clientAgreementModel: prodData })
+              //  contentType: "application/json; charset=utf-8",
+              //data: JSON.stringify({ clientAgreementModel: prodData })
+                data: postData,
+                async: true
             })
            .done(function (data) {
-               $.smallBox({
-                   title: "Agreement has been cancelled",
-                   color: "#5F895F",
-                   iconSmall: "fa fa-check bounce animated",
-                   timeout: 4000
-               });
-               window.location.href = data.Url;
+               //$.smallBox({
+               //    title: "Agreement has been cancelled",
+               //    color: "#5F895F",
+               //    iconSmall: "fa fa-check bounce animated",
+               //    timeout: 4000
+               //});
+               window.location.href = data.url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
             //debugger;
@@ -483,18 +484,21 @@
             var boatFSL = $("#MotorFSL").val().replace("$", " ");
             var motorModel = $("#MotorModel").val();
 
-            var prodData = {
+            var postData = {
                 "TermLimit": boatSumInsured.replace(/,/g, '').trim(),
                 "Excess": boatExcess.replace(/,/g, '').trim(),
                 "Premium": boatPremium.replace(/,/g, '').trim(),
                 "FSL": boatFSL.replace(/,/g, '').trim(),
-                "Model": motorModel
+                "Model": motorModel,
+                clientAgreementId : agreement
             };
             $.ajax({
                 type: "Post",
-                data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
+                //data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
                 url: "/Agreement/EditMotorTerm",
-                contentType: "application/json; charset=utf-8",
+                //contentType: "application/json; charset=utf-8",
+                data: postData,
+                async: true,
                 success: function () {
                     $("#myModal").modal("hide");
                     alert("Saved Successfully!");
