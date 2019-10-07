@@ -65,11 +65,10 @@
                                 viewrecords: true,
                                 gridview: true,
                                 autoencode: true,
-                                search: true,
                                 onSelectRow: function (rowid) {
                                     var grid = $('#tblBoat');
                                     var myCellData = grid.jqGrid('getCell', rowid, 'column_name');
-                                    EditBoat('b', myCellData);
+                                    //EditBoat('b', myCellData);
                                     SetCurrentTab("boatTabs-2");
 
                                 }

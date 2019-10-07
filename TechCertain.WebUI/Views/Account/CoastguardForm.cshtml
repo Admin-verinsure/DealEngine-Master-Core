@@ -9,6 +9,8 @@
     @*<span id="extr-page-header-space"> <span class="hidden-mobile">Already registered?</span> <a href="@Url.Action("login", "account")" class="btn btn-danger">Sign In</a> </span>*@
 }
 
+
+
 <div style="font-family:Arial !important;">
     <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"> </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -308,6 +310,7 @@
 </div>
 
 @section pagespecific{
+    <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
         var qq = document.getElementById("qquotfgroup");
@@ -366,6 +369,7 @@
         }
 
         function saveQuickQuote() {
+            debugger;
             if (cgdata.length > 0) {
                 cgdata = [];
             }
@@ -766,7 +770,7 @@
                 cType.classList.add("hidden");
             }
         }
-        
+
         //Fill Label with URL and change displayed Select Elements and their sub options when page is ready
         $(document).ready(function () {
             var logo = document.getElementById("logo");
