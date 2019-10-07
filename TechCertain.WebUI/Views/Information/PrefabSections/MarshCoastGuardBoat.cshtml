@@ -24,7 +24,9 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="~/jquery/jquery.js"></script>
+                            @*<script src="~/jquery/jquery.js"></script>*@
+                            @*<script src="~/jquery/jquery.min.js"></script>*@
+
                             <script type="text/javascript">
                                  //$("#Vessel").click(function () {
                                 $(window).on('load',function () {
@@ -675,7 +677,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select  form-control b" required>
+                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="multiselect form-control b" required>
 
                                                 @foreach (var bwloc in Model.BoatUseslist)
                                                 {
@@ -759,7 +761,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select  form-control b">
+                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="multiselect form-control b">
 
                                                 @foreach (var bwloc in Model.InterestedPartyList)
                                                 {
@@ -1429,7 +1431,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select  form-control b" requierd>
+                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="multiselect form-control b" required>
 
                                                 @foreach (var bwloc in Model.BoatUseslist)
                                                 {
@@ -1532,7 +1534,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select  form-control b">
+                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="multiselect form-control b">
 
                                                 @foreach (var bwloc in Model.InterestedPartyList)
                                                 {
@@ -1630,7 +1632,9 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            <script src="~/jquery/jquery.js"></script>
+                            @*<script src="~/jquery/jquery.js"></script>*@
+                            @*<script src="~/jquery/jquery.min.js"></script>*@
+
                             <script type="text/javascript">
                                 $(".BoatRemoved").click(function () {
                                $("#tblRemovedBoat").jqGrid({
