@@ -211,32 +211,32 @@ namespace TechCertain.WebUI.Controllers
                     term.ReferralLoading = clientAgreementModel.RefferLodPrc;
                     term.ReferralLoadingAmount = clientAgreementModel.RefferLodAmt;
                     term.AuthorisationNotes = clientAgreementModel.AdditionalNotes;
-                    term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc/100) + clientAgreementModel.RefferLodAmt;
+                    term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
                 }
 
                 foreach (var terms in agreement.ClientAgreementTerms)
                 {
                     foreach (var bvterm in terms.BoatTerms)
                     {
-                        
+
                         if (bvterm.Boat.BoatWaterLocation != null)
                         {
 
-                           InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
+                            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
 
-                            var orgList = _organisationService.GetAllOrganisations().Where(o => o.IsApproved==false && o.InsuranceAttributes.Contains(insuranceAttribute) ).ToList();
+                            var orgList = _organisationService.GetAllOrganisations().Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
                             foreach (var org in orgList)
                             {
                                 InsuranceAttribute insuranceAttribute1 = _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
-                                if(insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                                if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
                                 {
-                                     
-                                        org.IsApproved = true;
+
+                                    org.IsApproved = true;
                                 }
                             }
                             Organisation othermarine = _OrganisationRepository.GetById(bvterm.Boat.BoatWaterLocation.Id);
                         }
-                        
+
                     }
                 }
 
@@ -253,8 +253,9 @@ namespace TechCertain.WebUI.Controllers
 
             var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
             // < a onclick = "location.href='@Url.Action(" / ViewAcceptedAgreement", "Agreement",new { id =  Model.ProgramId})'" style = "cursor:pointer" align = "center" >
-            return Json(new { Url =url });
-            // return RedirectToAction("ViewAcceptedAgreement", new { id = clientAgreementModel.InformationId });
+            return Json(new { url });
+            //return RedirectToAction("ViewAcceptedAgreement", new { id = clientAgreementModel.InformationId });
+
         }
 
         [HttpGet]
@@ -305,7 +306,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
-            return Json(new { Url = url });
+            return Json(new { url });
         }
 
         [HttpGet]
@@ -354,7 +355,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
-            return Json(new { Url = url });
+            return Json(new { url });
         }
 
 
@@ -939,7 +940,7 @@ namespace TechCertain.WebUI.Controllers
                 clientAgreement.ExpiryDate = clientAgreement.InceptionDate.AddYears(1);
                 clientAgreement.CustomInceptionDate = true;
 
-                //update boat effective date if the date is prior to the new start date or over 30 days after the new start date
+                //boat effective date if the date is prior to the new start date or over 30 days after the new start date
                 foreach (var boat in clientAgreement.ClientInformationSheet.Boats.Where(b => !b.Removed && b.DateDeleted == null))
                 {
                     if (boat.BoatEffectiveDate < clientAgreement.InceptionDate || boat.BoatEffectiveDate > clientAgreement.InceptionDate.AddDays(30))
@@ -1235,7 +1236,7 @@ namespace TechCertain.WebUI.Controllers
                 model.ClientAgreementEndorsements = null;
             }
 
-            ViewBag.Title = answerSheet.Product.Name + " Agreement Endorsements for " + insured.Name;
+            ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Endorsements for " + insured.Name;
 
             return View("ViewAgreementEndorsement", model);
             //return View(model);
@@ -1492,8 +1493,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            //string domainQueryString = "localhost:44323";
-            string domainQueryString = "staging.mydealslive.com";
+            string domainQueryString = "localhost:44323";
+            //string domainQueryString = "staging.mydealslive.com";
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
