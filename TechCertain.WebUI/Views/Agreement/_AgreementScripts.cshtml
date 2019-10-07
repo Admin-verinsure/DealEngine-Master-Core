@@ -376,11 +376,11 @@
         var notes = $('#AuthorisationNotes').val();
 
          var postData = {
-                "InformationId": sheetId,
-                "AgreementId": agreementid,
-                "RefferLodPrc": loadValPerc,
-                "RefferLodAmt": loadValAmou,
-                "AdditionalNotes" : notes
+                "informationId": sheetId,
+                "agreementId": agreementid,
+                "refferLodPrc": loadValPerc,
+                "refferLodAmt": loadValAmou,
+                "additionalNotes" : notes
         };
           $.ajax({
                 url: '@Url.Action("AuthorisedReferral", "Agreement")',
