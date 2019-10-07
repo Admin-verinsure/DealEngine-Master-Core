@@ -20,7 +20,6 @@
       "wwwroot/css/fa-solid.css"
     ]
   },
-
   {
     "outputFileName": "wwwroot/css/site.min.css",
     "inputFiles": [

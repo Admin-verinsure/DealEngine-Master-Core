@@ -12,13 +12,16 @@ namespace TechCertain.Services.Impl
 		IUnitOfWork _unitOfWork;
 		IMapperSession<Programme> _programmeRepository;
 		IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        IReferenceService _referenceService;
 
-		public ProgrammeService (IUnitOfWork unitOfWork, IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository)
-		{
-			_unitOfWork = unitOfWork;
+
+        public ProgrammeService (IUnitOfWork unitOfWork, IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
+        {
+            _unitOfWork = unitOfWork;
 			_programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
-		}
+            _referenceService = referenceService;
+        }
 
 		public ClientProgramme CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner)
 		{
@@ -79,8 +82,13 @@ namespace TechCertain.Services.Impl
 			ClientProgramme newClientProgramme = CreateClientProgrammeFor (clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
+            newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
+            var reference = _referenceService.GetLatestReferenceId();
+            newClientProgramme.InformationSheet.ReferenceId = reference;
+            newClientProgramme.InformationSheet.IsChange = true;
+            _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
 
-			return newClientProgramme;
+            return newClientProgramme;
 		}
 
 		public ClientProgramme CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)

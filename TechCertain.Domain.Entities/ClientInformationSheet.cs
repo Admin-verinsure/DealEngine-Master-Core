@@ -196,8 +196,8 @@ namespace TechCertain.Domain.Entities
             foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
                 newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
 
-            foreach (WaterLocation waterLocation in WaterLocations.Where(wl => !wl.Removed && wl.DateDeleted == null))
-                newSheet.AddWaterLocation(waterLocation.CloneForNewSheet(newSheet));
+            //foreach (WaterLocation waterLocation in WaterLocations.Where(wl => !wl.Removed && wl.DateDeleted == null))
+            //    newSheet.AddWaterLocation(waterLocation.CloneForNewSheet(newSheet));
 
             foreach (Claim claim in Claims.Where(cl => !cl.Removed && cl.DateDeleted == null))
                 newSheet.AddClaim(claim.CloneForNewSheet(newSheet));

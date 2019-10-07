@@ -63,7 +63,7 @@
                                 viewrecords: true,
                                 gridview: true,
                                 autoencode: true,
-
+                                search: true,
                                 onSelectRow: function (rowid) {
                                     var grid = $('#tblBoat');
                                     var myCellData = grid.jqGrid('getCell', rowid, 'column_name');
@@ -83,6 +83,7 @@
                                 { height: 280, reloadAfterSubmit: false },
                                 // add options
                                 { reloadAfterSubmit: false },
+                                {search: true},
                                 // del options
                                 { sopt: ['eq', 'bw', 'cn'] }
                                 // search options

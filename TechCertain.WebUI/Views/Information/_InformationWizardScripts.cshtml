@@ -4,19 +4,31 @@
 <!-- <script src="/Scripts/bootstrapmvc" defer></script>-->
 <!-- <script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 
-
+    <script src="~/jquery/jquery.min.js"></script>
 <script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
 <script src="~/Scripts/plugin/chosen/chosen.jquery.js" defer></script>
 <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
 <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-    <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+<link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
+<script src="~/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+@*<script src="~/lib/multiselect/js/multiselect.js"></script>*@
+
+
+
 
 
 <script type="text/javascript">
 
    $(document).ready(function () {
+
+       $('select[multiple]').multiselect();
+       $('SelectedBoatUse').multiselect({
+        columns: 1,
+        placeholder: 'Select Languages'
+        });
 
            $('#smartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
@@ -62,7 +74,7 @@
            if (stepNumber == -1) {
                $('tab1').click();
            }
-            
+
 
            if (stepNumber === 0) {
 
@@ -73,9 +85,6 @@
                    var claim4 = $('#Claimexp4').val();
                    var claim5 = $('#Claimexp5').val();
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
-
-                   //if (hghg == "false" || hghg =="" ||hghg == null || hghg === "undefined" ||  hghg == "&nbsp;") {
-
 
                    if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
 
@@ -159,7 +168,7 @@
                }
                $('.sw-btn-prev').hide();
 
-               
+
                 $('#getAgreementDecModal').show();
                 $.ajax({
                     url: '@Url.Action("QuoteToAgree", "Information")',
@@ -1444,7 +1453,7 @@ $(document).ready(function () {
         return result;
     }
 
-    function SetCurrentTab(tabPaneId) { 
+    function SetCurrentTab(tabPaneId) {
         debugger;
         event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
@@ -6720,7 +6729,7 @@ async: true
 		'locationId': locationId,
 		'answerSheetId': _sheetId
 	};
-       
+
         if ($('#paymentCreditCard').is(":checked")) {
             debugger;
             $.ajax({

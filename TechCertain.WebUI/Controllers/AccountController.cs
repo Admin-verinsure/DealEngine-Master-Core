@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AccountController : BaseController
     {
         IEmailService _emailService;
