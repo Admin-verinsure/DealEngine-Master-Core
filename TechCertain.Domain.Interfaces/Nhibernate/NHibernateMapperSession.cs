@@ -21,7 +21,14 @@ namespace TechCertain.Domain.Interfaces
         {
             if (entity == null) throw new ArgumentNullException("entity");
             // not, not SaveOrUpdate as we don't need Update if we use Unit of Work semantics            
-            _session.SaveAsync(entity);
+            _session.Save(entity);
+        }
+
+        public async Task AddAsync(TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            // not, not SaveOrUpdate as we don't need Update if we use Unit of Work semantics            
+            await _session.SaveAsync(entity);
         }
 
         public IQueryable<TEntity> FindAll()

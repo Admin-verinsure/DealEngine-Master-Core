@@ -89,7 +89,16 @@ namespace TechCertain.Services.Impl
 
 		public User GetUserByEmail (string email)
 		{
-			User user = _userRepository.GetUserByEmail (email);
+            User user = null;
+            try
+            {
+                user = _userRepository.GetUserByEmail(email);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+			
 			// have a repo user? Return them
 			if (user != null)
 				return user;
@@ -99,7 +108,7 @@ namespace TechCertain.Services.Impl
 				Update (user);
 				return user;
 			}
-			user = _legacyLdapService.GetLegacyUserByEmail (email);
+			//user = _legacyLdapService.GetLegacyUserByEmail (email);
 			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
 			if (user != null) {
 				Create (user);
