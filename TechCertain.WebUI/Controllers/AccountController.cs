@@ -279,19 +279,15 @@ namespace TechCertain.WebUI.Controllers
             {
 				username = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
-                await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
-                //var user1 = new DealEngineUser { UserName = username };
-                
-                //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
-                //var createUser = await _userManager.CreateAsync(user1, password);
-                //if(createUser.Succeeded)
-                //{
-                //    //await _signInManager.SignInAsync(user1, viewModel.RememberMe);
-                //    await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
-                //}
+                var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToLocal(viewModel.ReturnUrl);
+                }
 
-                return RedirectToLocal(viewModel.ReturnUrl);
- 
+                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
+                return View(viewModel);
+
             }
 			catch (UserImportException ex)
 			{

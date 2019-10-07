@@ -4,17 +4,16 @@
 <!-- <script src="/Scripts/bootstrapmvc" defer></script>-->
 <!-- <script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 
-    <script src="~/jquery/jquery.min.js"></script>
 <script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
-<script src="~/Scripts/plugin/chosen/chosen.jquery.js" defer></script>
 <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
 <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+@*<script src="~/lib/popper.js/popper.min.js"></script>*@
+@*<script src="~/lib/popper.js/popper.js"></script>*@
 <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-<link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
-<script src="~/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
 @*<script src="~/lib/multiselect/js/multiselect.js"></script>*@
+
 
 
 
@@ -24,11 +23,6 @@
 
    $(document).ready(function () {
 
-       //$('select[multiple]').multiselect();
-       //$('SelectedBoatUse').multiselect({
-       // columns: 1,
-       // placeholder: 'Select Languages'
-       // });
 
            $('#smartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
@@ -279,6 +273,14 @@ $(document).ready(function () {
     $('.ClearBoat').css({ "background-color": "red", "color": "White" });
     $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
     $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
+    //$('.multiselect').style({width:20px});
+        $('.multiselect-container').css({ "width": "100%"});
+
+      $('.multiselect').multiselect({
+        columns: 1,
+        placeholder: 'Select',
+          buttonWidth: '100%'
+      });
 
 
     $('.overlay').css({
@@ -1175,6 +1177,7 @@ $(document).ready(function () {
     }
 
     function ValidateBoatForm(tabId, tableId, currentTab) {
+        debugger;
         var BoatName = $('#BoatName').val();
         var BoatType1 = $('#BoatType1').val();
         var BoatType2 = $('#BoatType2').val();
@@ -2680,14 +2683,14 @@ function EditClaim(claimId, tableId) {
             //     iconSmall: "fa fa-check bounce animated",
             //     timeout: 4000
             //    });
-                $('#BoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+                $('#BoatLandLocation.b').append($('<option>', { value: data.buildingId, text: data.buildingCategory + ", " + data.locationStreet }));
                 $("#BoatLandLocation.b [value='add']").remove();
                 $('#BoatLandLocation.b').append($('<option>', { value: "add", text: "Add Land Storage" }));
-                $('#BoatLandLocation.b').val(data.BuildingId);
-                $('#AddBoatLandLocation.b').append($('<option>', { value: data.BuildingId, text: data.BuildingCategory + ", " + data.LocationStreet }));
+                $('#BoatLandLocation.b').val(data.buildingId);
+                $('#AddBoatLandLocation.b').append($('<option>', { value: data.buildingId, text: data.buildingCategory + ", " + data.locationStreet }));
                 $("#AddBoatLandLocation.b [value='add']").remove();
                 $('#AddBoatLandLocation.b').append($('<option>', { value: "add", text: "Add Land Storage" }));
-                $('#AddBoatLandLocation.b').val(data.BuildingId);
+                $('#AddBoatLandLocation.b').val(data.buildingId);
                 $('#addLandLocModal' + " :input").val("");
                 $('#tblBuilding').trigger('reload');
                 $('#getLandLocModal').hide();
@@ -2720,9 +2723,9 @@ function EditClaim(claimId, tableId) {
             //     iconSmall: "fa fa-check bounce animated",
             //     timeout: 4000
             //    });
-                  $('#WaterLocationMarinaLocation').append("<option selected value=\"" + data.ID + "\">" + data.OrganisationName + "</option>")
+                  $('#WaterLocationMarinaLocation').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
                 $('#WaterLocationMarinaLocation').trigger('chosen:updated');
-                $('#AddWaterLocationMarinaLocation').append("<option selected value=\"" + data.ID + "\">" + data.OrganisationName + "</option>")
+                $('#AddWaterLocationMarinaLocation').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
                 $('#AddWaterLocationMarinaLocation').trigger('chosen:updated');
                 $('#WaterLocationMarinaLocation').append($('<option>', { value: "add", text: "Add Land Storage" }));
                 $('#AddWaterLocationMarinaLocation').append($('<option>', { value: "add", text: "Add Land Storage" }));
@@ -2761,14 +2764,14 @@ function EditClaim(claimId, tableId) {
             //     iconSmall: "fa fa-check bounce animated",
             //     timeout: 4000
             //    });
-                $('#BoatWaterLocation.b').append($('<option>', { value: data.WaterLocationId, text: data.WaterLocationName }));
+                $('#BoatWaterLocation.b').append($('<option>', { value: data.waterLocationId, text: data.waterLocationName }));
                 $("#BoatWaterLocation.b [value='add']").remove();
                 $('#BoatWaterLocation.b').append($('<option>', { value: "add", text: "Add Water Location" }));
                 $('#BoatWaterLocation.b').val(data.WaterLocationId);
-                $('#AddBoatWaterLocation.b').append($('<option>', { value: data.WaterLocationId, text: data.WaterLocationName }));
+                $('#AddBoatWaterLocation.b').append($('<option>', { value: data.waterLocationId, text: data.waterLocationName }));
                 $("#AddBoatWaterLocation.b [value='add']").remove();
                 $('#AddBoatWaterLocation.b').append($('<option>', { value: "add", text: "Add Water Location" }));
-                $('#AddBoatWaterLocation.b').val(data.WaterLocationId);
+                $('#AddBoatWaterLocation.b').val(data.waterLocationId);
                 $('#addWaterLocModal' + " :input").val("");
 
             })
@@ -2827,36 +2830,36 @@ function EditClaim(claimId, tableId) {
                 if ($('#addLandLocModal').hasClass('in')) {
                     debugger;
                     $('#addLocModal').hide();
-                    $("#BuildingLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     $('#BuildingLocationModal.b').val(data.LocationId);
                     //Want to use Location added in Water Modal use case
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     //Want to use Location added in Trailer Modal use case
-                    $("#VehicleLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
@@ -2868,38 +2871,38 @@ function EditClaim(claimId, tableId) {
                     debugger;
                     $('#addLocModal').hide();
 
-                    $("#VehicleLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
                     $('#VehicleLocationModal.b').val(data.LocationId);
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
                     //Want to use Location added in Water Modal use case
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.Postcode + ", " + data.country }));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
                                   $('#getLandLocModal').hide();
@@ -2909,60 +2912,60 @@ function EditClaim(claimId, tableId) {
                 else {
                     $('#addLocModal').hide();
 
-                    $("#AddVehicleLocation.rmv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddVehicleLocation.rmv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddVehicleLocation.rmv [value='add']").remove();
                     $('#AddVehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#VehicleLocation.rmv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#VehicleLocation.rmv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#VehicleLocation.rmv [value='add']").remove();
                     $('#VehicleLocation.rmv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#BuildingLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#BuildingLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#BuildingLocationModal.b [value='add']").remove();
                     $('#BuildingLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#VehicleLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#VehicleLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#VehicleLocationModal.b [value='add']").remove();
                     $('#VehicleLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#WaterLocationLocationModal.b").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#WaterLocationLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#WaterLocationLocationModal.b [value='add']").remove();
                     $('#WaterLocationLocationModal.b').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#AddMotorLocation.omv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddMotorLocation.omv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddMotorLocation.omv [value='add']").remove();
                     $('#AddMotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
-                    $("#MotorLocation.omv").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#MotorLocation.omv").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#MotorLocation.omv [value='add']").remove();
                     $('#MotorLocation.omv').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#AddBuildingLocation.bui").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#AddBuildingLocation.bui").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#AddBuildingLocation.bui [value='add']").remove();
                     $('#AddBuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
 
-                    $("#BuildingLocation.bui").append($('<option>', { value: data.LocationId, text: data.Street + ", " + data.Suburb + ", " + data.Postcode + ", " + data.Country }));
+                    $("#BuildingLocation.bui").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#BuildingLocation.bui [value='add']").remove();
                     $('#BuildingLocation.bui').append($('<option>', { value: "add", text: "Add Location" }));
 
 
                     if ($(openModal).val() == "Trailer") {
-                        $('#VehicleLocation.rmv').val(data.LocationId);
+                        $('#VehicleLocation.rmv').val(data.locationId);
                     } else if ($(openModal).val() == "Land") {
-                        $('#BuildingLocation.bui').val(data.LocationId);
+                        $('#BuildingLocation.bui').val(data.locationId);
                     } else if($(openModal).val() == "Plant"){
-                        $('#MotorLocation.omv').val(data.LocationId);
+                        $('#MotorLocation.omv').val(data.locationId);
                     }else  if ($(openModal).val() == "addTrailer") {
-                        $('#AddVehicleLocation.rmv').val(data.LocationId);
+                        $('#AddVehicleLocation.rmv').val(data.locationId);
                     } else if ($(openModal).val() == "addLand") {
-                        $('#AddBuildingLocation.bui').val(data.LocationId);
+                        $('#AddBuildingLocation.bui').val(data.locationId);
                     } else if($(openModal).val() == "addPlant"){
-                        $('#AddMotorLocation.omv').val(data.LocationId);
+                        $('#AddMotorLocation.omv').val(data.locationId);
                     }
 
                  $('#getLandLocModal').hide();
@@ -2990,15 +2993,15 @@ function EditClaim(claimId, tableId) {
             data: JSON.stringify({ operatorId: operatorId, answerSheetId: _sheetId })
         })
     .done(function (data) {
-        $('#OperatorId').val(data.OperatorId);
-        $('#OperatorFirstName').val(data.OperatorFirstName);
-        $('#OperatorLastName').val(data.OperatorLastName);
-        $('#OperatorDocumentType').val(data.OperatorDocumentType);
-        $('#OperatorDocumentNumber').val(data.OperatorDocumentNumber);
-        $('#OperatorYearsOfExp').val(data.OperatorYearsOfExp);
-        $('#OperatorNotes').val(data.OperatorNotes);
-        $('#OperatorDocumentEffectiveDate').val(data.OperatorDocumentEffectiveDate);
-        $('#OperatorDocumentExpiryDate').val(data.OperatorDocumentExpiryDate);
+        $('#OperatorId').val(data.operatorId);
+        $('#OperatorFirstName').val(data.operatorFirstName);
+        $('#OperatorLastName').val(data.operatorLastName);
+        $('#OperatorDocumentType').val(data.operatorDocumentType);
+        $('#OperatorDocumentNumber').val(data.operatorDocumentNumber);
+        $('#OperatorYearsOfExp').val(data.operatorYearsOfExp);
+        $('#OperatorNotes').val(data.operatorNotes);
+        $('#OperatorDocumentEffectiveDate').val(data.operatorDocumentEffectiveDate);
+        $('#OperatorDocumentExpiryDate').val(data.operatorDocumentExpiryDate);
         UpdateChosen();
     });
 };
@@ -3090,7 +3093,7 @@ function EditClaim(claimId, tableId) {
 
     function EditBoat(classId, boatId) {
         debugger;
-                event.preventDefault();
+                //event.preventDefault();
 
         var _sheetId = $('#AnswerSheetId').val();
         $('#getDetailsModal').show();
@@ -3106,10 +3109,10 @@ function EditClaim(claimId, tableId) {
         type: "Post",
         //contentType: "application/json; charset=utf-8",
         //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
-        data: postData,
-async: true
+            data: postData
     })
             .done(function (data) {
+                debugger;
             console.log(data);
             if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
@@ -3196,32 +3199,32 @@ async: true
 
     function updateEditBoat(data) {
         debugger;
-        if (data.HullConfiguration == "Other") {
+        if (data.hullConfiguration == "Other") {
             $('#HullConfigurationOtherSection').removeClass("hidden");
         }
-        if (data.HullConstruction == "Other") {
+        if (data.hullConstruction == "Other") {
             $('#HullConstructOtherSection').removeClass("hidden");
         }
-        if (data.BoatpartyText.length <= 0) {
+        if (data.boatpartyText.length <= 0) {
               $('#Addipeffectivedatesection').addClass('hidden');
               $('#ipeffectivedatesection').addClass('hidden');
         }
 
-        $('#BoatType2.b').val(data.BoatType2);
+        $('#BoatType2.b').val(data.boatType2);
 
-        $('#HullConstruction.b').val(data.HullConstruction);
-        $('#HullConfiguration.b').val(data.HullConfiguration);
-        $('#chooseBoat_chosen.b').val(data.BoatUseslist);
-        $('#RiggingType.b').val(data.RiggingType);
-        $('#MastType.b').val(data.MastType);
-        $('#MaxSumInsured.b').val("$"+(data.MaxSumInsured).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-        $('#excess.b').val(data.BoatQuoteExcessOption);
-        $('#AddBoatOperator.b').val(data.BoatOperator);
-        $('#MotorType.b').val(data.MotorType);
+        $('#HullConstruction.b').val(data.hullConstruction);
+        $('#HullConfiguration.b').val(data.hullConfiguration);
+        $('#chooseBoat_chosen.b').val(data.boatUseslist);
+        $('#RiggingType.b').val(data.riggingType);
+        $('#MastType.b').val(data.mastType);
+        $('#MaxSumInsured.b').val("$"+(data.maxSumInsured).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+        $('#excess.b').val(data.boatQuoteExcessOption);
+        $('#AddBoatOperator.b').val(data.boatOperator);
+        $('#MotorType.b').val(data.motorType);
 
-        $('#BoatTrailer.b').val(data.BoatTrailer);
-           $('#BoatIsTrailered.b').val(data.BoatIsTrailered);
-        $('#BuiltProfessionally.b').val(data.BuiltProfessionally);
+        $('#BoatTrailer.b').val(data.boatTrailer);
+           $('#BoatIsTrailered.b').val(data.boatIsTrailered);
+        $('#BuiltProfessionally.b').val(data.builtProfessionally);
 
         if ($('#BoatType1.b').val() == "Jetski") {
            //$('#BuiltProfessionally.b').val(data.BuiltProfessionally);
@@ -3233,14 +3236,14 @@ async: true
         $('#HullConfiguration').val("Mono").trigger('chosen:updated');
         }
 
-        if (data.BoatIsTrailered) {
+        if (data.boatIsTrailered) {
             hasTrailer();
         }
         // if (data.BoatType2 == "Roadtrailer") {
         //     $('#VesselTrailer').show('2000');
         //    $('#BoatIsTrailered').val("True");
         //}else
-            $('#BoatIsTrailered.b').val(data.BoatIsTrailered);
+            $('#BoatIsTrailered.b').val(data.boatIsTrailered);
 
          if (data.MotorType == "NA") {
             $('#AddModifiedMotorSection').addClass("hidden");
@@ -3560,9 +3563,9 @@ async: true
 
                 $(tableId).trigger('reloadGrid');
                 $(tabId + " :input").val("");
-                $('#SelectedInterestedParty').append("<option  value=\"" + data.ID + "\">" + data.OrganisationName + "</option>")
+                $('#SelectedInterestedParty').append("<option  value=\"" + data.ID + "\">" + data.organisationName + "</option>")
                 $('#SelectedInterestedParty').trigger('chosen:updated');
-                $('#AddSelectedInterestedParty').append("<option  value=\"" + data.ID + "\">" + data.OrganisationName + "</option>")
+                $('#AddSelectedInterestedParty').append("<option  value=\"" + data.ID + "\">" + data.organisationName + "</option>")
                 $('#AddSelectedInterestedParty').trigger('chosen:updated');
                 $('#getPartyModal').hide();
                 $('input[name=AddIsAdmin]').prop('checked', false);
@@ -3603,12 +3606,12 @@ async: true
                  // timeout: 4000
                  //});
                     debugger;
-                $('#BoatOperator').append("<option value=\"" + data.ID + "\">" + data.FirstName + " " + data.LastName + "</option>")
+                $('#BoatOperator').append("<option value=\"" + data.iD + "\">" + data.firstName + " " + data.lastName + "</option>")
                 $("#BoatOperator.b [value='add']").remove();
                 $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
                 $('#BoatOperator.b').trigger('chosen:updated');
 
-                $('#AddBoatOperator.b').append("<option value=\"" + data.ID + "\">" + data.FirstName + " " + data.LastName + "</option>")
+                $('#AddBoatOperator.b').append("<option value=\"" + data.iD + "\">" + data.firstName + " " + data.lastName + "</option>")
                 $("#AddBoatOperator.b [value='add']").remove();
                 $('#AddBoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
                 $('#AddBoatOperator.b').trigger('chosen:updated');
@@ -3887,9 +3890,9 @@ async: true
                 //timeout: 4000
                // });
 
-                $('#SelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.OrganisationName + "</option>")
+                $('#SelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
                 $('#SelectedInterestedParty').trigger('chosen:updated');
-                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.OrganisationName + "</option>")
+                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
                 $('#AddSelectedInterestedParty').trigger('chosen:updated');
 
                 $('#FinancialSection').addClass('hidden');
@@ -3942,6 +3945,7 @@ async: true
 
     };
     function addBoatUseModal() {
+                                    event.preventDefault();
 
          $('#getBoatUseModal').show();
         selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
@@ -3995,9 +3999,9 @@ async: true
                                 debugger;
 
                 console.log(data);
-                $('#SelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory + "</option>")
+                $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
-                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory+ "</option>")
+                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory+ "</option>")
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
                 $('#livingUseSection' + " :input").val("");
                 $('#racingUseSection' + " :input").val("");
@@ -4042,9 +4046,9 @@ async: true
                 //});
                                     debugger;
 
-                $('#SelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory + "</option>")
+                $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
-                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory + "</option>")
+                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
                 $('#livingUseSection' + " :input").val("");
                 $('#racingUseSection' + " :input").val("");
@@ -4088,9 +4092,9 @@ async: true
                 //});
                 debugger;
                 console.log(data);
-                $('#SelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory + "</option>")
+                $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
-                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory + "</option>")
+                $('#AddSelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#AddSelectedBoatUse').trigger('chosen:updated');
                 $('#getBoatUseModal').hide();
 
@@ -4674,14 +4678,14 @@ async: true
     })
         .done(function (data) {
             console.log(data);
-            vdate = data.Year;
-            vmake = data.Make;
-            vmodel = data.VehicleModel;
+            vdate = data.year;
+            vmake = data.make;
+            vmodel = data.vehicleModel;
         var vid = "";
         if (data.Validated===true) {
-            vid = data.Registration;
+            vid = data.registration;
         } else {
-            vid = data.FleetNumber;
+            vid = data.fleetNumber;
         };
 
         //$.smallBox({
@@ -4703,20 +4707,20 @@ async: true
             $(tabId + ', #InterestedParties2').val('').trigger('chosen:updated');
 
             if (data.Registration == null) {
-                    $('#BoatTrailer.b').append($('<option>', { value: data.VehicleId, text: data.Year + ", " + data.Make + ", " + data.VehicleModel }));
+                    $('#BoatTrailer.b').append($('<option>', { value: data.vehicleId, text: data.yeam + ", " + data.make + ", " + data.vehicleModel }));
                     $("#BoatTrailer.b [value='add']").remove();
                     $('#BoatTrailer.b').append($('<option>', { value: "add", text: "Add Trailer" }));
                     $('#BoatTrailer.b').val(data.VehicleId);
-                    $('#AddBoatTrailer.b').append($('<option>', { value: data.VehicleId, text: data.Year + ", " + data.Make + ", " + data.VehicleModel }));
+                    $('#AddBoatTrailer.b').append($('<option>', { value: data.vehicleId, text: data.year + ", " + data.make + ", " + data.vehicleModel }));
                     $("#AddBoatTrailer.b [value='add']").remove();
                     $('#AddBoatTrailer.b').append($('<option>', { value: "add", text: "Add Trailer" }));
                     $('#AddBoatTrailer.b').val(data.VehicleId);
                 } else {
-                    $('#BoatTrailer.b').append($('<option>', { value: data.VehicleId, text:  data.Year + ", " + data.Make + ", " + data.VehicleModel + ", " + data.Registration}));
+                    $('#BoatTrailer.b').append($('<option>', { value: data.vehicleId, text:  data.year + ", " + data.make + ", " + data.vehicleModel + ", " + data.registration}));
                     $("#BoatTrailer.b [value='add']").remove();
                     $('#BoatTrailer.b').append($('<option>', { value: "add", text: "Add Trailer" }));
                     $('#BoatTrailer.b').val(data.VehicleId);
-                    $('#AddBoatTrailer.b').append($('<option>', { value: data.VehicleId, text:  data.Year + ", " + data.Make + ", " + data.VehicleModel + ", " + data.Registration}));
+                    $('#AddBoatTrailer.b').append($('<option>', { value: data.vehicleId, text:  data.year + ", " + data.make + ", " + data.vehicleModel + ", " + data.registration}));
                     $("#AddBoatTrailer.b [value='add']").remove();
                     $('#AddBoatTrailer.b').append($('<option>', { value: "add", text: "Add Trailer" }));
                     $('#AddBoatTrailer.b').val(data.VehicleId);
@@ -5466,7 +5470,7 @@ async: true
                 $('#WaterLocationLocationModal').append("<option selected value=\"\"> --Select-- </option>")
                 $('#WaterLocationLocationModal').trigger('chosen:updated');
                 $.each(data, function (i, item) {
-                    $('#WaterLocationLocationModal').append($('<option>', { value: item.LocationId, text: item.Street }))
+                    $('#WaterLocationLocationModal').append($('<option>', { value: item.locationId, text: item.street }))
                      $("#WaterLocationLocationModal [value='add']").remove();
                     $('#WaterLocationLocationModal').append($('<option>', { value: "add", text: "Add Trailer" }));
             });
@@ -5504,13 +5508,13 @@ async: true
                  $('#AddOrgUnit').append("<option selected value=\"\"> --Select-- </option>")
                  $('#AddOrgUnit').trigger('chosen:updated');
                 $.each(data, function (i, item) {
-                    $('#OrgUnit').append($('<option>', { value: item.OrganisationalUnitId, text: item.Name }))
+                    $('#OrgUnit').append($('<option>', { value: item.organisationalUnitId, text: item.name }))
                     $("#OrgUnit [value='add']").remove();
                     $('#OrgUnit').append($('<option>', { value: "add", text: "Add Trailer" }));
-                    $('#AddOrgUnit').append($('<option>', { value: item.OrganisationalUnitId, text: item.Name }))
+                    $('#AddOrgUnit').append($('<option>', { value: item.organisationalUnitId, text: item.name }))
                     $("#AddOrgUnit [value='add']").remove();
                     $('#AddOrgUnit').append($('<option>', { value: "add", text: "Add Trailer" }));
-                    $('#OrgUnit.b').val(data.VehicleId);
+                    $('#OrgUnit.b').val(data.vehicleId);
                     });
 
     })
@@ -5533,7 +5537,7 @@ async: true
                 $('#WaterLocationLocation').append("<option selected value=\"\"> --Select-- </option>")
                 $('#WaterLocationLocation').trigger('chosen:updated');
                 $.each(data, function (i, item) {
-                    $('#WaterLocationLocation').append($('<option>', { value: item.LocationId, text: item.Street }))
+                    $('#WaterLocationLocation').append($('<option>', { value: item.locationId, text: item.street }))
                      $("#WaterLocationLocation [value='add']").remove();
                     $('#WaterLocationLocation').append($('<option>', { value: "add", text: "Add Trailer" }));
             });
@@ -5558,7 +5562,7 @@ async: true
       })
             .done(function (data) {
                 $.each(data, function (i, item) {
-                      $('#AddWaterLocationLocation').append($('<option>', { value: item.LocationId, text: item.Street }))
+                      $('#AddWaterLocationLocation').append($('<option>', { value: item.locationId, text: item.street }))
                      $("#AddWaterLocationLocation [value='add']").remove();
                     $('#AddWaterLocationLocation').append($('<option>', { value: "add", text: "Add Trailer" }));
             });
@@ -6274,8 +6278,8 @@ async: true
                  $('#MooredType').trigger('chosen:updated');
                 $.each(data, function (i, item) {
                     $('#getMooredModal').hide();
-                    $('#AddMooredType').append($('<option>', { value: item.Value, text: item.Text }));
-                    $('#MooredType').append($('<option>', { value: item.Value, text: item.Text }));
+                    $('#AddMooredType').append($('<option>', { value: item.value, text: item.text }));
+                    $('#MooredType').append($('<option>', { value: item.value, text: item.text }));
                 });
 
 

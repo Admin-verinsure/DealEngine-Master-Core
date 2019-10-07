@@ -1644,8 +1644,8 @@ namespace TechCertain.WebUI.Controllers
                     Console.WriteLine(ex.Message);
                 }
             }
-            if (boat.InterestedParties != null)
-            {
+            //if (boat.InterestedParties != null)
+            //{
                 //model.BoatUse = new List<BoatUse>();
                 model.BoatpartyVal = new List<String>();
                 model.BoatpartyText = new List<Guid>();
@@ -1663,7 +1663,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     Console.WriteLine(ex.Message);
                 }
-            }
+            //}
             return Json(model);
         }
 

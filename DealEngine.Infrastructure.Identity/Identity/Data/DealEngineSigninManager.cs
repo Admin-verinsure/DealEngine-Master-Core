@@ -113,10 +113,15 @@ namespace DealEngine.Infrastructure.Identity.Data
                 {
                     var ldapUser = _ldapService.GetUser(userName);
                     var localUser = _userManager.FindByNameAsync(userName).Result;
+                    if(localUser == null)
+                    {
+                        localUser = new DealEngineUser { UserName = userName };
+                        _userManager.CreateAsync(localUser, password);
+                    }
                     MapUserToUser(ldapUser, localUser);                    
                 }
 
-                return Task.FromResult(SignInResult.Success);
+                 return Task.FromResult(SignInResult.Success);
             }
             return Task.FromResult(SignInResult.Failed);
         }

@@ -2071,7 +2071,10 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
         {
             ClientInformationSheet sheet = null;
+            try
+            {
 
+           
             foreach (var item in Claims)
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2089,6 +2092,10 @@ namespace TechCertain.WebUI.Controllers
                     }
                     uow.Commit();
                 }
+            }
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
            return Json(true);
         }

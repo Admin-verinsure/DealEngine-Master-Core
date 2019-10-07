@@ -17,8 +17,7 @@ namespace TechCertain.Services.Impl
         IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
         IUnitOfWork _unitOfWork;
-        IUnderwritingModule _underwritingModule;
-        //public Dictionary<string, IUnderwritingModule> _modules;       
+        IUnderwritingModule _underwritingModule;        
 
         public UWMService(
             IUnderwritingModule underwritingModule,
@@ -26,9 +25,8 @@ namespace TechCertain.Services.Impl
             IClientAgreementRuleService clientAgreementRuleService,
             IClientAgreementTermService clientAgreementTermService,
             IClientAgreementMVTermService clientAgreementMVTermService,
-            IClientAgreementEndorsementService clientAgreementEndorsementService,
-            //Dictionary<string, IUnderwritingModule> modules,
-        IUnitOfWork unitOfWork)
+            IClientAgreementEndorsementService clientAgreementEndorsementService,            
+            IUnitOfWork unitOfWork)
         {
             _clientAgreementService = clientAgreementService;
             _clientAgreementRuleService = clientAgreementRuleService;
@@ -36,14 +34,14 @@ namespace TechCertain.Services.Impl
             _clientAgreementMVTermService = clientAgreementMVTermService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
             _unitOfWork = unitOfWork;
-            _underwritingModule = underwritingModule;
-            //_modules = modules;
+            _underwritingModule = underwritingModule;            
         }
 
         
         public bool UWM_ICIBNZIMV(User createdBy, ClientInformationSheet sheet, string reference)
         {
-			bool result = false;
+            var _modules = new Dictionary<string, IUnderwritingModule>();
+            bool result = false;
 			foreach (Product product in sheet.Programme.BaseProgramme.Products) {
 				if (!product.UnderwritingEnabled)
 					continue;
@@ -51,29 +49,28 @@ namespace TechCertain.Services.Impl
 				string uwmCode = product.UnderwritingModuleCode;
 				if (string.IsNullOrWhiteSpace (uwmCode))
 					throw new Exception ("No underwriting module specificed for product '" + product.Id + "'");
-				//var uwm = Load(uwmCode);
-				//result &= uwm.Underwrite (createdBy, sheet, product, reference);
+				var uwm = Load(uwmCode, _modules);
+				result &= uwm.Underwrite (createdBy, sheet, product, reference);
 			}
 			return result;
         }
 
-        public void Register(string key, IUnderwritingModule module)
+        public void Register(string key, IUnderwritingModule module, Dictionary<string, IUnderwritingModule> _modules)
         {
-            //_modules[key] = module;
+            _modules[key] = module;
         }
 
-        //public IUnderwritingModule Load(string key)
-        //{
-        //    if (!_modules.ContainsKey(key))
-        //        throw new Exception("No underwriting module for \"" + key + "\" registered");
+        public IUnderwritingModule Load(string key, Dictionary<string, IUnderwritingModule> _modules)
+        {
+            if (!_modules.ContainsKey(key))
+                throw new Exception("No underwriting module for \"" + key + "\" registered");
 
-        //    var modules = RegisterModules();
-        //    foreach (var module in modules)
-        //        Register(module.Name, module);
+            var modules = RegisterModules();
+            foreach (var module in modules)
+                Register(module.Name, module, _modules);
 
-
-        //    return _modules[key];
-        //}
+            return _modules[key];
+        }
 
         protected IUnderwritingModule[] RegisterModules()
         {
