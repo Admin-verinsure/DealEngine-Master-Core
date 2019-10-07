@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TechCertain.Domain.Interfaces
 {
-    public class NHibernateUnitOfWork : IUnitOfWork, IDisposable
+    public class NHibernateUnitOfWork : IUnitOfWork
     {
         private ISession _session;
         private ITransaction _transaction;
@@ -46,14 +46,15 @@ namespace TechCertain.Domain.Interfaces
         {
             if (_transaction != null)
             {
-                Dispose();
+                _transaction.Dispose();
+                _transaction = null;
             }
         }
 
         public void Dispose()
         {
-            _transaction.Dispose();
-            _transaction = null;
+            //_transaction.Dispose();
+            //_transaction = null;
         }
 
         public IUnitOfWork BeginUnitOfWork()
