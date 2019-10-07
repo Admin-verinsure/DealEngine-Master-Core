@@ -940,7 +940,7 @@ namespace TechCertain.WebUI.Controllers
                 clientAgreement.ExpiryDate = clientAgreement.InceptionDate.AddYears(1);
                 clientAgreement.CustomInceptionDate = true;
 
-                //update boat effective date if the date is prior to the new start date or over 30 days after the new start date
+                //boat effective date if the date is prior to the new start date or over 30 days after the new start date
                 foreach (var boat in clientAgreement.ClientInformationSheet.Boats.Where(b => !b.Removed && b.DateDeleted == null))
                 {
                     if (boat.BoatEffectiveDate < clientAgreement.InceptionDate || boat.BoatEffectiveDate > clientAgreement.InceptionDate.AddDays(30))
