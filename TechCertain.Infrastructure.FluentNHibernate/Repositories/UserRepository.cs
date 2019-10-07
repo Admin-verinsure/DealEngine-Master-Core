@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 
@@ -61,7 +62,12 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 			return _userRepository.FindAll ().FirstOrDefault (u => u.Email == email);
 		}
 
-       
+        public Task<User> GetUserByEmailAsync(string email)
+        {
+            var user = _userRepository.FindAll().FirstOrDefault(u => u.Email == email);
+            return Task.FromResult(user);
+        }
+
         public IEnumerable<User> GetUsers ()
 		{
 			return _userRepository.FindAll ();
