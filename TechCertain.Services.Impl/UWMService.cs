@@ -41,6 +41,7 @@ namespace TechCertain.Services.Impl
         public bool UWM_ICIBNZIMV(User createdBy, ClientInformationSheet sheet, string reference)
         {
             var _modules = new Dictionary<string, IUnderwritingModule>();
+            var modules = RegisterModules();
             bool result = false;
 			foreach (Product product in sheet.Programme.BaseProgramme.Products) {
 				if (!product.UnderwritingEnabled)
@@ -61,13 +62,13 @@ namespace TechCertain.Services.Impl
         }
 
         public IUnderwritingModule Load(string key, Dictionary<string, IUnderwritingModule> _modules)
-        {
-            if (!_modules.ContainsKey(key))
-                throw new Exception("No underwriting module for \"" + key + "\" registered");
-
+        {           
             var modules = RegisterModules();
             foreach (var module in modules)
                 Register(module.Name, module, _modules);
+
+            if (!_modules.ContainsKey(key))
+                throw new Exception("No underwriting module for \"" + key + "\" registered");
 
             return _modules[key];
         }
