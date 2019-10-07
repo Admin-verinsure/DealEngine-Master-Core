@@ -10,15 +10,15 @@ namespace TechCertain.Services.Impl
 {
     public class MilestoneService : IMilestoneService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<Milestone> _milestoneRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<Milestone> _milestoneRepository;
         ISystemEmailService _systemEmailRepository;
         //ITaskingService _taskingService;
         IMilestoneTemplateService _milestoneTemplateService;
 
 
-        public MilestoneService(IUnitOfWorkFactory unitOfWork,
-                                IRepository<Milestone> milestoneRepository,
+        public MilestoneService(IUnitOfWork unitOfWork,
+                                IMapperSession<Milestone> milestoneRepository,
                                 ISystemEmailService systemEmailService,
                                 //ITaskingService taskingService,
                                 IMilestoneTemplateService milestoneTemplateService)

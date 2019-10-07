@@ -4,19 +4,16 @@ using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
-using TechCertain.Domain.Services.Factories;
 using TechCertain.Services.Interfaces;
-using TechCertain.WebUI.Areas.Identity.Data;
-using TechCertain.WebUI.Models;
+using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models.Proposal;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class ProposalTemplateController : BaseController
     {
-        IRepository<ProposalTemplate> _proposalTemplateRepository;
-        ProposalTemplateFactory _proposalTemplateFacory;
-
+        IMapperSession<ProposalTemplate> _proposalTemplateRepository;
+        
 		public ProposalTemplateController(IUserService userRepository, DealEngineDBContext dealEngineDBContext) : base (userRepository, dealEngineDBContext)
         {
 
@@ -47,13 +44,12 @@ namespace TechCertain.WebUI.Controllers
 
             if (viewModel.Id == Guid.Empty)
             {
-				ProposalTemplate proposalTemplate = _proposalTemplateFacory.CreateProposalTemplate (
-					CurrentUser,
-					CurrentUser as Owner,
-					viewModel.Name, false,
-					CurrentUser.Organisations.First ());
-
-                viewModel.Id = proposalTemplate.Id;
+                ProposalTemplate proposalTemplate = new ProposalTemplate(
+                    CurrentUser,
+                    CurrentUser as Owner,
+                    viewModel.Name, false);
+                    
+                    viewModel.Id = proposalTemplate.Id;
             }
 
             return View(viewModel);

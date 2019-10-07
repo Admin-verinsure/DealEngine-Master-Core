@@ -11,24 +11,20 @@ namespace TechCertain.Services.Impl
 {
     public class UserService : IUserService
     {
-        IUnitOfWorkFactory _unitOfWork;
-		ILogger _logger;
+        IUnitOfWork _unitOfWork;
 		IUserRepository _userRepository;
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
         IOrganisationTypeService _organisationTypeService;
-        UserManager<User> _userManager;
 
 
-        public UserService(IUnitOfWorkFactory unitOfWork, ILogger logger, IUserRepository userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService, UserManager<User> userManager)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService)
         {
             _unitOfWork = unitOfWork;
-			_logger = logger;
 			_userRepository = userRepository;
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
             _organisationTypeService = organisationTypeService;
-            _userManager = userManager;
         }
 
         //public async Task<User> GetCurrentUserAsync()
@@ -91,9 +87,18 @@ namespace TechCertain.Services.Impl
 			throw new Exception ("User with Id '" + userId + "' does not exist in the system");
 		}
 
-		public User GetUserByEmail (string email)
+		public async Task<User> GetUserByEmailAsync (string email)
 		{
-			User user = _userRepository.GetUserByEmail (email);
+            User user = null;
+            try
+            {
+                user = await _userRepository.GetUserByEmailAsync(email);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+			
 			// have a repo user? Return them
 			if (user != null)
 				return user;
@@ -103,15 +108,46 @@ namespace TechCertain.Services.Impl
 				Update (user);
 				return user;
 			}
-			user = _legacyLdapService.GetLegacyUserByEmail (email);
+			//user = _legacyLdapService.GetLegacyUserByEmail (email);
 			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
 			if (user != null) {
-				Create (user);
-				return user;
+				Create (user);				
 			}
-			throw new Exception ("User with email '" + email + "' does not exist in the system");
+            return user;            
 		}
-      
+
+        public User GetUserByEmail(string email)
+        {
+            User user = null;
+            try
+            {
+                user = _userRepository.GetUserByEmail(email);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            // have a repo user? Return them
+            if (user != null)
+                return user;
+            user = _ldapService.GetUserByEmail(email);
+            // have a ldap user but no repo? Update NHibernate & return them
+            if (user != null)
+            {
+                Update(user);
+                return user;
+            }
+            //user = _legacyLdapService.GetLegacyUserByEmail (email);
+            // have a legacy ldap user only? Create them in Ldap & NHibernate & return them
+            if (user != null)
+            {
+                Create(user);
+                return user;
+            }
+            throw new Exception("User with email '" + email + "' does not exist in the system");
+        }
+
         public IEnumerable<User> GetAllUsers ()
 		{
 			return _userRepository.GetUsers ();
@@ -146,14 +182,12 @@ namespace TechCertain.Services.Impl
 
 		public void IssueLocalBan (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been locked locally by [" + banningUser.UserName + "]");
 			user.Lock ();
 			Update (user);
 		}
 
 		public void RemoveLocalban (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been unlocked locally by [" + banningUser.UserName + "]");
 			user.Unlock ();
 			Update (user);
 		}
@@ -165,13 +199,11 @@ namespace TechCertain.Services.Impl
 
 		public void IssueGlobalBan (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been locked globally by [" + banningUser.UserName + "]");
 			_ldapService.GlobalBan (user);
 		}
 
 		public void RemoveGlobalBan (User user, User banningUser)
 		{
-			_logger.Info ("User [" + user.UserName + "] has been unlocked globally by [" + banningUser.UserName + "]");
 			_ldapService.RemoveGlobalBan (user);
 		}
 
@@ -196,5 +228,10 @@ namespace TechCertain.Services.Impl
 			Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation (user, user, personalOrganisationType);
 			user.Organisations.Add (defaultOrganisation);
 		}
-	}
+
+        User IUserService.GetUserByEmailAsync(string email)
+        {
+            return GetUserByEmailAsync(email).Result;
+        }
+    }
 }

@@ -9,15 +9,13 @@ namespace TechCertain.Services.Impl
 {
 	public class OrganisationService : IOrganisationService
     {
-		IUnitOfWorkFactory _unitOfWork;
-		ILogger _logging;
-		IRepository<Organisation> _organisationRepository;
+		IUnitOfWork _unitOfWork;		
+		IMapperSession<Organisation> _organisationRepository;
 		ILdapService _ldapService;
 
-		public OrganisationService(IUnitOfWorkFactory unitOfWork, ILogger logging, IRepository<Organisation> organisationRepository, ILdapService ldapService)
+		public OrganisationService(IUnitOfWork unitOfWork, IMapperSession<Organisation> organisationRepository, ILdapService ldapService)
         {
-			_unitOfWork = unitOfWork;
-			_logging = logging;
+			_unitOfWork = unitOfWork;			
 			_organisationRepository = organisationRepository;
 			_ldapService = ldapService;
 		}

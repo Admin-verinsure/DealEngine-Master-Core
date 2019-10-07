@@ -7,30 +7,28 @@ using TechCertain.Domain.Interfaces;
 using AutoMapper;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Product;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
     //[Authorize]
     public class ProgrammeController : BaseController
-    {
-        ILogger _logger;
+    {        
         IInformationTemplateService _informationService;
-        IUnitOfWorkFactory _unitOfWork;
+        IUnitOfWork _unitOfWork;
 
-        IRepository<Programme> _programmeRepository;
-        IRepository<Product> _productRepository;
-        IRepository<RiskCategory> _riskRepository;
-        IRepository<RiskCover> _riskCoverRepository;
-        IRepository<Organisation> _organisationRepository;
+        IMapperSession<Programme> _programmeRepository;
+        IMapperSession<Product> _productRepository;
+        IMapperSession<RiskCategory> _riskRepository;
+        IMapperSession<RiskCover> _riskCoverRepository;
+        IMapperSession<Organisation> _organisationRepository;
         IBusinessActivityService _busActivityService;
-        IRepository<Document> _documentRepository;
+        IMapperSession<Document> _documentRepository;
         IProgrammeService _programmeService;
         IFileService _fileService;
         IEmailService _emailService;
@@ -38,16 +36,13 @@ namespace TechCertain.WebUI.Controllers
         IRoleService _roleService;
         IMapper _mapper;
 
-        private IUnitOfWorkFactory _unitOfWorkFactory;
-
-        public ProgrammeController(ILogger logger, DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService,
-                                 IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<RiskCategory> riskRepository,
-                                 IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository, IRoleService roleService,
-                                 IRuleService ruleService, IRepository<Document> documentRepository, IRepository<Programme> programmeRepository, IBusinessActivityService busActivityService,
-                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IUnitOfWorkFactory unitOfWorkFactory)
+        public ProgrammeController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService,
+                                 IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
+                                 IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRoleService roleService,
+                                 IRuleService ruleService, IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
+                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper)
             : base(userRepository, dealEngineDBContext)
-        {
-            _logger = logger;
+        {            
             _informationService = informationService;
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
@@ -59,7 +54,7 @@ namespace TechCertain.WebUI.Controllers
             _documentRepository = documentRepository;
             _programmeRepository = programmeRepository;
             _programmeService = programmeService;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
             _RuleService = ruleService;
             _fileService = fileService;
             _emailService = emailService;
@@ -477,7 +472,7 @@ namespace TechCertain.WebUI.Controllers
 
             foreach (ClientAgreement agreement in programme.Agreements)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     if (agreement.Status != status)
                     {
@@ -684,7 +679,7 @@ namespace TechCertain.WebUI.Controllers
         }
         //[HttpGet]
 
-        //               using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //               using (var uow = _unitOfWork.BeginUnitOfWork())
         //            {
         //                //TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
         //                bvTerm.TermLimit = clientAgreementBVTerm.TermLimit;
@@ -982,7 +977,7 @@ namespace TechCertain.WebUI.Controllers
 
         //        ////model.OrgUser = _organisationRepository.GetById(programme.Parties.);
         //        ////var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser.PrimaryOrganisation);
-        //        //using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //        //using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //        //{
         //        //    uow.Commit();
         //        //}
@@ -1116,7 +1111,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (emailTemplate != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     emailTemplate.Subject = model.Subject;
                     emailTemplate.Body = model.Body;
@@ -1128,7 +1123,7 @@ namespace TechCertain.WebUI.Controllers
             }
             else
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     emailTemplate = new EmailTemplate(CurrentUser, emailtemplatename, model.Type, model.Subject, model.Body, null, programme);
                     programme.EmailTemplates.Add(emailTemplate);

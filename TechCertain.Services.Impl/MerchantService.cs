@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class MerchantService : IMerchantService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<Merchant> _merchantRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<Merchant> _merchantRepository;
 
-        public MerchantService(IUnitOfWorkFactory unitOfWork, IRepository<Merchant> merchantRepository)
+        public MerchantService(IUnitOfWork unitOfWork, IMapperSession<Merchant> merchantRepository)
         {
             _unitOfWork = unitOfWork;
             _merchantRepository = merchantRepository;

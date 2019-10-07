@@ -3,27 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
-using TechCertain.Domain.Services.Factories;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class InformationTemplateService : IInformationTemplateService
     {
-        private InformationTemplateFactory _informationTemplateFactory;
-        private IRepository<InformationTemplate> _informationTemplateRepository;
+        //private InformationTemplateFactory _informationTemplateFactory;
+        private IMapperSession<InformationTemplate> _informationTemplateRepository;
 
-        public InformationTemplateService(
-            InformationTemplateFactory informationTemplateFactory,
-            IRepository<InformationTemplate> informationTemplateRepository)
+        public InformationTemplateService(IMapperSession<InformationTemplate> informationTemplateRepository)
         {
-            _informationTemplateFactory = informationTemplateFactory;
             _informationTemplateRepository = informationTemplateRepository;
         }
 
         public InformationTemplate CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections)
         {
-            InformationTemplate template = _informationTemplateFactory.CreateNewTemplate(createdBy, name, sections);
+            InformationTemplate template = new InformationTemplate(createdBy, name, sections); //_informationTemplateFactory.CreateNewTemplate(createdBy, name, sections);
 
             _informationTemplateRepository.Add(template);
 

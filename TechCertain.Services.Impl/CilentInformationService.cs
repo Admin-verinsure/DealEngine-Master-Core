@@ -11,9 +11,9 @@ namespace TechCertain.Services.Impl
 {
     public class CilentInformationService : ICilentInformationService
     {
-        IRepository<ClientInformationSheet> _customerInformationRepository;
+        IMapperSession<ClientInformationSheet> _customerInformationRepository;
 
-        public CilentInformationService(IRepository<ClientInformationSheet> customerInformationRepository)
+        public CilentInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository)
         {
             _customerInformationRepository = customerInformationRepository;
         }

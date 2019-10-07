@@ -9,16 +9,19 @@ namespace TechCertain.Services.Impl
 {
 	public class ProgrammeService : IProgrammeService
 	{
-		IUnitOfWorkFactory _unitOfWorkFactory;
-		IRepository<Programme> _programmeRepository;
-		IRepository<ClientProgramme> _clientProgrammeRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<Programme> _programmeRepository;
+		IMapperSession<ClientProgramme> _clientProgrammeRepository;
+        IReferenceService _referenceService;
 
-		public ProgrammeService (IUnitOfWorkFactory unitOfWorkFactory, IRepository<Programme> programmeRepository, IRepository<ClientProgramme> clientProgrammeRepository)
-		{
-			_unitOfWorkFactory = unitOfWorkFactory;
+
+        public ProgrammeService (IUnitOfWork unitOfWork, IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
+        {
+            _unitOfWork = unitOfWork;
 			_programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
-		}
+            _referenceService = referenceService;
+        }
 
 		public ClientProgramme CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner)
 		{
@@ -67,7 +70,7 @@ namespace TechCertain.Services.Impl
 
 		public void Update (params ClientProgramme [] clientProgrammes)
 		{
-			using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork ()) {
+			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
 				foreach (ClientProgramme clientProgramme in clientProgrammes)
 					_clientProgrammeRepository.Add (clientProgramme);
 				uow.Commit ();
@@ -79,8 +82,13 @@ namespace TechCertain.Services.Impl
 			ClientProgramme newClientProgramme = CreateClientProgrammeFor (clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
+            newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
+            var reference = _referenceService.GetLatestReferenceId();
+            newClientProgramme.InformationSheet.ReferenceId = reference;
+            newClientProgramme.InformationSheet.IsChange = true;
+            _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
 
-			return newClientProgramme;
+            return newClientProgramme;
 		}
 
 		public ClientProgramme CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)

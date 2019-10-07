@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 
@@ -8,18 +9,18 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        IRepository<User> _userRepository;
-        IUnitOfWorkFactory _unitOfWorkFactory;
+        IMapperSession<User> _userRepository;
+        IUnitOfWork _unitOfWork;
 
-        public UserRepository(IRepository<User> userRepository, IUnitOfWorkFactory unitOfWorkFactory)
+        public UserRepository(IMapperSession<User> userRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
         }
 
         public bool Create(User user)
         {
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 _userRepository.Add(user);
                 //uow.Add<User>(user);
@@ -30,7 +31,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 
         public bool Delete(User user)
         {
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 _userRepository.Remove(user);
                 //uow.Remove(user);
@@ -61,7 +62,12 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 			return _userRepository.FindAll ().FirstOrDefault (u => u.Email == email);
 		}
 
-       
+        public Task<User> GetUserByEmailAsync(string email)
+        {
+            var user = _userRepository.FindAll().FirstOrDefault(u => u.Email == email);
+            return Task.FromResult(user);
+        }
+
         public IEnumerable<User> GetUsers ()
 		{
 			return _userRepository.FindAll ();
@@ -69,7 +75,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 
         public bool Update(User user)
         {
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
 				try
 				{

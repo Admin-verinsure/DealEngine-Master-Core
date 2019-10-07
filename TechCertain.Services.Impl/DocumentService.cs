@@ -9,13 +9,13 @@ namespace TechCertain.Services.Impl
 {
 	public class DocumentService : IDocumentService
 	{
-		IUnitOfWorkFactory _unitOfWork;
-		IRepository<PolicyDocumentTemplate> _policyDocumentRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<PolicyDocumentTemplate> _policyDocumentRepository;
 		[Obsolete]
-		IRepository<Old_PolicyDocumentTemplate> _old_policyDocumentRepository;
+		IMapperSession<Old_PolicyDocumentTemplate> _old_policyDocumentRepository;
 
-		public DocumentService (IUnitOfWorkFactory unitOfWork, IRepository<PolicyDocumentTemplate> policyDocumentRepository, 
-			IRepository<Old_PolicyDocumentTemplate> old_policyDocumentRepository)
+		public DocumentService (IUnitOfWork unitOfWork, IMapperSession<PolicyDocumentTemplate> policyDocumentRepository, 
+			IMapperSession<Old_PolicyDocumentTemplate> old_policyDocumentRepository)
 		{
 			_unitOfWork = unitOfWork;
 			_policyDocumentRepository = policyDocumentRepository;

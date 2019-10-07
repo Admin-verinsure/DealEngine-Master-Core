@@ -2,28 +2,22 @@
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
-using TechCertain.Domain.Services.Factories;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class InformationSectionService : IInformationSectionService
-    {
-        public InformationSectionFactory _informationSectionFactory;
+    {        
+        public IMapperSession<InformationSection> _informationSectionRepository;
 
-        public IRepository<InformationSection> _informationSectionRepository;
-
-        public InformationSectionService(
-            InformationSectionFactory informationSectionFactory,
-            IRepository<InformationSection> informationSectionRepository)
+        public InformationSectionService(IMapperSession<InformationSection> informationSectionRepository)
         {
-            _informationSectionFactory = informationSectionFactory;
             _informationSectionRepository = informationSectionRepository;
         }
 
         public InformationSection CreateNewSection(User createdBy, string name, IList<InformationItem> items)
         {
-			InformationSection section = _informationSectionFactory.CreateSection(createdBy, name, items);
+			InformationSection section = new InformationSection(createdBy, name, items);//_informationSectionFactory.CreateSection(createdBy, name, items);
 
             _informationSectionRepository.Add(section);
 

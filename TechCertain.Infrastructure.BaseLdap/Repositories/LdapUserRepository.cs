@@ -1,6 +1,7 @@
 ﻿using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Infrastructure.BaseLdap.Converters;
@@ -194,5 +195,10 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			}
 			return user;
 		}
+
+        public Task<User> GetUserByEmailAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

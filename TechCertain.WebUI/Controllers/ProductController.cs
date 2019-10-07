@@ -9,7 +9,7 @@ using System.Net.Http;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
 
@@ -17,26 +17,24 @@ namespace TechCertain.WebUI.Controllers
 {
 	//[Authorize]
 	public class ProductController : BaseController
-	{
-		ILogger _logger;
+	{		
 		IInformationTemplateService _informationService;
-		IUnitOfWorkFactory _unitOfWork;
-		IRepository<Product> _productRepository;
-        IRepository<Territory> _TerritoryRepository;
+		IUnitOfWork _unitOfWork;
+		IMapperSession<Product> _productRepository;
+        IMapperSession<Territory> _TerritoryRepository;
 
-        IRepository<RiskCategory> _riskRepository;
-		IRepository<RiskCover> _riskCoverRepository;
-		IRepository<Organisation> _organisationRepository;
-		IRepository<Document> _documentRepository;
-		IRepository<Programme> _programmeRepository;
+        IMapperSession<RiskCategory> _riskRepository;
+		IMapperSession<RiskCover> _riskCoverRepository;
+		IMapperSession<Organisation> _organisationRepository;
+		IMapperSession<Document> _documentRepository;
+		IMapperSession<Programme> _programmeRepository;
 
-		public ProductController(ILogger logger, DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService, 
-		                         IUnitOfWorkFactory unitOfWork, IRepository<Product> productRepository, IRepository<Territory> territoryRepository, IRepository<RiskCategory> riskRepository,
-		                         IRepository<RiskCover> riskCoverRepository, IRepository<Organisation> organisationRepository,
-								 IRepository<Document> documentRepository, IRepository<Programme> programmeRepository)
+		public ProductController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService, 
+		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
+		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
+								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
 			: base(userRepository, dealEngineDBContext)
-		{
-			_logger = logger;
+		{			
 			_informationService = informationService;
 			_unitOfWork = unitOfWork;
 			_productRepository = productRepository;

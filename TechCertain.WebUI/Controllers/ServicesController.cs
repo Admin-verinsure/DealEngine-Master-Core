@@ -13,49 +13,49 @@ using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
+using System.Threading;
 
 namespace TechCertain.WebUI.Controllers
 {
 
     public class ServicesController : BaseController
-    {
-        ILogger _logger;
+    {        
         ICilentInformationService _clientInformationService;
-        IRepository<Vehicle> _vehicleRepository;
-        IRepository<OrganisationalUnit> _organisationalUnitRepository;
-        IRepository<Location> _locationRepository;
-        IRepository<WaterLocation> _waterLocationRepository;
-        //  IRepository<Operator> _operatorRepository;
-        IRepository<Boat> _boatRepository;
-        IRepository<BoatUse> _boatUseRepository;
+        IMapperSession<Vehicle> _vehicleRepository;
+        IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
+        IMapperSession<Location> _locationRepository;
+        IMapperSession<WaterLocation> _waterLocationRepository;
+        IMapperSession<Boat> _boatRepository;
+        IMapperSession<BoatUse> _boatUseRepository;
         IVehicleService _vehicleService;
         IOrganisationService _organisationService;
         IBoatUseService _boatUseService;
-        IRepository<Building> _buildingRepository;
-        IRepository<BusinessInterruption> _businessInterruptionRepository;
-        IRepository<MaterialDamage> _materialDamageRepository;
-        IRepository<Claim> _claimRepository;
-        IRepository<Product> _productRepository;
+        IMapperSession<Building> _buildingRepository;
+        IMapperSession<BusinessInterruption> _businessInterruptionRepository;
+        IMapperSession<MaterialDamage> _materialDamageRepository;
+        IMapperSession<Claim> _claimRepository;
+        IMapperSession<Product> _productRepository;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
-        IUnitOfWorkFactory _unitOfWorkFactory;
-        IRepository<Organisation> _OrganisationRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<Organisation> _OrganisationRepository;
         IReferenceService _referenceService;
         IEmailService _emailService;
         IInsuranceAttributeService _insuranceAttributeService;
         IMapper _mapper;
 
 
-        public ServicesController(ILogger logger, IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IRepository<Vehicle> vehicleRepository, IRepository<BoatUse> boatUseRepository,
-            IRepository<OrganisationalUnit> organisationalUnitRepository, IRepository<Location> locationRepository, IRepository<WaterLocation> waterLocationRepository, IRepository<Building> buildingRepository, IRepository<BusinessInterruption> businessInterruptionRepository,
-            IRepository<MaterialDamage> materialDamageRepository, IRepository<Claim> claimRepository, IRepository<Product> productRepository, IVehicleService vehicleService, IRepository<Boat> boatRepository,
-            IOrganisationService organisationService, IBoatUseService boatUseService, /*IRepository<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
-            IRepository<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper,IUnitOfWorkFactory unitOfWorkFactory, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
+
+        public ServicesController(IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+            IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
+            IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
+            IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
+            IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
             : base(userService, dealEngineDBContext)
         {
-            _logger = logger;
+            
             _clientInformationService = clientInformationService;
             _vehicleRepository = vehicleRepository;
             _organisationalUnitRepository = organisationalUnitRepository;
@@ -74,7 +74,7 @@ namespace TechCertain.WebUI.Controllers
             // _operatorRepository = operatorRepository;
             _programmeService = programeService;
             _organisationTypeService = organisationTypeService;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
             _OrganisationRepository = OrganisationRepository;
             _referenceService = referenceService;
             _emailService = emailService;
@@ -145,13 +145,11 @@ namespace TechCertain.WebUI.Controllers
                     model.VIN = vehicle.VIN;
                     model.ChassisNumber = vehicle.ChassisNumber;
                     model.EngineNumber = vehicle.EngineNumber;
-                    model.GrossVehicleMass = vehicle.GrossVehicleMass.ToString();
-                    _logger.Info(model.VIN);
+                    model.GrossVehicleMass = vehicle.GrossVehicleMass.ToString();             
                 }
             }
             catch (Exception ex)
-            {
-                _logger.Error(ex);
+            {                
                 Console.WriteLine(ex);
                 throw ex;
             }
@@ -202,7 +200,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.InterestedParties != null)
                 vehicle.InterestedParties = _organisationService.GetAllOrganisations().Where(org => model.InterestedParties.Contains(org.Id)).ToList();
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
 
                 sheet.Vehicles.Add(vehicle);
@@ -422,7 +420,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult SetVehicleRemovedStatus(Guid vehicleId, bool status)
         {
             Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 vehicle.Removed = status;
                 uow.Commit();
@@ -436,7 +434,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 vehicle.VehicleCeaseDate = DateTime.MinValue;
                 vehicle.VehicleCeaseReason = '0';
@@ -451,7 +449,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 vehicle.VehicleCeaseDate = DateTime.MinValue;
                 vehicle.VehicleCeaseReason = '0';
@@ -513,7 +511,7 @@ namespace TechCertain.WebUI.Controllers
                 ou = new OrganisationalUnit(CurrentUser, model.Name);
             ou.Name = model.Name;
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Owner.OrganisationalUnits.Add(ou);
                 uow.Commit();
@@ -644,7 +642,7 @@ namespace TechCertain.WebUI.Controllers
                 OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
 
             location.OrganisationalUnits = OUList;
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Locations.Add(location);
                 uow.Commit();
@@ -807,7 +805,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Location location = _locationRepository.GetById(locationId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 location.Removed = status;
                 uow.Commit();
@@ -841,7 +839,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.InterestedParties != null)
                 building.InterestedParties = _organisationService.GetAllOrganisations().Where(org => model.InterestedParties.Contains(org.Id)).ToList();
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Buildings.Add(building);
                 uow.Commit();
@@ -928,7 +926,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Building building = _buildingRepository.GetById(buildingId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 building.Removed = status;
                 uow.Commit();
@@ -986,7 +984,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 // waterLocation.OrganisationalUnit = OrganisationalUnit;
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.WaterLocations.Add(waterLocation);
                     uow.Commit();
@@ -1145,7 +1143,7 @@ namespace TechCertain.WebUI.Controllers
         {
             WaterLocation waterLocation = _waterLocationRepository.GetById(waterLocationId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 waterLocation.Removed = status;
                 uow.Commit();
@@ -1176,7 +1174,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.BusinessInterruptionLocation != null)
                 businessInterruption.Location = _locationRepository.GetById(model.BusinessInterruptionLocation);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.BusinessInterruptions.Add(businessInterruption);
                 uow.Commit();
@@ -1260,7 +1258,7 @@ namespace TechCertain.WebUI.Controllers
         {
             BusinessInterruption businessInterruption = _businessInterruptionRepository.GetById(businessInterruptionId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 businessInterruption.Removed = status;
                 uow.Commit();
@@ -1292,7 +1290,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.MaterialDamageLocation != null)
                 materialDamage.Location = _locationRepository.GetById(model.MaterialDamageLocation);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.MaterialDamages.Add(materialDamage);
                 uow.Commit();
@@ -1377,7 +1375,7 @@ namespace TechCertain.WebUI.Controllers
         {
             MaterialDamage materialDamage = _materialDamageRepository.GetById(materialDamageId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 materialDamage.Removed = status;
                 uow.Commit();
@@ -1396,7 +1394,7 @@ namespace TechCertain.WebUI.Controllers
             Boat boat = _boatRepository.FindAll().FirstOrDefault(b => b.Id == BoatId);
 
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 List<string> boatuselist = new List<string>();
 
@@ -1446,7 +1444,7 @@ namespace TechCertain.WebUI.Controllers
         //    {
         //        try
         //        {
-        //            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //            {
         //                List<string> boatuselist = new List<string>();
 
@@ -1479,7 +1477,7 @@ namespace TechCertain.WebUI.Controllers
         //    if (model.BoatOperator != Guid.Empty)
         //        boat.BoatOperator = _operatorRepository.GetById(model.BoatOperator);
 
-        //        using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //        {
 
         //            sheet.Boats.Add(boat);
@@ -1587,7 +1585,7 @@ namespace TechCertain.WebUI.Controllers
             try
             {
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     //boat.BoatUse = model.BoatUse;
 
@@ -1744,7 +1742,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Boat boat = _boatRepository.GetById(boatId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boat.Removed = status;
                 uow.Commit();
@@ -1757,7 +1755,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Boat boat = _boatRepository.GetById(boatId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boat.BoatCeaseDate = DateTime.MinValue;
                 boat.BoatCeaseReason = '0';
@@ -1772,7 +1770,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Boat boat = _boatRepository.GetById(boatId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boat.BoatCeaseDate = DateTime.MinValue;
                 boat.BoatCeaseReason = '0';
@@ -1806,7 +1804,7 @@ namespace TechCertain.WebUI.Controllers
             //if (model.BoatUseBoat != Guid.Empty)
             //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.BoatUses.Add(boatUse);
                 uow.Commit();
@@ -1845,7 +1843,7 @@ namespace TechCertain.WebUI.Controllers
                 //    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName);
                 //    _organisationService.CreateNewOrganisation(organisation);
                 //}
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     organisation.ChangeOrganisationName(model.OrganisationName);
                     organisation.Phone = model.OrganisationPhone;
@@ -1886,7 +1884,7 @@ namespace TechCertain.WebUI.Controllers
         //        }
 
         //        model.ID = organisation.Id;
-        //        using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //        {
         //            sheet.Organisation.Add(organisation);
         //            //NewMethod(uow);
@@ -1961,7 +1959,7 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 model.ID = organisation.Id;
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.Organisation.Add(organisation);
                     //NewMethod(uow);
@@ -2173,7 +2171,7 @@ namespace TechCertain.WebUI.Controllers
 
                     }
 
-                    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
                         CurrentUser.Organisations.Add(organisation);
                         sheet.Organisation.Add(organisation);
@@ -2286,7 +2284,7 @@ namespace TechCertain.WebUI.Controllers
         {
             BoatUse boatUse = _boatUseRepository.GetById(boatUseId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boatUse.Removed = status;
                 uow.Commit();
@@ -2299,7 +2297,7 @@ namespace TechCertain.WebUI.Controllers
         {
             BoatUse boatUse = _boatUseRepository.GetById(boatUseId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boatUse.BoatUseCeaseDate = DateTime.MinValue;
                 boatUse.BoatUseCeaseReason = '0';
@@ -2338,7 +2336,7 @@ namespace TechCertain.WebUI.Controllers
             if (model.ClaimProducts != null)
                 claim.ClaimProducts = _productRepository.FindAll().Where(pro => model.ClaimProducts.Contains(pro.Id)).ToList();
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
 
                 sheet.Claims.Add(claim);
@@ -2420,7 +2418,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Claim claim = _claimRepository.GetById(claimId);
 
-            using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 claim.Removed = status;
                 uow.Commit();
@@ -2503,7 +2501,7 @@ namespace TechCertain.WebUI.Controllers
 
 
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     user.SetPrimaryOrganisation(organisation);
                     currentuser.Organisations.Add(organisation);
@@ -2538,7 +2536,7 @@ namespace TechCertain.WebUI.Controllers
         //        operato = model.ToEntity(CurrentUser);
         //    model.UpdateEntity(operato);
 
-        //    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //    {
         //        sheet.Operators.Add(operato);
         //        uow.Commit();
@@ -2621,7 +2619,7 @@ namespace TechCertain.WebUI.Controllers
         //{
         //    Operator operato = _operatorRepository.GetById(operatorId);
 
-        //    using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+        //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //    {
         //        operato.Removed = status;
         //        uow.Commit();
@@ -2635,16 +2633,12 @@ namespace TechCertain.WebUI.Controllers
         #region CoastGuardSelfReg
 
         [HttpPost]
-        public ActionResult CoastGuardSelfReg(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+        public async System.Threading.Tasks.Task<ActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
 
             bool hasAccount = true;
-            _logger.Info(craftType + " " + membershipNumber + " " + boatType + " " + constructionType + " " + hullConfiguration + " " + mooredType + " " + trailered + " " + boatInsuredValue + " " +
-                quickQuotePremium + " " + firstName + " " + lastName + " " + email + " " + orgType + " " + homePhone);
-
-            _logger.Info("Entered Quick Quote Consuming Process");
-
+                     
             //Add User, Organisation, Information Sheet, Quick Term saving process here
             string organisationName = null;
             string ouname = null;
@@ -2699,8 +2693,7 @@ namespace TechCertain.WebUI.Controllers
             organisationType = _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
             if (organisationType == null)
             {
-                organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, orgTypeName);
-                _logger.Info("Created OrganisationType " + organisationType.Name);
+                organisationType = _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);               
             }
             Organisation organisation = null;
             organisation = _organisationService.GetOrganisationByEmail(email);
@@ -2708,11 +2701,10 @@ namespace TechCertain.WebUI.Controllers
             //condition for organisation exists
             if (organisation == null)
             {
-                organisation = new Organisation(CurrentUser, Guid.NewGuid(), organisationName, organisationType);
+                organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
                 organisation.Phone = phonenumber;
                 organisation.Email = email;
-                _organisationService.CreateNewOrganisation(organisation);
-                _logger.Info("Created Organisation " + organisation.Name);
+                _organisationService.CreateNewOrganisation(organisation);                
 
                 User user = null;
                 User user2 = null;
@@ -2742,7 +2734,7 @@ namespace TechCertain.WebUI.Controllers
                         //var personalOrganisation = new Organisation (CurrentUser, Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser, "personal"));
                         //_organisationService.CreateNewOrganisation (personalOrganisation);
                         // create user object
-                        user = new User(CurrentUser, Guid.NewGuid(), username);
+                        user = new User(null, Guid.NewGuid(), username);
                         user.FirstName = firstName;
                         user.LastName = lastName;
                         user.FullName = firstName + " " + lastName;
@@ -2769,12 +2761,20 @@ namespace TechCertain.WebUI.Controllers
                 var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme"); //Marsh Coastguard
                 var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
 
-                User user3 = _userService.GetUserByEmail(email);
+                Thread.Sleep(2000);
+               
+                User user3 = _userService.GetUserByEmailAsync(email);
+                //Thread.Sleep(4000);
+
                 var reference = _referenceService.GetLatestReferenceId();
+                Thread.Sleep(2000);
+
                 var sheet = _clientInformationService.IssueInformationFor(user3, organisation, clientProgramme, reference);
+                Thread.Sleep(2000);
+
                 _referenceService.CreateClientInformationReference(sheet);
 
-                using (IUnitOfWork uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     OrganisationalUnit ou = new OrganisationalUnit(user3, ouname);
                     Boat vessel = new Boat(user3)
@@ -2791,25 +2791,32 @@ namespace TechCertain.WebUI.Controllers
                     organisation.OrganisationalUnits.Add(ou);
                     clientProgramme.BrokerContactUser = programme.BrokerContactUser;
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
-                    uow.Commit();
+                    try
+                    {
+                        await uow.Commit();
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                   
                 }
 
                 //send out login email
-                _emailService.SendSystemEmailLogin(email);
+                //_emailService.SendSystemEmailLogin(email);
                 //send out instruction email
                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
                 if (emailTemplate != null)
                 {
-                    _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                    //_emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
                 }
                 else
                 {
-                    _logger.Info("There is no Information Sheet Instruction email template been set up.");
+                    throw new Exception("There is no Information Sheet Instruction email template been set up.");
                 }
                 //send out information sheet issue notification email
-               _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
-
-                _logger.Info("Quick Quote Consuming Process Completed");
+               //_emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                
             }
             else
             {

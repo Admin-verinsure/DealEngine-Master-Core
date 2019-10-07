@@ -9,10 +9,10 @@ namespace TechCertain.Services.Impl
 {
     public class RoleService : IRoleService
     {
-        IRepository<Role> _roleRepository;
-        IUnitOfWorkFactory _uowFactory;
+        IMapperSession<Role> _roleRepository;
+        IUnitOfWork _uowFactory;
 
-        public RoleService(IRepository<Role> roleRepository, IUnitOfWorkFactory uowFactory)
+        public RoleService(IMapperSession<Role> roleRepository, IUnitOfWork uowFactory)
         {
             _roleRepository = roleRepository;
             _uowFactory = uowFactory;

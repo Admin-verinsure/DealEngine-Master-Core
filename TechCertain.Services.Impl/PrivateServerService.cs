@@ -8,10 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class PrivateServerService : IPrivateServerService
 	{
-		IUnitOfWorkFactory _unitOfWork;
-        IRepository<PrivateServer> _privateServerRepository;
+		IUnitOfWork _unitOfWork;
+        IMapperSession<PrivateServer> _privateServerRepository;
 
-		public PrivateServerService(IUnitOfWorkFactory unitOfWork, IRepository<PrivateServer> privateServerRepository)
+		public PrivateServerService(IUnitOfWork unitOfWork, IMapperSession<PrivateServer> privateServerRepository)
         {
 			_unitOfWork = unitOfWork;
 			_privateServerRepository = privateServerRepository;

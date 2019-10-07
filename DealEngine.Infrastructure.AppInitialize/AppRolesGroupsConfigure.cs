@@ -7,11 +7,11 @@ namespace DealEngine.Infrastructure.AppInitialize
 {
 	public class AppRolesGroupsConfigure : IAppConfigure
 	{
-		IUnitOfWorkFactory _uowFactory;
-		IRepository<ApplicationGroup> _groupRespoitory;
-		IRepository<ApplicationRole> _roleRepository;
+		IUnitOfWork _uowFactory;
+		IMapperSession<ApplicationGroup> _groupRespoitory;
+		IMapperSession<ApplicationRole> _roleRepository;
 
-		public AppRolesGroupsConfigure (IUnitOfWorkFactory uowFactory, IRepository<ApplicationGroup> groupRepository, IRepository<ApplicationRole> roleRepository)
+		public AppRolesGroupsConfigure (IUnitOfWork uowFactory, IMapperSession<ApplicationGroup> groupRepository, IMapperSession<ApplicationRole> roleRepository)
 		{
 			_uowFactory = uowFactory;
 			_groupRespoitory = groupRepository;

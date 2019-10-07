@@ -34,10 +34,10 @@ namespace TechCertain.WebUI.Controllers
 
 	public class PermissionsService : IPermissionsService
 	{
-		IRepository<ApplicationGroup> _groupRepository;
-		IRepository<ApplicationRole> _roleRepository;
+		IMapperSession<ApplicationGroup> _groupRepository;
+		IMapperSession<ApplicationRole> _roleRepository;
 
-		public PermissionsService (IRepository<ApplicationGroup> groupRepository, IRepository<ApplicationRole> roleRepository)
+		public PermissionsService (IMapperSession<ApplicationGroup> groupRepository, IMapperSession<ApplicationRole> roleRepository)
 		{
 			_groupRepository = groupRepository;
 			_roleRepository = roleRepository;

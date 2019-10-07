@@ -6,16 +6,14 @@ using AutoMapper;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
-using TechCertain.Infrastructure.Tasking;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using static System.Net.WebRequestMethods;
-using TechCertain.WebUI.Areas.Identity.Data;
+using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -34,26 +32,26 @@ namespace TechCertain.WebUI.Controllers
         IClientAgreementRuleService _clientAgreementRuleService;
         IUWMService _uWMService;
         //ITaskingService _taskingService;
-        IRepository<PolicyDocumentTemplate> _documentRepository;
+        IMapperSession<PolicyDocumentTemplate> _documentRepository;
         IEmailService _emailService;
-        IUnitOfWorkFactory _unitOfWorkFactory;
+        IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
         IRoleService _roleService;
         IMilestoneService _milestoneService;
 
-        IRepository<Organisation> _organisationRepository;
-        IRepository<InsuranceAttribute> _InsuranceAttributesRepository;
-        IRepository<Territory> _territoryRepository;
+        IMapperSession<Organisation> _organisationRepository;
+        IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
+        IMapperSession<Territory> _territoryRepository;
 
-        IRepository<BusinessActivity> _busActivityRespository;
+        IMapperSession<BusinessActivity> _busActivityRespository;
         IProgrammeService _programmeService;
         IBusinessActivityService _businessActivityService;
 
         IMapper _mapper;
         IUserRepository _IUserRepository;
-        IRepository<DropdownListItem> _IDropdownListItem;
+        IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _IClientInformationAnswer;
-        IRepository<InformationSection> _informationSectionRepository;
+        IMapperSession<InformationSection> _informationSectionRepository;
         public InformationController(
             IUserService userRepository,
             IRoleService roleService,
@@ -71,17 +69,17 @@ namespace TechCertain.WebUI.Controllers
             IUWMService uWMService,
             IReferenceService referenceService,
             //ITaskingService taskingService,
-            IRepository<Organisation> organisationRepository,
-            IRepository<InsuranceAttribute> insuranceAttributesRepository,
-            IRepository<PolicyDocumentTemplate> documentRepository,
-            IRepository<Territory> territoryRepository,
-            IUnitOfWorkFactory unitOfWorkFactory,
-            IRepository<BusinessActivity> busActivityRespository,
-            IRepository<InformationSection> informationSectionRepository,
+            IMapperSession<Organisation> organisationRepository,
+            IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
+            IMapperSession<PolicyDocumentTemplate> documentRepository,
+            IMapperSession<Territory> territoryRepository,
+            IUnitOfWork unitOfWork,
+            IMapperSession<BusinessActivity> busActivityRespository,
+            IMapperSession<InformationSection> informationSectionRepository,
             IProgrammeService programmeService,
             IBusinessActivityService businessActivityService,
             IClientInformationAnswerService clientInformationAnswer,
-            IRepository<DropdownListItem> dropdownListItem,
+            IMapperSession<DropdownListItem> dropdownListItem,
             IMapper mapper,
             DealEngineDBContext dealEngineDBContext,
             IUserRepository UserRepository)
@@ -111,7 +109,7 @@ namespace TechCertain.WebUI.Controllers
             _documentRepository = documentRepository;
             _programmeService = programmeService;
             _IUserRepository = UserRepository;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
             _informationSectionRepository = informationSectionRepository;
             _mapper = mapper;
             _emailService = emailService;
@@ -930,7 +928,7 @@ namespace TechCertain.WebUI.Controllers
             model.AnswerSheetId = sheet.Id;
             model.OrganisationId = sheet.Owner.Id;
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 if (sheet.Status == "Not Started")
                 {
@@ -1095,7 +1093,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult EditPanel(Guid panelId, string panelName, int panelPosition)
         {
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
 
                 if (panelName != null)
@@ -1373,7 +1371,7 @@ namespace TechCertain.WebUI.Controllers
                 
             }
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 if (sheet.Status == "Not Started")
                 {
@@ -1427,7 +1425,7 @@ namespace TechCertain.WebUI.Controllers
             
             model.RevenueByTerritories = Lterritories;
 
-            //IRepository<Territory> _TerritoryRepository;  sdsdsadsadsa
+            //IMapperSession<Territory> _TerritoryRepository;  sdsdsadsadsa
             //foreach (var answer in sheet.SharedData.SharedAnswers)
             //	model.SharedData.Add (answer.ItemName, answer.Value);
 
@@ -1908,7 +1906,7 @@ namespace TechCertain.WebUI.Controllers
             //var role = user.GetRoles();
 
 
-            //using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            //using (var uow = _unitOfWork.BeginUnitOfWork())
             //{
             //    if (sheet.Status == "Quoted")
             //    {
@@ -1958,7 +1956,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (sheet != null)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     if (sheet.Status == "Submitted")
                     {
@@ -2024,7 +2022,7 @@ namespace TechCertain.WebUI.Controllers
                 if (sheet == null)
                     return Json("Failure");
 
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     _clientInformationService.SaveAnswersFor(sheet, collection);
                     _clientInformationService.UpdateInformation(sheet);
@@ -2079,7 +2077,7 @@ namespace TechCertain.WebUI.Controllers
            
             foreach (var item in Claims)
             {
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     for (var x = 0; x < item.Length-1; x++)
                     {
@@ -2115,7 +2113,7 @@ namespace TechCertain.WebUI.Controllers
 
                 var reference = _referenceService.GetLatestReferenceId();
 
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
@@ -2148,7 +2146,7 @@ namespace TechCertain.WebUI.Controllers
                 sheet = _clientInformationService.GetInformation(sheetId);
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
-                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Submitted";
                         sheet.SubmitDate = DateTime.UtcNow;
@@ -2213,7 +2211,7 @@ namespace TechCertain.WebUI.Controllers
 
             _programmeService.Update(newClientProgramme);
 
-            return Redirect("/Information/StartInformation/" + newClientProgramme.Id);
+            return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
         }
 
         [HttpGet]
@@ -2262,7 +2260,7 @@ namespace TechCertain.WebUI.Controllers
                 //Loop through Questions
                 foreach (var item in section.Items)
                 {
-                    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         // Create Information Item
 
@@ -2346,7 +2344,7 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     // Create New Section
 
@@ -2362,7 +2360,7 @@ namespace TechCertain.WebUI.Controllers
 
             // Create information sheet
 
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 InformationTemplate template = _informationTemplateService.CreateInformationTemplate(CurrentUser, demoData.Name, informationSections);
 
@@ -2390,7 +2388,7 @@ namespace TechCertain.WebUI.Controllers
 
             // issues a demo UIS for every template in the system, assuming it hasn't been issued yet
             var templates = _informationTemplateService.GetAllTemplates();
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 foreach (var template in templates)
                 {
@@ -2409,7 +2407,7 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("Insurance Product " + id + " lacks question set");
 
             ClientInformationSheet cis = null;
-            using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
+            using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 var user = CurrentUser;
                 cis = _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, infoTemplate);

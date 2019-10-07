@@ -8,11 +8,11 @@ namespace TechCertain.Services.Impl
 {
     public class BusinessActivityService : IBusinessActivityService
     {
-        IUnitOfWorkFactory _unitOfWork;
-        IRepository<BusinessActivity> _businessActivityRepository;
+        IUnitOfWork _unitOfWork;
+        IMapperSession<BusinessActivity> _businessActivityRepository;
 
-        public BusinessActivityService(IUnitOfWorkFactory unitOfWork,
-                                IRepository<BusinessActivity> businessActivityRepository)
+        public BusinessActivityService(IUnitOfWork unitOfWork,
+                                IMapperSession<BusinessActivity> businessActivityRepository)
         {
             _unitOfWork = unitOfWork;
             _businessActivityRepository = businessActivityRepository;
