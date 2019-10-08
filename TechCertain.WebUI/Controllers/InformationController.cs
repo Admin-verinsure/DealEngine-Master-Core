@@ -2089,11 +2089,12 @@ namespace TechCertain.WebUI.Controllers
                             sheet = _clientInformationService.GetInformation(ClientInformationSheet);
                             _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], sheet);
                         }
-                      }
-                      
+                            uow.Commit();
+
+                        }
+
 
                     }
-                    uow.Commit();
                 }
             }catch(Exception ex)
             {
