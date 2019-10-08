@@ -9,6 +9,7 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -27,14 +28,15 @@ namespace TechCertain.WebUI.Controllers
 		IVehicleService _vehicleService;
         ISystemEmailService _systemEmailService;
         IReferenceService _referenceService;
+        IHttpContextAccessor _httpContextAccessor;
 
         IMapper _mapper;
 
-		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, IPrivateServerService privateServerService, IFileService fileService,
+		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor,IPrivateServerService privateServerService, IFileService fileService,
 			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
             ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
-			: base (userRepository, dealEngineDBContext)
+			: base (userRepository, dealEngineDBContext, httpContextAccessor)
 		{		
 			_privateServerService = privateServerService;
 			_fileService = fileService;

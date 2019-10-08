@@ -14,6 +14,8 @@ using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 
 
@@ -34,15 +36,18 @@ namespace TechCertain.WebUI.Controllers
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
+        IHttpContextAccessor _httpContextAccessor;
         
         public AccountController(
+            IHttpContextAccessor httpContextAccessor,
             ISignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             IUserService userRepository,
             DealEngineDBContext dealEngineDBContext,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository, dealEngineDBContext)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository, dealEngineDBContext, httpContextAccessor)
 		{
+            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
             _userService = userRepository;
@@ -280,13 +285,15 @@ namespace TechCertain.WebUI.Controllers
 				username = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    return RedirectToLocal(viewModel.ReturnUrl);
+                    ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
+                    return View(viewModel);
                 }
-
-                ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
-                return View(viewModel);
+                var localUser = _userManager.FindByNameAsync(username).Result;
+                var claimPrincipal = _signInManager.CreateUserPrincipalAsync(localUser).Result;
+                await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal);
+                return RedirectToLocal(viewModel.ReturnUrl);
 
             }
 			catch (UserImportException ex)

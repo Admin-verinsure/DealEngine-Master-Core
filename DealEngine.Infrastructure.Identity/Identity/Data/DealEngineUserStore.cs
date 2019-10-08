@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
+using Claim = System.Security.Claims.Claim;
 
 namespace DealEngine.Infrastructure.Identity.Data
 {
-    public class DealEngineUserStore : IUserStore<DealEngineUser>, IUserEmailStore<DealEngineUser>, IUserPasswordStore<DealEngineUser>
+    public class DealEngineUserStore : IUserStore<DealEngineUser>, IUserEmailStore<DealEngineUser>, IUserPasswordStore<DealEngineUser>, IUserClaimStore<DealEngineUser>
     {
         IUnitOfWork _unitOfWork;
 		IMapperSession<User> _userRepository;
@@ -36,7 +38,12 @@ namespace DealEngine.Infrastructure.Identity.Data
 			}
 		}
 
-		public Task CreateAsync (User user)
+        public Task AddClaimsAsync(DealEngineUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateAsync (User user)
 		{          
             return UpdateAsync (user);
 		}
@@ -118,6 +125,12 @@ namespace DealEngine.Infrastructure.Identity.Data
             return Task.FromResult(deUser);
         }
 
+        public Task<IList<Claim>> GetClaimsAsync(DealEngineUser user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+
+        }
+
         public Task<string> GetEmailAsync (User user)
 		{
 			if (user == null) {
@@ -179,6 +192,11 @@ namespace DealEngine.Infrastructure.Identity.Data
             return Task.FromResult(user.UserName);           
         }
 
+        public Task<IList<DealEngineUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<bool> HasPasswordAsync(DealEngineUser user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -195,7 +213,12 @@ namespace DealEngine.Infrastructure.Identity.Data
 			return Task.FromResult (user.Groups.FirstOrDefault (g => g.Name == roleName) != null);
 		}
 
-		public Task RemoveFromRoleAsync (User user, string roleName)
+        public Task RemoveClaimsAsync(DealEngineUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveFromRoleAsync (User user, string roleName)
 		{
 			if (user == null) {
 				throw new ArgumentNullException (nameof (user));
@@ -208,7 +231,12 @@ namespace DealEngine.Infrastructure.Identity.Data
 			return UpdateAsync (user);
 		}
 
-		public Task SetEmailAsync (User user, string email)
+        public Task ReplaceClaimAsync(DealEngineUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetEmailAsync (User user, string email)
 		{
 			if (user == null) {
 				throw new ArgumentNullException (nameof (user));
@@ -271,7 +299,10 @@ namespace DealEngine.Infrastructure.Identity.Data
 
         public Task<IdentityResult> UpdateAsync(DealEngineUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _dealEngine.Update(user);
+            _dealEngine.SaveChanges();
+
+            return Task.FromResult(IdentityResult.Success);
         }
     }
 }

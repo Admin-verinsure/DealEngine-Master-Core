@@ -13,6 +13,7 @@ using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Product;
 using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -35,13 +36,14 @@ namespace TechCertain.WebUI.Controllers
         IRuleService _RuleService;
         IRoleService _roleService;
         IMapper _mapper;
+        IHttpContextAccessor _httpContextAccessor;
 
-        public ProgrammeController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService,
+        public ProgrammeController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRoleService roleService,
                                  IRuleService ruleService, IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper)
-            : base(userRepository, dealEngineDBContext)
+            : base(userRepository, dealEngineDBContext, httpContextAccessor)
         {            
             _informationService = informationService;
             _unitOfWork = unitOfWork;

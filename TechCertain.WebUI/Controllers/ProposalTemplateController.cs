@@ -7,14 +7,16 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models.Proposal;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class ProposalTemplateController : BaseController
     {
         IMapperSession<ProposalTemplate> _proposalTemplateRepository;
-        
-		public ProposalTemplateController(IUserService userRepository, DealEngineDBContext dealEngineDBContext) : base (userRepository, dealEngineDBContext)
+        IHttpContextAccessor _httpContextAccessor;
+
+        public ProposalTemplateController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor) : base (userRepository, dealEngineDBContext, httpContextAccessor)
         {
 
         }

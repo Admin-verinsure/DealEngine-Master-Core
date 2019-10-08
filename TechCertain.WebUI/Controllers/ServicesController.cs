@@ -15,6 +15,7 @@ using System.Linq.Dynamic;
 using ServiceStack;
 using DealEngine.Infrastructure.Identity.Data;
 using System.Threading;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -44,16 +45,16 @@ namespace TechCertain.WebUI.Controllers
         IEmailService _emailService;
         IInsuranceAttributeService _insuranceAttributeService;
         IMapper _mapper;
+        IHttpContextAccessor _httpContextAccessor;
 
 
-
-        public ServicesController(IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IHttpContextAccessor httpContextAccessor, IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
-            : base(userService, dealEngineDBContext)
+            : base(userService, dealEngineDBContext, httpContextAccessor)
         {
             
             _clientInformationService = clientInformationService;

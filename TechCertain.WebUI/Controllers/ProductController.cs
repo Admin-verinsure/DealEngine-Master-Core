@@ -12,6 +12,7 @@ using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -19,7 +20,8 @@ namespace TechCertain.WebUI.Controllers
 	public class ProductController : BaseController
 	{		
 		IInformationTemplateService _informationService;
-		IUnitOfWork _unitOfWork;
+        IHttpContextAccessor _httpContextAccessor;
+        IUnitOfWork _unitOfWork;
 		IMapperSession<Product> _productRepository;
         IMapperSession<Territory> _TerritoryRepository;
 
@@ -29,11 +31,11 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<Document> _documentRepository;
 		IMapperSession<Programme> _programmeRepository;
 
-		public ProductController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IInformationTemplateService informationService, 
+		public ProductController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService, 
 		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
 								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
-			: base(userRepository, dealEngineDBContext)
+			: base(userRepository, dealEngineDBContext, httpContextAccessor)
 		{			
 			_informationService = informationService;
 			_unitOfWork = unitOfWork;

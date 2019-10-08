@@ -16,6 +16,7 @@ using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Controllers;
 using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Http;
 
 #endregion
 
@@ -29,14 +30,14 @@ namespace TechCertain.WebUI.Controllers
         ICilentInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
-
+        IHttpContextAccessor _httpContextAccessor;
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
 
-        public HomeController(DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
+        public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
                               IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
-            : base(userRepository, dealEngineDBContext)
+            : base(userRepository, dealEngineDBContext, httpContextAccessor)
         {            
             //_mapper = mapper;
             //_informationService = informationService;

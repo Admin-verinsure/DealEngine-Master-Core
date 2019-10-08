@@ -9,6 +9,7 @@ using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -21,10 +22,10 @@ namespace TechCertain.WebUI.Controllers
 		 * https://github.com/TypecastException/AspNetGroupBasedPermissions
 		 */
 
-		IRolePermissionsService _roleService;		
-
-		public GroupsController (IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService)
-			: base (userService, dealEngineDBContext)
+		IRolePermissionsService _roleService;
+        IHttpContextAccessor httpContextAccessor;
+        public GroupsController (IUserService userService, IHttpContextAccessor httpContextAccessor, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService)
+			: base(userService, dealEngineDBContext, httpContextAccessor)
 		{
 			_roleService = rolePermissionsService;			
 		}

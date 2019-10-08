@@ -58,8 +58,8 @@ namespace TechCertain.WebUI
             services.AddBaseLdapPackage();
             services.AddResponseCaching();            
             services.AddServices();
-            //services.AddSingleton<IUnderwritingModule>(); // We must explicitly register Foo
-            
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
             //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }

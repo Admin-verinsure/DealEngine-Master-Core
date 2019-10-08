@@ -9,6 +9,8 @@ using System.Linq;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
 using DealEngine.Infrastructure.Identity.Data;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -18,9 +20,12 @@ namespace TechCertain.WebUI.Controllers
         protected DealEngineDBContext _dealEngineDBContext;
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
+        protected IHttpContextAccessor _httpContextAccessor;
 
-        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext)
+
+        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _userService = userService;
             _dealEngineDBContext = dealEngineDBContext;
         }
@@ -32,7 +37,10 @@ namespace TechCertain.WebUI.Controllers
                 //UserManager<User>
                 var user = "";
                 try {
-                    user = _dealEngineDBContext.Users.FirstOrDefault().UserName;
+                    user = HttpContext.User.Identity.Name;
+                    user = _httpContextAccessor.HttpContext.User.Identity.Name;
+                    user = _signInManager.GetHttpContext();
+                    user = _dealEngineDBContext.Users.FirstOrDefault().UserName;                    
                 }
                 catch (Exception ex)
                 {

@@ -52,6 +52,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _IClientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
+        IHttpContextAccessor _httpContextAccessor;
         public InformationController(
             IUserService userRepository,
             IRoleService roleService,
@@ -82,8 +83,9 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapper mapper,
             DealEngineDBContext dealEngineDBContext,
+            IHttpContextAccessor httpContextAccessor,
             IUserRepository UserRepository)
-            : base(userRepository, dealEngineDBContext)
+            : base(userRepository, dealEngineDBContext, httpContextAccessor)
         {
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
