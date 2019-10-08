@@ -32,11 +32,11 @@ namespace TechCertain.WebUI.Controllers
 
         IMapper _mapper;
 
-		public AdminController (IUserService userRepository, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor,IPrivateServerService privateServerService, IFileService fileService,
+		public AdminController (IUserService userRepository, ISignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor,IPrivateServerService privateServerService, IFileService fileService,
 			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
             ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
-			: base (userRepository, dealEngineDBContext, httpContextAccessor)
+			: base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 		{		
 			_privateServerService = privateServerService;
 			_fileService = fileService;

@@ -29,11 +29,11 @@ namespace TechCertain.WebUI.Areas.Identity
                     .AddUserManager<DealEngineUserManager>()
                     .AddRoleStore<DealEngineRoleStore>()
                     //.AddRoleManager<DealEngineRoleManager>()                    
-                    //.AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
+                    .AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
                     //.AddSignInManager<SignInManager<DealEngineUser>>()
                     .AddEntityFrameworkStores<DealEngineDBContext>();
 
-                services.AddTransient<IUserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();
+                //services.AddTransient<UserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();
                 services.AddTransient<UserManager<DealEngineUser>, DealEngineUserManager>();
                 services.AddTransient<ISignInManager<DealEngineUser>, DealEngineSignInManager>();
             });

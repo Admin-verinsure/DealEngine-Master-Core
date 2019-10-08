@@ -32,9 +32,9 @@ namespace TechCertain.WebUI.Controllers
         string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IFileService fileService,
+		public FileController(IUserService userRepository, ISignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IFileService fileService,
 		                      IMapperSession<SystemDocument> documentRepository, IMapperSession<Image> imageRepository, IMapperSession<Product> productRepository)
-			: base (userRepository, dealEngineDBContext, httpContextAccessor)
+			: base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 		{			
 			_unitOfWork = unitOfWork;
 			_fileService = fileService;

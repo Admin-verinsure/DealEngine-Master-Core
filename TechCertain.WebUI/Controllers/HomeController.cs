@@ -36,8 +36,8 @@ namespace TechCertain.WebUI.Controllers
 
         public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
-                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
-            : base(userRepository, dealEngineDBContext, httpContextAccessor)
+                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository, ISignInManager<DealEngineUser> signInManager)
+            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {            
             //_mapper = mapper;
             //_informationService = informationService;

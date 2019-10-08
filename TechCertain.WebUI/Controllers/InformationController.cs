@@ -84,8 +84,9 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper,
             DealEngineDBContext dealEngineDBContext,
             IHttpContextAccessor httpContextAccessor,
-            IUserRepository UserRepository)
-            : base(userRepository, dealEngineDBContext, httpContextAccessor)
+            IUserRepository UserRepository,
+            ISignInManager<DealEngineUser> signInManager)
+            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;

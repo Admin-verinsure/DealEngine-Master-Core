@@ -16,7 +16,10 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<ProposalTemplate> _proposalTemplateRepository;
         IHttpContextAccessor _httpContextAccessor;
 
-        public ProposalTemplateController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor) : base (userRepository, dealEngineDBContext, httpContextAccessor)
+        public ProposalTemplateController(IUserService userRepository, 
+            DealEngineDBContext dealEngineDBContext, 
+            IHttpContextAccessor httpContextAccessor, 
+            ISignInManager<DealEngineUser> signInManager) : base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {
 
         }

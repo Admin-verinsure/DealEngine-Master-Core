@@ -28,6 +28,7 @@ namespace TechCertain.WebUI.Controllers
 		IMapper _mapper;
 
 		public PolicyController(IUserService userRepository,
+                                ISignInManager<DealEngineUser> signInManager,
                                 IHttpContextAccessor httpContextAccessor,
                                 DealEngineDBContext dealEngineDBContext,
                                 IDocumentService policyDocumentService,
@@ -35,7 +36,7 @@ namespace TechCertain.WebUI.Controllers
 								IMapperSession<RiskCategory> riskRepository,
 								IUnitOfWork unitOfWork,
 								IMapper mapper)
-			: base(userRepository, dealEngineDBContext, httpContextAccessor)
+			: base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 		{
 			_policyDocumentService = policyDocumentService;
 			_termBuilderService = termBuilderService;

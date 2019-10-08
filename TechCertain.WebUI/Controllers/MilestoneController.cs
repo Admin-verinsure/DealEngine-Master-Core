@@ -37,9 +37,9 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<Programme> programmeRepository,
             IUWMService uWMService,
             DealEngineDBContext dealEngineDBContext,
-            //ITaskingService taskingService,
+            ISignInManager<DealEngineUser> signInManager,
             IMilestoneService milestoneService)
-            : base(userRepository, dealEngineDBContext, httpContextAccessor)
+            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {
             _programmeService = programmeService;
             _programmeRepository = programmeRepository;

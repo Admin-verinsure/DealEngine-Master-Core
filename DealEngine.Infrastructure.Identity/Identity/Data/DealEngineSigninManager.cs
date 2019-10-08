@@ -207,5 +207,10 @@ namespace DealEngine.Infrastructure.Identity.Data
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> GetHttpContext()
+        {
+            return Task.FromResult(_contextAccessor.HttpContext.User.Identity.Name);
+        }
     }
 }

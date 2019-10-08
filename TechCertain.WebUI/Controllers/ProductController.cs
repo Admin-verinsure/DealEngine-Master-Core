@@ -31,11 +31,11 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<Document> _documentRepository;
 		IMapperSession<Programme> _programmeRepository;
 
-		public ProductController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService, 
+		public ProductController(DealEngineDBContext dealEngineDBContext, ISignInManager<DealEngineUser> signInManager, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService, 
 		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
 								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
-			: base(userRepository, dealEngineDBContext, httpContextAccessor)
+			: base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 		{			
 			_informationService = informationService;
 			_unitOfWork = unitOfWork;

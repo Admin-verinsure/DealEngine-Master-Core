@@ -1,12 +1,18 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace DealEngine.Infrastructure.Identity.Data
 {
-    public class DealEngineClaimsPrincipalFactory : IUserClaimsPrincipalFactory<DealEngineUser>
+    public class DealEngineClaimsPrincipalFactory : UserClaimsPrincipalFactory<DealEngineUser>
     {
-        public Task<ClaimsPrincipal> CreateAsync(DealEngineUser user)
+        public DealEngineClaimsPrincipalFactory(UserManager<DealEngineUser> userManager, IOptions<IdentityOptions> optionsAccessor) 
+            : base(userManager, optionsAccessor)
+        {
+        }
+
+        public override Task<ClaimsPrincipal> CreateAsync(DealEngineUser user)
         {
             //this is where we load the role and claims - just defaulted for now
             var claims = new[]
@@ -23,5 +29,7 @@ namespace DealEngine.Infrastructure.Identity.Data
             }           
             return Task.FromResult(new ClaimsPrincipal(claimIdentity));            
         }
+
+
     }
 }

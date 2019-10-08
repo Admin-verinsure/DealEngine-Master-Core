@@ -12,7 +12,9 @@ namespace TechCertain.WebUI.Controllers
     {
         IProposalBuilderService _proposalBuilderService;
         IHttpContextAccessor _httpContextAccessor;
-        public ProposalController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor) : base(userRepository, dealEngineDBContext, httpContextAccessor)
+        public ProposalController(IUserService userRepository, 
+            DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, ISignInManager<DealEngineUser> signInManager) 
+            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 
         {
 

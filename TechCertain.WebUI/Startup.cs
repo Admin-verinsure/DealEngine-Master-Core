@@ -47,6 +47,8 @@ namespace TechCertain.WebUI
                 }
              );
 
+            services.AddAuthentication();
+
             //registering services in DI <-- see AppInitialize for process
             //start of removing simpleinjector
             
@@ -82,7 +84,7 @@ namespace TechCertain.WebUI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            //app.UseAuthentication();
+            app.UseAuthentication();
             //app.UseRouting();
 
             //app.UseEndpoints(endpoints =>

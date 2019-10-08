@@ -21,13 +21,14 @@ namespace TechCertain.WebUI.Controllers
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
         protected IHttpContextAccessor _httpContextAccessor;
+        protected ISignInManager<DealEngineUser> _signInManager;
 
-
-        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor)
+        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext, ISignInManager<DealEngineUser> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _userService = userService;
             _dealEngineDBContext = dealEngineDBContext;
+            _signInManager = signInManager;
         }
 
         public User CurrentUser
@@ -39,7 +40,7 @@ namespace TechCertain.WebUI.Controllers
                 try {
                     user = HttpContext.User.Identity.Name;
                     user = _httpContextAccessor.HttpContext.User.Identity.Name;
-                    user = _signInManager.GetHttpContext();
+                    user = _signInManager.GetHttpContext().Result;
                     user = _dealEngineDBContext.Users.FirstOrDefault().UserName;                    
                 }
                 catch (Exception ex)

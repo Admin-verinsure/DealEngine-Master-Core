@@ -38,12 +38,12 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
         IHttpContextAccessor _httpContextAccessor;
 
-        public ProgrammeController(DealEngineDBContext dealEngineDBContext, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService,
+        public ProgrammeController(DealEngineDBContext dealEngineDBContext, ISignInManager<DealEngineUser> signInManager, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRoleService roleService,
                                  IRuleService ruleService, IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper)
-            : base(userRepository, dealEngineDBContext, httpContextAccessor)
+            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {            
             _informationService = informationService;
             _unitOfWork = unitOfWork;

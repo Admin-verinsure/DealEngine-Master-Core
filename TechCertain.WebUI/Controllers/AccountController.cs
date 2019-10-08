@@ -39,13 +39,13 @@ namespace TechCertain.WebUI.Controllers
         IHttpContextAccessor _httpContextAccessor;
         
         public AccountController(
-            IHttpContextAccessor httpContextAccessor,
             ISignInManager<DealEngineUser> signInManager,
+            IHttpContextAccessor httpContextAccessor,
             UserManager<DealEngineUser> userManager,
             IUserService userRepository,
             DealEngineDBContext dealEngineDBContext,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository, dealEngineDBContext, httpContextAccessor)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 		{
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
@@ -292,7 +292,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 var localUser = _userManager.FindByNameAsync(username).Result;
                 var claimPrincipal = _signInManager.CreateUserPrincipalAsync(localUser).Result;
-                await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal);
+                await HttpContext.SignInAsync(claimPrincipal);
                 return RedirectToLocal(viewModel.ReturnUrl);
 
             }
