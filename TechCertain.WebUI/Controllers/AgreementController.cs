@@ -768,7 +768,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         riskname = "Vessel";
                     }
-                    insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C") });
+                    insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
                 }
 
                 // List Agreement Exclusions
@@ -818,7 +818,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     if (answerSheet.PreviousInformationSheet == null)
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C"), FSL = term.FSL.ToString("C"), TotalPremium = term.Premium.ToString("C") });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                     }
                     else
                     {
@@ -838,7 +838,7 @@ namespace TechCertain.WebUI.Controllers
                 model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
-                model.AdministrationFee = agreement.BrokerFee.ToString("C");
+                model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                 model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2");
                 model.CurrencySymbol = "fa fa-dollar";
                 model.ClientNumber = agreement.ClientNumber;
