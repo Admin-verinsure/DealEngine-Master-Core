@@ -2074,13 +2074,13 @@ namespace TechCertain.WebUI.Controllers
             try
             {
 
-           
-            foreach (var item in Claims)
-            {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    for (var x = 0; x < item.Length-1; x++)
-                    {
+
+                    foreach (var item in Claims)
+                   {
+                     for (var x = 0; x < item.Length-1; x++)
+                      {
                         ClientInformationAnswer answer = _IClientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
                         if (answer != null)
                             answer.Value = item[1];
@@ -2089,14 +2089,18 @@ namespace TechCertain.WebUI.Controllers
                             sheet = _clientInformationService.GetInformation(ClientInformationSheet);
                             _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], sheet);
                         }
+                      }
+                      
+
                     }
                     uow.Commit();
                 }
-            }
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }
+           
+        }
+
            return Json(true);
         }
 
