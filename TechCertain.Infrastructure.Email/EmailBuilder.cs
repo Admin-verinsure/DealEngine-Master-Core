@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Net.Mail;
 using TechCertain.Infrastructure.Email.Interfaces;
-using Microsoft.Extensions.Configuration;
 
 namespace TechCertain.Infrastructure.Email
 {
@@ -11,16 +10,10 @@ namespace TechCertain.Infrastructure.Email
 		// Code taken from https://scottlilly.com/c-design-patterns-the-wrapperfacade-pattern/
 
 		MailMessage _mailMessage;
-        private IConfiguration _configuration { get; set; }
 
         public EmailBuilder ()
 		{
 			_mailMessage = new MailMessage ();
-        }
-
-        public EmailBuilder(IConfiguration configuration)
-        {
-            _configuration = configuration;
         }
 
         public EmailBuilder (string senderAddress)
@@ -95,8 +88,6 @@ namespace TechCertain.Infrastructure.Email
 		{
             //string smtpServer = ConfigurationManager.AppSettings ["SmtpServer"];
             //int smtpPort = Convert.ToInt32 (ConfigurationManager.AppSettings ["SmtpPort"]);
-            //string smtpServer = _configuration.GetValue<string>("SmtpServer");
-            //int smtpPort = _configuration.GetValue<int>("SmtpPort");
 
             string smtpServer = "localhost";
             int smtpPort = 25;

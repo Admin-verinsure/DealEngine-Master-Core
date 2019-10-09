@@ -51,6 +51,7 @@ namespace TechCertain.WebUI
             //start of removing simpleinjector
             
             services.AddNHibernate();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();            
             services.AddRepositories();

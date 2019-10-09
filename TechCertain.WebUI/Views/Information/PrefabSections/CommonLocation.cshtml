@@ -44,7 +44,7 @@
                                             colNames: ["", "Location Type", "Common Name", "Street", "Suburb", "Postcode", "City", ""],
                                             colModel: [
                                                 {
-                                                    name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                    name: "update", align: 'center',width:120, search: false, formatter: function (cellvalue, options, rowobject) {
                                                         return ('<button onclick="EditLocation(\'' + cellvalue + '\', \'#tblLocation\'); SetCurrentTab(\'locTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
                                                     }
                                                 },
@@ -55,14 +55,13 @@
                                                 { name: "Postcode", align: 'center' },
                                                 { name: "City", align: 'center' },
                                                 {
-                                                    name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                    name: "update", align: 'center',width:120, search: false, formatter: function (cellvalue, options, rowobject) {
                                                         return ('<button onclick="SetLocationRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblLocation\', \'#tblRemovedLocation\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                                     }
                                                 }
                                             ], 
                                             autowidth: true,
                                             shrinkToFit: true,
-                                            width: 300,
                                             pager: "#pagerLocation",
                                             rowNum: 10,
                                             rowList: [10, 20, 30],
