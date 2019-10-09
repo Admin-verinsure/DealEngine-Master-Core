@@ -248,8 +248,9 @@
     $(document).ready(function () {
 
 
-    $('[data-toggle="popover"]').popover();
-        $('[data-toggle="tooltip"]').tooltip();
+    //$('[data-toggle="popover"]').popover();
+    //    $('[data-toggle="tooltip"]').tooltip();
+            $(".chosen-select").chosen({ width: "95%" });
 
     $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
@@ -6253,13 +6254,14 @@ async: true
          var orgId = othermarinaname;
         debugger;
         $('#getMooredModal').show();
+         var postData = { OrgID: orgId};
 
         $.ajax({
         // change back once mono decides to fix
              url: '@Url.Action("GetMooredType", "Services")',
              type: "POST",
-             data: JSON.stringify({ OrgId: orgId}),
-             contentType: "application/json; charset=utf-8"
+             data: postData,
+             //contentType: "application/json; charset=utf-8"
       })
             .done(function (data) {
                 debugger;

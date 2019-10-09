@@ -710,8 +710,33 @@
 
 
 
-
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
+                                <label class="label">Vessel Use</label>
+                                <div class="row">
+
+                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                        <label class="input form-group">
+
+                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select  form-control b" required>
+
+                                                @foreach (var bwloc in Model.BoatUseslist)
+                                                {
+                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                }
+
+                                            </select>
+                                        </label>
+                                    </section>
+                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
+                                    </section>
+                                </div>
+                                <p class="validationContainer" id="validateboatuse"></p>
+
+                            </section>
+
+
+                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
                                 <label class="label">Vessel Use</label>
                                 <div class="row">
 
@@ -734,7 +759,7 @@
                                 </div>
                                 <p class="validationContainer" id="validateboatuse"></p>
 
-                            </section>
+                            </section>*@
 
 
 
