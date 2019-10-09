@@ -711,56 +711,55 @@
 
 
                             @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
-                                <label class="label">Vessel Use</label>
-                                <div class="row">
+            <label class="label">Vessel Use</label>
+            <div class="row">
 
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">
+                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                    <label class="input form-group">
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select  form-control b" required>
+                        <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select  form-control b" required>
 
-                                                @foreach (var bwloc in Model.BoatUseslist)
-                                                {
-                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
-                                                }
+                            @foreach (var bwloc in Model.BoatUseslist)
+                            {
+                                <option value="@bwloc.Value"> @bwloc.Text</option>
+                            }
 
-                                            </select>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
-                                    </section>
-                                </div>
-                                <p class="validationContainer" id="validateboatuse"></p>
+                        </select>
+                    </label>
+                </section>
+                <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                    <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
+                </section>
+            </div>
+            <p class="validationContainer" id="validateboatuse"></p>
 
-                            </section>*@
+        </section>tion" >*@
 
+                               
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
+                                    <label class="label">Vessel Use</label>
+                                    <div class="row">
 
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
-                                <label class="label">Vessel Use</label>
-                                <div class="row">
+                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                            <label class="input form-group">
 
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input form-group">
+                                                <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="multiselect form-control b" required>
+                                                    @foreach (var bwloc in Model.BoatUseslist)
+                                                    {
+                                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                    }
 
-                                                @foreach (var bwloc in Model.BoatUseslist)
-                                                {
-                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
-                                                }
+                                                </select>
+                                            </label>
+                                        </section>
+                                        <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                            <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
+                                        </section>
+                                    </div>
+                                    <p class="validationContainer" id="validateboatuse"></p>
 
-                                            </select>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
-                                    </section>
-                                </div>
-                                <p class="validationContainer" id="validateboatuse"></p>
-
-                            </section>
-
+                                </section>
 
 
                         </div>
@@ -833,7 +832,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="multiselect form-control b">
+                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="SelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
 
                                                 @foreach (var bwloc in Model.InterestedPartyList)
                                                 {
@@ -914,7 +913,7 @@
                             @*@Html.Bootstrap().SubmitButton().Text("Update").HtmlAttributes(new { onclick = "ClearBoat('#boatTabs-2', '#tblBoat);" }).Class("btn-sm")*@
 
 
-                            <button onclick="ValidateBoatForm('#boatTabs2', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+                            <button onclick="ValidateBoatForm(event,'#boatTabs2', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats('#boatTabs2','boatTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                             @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateBoatForm('#boatTabs-2', '#tblBoat','boatTabs-1'); " }).Class("btn-sm updateBoat").Id("updateBoat")
@@ -1504,7 +1503,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="multiselect form-control b" required>
+                                            <select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
 
                                                 @foreach (var bwloc in Model.BoatUseslist)
                                                 {
@@ -1606,7 +1605,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="multiselect form-control b">
+                                            <select onchange="onIPaddressSelect()" data-placeholder="Choose Interested Parties..." id="AddSelectedInterestedParty" name="SelectedInterestedParty" multiple class="chosen-select form-control b">
 
                                                 @foreach (var bwloc in Model.InterestedPartyList)
                                                 {
@@ -1686,7 +1685,7 @@
                         <section class="col col-xs-12">
                             @*@Html.Bootstrap().SubmitButton().Text("Update").HtmlAttributes(new { onclick = "ClearBoat('#boatTabs-2', '#tblBoat);" }).Class("btn-sm")*@
 
-                            <button onclick="ValidateBoatForm('#boatTabs3', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ValidateAddBoatForm('#boatTabs3', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
                             <button onclick="ClearBoats('#boatTabs3','boatTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
 
                             @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddBoatForm('#boatTabs-3', '#tblBoat','boatTabs-1'); " }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")

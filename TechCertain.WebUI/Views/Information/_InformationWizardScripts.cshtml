@@ -904,6 +904,8 @@
 
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
+        debugger;
+        event.preventDefault();
         var BoatName = $('#AddBoatName').val();
         var BoatType1 = $('#AddBoatType1').val();
         var BoatType2 = $('#AddBoatType2').val();
@@ -1164,20 +1166,21 @@
         } else {
             $('#validateAddBoatWaterLocation').html("");
         }
-        debugger;
         if (validity) {
             $(".search-choice-close").click();
-            AddBoat(tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
+            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
             SetCurrentTab(currentTab);
         } else {
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
             $(require).show('2000');
+          
             return validity;
         }
     }
 
-    function ValidateBoatForm(tabId, tableId, currentTab) {
+    function ValidateBoatForm(event, tabId, tableId, currentTab) {
+        event.preventDefault();
         debugger;
         var BoatName = $('#BoatName').val();
         var BoatType1 = $('#BoatType1').val();
@@ -1447,6 +1450,8 @@
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
             $(require).show('2000');
+                    
+
             return validity;
         }
     }
@@ -1539,7 +1544,7 @@ function UpdateChosen() {
             return result;
         }
         if (result1) {
-            AddMotorVehicle(tabId, tableId);
+            AddMotorVehicle(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateAddRMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -1610,7 +1615,7 @@ function UpdateChosen() {
             return result;
         }
         if (result1) {
-            AddMotorVehicle(tabId, tableId);
+            AddMotorVehicle(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateNRMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -2527,7 +2532,7 @@ function EditClaim(claimId, tableId) {
             $('#validateOpLastName').html("<font></font>");
         }
         if (result) {
-            AddOperator(tabId, tableId);
+            AddOperator(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -3043,7 +3048,6 @@ function EditClaim(claimId, tableId) {
     }
     function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
         debugger;
-                event.preventDefault();
 
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
@@ -3260,12 +3264,12 @@ function EditClaim(claimId, tableId) {
 
     }
 
-    function SetBoatRemovedStatus(event,boatId, status, sourceTable, destTable) {
+    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
         debugger;
                 event.preventDefault();
 
         var postData = {
-		'boatIdboatId': locationId,
+		'boatId': boatId,
 		'status': status
 	};
     $.ajax({
@@ -3293,7 +3297,7 @@ async: true
     });
 };
 
-    function SetBoatCeasedStatus(event,boatId, status, sourceTable, destTable) {
+    function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
                 event.preventDefault();
 
         var postData = {
@@ -3388,7 +3392,7 @@ async: true
         }
 
         if (result) {
-            AddBoatUse(tabId, tableId);
+            AddBoatUse(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateNRMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -3939,7 +3943,7 @@ async: true
 
             if (!(document.getElementById("BoatUseRaceCategoryModal").validity.valueMissing) && !(document.getElementById("BoatUseRaceUseSpinnakersModal").validity.valueMissing)) {
 
-                addBoatUseModal();
+                addBoatUseModal(event);
                 $('#addBoatUseModal').hide();
             }
         } else {
@@ -4509,7 +4513,6 @@ async: true
 function GetRegisteredMVDetails(elementBaseName)
    {                    event.preventDefault();
 
-
     debugger;
     var TrailerModal = false;
     if (elementBaseName == "#RegistrationModal") {
@@ -4608,7 +4611,7 @@ async: true
             return result;
         }
         if (result1) {
-            AddMotorVehicle(tabId, tableId);
+            AddMotorVehicle(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateMarketValue').html("<font color='red'>Please enter the number.</font>")
