@@ -15,23 +15,14 @@ namespace TechCertain.Services.Impl
         string _apiEndpoint;
 		string _apiKey;
 
-        //private readonly AppSettings _appSettings;
+        IAppSettingService _appSettingService;
 
-        //public VehicleService(IOptions<AppSettings> appSettings)
-        //{
-        //    _appSettings = appSettings.Value;
-        //}
-
-        public VehicleService ()
+        public VehicleService (IAppSettingService appSettingService)
 		{
-            //_apiEndpoint = ConfigurationManager.AppSettings ["CarJamEndpoint"];
-            //_apiKey = ConfigurationManager.AppSettings ["CarJamApiKey"];
+            _appSettingService = appSettingService;
 
-            _apiEndpoint = "https://test.carjam.co.nz/api/";
-            _apiKey = "6C2FC149A76FF9F13152D0837A236645D242275E";
-
-            //_apiEndpoint = _appSettings.CarJamEndpoint;
-            //_apiKey = _appSettings.CarJamApiKey;
+            _apiEndpoint = _appSettingService.CarJamEndpoint;
+            _apiKey = _appSettingService.CarJamApiKey;
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}

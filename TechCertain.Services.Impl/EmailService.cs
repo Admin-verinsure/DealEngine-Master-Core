@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using TechCertain.Infrastructure.Email;
 using HtmlToOpenXml;
+using Microsoft.Extensions.Configuration;
 
 namespace TechCertain.Services.Impl
 {
@@ -23,13 +24,15 @@ namespace TechCertain.Services.Impl
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
         IUnitOfWork _unitOfWork;
+        private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IUnitOfWork unitOfWork)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IUnitOfWork unitOfWork, IConfiguration configuration)
 		{
 			_userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
 
 		#region IEmailService implementation
@@ -37,29 +40,33 @@ namespace TechCertain.Services.Impl
 		public string EmailEnabled
 		{
 			get {
-				return ConfigurationManager.AppSettings["EnableMail"];
-			}
+                return _configuration.GetValue<string>("EnableMail");
+                //return ConfigurationManager.AppSettings["EnableMail"];
+            }
 		}
-		
-		public string SmtpServer
+
+        public string SmtpServer
 		{
 			get {
-				return ConfigurationManager.AppSettings["SmtpServer"];
-			}
+                return _configuration.GetValue<string>("SmtpServer");
+                //return ConfigurationManager.AppSettings["SmtpServer"];
+            }
 		}
 
 		public int SmtpPort
 		{
 			get {
-				return Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
-			}
+                return _configuration.GetValue<int>("SmtpPort");
+                //return Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
+            }
 		}
 
 		public string DefaultSender
 		{
 			get {
-				return ConfigurationManager.AppSettings["SenderEmail"];
-			}
+                return _configuration.GetValue<string>("SenderEmail");
+                //return ConfigurationManager.AppSettings["SenderEmail"];
+            }
 		}
 
 		public string SystemEmail
@@ -72,8 +79,9 @@ namespace TechCertain.Services.Impl
 		public string CatchAllEmail
 		{
 			get {
-				return ConfigurationManager.AppSettings["CatchAllEmail"];
-			}
+                return _configuration.GetValue<string>("CatchAllEmail");
+                //return ConfigurationManager.AppSettings["CatchAllEmail"];
+            }
 		}
 
 		//public bool SendEmail(string recipient, string subject, string body, List<SystemDocument> documents, string sender = "", bool saveCopy = true, bool isHtml = true)
