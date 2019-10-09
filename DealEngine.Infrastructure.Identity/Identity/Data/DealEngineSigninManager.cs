@@ -55,7 +55,7 @@ namespace DealEngine.Infrastructure.Identity.Data
 
         public Task<ClaimsPrincipal> CreateUserPrincipalAsync(DealEngineUser user)
         {
-            throw new NotImplementedException();
+            return _claimsFactory.CreateAsync(user);
         }
 
         public Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent, bool bypassTwoFactor)
@@ -115,13 +115,15 @@ namespace DealEngine.Infrastructure.Identity.Data
                     var localUser = _userManager.FindByNameAsync(userName).Result;
                     if(localUser == null)
                     {
-                        localUser = new DealEngineUser { UserName = userName };
-                        _userManager.CreateAsync(localUser, password);
+                        localUser = new DealEngineUser { UserName = userName, Email = ldapUser.Email, Id = ldapUser.Id.ToString()};
+                        _userManager.CreateAsync(localUser, password);                        
+                        _userManager.UpdateAsync(localUser);                        
                     }
-                    MapUserToUser(ldapUser, localUser);                    
+                    MapUserToUser(ldapUser, localUser);
+                    var claimPrincipal = CreateUserPrincipalAsync(localUser).Result;
+                    _contextAccessor.HttpContext.SignInAsync(claimPrincipal);
                 }
-
-                 return Task.FromResult(SignInResult.Success);
+                return Task.FromResult(SignInResult.Success);
             }
             return Task.FromResult(SignInResult.Failed);
         }
@@ -204,6 +206,11 @@ namespace DealEngine.Infrastructure.Identity.Data
         public Task<DealEngineUser> ValidateTwoFactorSecurityStampAsync(ClaimsPrincipal principal)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<string> GetHttpContext()
+        {
+            return Task.FromResult(_contextAccessor.HttpContext.User.Identity.Name);
         }
     }
 }

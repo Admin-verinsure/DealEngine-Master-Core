@@ -47,6 +47,8 @@ namespace TechCertain.WebUI
                 }
              );
 
+            //services.AddAuthentication();
+
             //registering services in DI <-- see AppInitialize for process
             //start of removing simpleinjector
             
@@ -59,8 +61,8 @@ namespace TechCertain.WebUI
             services.AddBaseLdapPackage();
             services.AddResponseCaching();            
             services.AddServices();
-            //services.AddSingleton<IUnderwritingModule>(); // We must explicitly register Foo
-            
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
             //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
@@ -92,10 +94,18 @@ namespace TechCertain.WebUI
             //    endpoints.MapRazorPages();
             //});
 
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllerRoute(
+            //        name: "default",
+            //        pattern: "{controller=Account}/{action=Login}/{id?}");
+            //    endpoints.MapRazorPages();
+            //});
+
             app.UseMvc(routes =>
             {
-                //routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                routes.MapRoute("default", "{controller=Account}/{action=Login}/{id?}");
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                //routes.MapRoute("default", "{controller=Account}/{action=Login}/{id?}");
             });
 
             app.UseResponseCaching();

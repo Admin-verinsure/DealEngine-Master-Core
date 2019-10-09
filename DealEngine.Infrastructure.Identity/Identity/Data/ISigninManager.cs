@@ -23,6 +23,7 @@ namespace DealEngine.Infrastructure.Identity.Data
         public  Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);
         public  Task<SignInResult> PasswordSignInAsync(TUser user, string password, bool isPersistent, bool lockoutOnFailure);
         public  Task RefreshSignInAsync(TUser user);
+        public Task<string> GetHttpContext();
         public  Task RememberTwoFactorClientAsync(TUser user);
         public  Task SignInAsync(TUser user, bool isPersistent, string authenticationMethod = null);
         public  Task SignInAsync(TUser user, AuthenticationProperties authenticationProperties, string authenticationMethod = null);
