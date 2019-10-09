@@ -25,17 +25,17 @@ namespace TechCertain.WebUI.Areas.Identity
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
                     })
-                    .AddUserStore<DealEngineUserStore>()
-                    .AddUserManager<DealEngineUserManager>()
-                    .AddRoleStore<DealEngineRoleStore>()
+                    //.AddUserStore<DealEngineUserStore>()
+                    //.AddUserManager<DealEngineUserManager>()
+                    //.AddRoleStore<DealEngineRoleStore>()
                     //.AddRoleManager<DealEngineRoleManager>()                    
-                    .AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
+                    //.AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
                     //.AddSignInManager<SignInManager<DealEngineUser>>()
                     .AddEntityFrameworkStores<DealEngineDBContext>();
 
                 //services.AddTransient<UserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();
-                services.AddTransient<UserManager<DealEngineUser>, DealEngineUserManager>();
-                services.AddTransient<ISignInManager<DealEngineUser>, DealEngineSignInManager>();
+                //services.AddTransient<UserManager<DealEngineUser>, DealEngineUserManager>();
+                //services.AddTransient<ISignInManager<DealEngineUser>, DealEngineSignInManager>();
             });
         }
     }

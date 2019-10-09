@@ -8,6 +8,7 @@ using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models.Proposal;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -19,7 +20,7 @@ namespace TechCertain.WebUI.Controllers
         public ProposalTemplateController(IUserService userRepository, 
             DealEngineDBContext dealEngineDBContext, 
             IHttpContextAccessor httpContextAccessor, 
-            ISignInManager<DealEngineUser> signInManager) : base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+            SignInManager<DealEngineUser> signInManager) : base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {
 
         }

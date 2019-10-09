@@ -8,6 +8,7 @@ using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -17,7 +18,7 @@ namespace TechCertain.WebUI.Controllers
         IHttpContextAccessor _httpContextAccessor;
 
 
-        public RolesController (IHttpContextAccessor httpContextAccessor, ISignInManager<DealEngineUser> signInManager, 
+        public RolesController (IHttpContextAccessor httpContextAccessor, SignInManager<DealEngineUser> signInManager, 
             IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService)
 		    : base (userService, dealEngineDBContext, signInManager, httpContextAccessor)    
 		{

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -37,7 +38,7 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<Programme> programmeRepository,
             IUWMService uWMService,
             DealEngineDBContext dealEngineDBContext,
-            ISignInManager<DealEngineUser> signInManager,
+            SignInManager<DealEngineUser> signInManager,
             IMilestoneService milestoneService)
             : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {

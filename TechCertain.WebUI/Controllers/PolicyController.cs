@@ -14,6 +14,7 @@ using TechCertain.WebUI.Models.ControlModels;
 using TechCertain.WebUI.Models.Policy;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -28,7 +29,7 @@ namespace TechCertain.WebUI.Controllers
 		IMapper _mapper;
 
 		public PolicyController(IUserService userRepository,
-                                ISignInManager<DealEngineUser> signInManager,
+                                SignInManager<DealEngineUser> signInManager,
                                 IHttpContextAccessor httpContextAccessor,
                                 DealEngineDBContext dealEngineDBContext,
                                 IDocumentService policyDocumentService,

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using static System.Net.WebRequestMethods;
 using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -85,7 +86,7 @@ namespace TechCertain.WebUI.Controllers
             DealEngineDBContext dealEngineDBContext,
             IHttpContextAccessor httpContextAccessor,
             IUserRepository UserRepository,
-            ISignInManager<DealEngineUser> signInManager)
+            SignInManager<DealEngineUser> signInManager)
             : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {
             _informationItemService = informationItemService;

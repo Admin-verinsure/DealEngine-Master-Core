@@ -16,6 +16,7 @@ using HtmlToOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -32,7 +33,7 @@ namespace TechCertain.WebUI.Controllers
         string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, ISignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IFileService fileService,
+		public FileController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IFileService fileService,
 		                      IMapperSession<SystemDocument> documentRepository, IMapperSession<Image> imageRepository, IMapperSession<Product> productRepository)
 			: base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
 		{			

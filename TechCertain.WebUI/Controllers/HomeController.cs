@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Controllers;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 #endregion
 
@@ -36,7 +37,7 @@ namespace TechCertain.WebUI.Controllers
 
         public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
                               ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
-                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository, ISignInManager<DealEngineUser> signInManager)
+                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository, SignInManager<DealEngineUser> signInManager)
             : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
         {            
             //_mapper = mapper;
@@ -101,6 +102,7 @@ namespace TechCertain.WebUI.Controllers
         //[Route("")]
         //[Route("Index")]
         //[Route("/")]
+        [Authorize]
         public ActionResult Index()
         {
             ViewBag.Title = "Proposalonline Dashboard";

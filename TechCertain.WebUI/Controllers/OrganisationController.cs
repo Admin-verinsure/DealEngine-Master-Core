@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -22,7 +23,7 @@ namespace TechCertain.WebUI.Controllers
         //private readonly ICompanyService _companyService;
 
         public OrganisationController(IHttpContextAccessor httpContextAccessor,
-            ISignInManager<DealEngineUser> signInManager,
+            SignInManager<DealEngineUser> signInManager,
             IOrganisationService organisationService, 
             DealEngineDBContext dealEngineDBContext, 
             IOrganisationTypeService organisationTypeService, 

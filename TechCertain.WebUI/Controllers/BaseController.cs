@@ -11,6 +11,7 @@ using TechCertain.WebUI.Helpers.CustomActions;
 using DealEngine.Infrastructure.Identity.Data;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -21,9 +22,9 @@ namespace TechCertain.WebUI.Controllers
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
         protected IHttpContextAccessor _httpContextAccessor;
-        protected ISignInManager<DealEngineUser> _signInManager;
+        protected SignInManager<DealEngineUser> _signInManager;
 
-        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext, ISignInManager<DealEngineUser> signInManager, IHttpContextAccessor httpContextAccessor)
+        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext, SignInManager<DealEngineUser> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _userService = userService;
@@ -31,6 +32,7 @@ namespace TechCertain.WebUI.Controllers
             _signInManager = signInManager;
         }
 
+        
         public User CurrentUser
         {
             get
@@ -40,7 +42,7 @@ namespace TechCertain.WebUI.Controllers
                 try {
                     user = HttpContext.User.Identity.Name;
                     user = _httpContextAccessor.HttpContext.User.Identity.Name;
-                    user = _signInManager.GetHttpContext().Result;
+                    //user = User.Identity.Name;
                     user = _dealEngineDBContext.Users.FirstOrDefault().UserName;                    
                 }
                 catch (Exception ex)

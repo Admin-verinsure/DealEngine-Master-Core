@@ -47,7 +47,7 @@ namespace TechCertain.WebUI
                 }
              );
 
-            services.AddAuthentication();
+            //services.AddAuthentication();
 
             //registering services in DI <-- see AppInitialize for process
             //start of removing simpleinjector
@@ -84,7 +84,7 @@ namespace TechCertain.WebUI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication();
+            //app.UseAuthentication();
             //app.UseRouting();
 
             //app.UseEndpoints(endpoints =>
@@ -93,10 +93,18 @@ namespace TechCertain.WebUI
             //    endpoints.MapRazorPages();
             //});
 
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllerRoute(
+            //        name: "default",
+            //        pattern: "{controller=Account}/{action=Login}/{id?}");
+            //    endpoints.MapRazorPages();
+            //});
+
             app.UseMvc(routes =>
             {
-                //routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                routes.MapRoute("default", "{controller=Account}/{action=Login}/{id?}");
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                //routes.MapRoute("default", "{controller=Account}/{action=Login}/{id?}");
             });
 
             app.UseResponseCaching();

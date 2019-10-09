@@ -9,6 +9,7 @@ using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -25,7 +26,7 @@ namespace TechCertain.WebUI.Controllers
 
         //public InformationBuilderController(IInformationBuilderService informationBuilderService)
 		public InformationBuilderController(IUserService userService,
-            ISignInManager<DealEngineUser> signInManager,
+            SignInManager<DealEngineUser> signInManager,
             DealEngineDBContext dealEngineDBContext, 
             IHttpContextAccessor httpContextAccessor, 
             IMapper mapper, 

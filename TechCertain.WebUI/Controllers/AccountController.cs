@@ -28,7 +28,7 @@ namespace TechCertain.WebUI.Controllers
     {
         IEmailService _emailService;
 		IFileService _fileService;
-        ISignInManager<DealEngineUser> _signInManager;
+        SignInManager<DealEngineUser> _signInManager;
         UserManager<DealEngineUser> _userManager;
 
         DealEngineDBContext _context;
@@ -39,7 +39,7 @@ namespace TechCertain.WebUI.Controllers
         IHttpContextAccessor _httpContextAccessor;
         
         public AccountController(
-            ISignInManager<DealEngineUser> signInManager,
+            SignInManager<DealEngineUser> signInManager,
             IHttpContextAccessor httpContextAccessor,
             UserManager<DealEngineUser> userManager,
             IUserService userRepository,

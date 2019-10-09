@@ -13,6 +13,7 @@ using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -31,7 +32,7 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<Document> _documentRepository;
 		IMapperSession<Programme> _programmeRepository;
 
-		public ProductController(DealEngineDBContext dealEngineDBContext, ISignInManager<DealEngineUser> signInManager, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService, 
+		public ProductController(DealEngineDBContext dealEngineDBContext, SignInManager<DealEngineUser> signInManager, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService, 
 		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
 								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
