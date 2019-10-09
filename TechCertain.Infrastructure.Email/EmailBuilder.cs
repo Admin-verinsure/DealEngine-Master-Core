@@ -11,12 +11,12 @@ namespace TechCertain.Infrastructure.Email
 
 		MailMessage _mailMessage;
 
-		public EmailBuilder ()
+        public EmailBuilder ()
 		{
 			_mailMessage = new MailMessage ();
-		}
+        }
 
-		public EmailBuilder (string senderAddress)
+        public EmailBuilder (string senderAddress)
 		{
 			_mailMessage = new MailMessage ();
 			_mailMessage.Sender = new MailAddress (senderAddress);
@@ -84,13 +84,15 @@ namespace TechCertain.Infrastructure.Email
 			return this;
 		}
 
-		public void Send ()
+        public void Send ()
 		{
-			string smtpServer = ConfigurationManager.AppSettings ["SmtpServer"];
-			int smtpPort = Convert.ToInt32 (ConfigurationManager.AppSettings ["SmtpPort"]);
+            //string smtpServer = ConfigurationManager.AppSettings ["SmtpServer"];
+            //int smtpPort = Convert.ToInt32 (ConfigurationManager.AppSettings ["SmtpPort"]);
 
+            string smtpServer = "localhost";
+            int smtpPort = 25;
 
-			using (MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient ()) {
+            using (MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient ()) {
                 client.Connect (smtpServer, smtpPort);                
                 client.AuthenticationMechanisms.Remove ("XOAUTH2");
 				client.Send (MimeKit.MimeMessage.CreateFromMailMessage(_mailMessage));
@@ -98,11 +100,6 @@ namespace TechCertain.Infrastructure.Email
                 client.Disconnect (true);
 			}
 
-			//using (SmtpClient client = new SmtpClient (smtpServer, smtpPort)) {
-			//	client.DeliveryMethod = SmtpDeliveryMethod.Network;
-			//	client.UseDefaultCredentials = false;
-			//	client.Send (_mailMessage);
-			//}
 		}
 	}
 }
