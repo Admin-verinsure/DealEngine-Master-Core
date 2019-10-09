@@ -13,10 +13,7 @@
 @*<script src="~/lib/popper.js/popper.js"></script>*@
 <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
 @*<script src="~/lib/multiselect/js/multiselect.js"></script>*@
-
-
-
-
+<script src="~/lib/popper.js/umd/popper.js"></script>
 
 
 
@@ -249,9 +246,13 @@
       });
         });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
-$(document).ready(function () {
+    $(document).ready(function () {
 
-	$('#Nonregisteredtabs').tabs();
+
+    $('[data-toggle="popover"]').popover();
+        $('[data-toggle="tooltip"]').tooltip();
+
+    $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
     $('#registeredtrailertabs').tabs();
@@ -1623,14 +1624,14 @@ function UpdateChosen() {
             && !(document.getElementById("ModelModal").validity.valueMissing) && !(document.getElementById("VehicleLocationModal").validity.valueMissing)
             && !(document.getElementById("SumInsuredModal").validity.valueMissing)) {
 
-            AddMotorVehicleModal();
+            AddMotorVehicleModal(event);
             $('#addTrailerModal').hide();
         }
 
     }
 
 
-    function AddMotorVehicleModal() {
+    function AddMotorVehicleModal(event) {
                 event.preventDefault();
 
         var informationId = $('#AnswerSheetId').serialize();
@@ -2556,7 +2557,7 @@ function EditClaim(claimId, tableId) {
         }
 
         if (result) {
-            AddOperator(tabId, tableId);
+            AddOperator(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -2564,7 +2565,7 @@ function EditClaim(claimId, tableId) {
     }
 
 
-    function AddOperator(tabId, tableId) {
+    function AddOperator(event,tabId, tableId) {
                 event.preventDefault();
 
     var informationId = $('#AnswerSheetId').serialize();
@@ -2599,12 +2600,12 @@ function EditClaim(claimId, tableId) {
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
 
-            AddOperatorModal(firstName, lastName, yearsXP, Email);
+            AddOperatorModal(event,firstName, lastName, yearsXP, Email);
             $('#addOperatorModal').hide();
         }
     }
 
-    function AddOperatorModal(firstName, lastName, yearsXP, Email) {
+    function AddOperatorModal(event,firstName, lastName, yearsXP, Email) {
         debugger;
         event.preventDefault();
         var operatorFirstName = $(firstName).serialize();
@@ -3890,10 +3891,13 @@ async: true
                 //timeout: 4000
                // });
 
-                $('#SelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
+                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
                 $('#SelectedInterestedParty').trigger('chosen:updated');
-                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
+                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
                 $('#AddSelectedInterestedParty').trigger('chosen:updated');
+
+                                //$("#AddSelectedInterestedParty").multiSelect("select", data.iD);
+                $('#AddSelectedInterestedParty').trigger('refresh');
 
                 $('#FinancialSection').addClass('hidden');
                 $('#FinancialSection').addClass('hidden');
