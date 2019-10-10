@@ -46,16 +46,15 @@ namespace TechCertain.WebUI.Controllers
         IEmailService _emailService;
         IInsuranceAttributeService _insuranceAttributeService;
         IMapper _mapper;
-        IHttpContextAccessor _httpContextAccessor;
 
 
-        public ServicesController(SignInManager<DealEngineUser> signInManager, IHttpContextAccessor httpContextAccessor, IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IUserService userService, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
-            : base(userService, dealEngineDBContext, signInManager, httpContextAccessor)
+            : base (userService)
         {
             
             _clientInformationService = clientInformationService;

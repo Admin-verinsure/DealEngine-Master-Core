@@ -20,7 +20,7 @@ namespace TechCertain.WebUI.Controllers
         public ProposalTemplateController(IUserService userRepository, 
             DealEngineDBContext dealEngineDBContext, 
             IHttpContextAccessor httpContextAccessor, 
-            SignInManager<DealEngineUser> signInManager) : base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+            SignInManager<DealEngineUser> signInManager) : base (userRepository)
         {
 
         }

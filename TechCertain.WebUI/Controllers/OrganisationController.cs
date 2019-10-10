@@ -30,7 +30,7 @@ namespace TechCertain.WebUI.Controllers
             IUnitOfWork unitOfWork, 
             IInsuranceAttributeService insuranceAttributeService,
             IUserService userRepository)//(ICompanyService companyService)
-            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+            : base (userRepository)
         {
             _organisationService = organisationService;
             _organisationTypeService = organisationTypeService;

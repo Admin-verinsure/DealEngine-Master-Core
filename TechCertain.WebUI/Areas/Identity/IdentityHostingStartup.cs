@@ -1,6 +1,5 @@
 ﻿using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,9 +20,12 @@ namespace TechCertain.WebUI.Areas.Identity
 
                 services.AddIdentity<DealEngineUser, IdentityRole>(options =>
                     {
-                        options.SignIn.RequireConfirmedAccount = true;
+                        //options.SignIn.RequireConfirmedAccount = true;
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
+                        options.Password.RequireDigit = false;
+                        options.Password.RequiredLength = 0;      
+                        
                     })
                     //.AddUserStore<DealEngineUserStore>()
                     //.AddUserManager<DealEngineUserManager>()

@@ -36,7 +36,7 @@ namespace TechCertain.WebUI.Controllers
 		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
 								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
-			: base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+			: base (userRepository)
 		{			
 			_informationService = informationService;
 			_unitOfWork = unitOfWork;

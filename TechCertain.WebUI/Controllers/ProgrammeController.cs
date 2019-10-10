@@ -44,7 +44,7 @@ namespace TechCertain.WebUI.Controllers
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRoleService roleService,
                                  IRuleService ruleService, IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper)
-            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+            : base (userRepository)
         {            
             _informationService = informationService;
             _unitOfWork = unitOfWork;

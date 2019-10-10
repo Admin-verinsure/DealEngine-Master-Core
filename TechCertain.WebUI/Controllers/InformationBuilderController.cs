@@ -20,20 +20,15 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<InformationTemplate> _templateRepository;
         IMapperSession<InformationItem> _informationItemRepository;
         IMapperSession<InformationSection> _informationSectionRepository;
-        IHttpContextAccessor _httpContextAccessor;
-
         IUnitOfWork _unitOfWork;
 
         //public InformationBuilderController(IInformationBuilderService informationBuilderService)
 		public InformationBuilderController(IUserService userService,
-            SignInManager<DealEngineUser> signInManager,
-            DealEngineDBContext dealEngineDBContext, 
-            IHttpContextAccessor httpContextAccessor, 
             IMapper mapper, 
             IMapperSession<InformationSection> informationSectionRepository, 
             IMapperSession<InformationItem> informationItemRepository, 
             IMapperSession<InformationTemplate> templateRepository, IUnitOfWork unitOfWork)
-			: base(userService, dealEngineDBContext, signInManager, httpContextAccessor)
+			: base (userService)
         {
             _informationBuilderService = new InformationBuilderService(new InformationBuilderFactory());
 			_mapper = mapper;

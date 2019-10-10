@@ -40,7 +40,7 @@ namespace TechCertain.WebUI.Controllers
             DealEngineDBContext dealEngineDBContext,
             SignInManager<DealEngineUser> signInManager,
             IMilestoneService milestoneService)
-            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+            : base (userRepository)
         {
             _programmeService = programmeService;
             _programmeRepository = programmeRepository;

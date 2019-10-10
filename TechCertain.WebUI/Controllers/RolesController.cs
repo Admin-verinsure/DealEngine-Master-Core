@@ -15,12 +15,10 @@ namespace TechCertain.WebUI.Controllers
     public class RolesController : BaseController
     {
 		IRolePermissionsService _roleService;
-        IHttpContextAccessor _httpContextAccessor;
 
-
-        public RolesController (IHttpContextAccessor httpContextAccessor, SignInManager<DealEngineUser> signInManager, 
-            IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService)
-		    : base (userService, dealEngineDBContext, signInManager, httpContextAccessor)    
+        public RolesController (
+            IUserService userService, IRolePermissionsService rolePermissionsService)
+		    : base (userService)    
 		{
 			_roleService = rolePermissionsService;			
 		}

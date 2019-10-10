@@ -131,8 +131,8 @@
     </div>
     @if (User.Identity.IsAuthenticated)
     {
-        await Html.RenderPartialAsync("_Footer");
-        await Html.RenderPartialAsync("_Tiles");
+        //await Html.RenderPartialAsync("_Footer");
+        //await Html.RenderPartialAsync("_Tiles");
     }
 
     @{ await Html.RenderPartialAsync("_Scripts", RenderSection("pagespecific", false)); }
