@@ -14,10 +14,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using static System.Net.WebRequestMethods;
 using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
-    //[Authorize]
     public class InformationController : BaseController
     {
 
@@ -52,6 +52,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _IClientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
+        IHttpContextAccessor _httpContextAccessor;
         public InformationController(
             IUserService userRepository,
             IRoleService roleService,
@@ -82,8 +83,10 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<DropdownListItem> dropdownListItem,
             IMapper mapper,
             DealEngineDBContext dealEngineDBContext,
-            IUserRepository UserRepository)
-            : base(userRepository, dealEngineDBContext)
+            IHttpContextAccessor httpContextAccessor,
+            IUserRepository UserRepository,
+            SignInManager<DealEngineUser> signInManager)
+            : base (userRepository)
         {
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;

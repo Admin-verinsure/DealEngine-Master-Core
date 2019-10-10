@@ -7,6 +7,8 @@ using TechCertain.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -15,14 +17,20 @@ namespace TechCertain.WebUI.Controllers
         private readonly IOrganisationService _organisationService;
         private readonly IOrganisationTypeService _organisationTypeService;
         IInsuranceAttributeService _insuranceAttributeService;
-
+        IHttpContextAccessor _httpContextAccessor;
         IUnitOfWork _unitOfWork;
 
         //private readonly ICompanyService _companyService;
 
-        public OrganisationController(IOrganisationService organisationService, DealEngineDBContext dealEngineDBContext, IOrganisationTypeService organisationTypeService, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService,
+        public OrganisationController(IHttpContextAccessor httpContextAccessor,
+            SignInManager<DealEngineUser> signInManager,
+            IOrganisationService organisationService, 
+            DealEngineDBContext dealEngineDBContext, 
+            IOrganisationTypeService organisationTypeService, 
+            IUnitOfWork unitOfWork, 
+            IInsuranceAttributeService insuranceAttributeService,
             IUserService userRepository)//(ICompanyService companyService)
-            : base(userRepository, dealEngineDBContext)
+            : base (userRepository)
         {
             _organisationService = organisationService;
             _organisationTypeService = organisationTypeService;

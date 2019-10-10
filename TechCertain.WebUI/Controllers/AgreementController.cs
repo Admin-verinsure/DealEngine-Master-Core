@@ -15,9 +15,8 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Helpers;
 using TechCertain.Infrastructure.Payment.PxpayAPI;
 using Microsoft.AspNetCore.Http;
-using System.Net;
 using DealEngine.Infrastructure.Identity.Data;
-using TechCertain.Domain.Entities.Abstracts;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -43,17 +42,16 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Organisation> _OrganisationRepository;        
         IMapperSession<SystemDocument> _documentRepository;
         IOrganisationService _organisationService;
-
         IMapperSession<ClientProgramme> _programmeRepository;
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
 
-        public AgreementController(IUserService userRepository, DealEngineDBContext dealEngineDBContext, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
                                    IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
-            : base(userRepository, dealEngineDBContext)
+            : base (userRepository)
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;

@@ -6,13 +6,10 @@ using TechCertain.Domain.Entities;
 namespace DealEngine.Infrastructure.Identity.Data
 {
     public class DealEngineDBContext : IdentityDbContext<DealEngineUser>
-    {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public DealEngineDBContext(DbContextOptions<DealEngineDBContext> options, IHttpContextAccessor httpContextAccessor)
+    {       
+        public DealEngineDBContext(DbContextOptions<DealEngineDBContext> options)
             : base(options)
         {
-            _httpContextAccessor = httpContextAccessor;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

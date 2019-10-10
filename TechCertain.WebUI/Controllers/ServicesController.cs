@@ -15,6 +15,8 @@ using System.Linq.Dynamic;
 using ServiceStack;
 using DealEngine.Infrastructure.Identity.Data;
 using System.Threading;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -46,14 +48,13 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 
-
-        public ServicesController(IUserService userService, DealEngineDBContext dealEngineDBContext, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IUserService userService, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
-            : base(userService, dealEngineDBContext)
+            : base (userService)
         {
             
             _clientInformationService = clientInformationService;

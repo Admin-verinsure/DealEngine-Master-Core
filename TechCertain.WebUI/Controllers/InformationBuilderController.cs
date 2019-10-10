@@ -8,6 +8,8 @@ using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -18,13 +20,15 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<InformationTemplate> _templateRepository;
         IMapperSession<InformationItem> _informationItemRepository;
         IMapperSession<InformationSection> _informationSectionRepository;
-
-
         IUnitOfWork _unitOfWork;
 
         //public InformationBuilderController(IInformationBuilderService informationBuilderService)
-		public InformationBuilderController(IUserService userService, DealEngineDBContext dealEngineDBContext, IMapper mapper, IMapperSession<InformationSection> informationSectionRepository, IMapperSession<InformationItem> informationItemRepository, IMapperSession<InformationTemplate> templateRepository, IUnitOfWork unitOfWork)
-			: base(userService, dealEngineDBContext)
+		public InformationBuilderController(IUserService userService,
+            IMapper mapper, 
+            IMapperSession<InformationSection> informationSectionRepository, 
+            IMapperSession<InformationItem> informationItemRepository, 
+            IMapperSession<InformationTemplate> templateRepository, IUnitOfWork unitOfWork)
+			: base (userService)
         {
             _informationBuilderService = new InformationBuilderService(new InformationBuilderFactory());
 			_mapper = mapper;

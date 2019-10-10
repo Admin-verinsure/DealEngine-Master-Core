@@ -7,15 +7,18 @@ using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class RolesController : BaseController
     {
 		IRolePermissionsService _roleService;
-		
-		public RolesController (IUserService userService, DealEngineDBContext dealEngineDBContext, IRolePermissionsService rolePermissionsService)
-			: base (userService, dealEngineDBContext)
+
+        public RolesController (
+            IUserService userService, IRolePermissionsService rolePermissionsService)
+		    : base (userService)    
 		{
 			_roleService = rolePermissionsService;			
 		}

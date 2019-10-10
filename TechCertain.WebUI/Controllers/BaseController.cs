@@ -5,42 +5,38 @@ using TechCertain.Services.Interfaces;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
-using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class BaseController : Controller
     {
         protected IUserService _userService;
-        protected DealEngineDBContext _dealEngineDBContext;
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
 
-        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext)
+        public BaseController(IUserService userService)
         {
             _userService = userService;
-            _dealEngineDBContext = dealEngineDBContext;
         }
 
+        
         public User CurrentUser
         {
             get
             {
-                //UserManager<User>
-                var user = "";
+                var userName = "";
                 try {
-                    user = _dealEngineDBContext.Users.FirstOrDefault().UserName;
+                    userName = User.Identity.Name;
                 }
                 catch (Exception ex)
                 {
                     return null;
                 }
-                if (string.IsNullOrWhiteSpace (user))
+                if (string.IsNullOrWhiteSpace (userName))
                     return null;
-				return _userService.GetUser(user); 
+				return _userService.GetUser(userName); 
             }
         }
 

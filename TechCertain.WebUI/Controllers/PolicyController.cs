@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.ControlModels;
 using TechCertain.WebUI.Models.Policy;
 using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -21,19 +23,21 @@ namespace TechCertain.WebUI.Controllers
 		IDocumentService _policyDocumentService;
 		ITermBuilderService _termBuilderService;
 		IMapperSession<RiskCategory> _riskRepository;
-
+        IHttpContextAccessor _httpContextAccessor;
 		IUnitOfWork _unitOfWork;
 
 		IMapper _mapper;
 
 		public PolicyController(IUserService userRepository,
+                                SignInManager<DealEngineUser> signInManager,
+                                IHttpContextAccessor httpContextAccessor,
                                 DealEngineDBContext dealEngineDBContext,
                                 IDocumentService policyDocumentService,
 								ITermBuilderService termBuilderService,
 								IMapperSession<RiskCategory> riskRepository,
 								IUnitOfWork unitOfWork,
 								IMapper mapper)
-			: base(userRepository, dealEngineDBContext)
+			: base (userRepository)
 		{
 			_policyDocumentService = policyDocumentService;
 			_termBuilderService = termBuilderService;

@@ -14,40 +14,43 @@ using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using TechCertain.Infrastructure.Ldap.Interfaces;
 
 
 #endregion
 
 namespace TechCertain.WebUI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class AccountController : BaseController
     {
         IEmailService _emailService;
 		IFileService _fileService;
-        ISignInManager<DealEngineUser> _signInManager;
+        SignInManager<DealEngineUser> _signInManager;
         UserManager<DealEngineUser> _userManager;
-
-        DealEngineDBContext _context;
+        ILdapService _ldapService;
         IProgrammeService _programmeService;
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
-
+        IHttpContextAccessor _httpContextAccessor;
+        
         public AccountController(
-            ISignInManager<DealEngineUser> signInManager,
+            SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
+            ILdapService ldapService,
             IUserService userRepository,
-            DealEngineDBContext dealEngineDBContext,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository, dealEngineDBContext)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
 		{
+            _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
             _userService = userRepository;
             _emailService = emailService;
 			_fileService = fileService;
-            _context = dealEngineDBContext;
             _programmeService = programeService;
             _clientInformationService = clientInformationService;
             _organisationService = organisationService;
@@ -273,19 +276,35 @@ namespace TechCertain.WebUI.Controllers
 			if (User.Identity.IsAuthenticated)
 				return RedirectToLocal();
 
-			string username = "";
             try
             {
-				username = viewModel.Username.Trim();
-				string password = viewModel.Password.Trim();
-                var result = await _signInManager.PasswordSignInAsync(username, password, viewModel.RememberMe, false);
-                if (result.Succeeded)
+                var userName = viewModel.Username.Trim();
+				string password = viewModel.Password.Trim();                
+                int resultCode = -1;
+                string resultMessage = "";
+
+                // Step 1 validate in  LDap 
+                _ldapService.Validate(userName, password, out resultCode, out resultMessage);
+                if (resultCode == 0)
                 {
-                   return RedirectToLocal(viewModel.ReturnUrl);
+                    var deUser = _userManager.FindByNameAsync(userName).Result;
+                    if(deUser == null)
+                    {
+                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
+                        await _userManager.CreateAsync(deUser, password);
+                    }
+                                    
+                    var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
+                    if(identityResult.Succeeded)
+                    {
+                        //add claims, roles etc here
+                    }
+                    
+                    return LocalRedirect("~/Home/Index");
                 }
 
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
-                return View(viewModel);
+                return View(viewModel);                
 
             }
 			catch (UserImportException ex)
@@ -299,10 +318,6 @@ namespace TechCertain.WebUI.Controllers
             {
                 throw new Exception(ex.Message);
             }
-
-            ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
-
-            return View(viewModel);
         }
 
 		[HttpPost]
@@ -546,22 +561,24 @@ namespace TechCertain.WebUI.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
-			
 
+            _signInManager.SignOutAsync();
+            HttpContext.SignOutAsync();
+            HttpContext.Response.Cookies.Delete(".AspNet.Consent");
             //FormsAuthentication.SignOut();
-            //Session.Abandon();
+            
 
             //_dealEngineSignInManager.SignOutAsync();
 
-			//HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
+            //HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
 
-			//DateTime expiredDate = DateTime.UtcNow.AddDays (-1);
+            //DateTime expiredDate = DateTime.UtcNow.AddDays (-1);
 
-			//// clear authentication cookie
-			//SetCookie(FormsAuthentication.FormsCookieName, "", expiredDate, FormsAuthentication.CookieDomain);
+            //// clear authentication cookie
+            //SetCookie(FormsAuthentication.FormsCookieName, "", expiredDate, FormsAuthentication.CookieDomain);
 
-			//// clear session cookie
-			//SetCookie("ASP.NET_SessionId", "", expiredDate);
+            //// clear session cookie
+            //SetCookie("ASP.NET_SessionId", "", expiredDate);
 
             return RedirectToLocal();
         }
