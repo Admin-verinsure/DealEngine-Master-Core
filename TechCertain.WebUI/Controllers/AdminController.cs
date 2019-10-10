@@ -37,7 +37,7 @@ namespace TechCertain.WebUI.Controllers
 			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
             ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
-			: base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+			: base (userRepository)
 		{		
 			_privateServerService = privateServerService;
 			_fileService = fileService;

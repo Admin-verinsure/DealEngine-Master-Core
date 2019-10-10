@@ -24,13 +24,9 @@ namespace TechCertain.WebUI.Controllers
 		 */
 
 		IRolePermissionsService _roleService;
-        IHttpContextAccessor httpContextAccessor;
         public GroupsController (IUserService userService,
-            SignInManager<DealEngineUser> signInManager,
-            IHttpContextAccessor httpContextAccessor, 
-            DealEngineDBContext dealEngineDBContext, 
             IRolePermissionsService rolePermissionsService)
-			: base(userService, dealEngineDBContext, signInManager, httpContextAccessor)
+			: base (userService)
 		{
 			_roleService = rolePermissionsService;			
 		}

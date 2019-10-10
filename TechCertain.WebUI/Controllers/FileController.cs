@@ -35,7 +35,7 @@ namespace TechCertain.WebUI.Controllers
 
 		public FileController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IFileService fileService,
 		                      IMapperSession<SystemDocument> documentRepository, IMapperSession<Image> imageRepository, IMapperSession<Product> productRepository)
-			: base (userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+			: base (userRepository)
 		{			
 			_unitOfWork = unitOfWork;
 			_fileService = fileService;

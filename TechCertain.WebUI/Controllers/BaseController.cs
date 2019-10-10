@@ -5,31 +5,20 @@ using TechCertain.Services.Interfaces;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
-using DealEngine.Infrastructure.Identity.Data;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class BaseController : Controller
     {
         protected IUserService _userService;
-        protected DealEngineDBContext _dealEngineDBContext;
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
-        protected IHttpContextAccessor _httpContextAccessor;
-        protected SignInManager<DealEngineUser> _signInManager;
 
-        public BaseController(IUserService userService, DealEngineDBContext dealEngineDBContext, SignInManager<DealEngineUser> signInManager, IHttpContextAccessor httpContextAccessor)
+        public BaseController(IUserService userService)
         {
-            _httpContextAccessor = httpContextAccessor;
             _userService = userService;
-            _dealEngineDBContext = dealEngineDBContext;
-            _signInManager = signInManager;
         }
 
         
@@ -37,21 +26,17 @@ namespace TechCertain.WebUI.Controllers
         {
             get
             {
-                //UserManager<User>
-                var user = "";
+                var userName = "";
                 try {
-                    user = HttpContext.User.Identity.Name;
-                    user = _httpContextAccessor.HttpContext.User.Identity.Name;
-                    //user = User.Identity.Name;
-                    user = _dealEngineDBContext.Users.FirstOrDefault().UserName;                    
+                    userName = User.Identity.Name;
                 }
                 catch (Exception ex)
                 {
                     return null;
                 }
-                if (string.IsNullOrWhiteSpace (user))
+                if (string.IsNullOrWhiteSpace (userName))
                     return null;
-				return _userService.GetUser(user); 
+				return _userService.GetUser(userName); 
             }
         }
 

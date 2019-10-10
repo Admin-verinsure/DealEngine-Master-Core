@@ -37,7 +37,7 @@ namespace TechCertain.WebUI.Controllers
 								IMapperSession<RiskCategory> riskRepository,
 								IUnitOfWork unitOfWork,
 								IMapper mapper)
-			: base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+			: base (userRepository)
 		{
 			_policyDocumentService = policyDocumentService;
 			_termBuilderService = termBuilderService;

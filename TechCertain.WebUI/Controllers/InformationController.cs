@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
-    //[Authorize]
     public class InformationController : BaseController
     {
 
@@ -87,7 +86,7 @@ namespace TechCertain.WebUI.Controllers
             IHttpContextAccessor httpContextAccessor,
             IUserRepository UserRepository,
             SignInManager<DealEngineUser> signInManager)
-            : base(userRepository, dealEngineDBContext, signInManager, httpContextAccessor)
+            : base (userRepository)
         {
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
