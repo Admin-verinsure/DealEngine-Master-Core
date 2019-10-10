@@ -127,6 +127,31 @@ namespace TechCertain.WebUI.Controllers
                 model.DisplayProducts = false;
                 model.DisplayRole = "Client";
 
+                if (CurrentUser.PrimaryOrganisation.IsBroker)
+                {
+                    model.CurrentUserIsBroker = "True";
+                }
+                else
+                {
+                    model.CurrentUserIsBroker = "False";
+                }
+                if (CurrentUser.PrimaryOrganisation.IsInsurer)
+                {
+                    model.CurrentUserIsInsurer = "True";
+                }
+                else
+                {
+                    model.CurrentUserIsInsurer = "False";
+                }
+                if (CurrentUser.PrimaryOrganisation.IsTC)
+                {
+                    model.CurrentUserIsTC = "True";
+                }
+                else
+                {
+                    model.CurrentUserIsTC = "False";
+                }
+
                 IList<string> languages = new List<string>();
                 languages.Add("nz");
 

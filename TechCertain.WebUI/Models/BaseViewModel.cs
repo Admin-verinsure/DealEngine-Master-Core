@@ -44,6 +44,7 @@ namespace TechCertain.WebUI.Models
         {
             get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
         }
+
     }
 
 	public class BaseListViewModel<ViewModel> : BaseViewModel, IList<ViewModel>
