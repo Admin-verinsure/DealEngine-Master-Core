@@ -1883,29 +1883,29 @@ namespace TechCertain.WebUI.Controllers
             //	});
             //}
 
-            var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
-            userDetails.PostalAddress = CurrentUser.Address;
-            userDetails.StreetAddress = CurrentUser.Address;
-            userDetails.FirstName = CurrentUser.FirstName;
-            userDetails.Email = CurrentUser.Email;
+            //var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
+            //userDetails.PostalAddress = CurrentUser.Address;
+            //userDetails.StreetAddress = CurrentUser.Address;
+            //userDetails.FirstName = CurrentUser.FirstName;
+            //userDetails.Email = CurrentUser.Email;
 
             //< ApplicationRole > UserRole
 
             //var role= userDetails.
             //section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
-            User user = _IUserRepository.GetUser(CurrentUser.UserName);
-            var roles = new List<String>();
+            //User user = _IUserRepository.GetUser(CurrentUser.UserName);
+            //var roles = new List<String>();
 
-            for (var i = 0; i < user.Groups.Count(); i++)
-            {
-                roles.Add(user.Groups.ElementAtOrDefault(i).Name);
-            }
+            //for (var i = 0; i < user.Groups.Count(); i++)
+            //{
+            //    roles.Add(user.Groups.ElementAtOrDefault(i).Name);
+            //}
 
             //foreach (var role in user.Groups)
             //{
             //    roles.Add(role.Name);
             //}
-            model.UserRole = roles;
+            //model.UserRole = roles;
             //var role = user.GetRoles();
 
 
@@ -1938,7 +1938,7 @@ namespace TechCertain.WebUI.Controllers
             //model.InterestedParties = interestedParties;
             model.AvailableProducts = availableProducts;
             model.OrganisationDetails = organisationDetails;
-            model.UserDetails = userDetails;
+            //model.UserDetails = userDetails;
 
             model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id));
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
