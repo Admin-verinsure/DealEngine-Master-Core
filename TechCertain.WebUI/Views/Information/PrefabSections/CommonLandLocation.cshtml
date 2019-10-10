@@ -125,8 +125,8 @@
                     <div class="row" id="update">
                         <section class="col col-xs-12">
 
-                            <button onclick="validateLocation('#buiTabs2', '#tblBuilding','buiTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
-                            <button onclick="ClearBoats('#buiTabs2','buiTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
+                            <button onclick="ValidateBuilding(event,'#buiTabs2', '#tblBuilding','buiTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats(event,'#buiTabs2','buiTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
 
                             @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateBuilding('#buiTabs-2', '#tblBuilding','buiTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
                                 @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#buiTabs-2','buiTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
@@ -182,8 +182,8 @@
                     <div class="row" id="update">
                         <section class="col col-xs-12">
 
-                            <button onclick="validateAddLocation('#buiTabs3', '#tblBuilding','buiTabs1')" class="btn-sm AddupdateBoat" id="AddupdateBoat">Add</button>
-                            <button onclick="ClearBoats('#buiTabs3','buiTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+                            <button onclick="ValidateAddBuilding(event,'#buiTabs3', '#tblBuilding','buiTabs1')" class="btn-sm AddupdateBoat" id="AddupdateBoat">Add</button>
+                            <button onclick="ClearBoats(event,'#buiTabs3','buiTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
 
                             @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddBuilding('#buiTabs-3', '#tblBuilding' , 'buiTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
                                 @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#buiTabs-3','buiTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
@@ -322,7 +322,8 @@
 };
 
 
-    function ValidateBuilding(tabId, tableId, currenttab) {
+    function ValidateBuilding(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var buildingCategory = $('#BuildingCategory').val();
         var buildingName = $('#BuildingName').val();
         var buildingLocation = $('#BuildingLocation').val();
@@ -360,7 +361,8 @@
         }
     };
 
-    function ValidateAddBuilding(tabId, tableId, currenttab) {
+    function ValidateAddBuilding(event,tabId, tableId, currenttab) {
+        event.preventDefault();
         var buildingCategory = $('#AddBuildingCategory').val();
         var buildingName = $('#AddBuildingName').val();
         var buildingLocation = $('#AddBuildingLocation').val();
@@ -398,7 +400,8 @@
         }
     };
 
-function AddBuilding(tabId, tableId) {
+    function AddBuilding(tabId, tableId) {
+        debugger;
     var informationId = $('#AnswerSheetId').serialize();
     var loc = $('#SelectedLocation').serialize();
     $('#getLandLocModal').show();
@@ -411,12 +414,12 @@ function AddBuilding(tabId, tableId) {
         data: $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&")
     })
 	.done(function (data) {
-	    $.smallBox({
-	        title: "Building named (" + data.BuildingName + ") has been saved",
-	        color: "#5F895F",
-	        iconSmall: "fa fa-check bounce animated",
-	        timeout: 4000
-	    });
+	    //$.smallBox({
+	    //    title: "Building named (" + data.BuildingName + ") has been saved",
+	    //    color: "#5F895F",
+	    //    iconSmall: "fa fa-check bounce animated",
+	    //    timeout: 4000
+	    //});
 	    // reload grid
 	    $(tableId).trigger('reloadGrid');
 

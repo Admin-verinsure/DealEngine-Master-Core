@@ -914,7 +914,7 @@
 
 
                             <button onclick="ValidateBoatForm(event,'#boatTabs2', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-                            <button onclick="ClearBoats('#boatTabs2','boatTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                            <button onclick="ClearBoats(event,'#boatTabs2','boatTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                             @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateBoatForm('#boatTabs-2', '#tblBoat','boatTabs-1'); " }).Class("btn-sm updateBoat").Id("updateBoat")
 
@@ -1686,7 +1686,7 @@
                             @*@Html.Bootstrap().SubmitButton().Text("Update").HtmlAttributes(new { onclick = "ClearBoat('#boatTabs-2', '#tblBoat);" }).Class("btn-sm")*@
 
                             <button onclick="ValidateAddBoatForm('#boatTabs3', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
-                            <button onclick="ClearBoats('#boatTabs3','boatTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+                            <button onclick="ClearBoats(event,'#boatTabs3','boatTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
 
                             @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddBoatForm('#boatTabs-3', '#tblBoat','boatTabs-1'); " }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
 

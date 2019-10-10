@@ -1169,7 +1169,7 @@
         if (validity) {
             $(".search-choice-close").click();
             AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
-            SetCurrentTab(currentTab);
+            SetCurrentTab(currenttab);
         } else {
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
@@ -1445,7 +1445,7 @@
             $(".search-choice-close").click();
             debugger;
             AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
-            SetCurrentTab(currentTab);
+            SetCurrentTab(currenttab);
         } else {
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
@@ -1464,7 +1464,7 @@
 
     function SetCurrentTab(tabPaneId) {
         debugger;
-        event.preventDefault();
+        //event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         //$('#tblLocation').trigger('reloadGrid
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
@@ -1479,7 +1479,9 @@ function UpdateChosen() {
     });
 }
 
-    function ValidateAddNRegisteredMotor(tabId, tableId, currenttab) {
+    function ValidateAddNRegisteredMotor(event, tabId, tableId, currenttab) {
+        event.preventDefault();
+
         var make = $('#AddMotorMake').val();
         var vehicleModel = $('#AddMotorModel').val();
         var sumInsured = $('#AddMotorSumInsured').val();
@@ -1544,7 +1546,7 @@ function UpdateChosen() {
             return result;
         }
         if (result1) {
-            AddMotorVehicle(event,tabId, tableId);
+            AddMotorVehicle(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateAddRMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -1552,7 +1554,8 @@ function UpdateChosen() {
         }
     }
 
-    function ValidateNRegisteredMotor(tabId, tableId, currenttab) {
+    function ValidateNRegisteredMotor(event,tabId, tableId, currenttab) {
+        event.preventDefault();
         var make = $('#MotorMake').val();
         var vehicleModel = $('#MotorModel').val();
         var sumInsured = $('#MotorSumInsured').val();
@@ -1615,7 +1618,7 @@ function UpdateChosen() {
             return result;
         }
         if (result1) {
-            AddMotorVehicle(event,tabId, tableId);
+            AddMotorVehicle(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateNRMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -3037,10 +3040,13 @@ function EditClaim(claimId, tableId) {
     });
     };
 
-    function ClearBoats(tabId,currentTab) {
+    function ClearBoats(event, tabId, currentTab) {
+        debugger;
+        event.preventDefault();
+
         if (confirm("I don't want to add.")) {
-            $(tabId + " :input").val(""); //Clears form
-            SetCurrentTab(currenttab);
+            //$(tabId + " :input").val(""); //Clears form
+            SetCurrentTab(currentTab);
         }
         else {
             return false;
@@ -3360,7 +3366,8 @@ async: true
     };
 
 
-    function ValidateBoatUse(tabId, tableId, currenttab) {
+    function ValidateBoatUse(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var boatUseCategory = $('#BoatUseCategory').val();
         var boatUseRaceCategory = $('#BoatUseRaceCategory').val();
         var boatUseRaceUseSpinnakers = $('#BoatUseRaceUseSpinnakers').val();
@@ -3392,7 +3399,7 @@ async: true
         }
 
         if (result) {
-            AddBoatUse(event,tabId, tableId);
+            AddBoatUse(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateNRMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -3760,7 +3767,8 @@ async: true
 
 
 
-    function ValidateAddBoatUse(tabId, tableId, currenttab) {
+    function ValidateAddBoatUse(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var boatUseCategory = $('#AddBoatUseCategory').val();
         var boatUseRaceCategory = $('#AddBoatUseRaceCategory').val();
                 var boatUseRaceUseSpinnakers = $('#AddBoatUseRaceUseSpinnakers').val();
@@ -3791,7 +3799,7 @@ async: true
             $('#validateAddBoatUseRaceUseSpinnakers').html("<font></font>");
         }
         if (result) {
-            AddBoatUse(event,tabId, tableId);
+            AddBoatUse(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -3799,9 +3807,7 @@ async: true
     }
 
 
-    function AddBoatUse(event,tabId, tableId) {
-                            event.preventDefault();
-
+    function AddBoatUse(tabId, tableId) {
         var informationId = $('#AnswerSheetId').serialize();
         $('#getBoatUseModal').show();
     $.ajax({
@@ -4308,15 +4314,15 @@ async: true
     });
     };
 
-        function ClearBoats(tabId,currentTab) {
-        if (confirm("I don't want to add.")) {
-            $(tabId + " :input").val(""); //Clears form
-            SetCurrentTab(currenttab);
-        }
-        else {
-            return false;
-        }
-    };
+    //    function ClearBoats(tabId,currentTab) {
+    //    if (confirm("I don't want to add.")) {
+    //        $(tabId + " :input").val(""); //Clears form
+    //        SetCurrentTab(currenttab);
+    //    }
+    //    else {
+    //        return false;
+    //    }
+    //};
 
     //function SetCurrentTab(tabPaneId) {
     //    event.preventDefault();
@@ -4574,7 +4580,8 @@ async: true
     });
 };
 
-   function ValidateMotorVehicle(tabId, tableId, currenttab) {
+    function ValidateMotorVehicle(event,tabId, tableId, currenttab) {
+        event.preventDefault();
         var sumInsured = $('#SumInsured').val();
        var vehicleLocation = $('#VehicleLocation').val();
        var vehicleEffectiveDate = $('#EffectiveDate').val();
@@ -4611,7 +4618,7 @@ async: true
             return result;
         }
         if (result1) {
-            AddMotorVehicle(event,tabId, tableId);
+            AddMotorVehicle(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -4620,7 +4627,8 @@ async: true
 
     }
 
-    function ValidateAddMotorVehicle(tabId, tableId, currenttab) {
+    function ValidateAddMotorVehicle(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var sumInsured = $('#AddSumInsured').val();
         var vehicleLocation = $('#AddVehicleLocation').val();
 
@@ -4662,7 +4670,7 @@ async: true
         }
 
         if (result1) {
-            AddMotorVehicle(event,tabId, tableId);
+            AddMotorVehicle(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateMarketValue').html("<font color='red'>Please enter the number.</font>")
@@ -4671,8 +4679,7 @@ async: true
 
     }
 
-    function AddMotorVehicle(event,tabId, tableId) {
-                        event.preventDefault();
+    function AddMotorVehicle(tabId, tableId) {
 
     var registration = $('#Registration').serialize();
     var informationId = $('#AnswerSheetId').serialize();
