@@ -15,7 +15,6 @@ namespace TechCertain.Domain.Entities
         string _email;
         string _SkipperExp;
         OrganisationType _organisationType;
-        //IList<Product_Old> products = new List<Product_Old>();
 
         #region Constructors
         protected Organisation() : base(null) { }
@@ -95,21 +94,6 @@ namespace TechCertain.Domain.Entities
             _email = Email;
         }
 
-        //     public Organisation(User createdBy, string organisationName, OrganisationType organisationType, string ownerFirstName, string ownerLastName, string ownerEmail)
-        //: this (createdBy, organisationName, organisationType)
-        //     {
-        //         if (string.IsNullOrWhiteSpace(organisationName))
-        //             throw new ArgumentNullException("name", "Not allowed to create an organisation with no name.");
-
-        //         if (organisationType == null)
-        //             throw new ArgumentNullException("organisationType", "Not allowed to create an organisation without specifying a type.");
-
-        //  this.name = organisationName;
-        //         this.organisationType = organisationType;
-
-
-        //         AddNewAccount(ownerFirstName, ownerLastName, ownerEmail);
-        //     }
         #endregion
 
         #region Getters
@@ -142,15 +126,8 @@ namespace TechCertain.Domain.Entities
             set;
         }
 
-        //public virtual IEnumerable<Product_Old> Products
-        //{
-        //    get { return products; }
-        //}
-
         public virtual OrganisationType OrganisationType
         {
-            //  set {}
-
             get { return _organisationType; }
         }
 
@@ -190,22 +167,6 @@ namespace TechCertain.Domain.Entities
         #endregion
 
         #region Opperations
-        //public virtual void AddProduct(Product_Old product)
-        //{
-        //    if (product == null)
-        //        throw new ArgumentNullException("Product can not be null");
-
-        //    products.Add(product);
-        //}
-
-        //public virtual Product_Old AddNewProduct(string productName)
-        //{
-        //    Product_Old product = new Product_Old(CreatedBy, productName);
-
-        //    products.Add(product);
-
-        //    return product;
-        //}
 
         public virtual void ChangeOrganisationType(OrganisationType organisationType)
         {
@@ -224,18 +185,10 @@ namespace TechCertain.Domain.Entities
         }
         #endregion
 
-
-        //public virtual IEnumerable<User> Users { get; set; }
-
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
-
-        //public virtual IEnumerable<Department> Departments { get; set; }
-
-        //public virtual IEnumerable <BusinessType> BusinessTypes { get; set; }
 
         public static Organisation CreateDefaultOrganisation(User creatingUser, User owner, OrganisationType organisationType)
         {
-            //return new Organisation (creatingUser, Guid.NewGuid (), "Default user organisation for " + owner.FullName, new OrganisationType (creatingUser, "personal")) {
             return new Organisation(creatingUser, Guid.NewGuid(), "Default user organisation for " + owner.FullName, organisationType)
             {
                 Domain = "#"
@@ -244,7 +197,6 @@ namespace TechCertain.Domain.Entities
 
         public static Organisation CreateOrganisation(User creatingUser, string organisationName, OrganisationType organisationType, string Email, string Phone)
         {
-            //return new Organisation (creatingUser, Guid.NewGuid (), "Default user organisation for " + owner.FullName, new OrganisationType (creatingUser, "personal")) {
             return new Organisation(creatingUser, organisationName, organisationType, Email, Phone)
             {
                 Domain = "#"

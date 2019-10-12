@@ -23,6 +23,7 @@ namespace TechCertain.WebUI.Models
 
         public string ReturnUrl { get; set; }
         public bool RememberMe { get; set; }
+        public string DevicePrint { get; set; }
     }
 
 	public class RsaAccountLoginModel : AccountLoginModel
