@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
+using TechCertain.Domain.Interfaces;
+using System.Linq;
 
 
 #endregion
@@ -39,21 +41,22 @@ namespace TechCertain.WebUI.Controllers
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
         IHttpContextAccessor _httpContextAccessor;
-        
+        IMapperSession<User> _userRepository;
+
         public AccountController(
             IAuthenticationService authenticationService,
             SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             ILdapService ldapService,
-            IUserService userRepository,
+            IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IMapperSession<User> userRepository) : base (userService)
 		{
             _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _userService = userRepository;
+            _userRepository = userRepository;
             _emailService = emailService;
 			_fileService = fileService;
             _programmeService = programeService;
@@ -305,7 +308,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         //add claims, roles etc here
                     }
-                    
+                    var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                     return LocalRedirect("~/Home/Index");
                 }
 
