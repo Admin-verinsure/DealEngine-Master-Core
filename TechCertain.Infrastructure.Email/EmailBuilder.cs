@@ -93,6 +93,7 @@ namespace TechCertain.Infrastructure.Email
             int smtpPort = 25;
 
             using (MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient ()) {
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                 client.Connect (smtpServer, smtpPort);                
                 client.AuthenticationMechanisms.Remove ("XOAUTH2");
 				client.Send (MimeKit.MimeMessage.CreateFromMailMessage(_mailMessage));

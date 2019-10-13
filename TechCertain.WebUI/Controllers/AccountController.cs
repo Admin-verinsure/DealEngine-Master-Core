@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
+using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
 
 
 #endregion
@@ -26,6 +27,8 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        IAuthenticationService _authenticationService;
+
         IEmailService _emailService;
 		IFileService _fileService;
         SignInManager<DealEngineUser> _signInManager;
@@ -38,6 +41,7 @@ namespace TechCertain.WebUI.Controllers
         IHttpContextAccessor _httpContextAccessor;
         
         public AccountController(
+            IAuthenticationService authenticationService,
             SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             ILdapService ldapService,
@@ -45,6 +49,7 @@ namespace TechCertain.WebUI.Controllers
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
             IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
 		{
+            _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -104,11 +109,12 @@ namespace TechCertain.WebUI.Controllers
                     //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
                     //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemEmailLogin("mcgtestuser2@techcertain.com");
+                    _emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
                     //User user = _userService.GetUser(token.UserID);
                     ////change the users password to an intermediate
+
                     //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
                     ////get local domain
                     //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
