@@ -28,7 +28,7 @@ namespace TechCertain.WebUI.Models
 
         public string EngineNumber { get; set; }
 
-        public int SumInsured { get; set; }
+        public double SumInsured { get; set; }
 
         public string FleetNumber { get; set; }
 
@@ -90,7 +90,7 @@ namespace TechCertain.WebUI.Models
             vehicle.Make = Make;
             vehicle.Model = VehicleModel;
             vehicle.Year = Year;
-            vehicle.GroupSumInsured = SumInsured;
+            vehicle.GroupSumInsured = Convert.ToInt32(SumInsured) ;
             vehicle.FleetNumber = FleetNumber;
             vehicle.SerialNumber = SerialNumber;
             vehicle.AreaOfOperation = AreaOfOperation;

@@ -1445,7 +1445,7 @@
             $(".search-choice-close").click();
             debugger;
             AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
-            SetCurrentTab(currenttab);
+            SetCurrentTab(currentTab);
         } else {
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
@@ -1652,15 +1652,21 @@ function UpdateChosen() {
         var year = $('#YearModal').serialize();
         var make = $('#MakeModal').serialize();
         var model = $('#ModelModal').serialize();
-        var groupsuminsured = $('#SumInsuredModal').serialize();
+        var groupsuminsured = $('#SumInsuredModal').val();
+         //groupsuminsured = "SumInsured="+ groupsuminsured.replace(/[^0-9\.-]+/g, "");
+
         var validated = $('#ValidatedTrailer').serialize();
         var notes = $('#TrailerNotesModal').serialize();
         var garagelocation_id = $('#VehicleLocationModal').serialize();
+        var data = $.grep([registration, validated, vin, vehicleeffectivedate, vehicleceasedate, vehicleceasereason, garagelocation_id, chassisnumber, year, make, model, notes, informationId], Boolean).join("&");
+         data = data + "&SumInsured=" + groupsuminsured.replace(/[^0-9\.-]+/g, "");
+
+
           $('#AddTrailer').show();
         $.ajax({
                 url: '@Url.Action("AddVehicle", "Services")',
                 type: "POST",
-            data: $.grep([registration, validated, vin, vehicleeffectivedate, vehicleceasedate, vehicleceasereason, garagelocation_id, chassisnumber, year, make, model, groupsuminsured, notes, informationId], Boolean).join("&")
+                data:data
             })
             .done(function (data) {
                 if (data.Registration == null) {
@@ -2585,7 +2591,8 @@ function EditClaim(claimId, tableId) {
         type: "POST",
         data: test
     })
-    .done(function (data) {
+        .done(function (data) {
+
         //$.smallBox({
         //    title: "Operator has been saved",
         //    color: "#5F895F",
@@ -2631,7 +2638,10 @@ function EditClaim(claimId, tableId) {
             url: '@Url.Action("AddOperator", "Services")',
             type: "POST",
             data: postdata
-            }).done(function (data) {
+        }).done(function (data) {
+            debugger;
+                        setTimeout("alert('Operator has been saved');", 4000);
+
                 //$.smallBox({
                 //    title: "Operator has been saved",
                 //    color: "#5F895F",
