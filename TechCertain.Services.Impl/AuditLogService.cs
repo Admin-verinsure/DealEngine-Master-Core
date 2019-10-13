@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class AuditLogService : IAuditLogService
-    {
-        IUnitOfWork _unitOfWork;        
+    {      
         IMapperSession<AuditLog> _auditLogRepository;
 
-        public AuditLogService(IUnitOfWork unitOfWork, IMapperSession<AuditLog> auditLogRepository)
-        {
-            _unitOfWork = unitOfWork;            
+        public AuditLogService(IMapperSession<AuditLog> auditLogRepository)
+        {          
             _auditLogRepository = auditLogRepository;
         }
 
@@ -23,10 +21,10 @@ namespace TechCertain.Services.Impl
             return auditLog;
         }
 
-        public bool DeleteAuditLog(User deletedBy, AuditLog auditLog)
+        public void DeleteAuditLog(User deletedBy, AuditLog auditLog)
         {
             auditLog.Delete(deletedBy);
-            return UpdateAuditLog(auditLog);
+            UpdateAuditLog(auditLog);
         }
 
         public IQueryable<AuditLog> GetAllAuditLogs()
@@ -36,7 +34,7 @@ namespace TechCertain.Services.Impl
 
         public AuditLog GetAuditLog(Guid auditLogId)
         {
-            AuditLog auditLog = _auditLogRepository.GetById(auditLogId);
+            AuditLog auditLog = _auditLogRepository.GetById(auditLogId).Result;
             if (auditLog != null)
                 return auditLog;
             if (auditLog != null)
@@ -47,10 +45,9 @@ namespace TechCertain.Services.Impl
             throw new Exception("AuditLog with id [" + auditLogId + "] does not exist in the system");
         }
 
-        public bool UpdateAuditLog(AuditLog auditLog)
+        public void UpdateAuditLog(AuditLog auditLog)
         {
-            _auditLogRepository.Add(auditLog);
-            return true;
+            _auditLogRepository.UpdateAsync(auditLog);
         }
 
         public IQueryable<AuditLog> GetAuditLogForAuditLogClientInformationSheet(ClientInformationSheet clientInformationSheet)

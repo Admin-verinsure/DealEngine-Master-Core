@@ -1,29 +1,28 @@
 ﻿using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Domain.Services;
 using TechCertain.Infrastructure.BaseLdap.Converters;
 using TechCertain.Infrastructure.BaseLdap.Interfaces;
 
 namespace TechCertain.Infrastructure.BaseLdap.Repositories
 {
-    public class LdapUserRepository : IUserRepository
+    public class LdapUserRepository : ILdapUserRepository
     {
         ILdapConfigService _ldapConfigService;
         ILdapRepository _ldapRepository;
-		IOrganisationRepository _organisationRepository;
+        IOrganisationRepository _organisationRepository;
         IOpenLdapImportService _ldapImportService;
 
         public LdapUserRepository(ILdapConfigService ldapConfigService,
-	        ILdapRepository ldapRepository,
-			IOrganisationRepository organisationRepository,
+            IOrganisationRepository organisationRepository,
+            ILdapRepository ldapRepository,
 	        IOpenLdapImportService ldapImportService)
         {
+            _organisationRepository = organisationRepository;
             _ldapConfigService = ldapConfigService;
             _ldapRepository = ldapRepository;
-			_organisationRepository = organisationRepository;
             _ldapImportService = ldapImportService;
         }
 
@@ -130,9 +129,6 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 				user = GetOrganisations(user);
 				return user;
 			}
-//			catch (UserImportException ex) {
-//				throw;
-//			}
 			catch (Exception ex) {
 				throw new Exception ("Unable to retrieve User by email from ldap.", ex);
 			}
@@ -195,10 +191,5 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			}
 			return user;
 		}
-
-        public Task<User> GetUserByEmailAsync(string email)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

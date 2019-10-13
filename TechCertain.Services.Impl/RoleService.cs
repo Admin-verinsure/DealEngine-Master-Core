@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
@@ -10,12 +10,10 @@ namespace TechCertain.Services.Impl
     public class RoleService : IRoleService
     {
         IMapperSession<Role> _roleRepository;
-        IUnitOfWork _uowFactory;
 
-        public RoleService(IMapperSession<Role> roleRepository, IUnitOfWork uowFactory)
+        public RoleService(IMapperSession<Role> roleRepository)
         {
             _roleRepository = roleRepository;
-            _uowFactory = uowFactory;
         }
 
         public void AttachClientProgrammeToRole(Programme programme, Role role)
@@ -26,28 +24,19 @@ namespace TechCertain.Services.Impl
 
         private void Update(Role role)
         {
-            using (IUnitOfWork uow = _uowFactory.BeginUnitOfWork())
-            {
-                _roleRepository.Update(role);
-                uow.Commit();
-            }
+            _roleRepository.UpdateAsync(role);
         }
 
         public void CreateRole(string title)
         {
             Role role = new Role();
             role.Title = title;
-
-            using (IUnitOfWork uow = _uowFactory.BeginUnitOfWork())
-            {
-                _roleRepository.Add(role);
-                uow.Commit();
-            }
+            _roleRepository.AddAsync(role);
         }
 
         public Role GetRole(Guid roleId)
         {
-            return _roleRepository.GetById(roleId);
+            return _roleRepository.GetById(roleId).Result;
         }
 
         public IQueryable GetRoles()

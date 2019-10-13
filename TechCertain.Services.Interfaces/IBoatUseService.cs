@@ -8,13 +8,13 @@ namespace TechCertain.Services.Interfaces
     {
         BoatUse CreateNewBoatUse(BoatUse boatUse);
 
-        bool DeleteBoatUse(User deletedBy, BoatUse boatUse);
+        void DeleteBoatUse(User deletedBy, BoatUse boatUse);
 
         IQueryable<BoatUse> GetAllBoatUses();
 
         BoatUse GetBoatUse(Guid boatUseId);
 
-        bool UpdateBoatUse(BoatUse boatUse);
+        void UpdateBoatUse(BoatUse boatUse);
 
     }
 }

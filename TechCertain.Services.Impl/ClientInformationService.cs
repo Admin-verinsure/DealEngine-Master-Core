@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 
+
 namespace TechCertain.Services.Impl
 {
-    public class CilentInformationService : ICilentInformationService
+    public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
 
-        public CilentInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository)
+        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository)
         {
             _customerInformationRepository = customerInformationRepository;
         }
@@ -44,7 +45,7 @@ namespace TechCertain.Services.Impl
 
         public ClientInformationSheet GetInformation(Guid informationSheetId)
         {
-            return _customerInformationRepository.GetById(informationSheetId);
+            return _customerInformationRepository.GetById(informationSheetId).Result;
         }
 
         public IQueryable<ClientInformationSheet> GetAllInformationFor(User owner)
@@ -63,7 +64,7 @@ namespace TechCertain.Services.Impl
 
         public void UpdateInformation(ClientInformationSheet sheet)
         {
-            _customerInformationRepository.Add(sheet);
+            _customerInformationRepository.AddAsync(sheet);
         }
 
         public void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)

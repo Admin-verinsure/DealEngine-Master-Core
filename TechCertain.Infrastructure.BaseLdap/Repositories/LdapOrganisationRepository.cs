@@ -1,14 +1,14 @@
 ﻿using Novell.Directory.Ldap;
 using System;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Domain.Services;
 using TechCertain.Infrastructure.BaseLdap.Converters;
 using TechCertain.Infrastructure.BaseLdap.Interfaces;
 
 namespace TechCertain.Infrastructure.BaseLdap.Repositories
 {
 	public class LdapOrganisationRepository : IOrganisationRepository
-	{
+    {
 		ILdapConfigService _ldapConfigService;
 		ILdapRepository _ldapRepository;
 		IOpenLdapImportService _ldapImportService;
@@ -69,6 +69,11 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 		{
 			return _ldapRepository.GetEntry(dn, _ldapConfigService.AdminBindDN, _ldapConfigService.AdminBindPassword);
 		}
-	}
+
+        LdapEntry IOrganisationRepository.GetLdapEntry(string dn)
+        {
+            return _ldapRepository.GetEntry(dn, _ldapConfigService.AdminBindDN, _ldapConfigService.AdminBindPassword);
+        }
+    }
 }
 

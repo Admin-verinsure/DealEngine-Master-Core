@@ -1,9 +1,8 @@
 ﻿using NHibernate;
-using NHibernate.Linq;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities.Abstracts;
-using TechCertain.Domain.Interfaces;
 
 namespace TechCertain.Infrastructure.FluentNHibernate
 {
@@ -24,19 +23,14 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             this.session = session;
         }
 
-        public void Update(TEntity entity)
+        public Task<TEntity> GetById(Guid id)
         {
-            session.Update(entity);
+            return Task.FromResult(session.Get<TEntity>(id));
         }
 
-        public TEntity GetById(Guid id)
+        public Task<TEntity> GetById(String id)
         {
-            return session.Get<TEntity>(id);
-        }
-
-        public TEntity GetById(String id)
-        {
-            return session.Get<TEntity>(id);
+            return Task.FromResult(session.Get<TEntity>(id));
         }
 
         public IQueryable<TEntity> FindAll()
@@ -44,18 +38,33 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             return session.Query<TEntity>();
         }
 
-        public void Add(TEntity entity)
+        public Task UpdateAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
-            // not, not SaveOrUpdate as we don't need Update if we use Unit of Work semantics            
-           
-            session.SaveOrUpdate(entity);
+            session.UpdateAsync(entity);
+            return Task.CompletedTask;
         }
 
-        public void Remove(TEntity entity)
+        public Task RemoveAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
-            session.Delete(entity);
+            session.DeleteAsync(entity);
+            return Task.CompletedTask;
+        }
+
+        public Task AddAsync(TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            session.SaveOrUpdate(entity);
+            return Task.CompletedTask;
+        }
+
+        public Task SaveAsync(TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+
+            session.SaveAsync(entity);
+            return Task.CompletedTask;
         }
     }
 }

@@ -6,9 +6,9 @@ namespace TechCertain.Services.Interfaces
     public interface ISystemEmailService
     {
 
-        bool AddNewSystemEmail(User createdBy, string systemEmailName, string internalNotes, string subject, string body, string systemEmailType);
+        void AddNewSystemEmail(User createdBy, string systemEmailName, string internalNotes, string subject, string body, string systemEmailType);
 
-        bool RemoveSystemEmail(User deletedBy, string systemEmailName);
+        void RemoveSystemEmail(User deletedBy, string systemEmailName);
 
         bool CheckExists(string systemEmailName);
 

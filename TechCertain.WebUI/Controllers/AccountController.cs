@@ -36,7 +36,7 @@ namespace TechCertain.WebUI.Controllers
         UserManager<DealEngineUser> _userManager;
         ILdapService _ldapService;
         IProgrammeService _programmeService;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
         ILogger<AccountController> _logger;
@@ -49,7 +49,7 @@ namespace TechCertain.WebUI.Controllers
             IHttpClientService httpClientService,
             ILdapService ldapService,
             IUserService userRepository,
-			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
+			IEmailService emailService, IFileService fileService, IProgrammeService programeService, IClientInformationService clientInformationService, 
             IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
 		{
             _httpClientService = httpClientService;
@@ -292,31 +292,25 @@ namespace TechCertain.WebUI.Controllers
                 int resultCode = -1;
                 string resultMessage = "";
 
-                var user = _userService.GetUser(userName, password);
-                user.UserName = "JD";
-
-                _userService.Update(user);
-
-
                 //// Step 1 validate in  LDap 
-                //_ldapService.Validate(userName, password, out resultCode, out resultMessage);
-                //if (resultCode == 0)
-                //{
-                //    var deUser = _userManager.FindByNameAsync(userName).Result;
-                //    if(deUser == null)
-                //    {
-                //        deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
-                //        await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
-                //    }
-                                    
-                //    var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
-                //    if(identityResult.Succeeded)
-                //    {
-                //        //add claims, roles etc here
-                //    }
-                    
-                //    return LocalRedirect("~/Home/Index");
-                //}
+                _ldapService.Validate(userName, password, out resultCode, out resultMessage);
+                if (resultCode == 0)
+                {
+                    var deUser = _userManager.FindByNameAsync(userName).Result;
+                    if (deUser == null)
+                    {
+                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
+                        await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
+                    }
+
+                    var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
+                    if (identityResult.Succeeded)
+                    {
+                        //add claims, roles etc here
+                    }
+
+                    return LocalRedirect("~/Home/Index");
+                }
 
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
                 return View(viewModel);                
@@ -627,37 +621,7 @@ namespace TechCertain.WebUI.Controllers
             //}
         }
 
-        async Task SignInAsync(string username, bool isPersistent)
-        {
-            // Clear any lingering authencation data
-            throw new Exception("this method needs to be re-written in core");
-            //FormsAuthentication.SignOut();
-
-            //Account account = _authenticationService.LoginUser(username);
-
-
-
-            //Write the authentication cookie
-            //FormsAuthentication.SetAuthCookie(username, isPersistent);
-
-            //string userData = account.UserName;
-
-            //FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
-            //    1,
-            //    username,
-            //    DateTime.UtcNow,
-            //    DateTime.UtcNow.AddMinutes(2285),
-            //    false,
-            //    userData,
-            //    FormsAuthentication.FormsCookiePath);
-
-            //string encTicket = FormsAuthentication.Encrypt(ticket);
-
-            //HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName,
-            //        encTicket);
-
-            //Response.Cookies.Add(cookie);
-        }
+        
 
 		void SetCookie(string cookieName, string value, DateTime expiry)
 		{
@@ -675,20 +639,6 @@ namespace TechCertain.WebUI.Controllers
             ////			authCookie.HttpOnly = true;
             ////			authCookie.Secure = true;
             //Response.SetCookie(authCookie);
-        }
-
-		// GET: /account/lock
-		[HttpPost]
-		public ActionResult Lock(UserLockStatusViewModel model)
-        {
-			User user = _userService.GetUser (model.Id);
-			if (model.Status == "lock" && !user.Locked) {
-				_userService.IssueLocalBan (user, CurrentUser);
-			}
-			else if (model.Status == "unlock" && user.Locked) {
-				_userService.RemoveLocalban (user, CurrentUser);
-			}
-            return View();
         }
 
 		[HttpGet]
@@ -819,7 +769,7 @@ namespace TechCertain.WebUI.Controllers
             user.JobTitle = model.JobTitle;
             user.SalesPersonUserName = model.SalesPersonUserName;
 
-            _userService.Update (user);
+            _userService.Update(user);
 
             return Redirect("~/Account/ProfileEditor");
 		}

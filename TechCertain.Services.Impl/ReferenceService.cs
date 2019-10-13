@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class ReferenceService : IReferenceService
 	{
-		IUnitOfWork _unitOfWork;
         IMapperSession<Reference> _referenceRepository;
 
-		public ReferenceService(IUnitOfWork unitOfWork, IMapperSession<Reference> referenceRepository)
+		public ReferenceService(IMapperSession<Reference> referenceRepository)
         {
-			_unitOfWork = unitOfWork;
             _referenceRepository = referenceRepository;
         }
 
@@ -31,11 +29,7 @@ namespace TechCertain.Services.Impl
 
         public void Update(Reference reference)
         {
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                _referenceRepository.Add(reference);
-                work.Commit();
-            }
+            _referenceRepository.AddAsync(reference);
         }
 
         public void CreateClientInformationReference(ClientInformationSheet ClientInformationSheet)

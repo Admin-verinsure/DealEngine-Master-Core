@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.IO;
 using TechCertain.Services.Interfaces;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Domain.Entities;
 using System.Collections.Generic;
 using System.Data;
@@ -24,15 +24,13 @@ namespace TechCertain.Services.Impl
 		const uint _tiffMagicNumberIntel = 0x002A4949;
 		const uint _tiffMagicNumberMotorola = 0x2A004D4D;
 
-		IUnitOfWork _unitOfWork;
 		IMapperSession<Image> _imageRepository;
 		IMapperSession<Document> _documentRepository;
 		IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementBVTermService _clientAgreementBVTermService;        
 
-        public FileService (IUnitOfWork unitOfWork, IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
+        public FileService (IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
 		{
-			_unitOfWork = unitOfWork;
 			_imageRepository = imageRepository;
 			_documentRepository = documentRepository;
 			_clientAgreementMVTermService = clientAgreementMVTermService;
@@ -103,19 +101,13 @@ namespace TechCertain.Services.Impl
 
 		public bool UploadFile (Document document)
 		{
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				_documentRepository.Add (document);
-				uow.Commit ();
-			}
+            _documentRepository.AddAsync(document);
 			return true;
 		}
 
 		public bool UploadFile (Image image)
 		{
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				_imageRepository.Add (image);
-				uow.Commit ();
-			}
+		    _imageRepository.AddAsync(image);
 			return true;
 		}
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Xml.Linq;
@@ -13,23 +13,22 @@ using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
-using DealEngine.Infrastructure.Identity.Data;
 using System.Threading;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {
 
     public class ServicesController : BaseController
     {        
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
         IMapperSession<Vehicle> _vehicleRepository;
         IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
         IMapperSession<Location> _locationRepository;
         IMapperSession<WaterLocation> _waterLocationRepository;
         IMapperSession<Boat> _boatRepository;
         IMapperSession<BoatUse> _boatUseRepository;
+        IMapperSession<User> _userRepository;
         IVehicleService _vehicleService;
         IOrganisationService _organisationService;
         IBoatUseService _boatUseService;
@@ -48,7 +47,7 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 
-        public ServicesController(IUserService userService, ICilentInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IUserService userService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, /*IMapperSession<Operator> operatorRepository,*/ IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
@@ -56,7 +55,8 @@ namespace TechCertain.WebUI.Controllers
 
             : base (userService)
         {
-            
+
+            _userRepository = userRepository;
             _clientInformationService = clientInformationService;
             _vehicleRepository = vehicleRepository;
             _organisationalUnitRepository = organisationalUnitRepository;
@@ -195,7 +195,7 @@ namespace TechCertain.WebUI.Controllers
             //vehicle.Validated = model.Validated;
             //vehicle.Notes = model.Notes;
             if (model.VehicleLocation != Guid.Empty)
-                vehicle.GarageLocation = _locationRepository.GetById(model.VehicleLocation);
+                vehicle.GarageLocation = _locationRepository.GetById(model.VehicleLocation).Result;
 
             //var orgs = _organisationService.GetAllOrganisations ().ToList();
             if (model.InterestedParties != null)
@@ -420,7 +420,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetVehicleRemovedStatus(Guid vehicleId, bool status)
         {
-            Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
+            Vehicle vehicle = _vehicleRepository.GetById(vehicleId).Result;
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 vehicle.Removed = status;
@@ -433,7 +433,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetVehicleCeasedStatus(Guid vehicleId, bool status)
         {
-            Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
+            Vehicle vehicle = _vehicleRepository.GetById(vehicleId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -448,7 +448,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetVehicleTransferedStatus(Guid vehicleId, bool status)
         {
-            Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
+            Vehicle vehicle = _vehicleRepository.GetById(vehicleId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -464,7 +464,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult RevalidateVehicle(Guid vehicleId)
         {
-            Vehicle vehicle = _vehicleRepository.GetById(vehicleId);
+            Vehicle vehicle = _vehicleRepository.GetById(vehicleId).Result;
             if (vehicle == null)
                 throw new Exception("Vehicle is null");
             if (vehicle.Validated == false)
@@ -507,7 +507,7 @@ namespace TechCertain.WebUI.Controllers
             if (sheet == null)
                 throw new Exception("Unable to save Organisational Unit - No Client information for " + model.AnswerSheetId);
 
-            OrganisationalUnit ou = _organisationalUnitRepository.GetById(model.OrganisationalUnitId);
+            OrganisationalUnit ou = _organisationalUnitRepository.GetById(model.OrganisationalUnitId).Result;
             if (ou == null)
                 ou = new OrganisationalUnit(CurrentUser, model.Name);
             ou.Name = model.Name;
@@ -804,7 +804,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetLocationRemovedStatus(Guid locationId, bool status)
         {
-            Location location = _locationRepository.GetById(locationId);
+            Location location = _locationRepository.GetById(locationId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -835,7 +835,7 @@ namespace TechCertain.WebUI.Controllers
             model.UpdateEntity(building);
 
             if (model.BuildingLocation != null)
-                building.Location = _locationRepository.GetById(model.BuildingLocation);
+                building.Location = _locationRepository.GetById(model.BuildingLocation).Result;
 
             if (model.InterestedParties != null)
                 building.InterestedParties = _organisationService.GetAllOrganisations().Where(org => model.InterestedParties.Contains(org.Id)).ToList();
@@ -925,7 +925,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBuildingRemovedStatus(Guid buildingId, bool status)
         {
-            Building building = _buildingRepository.GetById(buildingId);
+            Building building = _buildingRepository.GetById(buildingId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -972,15 +972,15 @@ namespace TechCertain.WebUI.Controllers
                 model.UpdateEntity(waterLocation);
 
                 if (model.WaterLocationLocation != Guid.Empty)
-                    waterLocation.WaterLocationLocation = _locationRepository.GetById(model.WaterLocationLocation);
+                    waterLocation.WaterLocationLocation = _locationRepository.GetById(model.WaterLocationLocation).Result;
                 if (model.WaterLocationMarinaLocation != null)
                 {
-                    waterLocation.WaterLocationMarinaLocation = _OrganisationRepository.GetById(model.WaterLocationMarinaLocation);
+                    waterLocation.WaterLocationMarinaLocation = _OrganisationRepository.GetById(model.WaterLocationMarinaLocation).Result;
 
                 }
                 if (model.OrganisationalUnit != null)
                 {
-                    waterLocation.OrganisationalUnit = _organisationalUnitRepository.GetById(model.OrganisationalUnit);
+                    waterLocation.OrganisationalUnit = _organisationalUnitRepository.GetById(model.OrganisationalUnit).Result;
 
                 }
                 // waterLocation.OrganisationalUnit = OrganisationalUnit;
@@ -1142,7 +1142,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetWaterLocationRemovedStatus(Guid waterLocationId, bool status)
         {
-            WaterLocation waterLocation = _waterLocationRepository.GetById(waterLocationId);
+            WaterLocation waterLocation = _waterLocationRepository.GetById(waterLocationId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1173,7 +1173,7 @@ namespace TechCertain.WebUI.Controllers
             model.UpdateEntity(businessInterruption);
 
             if (model.BusinessInterruptionLocation != null)
-                businessInterruption.Location = _locationRepository.GetById(model.BusinessInterruptionLocation);
+                businessInterruption.Location = _locationRepository.GetById(model.BusinessInterruptionLocation).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1257,7 +1257,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBusinessInterruptionRemovedStatus(Guid businessInterruptionId, bool status)
         {
-            BusinessInterruption businessInterruption = _businessInterruptionRepository.GetById(businessInterruptionId);
+            BusinessInterruption businessInterruption = _businessInterruptionRepository.GetById(businessInterruptionId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1289,7 +1289,7 @@ namespace TechCertain.WebUI.Controllers
             model.UpdateEntity(materialDamage);
 
             if (model.MaterialDamageLocation != null)
-                materialDamage.Location = _locationRepository.GetById(model.MaterialDamageLocation);
+                materialDamage.Location = _locationRepository.GetById(model.MaterialDamageLocation).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1374,7 +1374,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetMaterialDamageRemovedStatus(Guid materialDamageId, bool status)
         {
-            MaterialDamage materialDamage = _materialDamageRepository.GetById(materialDamageId);
+            MaterialDamage materialDamage = _materialDamageRepository.GetById(materialDamageId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1508,17 +1508,17 @@ namespace TechCertain.WebUI.Controllers
                 boat = model.ToEntity(CurrentUser);
             model.UpdateEntity(boat);
             if (model.BoatLandLocation != Guid.Empty)
-                boat.BoatLandLocation = _buildingRepository.GetById(model.BoatLandLocation);
+                boat.BoatLandLocation = _buildingRepository.GetById(model.BoatLandLocation).Result;
             //if (model.BoatWaterLocation != Guid.Empty)
             //    boat.BoatWaterLocation = _waterLocationRepository.GetById(model.BoatWaterLocation);
             //if (model.InterestedParties != null)
             //    boat.InterestedParties = _organisationService.GetAllOrganisations().Where(org => model.InterestedParties.Contains(org.Id)).ToList();
             if (model.BoatOperator != Guid.Empty)
-                boat.BoatOperator = _OrganisationRepository.GetById(model.BoatOperator);
+                boat.BoatOperator = _OrganisationRepository.GetById(model.BoatOperator).Result;
             boat.BoatWaterLocation = null;
 
             if (model.BoatWaterLocation != Guid.Empty)
-                boat.BoatWaterLocation = _OrganisationRepository.GetById(model.BoatWaterLocation);
+                boat.BoatWaterLocation = _OrganisationRepository.GetById(model.BoatWaterLocation).Result;
 
             if (model.OtherMarinaName != null)
             {
@@ -1580,7 +1580,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             if (model.BoatTrailer != Guid.Empty)
-                boat.BoatTrailer = _vehicleRepository.GetById(model.BoatTrailer);
+                boat.BoatTrailer = _vehicleRepository.GetById(model.BoatTrailer).Result;
             //if (model.BoatOperator != Guid.Empty)
             //    boat.BoatOperator = _operatorRepository.GetById(model.BoatOperator);
             try
@@ -1741,7 +1741,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBoatRemovedStatus(Guid boatId, bool status)
         {
-            Boat boat = _boatRepository.GetById(boatId);
+            Boat boat = _boatRepository.GetById(boatId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1754,7 +1754,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBoatCeasedStatus(Guid boatId, bool status)
         {
-            Boat boat = _boatRepository.GetById(boatId);
+            Boat boat = _boatRepository.GetById(boatId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1769,7 +1769,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBoatTransferedStatus(Guid boatId, bool status)
         {
-            Boat boat = _boatRepository.GetById(boatId);
+            Boat boat = _boatRepository.GetById(boatId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -2025,7 +2025,7 @@ namespace TechCertain.WebUI.Controllers
         {
             OrganisationalUnit orgunit = null;
 
-            orgunit = _organisationalUnitRepository.GetById(OUselect);
+            orgunit = _organisationalUnitRepository.GetById(OUselect).Result;
             var locations = new List<LocationViewModel>();
 
             //var Locations = new List<Location>();
@@ -2283,7 +2283,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBoatUseRemovedStatus(Guid boatUseId, bool status)
         {
-            BoatUse boatUse = _boatUseRepository.GetById(boatUseId);
+            BoatUse boatUse = _boatUseRepository.GetById(boatUseId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -2296,7 +2296,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetBoatUseCeasedStatus(Guid boatUseId, bool status)
         {
-            BoatUse boatUse = _boatUseRepository.GetById(boatUseId);
+            BoatUse boatUse = _boatUseRepository.GetById(boatUseId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -2417,7 +2417,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SetClaimRemovedStatus(Guid claimId, bool status)
         {
-            Claim claim = _claimRepository.GetById(claimId);
+            Claim claim = _claimRepository.GetById(claimId).Result;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -2755,8 +2755,9 @@ namespace TechCertain.WebUI.Controllers
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
 
-                    _userService.Update(user);
                     user.SetPrimaryOrganisation(organisation);
+                    await _userRepository.UpdateAsync(user);
+                    
                 }
 
                 var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme"); //Marsh Coastguard
@@ -2764,7 +2765,7 @@ namespace TechCertain.WebUI.Controllers
 
                 Thread.Sleep(2000);
                
-                User user3 = _userService.GetUserByEmailAsync(email);
+                User user3 = _userService.GetUserByEmail(email);
                 //Thread.Sleep(4000);
 
                 var reference = _referenceService.GetLatestReferenceId();

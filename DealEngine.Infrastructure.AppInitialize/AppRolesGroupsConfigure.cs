@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize
 {
@@ -38,11 +38,10 @@ namespace DealEngine.Infrastructure.AppInitialize
 				new ApplicationGroup(null, "Client", true)
 			};
 
-			using (IUnitOfWork uow = _uowFactory.BeginUnitOfWork ()) {
 				string [] groupNames = _groupRespoitory.FindAll ().Select (g => g.Name).ToArray ();
 				foreach (var systemGroup in defaultSystemGroups) {
 					if (!groupNames.Contains (systemGroup.Name))
-						_groupRespoitory.Add (systemGroup);
+						_groupRespoitory.AddAsync(systemGroup);
 					//	Console.WriteLine ("Saving group: " + systemGroup.Name);
 					//else
 					//	Console.WriteLine ("Skip adding group: " + systemGroup.Name);
@@ -51,7 +50,7 @@ namespace DealEngine.Infrastructure.AppInitialize
 				string [] roleNames = _roleRepository.FindAll().Select (r => r.Name).ToArray ();
 				foreach (var systemRole in defaultSystemRoles) {
 					if (!roleNames.Contains (systemRole.Name))
-						_roleRepository.Add (systemRole);
+						_roleRepository.AddAsync(systemRole);
 					//	Console.WriteLine ("Saving role: " + systemRole.Name);
 					//else
 					//	Console.WriteLine ("Skip adding role: " + systemRole.Name);
@@ -60,14 +59,11 @@ namespace DealEngine.Infrastructure.AppInitialize
 				var adminGroup = _groupRespoitory.FindAll ().FirstOrDefault (g => g.Name == "SystemAdmin");
 				foreach (var appRole in _roleRepository.FindAll ()) {
 					if (!adminGroup.Roles.Contains (appRole))
-						adminGroup.Roles.Add (appRole);
+						adminGroup.Roles.Add(appRole);
 					//	Console.WriteLine ("Adding role (" + appRole.Name + ") to group: " + adminGroup.Name);
 					//else
 					//	Console.WriteLine ("Skip adding role (" + appRole.Name + ") to group: " + adminGroup.Name);
 				}
-
-				uow.Commit ();
-			}
 		}
 	}
 }

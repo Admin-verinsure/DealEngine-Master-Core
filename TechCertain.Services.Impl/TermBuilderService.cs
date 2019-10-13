@@ -1,7 +1,7 @@
 ﻿using System;
 using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using System.Linq;
 using System.Linq.Dynamic;
 
@@ -10,14 +10,12 @@ namespace TechCertain.Services.Impl
 {
 	public class TermBuilderService : ITermBuilderService
 	{
-		IUnitOfWork _unitOfWork;
 		IMapperSession<PolicyTermSection> _policyTermRepository;
 
 		#region ITermBuilderService implementation
 
-		public TermBuilderService(IUnitOfWork unitOfWork, IMapperSession<PolicyTermSection> policyTermRepository)
+		public TermBuilderService(IMapperSession<PolicyTermSection> policyTermRepository)
 		{
-			_unitOfWork = unitOfWork;
 			_policyTermRepository = policyTermRepository;
 		}
 
@@ -35,17 +33,14 @@ namespace TechCertain.Services.Impl
 			section.Territory = territory;
 			section.Version = version;
 
-			using (var uow = _unitOfWork.BeginUnitOfWork())
-			{
-				_policyTermRepository.Add(section);
-				uow.Commit();
-			}
-			return section;
+            _policyTermRepository.AddAsync(section);
+
+            return section;
 		}
 
 		public PolicyTermSection GetTerm (Guid termId)
 		{
-			return _policyTermRepository.GetById (termId);
+			return _policyTermRepository.GetById(termId).Result;
 		}
 
 		public PolicyTermSection[] GetTerms()
@@ -61,13 +56,9 @@ namespace TechCertain.Services.Impl
 		public bool Deprecate (User deletedBy, Guid termId)
 		{
 			PolicyTermSection term = GetTerm (termId);
-			using (var uow = _unitOfWork.BeginUnitOfWork())
-			{
-				term.Delete (deletedBy);
-				_policyTermRepository.Add (term);
-				uow.Commit();
-			}
-			return GetTerm (termId).DateDeleted != null;
+            _policyTermRepository.AddAsync(term);
+
+            return GetTerm (termId).DateDeleted != null;
 		}
 
 		#endregion

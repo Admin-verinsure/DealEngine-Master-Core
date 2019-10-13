@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Linq;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.Services.Impl
 {
 	public class OrganisationTypeService : IOrganisationTypeService
-	{
-
-        IUnitOfWork _unitOfWork;        
+	{     
         IMapperSession<OrganisationType> _organisationTypeRepository;
 
-        public OrganisationTypeService(IUnitOfWork unitOfWork, IMapperSession<OrganisationType> organisationTypeRepository)
-        {
-            _unitOfWork = unitOfWork;            
+        public OrganisationTypeService(IMapperSession<OrganisationType> organisationTypeRepository)
+        {       
             _organisationTypeRepository = organisationTypeRepository;
         }
 		#region IOrganisationTypeService implementation
@@ -32,13 +29,9 @@ namespace TechCertain.Services.Impl
 
         public OrganisationType CreateNewOrganisationType(User user, string organisationTypeName)
         {
-            OrganisationType OrganisationType = new OrganisationType(user, organisationTypeName);
-            
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                _organisationTypeRepository.Add(OrganisationType);
-                work.Commit();
-            }
+            OrganisationType OrganisationType = new OrganisationType(user, organisationTypeName);          
+            _organisationTypeRepository.AddAsync(OrganisationType);
+
             return OrganisationType;
         }
 

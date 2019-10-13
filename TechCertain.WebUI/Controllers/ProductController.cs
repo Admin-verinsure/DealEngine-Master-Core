@@ -4,16 +4,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -61,7 +59,7 @@ namespace TechCertain.WebUI.Controllers
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault()),
 						Id = p.Id,
 						Name = p.Name,
-						OwnerCompany = _organisationRepository.GetById (p.CreatorCompany).Name,
+						OwnerCompany = _organisationRepository.GetById(p.CreatorCompany).Result.Name,
 						SelectedLanguages = p.Languages
 					};
 					models.Add (model);
@@ -85,7 +83,7 @@ namespace TechCertain.WebUI.Controllers
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault ()),
 						Id = p.Id,
 						Name = p.Name,
-						OwnerCompany = _organisationRepository.GetById(p.CreatorCompany).Name,
+						OwnerCompany = _organisationRepository.GetById(p.CreatorCompany).Result.Name,
 						SelectedLanguages = p.Languages
 					};
 					models.Add (model);
@@ -289,7 +287,7 @@ namespace TechCertain.WebUI.Controllers
                 var programm = new List<Programme>();
                 for (var i = 0; i < model.TerritoryAttach.SelectedProgramme.Length; i++)
                 {
-                    programm.Add(_programmeRepository.GetById(Guid.Parse(model.TerritoryAttach.SelectedProgramme[i])));
+                    programm.Add(_programmeRepository.GetById(Guid.Parse(model.TerritoryAttach.SelectedProgramme[i])).Result);
 
                 }
                 foreach (Programme prog in programm)
@@ -297,13 +295,7 @@ namespace TechCertain.WebUI.Controllers
                     prog.territory.Add(territory);
                 }
                 territory.Programmes = programm;
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    if (territory != null)
-                    _TerritoryRepository.Add(territory);
-                    uow.Commit();
-                }
+                _TerritoryRepository.AddAsync(territory);
 
                 return Redirect("~/Product/MyProducts");
                 //return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
@@ -330,7 +322,7 @@ namespace TechCertain.WebUI.Controllers
 				Product baseProduct = null;
 				Guid baseProductId = Guid.Empty;
 				if (Guid.TryParse (model.Description.SelectedBaseProduct, out baseProductId))
-					baseProduct = _productRepository.GetById (baseProductId);
+					baseProduct = _productRepository.GetById (baseProductId).Result;
 
 				Guid ownerCompanyGuid = Guid.Empty;
 				if (!Guid.TryParse (model.Settings.SelectedOwnerOrganisation, out ownerCompanyGuid))
@@ -347,7 +339,7 @@ namespace TechCertain.WebUI.Controllers
 
 				foreach (RiskEntityViewModel risk in model.Risks) {
 					RiskCover cover = new RiskCover (CurrentUser) {
-						BaseRisk = _riskRepository.GetById (risk.Id),
+						BaseRisk = _riskRepository.GetById (risk.Id).Result,
 						CoverAll = risk.CoverAll,
 						Interuption = risk.CoverInterruption,
 						Loss = risk.CoverLoss,
@@ -363,7 +355,7 @@ namespace TechCertain.WebUI.Controllers
 					foreach (string sid in model.Settings.SelectedDocuments) {
 						Guid id = Guid.Empty;
 						if (Guid.TryParse (sid, out id))
-							product.Documents.Add (_documentRepository.GetById (id));
+							product.Documents.Add (_documentRepository.GetById(id).Result);
 					}
 				}
 
@@ -379,23 +371,21 @@ namespace TechCertain.WebUI.Controllers
 				}
 
 				if (!string.IsNullOrEmpty (model.Settings.SelectedInsuranceProgramme)) {
-					Guid programmeId = Guid.Empty;
-					if (Guid.TryParse (model.Settings.SelectedInsuranceProgramme, out programmeId)) {
-						Programme programme = _programmeRepository.GetById (programmeId);
-						programme.Products.Add (product);
-					}
-				}
+                    Guid programmeId = Guid.Empty;
+                    if (Guid.TryParse(model.Settings.SelectedInsuranceProgramme, out programmeId))
+                    {
+                        Programme programme = _programmeRepository.GetById(programmeId).Result;
+                        programme.Products.Add(product);
+                    }
+                }
 
-				using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-					if (baseProduct != null)
-						baseProduct.ChildProducts.Add (product);
+                if (baseProduct != null)
+                    baseProduct.ChildProducts.Add(product);
 
-					_productRepository.Add (product);
+                _productRepository.AddAsync(product);
 
-					uow.Commit ();
-				}
 
-				return Redirect ("~/Product/MyProducts");
+                return Redirect ("~/Product/MyProducts");
 				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
 			}
 			catch (Exception ex) {
@@ -409,7 +399,7 @@ namespace TechCertain.WebUI.Controllers
 		public ActionResult ViewProduct (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
-			Product product = _productRepository.GetById (id);
+			Product product = _productRepository.GetById(id).Result;
 			if (product != null) {
 				model.Description = new ProductDescriptionVM {
 					DateCreated = LocalizeTime (product.DateCreated.GetValueOrDefault ()),
@@ -430,7 +420,7 @@ namespace TechCertain.WebUI.Controllers
 		public ActionResult CloneProduct (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
-			Product originalProduct = _productRepository.GetById (id);
+			Product originalProduct = _productRepository.GetById(id).Result;
 			if (originalProduct != null) {
 				model.Description = new ProductDescriptionVM {
 					OriginalProductId = originalProduct.Id,
@@ -546,7 +536,7 @@ namespace TechCertain.WebUI.Controllers
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault ()),
 						Id = p.Id,
 						Name = p.Name,
-						OwnerCompany = _organisationRepository.GetById (p.CreatorCompany).Name,
+						OwnerCompany = _organisationRepository.GetById (p.CreatorCompany).Result.Name,
 						SelectedLanguages = p.Languages
 					};
 					models.Add (vm);

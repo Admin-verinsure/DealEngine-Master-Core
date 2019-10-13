@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{D9F7FD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Exceptions", "TechCertain.Domain.Exceptions\TechCertain.Domain.Exceptions.csproj", "{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Interfaces", "TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj", "{48B49F8A-2FDA-4B6C-A815-3FFF2DF6946C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Services", "TechCertain.Domain.Services\TechCertain.Domain.Services.csproj", "{F6AA139C-07CF-4701-A78D-D9E0B363264D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{352294D1-1048-48C8-9A02-236A597A602B}"
@@ -49,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Entities
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.WebUI", "TechCertain.WebUI\TechCertain.WebUI.csproj", "{D77B0A76-496E-4526-8320-6176AEB848ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealEngine.Infrastructure.AuthorizationRSA", "DealEngine.Infrastructure.AuthorizationRSA\DealEngine.Infrastructure.AuthorizationRSA.csproj", "{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealEngine.Infrastructure.AuthorizationRSA", "DealEngine.Infrastructure.AuthorizationRSA\DealEngine.Infrastructure.AuthorizationRSA.csproj", "{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +59,6 @@ Global
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48B49F8A-2FDA-4B6C-A815-3FFF2DF6946C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48B49F8A-2FDA-4B6C-A815-3FFF2DF6946C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48B49F8A-2FDA-4B6C-A815-3FFF2DF6946C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48B49F8A-2FDA-4B6C-A815-3FFF2DF6946C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -139,7 +133,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
-		{48B49F8A-2FDA-4B6C-A815-3FFF2DF6946C} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
 		{F6AA139C-07CF-4701-A78D-D9E0B363264D} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
 		{9001B632-59A9-43CC-A841-F6B6159B24DC} = {352294D1-1048-48C8-9A02-236A597A602B}
 		{7CCA5676-2CB8-49A1-B91A-CE9CA4EFBD8A} = {352294D1-1048-48C8-9A02-236A597A602B}

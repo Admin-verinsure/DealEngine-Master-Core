@@ -4,12 +4,10 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -182,23 +180,20 @@ namespace TechCertain.WebUI.Controllers
 				informationTemplate.AddSection (section);
 			}
 
-			//var items = informationTemplate.Sections.SelectMany (s => s.Items);
-			//foreach (var item in items) {
-			//	var editorConditional = model.Conditionals.FirstOrDefault (a => a.QuestionId.EndsWith(item.EditorId, StringComparison.CurrentCulture));
-			//	if (editorConditional != null) {
-			//		item.Conditional = new InformationItemConditional {
-			//			TriggerValue = editorConditional.TriggerValue,
-			//			VisibilityOnTrigger = editorConditional.Visibility,
-			//			Targets = items.Where (c => editorConditional.Controls.Contains (c.EditorId)).ToList ()
-			//		};
-			//	}
-			//}
+                //var items = informationTemplate.Sections.SelectMany (s => s.Items);
+                //foreach (var item in items) {
+                //	var editorConditional = model.Conditionals.FirstOrDefault (a => a.QuestionId.EndsWith(item.EditorId, StringComparison.CurrentCulture));
+                //	if (editorConditional != null) {
+                //		item.Conditional = new InformationItemConditional {
+                //			TriggerValue = editorConditional.TriggerValue,
+                //			VisibilityOnTrigger = editorConditional.Visibility,
+                //			Targets = items.Where (c => editorConditional.Controls.Contains (c.EditorId)).ToList ()
+                //		};
+                //	}
+                //}
 
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    _templateRepository.Add(informationTemplate);
-                    uow.Commit();
-                }
+             _templateRepository.AddAsync(informationTemplate);
+
             }
             catch (Exception ex)
             {

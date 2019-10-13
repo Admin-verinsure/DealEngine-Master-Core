@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SystemDocument = TechCertain.Domain.Entities.Document;
 using AutoMapper;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +10,9 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
-using static System.Net.WebRequestMethods;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -25,7 +23,7 @@ namespace TechCertain.WebUI.Controllers
         IInformationSectionService _informationSectionService;
         IInformationTemplateService _informationTemplateService;
         IFileService _fileService;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
@@ -38,7 +36,7 @@ namespace TechCertain.WebUI.Controllers
         IReferenceService _referenceService;
         IRoleService _roleService;
         IMilestoneService _milestoneService;
-
+        IUserService _userService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
         IMapperSession<Territory> _territoryRepository;
@@ -48,13 +46,12 @@ namespace TechCertain.WebUI.Controllers
         IBusinessActivityService _businessActivityService;
 
         IMapper _mapper;
-        IUserRepository _IUserRepository;
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _IClientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
         IHttpContextAccessor _httpContextAccessor;
         public InformationController(
-            IUserService userRepository,
+            IUserService userService,
             IRoleService roleService,
             IInformationItemService informationItemService,
             IInformationSectionService informationSectionService,
@@ -62,7 +59,7 @@ namespace TechCertain.WebUI.Controllers
             IEmailService emailService,
             IMilestoneService milestoneService,
             IInformationTemplateService informationTemplateService,
-            ICilentInformationService clientInformationService,
+            IClientInformationService clientInformationService,
             IClientAgreementService clientAgreementService,
             IClientAgreementTermService clientAgreementTermService,
             IClientAgreementMVTermService clientAgreementMVTermService,
@@ -84,10 +81,10 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper,
             DealEngineDBContext dealEngineDBContext,
             IHttpContextAccessor httpContextAccessor,
-            IUserRepository UserRepository,
             SignInManager<DealEngineUser> signInManager)
-            : base (userRepository)
+            : base (userService)
         {
+            _userService = userService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
             _IClientInformationAnswer = clientInformationAnswer;
@@ -111,7 +108,6 @@ namespace TechCertain.WebUI.Controllers
             _territoryRepository = territoryRepository;
             _documentRepository = documentRepository;
             _programmeService = programmeService;
-            _IUserRepository = UserRepository;
             _unitOfWork = unitOfWork;
             _informationSectionRepository = informationSectionRepository;
             _mapper = mapper;
@@ -1102,7 +1098,7 @@ namespace TechCertain.WebUI.Controllers
                 if (panelName != null)
                 {
 
-                    InformationSection section = _informationSectionRepository.GetById(panelId);
+                    InformationSection section = _informationSectionRepository.GetById(panelId).Result;
                     section.Position = panelPosition;
                     // TODO: Add these items at templates so it can be clonned properly 
                     uow.Commit();
@@ -1893,7 +1889,7 @@ namespace TechCertain.WebUI.Controllers
 
             //var role= userDetails.
             //section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
-            User user = _IUserRepository.GetUser(CurrentUser.UserName);
+            User user = _userService.GetUser(CurrentUser.UserName);
             var roles = new List<String>();
 
             for (var i = 0; i < user.Groups.Count(); i++)

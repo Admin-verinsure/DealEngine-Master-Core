@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +18,7 @@ using TechCertain.WebUI.Controllers;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 #endregion
 
@@ -29,7 +30,7 @@ namespace TechCertain.WebUI.Controllers
     {        
         //IMapper _mapper;
         //IInformationTemplateService _informationService;
-        ICilentInformationService _customerInformationService;
+        IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
         IHttpContextAccessor _httpContextAccessor;
@@ -37,7 +38,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Programme> _programmeRepository;
 
         public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
-                              ICilentInformationService customerInformationService, IPrivateServerService privateServerService,
+                              IClientInformationService customerInformationService, IPrivateServerService privateServerService,
                               IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository, SignInManager<DealEngineUser> signInManager)
             : base (userRepository)
         {            
@@ -415,7 +416,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ProgrammeItem model = new ProgrammeItem();
 
-            Programme programme = _programmeRepository.GetById(id);
+            Programme programme = _programmeRepository.GetById(id).Result;
             List<DealItem> deals = new List<DealItem>();
 
             if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)

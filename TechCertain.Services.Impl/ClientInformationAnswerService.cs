@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
-using TechCertain.Infrastructure.Ldap.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
 	public class ClientInformationAnswerService : IClientInformationAnswerService
-    {
-		IUnitOfWork _unitOfWork;		
+    {	
 		IMapperSession<ClientInformationAnswer> _clientInfomationsheetAnswer;
-		ILdapService _ldapService;
 
-		public ClientInformationAnswerService(IUnitOfWork unitOfWork, IMapperSession<ClientInformationAnswer> clientInfomationsheetAnswer, ILdapService ldapService)
-        {
-			_unitOfWork = unitOfWork;			
+		public ClientInformationAnswerService(IMapperSession<ClientInformationAnswer> clientInfomationsheetAnswer)
+        {		
             _clientInfomationsheetAnswer = clientInfomationsheetAnswer;
-			_ldapService = ldapService;
 		}
 
 		public ClientInformationAnswer CreateNewClaimHistory(ClientInformationAnswer clientInformationAnswer)
 		{
-            _clientInfomationsheetAnswer.Add(clientInformationAnswer);
+            _clientInfomationsheetAnswer.AddAsync(clientInformationAnswer);
              return clientInformationAnswer;
 		}
 

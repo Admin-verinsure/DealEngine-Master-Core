@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.BaseLdap\TechCertain.Infrastructure.BaseLdap.csproj" />
   </ItemGroup>
   

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 
@@ -9,16 +9,14 @@ namespace TechCertain.Services.Impl
 {
     public class ClientAgreementMVTermService : IClientAgreementMVTermService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<ClientAgreementMVTerm> _clientAgreementMVTermRepository;
 
-        public ClientAgreementMVTermService(IUnitOfWork unitOfWork, IMapperSession<ClientAgreementMVTerm> clientAgreementMVTermRepository)
+        public ClientAgreementMVTermService(IMapperSession<ClientAgreementMVTerm> clientAgreementMVTermRepository)
         {
-            _unitOfWork = unitOfWork;
             _clientAgreementMVTermRepository = clientAgreementMVTermRepository;
         }
 
-        public bool AddAgreementMVTerm(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
+        public void AddAgreementMVTerm(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
         {
             if (string.IsNullOrWhiteSpace(year))
                 throw new ArgumentNullException(nameof(year));
@@ -46,14 +44,8 @@ namespace TechCertain.Services.Impl
             if (vehicle == null)
                 throw new ArgumentNullException(nameof(vehicle));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                ClientAgreementMVTerm clientAgreementMVTerm = new ClientAgreementMVTerm(createdBy, registration, year, make, model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, fleetNumber, clientAgreementTerm, vehicle, burnerpremium);
-                _clientAgreementMVTermRepository.Add(clientAgreementMVTerm);
-                work.Commit();
-            }
-
-            return true;
+            ClientAgreementMVTerm clientAgreementMVTerm = new ClientAgreementMVTerm(createdBy, registration, year, make, model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, fleetNumber, clientAgreementTerm, vehicle, burnerpremium);
+            _clientAgreementMVTermRepository.AddAsync(clientAgreementMVTerm);
         }
 
         public IQueryable<ClientAgreementMVTerm> GetAllAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm)
@@ -63,16 +55,15 @@ namespace TechCertain.Services.Impl
             return mvterm;
         }
 
-        public bool UpdateAgreementMVTerm(ClientAgreementMVTerm clientAgreementMVTerm)
+        public void UpdateAgreementMVTerm(ClientAgreementMVTerm clientAgreementMVTerm)
         {
-            _clientAgreementMVTermRepository.Add(clientAgreementMVTerm);
-            return true;
+            _clientAgreementMVTermRepository.AddAsync(clientAgreementMVTerm);
         }
 
-		public bool DeleteAgreementMVTerm (User deletedBy, ClientAgreementMVTerm clientAgreementMVTerm)
+		public void DeleteAgreementMVTerm (User deletedBy, ClientAgreementMVTerm clientAgreementMVTerm)
 		{
 			clientAgreementMVTerm.Delete (deletedBy);
-			return UpdateAgreementMVTerm (clientAgreementMVTerm);
+			UpdateAgreementMVTerm (clientAgreementMVTerm);
 		}
 
         public IQueryable<ClientAgreementMVTerm> GetAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm, Vehicle vehicle)

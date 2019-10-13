@@ -8,13 +8,13 @@ namespace TechCertain.Services.Interfaces
     {
         AuditLog CreateNewAuditLog(AuditLog auditLog);
 
-        bool DeleteAuditLog(User deletedBy, AuditLog auditLog);
+        void DeleteAuditLog(User deletedBy, AuditLog auditLog);
 
         IQueryable<AuditLog> GetAllAuditLogs();
 
         AuditLog GetAuditLog(Guid auditLogId);
 
-        bool UpdateAuditLog(AuditLog auditLog);
+        void UpdateAuditLog(AuditLog auditLog);
 
         IQueryable<AuditLog> GetAuditLogForAuditLogClientInformationSheet(ClientInformationSheet clientInformationSheet);
 

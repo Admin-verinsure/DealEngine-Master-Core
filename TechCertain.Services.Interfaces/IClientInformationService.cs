@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Specialized;
 using System.Linq;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
-	public interface ICilentInformationService
+	public interface IClientInformationService
     {
 		[Obsolete]
 		ClientInformationSheet IssueInformationFor (User createdBy, Organisation createdFor, InformationTemplate informationTemplate);

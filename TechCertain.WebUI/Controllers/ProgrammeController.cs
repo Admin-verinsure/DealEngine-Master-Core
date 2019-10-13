@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using AutoMapper;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
@@ -772,13 +772,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public ActionResult ProductRules(Guid Id, Guid productId)
         {
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetById(Id).Result;
 
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var rules = new List<Rule>();
             model.Id = Id;
             model.ProductId = productId;
-            var product = _productRepository.GetById(productId);
+            var product = _productRepository.GetById(productId).Result;
             
             foreach (var rule in product.Rules)
             {
@@ -830,7 +830,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public ActionResult ManageRules(Guid Id)
         {
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetById(Id).Result;
 
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var product = new List<ProductInfoViewModel>();
@@ -878,7 +878,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult AddselectedParty(string[] selectedParty,Guid informationId)
         {
             PartyUserViewModel model = new PartyUserViewModel();
-            Programme programme = _programmeRepository.GetById(informationId);
+            Programme programme = _programmeRepository.GetById(informationId).Result;
             //model.Id = informationId;
             //model.Parties = programme.Parties;
            
@@ -912,10 +912,10 @@ namespace TechCertain.WebUI.Controllers
             //PartyUserViewModel model = new PartyUserViewModel();
             PartyUserViewModel model = new PartyUserViewModel();
 
-            Programme programme = _programmeRepository.GetById(informationId);
+            Programme programme = _programmeRepository.GetById(informationId).Result;
             //model.Id = informationId;
             //model.Parties = programme.Parties;
-            Organisation organisation = _organisationRepository.GetById(selectedParty);
+            Organisation organisation = _organisationRepository.GetById(selectedParty).Result;
             List<PartyUserViewModel> selectedorg = new List<PartyUserViewModel>();
             if ("organisation" != null)
             {
@@ -999,7 +999,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult IssueNotification(Guid Id)
         {
             var orguser = new List<string>();
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetById(Id).Result;
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             model.Id = Id;
             model.Parties = programme.Parties;
@@ -1016,7 +1016,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public ActionResult SendEmailTemplates(Guid Id, String type,String description)
         {
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetById(Id).Result;
            
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == type);
             
@@ -1048,7 +1048,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SendEmailTemplates(EmailTemplateViewModel model)
         {
-            Programme programme = _programmeRepository.GetById(model.BaseProgrammeID);
+            Programme programme = _programmeRepository.GetById(model.BaseProgrammeID).Result;
 
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == model.Type);
 
