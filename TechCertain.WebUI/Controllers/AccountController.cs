@@ -40,15 +40,10 @@ namespace TechCertain.WebUI.Controllers
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
-<<<<<<< HEAD
         ILogger<AccountController> _logger;
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
-
-=======
-        IHttpContextAccessor _httpContextAccessor;
         
->>>>>>> 040f950628b73916bfec08c73510db63d4d1b17a
         public AccountController(
             IMapperSession<User> userRepository,
             SignInManager<DealEngineUser> signInManager,
