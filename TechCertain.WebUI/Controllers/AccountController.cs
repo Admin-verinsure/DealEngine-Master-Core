@@ -17,10 +17,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
+using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.AuthorizationRSA;
-
-
+using System.Linq;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 
 #endregion
@@ -30,6 +31,8 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        IAuthenticationService _authenticationService;
+
         IEmailService _emailService;
 		IFileService _fileService;
         SignInManager<DealEngineUser> _signInManager;
@@ -40,24 +43,29 @@ namespace TechCertain.WebUI.Controllers
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
         ILogger<AccountController> _logger;
+        IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
 
         public AccountController(
-            SignInManager<DealEngineUser> signInManager,
+            IAuthenticationService authenticationService,
+			SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             ILogger<AccountController> logger,
+             IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
             ILdapService ldapService,
-            IUserService userRepository,
+            IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, IClientInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userService)
 		{
-            _httpClientService = httpClientService;
-            _logger = logger;
+            _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _userService = userRepository;
+            _userRepository = userRepository;
+			_httpClientService = httpClientService;
+			_logger = logger;
+			_userService = userService;
             _emailService = emailService;
 			_fileService = fileService;
             _programmeService = programeService;
@@ -87,12 +95,12 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult ResetPassword()
 		{
 			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
+				//return RedirectToLocal();
 			
             // We do not want to use any existing identity information
             //EnsureLoggedOut();
 
-            //return View();
+            return View();
         }
 
 		// POST: /account/resetpassword
@@ -109,19 +117,20 @@ namespace TechCertain.WebUI.Controllers
 				if (!string.IsNullOrWhiteSpace (viewModel.Email))
 				{
                     //System Email Testing
-                    /*var testuser = _userService.GetUserByEmail("mcgtestuser2@techcertain.com");
-                    var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
-                    var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
-                    var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(testuser, programme, sheet, organisation);*/
+                    //var testuser = _userService.GetUserByEmail("mcgtestuser2@techcertain.com");
+                    //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
+                    //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
+                    //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
+                    _emailService.SendSystemEmailLogin("support@techcertain.com");
 
-                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken (viewModel.Email);
-                    //User user = _userService.GetUser (token.UserID);
-                    // change the users password to an intermediate
-                    //Membership.GetUser (user.UserName).ChangePassword ("", IntermediateChangePassword);
-                    // get local domain
-                    //string domain = HttpContext.Request.Url.GetLeftPart (UriPartial.Authority);
-                    //_emailService.SendPasswordResetEmail (viewModel.Email, token.Id, domain);
+                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
+                    //User user = _userService.GetUser(token.UserID);
+                    ////change the users password to an intermediate
+
+                    //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
+                    ////get local domain
+                    //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
+                    //_emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
 
                     ViewBag.EmailSent = true;
                 }
@@ -140,7 +149,7 @@ namespace TechCertain.WebUI.Controllers
 			}
 			catch (Exception ex)
 			{
-				ErrorSignal.FromCurrentContext().Raise(ex);
+				//ErrorSignal.FromCurrentContext().Raise(ex);
 				Exception exception = ex;
 				while (exception.InnerException != null) exception = exception.InnerException;
 
@@ -292,7 +301,7 @@ namespace TechCertain.WebUI.Controllers
                 int resultCode = -1;
                 string resultMessage = "";
 
-                //// Step 1 validate in  LDap 
+                // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
@@ -309,6 +318,8 @@ namespace TechCertain.WebUI.Controllers
                         //add claims, roles etc here
                     }
 
+                    var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    var result = await LoginMarsh(user, viewModel.DevicePrint);
                     return LocalRedirect("~/Home/Index");
                 }
 
@@ -344,31 +355,39 @@ namespace TechCertain.WebUI.Controllers
             //rsaUser.OrgName = System.Web.Configuration.WebConfigurationManager.AppSettings ["RsaOrg"];
             rsaUser.OrgName = "Marsh_Model";
 
-            Console.WriteLine("Analzying RSA User");
-            RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
-            if (rsaStatus == RsaStatus.Allow)
+            try
             {
+                Console.WriteLine("Analzying RSA User");
+                RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
+                if (rsaStatus == RsaStatus.Allow)
+                {
 
-                Console.WriteLine("RSA User allowed, signing in...");
-                SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
+                    Console.WriteLine("RSA User allowed, signing in...");
+                    SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
 
-                _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");                
+                    _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
+                }
+                if (rsaStatus == RsaStatus.RequiresOtp)
+                {
+                    Console.WriteLine("RSA User requires otp. Making request");
+                    string otp = rsaAuth.GetOneTimePassword(rsaUser);
+
+                    Console.WriteLine("One Time Password: " + otp);
+                    _emailService.ContactSupport(_emailService.DefaultSender, "Marsh RSA OTP", otp);
+
+                    Console.WriteLine("Sent otp. Redirecting to Otp page");
+                    // sent otp to user                
+                }
             }
-            if (rsaStatus == RsaStatus.RequiresOtp)
+            catch (Exception ex)
             {
-                Console.WriteLine("RSA User requires otp. Making request");
-                string otp = rsaAuth.GetOneTimePassword(rsaUser);
-
-                Console.WriteLine("One Time Password: " + otp);
-                _emailService.ContactSupport(_emailService.DefaultSender, "Marsh RSA OTP", otp);
-
-                Console.WriteLine("Sent otp. Redirecting to Otp page");
-                // sent otp to user                
+                throw new Exception(ex.Message);
             }
+
             return Task.FromResult(IdentityResult.Success);
         }
 
-		[HttpPost]
+        [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
 		public ActionResult OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)

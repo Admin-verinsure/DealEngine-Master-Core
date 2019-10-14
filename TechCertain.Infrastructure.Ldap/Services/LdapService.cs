@@ -255,6 +255,50 @@ namespace TechCertain.Infrastructure.Ldap.Services
 				}
 			return organisations;
 		}
-	}
+
+        //public bool ChangePassword(string username, string oldPassword, string newPassword)
+        //{
+        //    if (string.IsNullOrWhiteSpace(username))
+        //        throw new ArgumentNullException(nameof(username));
+        //    if (string.IsNullOrWhiteSpace(newPassword))
+        //        throw new ArgumentNullException(nameof(newPassword));
+
+        //    bool result = false;
+
+        //    string userDN =  GetUsernameDN(username);
+
+        //    string bindDN = userDN;
+        //    string bindPw = oldPassword;
+        //    Console.WriteLine(username + " " + oldPassword + " " + newPassword);
+        //    if (string.IsNullOrWhiteSpace(oldPassword))
+        //    {
+        //        string baseDN = ConfigurationManager.AppSettings["OpenLdapBaseDN"];
+        //        bindDN = string.Format(ConfigurationManager.AppSettings["OpenLdapBindDN"], baseDN);
+        //        bindPw = ConfigurationManager.AppSettings["OpenLdapBindPW"];
+        //    }
+
+        //    using (LdapClient ldapClient = GetLdapConnection(bindDN, bindPw))
+        //    {
+        //        var modifyRequest = new ModifyRequest(ldapClient.NextMessageId)
+        //        {
+        //            EntryName = userDN,
+        //            Attributes = new List<ModifyAttribute> {
+        //                new ModifyAttribute("userpassword", ModificationType.Replace, newPassword)
+        //            }
+        //        };
+        //        var response = ldapClient.Send<ModifyResponse>(modifyRequest);
+        //        if (response.ResultCode == 0)
+        //            return true;
+
+        //        // error otherwise
+        //        throw new AuthenticationException(response.ErrorMessage) { ErrorCode = response.ResultCode, User = username };
+        //    }
+        //}
+
+        //string GetUsernameDN(string username)
+        //{
+        //    return string.Format(ConfigurationManager.AppSettings["OpenLdapUserDNFromUsername"], username, _ldapConfiguration.BaseDn);
+        //}
+    }
 }
 

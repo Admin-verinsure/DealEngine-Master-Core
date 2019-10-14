@@ -25,11 +25,11 @@ namespace TechCertain.WebUI.Controllers
         IPaymentService _paymentService;
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
-
+        IHttpClientService _httpClientService;
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<User> _userRepository;
-
+        IAppSettingService _appSettingService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
@@ -44,15 +44,16 @@ namespace TechCertain.WebUI.Controllers
 
         public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, IClientInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
-                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService,
+                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
-                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
+                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
+                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService)
             : base (userRepository)
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;
             _organisationService = organisationService;
-
+            _httpClientService = httpClientService;
             _productRepository = productRepository;
             _clientAgreementService = clientAgreementService;
             _clientAgreementRuleService = clientAgreementRuleService;
@@ -71,6 +72,8 @@ namespace TechCertain.WebUI.Controllers
             _insuranceAttributeService = insuranceAttributeService;
             _OrganisationRepository = OrganisationRepository;
             _programmeRepository = programmeRepository;
+
+            _appSettingService = appSettingService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -617,7 +620,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm.Excess = clientAgreementBVTerm.Excess;
                 bvTerm.Premium = clientAgreementBVTerm.Premium;
                 bvTerm.FSL = clientAgreementBVTerm.FSL;
-                NewMethod(uow);
+                uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -644,8 +647,8 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm.TermLimit = clientAgreementMVTerm.TermLimit;
                 mvTerm.Excess = clientAgreementMVTerm.Excess;
                 mvTerm.Premium = clientAgreementMVTerm.Premium;
-                mvTerm.FSL = clientAgreementMVTerm.FSL;
-                NewMethod(uow);
+                mvTerm.FSL = clientAgreementMVTerm.FSL;                
+                uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -673,8 +676,7 @@ namespace TechCertain.WebUI.Controllers
                     bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
                     term.BoatTerms.Remove(bvTerm);
                 }
-
-                NewMethod(uow);
+                uow.Commit();                
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -699,13 +701,6 @@ namespace TechCertain.WebUI.Controllers
         //    }
         //    return RedirectToAction("EditTerms", new { id = clientAgreementId });
         //}
-
-
-
-        private static void NewMethod(IUnitOfWork uow)
-        {
-            uow.Commit();
-        }
 
         [HttpGet]
         public IActionResult ViewAgreement(Guid id)
@@ -762,7 +757,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         riskname = "Vessel";
                     }
-                    insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C") });
+                    insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
                 }
 
                 // List Agreement Exclusions
@@ -812,7 +807,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     if (answerSheet.PreviousInformationSheet == null)
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C"), FSL = term.FSL.ToString("C"), TotalPremium = term.Premium.ToString("C") });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                     }
                     else
                     {
@@ -832,7 +827,7 @@ namespace TechCertain.WebUI.Controllers
                 model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
-                model.AdministrationFee = agreement.BrokerFee.ToString("C");
+                model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                 model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2");
                 model.CurrencySymbol = "fa fa-dollar";
                 model.ClientNumber = agreement.ClientNumber;
@@ -1444,14 +1439,12 @@ namespace TechCertain.WebUI.Controllers
 
                 sheet = _customerInformationService.GetInformation(sheetId);
             }
+            
+            ClientProgramme programme = sheet.Programme;
+            programme.PaymentType = "Credit Card";
 
-               ClientProgramme programme = sheet.Programme;
-               programme.PaymentType = "Credit Card";
+            var active = _httpClientService.GetEglobalStatus().Result;
 
-
-            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-            //eGlobalSerializer.SiteActive();
-            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
             //Hardcoded variables
             decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
             Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
@@ -1487,8 +1480,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            //string domainQueryString = "localhost:44323";
-            string domainQueryString = "staging.mydealslive.com";
+            string domainQueryString = _appSettingService.domainQueryString;
+            
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
@@ -1555,7 +1548,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = "localhost:44323";
+            string domainQueryString = _appSettingService.domainQueryString;
+
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),

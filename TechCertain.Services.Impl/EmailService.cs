@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using TechCertain.Infrastructure.Email;
 using HtmlToOpenXml;
+using Microsoft.Extensions.Configuration;
 
 namespace TechCertain.Services.Impl
 {
@@ -22,14 +23,16 @@ namespace TechCertain.Services.Impl
 		IUserService _userService;		
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
-        IMapperSession<ClientInformationSheet> _clientInformationSheetMapper;
+        IMapperSession<ClientInformationSheet> _clientInformationSheetmapperSession;
+        private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IMapperSession<ClientInformationSheet> clientInformationSheetMapper)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession)
 		{
-			_userService = userService;			
+            _clientInformationSheetmapperSession = clientInformationSheetmapperSession;
+            _userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
-            _clientInformationSheetMapper = clientInformationSheetMapper;
+            _configuration = configuration;
         }
 
 		#region IEmailService implementation
@@ -37,29 +40,33 @@ namespace TechCertain.Services.Impl
 		public string EmailEnabled
 		{
 			get {
-				return ConfigurationManager.AppSettings["EnableMail"];
-			}
+                return _configuration.GetValue<string>("EnableMail");
+                //return ConfigurationManager.AppSettings["EnableMail"];
+            }
 		}
-		
-		public string SmtpServer
+
+        public string SmtpServer
 		{
 			get {
-				return ConfigurationManager.AppSettings["SmtpServer"];
-			}
+                return _configuration.GetValue<string>("SmtpServer");
+                //return ConfigurationManager.AppSettings["SmtpServer"];
+            }
 		}
 
 		public int SmtpPort
 		{
 			get {
-				return Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
-			}
+                return _configuration.GetValue<int>("SmtpPort");
+                //return Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
+            }
 		}
 
 		public string DefaultSender
 		{
 			get {
-				return ConfigurationManager.AppSettings["SenderEmail"];
-			}
+                return _configuration.GetValue<string>("SenderEmail");
+                //return ConfigurationManager.AppSettings["SenderEmail"];
+            }
 		}
 
 		public string SystemEmail
@@ -72,80 +79,10 @@ namespace TechCertain.Services.Impl
 		public string CatchAllEmail
 		{
 			get {
-				return ConfigurationManager.AppSettings["CatchAllEmail"];
-			}
-		}
-
-		//public void SendEmail(string recipient, string subject, string body, List<SystemDocument> documents, string sender = "", void saveCopy = true, void isHtml = true)
-		//{
-		//	// if there is a catch email address, send all emails there, otherwise send to specified recipient
-		//	recipient = !string.IsNullOrWhiteSpace (CatchAllEmail) ? CatchAllEmail : recipient;
-		//	// create email
-		//	if (string.IsNullOrWhiteSpace (sender))
-		//		sender = DefaultSender;
-		//	MailMessage mail = new MailMessage (sender, recipient);
-		//	mail.Subject = subject;
-		//	mail.Body = body;
-		//	mail.IsBodyHtml = isHtml;
-		//	if (saveCopy && string.IsNullOrWhiteSpace(CatchAllEmail))
-		//		mail.Bcc.Add (SystemEmail);
-                      
-  //          if (documents != null)
-  //          {
-  //              foreach (SystemDocument doc in documents)
-  //              {
-  //                  if (doc.ContentType == MediaTypeNames.Text.Html)
-  //                  {
-		//				// Testing HtmlToOpenXml
-		//				string html = _fileService.FromBytes(doc.Contents);
-		//				using (MemoryStream virtualFile = new MemoryStream())
-		//				{
-		//				    using (WordprocessingDocument wordDocument = WordprocessingDocument.Create (virtualFile, WordprocessingDocumentType.Document))
-		//				    {
-		//				    // Add a main document part. 
-		//				        MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-		//				        new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-		//				        HtmlConverter converter = new HtmlConverter(mainPart);
-		//				        converter.ImageProcessing = ImageProcessing.AutomaticDownload;
-		//				        converter.ParseHtml(html);
-		//				    }
-		//				    var attachement = new Attachment(new MemoryStream(virtualFile.ToArray()), doc.Name + ".docx");
-		//				    mail.Attachments.Add(attachement);
-		//				}
-  //                  }
-  //              }
-  //          }
-
-		//	using (SmtpClient client = new SmtpClient ()) {
-		//		client.Port = SmtpPort;
-		//		client.DeliveryMethod = SmtpDeliveryMethod.Network;
-		//		client.UseDefaultCredentials = false;
-		//		client.Host = SmtpServer;
-		//		client.Send (mail);
-		//	}
-
-		//	return true;
-		//}
-
-		//public void SendEmail(string recipient, string subject, string body)
-		//{
-		//	return SendEmail (recipient, subject, body, true);
-		//}
-
-		//public void SendEmail(string recipient, string subject, string body, void saveCopy)
-		//{
-		//	return SendEmail (recipient, DefaultSender, subject, body, saveCopy);
-		//}
-
-		//public void SendEmail(string recipient, string sender, string subject, string body)
-		//{
-		//	return SendEmail (recipient, sender, subject, body, true);
-		//}
-
-		//public void SendEmail(string recipient, string sender, string subject, string body, void saveCopy)
-		//{
-		//	return SendEmail (recipient, subject, body, null, sender, saveCopy, true);
-		//}
+                return _configuration.GetValue<string>("CatchAllEmail");
+                //return ConfigurationManager.AppSettings["CatchAllEmail"];
+            }
+		}		
 
 		public void SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
 		{
@@ -261,7 +198,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
@@ -300,7 +237,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
         }
@@ -340,7 +277,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
         }
@@ -380,7 +317,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
         }
@@ -421,7 +358,7 @@ namespace TechCertain.Services.Impl
 
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
         }
@@ -462,7 +399,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
@@ -499,7 +436,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
@@ -539,7 +476,7 @@ namespace TechCertain.Services.Impl
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
@@ -579,7 +516,7 @@ namespace TechCertain.Services.Impl
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(issuer, sheet, agreement, "Agreement Issue Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
@@ -620,7 +557,7 @@ namespace TechCertain.Services.Impl
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(binder, sheet, agreement, "Agreement Bound Notification Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
         }
@@ -660,7 +597,7 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Create Other Marina Notification Email to TC Sent"));
-                _clientInformationSheetMapper.UpdateAsync(sheet);
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
         }

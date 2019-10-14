@@ -21,12 +21,14 @@ namespace TechCertain.Services.Impl
              return clientInformationAnswer;
 		}
 
-		public ClientInformationAnswer CreateNewClaimHistory( string ClaimName,string value, ClientInformationSheet InformationSheetID)
-		{
-			ClientInformationAnswer answer = new ClientInformationAnswer(null, ClaimName,  value, InformationSheetID);
+        public ClientInformationAnswer CreateNewClaimHistory(string ClaimName, string value, string details, ClientInformationSheet InformationSheetID)
+        {
+            ClientInformationAnswer answer = new ClientInformationAnswer(null, ClaimName, value, details, InformationSheetID);
             // TODO - finish this later since I need to figure out what calls the controller function that calls this service function
+            _clientInfomationsheetAnswer.AddAsync(answer);
+
             return answer;
-		}
+        }
 
         public ClientInformationAnswer GetClaimHistoryByName(string ClaimName, Guid InformationSheetID)
         {

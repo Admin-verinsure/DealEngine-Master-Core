@@ -1,0 +1,282 @@
+﻿using System;
+using System.IO;
+using System.Xml.Serialization;
+using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
+
+
+namespace TechCertain.Infrastructure.Payment.EGlobalAPI
+{
+    public class EGlobalSerializerAPI : ISerializer
+    {
+        protected EGlobalPolicy EGlobalPolicy;
+        protected EGlobalPolicyAPI EGlobalPolicyAPI;
+        protected EGlobalAPI EGlobalAPI;
+        protected string gv_strXML;
+        protected string gv_strPaymentType;
+
+        /****************************************
+        * TODO - MUST BE OVERRIDDEN IN BASE CLASS
+        ****************************************/
+        protected virtual string Folder
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
+        /// </summary>
+        /// <param name="objPolicy">Object policy.</param>
+        public string SerializePolicy(ClientProgramme programme, User currentUser)
+        {
+            //objPolicy.AdviseAndBindQuoteByClient(objPolicy.ContactUser);
+            //objPolicy.SetWorkflowID((int)TCQuote.TCWorkflowStatus.Pending_Invoice);
+            string xml = "Failed to Serialize programme ";
+            EGlobalAPI = new EGlobalAPI();
+            try
+            {
+                foreach (Package package in programme.BaseProgramme.Packages)
+                {
+                    EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+                    EGlobalPolicyAPI.CreatePolicyInvoice();
+
+                    if (EGlobalPolicy != null)
+                    {
+                        // Bind all secondary quotes
+                        /*foreach (TCQuote quote in gv_objXML.InvoicePolicies)
+                        {
+                            if (!quote.Policy)
+                            {
+                                TCUser user = quote.Proposal.ContactUser;
+                                quote.PublishToContactUser(user);
+                                quote.AdviseAndBindQuoteByClient(user);
+                            }
+                        }*/
+
+                        EGlobalPolicy.PaymentType = "INVOICE";
+
+                        //gv_objXML.SaveTransaction();
+
+                        xml = EGlobalPolicy.Serialize();
+                        SaveXml(xml, EGlobalPolicy.FTPFolder);
+                        SendEGlobalPolicy(xml, EGlobalPolicy);
+
+                    }
+                    else
+                        throw new ArgumentNullException(nameof(EGlobalPolicy));
+                }
+            }
+            catch (Exception ex)
+            {
+                xml += ex.InnerException + " "+ ex.StackTrace;
+            }
+
+            return xml;
+        }
+
+        public void ReversePolicy(Package package, ClientProgramme programme, User currentUser)
+        {
+            EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+
+
+            Folder = EGlobalPolicy.FTPFolder;
+
+            var strFileName = GetPolicyFileLocation(EGlobalPolicy.FTPFolder);
+
+            var doc = new System.Xml.XmlDocument();
+            doc.Load(strFileName);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(EGlobalPolicy));
+            EGlobalPolicyAPI = (EGlobalPolicyAPI)serializer.Deserialize(new StringReader(doc.InnerXml));
+
+            // do cancel stuff here
+            EGlobalPolicyAPI.CreateReversePolicyInvoice(EGlobalPolicy.PolicyRisks);
+            //EGlobalPolicy.SaveTransaction();
+
+            string xml = EGlobalPolicy.Serialize();
+
+            doc.LoadXml(gv_strXML);
+
+            SendEGlobalPolicy(xml, EGlobalPolicy);
+        }
+
+        public void UpdatePolicy(Package package, ClientProgramme programme, User currentUser)
+        {
+            EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+
+            Folder = EGlobalPolicy.FTPFolder;
+
+            EGlobalPolicy.PaymentType = "3";
+            EGlobalPolicyAPI.CreatePolicyInvoice();
+
+            //            gv_objXML.SaveTransaction();
+            //
+            string xml = EGlobalPolicy.Serialize();
+            //TC_Shared.LogEvent(TC_Shared.EventType.Information, "EGlobal XML Invoice", xml);
+            //
+            //            SaveXml(xml, gv_objXML.FTPFolder);
+            //            SendEGlobalPolicy(xml, gv_objPolicy);
+
+            if (EGlobalPolicyAPI != null)
+            {
+            }
+
+        }
+
+        public void CancelPolicy(Package package, ClientProgramme programme, User currentUser)
+        {
+            EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+
+            EGlobalPolicyAPI.CreateCancelPolicyInvoice();
+            EGlobalPolicyAPI.SaveTransaction();
+
+            string xml = EGlobalPolicy.Serialize();
+            SaveXml(xml, EGlobalPolicy.FTPFolder);
+            SendEGlobalPolicy(xml, EGlobalPolicy);
+        }
+
+        public EGlobalPolicy LoadLastXML(ClientProgramme clientProgramme)
+        {
+            throw new Exception("unimplemented method - LoadLastXML");
+            /*gv_objPolicy = quote;
+            gv_objXML = GetEGlobalXML(quote);
+
+            Folder = gv_objXML.FTPFolder;
+
+            var strFileName = GetPolicyFileLocation(gv_objXML.FTPFolder);
+
+            var doc = new System.Xml.XmlDocument();
+            try
+            {
+                doc.Load(strFileName);
+
+                XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Base_EGlobalPolicy));
+                Base_EGlobalPolicy policy = (Base_EGlobalPolicy)serializer.Deserialize(new StringReader(doc.InnerXml));
+
+                // call private set on public property
+                typeof(Base_EGlobalPolicy).GetProperty("TCPolicy").SetValue(policy, quote, null);
+                typeof(Base_EGlobalPolicy).GetMethod("Setup", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(policy, null);
+
+                List<EGlobalPolicyRiskConfig> prConfig = (List<EGlobalPolicyRiskConfig>)
+                    typeof(Base_EGlobalPolicy).GetField("gv_objPolicyRisksConfigs", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(policy);
+
+                foreach (var pr in policy.PolicyRisks)
+                {
+                    EGlobalPolicyRiskConfig prc = prConfig.SingleOrDefault(c => c.SubCover == pr.SubCoverString
+                                                  && c.RiskCode == pr.RiskCode && c.MergeWithCOBID == Guid.Empty);
+                    pr.TCClassOfBusiness = (prc != null) ? prc.ClassOfBusinessID : Guid.Empty;
+                }
+
+                //typeof(Base_EGlobalPolicy).GetConstructor(new[] { typeof(TCQuote) }).Invoke(new object[] { quote });
+
+                return policy;
+            }
+            catch (FileNotFoundException)
+            {
+                //TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Could not find file " + strFileName);
+                return null;
+            }*/
+        }
+
+        /****************************************
+        * TODO - MUST BE OVERRIDDEN IN BASE CLASS
+        ****************************************/
+        /// <summary>
+        /// Gets the completed EGLobal XML object for the current policy
+        /// </summary>
+        /// <returns>The EGlobal XML.</returns>
+        public virtual EGlobalPolicy GetEGlobalXML(Package package, ClientProgramme programme, User currentUser)
+        {
+            EGlobalPolicy = new EGlobalPolicy(package, programme);
+            EGlobalPolicyAPI = new EGlobalPolicyAPI(EGlobalPolicy, currentUser);
+            EGlobalPolicyAPI.Setup();
+            return EGlobalPolicy;
+        }
+
+        protected void SendEGlobalPolicy(string xml, EGlobalPolicy EGlobalPolicy)
+        {
+            try
+            {
+                // Send to EGlobal
+                // EGlobalAPI.SendInvoiceXMLAsync(xml, EGlobalPolicy);
+                EGlobalAPI.SendInvoiceXML(xml);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error sending EGlobcal Invoice " + EGlobalPolicy.EGlobalPolicyId + Environment.NewLine + ex.ToString());
+            }
+        }
+
+        protected void SaveXml(string xml, string folder)
+        {
+            try
+            {
+                var strFileName = GetPolicyFileLocation(folder);
+                var doc = new System.Xml.XmlDocument();
+                doc.LoadXml(xml);
+
+                if (System.IO.File.Exists(strFileName))
+                    System.IO.File.Delete(strFileName);
+
+                doc.Save(strFileName);
+
+                // attempt to set permissions
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to save Xml file " + ex.GetBaseException().ToString());
+            }
+        }
+
+        string GetPolicyFileLocation(string folder)
+        {
+            string strFileName = "";
+            try
+            {
+                //Check/create the directory for the scheme
+                var strSchemePath = Path.Combine("C:\tmp", folder);
+                if (!Directory.Exists(strSchemePath))
+                {
+                    Directory.CreateDirectory(strSchemePath);
+                }
+                //Check/create the directory for the day
+                var strDayPath = Path.Combine(strSchemePath, (DateTime.Now).ToString("yyyy-MM-dd"));//((DateTime)EGlobalPolicy.ClientProgramme.LastModifiedOn).ToString("yyyy-MM-dd"));
+                if (!Directory.Exists(strDayPath))
+                {
+                    Directory.CreateDirectory(strDayPath);
+                }
+                //Save the file into the directory for today
+                strFileName = Path.Combine(strDayPath, Folder + "_Policy_" + EGlobalPolicy.EGlobalPolicyId.ToString() + ".xml");
+            }
+            catch (IOException e)
+            {
+                throw new Exception("Cannot get XML file location " + e.GetBaseException().ToString());
+            }
+            return strFileName;
+        }
+
+        public bool SiteActive()
+        {
+            EGlobalAPI = new EGlobalAPI();
+            var res = EGlobalAPI.TestSiteStatus();
+
+            if (res != "ACTIVE")
+                return false;
+
+            return true;
+        }
+
+        /*public static EGlobalAPI GetEGlobalPolicyInvoice(ClientProgramme clientProgramme)
+        {
+            return GetEGlobalSerializer(clientProgramme).GetEGlobalXML(clientProgramme);
+        }
+
+        public static EGlobalAPI GetEGlobalSerializer(ClientProgramme clientProgramme)
+        {
+            Type serializerType = Type.GetType("TCSerializer." + policy.SchemeProject.Scheme.SerializerClass + ",TCShared");
+            return ((BaseEGlobalSerializer)Activator.CreateInstance(serializerType));
+        }*/
+    }
+}
+

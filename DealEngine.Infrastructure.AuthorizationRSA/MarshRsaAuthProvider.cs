@@ -74,9 +74,10 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			serxml.Serialize (ms, analyzeRequest);
             string xml = Encoding.UTF8.GetString (ms.ToArray ());
 
-            Console.WriteLine (xml);                     
-
-            var analyzeResponse = _httpClientService.Analyze(xml, "rsa:analyze:Analyze", "https://ris.us1.qeadaptiveauth.com/AdaptiveAuthentication/services/AdaptiveAuthentication");
+            //Console.WriteLine (xml);
+            _logger.LogDebug(xml);
+            _logger.LogDebug(analyzeRequest.ToString());
+            var analyzeResponse = _httpClientService.Analyze(xml);
 
 			//UserStatus userStatus = analyzeResponse.identificationData.userStatus;
 			//ActionCode actionCode = analyzeResponse.riskResult.triggeredRule.actionCode;

@@ -1537,7 +1537,7 @@ namespace TechCertain.WebUI.Controllers
             //model.Operators = operators;
 
             var claims = new List<ClaimViewModel>();
-            for (var i = 0; i < sheet.Claims.Count(); i++)
+            for (var i = 0; i < sheet.Claims.Count; i++)
             {
                 claims.Add(ClaimViewModel.FromEntity(sheet.Claims.ElementAtOrDefault(i)));
             }
@@ -2030,75 +2030,102 @@ namespace TechCertain.WebUI.Controllers
             }
 
             return Json("Success");
+
         }
-
-
-
 
         [HttpPost]
         public ActionResult GetClaimHistory(Guid ClientInformationSheet)
         {
-            
-
             String[][] ClaimAnswers = new String[5][];
-
             var count = 0;
             String[] ClaimItem;
             foreach (var answer in _IClientInformationAnswer.GetAllClaimHistory().Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
                                                                                                                                                           || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5")))
             {
-                      ClaimItem = new String[2];
+                ClaimItem = new String[3];
 
-                      for (var i = 0; i < 1; i++)
-                    {               
-                       ClaimItem[i] = answer.ItemName;
-                       ClaimItem[i + 1] = answer.Value;
-                    }
+                for (var i = 0; i < 1; i++)
+                {
+                    ClaimItem[i] = answer.ItemName;
+                    ClaimItem[i + 1] = answer.Value;
+                    ClaimItem[i + 2] = answer.ClaimDetails;
+                }
 
-                    ClaimAnswers[count]=ClaimItem;
-
+                ClaimAnswers[count] = ClaimItem;
                 count++;
-
             }
-
 
             return Json(ClaimAnswers);
         }
 
 
+        //[HttpPost]
+        //public ActionResult UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
+        //{
+        //    ClientInformationSheet sheet = null;
+        //    try
+        //    {
+
+        //        using (var uow = _unitOfWork.BeginUnitOfWork())
+        //        {
+
+        //            foreach (var item in Claims)
+        //           {
+        //             for (var x = 0; x < item.Length-1; x++)
+        //              {
+        //                ClientInformationAnswer answer = _IClientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
+        //                if (answer != null)
+        //                    answer.Value = item[1];
+        //                else
+        //                {
+        //                    sheet = _clientInformationService.GetInformation(ClientInformationSheet);
+        //                    _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], sheet);
+        //                }
+        //                    uow.Commit();
+
+        //                }
+
+
+        //            }
+        //        }
+
+        //    }catch(Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+
+        //}
+
+        //   return Json(true);
+        //}
+
         [HttpPost]
         public ActionResult UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
         {
             ClientInformationSheet sheet = null;
-            try
-            {
 
-           
             foreach (var item in Claims)
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    for (var x = 0; x < item.Length-1; x++)
+                    for (var x = 0; x < item.Length - 1; x++)
                     {
                         ClientInformationAnswer answer = _IClientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
                         if (answer != null)
+                        {
                             answer.Value = item[1];
+                            answer.ClaimDetails = item[2];
+                        }
                         else
                         {
                             sheet = _clientInformationService.GetInformation(ClientInformationSheet);
-                            _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], sheet);
+                            _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet);
                         }
                     }
                     uow.Commit();
                 }
             }
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-           return Json(true);
+            return Json(true);
         }
-
 
         [HttpPost]
         public IActionResult SubmitInformation(IFormCollection collection)

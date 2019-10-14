@@ -143,8 +143,8 @@ namespace TechCertain.Services.Impl
 
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
-            mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
-                agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
+            //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
+            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
             mergeFields.Add (new KeyValuePair<string, string> ("[[InceptionDate]]", agreement.InceptionDate.ToString ("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[ExpiryDate]]", agreement.ExpiryDate.ToString ("dd/MM/yyyy")));
 			if (agreement.Bound == true) {

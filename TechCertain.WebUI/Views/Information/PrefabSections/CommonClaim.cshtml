@@ -262,8 +262,8 @@
 
                             @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#clTabs-2','clTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
                           
-                            <button onclick="ValidateClaim('#clTabs2', '#tblClaim','clTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
-                            <button onclick="ClearBoats('#clTabs2','clTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
+                            <button onclick="ValidateClaim(event,'#clTabs2', '#tblClaim','clTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats(event,'#clTabs2','clTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
 
                         </section>
                     </div>
@@ -418,8 +418,8 @@
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateAddClaim('#clTabs3', '#tblClaim','clTabs1')" class="btn-sm AddupdateBoat" id="AddupdateBoat">Add</button>
-                            <button onclick="ClearBoats('#tblClaim3','tblClaim1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+                            <button onclick="ValidateAddClaim(event,'#clTabs3', '#tblClaim','clTabs1')" class="btn-sm AddupdateBoat" id="AddupdateBoat">Add</button>
+                            <button onclick="ClearBoats(event,'#tblClaim3','tblClaim1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
 
 
                             @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddClaim('#clTabs-3', '#tblClaim','clTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")

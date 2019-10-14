@@ -28,7 +28,6 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class HomeController : BaseController
     {        
-        //IMapper _mapper;
         //IInformationTemplateService _informationService;
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
@@ -39,15 +38,13 @@ namespace TechCertain.WebUI.Controllers
 
         public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
                               IClientInformationService customerInformationService, IPrivateServerService privateServerService,
-                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository, SignInManager<DealEngineUser> signInManager)
+                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base (userRepository)
         {            
-            //_mapper = mapper;
             //_informationService = informationService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;
-
             _productRepositoy = productRepository;
             _programmeRepository = programmeRepository;
         }
@@ -127,6 +124,31 @@ namespace TechCertain.WebUI.Controllers
                 model.DisplayDeals = true;
                 model.DisplayProducts = false;
                 model.DisplayRole = "Client";
+
+                if (CurrentUser.PrimaryOrganisation.IsBroker)
+                {
+                    model.CurrentUserIsBroker = "True";
+                }
+                else
+                {
+                    model.CurrentUserIsBroker = "False";
+                }
+                if (CurrentUser.PrimaryOrganisation.IsInsurer)
+                {
+                    model.CurrentUserIsInsurer = "True";
+                }
+                else
+                {
+                    model.CurrentUserIsInsurer = "False";
+                }
+                if (CurrentUser.PrimaryOrganisation.IsTC)
+                {
+                    model.CurrentUserIsTC = "True";
+                }
+                else
+                {
+                    model.CurrentUserIsTC = "False";
+                }
 
                 IList<string> languages = new List<string>();
                 languages.Add("nz");
