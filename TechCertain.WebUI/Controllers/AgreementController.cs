@@ -33,7 +33,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<User> _userRepository1;
-
+        IAppSettingService _appSettingService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
@@ -46,11 +46,12 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
 
-        public AgreementController(IUserService userRepository, IHttpClientService httpClientService, SignInManager<DealEngineUser> signInManager, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
-                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService,
+                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
-                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
+                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
+                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService)
             : base (userRepository)
         {
             _informationService = informationService;
@@ -75,6 +76,8 @@ namespace TechCertain.WebUI.Controllers
             _insuranceAttributeService = insuranceAttributeService;
             _OrganisationRepository = OrganisationRepository;
             _programmeRepository = programmeRepository;
+
+            _appSettingService = appSettingService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -1481,8 +1484,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = "localhost:44323";
-            //string domainQueryString = "staging.mydealslive.com";
+            string domainQueryString = _appSettingService.domainQueryString;
+            
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
@@ -1549,7 +1552,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = "localhost:44323";
+            string domainQueryString = _appSettingService.domainQueryString;
+
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),

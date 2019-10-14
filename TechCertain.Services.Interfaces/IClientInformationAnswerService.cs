@@ -8,7 +8,7 @@ namespace TechCertain.Services.Interfaces
     {
         ClientInformationAnswer CreateNewClaimHistory(ClientInformationAnswer clientInformationAnswer);
 
-        ClientInformationAnswer CreateNewClaimHistory( string ClaimName, string value, ClientInformationSheet InformationSheetID);
+        ClientInformationAnswer CreateNewClaimHistory(string ClaimName, string value, string details, ClientInformationSheet InformationSheetID);
 
         ClientInformationAnswer GetClaimHistoryByName(string ClaimName, Guid InformationSheetID);
 
