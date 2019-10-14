@@ -29,11 +29,11 @@ namespace TechCertain.WebUI.Controllers
         IPaymentService _paymentService;
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
-
+        IHttpClientService _httpClientService;
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<User> _userRepository1;
-
+        IAppSettingService _appSettingService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
@@ -46,11 +46,9 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
 
-        IAppSettingService _appSettingService;
-
         public AgreementController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
-                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService,
+                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
                                    IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
                                    IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService)
@@ -59,7 +57,7 @@ namespace TechCertain.WebUI.Controllers
             _informationService = informationService;
             _customerInformationService = customerInformationService;
             _organisationService = organisationService;
-
+            _httpClientService = httpClientService;
             _productRepository = productRepository;
             _clientAgreementService = clientAgreementService;
             _clientAgreementRuleService = clientAgreementRuleService;
@@ -626,7 +624,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm.Excess = clientAgreementBVTerm.Excess;
                 bvTerm.Premium = clientAgreementBVTerm.Premium;
                 bvTerm.FSL = clientAgreementBVTerm.FSL;
-                NewMethod(uow);
+                uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -653,8 +651,8 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm.TermLimit = clientAgreementMVTerm.TermLimit;
                 mvTerm.Excess = clientAgreementMVTerm.Excess;
                 mvTerm.Premium = clientAgreementMVTerm.Premium;
-                mvTerm.FSL = clientAgreementMVTerm.FSL;
-                NewMethod(uow);
+                mvTerm.FSL = clientAgreementMVTerm.FSL;                
+                uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -682,8 +680,7 @@ namespace TechCertain.WebUI.Controllers
                     bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
                     term.BoatTerms.Remove(bvTerm);
                 }
-
-                NewMethod(uow);
+                uow.Commit();                
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -708,13 +705,6 @@ namespace TechCertain.WebUI.Controllers
         //    }
         //    return RedirectToAction("EditTerms", new { id = clientAgreementId });
         //}
-
-
-
-        private static void NewMethod(IUnitOfWork uow)
-        {
-            uow.Commit();
-        }
 
         [HttpGet]
         public IActionResult ViewAgreement(Guid id)
@@ -1453,14 +1443,12 @@ namespace TechCertain.WebUI.Controllers
 
                 sheet = _customerInformationService.GetInformation(sheetId);
             }
+            
+            ClientProgramme programme = sheet.Programme;
+            programme.PaymentType = "Credit Card";
 
-               ClientProgramme programme = sheet.Programme;
-               programme.PaymentType = "Credit Card";
+            var active = _httpClientService.GetEglobalStatus().Result;
 
-
-            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-            //eGlobalSerializer.SiteActive();
-            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
             //Hardcoded variables
             decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
             Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
