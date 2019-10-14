@@ -17,11 +17,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
+using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.AuthorizationRSA;
 using TechCertain.Domain.Interfaces;
 using System.Linq;
-
 
 
 #endregion
@@ -31,6 +31,8 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        IAuthenticationService _authenticationService;
+
         IEmailService _emailService;
 		IFileService _fileService;
         SignInManager<DealEngineUser> _signInManager;
@@ -43,25 +45,26 @@ namespace TechCertain.WebUI.Controllers
         ILogger<AccountController> _logger;
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
-        
+
         public AccountController(
-            IMapperSession<User> userRepository,
-            SignInManager<DealEngineUser> signInManager,
+            IAuthenticationService authenticationService,
+			SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             ILogger<AccountController> logger,
             IHttpClientService httpClientService,
             ILdapService ldapService,
             IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userService)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IMapperSession<User> userRepository) : base (userService)
 		{
-            _userRepository = userRepository;
-            _httpClientService = httpClientService;
-            _logger = logger;
+            _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _userService = userService;
+            _userRepository = userRepository;
+			_httpClientService = httpClientService;
+			_logger = logger;
+			_userService = userService;
             _emailService = emailService;
 			_fileService = fileService;
             _programmeService = programeService;
@@ -117,11 +120,12 @@ namespace TechCertain.WebUI.Controllers
                     //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
                     //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemEmailLogin("mcgtestuser2@techcertain.com");
+                    _emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
                     //User user = _userService.GetUser(token.UserID);
                     ////change the users password to an intermediate
+
                     //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
                     ////get local domain
                     //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
@@ -317,7 +321,6 @@ namespace TechCertain.WebUI.Controllers
                     }
                     var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                     var result = await LoginMarsh(user, viewModel.DevicePrint);
-
                     return LocalRedirect("~/Home/Index");
                 }
 

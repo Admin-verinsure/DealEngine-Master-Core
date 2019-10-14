@@ -9,7 +9,7 @@ namespace TechCertain.Services.Interfaces
         string CarJamEndpoint { get; }
         string CarJamApiKey { get; }
         string IntermediatePassword { get; }
-
+        string domainQueryString { get; }
     }
 }
 
