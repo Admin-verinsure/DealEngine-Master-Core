@@ -53,7 +53,7 @@ namespace TechCertain.Services.Impl
 				// in this case, we'll get the ldap user, and only if the uppercase'd ldap username doesn't exist in postgres, we'll add the user.
 				var localUser = _userRepository.GetUser (user.UserName);
 				if (localUser == null)
-					Update (user);
+					//Update (user);
 				return user;
 			}
 			user = _legacyLdapService.GetLegacyUser (username);
