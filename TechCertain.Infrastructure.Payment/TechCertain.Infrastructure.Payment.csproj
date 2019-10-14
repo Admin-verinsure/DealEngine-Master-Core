@@ -5,15 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="EGlobalAPI\**" />
-    <EmbeddedResource Remove="EGlobalAPI\**" />
-    <None Remove="EGlobalAPI\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
+    <ProjectReference Include="..\TechCertain.Services.Interfaces\TechCertain.Services.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

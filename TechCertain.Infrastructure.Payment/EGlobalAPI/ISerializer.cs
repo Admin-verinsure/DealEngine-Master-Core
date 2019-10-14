@@ -4,6 +4,6 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 {
     public interface ISerializer
     {
-        //string SerializePolicy(ClientProgramme clientProgramme, User currentUser);
+        string SerializePolicy(ClientProgramme clientProgramme, User currentUser);
     }
 }
