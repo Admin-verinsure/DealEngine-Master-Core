@@ -24,7 +24,6 @@ using System.Linq;
 
 
 
-
 #endregion
 
 namespace TechCertain.WebUI.Controllers
@@ -41,10 +40,15 @@ namespace TechCertain.WebUI.Controllers
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
+<<<<<<< HEAD
         ILogger<AccountController> _logger;
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
 
+=======
+        IHttpContextAccessor _httpContextAccessor;
+        
+>>>>>>> 040f950628b73916bfec08c73510db63d4d1b17a
         public AccountController(
             IMapperSession<User> userRepository,
             SignInManager<DealEngineUser> signInManager,
@@ -92,12 +96,12 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult ResetPassword()
 		{
 			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
+				//return RedirectToLocal();
 			
             // We do not want to use any existing identity information
             //EnsureLoggedOut();
 
-            //return View();
+            return View();
         }
 
 		// POST: /account/resetpassword
@@ -114,19 +118,19 @@ namespace TechCertain.WebUI.Controllers
 				if (!string.IsNullOrWhiteSpace (viewModel.Email))
 				{
                     //System Email Testing
-                    /*var testuser = _userService.GetUserByEmail("mcgtestuser2@techcertain.com");
-                    var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
-                    var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
-                    var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(testuser, programme, sheet, organisation);*/
+                    //var testuser = _userService.GetUserByEmail("mcgtestuser2@techcertain.com");
+                    //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
+                    //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
+                    //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
+                    _emailService.SendSystemEmailLogin("mcgtestuser2@techcertain.com");
 
-                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken (viewModel.Email);
-                    //User user = _userService.GetUser (token.UserID);
-                    // change the users password to an intermediate
-                    //Membership.GetUser (user.UserName).ChangePassword ("", IntermediateChangePassword);
-                    // get local domain
-                    //string domain = HttpContext.Request.Url.GetLeftPart (UriPartial.Authority);
-                    //_emailService.SendPasswordResetEmail (viewModel.Email, token.Id, domain);
+                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
+                    //User user = _userService.GetUser(token.UserID);
+                    ////change the users password to an intermediate
+                    //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
+                    ////get local domain
+                    //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
+                    //_emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
 
                     ViewBag.EmailSent = true;
                 }
@@ -145,7 +149,7 @@ namespace TechCertain.WebUI.Controllers
 			}
 			catch (Exception ex)
 			{
-				ErrorSignal.FromCurrentContext().Raise(ex);
+				//ErrorSignal.FromCurrentContext().Raise(ex);
 				Exception exception = ex;
 				while (exception.InnerException != null) exception = exception.InnerException;
 

@@ -4,11 +4,12 @@
 @{
     var totalPremiums = 0d;
     var premiumsGSTBrokerFee = 0d;
-    var brokerageFee = Model.AdministrationFee.Replace("$", "");
+    var brokerageFee = Model.AdministrationFee.Substring(1);
 
     foreach (var item in Model.RiskPremiums)
     {
-        var premium = item.TotalPremium.Replace("$", "");
+        //var premium = item.TotalPremium.Replace("$", "");
+        var premium = item.TotalPremium.Substring(1);
         totalPremiums += double.Parse(premium);
     }
     premiumsGSTBrokerFee = Math.Round((double.Parse(brokerageFee) + totalPremiums) * (1.15f) * (1.02f), 2);

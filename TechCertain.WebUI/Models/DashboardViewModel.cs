@@ -23,7 +23,13 @@ namespace TechCertain.WebUI.Models
 		public IList<TaskItem> ImportantTaskItems { get; set; }
 
 		public IList<TaskItem> CompletedTaskItems { get; set; }
-	}
+
+        public string CurrentUserIsBroker { get; set; }
+
+        public string CurrentUserIsInsurer { get; set; }
+
+        public string CurrentUserIsTC { get; set; }
+    }
 
 	public class ButtonItem
 	{

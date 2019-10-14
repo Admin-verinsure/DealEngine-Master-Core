@@ -13,10 +13,7 @@
 @*<script src="~/lib/popper.js/popper.js"></script>*@
 <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
 @*<script src="~/lib/multiselect/js/multiselect.js"></script>*@
-
-
-
-
+<script src="~/lib/popper.js/umd/popper.js"></script>
 
 
 <script type="text/javascript">
@@ -27,7 +24,7 @@
            $('#smartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
             keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
-            autoAdjustHeight:true, // Automatically adjust content height
+            autoAdjustHeight:false, // Automatically adjust content height
             cycleSteps: false, // Allows to cycle the navigation of steps
             backButtonSupport: true, // Enable the back button support
             useURLhash: true, // Enable selection of the step based on url hash
@@ -36,7 +33,7 @@
                 previous: 'Previous'
             },
             toolbarSettings: {
-                toolbarPosition: 'bottom', // none, top, bottom, both
+                toolbarPosition: 'both', // none, top, bottom, both
                 toolbarButtonPosition: 'right', // left, right
                 showNextButton: true, // show/hide a Next button
                 showPreviousButton: true, // show/hide a Previous button
@@ -248,9 +245,14 @@
       });
         });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
-$(document).ready(function () {
+    $(document).ready(function () {
 
-	$('#Nonregisteredtabs').tabs();
+
+    //$('[data-toggle="popover"]').popover();
+    //    $('[data-toggle="tooltip"]').tooltip();
+            $(".chosen-select").chosen({ width: "95%" });
+
+    $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
     $('#registeredtrailertabs').tabs();
@@ -277,8 +279,7 @@ $(document).ready(function () {
         $('.multiselect-container').css({ "width": "100%"});
 
       $('.multiselect').multiselect({
-        columns: 1,
-        placeholder: 'Select',
+        includeSelectAllOption: true,
           buttonWidth: '100%'
       });
 
@@ -903,6 +904,8 @@ $(document).ready(function () {
 
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
+        debugger;
+        event.preventDefault();
         var BoatName = $('#AddBoatName').val();
         var BoatType1 = $('#AddBoatType1').val();
         var BoatType2 = $('#AddBoatType2').val();
@@ -1163,20 +1166,21 @@ $(document).ready(function () {
         } else {
             $('#validateAddBoatWaterLocation').html("");
         }
-        debugger;
         if (validity) {
             $(".search-choice-close").click();
-            AddBoat(tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
-            SetCurrentTab(currentTab);
+            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
+            SetCurrentTab(currenttab);
         } else {
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
             $(require).show('2000');
+          
             return validity;
         }
     }
 
-    function ValidateBoatForm(tabId, tableId, currentTab) {
+    function ValidateBoatForm(event, tabId, tableId, currentTab) {
+        event.preventDefault();
         debugger;
         var BoatName = $('#BoatName').val();
         var BoatType1 = $('#BoatType1').val();
@@ -1440,12 +1444,14 @@ $(document).ready(function () {
         if (validity) {
             $(".search-choice-close").click();
             debugger;
-            AddBoat(tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
+            AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
             SetCurrentTab(currentTab);
         } else {
             var require = document.getElementById("updaterequired");
             $('#updaterequired').removeClass("hidden");
             $(require).show('2000');
+                    
+
             return validity;
         }
     }
@@ -1458,7 +1464,7 @@ $(document).ready(function () {
 
     function SetCurrentTab(tabPaneId) {
         debugger;
-        event.preventDefault();
+        //event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         //$('#tblLocation').trigger('reloadGrid
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
@@ -1473,7 +1479,9 @@ function UpdateChosen() {
     });
 }
 
-    function ValidateAddNRegisteredMotor(tabId, tableId, currenttab) {
+    function ValidateAddNRegisteredMotor(event, tabId, tableId, currenttab) {
+        event.preventDefault();
+
         var make = $('#AddMotorMake').val();
         var vehicleModel = $('#AddMotorModel').val();
         var sumInsured = $('#AddMotorSumInsured').val();
@@ -1546,7 +1554,8 @@ function UpdateChosen() {
         }
     }
 
-    function ValidateNRegisteredMotor(tabId, tableId, currenttab) {
+    function ValidateNRegisteredMotor(event,tabId, tableId, currenttab) {
+        event.preventDefault();
         var make = $('#MotorMake').val();
         var vehicleModel = $('#MotorModel').val();
         var sumInsured = $('#MotorSumInsured').val();
@@ -1623,14 +1632,14 @@ function UpdateChosen() {
             && !(document.getElementById("ModelModal").validity.valueMissing) && !(document.getElementById("VehicleLocationModal").validity.valueMissing)
             && !(document.getElementById("SumInsuredModal").validity.valueMissing)) {
 
-            AddMotorVehicleModal();
+            AddMotorVehicleModal(event);
             $('#addTrailerModal').hide();
         }
 
     }
 
 
-    function AddMotorVehicleModal() {
+    function AddMotorVehicleModal(event) {
                 event.preventDefault();
 
         var informationId = $('#AnswerSheetId').serialize();
@@ -1643,15 +1652,21 @@ function UpdateChosen() {
         var year = $('#YearModal').serialize();
         var make = $('#MakeModal').serialize();
         var model = $('#ModelModal').serialize();
-        var groupsuminsured = $('#SumInsuredModal').serialize();
+        var groupsuminsured = $('#SumInsuredModal').val();
+         //groupsuminsured = "SumInsured="+ groupsuminsured.replace(/[^0-9\.-]+/g, "");
+
         var validated = $('#ValidatedTrailer').serialize();
         var notes = $('#TrailerNotesModal').serialize();
         var garagelocation_id = $('#VehicleLocationModal').serialize();
+        var data = $.grep([registration, validated, vin, vehicleeffectivedate, vehicleceasedate, vehicleceasereason, garagelocation_id, chassisnumber, year, make, model, notes, informationId], Boolean).join("&");
+         data = data + "&SumInsured=" + groupsuminsured.replace(/[^0-9\.-]+/g, "");
+
+
           $('#AddTrailer').show();
         $.ajax({
                 url: '@Url.Action("AddVehicle", "Services")',
                 type: "POST",
-            data: $.grep([registration, validated, vin, vehicleeffectivedate, vehicleceasedate, vehicleceasereason, garagelocation_id, chassisnumber, year, make, model, groupsuminsured, notes, informationId], Boolean).join("&")
+                data:data
             })
             .done(function (data) {
                 if (data.Registration == null) {
@@ -1719,7 +1734,7 @@ function SetVehicleCeasedStatus(vehicleId, status, sourceTable, destTable) {
         });
 };
 
-    function SetVehicleTransferedStatus(vehicleId, status, sourceTable, destTable) {
+    function SetVehicleTransferedStatus(event,vehicleId, status, sourceTable, destTable) {
             event.preventDefault();
 
     $.ajax({
@@ -1745,7 +1760,7 @@ function SetVehicleCeasedStatus(vehicleId, status, sourceTable, destTable) {
             });
 };
 
-function GetOUDetails(elementBaseName) {
+function GetOUDetails(event,elementBaseName) {
     var _sheetId = $('#AnswerSheetId').val();
     var _unitName = $(elementBaseName).val();
             event.preventDefault();
@@ -2272,7 +2287,7 @@ function GetActivitiesForRevenue() {
             return result;
         }
         if (result1) {
-            AddClaim(tabId, tableId);
+            AddClaim(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateClaimEstimateInsuredLiability').html("<font color='red'>Please enter the number.</font>")
@@ -2391,7 +2406,7 @@ function GetActivitiesForRevenue() {
         }
 
         if (result1) {
-            AddClaim(tabId, tableId);
+            AddClaim(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateClaimEstimateInsuredLiability').html("<font color='red'>Please enter the number.</font>")
@@ -2399,7 +2414,7 @@ function GetActivitiesForRevenue() {
         }
     }
 
-function AddClaim(tabId, tableId) {
+function AddClaim(event,tabId, tableId) {
     var informationId = $('#AnswerSheetId').serialize();
             event.preventDefault();
 
@@ -2526,7 +2541,7 @@ function EditClaim(claimId, tableId) {
             $('#validateOpLastName').html("<font></font>");
         }
         if (result) {
-            AddOperator(tabId, tableId);
+            AddOperator(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -2556,7 +2571,7 @@ function EditClaim(claimId, tableId) {
         }
 
         if (result) {
-            AddOperator(tabId, tableId);
+            AddOperator(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -2564,7 +2579,7 @@ function EditClaim(claimId, tableId) {
     }
 
 
-    function AddOperator(tabId, tableId) {
+    function AddOperator(event,tabId, tableId) {
                 event.preventDefault();
 
     var informationId = $('#AnswerSheetId').serialize();
@@ -2576,7 +2591,8 @@ function EditClaim(claimId, tableId) {
         type: "POST",
         data: test
     })
-    .done(function (data) {
+        .done(function (data) {
+
         //$.smallBox({
         //    title: "Operator has been saved",
         //    color: "#5F895F",
@@ -2599,12 +2615,12 @@ function EditClaim(claimId, tableId) {
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
 
-            AddOperatorModal(firstName, lastName, yearsXP, Email);
+            AddOperatorModal(event,firstName, lastName, yearsXP, Email);
             $('#addOperatorModal').hide();
         }
     }
 
-    function AddOperatorModal(firstName, lastName, yearsXP, Email) {
+    function AddOperatorModal(event,firstName, lastName, yearsXP, Email) {
         debugger;
         event.preventDefault();
         var operatorFirstName = $(firstName).serialize();
@@ -2622,7 +2638,10 @@ function EditClaim(claimId, tableId) {
             url: '@Url.Action("AddOperator", "Services")',
             type: "POST",
             data: postdata
-            }).done(function (data) {
+        }).done(function (data) {
+            debugger;
+                        setTimeout("alert('Operator has been saved');", 4000);
+
                 //$.smallBox({
                 //    title: "Operator has been saved",
                 //    color: "#5F895F",
@@ -2654,12 +2673,12 @@ function EditClaim(claimId, tableId) {
         debugger;
          if (!(document.getElementById("BuildingLocationModal").validity.valueMissing) && !(document.getElementById("BuildingCategoryModal").validity.valueMissing)
              && !(document.getElementById("BuildingNameModal").validity.valueMissing)) {
-             AddLandLocModal(storageType, storageDescription, location);
+             AddLandLocModal(event,storageType, storageDescription, location);
              $('#addLandLocModal').hide();
         }
     }
 
-    function AddLandLocModal(storageType, storageDescription, location) {
+    function AddLandLocModal(event,storageType, storageDescription, location) {
                 event.preventDefault();
 
         var buildingCategory = $(storageType).serialize();
@@ -2703,7 +2722,7 @@ function EditClaim(claimId, tableId) {
         });
     };
 
-    function AddMarinaLocModal(marinaName) {
+    function AddMarinaLocModal(event,marinaName) {
                 event.preventDefault();
 
         var MarinaName = $(marinaName).serialize();
@@ -2737,7 +2756,7 @@ function EditClaim(claimId, tableId) {
         });
     };
 
-    function AddWaterLocModal(waterLocName, waterLocLat, waterLocLong, waterLocLoc, waterLocMarinaLoc, mooredType, orgunit) {
+    function AddWaterLocModal(event,waterLocName, waterLocLat, waterLocLong, waterLocLoc, waterLocMarinaLoc, mooredType, orgunit) {
                 event.preventDefault();
 
         var WaterLocationMooringType = $(mooredType).serialize(); //TBC
@@ -2787,12 +2806,12 @@ function EditClaim(claimId, tableId) {
          if (!(document.getElementById("LocationTypeModal").validity.valueMissing) && !(document.getElementById("StreetModal").validity.valueMissing)
              && !(document.getElementById("SuburbModal").validity.valueMissing) && !(document.getElementById("CityModal").validity.valueMissing)) {
 
-             AddLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, selOULoc);
+             AddLocModal(event,streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, selOULoc);
              closeLocModal();
          }
 
     }
-    function AddLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, selOULoc) {
+    function AddLocModal(event,streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, selOULoc) {
         debugger;
                 event.preventDefault();
 
@@ -2981,7 +3000,7 @@ function EditClaim(claimId, tableId) {
         });
     };
 
-    function EditOperator(operatorId, tableId) {
+    function EditOperator(event,operatorId, tableId) {
                 event.preventDefault();
 
         var _sheetId = $('#AnswerSheetId').val();
@@ -3006,7 +3025,7 @@ function EditClaim(claimId, tableId) {
     });
 };
 
-    function SetOperatorRemovedStatus(operatorId, status, sourceTable, destTable) {
+    function SetOperatorRemovedStatus(event,operatorId, status, sourceTable, destTable) {
                 event.preventDefault();
 
     $.ajax({
@@ -3031,18 +3050,20 @@ function EditClaim(claimId, tableId) {
     });
     };
 
-    function ClearBoats(tabId,currentTab) {
+    function ClearBoats(event, tabId, currentTab) {
+        debugger;
+        event.preventDefault();
+
         if (confirm("I don't want to add.")) {
-            $(tabId + " :input").val(""); //Clears form
+            //$(tabId + " :input").val(""); //Clears form
             SetCurrentTab(currentTab);
         }
         else {
             return false;
         }
     }
-    function AddBoat(tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
+    function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
         debugger;
-                event.preventDefault();
 
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
@@ -3264,7 +3285,7 @@ function EditClaim(claimId, tableId) {
                 event.preventDefault();
 
         var postData = {
-		'boatIdboatId': locationId,
+		'boatId': boatId,
 		'status': status
 	};
     $.ajax({
@@ -3355,7 +3376,8 @@ async: true
     };
 
 
-    function ValidateBoatUse(tabId, tableId, currenttab) {
+    function ValidateBoatUse(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var boatUseCategory = $('#BoatUseCategory').val();
         var boatUseRaceCategory = $('#BoatUseRaceCategory').val();
         var boatUseRaceUseSpinnakers = $('#BoatUseRaceUseSpinnakers').val();
@@ -3494,7 +3516,7 @@ async: true
         }
 
         if (result) {
-            AddAddNamedParty(tabId, tableId);
+            AddAddNamedParty(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -3502,7 +3524,7 @@ async: true
 
     }
 
-    function AddAddNamedParty(tabId, tableId) {
+    function AddAddNamedParty(event,tabId, tableId) {
         debugger;
                             event.preventDefault();
 
@@ -3670,7 +3692,7 @@ async: true
         }
 
         if (result) {
-            AddNamedParty(tabId, tableId);
+            AddNamedParty(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             return result;
@@ -3678,7 +3700,7 @@ async: true
     }
 
 
-     function AddNamedParty(tabId, tableId) {
+     function AddNamedParty(event,tabId, tableId) {
          debugger;
                              event.preventDefault();
 
@@ -3755,7 +3777,8 @@ async: true
 
 
 
-    function ValidateAddBoatUse(tabId, tableId, currenttab) {
+    function ValidateAddBoatUse(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var boatUseCategory = $('#AddBoatUseCategory').val();
         var boatUseRaceCategory = $('#AddBoatUseRaceCategory').val();
                 var boatUseRaceUseSpinnakers = $('#AddBoatUseRaceUseSpinnakers').val();
@@ -3795,8 +3818,6 @@ async: true
 
 
     function AddBoatUse(tabId, tableId) {
-                            event.preventDefault();
-
         var informationId = $('#AnswerSheetId').serialize();
         $('#getBoatUseModal').show();
     $.ajax({
@@ -3830,13 +3851,13 @@ async: true
         debugger;
         if (!(document.getElementById("OrganisationTypeName").validity.valueMissing) && !(document.getElementById("organisationName").validity.valueMissing)
             && !(document.getElementById("organisationPhone").validity.valueMissing)) {
-            addInterestedParty();
+            addInterestedParty(event);
             $('#addInterestedPartyModal').hide();
         }
     }
 
 
-    function addInterestedParty() {
+    function addInterestedParty(event) {
                             event.preventDefault();
 
         $('#getPartyModal').show();
@@ -3890,10 +3911,13 @@ async: true
                 //timeout: 4000
                // });
 
-                $('#SelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
+                $('#SelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
                 $('#SelectedInterestedParty').trigger('chosen:updated');
-                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.ID + "\">" + data.organisationName + "</option>")
+                 $('#AddSelectedInterestedParty').append("<option selected value=\"" + data.id + "\">" + data.organisationName + "</option>")
                 $('#AddSelectedInterestedParty').trigger('chosen:updated');
+
+                                //$("#AddSelectedInterestedParty").multiSelect("select", data.iD);
+                $('#AddSelectedInterestedParty').trigger('refresh');
 
                 $('#FinancialSection').addClass('hidden');
                 $('#FinancialSection').addClass('hidden');
@@ -3935,16 +3959,16 @@ async: true
 
             if (!(document.getElementById("BoatUseRaceCategoryModal").validity.valueMissing) && !(document.getElementById("BoatUseRaceUseSpinnakersModal").validity.valueMissing)) {
 
-                addBoatUseModal();
+                addBoatUseModal(event);
                 $('#addBoatUseModal').hide();
             }
         } else {
-            addBoatUseModal();
+            addBoatUseModal(event);
             $('#addBoatUseModal').hide();
         }
 
     };
-    function addBoatUseModal() {
+    function addBoatUseModal(event) {
                                     event.preventDefault();
 
          $('#getBoatUseModal').show();
@@ -4300,15 +4324,15 @@ async: true
     });
     };
 
-        function ClearBoats(tabId,currentTab) {
-        if (confirm("I don't want to add.")) {
-            $(tabId + " :input").val(""); //Clears form
-            SetCurrentTab(currentTab);
-        }
-        else {
-            return false;
-        }
-    };
+    //    function ClearBoats(tabId,currentTab) {
+    //    if (confirm("I don't want to add.")) {
+    //        $(tabId + " :input").val(""); //Clears form
+    //        SetCurrentTab(currenttab);
+    //    }
+    //    else {
+    //        return false;
+    //    }
+    //};
 
     //function SetCurrentTab(tabPaneId) {
     //    event.preventDefault();
@@ -4505,7 +4529,6 @@ async: true
 function GetRegisteredMVDetails(elementBaseName)
    {                    event.preventDefault();
 
-
     debugger;
     var TrailerModal = false;
     if (elementBaseName == "#RegistrationModal") {
@@ -4567,7 +4590,8 @@ async: true
     });
 };
 
-   function ValidateMotorVehicle(tabId, tableId, currenttab) {
+    function ValidateMotorVehicle(event,tabId, tableId, currenttab) {
+        event.preventDefault();
         var sumInsured = $('#SumInsured').val();
        var vehicleLocation = $('#VehicleLocation').val();
        var vehicleEffectiveDate = $('#EffectiveDate').val();
@@ -4613,7 +4637,8 @@ async: true
 
     }
 
-    function ValidateAddMotorVehicle(tabId, tableId, currenttab) {
+    function ValidateAddMotorVehicle(event, tabId, tableId, currenttab) {
+        event.preventDefault();
         var sumInsured = $('#AddSumInsured').val();
         var vehicleLocation = $('#AddVehicleLocation').val();
 
@@ -4665,7 +4690,6 @@ async: true
     }
 
     function AddMotorVehicle(tabId, tableId) {
-                        event.preventDefault();
 
     var registration = $('#Registration').serialize();
     var informationId = $('#AnswerSheetId').serialize();
@@ -6250,13 +6274,14 @@ async: true
          var orgId = othermarinaname;
         debugger;
         $('#getMooredModal').show();
+         var postData = { OrgID: orgId};
 
         $.ajax({
         // change back once mono decides to fix
              url: '@Url.Action("GetMooredType", "Services")',
              type: "POST",
-             data: JSON.stringify({ OrgId: orgId}),
-             contentType: "application/json; charset=utf-8"
+             data: postData,
+             //contentType: "application/json; charset=utf-8"
       })
             .done(function (data) {
                 debugger;

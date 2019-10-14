@@ -142,12 +142,13 @@
                         <div class="row" id="update">
                             <section class="col col-xs-12">
 
-                                <button onclick="ValidateBoatUse('#boatUseTabs2', '#tblBoatUse','boatUseTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
-                                <button onclick="ClearBoats('#boatUseTabs2','boatUseTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>
+                                <button onclick="ValidateBoatUse(event,'#boatUseTabs2', '#tblBoatUse','boatUseTabs1')" class="btn-sm updateBoat" id="updateBoat">Update</button>
+                                @*<button onclick="ClearBoats(event,'#boatUseTabs2','boatUseTabs1 ')" class="btn-sm ClearBoat" id="ClearBoat">Cancel Update</button>*@
+                                <button onclick="ClearBoats(event,'#boatUseTabs2','boatUseTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Cancel Update</button>
 
                                 @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateBoatUse('#boatUseTabs-1', '#tblBoatUse','boatUseTabs-1');" }).Class("btn-sm updateBoat").Id("updateBoat")
 
-                                    @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#boatTabs-2','boatTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
+        @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#boatTabs-2','boatTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
 
                             </section>
                         </div>
@@ -217,8 +218,8 @@
                         <div class="row" id="update">
                             <section class="col col-xs-12">
 
-                                <button onclick="ValidateAddBoatUse('#boatUseTabs3', '#tblBoatUse','boatUseTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
-                                <button onclick="ClearBoats('#boatUseTabs3','boatUseTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+                                <button onclick="ValidateAddBoatUse(event,'#boatUseTabs3', '#tblBoatUse','boatUseTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                                <button onclick="ClearBoats(event,'#boatUseTabs3','boatUseTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
 
                                 @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddBoatUse('#boatUseTabs-3', '#tblBoatUse','boatUseTabs-1');" }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
 
@@ -283,56 +284,7 @@
                 </fieldset>
             </div>
         </div>
-        @*/*using (tabs.BeginPanel())
-            {
-                <fieldset>
-                    <div class="row">
-                        <section class="col col-xs-12">
-                            <script src="~/jquery/jquery.min.js"></script>
-                            <script type="text/javascript">
-                        $(document).ready(function () {
-                            $("#tblCeasedBoatUse").jqGrid({
-                                url: "/Services/GetBoatUses?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=true",
-                                datatype: "xml",
-                                mtype: "GET",
-                                colNames: ["Vessel Use Category", ""],
-                                colModel: [
-                                    { name: "BoatUseCategory", align: 'center' },
-                                    { name: "update", align: 'center', search: false, formatter: function(cellvalue, options, rowobject)
-                                    { return '<button onclick="SetBoatUseCeasedStatus(\'' + cellvalue +'\', \'false\', \'#tblCeasedBoatUse\', \'#tblBoatUse\');" type="button">Restore</button>'; }
-                                    }
-                                ],
-                                autowidth: true,
-                                pager: "#pagerCeasedBoatUse",
-                                rowNum: 10,
-                                rowList: [10, 20, 30],
-                                sortname: "BoatUseCategory",
-                                sortorder: "desc",
-                                viewrecords: true,
-                                gridview: true,
-                                autoencode: true
-                            });
-                            $("#tblCeasedBoatUse").jqGrid('navGrid',
-                                '#pagerCeasedBoatUse',
-                                {edit: false, add: false, del: false},
-                                //options
-                                {height:280,reloadAfterSubmit:false},
-                                // edit options
-                                {height:280,reloadAfterSubmit:false},
-                                // add options
-                                {reloadAfterSubmit:false},
-                                // del options
-                                {sopt:['eq','bw','cn']}
-                                // search options
-                            );
-                        });
-                            </script>
-                            <table id="tblCeasedBoatUse"><tr><td></td></tr></table>
-                            <div id="pagerCeasedBoatUse"></div>
-                        </section>
-                    </div>
-                </fieldset>
-            }*/*@
-        }
+      
+        
     </div>
 </div>

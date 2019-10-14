@@ -28,6 +28,7 @@ namespace TechCertain.WebUI
             services.AddMvc();
             services.AddRazorPages();            
             services.AddNHibernate();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();            
             services.AddRepositories();

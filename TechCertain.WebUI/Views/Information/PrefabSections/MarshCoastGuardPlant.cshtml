@@ -30,7 +30,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditRegisteredMotorVehicle(\'omv\', \'' + cellvalue + '\'); SetCurrentTab(\'omvTabs-2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                            return ('<button onclick="EditRegisteredMotorVehicle(\'omv\', \'' + cellvalue + '\'); SetCurrentTab(\'omvTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
                                         }
                                     },
                                     { name: "Year", align: 'center', key: 'true' },
@@ -171,8 +171,8 @@
                     <!-- 6th row -->
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateNRegisteredMotor('#omvTabs2', '#tblRegisteredMV','omvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-                            <button onclick="ClearBoats('#omvTabs3','omvTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                            <button onclick="ValidateNRegisteredMotor(event,'#omvTabs2', '#tblRegisteredMV','omvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats(event,'#omvTabs3','omvTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                         </section>
                     </div>
@@ -281,8 +281,8 @@
 
                                 @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#boatTabs-2','boatTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
 
-                            <button onclick="ValidateAddNRegisteredMotor('#omvTabs3', '#tblRegisteredMV','omvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
-                            <button onclick="ClearBoats('#omvTabs2','omvTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+                            <button onclick="ValidateAddNRegisteredMotor(event,'#omvTabs3', '#tblRegisteredMV','omvTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ClearBoats(event,'#omvTabs2','omvTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
 
                         </section>
                     </div>
