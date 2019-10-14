@@ -236,7 +236,7 @@ namespace TechCertain.Services.Impl
                                                             </request>                                                                                                                                                                                                                                                                                                              
                                                             </analyze>                                                                                                                                                                                                                                                                                                              
                                                             </soap:Body>
-                                                            </soap:Envelope>"; ;
+                                                            </soap:Envelope>"; 
         }
     }
 }
