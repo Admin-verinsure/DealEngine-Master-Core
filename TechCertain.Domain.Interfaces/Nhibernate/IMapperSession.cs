@@ -14,7 +14,6 @@ namespace TechCertain.Domain.Interfaces
         TEntity GetById(Guid id);
         void Update(TEntity entity);
         void Add(TEntity entity);
-        //async Task AddAsync();
         void Remove(TEntity entity);
     }
 }

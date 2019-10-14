@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Entities
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.WebUI", "TechCertain.WebUI\TechCertain.WebUI.csproj", "{D77B0A76-496E-4526-8320-6176AEB848ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealEngine.Infrastructure.AuthorizationRSA", "DealEngine.Infrastructure.AuthorizationRSA\DealEngine.Infrastructure.AuthorizationRSA.csproj", "{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,10 @@ Global
 		{D77B0A76-496E-4526-8320-6176AEB848ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D77B0A76-496E-4526-8320-6176AEB848ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D77B0A76-496E-4526-8320-6176AEB848ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,6 +156,7 @@ Global
 		{B6B8A69E-3AA0-4D75-81BD-77AA1157D31A} = {1A636723-5713-4AA2-AAEC-DB0A2DA7787F}
 		{F94C40D8-1833-4AFE-932D-E318949B4F65} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
 		{D77B0A76-496E-4526-8320-6176AEB848ED} = {AB10B0D1-6D77-41CA-8BCD-E86192BC5D01}
+		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1} = {A5E4C7C9-8238-45E3-ADDE-5C8BCFF6C764}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5668B32C-4F98-4A16-9AA6-0CC704FE715D}

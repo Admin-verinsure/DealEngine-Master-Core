@@ -17,6 +17,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
+using Microsoft.Extensions.Logging;
+using DealEngine.Infrastructure.AuthorizationRSA;
+using TechCertain.Domain.Interfaces;
+using System.Linq;
+
 
 
 #endregion
@@ -35,20 +40,28 @@ namespace TechCertain.WebUI.Controllers
         ICilentInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
-        IHttpContextAccessor _httpContextAccessor;
+        ILogger<AccountController> _logger;
+        IMapperSession<User> _userRepository;
+        IHttpClientService _httpClientService;
         
         public AccountController(
+            IMapperSession<User> userRepository,
             SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
+            ILogger<AccountController> logger,
+            IHttpClientService httpClientService,
             ILdapService ldapService,
-            IUserService userRepository,
+            IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userService)
 		{
+            _userRepository = userRepository;
+            _httpClientService = httpClientService;
+            _logger = logger;
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _userService = userRepository;
+            _userService = userService;
             _emailService = emailService;
 			_fileService = fileService;
             _programmeService = programeService;
@@ -283,23 +296,28 @@ namespace TechCertain.WebUI.Controllers
                 int resultCode = -1;
                 string resultMessage = "";
 
+                // Step 1 validate in  MarshUser
+                
+
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
                     var deUser = _userManager.FindByNameAsync(userName).Result;
-                    if(deUser == null)
+                    if (deUser == null)
                     {
                         deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
-                        await _userManager.CreateAsync(deUser, password);
+                        await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
                     }
-                                    
+
                     var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
-                    if(identityResult.Succeeded)
+                    if (identityResult.Succeeded)
                     {
                         //add claims, roles etc here
                     }
-                    
+                    var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    var result = await LoginMarsh(user, viewModel.DevicePrint);
+
                     return LocalRedirect("~/Home/Index");
                 }
 
@@ -320,70 +338,54 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-		[HttpPost]
-		[AllowAnonymous]
-		[ValidateAntiForgeryToken]
-		public ActionResult LoginMarsh (RsaAccountLoginModel viewModel)
+		public Task<IdentityResult> LoginMarsh (User user, string devicePrint)
 		{
-			string username = viewModel.Username.Trim ();
-			//if (ModelState.IsValid) {
+            MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService);
+            MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
 
-			//	_signInManager.SignIn (username, viewModel.Password, viewModel.RememberMe);
+            rsaUser.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            rsaUser.DevicePrint = devicePrint;
+            //for testing purposes
+            rsaUser.Email = user.Email;
+            //rsaUser.Username = rsaAuth.GetHashedId (username + "@dealengine.com");
+            rsaUser.Username = user.Email; //try as Marsh RSA team advised
+            rsaUser.HttpReferer = Url.ToString();
+            //rsaUser.OrgName = System.Web.Configuration.WebConfigurationManager.AppSettings ["RsaOrg"];
+            rsaUser.OrgName = "Marsh_Model";
 
-			//	if (Membership.ValidateUser (username, viewModel.Password)) {
+            try
+            {
+                Console.WriteLine("Analzying RSA User");
+                RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
+                if (rsaStatus == RsaStatus.Allow)
+                {
 
-			//		User user = _userService.GetUser(username);
-			//		Console.WriteLine ("Creating RSA User");
-			//		MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider (_logger);
-			//		MarshRsaUser rsaUser = rsaAuth.GetRsaUser (user.Email);
-                   
-   //                 rsaUser.IpAddress = Request.UserHostAddress;
-			//		rsaUser.DevicePrint = viewModel.DevicePrint;
-   //                 //for testing purposes
-   //                 rsaUser.Email = user.Email;
-   //                 //rsaUser.Username = rsaAuth.GetHashedId (username + "@dealengine.com");
-   //                 rsaUser.Username = user.Email; //try as Marsh RSA team advised
-   //                 rsaUser.HttpReferer = Request.UrlReferrer.ToString ();
-			//		//rsaUser.OrgName = System.Web.Configuration.WebConfigurationManager.AppSettings ["RsaOrg"];
-			//		rsaUser.OrgName = "Marsh_Model";
+                    Console.WriteLine("RSA User allowed, signing in...");
+                    SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
 
-			//		Console.WriteLine ("Analzying RSA User");
-			//			RsaStatus rsaStatus = rsaAuth.Analyze (rsaUser, true);
-			//		if (rsaStatus == RsaStatus.Allow) {
+                    _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
+                }
+                if (rsaStatus == RsaStatus.RequiresOtp)
+                {
+                    Console.WriteLine("RSA User requires otp. Making request");
+                    string otp = rsaAuth.GetOneTimePassword(rsaUser);
 
-			//			Console.WriteLine ("RSA User allowed, signing in...");
-			//			Session.Abandon ();
-			//			FormsAuthentication.SetAuthCookie (username, true);
-			//			SetCookie ("ASP.NET_SessionId", "", DateTime.MinValue);
+                    Console.WriteLine("One Time Password: " + otp);
+                    _emailService.ContactSupport(_emailService.DefaultSender, "Marsh RSA OTP", otp);
 
-			//			_logger.Info ("RSA Authentication succeeded for [" + username + "]");
+                    Console.WriteLine("Sent otp. Redirecting to Otp page");
+                    // sent otp to user                
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
-			//			return RedirectToLocal (viewModel.ReturnUrl);
-			//		}
-			//		if (rsaStatus == RsaStatus.RequiresOtp) {
-			//			Console.WriteLine ("RSA User requires otp. Making request");
-			//			string otp = rsaAuth.GetOneTimePassword (rsaUser);
+            return Task.FromResult(IdentityResult.Success);
+        }
 
-			//			Console.WriteLine ("One Time Password: " + otp);
-			//			_emailService.ContactSupport (_emailService.DefaultSender, "Marsh RSA OTP", otp);
-
-			//			Console.WriteLine ("Sent otp. Redirecting to Otp page");
-			//			// sent otp to user
-			//			return View ("OneTimePasswordMarsh", new RsaOneTimePasswordModel (username) {
-			//				DevicePrint = rsaUser.DevicePrint,
-			//				SessionId = rsaUser.SessionId,
-			//				TransactionId = rsaUser.TransactionId
-			//			});
-			//		}
-			//	}
-			//}
-
-			//// If we got this far, something failed, redisplay form			
-			ModelState.AddModelError ("", "The user name or password provided is incorrect.");
-			return View (viewModel);
-		}
-
-		[HttpPost]
+        [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
 		public ActionResult OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)

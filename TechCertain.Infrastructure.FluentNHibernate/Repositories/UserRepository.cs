@@ -81,7 +81,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 				{
                     _userRepository.Add(user);
 	                //uow.Add(user);
-	                uow.Commit();
+	                //uow.Commit();
 				}
 				catch (Exception e)
 				{
