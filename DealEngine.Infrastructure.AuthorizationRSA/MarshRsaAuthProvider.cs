@@ -74,8 +74,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			serxml.Serialize (ms, analyzeRequest);
             string xml = Encoding.UTF8.GetString (ms.ToArray ());
 
-            Console.WriteLine (xml);                     
-
+            //Console.WriteLine (xml);
+            _logger.LogDebug(xml);
+            _logger.LogDebug(analyzeRequest.ToString());
             var analyzeResponse = _httpClientService.Analyze(xml);
 
 			//UserStatus userStatus = analyzeResponse.identificationData.userStatus;
