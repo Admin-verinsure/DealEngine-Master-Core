@@ -47,15 +47,22 @@ namespace TechCertain.Infrastructure.Ldap
 			}
 		}
 
-        //public string UserDN
-        //{
-        //    get
-        //    {
-        //        string baseDN = _configuration.GetValue<string>("OpenLdapBaseDN");
-        //        return string.Format(_configuration.GetValue<string>("OpenLdapBaseUserDN"), baseDN);
-        //    }
-        //}
+        public string UserDN
+        {
+            get
+            {
+                string baseDN = _configuration.GetValue<string>("OpenLdapBaseDN");
+                return string.Format(_configuration.GetValue<string>("OpenLdapBaseUserDN"), baseDN);
+            }
+        }
 
+        public string OpenLdapUserDNFromUsername
+        {
+            get
+            {
+                return _configuration.GetValue<string>("OpenLdapUserDNFromUsername");
+            }
+        }
     }
 }
 
