@@ -93,11 +93,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword()
 		{
-			//if (Request.IsAuthenticated)
-				//return RedirectToLocal();
-			
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
+
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View();
         }
@@ -434,11 +434,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult Register()
 		{
-			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
-			
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
+
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -508,11 +508,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult CoastguardReg()
         {
-            //if (Request.IsAuthenticated)
-                //return RedirectToLocal();
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
 
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -537,11 +537,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult CoastguardForm()
         {
-            //if (Request.IsAuthenticated)
-                //return RedirectToLocal();
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
 
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -624,14 +624,13 @@ namespace TechCertain.WebUI.Controllers
 
         void EnsureLoggedOut()
         {
-            // If the request is (still) marked as authenticated we send the user to the logout action
+            //If the request is (still)marked as authenticated we send the user to the logout action
 
-            throw new Exception("this method needs to be re-written in core");
 
-            //if (Request.IsAuthenticated)
-            //    Logout();
+            if (User.Identity.IsAuthenticated)
+                Logout();
 
-            //if (!Request.IsAuthenticated)
+            //if (!User.Identity.IsAuthenticated)
             //{
             //    if (Response.Cookies[FormsAuthentication.FormsCookieName] != null)
             //        Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.UtcNow.AddDays(-1);
