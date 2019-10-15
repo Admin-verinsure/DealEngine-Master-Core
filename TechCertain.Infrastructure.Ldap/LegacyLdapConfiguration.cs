@@ -1,40 +1,67 @@
-﻿using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System.Configuration;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 
 namespace TechCertain.Infrastructure.Ldap
 {
 	public class LegacyLdapConfiguration : ILegacyLdapConfiguration
 	{
-
-		public string AdminDn {
+        private IConfiguration _configuration { get; set; }
+        public LegacyLdapConfiguration(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        public string AdminDn {
 			get {
-				return ConfigurationManager.AppSettings ["LegacyLdapBindDN"];
+                return _configuration.GetValue<string>("LegacyLdapBindDN");
+                //return ConfigurationManager.AppSettings ["LegacyLdapBindDN"];
 			}
 		}
 
 		public string AdminPassword {
 			get {
-				return ConfigurationManager.AppSettings ["LegacyLdapBindPW"];
+                return _configuration.GetValue<string>("LegacyLdapBindPW");
+                //return ConfigurationManager.AppSettings ["LegacyLdapBindPW"];
 			}
 		}
 
 		public string LdapHost {
 			get {
-				return ConfigurationManager.AppSettings ["LegacyLdapServer"];
+                return _configuration.GetValue<string>("LegacyLdapServer");
+                //return ConfigurationManager.AppSettings ["LegacyLdapServer"];
 			}
 		}
 
 		public int LdapPort {
 			get {
-				return int.Parse (ConfigurationManager.AppSettings ["LegacyLdapPort"]);
+                return _configuration.GetValue<int>("LegacyLdapPort");
+                //return int.Parse (ConfigurationManager.AppSettings ["LegacyLdapPort"]);
 			}
 		}
 
 		public string BaseDn {
 			get {
-				return ConfigurationManager.AppSettings ["LegacyLdapBaseDN"];
+                return _configuration.GetValue<string>("LegacyLdapBaseDN");
+                //return ConfigurationManager.AppSettings ["LegacyLdapBaseDN"];
 			}
 		}
-	}
+
+        public string UserDN
+        {
+            get
+            {
+                string baseDN = _configuration.GetValue<string>("OpenLdapBaseDN");
+                return string.Format(_configuration.GetValue<string>("OpenLdapBaseUserDN"), baseDN);
+            }
+        }
+
+        public string OpenLdapUserDNFromUsername
+        {
+            get
+            {
+                return _configuration.GetValue<string>("OpenLdapUserDNFromUsername");
+            }
+        }
+    }
 }
 
