@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
@@ -41,7 +42,12 @@ namespace TechCertain.Services.Impl
 			return _clientAgreementRepository.GetById (clientAgreementId);
 		}
 
-		public ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser)
+        public ClientAgreement GetAgreementbyReferenceNum(string reference)
+        {
+            return _clientAgreementRepository.FindAll().FirstOrDefault(cp => cp.ReferenceId == reference);
+        }
+
+        public ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser)
 		{
 			if (agreement == null)
 				throw new ArgumentNullException (nameof (agreement));

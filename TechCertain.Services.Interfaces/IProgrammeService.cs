@@ -14,7 +14,8 @@ namespace TechCertain.Services.Interfaces
 
 		ClientProgramme GetClientProgramme (Guid id);
 
-		IEnumerable<ClientProgramme> GetClientProgrammesByOwner (Guid ownerOrganisationId);
+
+        IEnumerable<ClientProgramme> GetClientProgrammesByOwner (Guid ownerOrganisationId);
 
 		IEnumerable<ClientProgramme> GetClientProgrammesForProgramme (Guid programmeId);
 

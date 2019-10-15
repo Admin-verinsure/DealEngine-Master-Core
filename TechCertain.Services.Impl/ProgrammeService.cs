@@ -40,7 +40,8 @@ namespace TechCertain.Services.Impl
 			return _clientProgrammeRepository.GetById (id);
 		}
 
-		public IEnumerable<ClientProgramme> GetClientProgrammesByOwner (Guid ownerOrganisationId)
+
+        public IEnumerable<ClientProgramme> GetClientProgrammesByOwner (Guid ownerOrganisationId)
 		{
 			return _clientProgrammeRepository.FindAll ().Where (cp => cp.Owner.Id == ownerOrganisationId);
 		}

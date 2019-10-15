@@ -10,5 +10,7 @@ namespace TechCertain.Services.Interfaces
         ClientAgreement GetAgreement(Guid clientAgreementId);
 
 		ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser);
+        ClientAgreement GetAgreementbyReferenceNum(string reference);
+
     }
 }
