@@ -2810,14 +2810,14 @@ namespace TechCertain.WebUI.Controllers
                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
                 if (emailTemplate != null)
                 {
-                    //_emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                    _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
                 }
                 else
                 {
                     throw new Exception("There is no Information Sheet Instruction email template been set up.");
                 }
                 //send out information sheet issue notification email
-               //_emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+               _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                 
             }
             else

@@ -32,12 +32,13 @@ namespace TechCertain.WebUI.Controllers
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
-        IHttpContextAccessor _httpContextAccessor;
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
+        IClientInformationService _clientInformationService;
+
 
         public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
-                              IClientInformationService customerInformationService, IPrivateServerService privateServerService,
+                              IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientInformationService clientInformationService,
                               IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base (userRepository)
         {            
@@ -45,6 +46,7 @@ namespace TechCertain.WebUI.Controllers
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;
+            _clientInformationService = clientInformationService;
             _productRepositoy = productRepository;
             _programmeRepository = programmeRepository;
         }
@@ -432,6 +434,97 @@ namespace TechCertain.WebUI.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public ActionResult Search()
+        {
+            return View("Search");
+
+        }
+
+        [HttpPost]
+        public ActionResult Search(String Value)
+        {
+            //return Redirect("/EditBillingConfiguration" + programmeId);
+            //return Content("/Home/ViewProgrammeByFilter/" + value);
+            return Content("/Home/ViewProgrammeByFilter/?value=" + Value);
+
+            //return Json(Value);
+            //return RedirectToAction("ViewProgrammeByFilter", new { value = Value });
+
+
+        }
+        [HttpGet]
+        public ActionResult ViewProgrammeByFilter( String value)
+        {
+            ProgrammeItem model = new ProgrammeItem();
+
+            List<DealItem> deals = new List<DealItem>();
+
+            if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)
+            {
+                foreach (ClientInformationSheet sheet in _clientInformationService.GetAllInformationFor(value))
+                {
+
+                    ClientProgramme client = sheet.Programme;
+
+                        string status = client.InformationSheet.Status;
+                        string referenceid = client.InformationSheet.ReferenceId;
+                        string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
+                        string localDateSubmitted = null;
+
+                        if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+                        {
+                            localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
+                        }
+
+                        deals.Add(new DealItem
+                        {
+                            Id = client.Id.ToString(),
+                            Name = sheet.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+                            LocalDateCreated = localDateCreated,
+                            LocalDateSubmitted = localDateSubmitted,
+                            Status = status,
+                            ReferenceId = referenceid// Move into ClientProgramme?
+                        });
+                    
+
+                }
+
+            }
+           
+
+            model.Deals = deals;
+
+            if (CurrentUser.PrimaryOrganisation.IsBroker)
+            {
+                model.CurrentUserIsBroker = "True";
+            }
+            else
+            {
+                model.CurrentUserIsBroker = "False";
+            }
+            if (CurrentUser.PrimaryOrganisation.IsInsurer)
+            {
+                model.CurrentUserIsInsurer = "True";
+            }
+            else
+            {
+                model.CurrentUserIsInsurer = "False";
+            }
+            if (CurrentUser.PrimaryOrganisation.IsTC)
+            {
+                model.CurrentUserIsTC = "True";
+            }
+            else
+            {
+                model.CurrentUserIsTC = "False";
+            }
+
+
+            return View(model);
+        }
+
 
         [HttpGet]
         public ActionResult ViewProgramme(Guid id)

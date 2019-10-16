@@ -574,7 +574,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditBillingConfiguration(Guid programmeId)
+        public IActionResult EditBillingConfiguration(Guid programmeId)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             ClientProgramme programme = _programmeService.GetClientProgramme(programmeId);
@@ -590,13 +590,13 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
+        public IActionResult SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {
             ClientProgramme programme = _programmeService.GetClientProgramme(programmeId);
             programme.EGlobalBranchCode = billingConfig[0];
             programme.EGlobalClientNumber = billingConfig[1];
             programme.EGlobalClientStatus = billingConfig[2];
-            if (billingConfig[3] != "")
+            if (string.IsNullOrEmpty(billingConfig[3]))
             {
                 programme.HasEGlobalCustomDescription = true;
                 programme.EGlobalCustomDescription = billingConfig[3];
@@ -609,7 +609,7 @@ namespace TechCertain.WebUI.Controllers
                     
             _programmeService.Update(programme);
 
-            return Redirect("/EditBillingConfiguration" + programmeId);
+            return Redirect("EditBillingConfiguration" + programmeId);
         }
 
         [HttpGet]

@@ -62,6 +62,14 @@ namespace TechCertain.Services.Impl
             //return _customerInformationRepository.FindAll ().Where (s => s.OwnerId == userId);
         }
 
+        public IQueryable<ClientInformationSheet> GetAllInformationFor(String referenceId)
+        {
+            var sheets = _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId);
+
+            return sheets;
+
+        }
+
         public void UpdateInformation(ClientInformationSheet sheet)
         {
             _customerInformationRepository.AddAsync(sheet);

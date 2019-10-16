@@ -45,18 +45,19 @@ namespace TechCertain.WebUI.Controllers
         ILogger<AccountController> _logger;
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
+        IAppSettingService _appSettingService;
 
         public AccountController(
             IAuthenticationService authenticationService,
 			SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             ILogger<AccountController> logger,
-             IMapperSession<User> userRepository,
+            IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
             ILdapService ldapService,
             IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, IClientInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userService)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IAppSettingService appSettingService) : base (userService)
 		{
             _authenticationService = authenticationService;
             _ldapService = ldapService;
@@ -72,6 +73,7 @@ namespace TechCertain.WebUI.Controllers
             _clientInformationService = clientInformationService;
             _organisationService = organisationService;
             _organisationalUnitService = organisationalUnitService;
+            _appSettingService = appSettingService;
         }
 
 		// GET: /account/forgotpassword
@@ -94,11 +96,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword()
 		{
-			//if (Request.IsAuthenticated)
-				//return RedirectToLocal();
-			
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
+
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View();
         }
@@ -121,18 +123,33 @@ namespace TechCertain.WebUI.Controllers
                     //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
                     //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemEmailLogin("support@techcertain.com");
+                    //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
-                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
-                    //User user = _userService.GetUser(token.UserID);
-                    ////change the users password to an intermediate
+                    SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
+                    User user = _userService.GetUser(token.UserID);
+                    if (user != null)
+                    {
+                        //change the users password to an intermediate
+                        _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
 
-                    //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
-                    ////get local domain
-                    //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
-                    //_emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
+                        var deUser = _userManager.FindByNameAsync(user.UserName).Result;
+                        if (deUser != null)
+                        {
+                            var removePasswordResult = _userManager.RemovePasswordAsync(deUser).Result;
+                            var addPasswordResult = _userManager.AddPasswordAsync(deUser, _appSettingService.IntermediatePassword).Result;
+                            if (addPasswordResult.Succeeded)
+                            {
+                                
+                            }
+                        }
 
-                    ViewBag.EmailSent = true;
+                        //get local domain
+                        string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
+                        _emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
+
+                        ViewBag.EmailSent = true;
+                    }
+                    
                 }
             }
             catch (System.Net.Mail.SmtpFailedRecipientsException exception) {
@@ -164,23 +181,24 @@ namespace TechCertain.WebUI.Controllers
 			return View ();
 		}
 
-		// GET: /account/changepassword
-		//[HttpGet]
-		//[AllowAnonymous]
-		//public ActionResult ChangePassword(Guid id)
-		//{
-		//	if (id != Guid.Empty && _authenticationService.GetToken (id) != null) {
-		//		if (_authenticationService.ValidSingleUseToken (id))
-		//			return View ();
-		//		// invalid token? display an error
-		//		return Redirect ("~/Error/InvalidPasswordReset");
-		//	}
-		//	// if we get here - either invalid guid or token doesn't exist - 404
-		//	return PageNotFound ();
-		//}
+        // GET: /account/changepassword
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ChangePassword(Guid id)
+        {
+            if (id != Guid.Empty && _authenticationService.GetToken(id) != null)
+            {
+                if (_authenticationService.ValidSingleUseToken(id))
+                    return View();
+                // invalid token? display an error
+                return Redirect("~/Error/InvalidPasswordReset");
+            }
+            // if we get here - either invalid guid or token doesn't exist - 404
+            return PageNotFound();
+        }
 
-		// POST: /account/changepassword
-		[HttpPost]
+        // POST: /account/changepassword
+        [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
@@ -205,25 +223,56 @@ namespace TechCertain.WebUI.Controllers
 					ModelState.AddModelError ("passwordConfirm", "Passwords do not match");
 					return View ();
 				}
-				//SingleUseToken st = _authenticationService.GetToken (id);
-				//User user = _userService.GetUser (st.UserID);
-				//if (user == null)
-				//	// in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
-				//	throw new Exception (string.Format ("Could not find user with ID {0}", st.UserID));
+                SingleUseToken st = _authenticationService.GetToken(id);
+                User user = _userService.GetUser(st.UserID);
+                if (user == null)
+                    // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
+                    throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
 
-				//string username = user.UserName;
-				// change the users password as them using the intermediate password
-				//if (!string.IsNullOrWhiteSpace (username) && Membership.GetUser (username).ChangePassword (IntermediateChangePassword, viewModel.Password)) {
-				//	_logger.Info ("Password changed for [" + username + "]");
-				//	_authenticationService.UseSingleUseToken (st.Id);
-				//	//return Redirect ("~/Account/PasswordChanged");
-				//	return RedirectToAction ("PasswordChanged", "Account");
-				//}
-				else {
-					ModelState.AddModelError ("passwordConfirm", "The password change has failed. Is your new password complex enough?");
-					return View ();
-				}
-			}
+
+                if (user != null)
+                {
+                    string username = user.UserName;
+
+                    //change the users password to an intermediate
+                    if (_ldapService.ChangePassword(user.UserName, _appSettingService.IntermediatePassword, viewModel.Password))
+                    {
+                        var deUser = _userManager.FindByNameAsync(user.UserName).Result;
+                        if (deUser != null)
+                        {
+                            var removePasswordResult = _userManager.RemovePasswordAsync(deUser).Result;
+                            var addPasswordResult = _userManager.AddPasswordAsync(deUser, viewModel.Password).Result;
+                            if (addPasswordResult.Succeeded)
+                            {
+
+                            }
+                        }
+
+                        _authenticationService.UseSingleUseToken(st.Id);
+                        return RedirectToAction("PasswordChanged", "Account");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("passwordConfirm", "The password change has failed. Is your new password complex enough?");
+                        return View();
+                    }
+
+                }
+
+                    //change the users password as them using the intermediate password
+
+                    //            if (!string.IsNullOrWhiteSpace(username) && Membership.GetUser(username).ChangePassword(IntermediateChangePassword, viewModel.Password))
+                    //            {
+                    //                _logger.Info("Password changed for [" + username + "]");
+                    //                _authenticationService.UseSingleUseToken(st.Id);
+                    //                //return Redirect ("~/Account/PasswordChanged");
+                    //                return RedirectToAction("PasswordChanged", "Account");
+                    //            }
+                    //            else {
+                    //	ModelState.AddModelError ("passwordConfirm", "The password change has failed. Is your new password complex enough?");
+                    //	return View ();
+                    //}
+            }
 			catch (AuthenticationException ex) {
 				ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");
 				
@@ -433,11 +482,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult Register()
 		{
-			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
-			
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
+
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -507,11 +556,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult CoastguardReg()
         {
-            //if (Request.IsAuthenticated)
-                //return RedirectToLocal();
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
 
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -536,11 +585,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult CoastguardForm()
         {
-            //if (Request.IsAuthenticated)
-                //return RedirectToLocal();
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
 
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -623,14 +672,13 @@ namespace TechCertain.WebUI.Controllers
 
         void EnsureLoggedOut()
         {
-            // If the request is (still) marked as authenticated we send the user to the logout action
+            //If the request is (still)marked as authenticated we send the user to the logout action
 
-            throw new Exception("this method needs to be re-written in core");
 
-            //if (Request.IsAuthenticated)
-            //    Logout();
+            if (User.Identity.IsAuthenticated)
+                Logout();
 
-            //if (!Request.IsAuthenticated)
+            //if (!User.Identity.IsAuthenticated)
             //{
             //    if (Response.Cookies[FormsAuthentication.FormsCookieName] != null)
             //        Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.UtcNow.AddDays(-1);
@@ -639,8 +687,6 @@ namespace TechCertain.WebUI.Controllers
             //        Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.UtcNow.AddDays(-1);
             //}
         }
-
-        
 
 		void SetCookie(string cookieName, string value, DateTime expiry)
 		{
@@ -712,17 +758,21 @@ namespace TechCertain.WebUI.Controllers
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
 
-            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits();
-
-            foreach (OrganisationalUnit ou in OrgUnitList)
+            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits().GroupBy(o => o.Name).ToList();
+            foreach (var group in OrgUnitList)
             {
-                organisationalUnits.Add(new OrganisationalUnitViewModel
+                foreach (OrganisationalUnit ou in group)
                 {
-                    OrganisationalUnitId = ou.Id,
-                    Name = ou.Name
-                });
-                //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                    organisationalUnits.Add(new OrganisationalUnitViewModel
+                    {
+                        OrganisationalUnitId = ou.Id,
+                        Name = ou.Name
+                    });
+                    break;
+                    //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                }
             }
+
 
             //if (CurrentUser.Organisations.Count() > 0 && CurrentUser.Organisations.ElementAt(0).OrganisationType.Name != "personal")
             //	model.PrimaryOrganisationName = CurrentUser.Organisations.ElementAt(0).Name;
@@ -749,35 +799,37 @@ namespace TechCertain.WebUI.Controllers
 				return PageNotFound ();
             Guid defaultOU = Guid.Empty;
 
-            throw new Exception("this method needs to be re-written in core");
-            // if we've added a new avatar, upload it. Otherwise don't change
-   //         if (Request.Files.Count > 0)
-			//{
-			//	//Console.WriteLine ("{0} files uploaded", Request.Files.Count);
-			//	var file = Request.Files [0];
-			//	if (file != null && file.ContentLength > 0)
-			//	{
-			//		byte[] buffer = new byte[file.ContentLength];
-			//		file.InputStream.Read(buffer, 0, buffer.Length);
-			//		if (_fileService.IsImageFile (buffer, file.ContentType, file.FileName)) {
-			//			//_fileService.UploadFile (buffer, file.ContentType, file.FileName);
-			//			Image img = new Image (user, file.FileName, file.ContentType);
-			//			img.Contents = buffer;
-			//			_fileService.UploadFile (img);
-			//			model.ProfilePicture = file.FileName;
-			//			user.ProfilePicture = img;
-			//		}
-			//		else
-			//			ModelState.AddModelError ("", "Unable to upload profile picture - invalid image file");
-			//	}
-			//}
+            //if we've added a new avatar, upload it. Otherwise don't change
+            if (Request.Form.Files.Count > 0)
+            {
+                //Console.WriteLine ("{0} files uploaded", Request.Files.Count);
+                var file = Request.Form.Files[0];
+                if (file != null && file.Length > 0)
+                {
+                    byte[] buffer = new byte[file.Length];
+                    file.OpenReadStream().Read(buffer, 0, buffer.Length);
+                    if (_fileService.IsImageFile(buffer, file.ContentType, file.FileName))
+                    {
+                        //_fileService.UploadFile (buffer, file.ContentType, file.FileName);
+                        Image img = new Image(user, file.FileName, file.ContentType);
+                        img.Contents = buffer;
+                        _fileService.UploadFile(img);
+                        model.ProfilePicture = file.FileName;
+                        user.ProfilePicture = img;
+                    }
+                    else
+                        ModelState.AddModelError("", "Unable to upload profile picture - invalid image file");
+                }
+            }
 
-   //         if(Request.Form["branch"] != null)
-   //         {
-   //             defaultOU = Guid.Parse(Request.Form["branch"]);
-   //             OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU);
-   //             user.DefaultOU = DefaultOU;
-   //         }
+            Microsoft.Extensions.Primitives.StringValues branchId;
+            Request.Form.TryGetValue("branch", out branchId);
+            if (branchId.Count == 1)
+            {
+                defaultOU = Guid.Parse(branchId);
+                OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU);
+                user.DefaultOU = DefaultOU;
+            }
 
             user.FirstName = model.FirstName;
 			user.LastName = model.LastName;

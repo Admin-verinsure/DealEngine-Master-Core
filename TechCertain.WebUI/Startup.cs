@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -26,15 +26,15 @@ namespace TechCertain.WebUI
             services.AddControllersWithViews();
             services.AddRouting();
             services.AddMvc();
-            services.AddRazorPages();            
+            services.AddRazorPages();
             services.AddNHibernate();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(MapperConfig.ConfigureMaps());
-            services.AddLogging();            
+            services.AddLogging();
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddBaseLdapPackage();
-            services.AddResponseCaching();            
+            services.AddResponseCaching();
             services.AddServices();
         }
 

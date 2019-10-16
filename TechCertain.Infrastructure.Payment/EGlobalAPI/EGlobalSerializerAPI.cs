@@ -7,7 +7,7 @@ using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 {
-    public class EGlobalSerializerAPI : ISerializer
+    public class EGlobalSerializerAPI 
     {
         protected EGlobalPolicy EGlobalPolicy;
         protected EGlobalPolicyAPI EGlobalPolicyAPI;
@@ -30,8 +30,6 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// <param name="objPolicy">Object policy.</param>
         public string SerializePolicy(ClientProgramme programme, User currentUser)
         {
-            //objPolicy.AdviseAndBindQuoteByClient(objPolicy.ContactUser);
-            //objPolicy.SetWorkflowID((int)TCQuote.TCWorkflowStatus.Pending_Invoice);
             string xml = "Failed to Serialize programme ";
             EGlobalAPI = new EGlobalAPI();
             try
@@ -43,25 +41,10 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
                     if (EGlobalPolicy != null)
                     {
-                        // Bind all secondary quotes
-                        /*foreach (TCQuote quote in gv_objXML.InvoicePolicies)
-                        {
-                            if (!quote.Policy)
-                            {
-                                TCUser user = quote.Proposal.ContactUser;
-                                quote.PublishToContactUser(user);
-                                quote.AdviseAndBindQuoteByClient(user);
-                            }
-                        }*/
-
                         EGlobalPolicy.PaymentType = "INVOICE";
-
-                        //gv_objXML.SaveTransaction();
-
                         xml = EGlobalPolicy.Serialize();
-                        SaveXml(xml, EGlobalPolicy.FTPFolder);
-                        SendEGlobalPolicy(xml, EGlobalPolicy);
-
+                        //removed for testing
+                        //SaveXml(xml, EGlobalPolicy.FTPFolder);
                     }
                     else
                         throw new ArgumentNullException(nameof(EGlobalPolicy));
@@ -70,6 +53,22 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             catch (Exception ex)
             {
                 xml += ex.InnerException + " "+ ex.StackTrace;
+            }
+
+            return xml;
+        }
+
+        public string DeSerializeResponse(string byteResponse)
+        {
+            string xml = "Failed to Deserialize programme";            
+            try
+            {
+                EGlobalAPI.ProcessAsyncResult(byteResponse);
+                xml = "true";
+            }
+            catch (Exception ex)
+            {
+                xml += ex.InnerException + " " + ex.StackTrace;
             }
 
             return xml;
@@ -97,8 +96,6 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             string xml = EGlobalPolicy.Serialize();
 
             doc.LoadXml(gv_strXML);
-
-            SendEGlobalPolicy(xml, EGlobalPolicy);
         }
 
         public void UpdatePolicy(Package package, ClientProgramme programme, User currentUser)
@@ -133,7 +130,6 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
             string xml = EGlobalPolicy.Serialize();
             SaveXml(xml, EGlobalPolicy.FTPFolder);
-            SendEGlobalPolicy(xml, EGlobalPolicy);
         }
 
         public EGlobalPolicy LoadLastXML(ClientProgramme clientProgramme)
@@ -194,20 +190,6 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return EGlobalPolicy;
         }
 
-        protected void SendEGlobalPolicy(string xml, EGlobalPolicy EGlobalPolicy)
-        {
-            try
-            {
-                // Send to EGlobal
-                // EGlobalAPI.SendInvoiceXMLAsync(xml, EGlobalPolicy);
-                EGlobalAPI.SendInvoiceXML(xml);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error sending EGlobcal Invoice " + EGlobalPolicy.EGlobalPolicyId + Environment.NewLine + ex.ToString());
-            }
-        }
-
         protected void SaveXml(string xml, string folder)
         {
             try
@@ -256,27 +238,6 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return strFileName;
         }
 
-        public bool SiteActive()
-        {
-            EGlobalAPI = new EGlobalAPI();
-            var res = EGlobalAPI.TestSiteStatus();
-
-            if (res != "ACTIVE")
-                return false;
-
-            return true;
-        }
-
-        /*public static EGlobalAPI GetEGlobalPolicyInvoice(ClientProgramme clientProgramme)
-        {
-            return GetEGlobalSerializer(clientProgramme).GetEGlobalXML(clientProgramme);
-        }
-
-        public static EGlobalAPI GetEGlobalSerializer(ClientProgramme clientProgramme)
-        {
-            Type serializerType = Type.GetType("TCSerializer." + policy.SchemeProject.Scheme.SerializerClass + ",TCShared");
-            return ((BaseEGlobalSerializer)Activator.CreateInstance(serializerType));
-        }*/
     }
 }
 

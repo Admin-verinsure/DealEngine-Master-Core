@@ -16,7 +16,7 @@ namespace TechCertain.WebUI.Controllers
         protected IUserService _userService;
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
-
+        
         public BaseController(IUserService userService)
         {
             _userService = userService;
@@ -92,7 +92,7 @@ namespace TechCertain.WebUI.Controllers
             get
             {
                 throw new Exception("This method will need to be re-written");
-                //return WebConfigurationManager.AppSettings ["IntermediatePassword"]; }
+                //return _appSettingService.IntermediatePassword;
             }
         }
 

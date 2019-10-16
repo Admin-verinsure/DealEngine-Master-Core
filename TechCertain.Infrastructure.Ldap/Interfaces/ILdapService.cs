@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bismuth.Ldap;
+using System;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Infrastructure.Ldap.Interfaces
@@ -16,17 +17,18 @@ namespace TechCertain.Infrastructure.Ldap.Interfaces
 
 		//PasswordPolicy GetPasswordPolicy (string passwordPolicyName);
 		void SetPasswordPolicyFor (User user, string passwordPolicyName);
-
 		void Create (User user);
 		void Create (Organisation organisation);
 		//void Create (PasswordPolicy passwordPolicy)
-
 		void Update (User user);
 		void Update (Organisation organisation);
 		//void Update (PasswordPolicy passwordPolicy)
-
 		void GlobalBan (User user);
 		void RemoveGlobalBan (User user);
-	}
+        bool ChangePassword(string username, string oldPassword, string newPassword);
+        //LdapClient GetLdapConnection();
+        //LdapClient GetLdapConnection(string ldapUser, string password);
+        string GetUsernameDN(string username);
+    }
 }
 

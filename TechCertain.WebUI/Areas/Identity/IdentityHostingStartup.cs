@@ -24,8 +24,8 @@ namespace TechCertain.WebUI.Areas.Identity
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
                         options.Password.RequireDigit = false;
-                        options.Password.RequiredLength = 0;      
-                        
+                        options.Password.RequiredLength = 6;
+                        options.Password.RequireLowercase = false;
                     })
                     //.AddUserStore<DealEngineUserStore>()
                     //.AddUserManager<DealEngineUserManager>()

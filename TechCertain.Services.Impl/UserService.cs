@@ -129,6 +129,7 @@ namespace TechCertain.Services.Impl
 		public void Update (User user)
 		{
 		    _userRepository.UpdateAsync(user);
+			_ldapService.Update (user);
 		}
 
         public void Delete (User user, User authorizingUser)
