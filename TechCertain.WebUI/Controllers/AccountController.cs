@@ -259,19 +259,6 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                    //change the users password as them using the intermediate password
-
-                    //            if (!string.IsNullOrWhiteSpace(username) && Membership.GetUser(username).ChangePassword(IntermediateChangePassword, viewModel.Password))
-                    //            {
-                    //                _logger.Info("Password changed for [" + username + "]");
-                    //                _authenticationService.UseSingleUseToken(st.Id);
-                    //                //return Redirect ("~/Account/PasswordChanged");
-                    //                return RedirectToAction("PasswordChanged", "Account");
-                    //            }
-                    //            else {
-                    //	ModelState.AddModelError ("passwordConfirm", "The password change has failed. Is your new password complex enough?");
-                    //	return View ();
-                    //}
             }
 			catch (AuthenticationException ex) {
 				ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");
@@ -290,25 +277,6 @@ namespace TechCertain.WebUI.Controllers
 		public ActionResult PasswordChanged ()
 		{
 			return View ();
-		}
-
-		[HttpGet]
-		public ActionResult ImpersonateUser (string id)
-		{
-			User user = _userService.GetUser (id);
-
-			//if (_permissionsService.DoesUserHaveRole(id, "Admin")) {
-			//	_logger.Info (" Attempt by [" + CurrentUser.UserName + "] to impersonate admin user [" + user.UserName + "]");
-			//}
-			//else {
-			//	//Session.Abandon ();
-			//	//FormsAuthentication.SetAuthCookie (user.UserName, true);
-			//	SetCookie ("ASP.NET_SessionId", "", DateTime.MinValue);
-
-			//	_logger.Info ("[" + CurrentUser.UserName + "] is impersonating [" + user.UserName + "]");
-			//}
-
-			return Redirect ("~/Home/Index");
 		}
 
 		// GET: /account/login
@@ -357,7 +325,7 @@ namespace TechCertain.WebUI.Controllers
                     var deUser = _userManager.FindByNameAsync(userName).Result;
                     if (deUser == null)
                     {
-                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
+                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password };
                         await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
                     }
 
@@ -367,8 +335,13 @@ namespace TechCertain.WebUI.Controllers
                         //add claims, roles etc here
                     }
 
-                    var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
-                    var result = await LoginMarsh(user, viewModel.DevicePrint);
+                    //var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    //user.UserName = "testUserName";
+                    //await _userRepository.UpdateAsync(user).ConfigureAwait(false);
+                    //user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == user.UserName);
+
+                    //var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    //var result = await LoginMarsh(user, viewModel.DevicePrint);
                     return LocalRedirect("~/Home/Index");
                 }
 
@@ -410,10 +383,7 @@ namespace TechCertain.WebUI.Controllers
                 RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
                 if (rsaStatus == RsaStatus.Allow)
                 {
-
                     Console.WriteLine("RSA User allowed, signing in...");
-                    SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
-
                     _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
                 }
                 if (rsaStatus == RsaStatus.RequiresOtp)
@@ -610,28 +580,13 @@ namespace TechCertain.WebUI.Controllers
         }
 
         // POST: /account/Logout
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
-
             _signInManager.SignOutAsync();
             HttpContext.SignOutAsync();
             HttpContext.Response.Cookies.Delete(".AspNet.Consent");
-            //FormsAuthentication.SignOut();
-            
-
-            //_dealEngineSignInManager.SignOutAsync();
-
-            //HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
-
-            //DateTime expiredDate = DateTime.UtcNow.AddDays (-1);
-
-            //// clear authentication cookie
-            //SetCookie(FormsAuthentication.FormsCookieName, "", expiredDate, FormsAuthentication.CookieDomain);
-
-            //// clear session cookie
-            //SetCookie("ASP.NET_SessionId", "", expiredDate);
 
             return RedirectToLocal();
         }
@@ -653,57 +608,10 @@ namespace TechCertain.WebUI.Controllers
             return Redirect("~/Home/Index");
         }
 
-        //private void AddErrors(DbEntityValidationException exc)
-        //{
-        //    foreach (var error in exc.EntityValidationErrors.SelectMany(validationErrors => validationErrors.ValidationErrors.Select(validationError => validationError.ErrorMessage)))
-        //    {
-        //        ModelState.AddModelError("", error);
-        //    }
-        //}
-
-        //private void AddErrors(IdentityResult result)
-        //{
-        //    // Add all errors that were returned to the page error collection
-        //    foreach (var error in result.Errors)
-        //    {
-        //        ModelState.AddModelError("", error);
-        //    }
-        //}
-
         void EnsureLoggedOut()
         {
-            //If the request is (still)marked as authenticated we send the user to the logout action
-
-
             if (User.Identity.IsAuthenticated)
                 Logout();
-
-            //if (!User.Identity.IsAuthenticated)
-            //{
-            //    if (Response.Cookies[FormsAuthentication.FormsCookieName] != null)
-            //        Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.UtcNow.AddDays(-1);
-
-            //    if (Response.Cookies["ASP.NET_SessionId"] != null)
-            //        Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.UtcNow.AddDays(-1);
-            //}
-        }
-
-		void SetCookie(string cookieName, string value, DateTime expiry)
-		{
-			SetCookie (cookieName, value, expiry, "");
-		}
-
-		void SetCookie(string cookieName, string value, DateTime expiry, string domain)
-		{
-            //throw new Exception("this method needs to be re-written in core");
-            //HttpCookie authCookie = new HttpCookie(cookieName, value);
-            //if (!string.IsNullOrWhiteSpace(domain))
-            //    authCookie.Domain = domain;
-            //authCookie.Expires = expiry;
-            //// overridden in Global.Application_EndRequest
-            ////			authCookie.HttpOnly = true;
-            ////			authCookie.Secure = true;
-            //Response.SetCookie(authCookie);
         }
 
 		[HttpGet]
@@ -773,9 +681,6 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
 
-
-            //if (CurrentUser.Organisations.Count() > 0 && CurrentUser.Organisations.ElementAt(0).OrganisationType.Name != "personal")
-            //	model.PrimaryOrganisationName = CurrentUser.Organisations.ElementAt(0).Name;
             if (CurrentUser.PrimaryOrganisation != null)
                 model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
             model.Description = CurrentUser.Description;
@@ -786,7 +691,6 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationalUnitsVM = organisationalUnits;
 
             return View(model);
-//			return View("Profile", model);
 		}
 
 		[HttpPost]
@@ -870,12 +774,6 @@ namespace TechCertain.WebUI.Controllers
 			try
 			{
                 throw new Exception("this method needs to be re-written in core");
-                //if (Membership.GetUser(CurrentUser.UserName).ChangePassword(model.CurrentPassword, model.NewPassword))
-                //{
-                //    string content = "<div class=\"alert alert-success\">Your password has been successfully changed.</div>";
-                //    content += "<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>";
-                //    return Content(content);
-                //}
             }
 			catch (Exception ex) {
 				ModelState.AddModelError ("", ex.Message);

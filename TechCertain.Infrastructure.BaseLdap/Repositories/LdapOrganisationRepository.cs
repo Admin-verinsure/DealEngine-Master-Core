@@ -1,13 +1,14 @@
 ﻿using Novell.Directory.Ldap;
 using System;
+using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Services;
 using TechCertain.Infrastructure.BaseLdap.Converters;
 using TechCertain.Infrastructure.BaseLdap.Interfaces;
+using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Infrastructure.BaseLdap.Repositories
 {
-	public class LdapOrganisationRepository : IOrganisationRepository
+	public class LdapOrganisationRepository : IOrganisationService
     {
 		ILdapConfigService _ldapConfigService;
 		ILdapRepository _ldapRepository;
@@ -24,7 +25,7 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 
 		#region IOrganisationRepository implementation
 
-		public Organisation Get (Guid organisationID)
+		public Organisation GetOrganisation(Guid organisationID)
 		{
 			string organisationDn = _ldapConfigService.GetOrganisationDN (organisationID);
 			LdapEntry entry = GetLdapEntry(organisationDn);
@@ -35,12 +36,12 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			return LdapConverter.ToOrganisation(entry);
 		}
 
-		public bool Create (Organisation organisation)
+		public Organisation CreateNewOrganisation(Organisation organisation)
 		{
 			string organisationDn = _ldapConfigService.GetOrganisationDN (organisation.Id);
 			LdapEntry entry = LdapConverter.ToEntry (organisation, organisationDn);
 
-			return _ldapRepository.AddEntry(entry);
+			return organisation;
 			//throw new NotImplementedException ();
 		}
 
@@ -58,7 +59,7 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
             throw new NotImplementedException();
         }
 
-        public bool Delete (Organisation organisation)
+        public bool DeleteOrganisation(User deletedBy, Organisation organisation)
 		{
 			throw new NotImplementedException ();
 		}
@@ -70,9 +71,29 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			return _ldapRepository.GetEntry(dn, _ldapConfigService.AdminBindDN, _ldapConfigService.AdminBindPassword);
 		}
 
-        LdapEntry IOrganisationRepository.GetLdapEntry(string dn)
+        public Organisation CreateNewOrganisation(string p1, OrganisationType organisationType, string ownerFirstName, string ownerLastName, string ownerEmail)
         {
-            return _ldapRepository.GetEntry(dn, _ldapConfigService.AdminBindDN, _ldapConfigService.AdminBindPassword);
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<Organisation> GetAllOrganisations()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Organisation GetOrganisationByName(string organisationName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Organisation GetOrganisationByEmail(string organisationEmail)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateOrganisation(Organisation organisation)
+        {
+            throw new NotImplementedException();
         }
     }
 }

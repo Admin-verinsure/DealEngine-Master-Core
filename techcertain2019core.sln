@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{D9F7FD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Exceptions", "TechCertain.Domain.Exceptions\TechCertain.Domain.Exceptions.csproj", "{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Services", "TechCertain.Domain.Services\TechCertain.Domain.Services.csproj", "{F6AA139C-07CF-4701-A78D-D9E0B363264D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{352294D1-1048-48C8-9A02-236A597A602B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bismuth.Ldap", "Bismuth.Ldap\Bismuth.Ldap.csproj", "{9001B632-59A9-43CC-A841-F6B6159B24DC}"
@@ -49,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.WebUI", "TechCe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealEngine.Infrastructure.AuthorizationRSA", "DealEngine.Infrastructure.AuthorizationRSA\DealEngine.Infrastructure.AuthorizationRSA.csproj", "{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Domain.Services", "TechCertain.Domain.Services\TechCertain.Domain.Services.csproj", "{BE067612-7348-4165-AE35-7305031C64A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,10 +59,6 @@ Global
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6AA139C-07CF-4701-A78D-D9E0B363264D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9001B632-59A9-43CC-A841-F6B6159B24DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9001B632-59A9-43CC-A841-F6B6159B24DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9001B632-59A9-43CC-A841-F6B6159B24DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -127,13 +123,16 @@ Global
 		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE067612-7348-4165-AE35-7305031C64A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE067612-7348-4165-AE35-7305031C64A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE067612-7348-4165-AE35-7305031C64A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE067612-7348-4165-AE35-7305031C64A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{07AEE3B3-E6A1-4A80-8EC8-3E9E8E1C6B2C} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
-		{F6AA139C-07CF-4701-A78D-D9E0B363264D} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
 		{9001B632-59A9-43CC-A841-F6B6159B24DC} = {352294D1-1048-48C8-9A02-236A597A602B}
 		{7CCA5676-2CB8-49A1-B91A-CE9CA4EFBD8A} = {352294D1-1048-48C8-9A02-236A597A602B}
 		{8E5E3FDB-B069-4FFF-883F-30F409F6794E} = {A5E4C7C9-8238-45E3-ADDE-5C8BCFF6C764}
@@ -150,6 +149,7 @@ Global
 		{F94C40D8-1833-4AFE-932D-E318949B4F65} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
 		{D77B0A76-496E-4526-8320-6176AEB848ED} = {AB10B0D1-6D77-41CA-8BCD-E86192BC5D01}
 		{5819AE8F-42D1-47E8-9BE9-0291DBD5A7A1} = {A5E4C7C9-8238-45E3-ADDE-5C8BCFF6C764}
+		{BE067612-7348-4165-AE35-7305031C64A1} = {D9F7FD19-6468-4A04-B372-BC84867ECE58}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5668B32C-4F98-4A16-9AA6-0CC704FE715D}
