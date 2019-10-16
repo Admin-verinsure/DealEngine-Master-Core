@@ -45,6 +45,7 @@ namespace TechCertain.WebUI.Controllers
         ILogger<AccountController> _logger;
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
+        IAppSettingService _appSettingService;
 
         public AccountController(
             IAuthenticationService authenticationService,
@@ -55,7 +56,7 @@ namespace TechCertain.WebUI.Controllers
             ILdapService ldapService,
             IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IMapperSession<User> userRepository) : base (userService)
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IMapperSession<User> userRepository, IAppSettingService appSettingService) : base (userService)
 		{
             _authenticationService = authenticationService;
             _ldapService = ldapService;
@@ -71,6 +72,7 @@ namespace TechCertain.WebUI.Controllers
             _clientInformationService = clientInformationService;
             _organisationService = organisationService;
             _organisationalUnitService = organisationalUnitService;
+            _appSettingService = appSettingService;
         }
 
 		// GET: /account/forgotpassword
@@ -93,11 +95,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword()
 		{
-			//if (Request.IsAuthenticated)
-				//return RedirectToLocal();
-			
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
+
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View();
         }
@@ -120,18 +122,33 @@ namespace TechCertain.WebUI.Controllers
                     //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
                     //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemEmailLogin("support@techcertain.com");
+                    //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
-                    //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
-                    //User user = _userService.GetUser(token.UserID);
-                    ////change the users password to an intermediate
+                    SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
+                    User user = _userService.GetUser(token.UserID);
+                    if (user != null)
+                    {
+                        //change the users password to an intermediate
+                        _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
 
-                    //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
-                    ////get local domain
-                    //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
-                    //_emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
+                        var deUser = _userManager.FindByNameAsync(user.UserName).Result;
+                        if (deUser != null)
+                        {
+                            var removePasswordResult = _userManager.RemovePasswordAsync(deUser).Result;
+                            var addPasswordResult = _userManager.AddPasswordAsync(deUser, _appSettingService.IntermediatePassword).Result;
+                            if (addPasswordResult.Succeeded)
+                            {
+                                
+                            }
+                        }
 
-                    ViewBag.EmailSent = true;
+                        //get local domain
+                        string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
+                        _emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
+
+                        ViewBag.EmailSent = true;
+                    }
+                    
                 }
             }
             catch (System.Net.Mail.SmtpFailedRecipientsException exception) {
@@ -163,23 +180,24 @@ namespace TechCertain.WebUI.Controllers
 			return View ();
 		}
 
-		// GET: /account/changepassword
-		//[HttpGet]
-		//[AllowAnonymous]
-		//public ActionResult ChangePassword(Guid id)
-		//{
-		//	if (id != Guid.Empty && _authenticationService.GetToken (id) != null) {
-		//		if (_authenticationService.ValidSingleUseToken (id))
-		//			return View ();
-		//		// invalid token? display an error
-		//		return Redirect ("~/Error/InvalidPasswordReset");
-		//	}
-		//	// if we get here - either invalid guid or token doesn't exist - 404
-		//	return PageNotFound ();
-		//}
+        // GET: /account/changepassword
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ChangePassword(Guid id)
+        {
+            if (id != Guid.Empty && _authenticationService.GetToken(id) != null)
+            {
+                if (_authenticationService.ValidSingleUseToken(id))
+                    return View();
+                // invalid token? display an error
+                return Redirect("~/Error/InvalidPasswordReset");
+            }
+            // if we get here - either invalid guid or token doesn't exist - 404
+            return PageNotFound();
+        }
 
-		// POST: /account/changepassword
-		[HttpPost]
+        // POST: /account/changepassword
+        [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
@@ -204,25 +222,56 @@ namespace TechCertain.WebUI.Controllers
 					ModelState.AddModelError ("passwordConfirm", "Passwords do not match");
 					return View ();
 				}
-				//SingleUseToken st = _authenticationService.GetToken (id);
-				//User user = _userService.GetUser (st.UserID);
-				//if (user == null)
-				//	// in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
-				//	throw new Exception (string.Format ("Could not find user with ID {0}", st.UserID));
+                SingleUseToken st = _authenticationService.GetToken(id);
+                User user = _userService.GetUser(st.UserID);
+                if (user == null)
+                    // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
+                    throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
 
-				//string username = user.UserName;
-				// change the users password as them using the intermediate password
-				//if (!string.IsNullOrWhiteSpace (username) && Membership.GetUser (username).ChangePassword (IntermediateChangePassword, viewModel.Password)) {
-				//	_logger.Info ("Password changed for [" + username + "]");
-				//	_authenticationService.UseSingleUseToken (st.Id);
-				//	//return Redirect ("~/Account/PasswordChanged");
-				//	return RedirectToAction ("PasswordChanged", "Account");
-				//}
-				else {
-					ModelState.AddModelError ("passwordConfirm", "The password change has failed. Is your new password complex enough?");
-					return View ();
-				}
-			}
+
+                if (user != null)
+                {
+                    string username = user.UserName;
+
+                    //change the users password to an intermediate
+                    if (_ldapService.ChangePassword(user.UserName, _appSettingService.IntermediatePassword, viewModel.Password))
+                    {
+                        var deUser = _userManager.FindByNameAsync(user.UserName).Result;
+                        if (deUser != null)
+                        {
+                            var removePasswordResult = _userManager.RemovePasswordAsync(deUser).Result;
+                            var addPasswordResult = _userManager.AddPasswordAsync(deUser, viewModel.Password).Result;
+                            if (addPasswordResult.Succeeded)
+                            {
+
+                            }
+                        }
+
+                        _authenticationService.UseSingleUseToken(st.Id);
+                        return RedirectToAction("PasswordChanged", "Account");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("passwordConfirm", "The password change has failed. Is your new password complex enough?");
+                        return View();
+                    }
+
+                }
+
+                    //change the users password as them using the intermediate password
+
+                    //            if (!string.IsNullOrWhiteSpace(username) && Membership.GetUser(username).ChangePassword(IntermediateChangePassword, viewModel.Password))
+                    //            {
+                    //                _logger.Info("Password changed for [" + username + "]");
+                    //                _authenticationService.UseSingleUseToken(st.Id);
+                    //                //return Redirect ("~/Account/PasswordChanged");
+                    //                return RedirectToAction("PasswordChanged", "Account");
+                    //            }
+                    //            else {
+                    //	ModelState.AddModelError ("passwordConfirm", "The password change has failed. Is your new password complex enough?");
+                    //	return View ();
+                    //}
+            }
 			catch (AuthenticationException ex) {
 				ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");
 				
@@ -434,11 +483,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult Register()
 		{
-			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
-			
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
+
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -508,11 +557,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult CoastguardReg()
         {
-            //if (Request.IsAuthenticated)
-                //return RedirectToLocal();
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
 
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -537,11 +586,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public ActionResult CoastguardForm()
         {
-            //if (Request.IsAuthenticated)
-                //return RedirectToLocal();
+            if (User.Identity.IsAuthenticated)
+                return RedirectToLocal();
 
             // We do not want to use any existing identity information
-            //EnsureLoggedOut();
+            EnsureLoggedOut();
 
             return View(new AccountRegistrationModel());
         }
@@ -624,14 +673,13 @@ namespace TechCertain.WebUI.Controllers
 
         void EnsureLoggedOut()
         {
-            // If the request is (still) marked as authenticated we send the user to the logout action
+            //If the request is (still)marked as authenticated we send the user to the logout action
 
-            throw new Exception("this method needs to be re-written in core");
 
-            //if (Request.IsAuthenticated)
-            //    Logout();
+            if (User.Identity.IsAuthenticated)
+                Logout();
 
-            //if (!Request.IsAuthenticated)
+            //if (!User.Identity.IsAuthenticated)
             //{
             //    if (Response.Cookies[FormsAuthentication.FormsCookieName] != null)
             //        Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.UtcNow.AddDays(-1);

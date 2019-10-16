@@ -4,6 +4,7 @@ using Bismuth.Ldap;
 using Bismuth.Ldap.Requests;
 using Bismuth.Ldap.Responses;
 using TechCertain.Domain.Entities;
+using TechCertain.Domain.Exceptions;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 
 namespace TechCertain.Infrastructure.Ldap.Services
@@ -256,49 +257,66 @@ namespace TechCertain.Infrastructure.Ldap.Services
 			return organisations;
 		}
 
-        //public bool ChangePassword(string username, string oldPassword, string newPassword)
-        //{
-        //    if (string.IsNullOrWhiteSpace(username))
-        //        throw new ArgumentNullException(nameof(username));
-        //    if (string.IsNullOrWhiteSpace(newPassword))
-        //        throw new ArgumentNullException(nameof(newPassword));
+        public bool ChangePassword(string username, string oldPassword, string newPassword)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentNullException(nameof(username));
+            if (string.IsNullOrWhiteSpace(newPassword))
+                throw new ArgumentNullException(nameof(newPassword));
 
-        //    bool result = false;
+            bool result = false;
 
-        //    string userDN =  GetUsernameDN(username);
+            string userDN = GetUsernameDN(username);
 
-        //    string bindDN = userDN;
-        //    string bindPw = oldPassword;
-        //    Console.WriteLine(username + " " + oldPassword + " " + newPassword);
-        //    if (string.IsNullOrWhiteSpace(oldPassword))
-        //    {
-        //        string baseDN = ConfigurationManager.AppSettings["OpenLdapBaseDN"];
-        //        bindDN = string.Format(ConfigurationManager.AppSettings["OpenLdapBindDN"], baseDN);
-        //        bindPw = ConfigurationManager.AppSettings["OpenLdapBindPW"];
-        //    }
+            string bindDN = userDN;
+            string bindPw = oldPassword;
+            Console.WriteLine(username + " " + oldPassword + " " + newPassword);
+            if (string.IsNullOrWhiteSpace(oldPassword))
+            {
+                string baseDN = _ldapConfiguration.BaseDn;
+                bindDN = string.Format(_ldapConfiguration.AdminDn, baseDN);
+                bindPw = _ldapConfiguration.AdminPassword;
+            }
 
-        //    using (LdapClient ldapClient = GetLdapConnection(bindDN, bindPw))
-        //    {
-        //        var modifyRequest = new ModifyRequest(ldapClient.NextMessageId)
-        //        {
-        //            EntryName = userDN,
-        //            Attributes = new List<ModifyAttribute> {
-        //                new ModifyAttribute("userpassword", ModificationType.Replace, newPassword)
-        //            }
-        //        };
-        //        var response = ldapClient.Send<ModifyResponse>(modifyRequest);
-        //        if (response.ResultCode == 0)
-        //            return true;
+            using (LdapClient ldapClient = GetLdapConnection(bindDN, bindPw))
+            {
+                var modifyRequest = new ModifyRequest(ldapClient.NextMessageId)
+                {
+                    EntryName = userDN,
+                    Attributes = new List<ModifyAttribute> {
+                        new ModifyAttribute("userpassword", ModificationType.Replace, newPassword)
+                    }
+                };
+                var response = ldapClient.Send<ModifyResponse>(modifyRequest);
+                if (response.ResultCode == 0)
+                    return true;
 
-        //        // error otherwise
-        //        throw new AuthenticationException(response.ErrorMessage) { ErrorCode = response.ResultCode, User = username };
-        //    }
-        //}
+                // error otherwise
+                throw new AuthenticationException(response.ErrorMessage) { ErrorCode = response.ResultCode, User = username };
+            }
+        }
 
-        //string GetUsernameDN(string username)
-        //{
-        //    return string.Format(ConfigurationManager.AppSettings["OpenLdapUserDNFromUsername"], username, _ldapConfiguration.BaseDn);
-        //}
+        LdapClient GetLdapConnection()
+        {
+            string baseDN = _ldapConfiguration.BaseDn;
+            string adminUserDN = string.Format(_ldapConfiguration.AdminDn, baseDN);
+            string adminUserPassword = _ldapConfiguration.AdminPassword;
+
+            return GetLdapConnection(adminUserDN, adminUserPassword);
+        }
+
+        LdapClient GetLdapConnection(string ldapUser, string password)
+        {
+            LdapClient ldapClient = new LdapClient(_ldapConfiguration.LdapHost, _ldapConfiguration.LdapPort);
+            ldapClient.Bind(ldapUser, password, BindAuthentication.Simple);
+
+            return ldapClient;
+        }
+
+        public string GetUsernameDN(string username)
+        {
+            return string.Format(_ldapConfiguration.OpenLdapUserDNFromUsername, username, _ldapConfiguration.UserDN);
+        }
     }
 }
 
