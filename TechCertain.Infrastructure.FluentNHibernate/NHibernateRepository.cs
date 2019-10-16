@@ -27,6 +27,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
         public void Update(TEntity entity)
         {
             session.Update(entity);
+            session.Save(entity);
         }
 
         public TEntity GetById(Guid id)

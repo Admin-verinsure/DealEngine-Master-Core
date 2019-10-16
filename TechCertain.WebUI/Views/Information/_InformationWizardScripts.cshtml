@@ -1,26 +1,17 @@
 ﻿<!-- PAGE RELATED PLUGIN(S) -->
-@*<script src="/Scripts/bootstrapmvc" defer></script>*@
-<!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
-<!-- <script src="/Scripts/bootstrapmvc" defer></script>-->
-<!-- <script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
 
 <script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
 <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
 <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-@*<script src="~/lib/popper.js/popper.min.js"></script>*@
-@*<script src="~/lib/popper.js/popper.js"></script>*@
-<script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-@*<script src="~/lib/multiselect/js/multiselect.js"></script>*@
-<script src="~/lib/popper.js/umd/popper.js"></script>
+<script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js" defer></script>
+<script src="~/lib/popper.js/umd/popper.js" defer></script>
 
 
 <script type="text/javascript">
 
    $(document).ready(function () {
-
-
            $('#smartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
             keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
@@ -6725,7 +6716,7 @@ async: true
         if ($('#paymentCreditCard').is(":checked")) {
             $.ajax({
                 type: "POST",
-                url: '@Url.ActionLink("GeneratePxPayment1", "Agreement")',
+                url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
                 data: $("#tab1 :input").serialize({ json: true })
 
             })
@@ -6746,45 +6737,5 @@ async: true
                 });
         }
     }
-
-    @*function submitPayment() {
-
-            var answerSheetId = $('#AnswerSheetId').val();
-        debugger;
-        var AnswerSheetId = $('#AnswerSheetId').val();
-        if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
-            return false;
-         var postData = {
-		'locationId': locationId,
-		'answerSheetId': _sheetId
-	};
-
-        if ($('#paymentCreditCard').is(":checked")) {
-            debugger;
-            $.ajax({
-                type: "Post",
-
-                url: '@Url.Action("GeneratePxPayment", "Agreement")',
-                data: answerSheetId
-            })
-                .done(function (data) {
-                    window.location = data.url;
-                });
-        }
-        else if ($('#paymentEGlobal').is(":checked")) {
-                        debugger;
-
-            $.ajax({
-                type: "Post",
-                url: '@Url.Action("GenerateEGlobal", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true })
-
-            })
-                .done(function (url) {
-                    $("#documentsSection").on('load', url, function () {
-                    });
-                });
-        }
-    }*@
 </script>
 

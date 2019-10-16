@@ -6,7 +6,7 @@ namespace TechCertain.Services.Interfaces
     public interface IHttpClientService
     {
         Task<string> Analyze(string request);
-        Task<byte[]> CreateEGlobalInvoice(string xmlPayload);
+        Task<string> CreateEGlobalInvoice(string xmlPayload);
         Task<string> GetEglobalStatus();
     }
 }

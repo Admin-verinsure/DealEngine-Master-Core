@@ -55,6 +55,7 @@ namespace TechCertain.Domain.Interfaces
         public void Update(TEntity entity)
         {
             _session.SaveOrUpdateAsync(entity);
+            _session.Save(entity);
         }
     }
 }

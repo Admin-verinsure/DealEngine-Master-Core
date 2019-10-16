@@ -1,12 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
-using TechCertain.Services.Interfaces;
+
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 {
@@ -14,71 +11,23 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
     {
 
         #region API fields
-
-        IHttpClientService _httpClientService;
-        /// <summary>
-        /// Sends the ELink XML invoice to be billed (Synchronous)
-        /// </summary>
-        /// <param name="xml">The invoice XML.</param>
-        public byte[] SendInvoiceXML(string xml)
-        {
-            byte[] res = _httpClientService.CreateEGlobalInvoice(xml.Trim()).Result;
-
-            //using (EGlobalInvoiceServiceAPI service = new EGlobalInvoiceServiceAPI())
-            //{
-            //    res = service.EndcreateInvoice(invoice);
-            //}
-
-            ASyncInvoice = Encoding.UTF8.GetString(res, 0, res.Length);
-            EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
-
-            // process it
-            ProcessResponse(xo);
-
-            return res;
-        }
-
-        /*public string SendInvoiceXML (string xml)
-		{
-			byte[] res = SendInvoiceXML(xml);
-			return Encoding.UTF8.GetString(res, 0, res.Length);
-		}*/
-
-        /// <summary>
-        /// Gets the status of the ELink Invoice Service (Synchronous)
-        /// </summary>
-        /// <returns>The site status.</returns>
-        public string TestSiteStatus()
-        {
-            string res = "";
-
-            try
-            {
-                res = _httpClientService.GetEglobalStatus().Result;
-            }
-
-            catch(SocketException ex)
-            {
-               Console.WriteLine(ex.Message);
-            }
-
-            return res;
-        }
       
         /// <summary>
         /// Processes the Async result.
         /// </summary>
         /// <param name="result">The Async result.</param>
-        public void ProcessAsyncResult(byte[] res)
+        public void ProcessAsyncResult(string res)
         {
             // adjust the response
-            ASyncInvoice = Encoding.UTF8.GetString(res, 0, res.Length);
+            int start = res.IndexOf("billingdesktop/\">") + 17;
+            int to = res.IndexOf("</ns3:createInvoiceResponse>", start);
+            var subString = res.Substring(start, to - start);
+            // decode string to Base64
+            byte[] byteStream = Convert.FromBase64String(subString);
+            ASyncInvoice = Encoding.UTF8.GetString(byteStream, 0, byteStream.Length);
             EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
-
-            // Log the response
-            //TC_Shared.LogEvent(TC_Shared.EventType.Information, "ELink response", ASyncInvoice);
-
-            // process it
+                        
+            //// process it
             ProcessResponse(xo);
 
             // indicate we have received a response

@@ -6,7 +6,8 @@
             <div id="pxpaysection">
                 @foreach (var item in Model)
                 {
-                    @Html.Partial("Partials/ViewPxPayments", item);
+                    @await Html.PartialAsync("Partials/ViewPxPayments", item);
+                    @await Html.PartialAsync("Partials/ViewEGlobalPayments", item);
                 }
             </div>
             <br />
@@ -18,7 +19,5 @@
             </div>*@
         </div>
         <button onclick="submitPayment()" class="btn-sm AddupdateBoat" id="updateBoat">Pay now</button>
-
-        @*@Html.Button().Text("Pay now").HtmlAttributes(new { onclick = "submitPayment();" }).Class("btn-sm")*@
     </div>
 

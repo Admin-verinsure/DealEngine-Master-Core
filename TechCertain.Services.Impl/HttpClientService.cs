@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
@@ -71,11 +72,11 @@ namespace TechCertain.Services.Impl
             return Task.FromResult(responseMessage);
         }
 
-        public Task<byte[]> CreateEGlobalInvoice(string xmlPayload)
+        public Task<string> CreateEGlobalInvoice(string xmlPayload)
         {
-            var responseMessage = "";
-            var SOAPAction = "http://www.example.org/invoice-service/createInvoice";
-            var service = "https://staging.ap.marsh.com:19443/services/invoice/service";
+            var responseMessage ="";            
+            var SOAPAction = @"http://www.example.org/invoice-service/createInvoice";
+            var service =  "https://staging.ap.marsh.com:19443/services/invoice/service"; //"http://localhost:8088/mockInvoiceServiceImplPortBinding";
             var body = generateBody(xmlPayload);
             HttpResponseMessage response;
             SocketsHttpHandler _socketsHttpHandler;
@@ -103,14 +104,14 @@ namespace TechCertain.Services.Impl
             }
             catch (HttpRequestException e)
             {
-                responseMessage = e.Message + " status code not 200";
+               responseMessage = e.Message + " status code not 200";
             }
             catch (Exception ex)
             {
-                responseMessage = ex.Message;
+               responseMessage = ex.Message;
             }
 
-            return Task.FromResult(Encoding.ASCII.GetBytes(responseMessage));
+            return Task.FromResult(responseMessage);
         }
 
         public Task<string> GetEglobalStatus()
@@ -157,17 +158,19 @@ namespace TechCertain.Services.Impl
 
         private string generateBody(string xmlPayload)
         {
-            string body = @"<soapenv:Envelope xmlns:soapenv = ""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:inv = ""http://www.example.org/invoice-service/"">    
+            //var formattedString = xmlPayload.Remove(0, 22);
+            string htmlEncodedString = HttpUtility.HtmlEncode(xmlPayload);
+            string body = @"<?xml version=""1.0"" encoding=""utf-8""?><soapenv:Envelope xmlns:soapenv = ""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:inv = ""http://www.example.org/invoice-service/"">    
                             <soapenv:Header/>     
                                 <soapenv:Body>      
                                     <inv:createInvoice>       
-                                        <xmlStr>?</xmlStr>       
+                                        <xmlStr>{0}</xmlStr>       
                                         <site>NZL</site>       
                                     </inv:createInvoice>       
                                 </soapenv:Body>
                             </soapenv:Envelope>";
-            string strxml = string.Format(body, xmlPayload);
-
+            string strxml = string.Format(body, htmlEncodedString);
+            
             return strxml;
         }
         private string GenerateGetSiteActiveSoapBody()

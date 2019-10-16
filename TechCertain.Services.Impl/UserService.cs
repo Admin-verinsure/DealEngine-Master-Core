@@ -162,10 +162,7 @@ namespace TechCertain.Services.Impl
 
 		public void Update (User user)
 		{
-			//using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				_userRepository.Update (user);
-			//	uow.Commit ();
-			//}
+		    _userRepository.Update (user);
 			_ldapService.Update (user);
 		}
 

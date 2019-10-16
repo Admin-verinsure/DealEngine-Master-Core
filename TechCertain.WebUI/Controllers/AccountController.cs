@@ -641,38 +641,6 @@ namespace TechCertain.WebUI.Controllers
             //}
         }
 
-        async Task SignInAsync(string username, bool isPersistent)
-        {
-            // Clear any lingering authencation data
-            throw new Exception("this method needs to be re-written in core");
-            //FormsAuthentication.SignOut();
-
-            //Account account = _authenticationService.LoginUser(username);
-
-
-
-            //Write the authentication cookie
-            //FormsAuthentication.SetAuthCookie(username, isPersistent);
-
-            //string userData = account.UserName;
-
-            //FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
-            //    1,
-            //    username,
-            //    DateTime.UtcNow,
-            //    DateTime.UtcNow.AddMinutes(2285),
-            //    false,
-            //    userData,
-            //    FormsAuthentication.FormsCookiePath);
-
-            //string encTicket = FormsAuthentication.Encrypt(ticket);
-
-            //HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName,
-            //        encTicket);
-
-            //Response.Cookies.Add(cookie);
-        }
-
 		void SetCookie(string cookieName, string value, DateTime expiry)
 		{
 			SetCookie (cookieName, value, expiry, "");
@@ -757,17 +725,21 @@ namespace TechCertain.WebUI.Controllers
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
 
-            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits();
-
-            foreach (OrganisationalUnit ou in OrgUnitList)
+            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits().GroupBy(o => o.Name).ToList();
+            foreach (var group in OrgUnitList)
             {
-                organisationalUnits.Add(new OrganisationalUnitViewModel
+                foreach (OrganisationalUnit ou in group)
                 {
-                    OrganisationalUnitId = ou.Id,
-                    Name = ou.Name
-                });
-                //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                    organisationalUnits.Add(new OrganisationalUnitViewModel
+                    {
+                        OrganisationalUnitId = ou.Id,
+                        Name = ou.Name
+                    });
+                    break;
+                    //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                }
             }
+
 
             //if (CurrentUser.Organisations.Count() > 0 && CurrentUser.Organisations.ElementAt(0).OrganisationType.Name != "personal")
             //	model.PrimaryOrganisationName = CurrentUser.Organisations.ElementAt(0).Name;
@@ -794,35 +766,37 @@ namespace TechCertain.WebUI.Controllers
 				return PageNotFound ();
             Guid defaultOU = Guid.Empty;
 
-            throw new Exception("this method needs to be re-written in core");
-            // if we've added a new avatar, upload it. Otherwise don't change
-   //         if (Request.Files.Count > 0)
-			//{
-			//	//Console.WriteLine ("{0} files uploaded", Request.Files.Count);
-			//	var file = Request.Files [0];
-			//	if (file != null && file.ContentLength > 0)
-			//	{
-			//		byte[] buffer = new byte[file.ContentLength];
-			//		file.InputStream.Read(buffer, 0, buffer.Length);
-			//		if (_fileService.IsImageFile (buffer, file.ContentType, file.FileName)) {
-			//			//_fileService.UploadFile (buffer, file.ContentType, file.FileName);
-			//			Image img = new Image (user, file.FileName, file.ContentType);
-			//			img.Contents = buffer;
-			//			_fileService.UploadFile (img);
-			//			model.ProfilePicture = file.FileName;
-			//			user.ProfilePicture = img;
-			//		}
-			//		else
-			//			ModelState.AddModelError ("", "Unable to upload profile picture - invalid image file");
-			//	}
-			//}
+            //if we've added a new avatar, upload it. Otherwise don't change
+            if (Request.Form.Files.Count > 0)
+            {
+                //Console.WriteLine ("{0} files uploaded", Request.Files.Count);
+                var file = Request.Form.Files[0];
+                if (file != null && file.Length > 0)
+                {
+                    byte[] buffer = new byte[file.Length];
+                    file.OpenReadStream().Read(buffer, 0, buffer.Length);
+                    if (_fileService.IsImageFile(buffer, file.ContentType, file.FileName))
+                    {
+                        //_fileService.UploadFile (buffer, file.ContentType, file.FileName);
+                        Image img = new Image(user, file.FileName, file.ContentType);
+                        img.Contents = buffer;
+                        _fileService.UploadFile(img);
+                        model.ProfilePicture = file.FileName;
+                        user.ProfilePicture = img;
+                    }
+                    else
+                        ModelState.AddModelError("", "Unable to upload profile picture - invalid image file");
+                }
+            }
 
-   //         if(Request.Form["branch"] != null)
-   //         {
-   //             defaultOU = Guid.Parse(Request.Form["branch"]);
-   //             OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU);
-   //             user.DefaultOU = DefaultOU;
-   //         }
+            Microsoft.Extensions.Primitives.StringValues branchId;
+            Request.Form.TryGetValue("branch", out branchId);
+            if (branchId.Count == 1)
+            {
+                defaultOU = Guid.Parse(branchId);
+                OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU);
+                user.DefaultOU = DefaultOU;
+            }
 
             user.FirstName = model.FirstName;
 			user.LastName = model.LastName;
@@ -833,7 +807,7 @@ namespace TechCertain.WebUI.Controllers
             user.JobTitle = model.JobTitle;
             user.SalesPersonUserName = model.SalesPersonUserName;
 
-            _userService.Update (user);
+            _userService.Update(user);
 
             return Redirect("~/Account/ProfileEditor");
 		}

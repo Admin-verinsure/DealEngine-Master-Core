@@ -6,8 +6,6 @@ using TechCertain.Domain.Entities;
 using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
-using Elmah;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Agreement;
@@ -17,6 +15,7 @@ using TechCertain.Infrastructure.Payment.PxpayAPI;
 using Microsoft.AspNetCore.Http;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.Payment.EGlobalAPI;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -46,7 +45,7 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
 
-        public AgreementController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
@@ -65,7 +64,6 @@ namespace TechCertain.WebUI.Controllers
             _fileService = fileService;
             _emailService = emailService;            
             _unitOfWork = unitOfWork;
-            // temp
             _ruleRepository = ruleRepository;
             _documentRepository = documentRepository;
             _userRepository1 = userRepository1;
@@ -1434,7 +1432,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePxPayment1(IFormCollection collection)
+        public IActionResult GeneratePxPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -1500,145 +1498,7 @@ namespace TechCertain.WebUI.Controllers
 
             //opens on same page - hard to return back to current process
             return Json(new { url = requestOutput.Url });
-        }
-
-        [HttpPost]
-        public IActionResult GeneratePxPayment(IFormCollection collection)
-        {
-            Guid sheetId = Guid.Empty;
-
-            ClientInformationSheet sheet = null;
-            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
-            {
-                sheet = _customerInformationService.GetInformation(sheetId);
-            }
-
-            ClientProgramme programme = sheet.Programme;
-            programme.PaymentType = "Credit Card";
-            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-            //eGlobalSerializer.SiteActive();
-            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
-            //Hardcoded variables
-            decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
-            Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
-            Payment payment = _paymentService.GetPayment(programme.Id);
-            if (payment == null)
-            {
-                payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
-            }
-
-            using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
-                programme.PaymentType = "Credit Card";
-                programme.Payment = payment;
-                programme.InformationSheet.Status = "Bound";
-                uow.Commit();
-            }
-
-            //add check to count how many failed payments
-            var ProgrammeId = sheetId;
-            foreach (ClientAgreement clientAgreement in programme.Agreements)
-            {
-                ProgrammeId = programme.Id;
-                brokerFee += clientAgreement.BrokerFee;
-                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
-                foreach (ClientAgreementTerm clientAgreementTerm in terms)
-                {
-                    totalPremium += clientAgreementTerm.Premium;
-                }
-            }
-            totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
-
-            PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
-
-            //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = _appSettingService.domainQueryString;
-
-            RequestInput input = new RequestInput
-            {
-                AmountInput = totalPayment.ToString("0.00"),
-                CurrencyInput = "NZD",
-                TxnType = "Purchase",
-                UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
-                UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
-                TxnId = payment.Id.ToString("N").Substring(0, 16),
-            };
-
-            RequestOutput requestOutput = pxPay.GenerateRequest(input);
-
-            //opens on same page - hard to return back to current process
-            return Json(new { url = requestOutput.Url });
-
-        }
-
-
-        //[HttpPost]
-        //public ActionResult GeneratePxPayment(IFormCollection collection)
-        //{
-
-        //    ClientInformationSheet sheet = null;
-
-        //    if (answerSheetId != null)
-        //    {
-        //        sheet = _customerInformationService.GetInformation(answerSheetId);
-        //    }
-
-        //    ClientProgramme programme = sheet.Programme;
-        //    programme.PaymentType = "Credit Card";
-        //    //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-        //    //eGlobalSerializer.SiteActive();
-        //    //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
-        //    //Hardcoded variables
-        //    decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
-        //    Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
-        //    Payment payment = _paymentService.GetPayment(programme.Id);
-        //    if (payment == null)
-        //    {
-        //        payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
-        //    }
-
-        //    using (var uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        programme.PaymentType = "Credit Card";
-        //        programme.Payment = payment;
-        //        programme.InformationSheet.Status = "Bound";
-        //        uow.Commit();
-        //    }
-
-        //    //add check to count how many failed payments
-        //    var ProgrammeId = answerSheetId;
-        //    foreach (ClientAgreement clientAgreement in programme.Agreements)
-        //    {
-        //        ProgrammeId = programme.Id;
-        //        brokerFee += clientAgreement.BrokerFee;
-        //        var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
-        //        foreach (ClientAgreementTerm clientAgreementTerm in terms)
-        //        {
-        //            totalPremium += clientAgreementTerm.Premium;
-        //        }
-        //    }
-        //    totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
-
-        //    PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
-
-        //    //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-        //    string domainQueryString = "localhost:44323";
-        //    RequestInput input = new RequestInput
-        //    {
-        //        AmountInput = totalPayment.ToString("0.00"),
-        //        CurrencyInput = "NZD",
-        //        TxnType = "Purchase",
-        //        UrlFail = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
-        //        UrlSuccess = "http://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
-        //        TxnId = payment.Id.ToString("N").Substring(0, 16),
-        //    };
-
-        //    RequestOutput requestOutput = pxPay.GenerateRequest(input);
-
-        //    //opens on same page - hard to return back to current process
-        //    return Json(new { url = requestOutput.Url });
-
-        //}
+        }       
 
         [HttpPost]
         public IActionResult GenerateEGlobal(IFormCollection collection)
@@ -1652,48 +1512,19 @@ namespace TechCertain.WebUI.Controllers
 
             //Hardcoded variables
             ClientProgramme programme = sheet.Programme;
-            programme.PaymentType = "Invoice";
-            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
+            var eGlobalSerializer = new EGlobalSerializerAPI();
 
             //check Eglobal parameters
-            if (programme.EGlobalClientNumber == "")
+            if (string.IsNullOrEmpty(programme.EGlobalClientNumber))
             {
                 throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
 
-            //if (!eGlobalSerializer.SiteActive())
-            //{
-            //    var xmlBody = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
-            //    _emailService.SendSystemEmailEGlobalTCNotify(xmlBody);
-            //}
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
+            var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
+            eGlobalSerializer.DeSerializeResponse(byteResponse);
 
-            decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m;
-
-            //add check to count how many failed payments
-            var ProgrammeId = sheetId;
-            foreach (ClientAgreement clientAgreement in programme.Agreements)
-            {
-                ProgrammeId = programme.Id;
-                brokerFee += clientAgreement.BrokerFee;
-                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
-                foreach (ClientAgreementTerm clientAgreementTerm in terms)
-                {
-                    totalPremium += clientAgreementTerm.Premium;
-                }
-            }
-
-            var status = "bound";
-            using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
-                if (programme.InformationSheet.Status != status)
-                {
-                    programme.PaymentType = "Invoice";
-                    programme.InformationSheet.Status = status;
-                    uow.Commit();
-                }
-            }
-
-            return Redirect("~/Agreement/ViewAcceptedAgreement/" + ProgrammeId.ToString());
+            return Redirect("~/Agreement/ViewAcceptedAgreement/" + programme.Id.ToString());
         }
 
 
@@ -1911,78 +1742,6 @@ namespace TechCertain.WebUI.Controllers
             }
             return View("ViewAcceptedAgreementList", models);
         }
-
-
-        /*		[HttpGet]
-                public ActionResult ViewAgreement(Guid id)
-                {
-                    ViewAgreementViewModel model = new ViewAgreementViewModel();
-
-                    ClientInformationSheet answerSheet = _customerInformationService.GetInformation (id);
-                    InformationTemplate informationTemplate = answerSheet.InformationTemplate;
-                    IList<Product> products = informationTemplate.Products;
-                    User insured = _userRepository.GetUser (answerSheet.OwnerId);
-
-                    // List Agreement Parties
-                    var insuranceRoles = new List<InsuranceRoleViewModel>();
-
-                    insuranceRoles.Add(new InsuranceRoleViewModel() { RoleName = "Customer", Name = insured.FullName, ManagedBy = insured.FullName, Email = insured.Email});
-                    //foreach (Product product in products)
-                    //	foreach (KeyValuePair<string, Organisation> kvp in product.Parties) {
-                    //		insuranceRoles.Add (new InsuranceRoleViewModel () { RoleName = kvp.Key, Name = kvp.Value.Name, ManagedBy = kvp.Value.Name, Email = "" });
-                    //	}
-
-                    // List Agreement Inclusions
-                    var insuranceInclusion = new List<InsuranceInclusion>();
-
-                    insuranceInclusion.Add(new InsuranceInclusion() { RiskName = "Medical Malpractice", Inclusion = "Limit: $500,000" });
-                    insuranceInclusion.Add(new InsuranceInclusion() { RiskName = "Statutory Liability", Inclusion = "Limit: $500,000" });
-                    insuranceInclusion.Add(new InsuranceInclusion() { RiskName = "General Liability", Inclusion = "Limit: $1,000,000" });
-                    insuranceInclusion.Add(new InsuranceInclusion() { RiskName = "Medical Malpractice", Inclusion = _MPCourAttendanceEndor });
-                    insuranceInclusion.Add(new InsuranceInclusion() { RiskName = "Statutory Liability", Inclusion = _SLAmendmentstoDefinitionEndor });
-
-                    // List Agreement Exclusions
-                    var insuranceExclusion = new List<InsuranceExclusion>();
-
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "Medical Malpractice", Exclusion = "Excess: $2,000" });
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "Statutory Liability", Exclusion = "Excess: $500" });
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "General Liability", Exclusion = "Excess: $500" });
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "Medical Malpractice", Exclusion = _MPSplitLimitofIndemnityEndor });
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "General Liability", Exclusion = _GLBusinessAdviceorServiceExclusion2Endor });
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "Statutory Liability", Exclusion = _SLExclusionEndor });
-                    insuranceExclusion.Add(new InsuranceExclusion() { RiskName = "Statutory Liability", Exclusion = _SLSplitLimitofIndemnityEndor });
-
-                    // List Agreement Premiums
-                    var riskPremiums = new List<RiskPremiumsViewModel>();
-
-                    riskPremiums.Add(new RiskPremiumsViewModel() { RiskName = "Medical Malpractice", Premium = "$230.00" });
-                    riskPremiums.Add(new RiskPremiumsViewModel() { RiskName = "Statutory Liability", Premium = "Included" });
-                    riskPremiums.Add(new RiskPremiumsViewModel() { RiskName = "General Liability", Premium = "Included" });
-
-                    // Populate the ViewModel
-                    model.InsuranceRoles = insuranceRoles;
-                    model.Inclusions = insuranceInclusion;
-                    model.Exclusions = insuranceExclusion;
-                    model.RiskPremiums = riskPremiums;
-
-                    // Statuss
-                    model.ProductName = informationTemplate.Name;;
-                    model.Status = "Quoted";
-                    model.StartDate = DateTime.UtcNow;
-                    model.EndDate = DateTime.UtcNow.AddYears (1);  // TODO - load duration from product/underwriting configuration
-                    model.AdministrationFee = 20;
-                    model.CurrencySymbol = "fa fa-dollar";
-
-                    // 
-                    if (answerSheet.Status == "Submitted") {
-                        model.InformationSheetId = answerSheet.Id;
-                    }
-
-                    //Title = ;
-                    ViewBag.Title = "Proposalonline - " + informationTemplate.Name + " Agreement for " + insured.FullName;
-
-                    return View(model);
-                }*/
 
         public ActionResult CreateDefaultAgreementRules()
         {
