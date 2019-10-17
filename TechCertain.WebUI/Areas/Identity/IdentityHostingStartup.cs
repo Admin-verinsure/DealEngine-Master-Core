@@ -20,24 +20,14 @@ namespace TechCertain.WebUI.Areas.Identity
 
                 services.AddIdentity<DealEngineUser, IdentityRole>(options =>
                     {
-                        //options.SignIn.RequireConfirmedAccount = true;
                         options.Password.RequireNonAlphanumeric = false;
                         options.Password.RequireUppercase = false;
                         options.Password.RequireDigit = false;
                         options.Password.RequiredLength = 6;
                         options.Password.RequireLowercase = false;
                     })
-                    //.AddUserStore<DealEngineUserStore>()
-                    //.AddUserManager<DealEngineUserManager>()
-                    //.AddRoleStore<DealEngineRoleStore>()
-                    //.AddRoleManager<DealEngineRoleManager>()                    
-                    //.AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
-                    //.AddSignInManager<SignInManager<DealEngineUser>>()
-                    .AddEntityFrameworkStores<DealEngineDBContext>();
 
-                //services.AddTransient<UserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();
-                //services.AddTransient<UserManager<DealEngineUser>, DealEngineUserManager>();
-                //services.AddTransient<ISignInManager<DealEngineUser>, DealEngineSignInManager>();
+                    .AddEntityFrameworkStores<DealEngineDBContext>();
             });
         }
     }

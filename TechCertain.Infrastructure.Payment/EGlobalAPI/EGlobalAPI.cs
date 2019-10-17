@@ -19,11 +19,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         public void ProcessAsyncResult(string res)
         {
             // adjust the response
-            int start = res.IndexOf("billingdesktop/\">") + 17;
-            int to = res.IndexOf("</ns3:createInvoiceResponse>", start);
-            var subString = res.Substring(start, to - start);
+            Envelope processingxml = GetPreResponseClass(res);
             // decode string to Base64
-            byte[] byteStream = Convert.FromBase64String(subString);
+            byte[] byteStream = Convert.FromBase64String(processingxml.Body.CreateInvoiceResponse.Text);
             ASyncInvoice = Encoding.UTF8.GetString(byteStream, 0, byteStream.Length);
             EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
                         
@@ -56,6 +54,14 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             XmlSerializer xs = new XmlSerializer(typeof(EGlobalXmlResponse));
             StringReader sr = new StringReader(xml);
             EGlobalXmlResponse xo = (EGlobalXmlResponse)xs.Deserialize(sr);
+            return xo;
+        }
+
+        public Envelope GetPreResponseClass(string xml)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(Envelope));
+            StringReader sr = new StringReader(xml);
+            Envelope xo = (Envelope)xs.Deserialize(sr);
             return xo;
         }
 
@@ -478,6 +484,33 @@ INSERT INTO tbleglobalinvoiceresponse (responseid, quoteid, responsetype, datecr
             public string Text
             { get; set; }
 
+        }
+
+        [XmlRoot(ElementName = "createInvoiceResponse", Namespace = "http://www.example.org/invoice-service/")]
+        public class CreateInvoiceResponse
+        {
+            [XmlAttribute(AttributeName = "ns3", Namespace = "http://www.w3.org/2000/xmlns/")]
+            public string Ns3 { get; set; }
+            [XmlAttribute(AttributeName = "ns2", Namespace = "http://www.w3.org/2000/xmlns/")]
+            public string Ns2 { get; set; }
+            [XmlText]
+            public string Text { get; set; }
+        }
+
+        [XmlRoot(ElementName = "Body", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        public class Body
+        {
+            [XmlElement(ElementName = "createInvoiceResponse", Namespace = "http://www.example.org/invoice-service/")]
+            public CreateInvoiceResponse CreateInvoiceResponse { get; set; }
+        }
+
+        [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        public class Envelope
+        {
+            [XmlElement(ElementName = "Body", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+            public Body Body { get; set; }
+            [XmlAttribute(AttributeName = "S", Namespace = "http://www.w3.org/2000/xmlns/")]
+            public string S { get; set; }
         }
 
         [XmlRoot("Error")]
