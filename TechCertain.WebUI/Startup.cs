@@ -20,7 +20,7 @@ namespace TechCertain.WebUI
         private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllersWithViews();
@@ -39,7 +39,7 @@ namespace TechCertain.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -68,14 +68,6 @@ namespace TechCertain.WebUI
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
-
-            //app.UseMvc(routes =>
-            //{
-            //    //routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            //    routes.MapRoute("default", "{controller=Account}/{action=Login}/{id?}");
-            //});
-
-            //app.UseResponseCaching();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

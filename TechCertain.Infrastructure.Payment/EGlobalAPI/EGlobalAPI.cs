@@ -19,6 +19,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         public void ProcessAsyncResult(string res)
         {
             // adjust the response
+            var xml = res.Replace(@"<? xml version=""1.0"" encoding=""UTF-8""?>", "");
+            EGlobalXmlPreprocessingResponse processingxml = GetPreResponseClass(xml);
             int start = res.IndexOf("billingdesktop/\">") + 17;
             int to = res.IndexOf("</ns3:createInvoiceResponse>", start);
             var subString = res.Substring(start, to - start);
@@ -56,6 +58,14 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             XmlSerializer xs = new XmlSerializer(typeof(EGlobalXmlResponse));
             StringReader sr = new StringReader(xml);
             EGlobalXmlResponse xo = (EGlobalXmlResponse)xs.Deserialize(sr);
+            return xo;
+        }
+
+        public EGlobalXmlPreprocessingResponse GetPreResponseClass(string xml)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(EGlobalXmlPreprocessingResponse));
+            StringReader sr = new StringReader(xml);
+            EGlobalXmlPreprocessingResponse xo = (EGlobalXmlPreprocessingResponse)xs.Deserialize(sr);
             return xo;
         }
 
@@ -478,6 +488,20 @@ INSERT INTO tbleglobalinvoiceresponse (responseid, quoteid, responsetype, datecr
             public string Text
             { get; set; }
 
+        }
+
+        [XmlRoot("S:Envelope")]
+        public class EGlobalXmlPreprocessingResponse
+        {
+            [XmlElement("S:Body")]
+            public PreprocessingBody Body { get; set; }
+        }
+
+        [XmlRoot("S:Body")]
+        public class PreprocessingBody
+        {
+            [XmlAttribute("xmlns:")]
+            public string ns3 { get; set; }
         }
 
         [XmlRoot("Error")]
