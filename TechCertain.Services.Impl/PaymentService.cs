@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class PaymentService : IPaymentService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<Payment> _paymentRepository;
 
-        public PaymentService(IUnitOfWork unitOfWork, IMapperSession<Payment> paymentRepository)
+        public PaymentService(IMapperSession<Payment> paymentRepository)
         {
-            _unitOfWork = unitOfWork;
             _paymentRepository = paymentRepository;
         }
 
         public void Update(Payment payment)
         {
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                _paymentRepository.Update(payment);
-                work.Commit();
-            }
+            _paymentRepository.UpdateAsync(payment);            
         }
 
         public Payment AddNewPayment(User createdBy, ClientProgramme clientProgramme, Merchant merchant, PaymentGateway paymentGateway)
@@ -36,13 +30,7 @@ namespace TechCertain.Services.Impl
                 throw new ArgumentNullException(nameof(paymentGateway));
 
             Payment payment = new Payment(createdBy, clientProgramme, merchant, paymentGateway);
-
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                _paymentRepository.Add(payment);
-                work.Commit();
-            }
-
+            _paymentRepository.AddAsync(payment);
             //check with craig best way to check
             return payment;//CheckExists(paymentGatewayWebServiceURL);
         }
@@ -55,15 +43,13 @@ namespace TechCertain.Services.Impl
 
         public Payment GetPayment(Guid clientProgrammeID, Guid merchantID, Guid paymentGatewayID)
         {
-            Payment payment = GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID &&
+            return GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID &&
                                                              p.PaymentMerchant.Id == merchantID && p.PaymentPaymentGateway.Id == paymentGatewayID);
-            return payment;
         }
 
         public Payment GetPayment(Guid clientProgrammeID)
         {
-            Payment payment = GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID);
-            return payment;
+            return GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID);
         }
 
     }

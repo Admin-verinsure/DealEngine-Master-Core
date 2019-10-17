@@ -7,14 +7,9 @@ namespace TechCertain.Services.Interfaces
     public interface IPaymentGatewayService
     {
 
-        bool AddNewPaymentGateway(User createdBy, string paymentGatewayName, string paymentGatewayWebServiceURL, string paymentGatewayResponsePageURL, string paymentGatewayType);
-
-        bool RemovePaymentGateway(User deletedBy, string paymentGatewayWebServiceURL);
-
-        bool CheckExists(string paymentGatewayWebServiceURL);
-
+        void AddNewPaymentGateway(User createdBy, string paymentGatewayName, string paymentGatewayWebServiceURL, string paymentGatewayResponsePageURL, string paymentGatewayType);
+        void RemovePaymentGateway(User deletedBy, string paymentGatewayWebServiceURL);
         IQueryable<PaymentGateway> GetAllPaymentGateways();
-
         PaymentGateway GetPaymentGateway(Guid paymentGatewayId);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {

@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\Novell.Directory.Ldap.NETStandard\Novell.Directory.Ldap.NETStandard.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
+    <ProjectReference Include="..\TechCertain.Services.Interfaces\TechCertain.Services.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

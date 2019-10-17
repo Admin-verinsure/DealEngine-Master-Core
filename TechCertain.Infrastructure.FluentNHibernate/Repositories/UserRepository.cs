@@ -3,46 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : IUserService
     {
         IMapperSession<User> _userRepository;
-        IUnitOfWork _unitOfWork;
-
-        public UserRepository(IMapperSession<User> userRepository, IUnitOfWork unitOfWork)
+        public UserRepository(IMapperSession<User> userRepository)
         {
             _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
         }
 
-        public bool Create(User user)
+        public void Create(User user)
         {
-            using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _userRepository.Add(user);
-                //uow.Add<User>(user);
-                uow.Commit();
-            }
-            return true;
+            _userRepository.AddAsync(user);            
         }
 
-        public bool Delete(User user)
+        public void Delete(User user)
         {
-            using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _userRepository.Remove(user);
-                //uow.Remove(user);
-                uow.Commit();
-            }
-            return true;
+            _userRepository.RemoveAsync(user);
+        }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _userRepository.FindAll();
         }
 
         public User GetUser(Guid userID)
         {
-            return _userRepository.GetById(userID);
+            return _userRepository.GetByIdAsync(userID).Result;
         }
 
         public User GetUser(string userName)
@@ -73,23 +63,9 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 			return _userRepository.FindAll ();
 		}
 
-        public bool Update(User user)
+        public void Update(User user)
         {
-            using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
-				try
-				{
-                    _userRepository.Update(user);
-	                //uow.Add(user);
-	                uow.Commit();
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine (e.ToString ());
-				}
-            }
-
-            return true;
+            _userRepository.UpdateAsync(user);
         }
     }
 }

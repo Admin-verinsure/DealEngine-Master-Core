@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
+    <ProjectReference Include="..\TechCertain.Infrastructure.FluentNHibernate\TechCertain.Infrastructure.FluentNHibernate.csproj" />
   </ItemGroup>
 
 </Project>

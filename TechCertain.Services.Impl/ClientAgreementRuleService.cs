@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 
@@ -9,16 +9,16 @@ namespace TechCertain.Services.Impl
 {
     public class ClientAgreementRuleService : IClientAgreementRuleService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<ClientAgreementRule> _clientAgreementRuleRepository;
+        IMapperSession<ClientAgreement> _clientAgreementRepository;
 
-        public ClientAgreementRuleService(IUnitOfWork unitOfWork, IMapperSession<ClientAgreementRule> clientAgreementRuleRepository)
+        public ClientAgreementRuleService(IMapperSession<ClientAgreementRule> clientAgreementRuleRepository, IMapperSession<ClientAgreement> clientAgreementRepository)
         {
-            _unitOfWork = unitOfWork;
             _clientAgreementRuleRepository = clientAgreementRuleRepository;
+            _clientAgreementRepository = clientAgreementRepository;
         }
 
-		public bool AddClientAgreementRule (User createdBy, Rule rule, string name, string description, Product product, string value, int orderNumber, string ruleCategory, string ruleRoleType, bool isPublic, ClientAgreement clientAgreement)
+		public void AddClientAgreementRule (User createdBy, Rule rule, string name, string description, Product product, string value, int orderNumber, string ruleCategory, string ruleRoleType, bool isPublic, ClientAgreement clientAgreement)
 		{
 			if (string.IsNullOrWhiteSpace (name))
 				throw new ArgumentNullException (nameof (name));
@@ -33,18 +33,15 @@ namespace TechCertain.Services.Impl
 			if (clientAgreement == null)
 				throw new ArgumentNullException (nameof (clientAgreement));
 
-			using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork ()) {
-				ClientAgreementRule clientAgreementRule = new ClientAgreementRule (createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
-				clientAgreement.ClientAgreementRules.Add (clientAgreementRule);
-				work.Commit ();
-			}
+            ClientAgreementRule clientAgreementRule = new ClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
+            clientAgreement.ClientAgreementRules.Add(clientAgreementRule);
+            _clientAgreementRuleRepository.AddAsync(clientAgreementRule);
+            _clientAgreementRepository.UpdateAsync(clientAgreement);
+        }
 
-			return true;
-		}
-
-        public bool AddClientAgreementRule(User createdBy, Rule rule, ClientAgreement clientAgreement)
+        public void AddClientAgreementRule(User createdBy, Rule rule, ClientAgreement clientAgreement)
         {
-			return AddClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
+			AddClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
         }
 
 
@@ -56,7 +53,7 @@ namespace TechCertain.Services.Impl
 
         public ClientAgreementRule GetClientAgreementRuleBy(Guid clientAgreementRuleId)
         {
-            return _clientAgreementRuleRepository.GetById(clientAgreementRuleId);
+            return _clientAgreementRuleRepository.GetByIdAsync(clientAgreementRuleId).Result;
         }
     }
 }

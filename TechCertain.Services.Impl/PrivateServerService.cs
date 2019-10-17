@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class PrivateServerService : IPrivateServerService
 	{
-		IUnitOfWork _unitOfWork;
         IMapperSession<PrivateServer> _privateServerRepository;
 
-		public PrivateServerService(IUnitOfWork unitOfWork, IMapperSession<PrivateServer> privateServerRepository)
+		public PrivateServerService(IMapperSession<PrivateServer> privateServerRepository)
         {
-			_unitOfWork = unitOfWork;
 			_privateServerRepository = privateServerRepository;
         }
         
@@ -23,14 +21,10 @@ namespace TechCertain.Services.Impl
 				throw new ArgumentNullException(nameof(serverName));
             if (string.IsNullOrWhiteSpace(serverName))
 				throw new ArgumentNullException(nameof(serverAddress));
+            _privateServerRepository.AddAsync(new PrivateServer(createdBy, serverName, serverAddress));
 
-			using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork ())
-			{
-				_privateServerRepository.Add (new PrivateServer (createdBy, serverName, serverAddress));
-				work.Commit ();
-			}
 
-			return CheckExists(serverAddress);
+            return CheckExists(serverAddress);
         }
 
         /// <exception cref="System.ArgumentNullException">Thrown when Server Address or Server Name is null, empty or a white space.</exception>
@@ -55,13 +49,8 @@ namespace TechCertain.Services.Impl
 			PrivateServer server = GetAllPrivateServers ().FirstOrDefault (ps => ps.ServerAddress == serverAddress);
 			if (server != null)
 			{
-				using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork ())
-				{
-					server.Delete (deletedBy);
-					_privateServerRepository.Add (server);
-					work.Commit ();
-				}
-			}
+                _privateServerRepository.AddAsync(server);
+            }
 			// check that it has been removed, and return the inverse result
 			return !CheckExists(serverAddress);
         }

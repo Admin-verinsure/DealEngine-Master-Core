@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -40,7 +39,7 @@ namespace TechCertain.WebUI.Controllers
 
         // GET: InformationBuilder
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View(new InformationBuilderViewModel());
         }        
@@ -52,7 +51,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateInformationSheet(InformationBuilderViewModel model)
+        public async Task<IActionResult> CreateInformationSheet(InformationBuilderViewModel model)
         {
             // Should be abstracted to a service
 
@@ -72,16 +71,16 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult StagingBuilder ()
+		public async Task<IActionResult> StagingBuilder ()
 		{
-			_templateRepository.GetById (new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
+			await _templateRepository.GetByIdAsync(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
 
 
 			return View (new ExperimentalInfoBuilderViewModel());
 		}
 
         //[HttpGet]
-        //public ActionResult SectionBuilder()
+        //public async Task<IActionResult> SectionBuilder()
         //{
         //    // //  _informationItemRepository.FindAll().Where(p => p.infor)
         //    InformationSection informationSection = _informationSectionRepository.GetById(new Guid("3b2ba8c1-48bc-4ec2-b8ef-aaa200bc5376"));
@@ -106,7 +105,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-		public ActionResult StagingBuilder (ExperimentalInfoBuilderViewModel model)
+		public async Task<IActionResult> StagingBuilder (ExperimentalInfoBuilderViewModel model)
 		{
             //Console.WriteLine ("Title: " + model.Title);
             //Console.WriteLine ("Description: " + model.Description);
@@ -182,23 +181,20 @@ namespace TechCertain.WebUI.Controllers
 				informationTemplate.AddSection (section);
 			}
 
-			//var items = informationTemplate.Sections.SelectMany (s => s.Items);
-			//foreach (var item in items) {
-			//	var editorConditional = model.Conditionals.FirstOrDefault (a => a.QuestionId.EndsWith(item.EditorId, StringComparison.CurrentCulture));
-			//	if (editorConditional != null) {
-			//		item.Conditional = new InformationItemConditional {
-			//			TriggerValue = editorConditional.TriggerValue,
-			//			VisibilityOnTrigger = editorConditional.Visibility,
-			//			Targets = items.Where (c => editorConditional.Controls.Contains (c.EditorId)).ToList ()
-			//		};
-			//	}
-			//}
+                //var items = informationTemplate.Sections.SelectMany (s => s.Items);
+                //foreach (var item in items) {
+                //	var editorConditional = model.Conditionals.FirstOrDefault (a => a.QuestionId.EndsWith(item.EditorId, StringComparison.CurrentCulture));
+                //	if (editorConditional != null) {
+                //		item.Conditional = new InformationItemConditional {
+                //			TriggerValue = editorConditional.TriggerValue,
+                //			VisibilityOnTrigger = editorConditional.Visibility,
+                //			Targets = items.Where (c => editorConditional.Controls.Contains (c.EditorId)).ToList ()
+                //		};
+                //	}
+                //}
 
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    _templateRepository.Add(informationTemplate);
-                    uow.Commit();
-                }
+             await _templateRepository.AddAsync(informationTemplate);
+
             }
             catch (Exception ex)
             {

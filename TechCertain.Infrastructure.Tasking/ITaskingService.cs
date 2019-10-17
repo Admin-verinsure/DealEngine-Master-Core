@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TechCertain.Domain.Entities;
 
 namespace TechCertain.Infrastructure.Tasking
 {
@@ -17,13 +16,13 @@ namespace TechCertain.Infrastructure.Tasking
 		/// <param name="dueDate">Date the task needs to be completed by.</param>
 		//UserTask CreateTaskFor (User createdBy, Organisation createdFor, string name, DateTime dueDate);
 
-		IList<UserTask> GetAllTasksFor (User user);
+//		IList<UserTask> GetAllTasksFor (User// user);
 
-		IList<UserTask> GetAllTasksFor (Organisation organisation);
+//		IList<UserTask> GetAllTasksFor (Orga//nisation organisation);
 
-        UserTask GetTask(Guid Id);
+//        UserTask GetTask(Guid Id);
 
-        UserTask CreateTaskFor(UserTask task);
+////        UserTask CreateTaskFor(UserTas//k task);
 	}
 }
 

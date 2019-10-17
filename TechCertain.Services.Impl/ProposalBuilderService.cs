@@ -1,5 +1,5 @@
 ﻿using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using System.Linq;
 using TechCertain.Services.Interfaces;
 using System;
@@ -8,12 +8,10 @@ namespace TechCertain.Services.Impl
 {
     public class ProposalBuilderService : IProposalBuilderService
     {
-        private readonly IUnitOfWork _unitOfWork;
         readonly IMapperSession<ProposalTemplate> _proposalTemplateRepository;
 
-        public ProposalBuilderService(IUnitOfWork unitOfWork, IMapperSession<ProposalTemplate> proposalTemplateRepository)
-        {
-            _unitOfWork = unitOfWork;
+        public ProposalBuilderService(IMapperSession<ProposalTemplate> proposalTemplateRepository)
+        {            
             _proposalTemplateRepository = proposalTemplateRepository;
         }
 
@@ -25,13 +23,8 @@ namespace TechCertain.Services.Impl
             {
                 throw new ArgumentException("There is already a proposal template with that name!");
             }
-
-            using (var uow = _unitOfWork.BeginUnitOfWork()) {               
-
                 proposalTemplate = new ProposalTemplate(owner, owner, proposalTemplateName, isPrivate);
-                _proposalTemplateRepository.Add(proposalTemplate);
-                uow.Commit();
-            }
+                _proposalTemplateRepository.AddAsync(proposalTemplate);
 
             return proposalTemplate;
         }

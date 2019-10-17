@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class MerchantService : IMerchantService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<Merchant> _merchantRepository;
 
-        public MerchantService(IUnitOfWork unitOfWork, IMapperSession<Merchant> merchantRepository)
+        public MerchantService(IMapperSession<Merchant> merchantRepository)
         {
-            _unitOfWork = unitOfWork;
             _merchantRepository = merchantRepository;
         }
 
@@ -24,12 +22,7 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(merchantKey))
                 throw new ArgumentNullException(nameof(merchantKey));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                _merchantRepository.Add(new Merchant(createdBy, merchantUserName, merchantPassword, merchantKey, merchantReference));
-                work.Commit();
-            }
-
+            _merchantRepository.AddAsync(new Merchant(createdBy, merchantUserName, merchantPassword, merchantKey, merchantReference));
             return CheckExists(merchantKey);
         }
 
@@ -51,12 +44,9 @@ namespace TechCertain.Services.Impl
             Merchant merchant = GetAllMerchants().FirstOrDefault(m => m.MerchantKey == merchantKey);
             if (merchant != null)
             {
-                using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-                {
-                    merchant.Delete(deletedBy);
-                    _merchantRepository.Add(merchant);
-                    work.Commit();
-                }
+                merchant.Delete(deletedBy);
+                _merchantRepository.RemoveAsync(merchant);
+
             }
             // check that it has been removed, and return the inverse result
             return !CheckExists(merchantKey);
@@ -64,8 +54,7 @@ namespace TechCertain.Services.Impl
 
         public Merchant GetMerchant(Guid merchantProgrammeId)
         {
-            Merchant merchant = _merchantRepository.FindAll().FirstOrDefault(m => m.Programme_id == merchantProgrammeId);
-            return merchant;
+            return _merchantRepository.FindAll().FirstOrDefault(m => m.Programme_id == merchantProgrammeId);
         }
     }
 }

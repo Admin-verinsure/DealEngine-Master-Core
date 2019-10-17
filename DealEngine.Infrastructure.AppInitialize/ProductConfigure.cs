@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize
 {
@@ -43,17 +43,15 @@ namespace DealEngine.Infrastructure.AppInitialize
             };
 
             var existingCategoryNames = _riskCategoryRepository.FindAll().Select(rc => rc.Name).ToArray();
-            using (IUnitOfWork uow = _uowFactory.BeginUnitOfWork())
+            foreach (var riskCategory in riskCategories)
             {
-                foreach (var riskCategory in riskCategories)
-                {
-                    if (!existingCategoryNames.Contains(riskCategory.Name))
-                        _riskCategoryRepository.Add(riskCategory);
-                    //	Console.WriteLine ("Saving RiskCategory: " + riskCategory.Name);
-                    //else
-                    //	Console.WriteLine ("Skip saving RiskCategory: " + riskCategory.Name);
-                }
+                if (!existingCategoryNames.Contains(riskCategory.Name))
+                    _riskCategoryRepository.AddAsync(riskCategory);
+                //	Console.WriteLine ("Saving RiskCategory: " + riskCategory.Name);
+                //else
+                //	Console.WriteLine ("Skip saving RiskCategory: " + riskCategory.Name);
             }
+
         }
 
         void SetupProducts()
@@ -88,18 +86,14 @@ namespace DealEngine.Infrastructure.AppInitialize
                 CreateAirsidePlantAndEquipmentHireWetProduct (defaultOrganisation),
                 CreateLossOfMoneyProduct (defaultOrganisation)
             };
-
-            using (IUnitOfWork uow = _uowFactory.BeginUnitOfWork())
+            string[] productNames = _productRepository.FindAll().Where(p => p.IsBaseProduct).Select(p => p.Name).ToArray();
+            foreach (Product defaultProduct in baseProducts)
             {
-                string[] productNames = _productRepository.FindAll().Where(p => p.IsBaseProduct).Select(p => p.Name).ToArray();
-                foreach (Product defaultProduct in baseProducts)
-                {
-                    if (!productNames.Contains(defaultProduct.Name))
-                        _productRepository.Add(defaultProduct);
-                    //	Console.WriteLine ("Saving product: " + defaultProduct.Name);
-                    //else
-                    //	Console.WriteLine ("Skip saving product: " + defaultProduct.Name);
-                }
+                if (!productNames.Contains(defaultProduct.Name))
+                    _productRepository.AddAsync(defaultProduct);
+                //	Console.WriteLine ("Saving product: " + defaultProduct.Name);
+                //else
+                //	Console.WriteLine ("Skip saving product: " + defaultProduct.Name);
             }
         }
 

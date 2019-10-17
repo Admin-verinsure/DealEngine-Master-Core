@@ -3,21 +3,19 @@ using System.Linq;
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.Services.Impl
 {
 	public class DocumentService : IDocumentService
 	{
-		IUnitOfWork _unitOfWork;
 		IMapperSession<PolicyDocumentTemplate> _policyDocumentRepository;
 		[Obsolete]
 		IMapperSession<Old_PolicyDocumentTemplate> _old_policyDocumentRepository;
 
-		public DocumentService (IUnitOfWork unitOfWork, IMapperSession<PolicyDocumentTemplate> policyDocumentRepository, 
+		public DocumentService (IMapperSession<PolicyDocumentTemplate> policyDocumentRepository, 
 			IMapperSession<Old_PolicyDocumentTemplate> old_policyDocumentRepository)
 		{
-			_unitOfWork = unitOfWork;
 			_policyDocumentRepository = policyDocumentRepository;
 			_old_policyDocumentRepository = old_policyDocumentRepository;
 		}
@@ -26,18 +24,13 @@ namespace TechCertain.Services.Impl
 
 		public Old_PolicyDocumentTemplate SaveDocumentTemplate (Old_PolicyDocumentTemplate policyDocument)
 		{
-			using (var uow = _unitOfWork.BeginUnitOfWork())
-			{
-				//uow.Add<PolicyDocumentTemplate>(policyDocument);
-                _old_policyDocumentRepository.Add(policyDocument);
-				uow.Commit();
-			}
+            _old_policyDocumentRepository.AddAsync(policyDocument);
 			return policyDocument;
 		}
 
 		public Old_PolicyDocumentTemplate GetDocumentTemplate (Guid id)
 		{
-			return _old_policyDocumentRepository.GetById (id);
+			return _old_policyDocumentRepository.GetByIdAsync(id).Result;
 		}
 
 		public IList<Old_PolicyDocumentTemplate> GetDocumentTemplates()

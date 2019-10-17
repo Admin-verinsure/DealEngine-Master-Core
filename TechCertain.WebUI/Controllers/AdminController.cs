@@ -5,12 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -20,11 +21,10 @@ namespace TechCertain.WebUI.Controllers
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
         IFileService _fileService;
-		IOrganisationService _organisationService;
-		IOrganisationRepository _organisationRepository;
+		IOrganisationService _organisationService;		
 		IUnitOfWork _unitOfWork;
 		IInformationTemplateService _informationTemplateService;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
 		IProgrammeService _programmeService;
 		IVehicleService _vehicleService;
         ISystemEmailService _systemEmailService;
@@ -34,15 +34,14 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 		public AdminController (IUserService userRepository, SignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor,IPrivateServerService privateServerService, IFileService fileService,
-			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
-            ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
+			IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
+            IClientInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
 			: base (userRepository)
 		{		
 			_privateServerService = privateServerService;
 			_fileService = fileService;
 			_organisationService = organisationService;
-			_organisationRepository = organisationRepository;
 			_unitOfWork = unitOfWork;
 			_informationTemplateService = informationTemplateService;
 			_clientInformationService = clientInformationService;
@@ -56,7 +55,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult Index ()
+		public async Task<IActionResult> Index ()
 		{
 
             var privateServers = _privateServerService.GetAllPrivateServers ().ToList();
@@ -71,7 +70,7 @@ namespace TechCertain.WebUI.Controllers
         }
         
         [HttpGet]
-        public ActionResult PrivateServerList()
+        public async Task<IActionResult> PrivateServerList()
         {
 			var privateServers = _privateServerService.GetAllPrivateServers().ToList();
 
@@ -80,7 +79,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpPost]
-        public ActionResult AddPrivateServer(PrivateServerViewModel privateServer)
+        public async Task<IActionResult> AddPrivateServer(PrivateServerViewModel privateServer)
         {
 			var privateServers = _privateServerService.GetAllPrivateServers ().ToList();
 				
@@ -103,15 +102,15 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpPost]
-		public ActionResult DeletePrivateServer(string id)
+		public async Task<IActionResult> DeletePrivateServer(string id)
 		{
 			if (_privateServerService.RemoveServer (CurrentUser, id))
-				return PrivateServerList ();
-			return PrivateServerList ();
+				return await PrivateServerList();
+			return await PrivateServerList();
 		}
 
         [HttpGet]
-        public ActionResult PaymentGatewayList()
+        public async Task<IActionResult> PaymentGatewayList()
         {
             var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
 
@@ -119,7 +118,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddPaymentGateway(PaymentGatewayViewModel paymentGateway)
+        public async Task<IActionResult> AddPaymentGateway(PaymentGatewayViewModel paymentGateway)
         {
             var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
 
@@ -143,15 +142,14 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeletePaymentGateway(string id)
+        public async Task<IActionResult> DeletePaymentGateway(string id)
         {
-            if (_paymentGatewayService.RemovePaymentGateway(CurrentUser, id))
-                return PaymentGatewayList();
-            return PaymentGatewayList();
+            _paymentGatewayService.RemovePaymentGateway(CurrentUser, id);            
+            return await PaymentGatewayList();
         }
 
         [HttpGet]
-        public ActionResult MerchantList()
+        public async Task<IActionResult> MerchantList()
         {
             var merchants = _merchantService.GetAllMerchants().ToList();
             MerchantViewModel merchantModel = new MerchantViewModel();
@@ -166,7 +164,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddMerchant(MerchantViewModel merchant)
+        public async Task<IActionResult> AddMerchant(MerchantViewModel merchant)
         {
             var merchants = _merchantService.GetAllMerchants().ToList();
 
@@ -189,16 +187,15 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteMerchant(string id)
+        public async Task<IActionResult> DeleteMerchant(string id)
         {
             if (_merchantService.RemoveMerchant(CurrentUser, id))
-                return MerchantList();
-            return MerchantList();
+                return await MerchantList();
+            return await MerchantList();
         }
 
         //[HttpPost]
-        //[AuthorizeRole("Admin")]
-        //public ActionResult UploadDataFiles(HttpPostedFileWrapper uploadedUserData, HttpPostedFileWrapper uploadedLocationData, HttpPostedFileWrapper uploadedOrgUISData, HttpPostedFileWrapper uploadedVehicleData, HttpPostedFileWrapper uploadedIPOrganisationData)
+        //public async Task<IActionResult> UploadDataFiles(HttpPostedFileWrapper uploadedUserData, HttpPostedFileWrapper uploadedLocationData, HttpPostedFileWrapper uploadedOrgUISData, HttpPostedFileWrapper uploadedVehicleData, HttpPostedFileWrapper uploadedIPOrganisationData)
         //{
         //    byte[] buffer;
         //    // Parse uploaded organisation and user data here
@@ -275,7 +272,6 @@ namespace TechCertain.WebUI.Controllers
         //                    if (user2 != null && user != user2)
         //                    {
         //                        Exception ex = new Exception(string.Format("User with email {0} doesn't match user with username {1}", user.Email, user.UserName));
-        //                        _logger.Error(ex);
         //                        throw ex;
         //                    }
         //                }
@@ -502,14 +498,15 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         [HttpPost]
-		public ActionResult UnlockUser (string username)
+		public async Task<IActionResult> UnlockUser (string username)
 		{
-			_userService.RemoveGlobalBan (_userService.GetUser (username), CurrentUser);
+            throw new Exception("method needs to be implemented in identity");
+			//_userService.RemoveGlobalBan (_userService.GetUser (username), CurrentUser);
 			return Redirect ("/Admin/Index");
 		}
 
         [HttpGet]
-        public ActionResult SysEmailTemplate(String systemEmailType, String internalNotes)
+        public async Task<IActionResult> SysEmailTemplate(String systemEmailType, String internalNotes)
         {
             SystemEmail systemEmailTemplate = _systemEmailService.GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == systemEmailType);
              
@@ -538,7 +535,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SysEmailTemplate(SystemEmailTemplateViewModel model)
+        public async Task<IActionResult> SysEmailTemplate(SystemEmailTemplateViewModel model)
         {
             SystemEmail systemEmailTemplate = _systemEmailService.GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == model.SystemEmailType);
 
@@ -635,13 +632,13 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult SysExchange()
+        public async Task<IActionResult> SysExchange()
         {
             return View("SysExchange");
         }
 
         [HttpPost]
-        public ActionResult SysExchange(OrganisationViewModel model)
+        public async Task<IActionResult> SysExchange(OrganisationViewModel model)
         {
             Organisation org = _organisationService.GetOrganisationByEmail(model.Email);            
             User user = _userService.GetUserByEmail(model.Email);

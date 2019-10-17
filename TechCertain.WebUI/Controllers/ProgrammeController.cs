@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using AutoMapper;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
@@ -15,6 +15,7 @@ using TechCertain.WebUI.Models.Product;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -23,7 +24,6 @@ namespace TechCertain.WebUI.Controllers
     {        
         IInformationTemplateService _informationService;
         IUnitOfWork _unitOfWork;
-
         IMapperSession<Programme> _programmeRepository;
         IMapperSession<Product> _productRepository;
         IMapperSession<RiskCategory> _riskRepository;
@@ -35,14 +35,12 @@ namespace TechCertain.WebUI.Controllers
         IFileService _fileService;
         IEmailService _emailService;
         IRuleService _RuleService;
-        IRoleService _roleService;
-        IMapper _mapper;
-        IHttpContextAccessor _httpContextAccessor;
+        IMapper _mapper;        
 
-        public ProgrammeController(DealEngineDBContext dealEngineDBContext, SignInManager<DealEngineUser> signInManager, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService,
+        public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
-                                 IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRoleService roleService,
-                                 IRuleService ruleService, IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
+                                 IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRuleService ruleService, IMapperSession<Document> documentRepository,
+                                 IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper)
             : base (userRepository)
         {            
@@ -51,7 +49,6 @@ namespace TechCertain.WebUI.Controllers
             _productRepository = productRepository;
             _riskRepository = riskRepository;
             _riskCoverRepository = riskCoverRepository;
-            _roleService = roleService;
             _organisationRepository = organisationRepository;
             _busActivityService = busActivityService;
             _documentRepository = documentRepository;
@@ -65,7 +62,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult MyProgrammes()
+        public async Task<IActionResult> MyProgrammes()
         {
             try {
                 var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser.PrimaryOrganisation);
@@ -97,7 +94,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult AllProgrammes()
+        public async Task<IActionResult> AllProgrammes()
         {
             try {
                 var programmes = _programmeRepository.FindAll().Where(p => p.DateDeleted == null);
@@ -124,7 +121,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult ManageClient(Guid Id)
+        public async Task<IActionResult> ManageClient(Guid Id)
         {
             //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -167,7 +164,7 @@ namespace TechCertain.WebUI.Controllers
 
         //throw new Exception("Method will need to be re-written");
         //[HttpPost]
-        //public ActionResult UploadDataFiles(HttpPostedFileWrapper uploadedBusinessActivityData)
+        //public async Task<IActionResult> UploadDataFiles(HttpPostedFileWrapper uploadedBusinessActivityData)
         //{
         //    byte[] buffer;
         //    IList<BusinessActivity> BAList = new List<BusinessActivity>();
@@ -237,7 +234,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         [HttpPost]
-        public ActionResult CreateProgrammeActivities(ActivityViewModel model)
+        public async Task<IActionResult> CreateProgrammeActivities(ActivityViewModel model)
         {
             //if (!ModelState.IsValid)
             //{
@@ -266,7 +263,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult ActivityBuilder()
+        public async Task<IActionResult> ActivityBuilder()
         {
             ActivityViewModel model = new ActivityViewModel
             {
@@ -320,7 +317,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateBusinessActivity(ActivityModal model)
+        public async Task<IActionResult> CreateBusinessActivity(ActivityModal model)
         {
             //TODO: tidy up code use a list to loop through model 
             IList<BusinessActivity> BAList = new List<BusinessActivity>();
@@ -377,14 +374,14 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateRole(string title)
+        public async Task<IActionResult> CreateRole(string title)
         {
-            _roleService.CreateRole(title);
+            //_roleService.CreateRole(title);
             return Redirect("/Programme/RoleBuilder");
         }
 
         [HttpPost]
-        public ActionResult CreateProgrammeRoles(RoleViewModel model)
+        public async Task<IActionResult> CreateProgrammeRoles(RoleViewModel model)
         {
             //if (!ModelState.IsValid)
             //{
@@ -397,8 +394,8 @@ namespace TechCertain.WebUI.Controllers
                 Programme programme = _programmeService.GetProgramme(Guid.Parse(model.RoleAttach.SelectedProgramme[0]));
                 foreach (string str in model.Builder.SelectedRoles)
                 {
-                    Role role = _roleService.GetRole(Guid.Parse(str));
-                    _roleService.AttachClientProgrammeToRole(programme, role);
+                    //Role role = _roleService.GetRole(Guid.Parse(str));
+                    //_roleService.AttachClientProgrammeToRole(programme, role);
                 }
 
                 return Redirect("~/Programme/ActivityBuilder");
@@ -410,54 +407,10 @@ namespace TechCertain.WebUI.Controllers
                 Response.StatusCode = 500;
                 return Content(ex.Message);
             }
-        }
-
-        [HttpGet]
-        public ActionResult RoleBuilder()
-        {
-            List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == CurrentUser.PrimaryOrganisation.Id))
-            {
-                proglist.Add(new SelectListItem
-                {
-                    Selected = false,
-                    Text = programme.Name,
-                    Value = programme.Id.ToString(),
-                });
-
-            }
-
-            List<SelectListItem> roleList = new List<SelectListItem>();
-            var roles = _roleService.GetRoles();
-            foreach (Role role in roles)
-            {
-                roleList.Add(new SelectListItem
-                {
-                    Selected = false,
-                    Text = role.Title,
-                    Value = role.Id.ToString(),
-                });
-
-            }
-
-            RoleViewModel model = new RoleViewModel
-            {
-                Builder = new RoleBuilderVM()
-                {
-                    Roles = roleList,
-                },
-                RoleAttach = new RoleAttachVM()
-                {
-                    BaseProgList = proglist,
-                }
-
-            };
-
-            return View(model);
-        }
+        }       
 
         [HttpPost]
-        public ActionResult SendInvoice(Guid programmeId)
+        public async Task<IActionResult> SendInvoice(Guid programmeId)
         {
             ClientProgramme programme = _programmeService.GetClientProgramme(programmeId);
             if (programme.EGlobalClientNumber == null)
@@ -480,7 +433,7 @@ namespace TechCertain.WebUI.Controllers
                     if (agreement.Status != status)
                     {
                         agreement.Status = status;
-                        uow.Commit();
+                        await uow.Commit();
                     }
                 }
 
@@ -504,7 +457,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult OwnerProgrammes(Guid ownerId, Guid Id)
+        public async Task<IActionResult> OwnerProgrammes(Guid ownerId, Guid Id)
         {
             //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -539,7 +492,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult ClientProgrammeDetails(Guid programmeId, Guid Id,Guid ownerId)
+        public async Task<IActionResult> ClientProgrammeDetails(Guid programmeId, Guid Id,Guid ownerId)
         {
             //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
           //  ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -574,7 +527,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditBillingConfiguration(Guid programmeId)
+        public async Task<IActionResult> EditBillingConfiguration(Guid programmeId)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             ClientProgramme programme = _programmeService.GetClientProgramme(programmeId);
@@ -590,7 +543,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
+        public async Task<IActionResult> SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {
             ClientProgramme programme = _programmeService.GetClientProgramme(programmeId);
             programme.EGlobalBranchCode = billingConfig[0];
@@ -613,7 +566,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditClientProgrammeDetails(Guid programmeId, Guid Id, Guid OwnerId)
+        public async Task<IActionResult> EditClientProgrammeDetails(Guid programmeId, Guid Id, Guid OwnerId)
         {
             ClientProgrammeInfoViewModel clientviewmodel = new ClientProgrammeInfoViewModel();
 
@@ -640,7 +593,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveClientProgrammeDetails(Guid programme_id, ClientProgrammeInfoViewModel clientviewmodel, Guid id)
+        public async Task<IActionResult> SaveClientProgrammeDetails(Guid programme_id, ClientProgrammeInfoViewModel clientviewmodel, Guid id)
         {
             ClientProgramme programme = _programmeService.GetClientProgramme(programme_id);
 
@@ -656,7 +609,7 @@ namespace TechCertain.WebUI.Controllers
                     //owner.Name = clientviewmodel.Name;
                     owner.Phone = clientviewmodel.Phone;
                     owner.Email = clientviewmodel.Email;
-                    NewMethod(uow);
+                    await uow.Commit();
 
                 }
 
@@ -674,12 +627,7 @@ namespace TechCertain.WebUI.Controllers
 
             //return View("ClientProgrammeDetails",clientviewmodel);
         }
-
-
-        private static void NewMethod(IUnitOfWork uow)
-        {
-            uow.Commit();
-        }
+     
         //[HttpGet]
 
         //               using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -692,7 +640,7 @@ namespace TechCertain.WebUI.Controllers
         //                NewMethod(uow);
         //}
         //            return RedirectToAction("EditTerms", new { id = clientAgreementId });
-        //public ActionResult OwnerDetails(List<Organisation> ownerlist, Guid Id)
+        //public async Task<IActionResult> OwnerDetails(List<Organisation> ownerlist, Guid Id)
         //{
         //    //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
         //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -730,7 +678,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult EmailTemplate(Guid Id)
+        public async Task<IActionResult> EmailTemplate(Guid Id)
         {
             //BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -753,7 +701,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult TermSheetTemplate(Guid Id)
+        public async Task<IActionResult> TermSheetTemplate(Guid Id)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             try
@@ -770,15 +718,15 @@ namespace TechCertain.WebUI.Controllers
 
         
         [HttpGet]
-        public ActionResult ProductRules(Guid Id, Guid productId)
+        public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
 
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var rules = new List<Rule>();
             model.Id = Id;
             model.ProductId = productId;
-            var product = _productRepository.GetById(productId);
+            var product = _productRepository.GetByIdAsync(productId).Result;
             
             foreach (var rule in product.Rules)
             {
@@ -792,7 +740,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditRule(Guid Id , ClientAgreementRuleViewModel rule )
+        public async Task<IActionResult> EditRule(Guid Id , ClientAgreementRuleViewModel rule )
         {
             //Programme programme = _programmeRepository.GetById(programmeId);
 
@@ -810,7 +758,7 @@ namespace TechCertain.WebUI.Controllers
                         Rule.Description = rule.Description;
                         Rule.OrderNumber = rule.OrderNumber;
                         Rule.Value = rule.Value;
-                        uow.Commit();
+                        await uow.Commit();
                     }
 
                 }
@@ -828,9 +776,9 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult ManageRules(Guid Id)
+        public async Task<IActionResult> ManageRules(Guid Id)
         {
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
 
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var product = new List<ProductInfoViewModel>();
@@ -857,7 +805,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         //[HttpPost]
-        //public ActionResult AddselectedParty(Guid Id)
+        //public async Task<IActionResult> AddselectedParty(Guid Id)
         //{
         //    var orguser = new List<string>();
         //    Programme programme = _programmeRepository.GetById(Id);
@@ -875,10 +823,10 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public ActionResult AddselectedParty(string[] selectedParty,Guid informationId)
+        public async Task<IActionResult> AddselectedParty(string[] selectedParty,Guid informationId)
         {
             PartyUserViewModel model = new PartyUserViewModel();
-            Programme programme = _programmeRepository.GetById(informationId);
+            Programme programme = _programmeRepository.GetByIdAsync(informationId).Result;
             //model.Id = informationId;
             //model.Parties = programme.Parties;
            
@@ -893,7 +841,7 @@ namespace TechCertain.WebUI.Controllers
                             var user = _userService.GetUserByEmail(party);
                             programme.UISIssueNotifyUsers.Add(user);
                         }
-                        uow.Commit();
+                        await uow.Commit();
                     }
                     
                 }
@@ -907,15 +855,15 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public ActionResult selectedParty(Guid selectedParty, Guid informationId)
+        public async Task<IActionResult> selectedParty(Guid selectedParty, Guid informationId)
         {
             //PartyUserViewModel model = new PartyUserViewModel();
             PartyUserViewModel model = new PartyUserViewModel();
 
-            Programme programme = _programmeRepository.GetById(informationId);
+            Programme programme = _programmeRepository.GetByIdAsync(informationId).Result;
             //model.Id = informationId;
             //model.Parties = programme.Parties;
-            Organisation organisation = _organisationRepository.GetById(selectedParty);
+            Organisation organisation = _organisationRepository.GetByIdAsync(selectedParty).Result;
             List<PartyUserViewModel> selectedorg = new List<PartyUserViewModel>();
             if ("organisation" != null)
             {
@@ -945,7 +893,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         //[HttpPost]
-        //public ActionResult AddselectedParty(Guid selectedParty, Guid informationId)
+        //public async Task<IActionResult> AddselectedParty(Guid selectedParty, Guid informationId)
         //{
         //    Programme programme = _programmeRepository.GetById(informationId);
         //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
@@ -996,10 +944,10 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult IssueNotification(Guid Id)
+        public async Task<IActionResult> IssueNotification(Guid Id)
         {
             var orguser = new List<string>();
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             model.Id = Id;
             model.Parties = programme.Parties;
@@ -1014,9 +962,9 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult SendEmailTemplates(Guid Id, String type,String description)
+        public async Task<IActionResult> SendEmailTemplates(Guid Id, String type,String description)
         {
-            Programme programme = _programmeRepository.GetById(Id);
+            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
            
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == type);
             
@@ -1046,9 +994,9 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SendEmailTemplates(EmailTemplateViewModel model)
+        public async Task<IActionResult> SendEmailTemplates(EmailTemplateViewModel model)
         {
-            Programme programme = _programmeRepository.GetById(model.BaseProgrammeID);
+            Programme programme = _programmeRepository.GetByIdAsync(model.BaseProgrammeID).Result;
 
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == model.Type);
 
@@ -1120,8 +1068,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.Body = model.Body;
                     emailTemplate.LastModifiedBy = CurrentUser;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
-
-                    uow.Commit();
+                    await uow.Commit();
                 }
             }
             else
@@ -1130,7 +1077,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     emailTemplate = new EmailTemplate(CurrentUser, emailtemplatename, model.Type, model.Subject, model.Body, null, programme);
                     programme.EmailTemplates.Add(emailTemplate);
-                    uow.Commit();
+                    await uow.Commit();
                 }
             }
 
@@ -1139,7 +1086,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         /*[HttpGet]
-		public ActionResult ViewProgramme (Guid id)
+		public async Task<IActionResult> ViewProgramme (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
 			Product product = _productRepository.GetById (id);

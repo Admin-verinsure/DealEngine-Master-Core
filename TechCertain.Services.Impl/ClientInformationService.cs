@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 
+
 namespace TechCertain.Services.Impl
 {
-    public class CilentInformationService : ICilentInformationService
+    public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
 
-        public CilentInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository)
+        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository)
         {
             _customerInformationRepository = customerInformationRepository;
         }
@@ -23,7 +24,6 @@ namespace TechCertain.Services.Impl
         public ClientInformationSheet IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
         {
             ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, informationTemplate);
-            //ConfigureSharedData (sheet);
             UpdateInformation(sheet);
             return sheet;
         }
@@ -44,34 +44,27 @@ namespace TechCertain.Services.Impl
 
         public ClientInformationSheet GetInformation(Guid informationSheetId)
         {
-            return _customerInformationRepository.GetById(informationSheetId);
+            return _customerInformationRepository.GetByIdAsync(informationSheetId).Result;
         }
 
         public IQueryable<ClientInformationSheet> GetAllInformationFor(User owner)
         {
-            var sheets = _customerInformationRepository.FindAll().Where(s => owner.Organisations.Contains(s.Owner));
-            return sheets;
-            //return _customerInformationRepository.FindAll ().Where (s => s.OwnerId == userId);
+            return _customerInformationRepository.FindAll().Where(s => owner.Organisations.Contains(s.Owner));
         }
 
         public IQueryable<ClientInformationSheet> GetAllInformationFor(Organisation owner)
         {
-            var sheets = _customerInformationRepository.FindAll().Where(s => s.Owner == owner);
-            return sheets;
-            //return _customerInformationRepository.FindAll ().Where (s => s.OwnerId == userId);
+            return _customerInformationRepository.FindAll().Where(s => s.Owner == owner);
         }
 
         public IQueryable<ClientInformationSheet> GetAllInformationFor(String referenceId)
         {
-            var sheets = _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId);
-
-            return sheets;
-
+            return _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId);
         }
 
-        public void UpdateInformation(ClientInformationSheet sheet)
+        public async void UpdateInformation(ClientInformationSheet sheet)
         {
-            _customerInformationRepository.Add(sheet);
+            await _customerInformationRepository.UpdateAsync(sheet);
         }
 
         public void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
@@ -86,7 +79,6 @@ namespace TechCertain.Services.Impl
                 foreach (string value in collection[key])
                 {
                     sheet.AddAnswer(key, value);
-                    //Console.WriteLine (key + ": " + value);
                 }
             }
 

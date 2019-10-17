@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using System;
@@ -14,6 +14,7 @@ using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -51,7 +52,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult MilestoneList()
+        public async Task<IActionResult> MilestoneList()
         {
             string[] events = new[] { "Process New Agreement", "Change Agreement", "Process Renewal Agreement", "Process Cancel Agreement" };
 
@@ -87,7 +88,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public ActionResult CreateMilestone (MilestoneListViewModel listModel)
+        public async Task<IActionResult> CreateMilestone (MilestoneListViewModel listModel)
         {
             IList<string> emailTo = new List<string>();
 
@@ -127,7 +128,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult MilestoneBuilder()
+        public async Task<IActionResult> MilestoneBuilder()
         {
             MilestoneBuilderViewModel model = (MilestoneBuilderViewModel)TempData["MilestoneBuilderViewModel"];
             return View("MilestoneBuilder", model);
@@ -135,7 +136,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public ActionResult SubmitMilestone(MilestoneBuilderViewModel model)
+        public async Task<IActionResult> SubmitMilestone(MilestoneBuilderViewModel model)
         {
 
             Programme programme = _programmeService.GetProgramme(model.ProgrammeId);

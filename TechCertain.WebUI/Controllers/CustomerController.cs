@@ -10,7 +10,7 @@ namespace TechCertain.WebUI.Controllers
     {
 		// GET: Customer
 		[HttpGet]
-        public ActionResult Parties()
+        public IActionResult Parties()
         {
             return View();
         }

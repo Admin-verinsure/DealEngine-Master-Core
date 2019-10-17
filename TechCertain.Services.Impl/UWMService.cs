@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Domain.Services;
 using TechCertain.Services.Interfaces;
 
@@ -16,7 +15,6 @@ namespace TechCertain.Services.Impl
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
-        IUnitOfWork _unitOfWork;
         IUnderwritingModule _underwritingModule;        
 
         public UWMService(
@@ -25,15 +23,13 @@ namespace TechCertain.Services.Impl
             IClientAgreementRuleService clientAgreementRuleService,
             IClientAgreementTermService clientAgreementTermService,
             IClientAgreementMVTermService clientAgreementMVTermService,
-            IClientAgreementEndorsementService clientAgreementEndorsementService,            
-            IUnitOfWork unitOfWork)
+            IClientAgreementEndorsementService clientAgreementEndorsementService)
         {
             _clientAgreementService = clientAgreementService;
             _clientAgreementRuleService = clientAgreementRuleService;
             _clientAgreementTermService = clientAgreementTermService;
             _clientAgreementMVTermService = clientAgreementMVTermService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
-            _unitOfWork = unitOfWork;
             _underwritingModule = underwritingModule;            
         }
 
@@ -86,6 +82,30 @@ namespace TechCertain.Services.Impl
 
 
 
+    }
+    public class EmptyUWModule : IUnderwritingModule
+    {
+        public EmptyUWModule()
+        {
+        }
+
+        public string Name
+        {
+            get
+            {
+                return "NoUnderwrite";
+            }
+        }
+
+        public bool Underwrite(User underwritingUser, ClientInformationSheet informationSheet)
+        {
+            return true;
+        }
+
+        public bool Underwrite(User underwritingUser, ClientInformationSheet informationSheet, Product product, string reference)
+        {
+            return true;
+        }
     }
 
     public class ICIBARCCOUWModule : IUnderwritingModule

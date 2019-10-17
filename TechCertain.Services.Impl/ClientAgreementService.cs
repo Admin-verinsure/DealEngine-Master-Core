@@ -1,6 +1,6 @@
 ﻿using System;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 
@@ -8,37 +8,31 @@ namespace TechCertain.Services.Impl
 {
     public class ClientAgreementService : IClientAgreementService
     {
-
-        IUnitOfWork _unitOfWork;
         IMapperSession<ClientAgreement> _clientAgreementRepository;
+        IMapperSession<ClientInformationSheet> _clientInformationSheetRepository;
 
-        public ClientAgreementService(IUnitOfWork unitOfWork, IMapperSession<ClientAgreement> clientAgreementRepository)
+        public ClientAgreementService(IMapperSession<ClientAgreement> clientAgreementRepository, IMapperSession<ClientInformationSheet> clientInformationSheetRepository)
         {
-            _unitOfWork = unitOfWork;
             _clientAgreementRepository = clientAgreementRepository;
+            _clientInformationSheetRepository = clientInformationSheetRepository;
         }
 
-        public bool CreateClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet)
+        public void CreateClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet)
         {
             if (string.IsNullOrWhiteSpace(insuredName))
                 throw new ArgumentNullException(nameof(insuredName));
             if (clientInformationSheet == null)
                 throw new ArgumentNullException(nameof(clientInformationSheet));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-				ClientAgreement clientAgreement = new ClientAgreement (createdBy, insuredName, inceptionDate, expiryDate, brokerage, brokerFee, clientInformationSheet, null, clientInformationSheet.ReferenceId);
-                clientInformationSheet.ClientAgreement = clientAgreement;
-                _clientAgreementRepository.Add(clientAgreement);
-                work.Commit();
-            }
-
-            return true;
+            ClientAgreement clientAgreement = new ClientAgreement (createdBy, insuredName, inceptionDate, expiryDate, brokerage, brokerFee, clientInformationSheet, null, clientInformationSheet.ReferenceId);
+            clientInformationSheet.ClientAgreement = clientAgreement;
+            _clientInformationSheetRepository.UpdateAsync(clientInformationSheet);
+            _clientAgreementRepository.AddAsync(clientAgreement);
         }
 
 		public ClientAgreement GetAgreement (Guid clientAgreementId)
 		{
-			return _clientAgreementRepository.GetById (clientAgreementId);
+			return _clientAgreementRepository.GetByIdAsync(clientAgreementId).Result;
 		}
 
 		public ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser)
@@ -48,16 +42,12 @@ namespace TechCertain.Services.Impl
 			if (acceptingUser == null)
 				throw new ArgumentNullException (nameof (acceptingUser));
 
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				agreement.ClientInformationSheet.Status = "Submitted";
-				agreement.ClientInformationSheet.SubmitDate = DateTime.UtcNow;
-				agreement.ClientInformationSheet.SubmittedBy = acceptingUser;
-				// set accept flag here
-
-				uow.Commit ();
-			}
-
-			return agreement;
+		    agreement.ClientInformationSheet.Status = "Submitted";
+			agreement.ClientInformationSheet.SubmitDate = DateTime.UtcNow;
+			agreement.ClientInformationSheet.SubmittedBy = acceptingUser;
+			
+            _clientAgreementRepository.UpdateAsync(agreement);
+            return agreement;
 		}
     }
 }

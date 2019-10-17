@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechCertain.Domain.Entities.Abstracts;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
 {

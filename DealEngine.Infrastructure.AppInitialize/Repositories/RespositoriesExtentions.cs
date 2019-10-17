@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using TechCertain.Domain.Entities.Abstracts;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Infrastructure.BaseLdap.Repositories;
-using TechCertain.Infrastructure.FluentNHibernate.Repositories;
+using TechCertain.Services.Interfaces;
 
 namespace DealEngine.Infrastructure.AppInitialize.Repositories
 {
@@ -11,8 +8,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Repositories
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IOrganisationRepository, LdapOrganisationRepository>();                      
+            services.AddTransient<IOrganisationService, LdapOrganisationRepository>();                      
 
             return services;
         }

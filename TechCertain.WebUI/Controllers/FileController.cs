@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Mime;
 using SystemDocument = TechCertain.Domain.Entities.Document;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +17,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -46,7 +47,7 @@ namespace TechCertain.WebUI.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public ActionResult Image(string id)
+		public async Task<IActionResult> Image(string id)
 		{
 
             //string uploadFolder = "~/App_Data/uploads/";
@@ -70,13 +71,13 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult GetDocument (Guid id, string format)
+		public async Task<IActionResult> GetDocument (Guid id, string format)
 		{
             //throw new Exception("This method needs to be re-written");
             //if (id == Guid.Empty)
             //    return new HttpNotFoundResult();
 
-            SystemDocument doc = _documentRepository.GetById(id);
+            SystemDocument doc = _documentRepository.GetByIdAsync(id).Result;
             string extension = "";
             if (doc.ContentType == MediaTypeNames.Text.Html)
             {
@@ -113,7 +114,7 @@ namespace TechCertain.WebUI.Controllers
 		//	file.SaveAs(absolutePath);
 		//}
 
-		//ActionResult DownloadFile(string folder, string fileName, string mediaType)
+		//async Task<IActionResult> DownloadFile(string folder, string fileName, string mediaType)
 		//{
 		//	try
 		//	{
@@ -130,7 +131,7 @@ namespace TechCertain.WebUI.Controllers
 		//}
 
 		[HttpGet]
-		public ActionResult CreateDocument (string id)
+		public async Task<IActionResult> CreateDocument (string id)
 		{
 			DocumentViewModel model = new DocumentViewModel ();
 
@@ -144,7 +145,7 @@ namespace TechCertain.WebUI.Controllers
 			if (documentId == Guid.Empty)
 				return View (model);
 
-			SystemDocument document = _documentRepository.GetById (documentId);
+			SystemDocument document = _documentRepository.GetByIdAsync(documentId).Result;
 			if (document == null)
 				throw new Exception ("Unable to update document: Could not find document with id " + id);
 
@@ -158,11 +159,11 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult CreateDocument (DocumentViewModel model)
+		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
 		{
             if (model.DocumentId != Guid.Empty)
             {
-                SystemDocument document = _documentRepository.GetById(model.DocumentId);
+                SystemDocument document = _documentRepository.GetByIdAsync(model.DocumentId).Result;
                 if (document != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -184,19 +185,14 @@ namespace TechCertain.WebUI.Controllers
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = CurrentUser.PrimaryOrganisation;
                 document.IsTemplate = true;
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    _documentRepository.Add(document);
-                    uow.Commit();
-                }
+                _documentRepository.AddAsync(document);
             }
 
 			return View (model);
 		}
 
 		[HttpGet]
-		public ActionResult ManageDocuments ()
+		public async Task<IActionResult> ManageDocuments ()
 		{
 			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
 
@@ -255,7 +251,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult Render (string id)
+		public async Task<IActionResult> Render (string id)
 		{
             throw new Exception("Method will need to be re-written");
             //string serverFile = Path.Combine(_appData, _uploadFolder, id);

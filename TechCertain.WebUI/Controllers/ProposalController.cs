@@ -6,30 +6,29 @@ using TechCertain.WebUI.Models.Proposal;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class ProposalController : BaseController
     {
         IProposalBuilderService _proposalBuilderService;
-        IHttpContextAccessor _httpContextAccessor;
-        public ProposalController(IUserService userRepository, 
-            DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, SignInManager<DealEngineUser> signInManager) 
+
+        public ProposalController(IUserService userRepository, IProposalBuilderService proposalBuilderService) 
             : base (userRepository)
-
         {
-
+            _proposalBuilderService = proposalBuilderService;
         }
 
 
 		[HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
         }
 
 		[HttpGet]
-        public ActionResult ProposalBuilder()
+        public async Task<IActionResult> ProposalBuilder()
         {
             ProposalBuilderViewModel model = new ProposalBuilderViewModel();
 
@@ -370,22 +369,22 @@ namespace TechCertain.WebUI.Controllers
         //       //    ViewData["items"] = proposalItems;
         //       //}
 
-        //       public ActionResult Index()
+        //       public async Task<IActionResult> Index()
         //       {
         //           return View();
         //       }
 
-        //       public ActionResult Add()
+        //       public async Task<IActionResult> Add()
         //       {
         //           return View();
         //       }
 
-        //       //public ActionResult ViewAll()
+        //       //public async Task<IActionResult> ViewAll()
         //       //{
         //       //    return View(model);
         //       //}
 
-        //       public ActionResult ProposalBuilder()
+        //       public async Task<IActionResult> ProposalBuilder()
         //       {
         //           ProposalBuilderViewModel model = new ProposalBuilderViewModel();
 
@@ -414,7 +413,7 @@ namespace TechCertain.WebUI.Controllers
         //           return Json(proposalItems, JsonRequestBehavior.AllowGet);
         //       }
 
-        //	public ActionResult ManageElements()
+        //	public async Task<IActionResult> ManageElements()
         //	{
         //		ProposalViewAllViewModel model = new ProposalViewAllViewModel () {
         //			Items = new List<ProposalViewAllViewModel.ProposalItem>()
@@ -431,13 +430,13 @@ namespace TechCertain.WebUI.Controllers
         //		return View(model);
         //	}
 
-        //       //public ActionResult Read([DataSourceRequest] DataSourceRequest request)
+        //       //public async Task<IActionResult> Read([DataSourceRequest] DataSourceRequest request)
         //       //{
         //       //    return Json(proposalItems.ToDataSourceResult(request));
         //       //}
 
         //       //        [AcceptVerbs(HttpVerbs.Post)]
-        //       //        public ActionResult Create([DataSourceRequest] DataSourceRequest request, ProposalViewAllViewModel.ProposalItem proposalItem)
+        //       //        public async Task<IActionResult> Create([DataSourceRequest] DataSourceRequest request, ProposalViewAllViewModel.ProposalItem proposalItem)
         //       //        {
         //       //            if (proposalItem != null && ModelState.IsValid)
         //       //            {                //productService.Create(product);
@@ -455,7 +454,7 @@ namespace TechCertain.WebUI.Controllers
         //       //        }
 
         //       //[AcceptVerbs(HttpVerbs.Post)]
-        //       //public ActionResult Update([DataSourceRequest] DataSourceRequest request, ProposalViewAllViewModel.ProposalItem proposalItem)
+        //       //public async Task<IActionResult> Update([DataSourceRequest] DataSourceRequest request, ProposalViewAllViewModel.ProposalItem proposalItem)
         //       //{
         //       //    if (proposalItem != null && ModelState.IsValid)
         //       //    {
@@ -466,7 +465,7 @@ namespace TechCertain.WebUI.Controllers
         //       //}
 
         //       //[AcceptVerbs(HttpVerbs.Post)]
-        //       //public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ProposalViewAllViewModel.ProposalItem proposalItem)
+        //       //public async Task<IActionResult> Destroy([DataSourceRequest] DataSourceRequest request, ProposalViewAllViewModel.ProposalItem proposalItem)
         //       //{
         //       //    if (proposalItem != null)
         //       //    {
@@ -478,7 +477,7 @@ namespace TechCertain.WebUI.Controllers
 
         //       // This should build the proposal based on a binder
 
-        //       public ActionResult MNZNLP()
+        //       public async Task<IActionResult> MNZNLP()
         //       {
         //           #region MyRegion
 

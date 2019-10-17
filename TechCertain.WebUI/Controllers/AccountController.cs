@@ -20,8 +20,8 @@ using TechCertain.Infrastructure.Ldap.Interfaces;
 using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
 using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.AuthorizationRSA;
-using TechCertain.Domain.Interfaces;
 using System.Linq;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 
 #endregion
@@ -39,7 +39,7 @@ namespace TechCertain.WebUI.Controllers
         UserManager<DealEngineUser> _userManager;
         ILdapService _ldapService;
         IProgrammeService _programmeService;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
         ILogger<AccountController> _logger;
@@ -52,11 +52,12 @@ namespace TechCertain.WebUI.Controllers
 			SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
             ILogger<AccountController> logger,
+            IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
             ILdapService ldapService,
             IUserService userService,
-			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IMapperSession<User> userRepository, IAppSettingService appSettingService) : base (userService)
+			IEmailService emailService, IFileService fileService, IProgrammeService programeService, IClientInformationService clientInformationService, 
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IAppSettingService appSettingService) : base (userService)
 		{
             _authenticationService = authenticationService;
             _ldapService = ldapService;
@@ -78,10 +79,10 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/forgotpassword
 		[HttpGet]
 		[AllowAnonymous]
-		public ActionResult ForgotPassword()
+		public async Task<IActionResult> ForgotPassword()
 		{
 			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
+				return await RedirectToLocal();
 			
 			// TODO - need to somehow call ResetPassword and return its view so we don't have to duplicate it here.
 			// We do not want to use any existing identity information
@@ -93,10 +94,10 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/resetpassword
 		[HttpGet]
         [AllowAnonymous]
-        public ActionResult ResetPassword()
+        public async Task<IActionResult> ResetPassword()
 		{
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -108,7 +109,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> ResetPassword(AccountResetPasswordModel viewModel)
+		public async Task<IActionResult> ResetPassword(AccountResetPasswordModel viewModel)
 		{
 			string errorMessage = @"We have sent you an email to the email address we have recorded in the system, that email address is different from the one you supplied. 
 				Please check the other email addresses you may have used. If you cannot locate our email, 
@@ -183,7 +184,7 @@ namespace TechCertain.WebUI.Controllers
         // GET: /account/changepassword
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult ChangePassword(Guid id)
+        public async Task<IActionResult> ChangePassword(Guid id)
         {
             if (id != Guid.Empty && _authenticationService.GetToken(id) != null)
             {
@@ -200,7 +201,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
+		public async Task<IActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
 		{
 			try
 			{
@@ -258,19 +259,6 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                    //change the users password as them using the intermediate password
-
-                    //            if (!string.IsNullOrWhiteSpace(username) && Membership.GetUser(username).ChangePassword(IntermediateChangePassword, viewModel.Password))
-                    //            {
-                    //                _logger.Info("Password changed for [" + username + "]");
-                    //                _authenticationService.UseSingleUseToken(st.Id);
-                    //                //return Redirect ("~/Account/PasswordChanged");
-                    //                return RedirectToAction("PasswordChanged", "Account");
-                    //            }
-                    //            else {
-                    //	ModelState.AddModelError ("passwordConfirm", "The password change has failed. Is your new password complex enough?");
-                    //	return View ();
-                    //}
             }
 			catch (AuthenticationException ex) {
 				ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");
@@ -286,34 +274,15 @@ namespace TechCertain.WebUI.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public ActionResult PasswordChanged ()
+		public async Task<IActionResult> PasswordChanged ()
 		{
 			return View ();
-		}
-
-		[HttpGet]
-		public ActionResult ImpersonateUser (string id)
-		{
-			User user = _userService.GetUser (id);
-
-			//if (_permissionsService.DoesUserHaveRole(id, "Admin")) {
-			//	_logger.Info (" Attempt by [" + CurrentUser.UserName + "] to impersonate admin user [" + user.UserName + "]");
-			//}
-			//else {
-			//	//Session.Abandon ();
-			//	//FormsAuthentication.SetAuthCookie (user.UserName, true);
-			//	SetCookie ("ASP.NET_SessionId", "", DateTime.MinValue);
-
-			//	_logger.Info ("[" + CurrentUser.UserName + "] is impersonating [" + user.UserName + "]");
-			//}
-
-			return Redirect ("~/Home/Index");
 		}
 
 		// GET: /account/login
 		[HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl)
         {
             // We do not want to use any existing identity information
             //EnsureLoggedOut();            
@@ -340,7 +309,7 @@ namespace TechCertain.WebUI.Controllers
 			}
 
 			if (User.Identity.IsAuthenticated)
-				return RedirectToLocal();
+				return await RedirectToLocal();
 
             try
             {
@@ -349,9 +318,6 @@ namespace TechCertain.WebUI.Controllers
                 int resultCode = -1;
                 string resultMessage = "";
 
-                // Step 1 validate in  MarshUser
-                
-
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
@@ -359,7 +325,7 @@ namespace TechCertain.WebUI.Controllers
                     var deUser = _userManager.FindByNameAsync(userName).Result;
                     if (deUser == null)
                     {
-                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
+                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password };
                         await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
                     }
 
@@ -368,8 +334,14 @@ namespace TechCertain.WebUI.Controllers
                     {
                         //add claims, roles etc here
                     }
-                    var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
-                    var result = await LoginMarsh(user, viewModel.DevicePrint);
+
+                    //var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    //user.UserName = "testUserName";
+                    //await _userRepository.UpdateAsync(user).ConfigureAwait(false);
+                    //user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == user.UserName);
+
+                    //var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    //var result = await LoginMarsh(user, viewModel.DevicePrint);
                     return LocalRedirect("~/Home/Index");
                 }
 
@@ -411,10 +383,7 @@ namespace TechCertain.WebUI.Controllers
                 RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
                 if (rsaStatus == RsaStatus.Allow)
                 {
-
                     Console.WriteLine("RSA User allowed, signing in...");
-                    SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
-
                     _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
                 }
                 if (rsaStatus == RsaStatus.RequiresOtp)
@@ -440,7 +409,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public ActionResult OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
+		public async Task<IActionResult> OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
 		{
             throw new Exception("Method needs to be re-written");
 			//if (ModelState.IsValid) {
@@ -470,7 +439,7 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/error
 		[HttpGet]
         [AllowAnonymous]
-        public ActionResult Error()
+        public async Task<IActionResult> Error()
         {
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -481,10 +450,10 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/register
 		[HttpGet]
         [AllowAnonymous]
-        public ActionResult Register()
+        public async Task<IActionResult> Register()
 		{
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -496,13 +465,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(AccountRegistrationModel model)
+        public async Task<IActionResult> Register(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
             if (!ModelState.IsValid)
 				return View(model);
 
-			return RedirectToLocal();
+			return await RedirectToLocal();
 
 //			// Disable for now
 //			var user = new TechCertain.Domain.Entities.User (Guid.NewGuid(), model.Username);
@@ -555,10 +524,10 @@ namespace TechCertain.WebUI.Controllers
         // GET: /account/coastguardreg
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult CoastguardReg()
+        public async Task<IActionResult> CoastguardReg()
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -570,7 +539,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CoastguardReg(AccountRegistrationModel model)
+        public async Task<IActionResult> CoastguardReg(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
             //if (!ModelState.IsValid)
@@ -584,10 +553,10 @@ namespace TechCertain.WebUI.Controllers
         // GET: /account/coastguardreg
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult CoastguardForm()
+        public async Task<IActionResult> CoastguardForm()
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -599,7 +568,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CoastguardForm(AccountRegistrationModel model)
+        public async Task<IActionResult> CoastguardForm(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
             //if (!ModelState.IsValid)
@@ -613,31 +582,16 @@ namespace TechCertain.WebUI.Controllers
         // POST: /account/Logout
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-
-            _signInManager.SignOutAsync();
-            HttpContext.SignOutAsync();
+            await _signInManager.SignOutAsync();
+            await  HttpContext.SignOutAsync();
             HttpContext.Response.Cookies.Delete(".AspNet.Consent");
-            //FormsAuthentication.SignOut();
-            
 
-            //_dealEngineSignInManager.SignOutAsync();
-
-            //HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
-
-            //DateTime expiredDate = DateTime.UtcNow.AddDays (-1);
-
-            //// clear authentication cookie
-            //SetCookie(FormsAuthentication.FormsCookieName, "", expiredDate, FormsAuthentication.CookieDomain);
-
-            //// clear session cookie
-            //SetCookie("ASP.NET_SessionId", "", expiredDate);
-
-            return RedirectToLocal();
+            return await RedirectToLocal();
         }
 
-        ActionResult RedirectToLocal(string returnUrl = "")
+        async Task<IActionResult> RedirectToLocal(string returnUrl = "")
         {
             // If the return url starts with a slash "/" we assume it belongs to our site
             // so we will redirect to this "action"
@@ -654,75 +608,14 @@ namespace TechCertain.WebUI.Controllers
             return Redirect("~/Home/Index");
         }
 
-        //private void AddErrors(DbEntityValidationException exc)
-        //{
-        //    foreach (var error in exc.EntityValidationErrors.SelectMany(validationErrors => validationErrors.ValidationErrors.Select(validationError => validationError.ErrorMessage)))
-        //    {
-        //        ModelState.AddModelError("", error);
-        //    }
-        //}
-
-        //private void AddErrors(IdentityResult result)
-        //{
-        //    // Add all errors that were returned to the page error collection
-        //    foreach (var error in result.Errors)
-        //    {
-        //        ModelState.AddModelError("", error);
-        //    }
-        //}
-
         void EnsureLoggedOut()
         {
-            //If the request is (still)marked as authenticated we send the user to the logout action
-
-
             if (User.Identity.IsAuthenticated)
                 Logout();
-
-            //if (!User.Identity.IsAuthenticated)
-            //{
-            //    if (Response.Cookies[FormsAuthentication.FormsCookieName] != null)
-            //        Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.UtcNow.AddDays(-1);
-
-            //    if (Response.Cookies["ASP.NET_SessionId"] != null)
-            //        Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.UtcNow.AddDays(-1);
-            //}
-        }
-
-		void SetCookie(string cookieName, string value, DateTime expiry)
-		{
-			SetCookie (cookieName, value, expiry, "");
-		}
-
-		void SetCookie(string cookieName, string value, DateTime expiry, string domain)
-		{
-            //throw new Exception("this method needs to be re-written in core");
-            //HttpCookie authCookie = new HttpCookie(cookieName, value);
-            //if (!string.IsNullOrWhiteSpace(domain))
-            //    authCookie.Domain = domain;
-            //authCookie.Expires = expiry;
-            //// overridden in Global.Application_EndRequest
-            ////			authCookie.HttpOnly = true;
-            ////			authCookie.Secure = true;
-            //Response.SetCookie(authCookie);
-        }
-
-		// GET: /account/lock
-		[HttpPost]
-		public ActionResult Lock(UserLockStatusViewModel model)
-        {
-			User user = _userService.GetUser (model.Id);
-			if (model.Status == "lock" && !user.Locked) {
-				_userService.IssueLocalBan (user, CurrentUser);
-			}
-			else if (model.Status == "unlock" && user.Locked) {
-				_userService.RemoveLocalban (user, CurrentUser);
-			}
-            return View();
         }
 
 		[HttpGet]
-		public ActionResult Profile(string id)
+		public async Task<IActionResult> Profile(string id)
 		{
 			var user = string.IsNullOrWhiteSpace (id) ? CurrentUser : _userService.GetUser (id);
 			if (user == null)
@@ -753,7 +646,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ProfileEditor()
+		public async Task<IActionResult> ProfileEditor()
 		{
 			var user = CurrentUser;
 			if (user == null)
@@ -788,9 +681,6 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
 
-
-            //if (CurrentUser.Organisations.Count() > 0 && CurrentUser.Organisations.ElementAt(0).OrganisationType.Name != "personal")
-            //	model.PrimaryOrganisationName = CurrentUser.Organisations.ElementAt(0).Name;
             if (CurrentUser.PrimaryOrganisation != null)
                 model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
             model.Description = CurrentUser.Description;
@@ -801,12 +691,11 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationalUnitsVM = organisationalUnits;
 
             return View(model);
-//			return View("Profile", model);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult ProfileEditor(ProfileViewModel model)
+		public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
 		{
 
 			var user = CurrentUser;
@@ -861,14 +750,14 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ChangeOwnPassword()
+		public async Task<IActionResult> ChangeOwnPassword()
 		{
 			return PartialView ("_ChangeOwnPassword");
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult ChangeOwnPassword(ChangePasswordViewModel model)
+		public async Task<IActionResult> ChangeOwnPassword(ChangePasswordViewModel model)
 		{
 			if (!ModelState.IsValid)
 				return PartialView ("_ChangeOwnPassword", model);
@@ -885,12 +774,6 @@ namespace TechCertain.WebUI.Controllers
 			try
 			{
                 throw new Exception("this method needs to be re-written in core");
-                //if (Membership.GetUser(CurrentUser.UserName).ChangePassword(model.CurrentPassword, model.NewPassword))
-                //{
-                //    string content = "<div class=\"alert alert-success\">Your password has been successfully changed.</div>";
-                //    content += "<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>";
-                //    return Content(content);
-                //}
             }
 			catch (Exception ex) {
 				ModelState.AddModelError ("", ex.Message);
@@ -899,7 +782,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ListAllUsers ()
+		public async Task<IActionResult> ListAllUsers ()
 		{
 			BaseListViewModel<UserViewModel> userList = new BaseListViewModel<UserViewModel> ();
 
@@ -928,7 +811,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ManageUser (Guid Id)
+		public async Task<IActionResult> ManageUser (Guid Id)
 		{
             var user = _userService.GetUser(Id);
             var accountModel = new ManageUserViewModel(user);

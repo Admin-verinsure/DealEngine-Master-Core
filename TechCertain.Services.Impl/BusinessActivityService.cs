@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class BusinessActivityService : IBusinessActivityService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<BusinessActivity> _businessActivityRepository;
 
-        public BusinessActivityService(IUnitOfWork unitOfWork,
-                                IMapperSession<BusinessActivity> businessActivityRepository)
+        public BusinessActivityService(IMapperSession<BusinessActivity> businessActivityRepository)
         {
-            _unitOfWork = unitOfWork;
             _businessActivityRepository = businessActivityRepository;
         }
 
@@ -26,22 +23,14 @@ namespace TechCertain.Services.Impl
 
         public void Update(BusinessActivity businessActivity)
         {
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _businessActivityRepository.Update(businessActivity);
-                uow.Commit();
-            }
+            _businessActivityRepository.UpdateAsync(businessActivity);
         }
 
         public void CreateBusinessActivity(BusinessActivity businessActivity)
         {
             if (businessActivity.AnzsciCode != null || businessActivity.Description != null)
             {
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    _businessActivityRepository.Add(businessActivity);
-                    uow.Commit();
-                }
+                _businessActivityRepository.AddAsync(businessActivity);
             }
         }
 
@@ -57,7 +46,7 @@ namespace TechCertain.Services.Impl
 
         public BusinessActivity GetBusinessActivity(Guid Id)
         {
-            return _businessActivityRepository.GetById(Id);
+            return _businessActivityRepository.GetByIdAsync(Id).Result;
         }
 
         public object GetBusinessActivitiesByClientProgramme(Guid programmeId)

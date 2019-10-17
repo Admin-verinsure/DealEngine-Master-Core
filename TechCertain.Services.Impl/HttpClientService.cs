@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class HttpClientService : IHttpClientService
     {
-        IUnitOfWork _unitOfWork;
-
-        public HttpClientService(IUnitOfWork unitOfWork)
+        IMapperSession<LogInfo> _logInfoMapperSession;
+        public HttpClientService(IMapperSession<LogInfo> logInfoMapperSession)
         {
-            _unitOfWork = unitOfWork;
+            _logInfoMapperSession = logInfoMapperSession;
         }
 
         public Task<string> Analyze(string request)
@@ -25,6 +23,7 @@ namespace TechCertain.Services.Impl
             var responseMessage = "";
             string service = "https://ris.us1.qeadaptiveauth.com/AdaptiveAuthentication/services/AdaptiveAuthentication";
             string SOAPAction = "rsa:analyze:Analyze";
+
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
             HttpResponseMessage response;
@@ -44,6 +43,10 @@ namespace TechCertain.Services.Impl
 
             try
             {
+                var logInfo = new LogInfo();
+                logInfo.AnalyzeXMLRSA = "test save";
+                _logInfoMapperSession.AddAsync(logInfo);
+
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = client.SendAsync(_httpRequestMessage).Result;
                 response.EnsureSuccessStatusCode();

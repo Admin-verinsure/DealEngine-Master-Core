@@ -14,16 +14,13 @@ namespace TechCertain.Services.Impl
 
         string _apiEndpoint;
 		string _apiKey;
-
         IAppSettingService _appSettingService;
 
         public VehicleService (IAppSettingService appSettingService)
 		{
             _appSettingService = appSettingService;
-
             _apiEndpoint = _appSettingService.CarJamEndpoint;
             _apiKey = _appSettingService.CarJamApiKey;
-
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
 

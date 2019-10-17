@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using Elmah;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,8 @@ using TechCertain.WebUI.Models.Policy;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -23,15 +24,10 @@ namespace TechCertain.WebUI.Controllers
 		IDocumentService _policyDocumentService;
 		ITermBuilderService _termBuilderService;
 		IMapperSession<RiskCategory> _riskRepository;
-        IHttpContextAccessor _httpContextAccessor;
 		IUnitOfWork _unitOfWork;
-
 		IMapper _mapper;
 
 		public PolicyController(IUserService userRepository,
-                                SignInManager<DealEngineUser> signInManager,
-                                IHttpContextAccessor httpContextAccessor,
-                                DealEngineDBContext dealEngineDBContext,
                                 IDocumentService policyDocumentService,
 								ITermBuilderService termBuilderService,
 								IMapperSession<RiskCategory> riskRepository,
@@ -41,20 +37,14 @@ namespace TechCertain.WebUI.Controllers
 		{
 			_policyDocumentService = policyDocumentService;
 			_termBuilderService = termBuilderService;
-
 			_riskRepository = riskRepository;
-
 			_unitOfWork = unitOfWork;
-
 			_mapper = mapper;
 
-			// Maps
-			//Mapper.CreateMap<IQueryable<CategoryRisk>, IList<InsuranceRiskCategory>> ().ReverseMap();
-			//Mapper.CreateMap<RiskCategory, InsuranceRiskCategory> ().ReverseMap();
 		}
 
 		[HttpGet]
-		public ActionResult PolicyIndex()
+		public async Task<IActionResult> PolicyIndex()
         {
 			PolicyDocumentListViewModel documents = new PolicyDocumentListViewModel ();
 
@@ -83,7 +73,7 @@ namespace TechCertain.WebUI.Controllers
 
 		[Obsolete]
 		[HttpGet]
-		public ActionResult DocumentBuilder()
+		public async Task<IActionResult> DocumentBuilder()
 		{
 //			List<PolicyDocumentViewModel> documents = new List<PolicyDocumentViewModel> () {
 //				new PolicyDocumentViewModel() { Title = "Wording",  Type = "Wording 1",  Owner = "Broker A", Creator = "Broker A" },
@@ -105,7 +95,7 @@ namespace TechCertain.WebUI.Controllers
 
 		[Obsolete]
 		[HttpPost]
-		public ActionResult SubmitCompletedDocument(PolicyDocumentViewModel model)
+		public async Task<IActionResult> SubmitCompletedDocument(PolicyDocumentViewModel model)
 		{
 			Old_PolicyDocumentTemplate document = new Old_PolicyDocumentTemplate (CurrentUser, model.Title);
 			document.ChangeCreator(CurrentUser.FullName);
@@ -129,20 +119,20 @@ namespace TechCertain.WebUI.Controllers
 
 		[Obsolete]
 		[HttpGet]
-		public ActionResult CreateDocuments()
+		public async Task<IActionResult> CreateDocuments()
 		{
 			return View();
 		}
 
 		[Obsolete]
 		[HttpGet]
-		public ActionResult CreateDocumentSections()
+		public async Task<IActionResult> CreateDocumentSections()
 		{
 			return View();
 		}
 
 		[HttpGet]
-		public ActionResult Risks ()
+		public async Task<IActionResult> Risks ()
 		{
 			IQueryable<RiskCategory> risks = _riskRepository.FindAll ();
 
@@ -174,20 +164,16 @@ namespace TechCertain.WebUI.Controllers
 			return View (model);
 		}
 
-		public ActionResult Risks (InsuranceRiskCategory category)
+		public async Task<IActionResult> Risks (InsuranceRiskCategory category)
 		{
 			if (_riskRepository.FindAll ().FirstOrDefault (r => r.Name == category.Name) != null)
-				return Risks ();
+				return await Risks();
 
 			RiskCategory risk = new RiskCategory (CurrentUser, category.Name, category.Description);
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				_riskRepository.Add (risk);
+            await _riskRepository.AddAsync(risk);
 
-				uow.Commit ();
-			}
-
-			return Risks ();
-		}
+            return await Risks();
+        }
 
 		/// <summary>
 		/// Gets the documents.
@@ -200,17 +186,17 @@ namespace TechCertain.WebUI.Controllers
 		/// <param name="sidx">Field to order by.</param>
 		/// <param name="sord">Direction to order in (asc or desc).</param>
 		[HttpGet]
-		public ActionResult GetDocuments(string _search, string nd, string rows, string page, string sidx, string sord)
+		public async Task<IActionResult> GetDocuments(string _search, string nd, string rows, string page, string sidx, string sord)
 		{
 			XDocument document = null;
 			try 
 			{
 				// FIX - fields don't map nicely.
 				PolicyTermSection[] sections = _termBuilderService.GetTerms (sidx, sord);
-				int perPage = Convert.ToInt32 (rows);
+				int perPage = Convert.ToInt32(rows);
 
 				JqGridViewModel model = new JqGridViewModel ();
-				model.Page = Convert.ToInt32 (page);
+				model.Page = Convert.ToInt32(page);
 				model.TotalRecords = sections.Length;
 				model.TotalPages = ((model.TotalRecords - 1) / perPage) + 1;
 
@@ -248,7 +234,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ViewDocumentTemplate(string id)
+		public async Task<IActionResult> ViewDocumentTemplate(string id)
 		{
 			Guid documentId = new Guid (id);
 			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId);
@@ -263,7 +249,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult EditDocument(string id)
+		public async Task<IActionResult> EditDocument(string id)
 		{
 			Guid documentId = new Guid (id);
 			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId);
@@ -322,7 +308,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult SectionBuilder()
+		public async Task<IActionResult> SectionBuilder()
 		{
 			string[] locales = new string[] {
 				"Worldwide",
@@ -374,7 +360,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SubmitTermSection(PolicySectionVM model)
+		public async Task<IActionResult> SubmitTermSection(PolicySectionVM model)
 		{
 			_termBuilderService.Create (
 				CurrentUser,
@@ -391,7 +377,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ViewSectionTemplate(string id)
+		public async Task<IActionResult> ViewSectionTemplate(string id)
 		{
 			string[] locales = new string[] {
 				"Worldwide",
@@ -444,7 +430,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult EditSection(string id)
+		public async Task<IActionResult> EditSection(string id)
 		{
 			string[] locales = new string[] {
 				"Worldwide",

@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class ClientAgreementEndorsementService : IClientAgreementEndorsementService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<ClientAgreementEndorsement> _clientAgreementEndorsementRepository;
+        IMapperSession<ClientAgreement> _clientAgreementRepository;
 
-        public ClientAgreementEndorsementService(IUnitOfWork unitOfWork, IMapperSession<ClientAgreementEndorsement> clientAgreementEndorsementRepository)
+        public ClientAgreementEndorsementService(IMapperSession<ClientAgreementEndorsement> clientAgreementEndorsementRepository, IMapperSession<ClientAgreement> clientAgreementRepository)
         {
-            _unitOfWork = unitOfWork;
             _clientAgreementEndorsementRepository = clientAgreementEndorsementRepository;
+            _clientAgreementRepository = clientAgreementRepository;
         }
 
-        public bool AddClientAgreementEndorsement(User createdBy, string name, string type, Product product, string value, int orderNumber, ClientAgreement clientAgreement)
+        public void AddClientAgreementEndorsement(User createdBy, string name, string type, Product product, string value, int orderNumber, ClientAgreement clientAgreement)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -32,14 +32,10 @@ namespace TechCertain.Services.Impl
             if (clientAgreement == null)
                 throw new ArgumentNullException(nameof(clientAgreement));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(createdBy, name, type, product, value, orderNumber, clientAgreement);
-                clientAgreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
-                work.Commit();
-            }
-
-            return true;
+            ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(createdBy, name, type, product, value, orderNumber, clientAgreement);
+            clientAgreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            _clientAgreementEndorsementRepository.AddAsync(clientAgreementEndorsement);
+            _clientAgreementRepository.UpdateAsync(clientAgreement);
         }
 
 
@@ -51,7 +47,7 @@ namespace TechCertain.Services.Impl
 
         public ClientAgreementEndorsement GetClientAgreementEndorsementBy(Guid clientAgreementEndorsementId)
         {
-            return _clientAgreementEndorsementRepository.GetById(clientAgreementEndorsementId);
+            return _clientAgreementEndorsementRepository.GetByIdAsync(clientAgreementEndorsementId).Result;
         }
     }
 }

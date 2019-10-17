@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Net.Mail;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,15 +23,15 @@ namespace TechCertain.Services.Impl
 		IUserService _userService;		
         IFileService _fileService;
         ISystemEmailService _systemEmailRepository;
-        IUnitOfWork _unitOfWork;
+        IMapperSession<ClientInformationSheet> _clientInformationSheetmapperSession;
         private IConfiguration _configuration { get; set; }
 
-        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public EmailService (IUserService userService, IFileService fileService, ISystemEmailService systemEmailService, IConfiguration configuration, IMapperSession<ClientInformationSheet> clientInformationSheetmapperSession)
 		{
-			_userService = userService;			
+            _clientInformationSheetmapperSession = clientInformationSheetmapperSession;
+            _userService = userService;			
             _fileService = fileService;
             _systemEmailRepository = systemEmailService;
-            _unitOfWork = unitOfWork;
             _configuration = configuration;
         }
 
@@ -82,80 +82,9 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetValue<string>("CatchAllEmail");
                 //return ConfigurationManager.AppSettings["CatchAllEmail"];
             }
-		}
+		}		
 
-		//public bool SendEmail(string recipient, string subject, string body, List<SystemDocument> documents, string sender = "", bool saveCopy = true, bool isHtml = true)
-		//{
-		//	// if there is a catch email address, send all emails there, otherwise send to specified recipient
-		//	recipient = !string.IsNullOrWhiteSpace (CatchAllEmail) ? CatchAllEmail : recipient;
-		//	// create email
-		//	if (string.IsNullOrWhiteSpace (sender))
-		//		sender = DefaultSender;
-		//	MailMessage mail = new MailMessage (sender, recipient);
-		//	mail.Subject = subject;
-		//	mail.Body = body;
-		//	mail.IsBodyHtml = isHtml;
-		//	if (saveCopy && string.IsNullOrWhiteSpace(CatchAllEmail))
-		//		mail.Bcc.Add (SystemEmail);
-                      
-  //          if (documents != null)
-  //          {
-  //              foreach (SystemDocument doc in documents)
-  //              {
-  //                  if (doc.ContentType == MediaTypeNames.Text.Html)
-  //                  {
-		//				// Testing HtmlToOpenXml
-		//				string html = _fileService.FromBytes(doc.Contents);
-		//				using (MemoryStream virtualFile = new MemoryStream())
-		//				{
-		//				    using (WordprocessingDocument wordDocument = WordprocessingDocument.Create (virtualFile, WordprocessingDocumentType.Document))
-		//				    {
-		//				    // Add a main document part. 
-		//				        MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-		//				        new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-		//				        HtmlConverter converter = new HtmlConverter(mainPart);
-		//				        converter.ImageProcessing = ImageProcessing.AutomaticDownload;
-		//				        converter.ParseHtml(html);
-		//				    }
-		//				    var attachement = new Attachment(new MemoryStream(virtualFile.ToArray()), doc.Name + ".docx");
-		//				    mail.Attachments.Add(attachement);
-		//				}
-  //                  }
-  //              }
-  //          }
-
-		//	using (SmtpClient client = new SmtpClient ()) {
-		//		client.Port = SmtpPort;
-		//		client.DeliveryMethod = SmtpDeliveryMethod.Network;
-		//		client.UseDefaultCredentials = false;
-		//		client.Host = SmtpServer;
-		//		client.Send (mail);
-		//	}
-
-		//	return true;
-		//}
-
-		//public bool SendEmail(string recipient, string subject, string body)
-		//{
-		//	return SendEmail (recipient, subject, body, true);
-		//}
-
-		//public bool SendEmail(string recipient, string subject, string body, bool saveCopy)
-		//{
-		//	return SendEmail (recipient, DefaultSender, subject, body, saveCopy);
-		//}
-
-		//public bool SendEmail(string recipient, string sender, string subject, string body)
-		//{
-		//	return SendEmail (recipient, sender, subject, body, true);
-		//}
-
-		//public bool SendEmail(string recipient, string sender, string subject, string body, bool saveCopy)
-		//{
-		//	return SendEmail (recipient, subject, body, null, sender, saveCopy, true);
-		//}
-
-		public bool SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
+		public void SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
 		{
 			var user = _userService.GetUserByEmail (recipent);
 
@@ -179,12 +108,9 @@ namespace TechCertain.Services.Impl
 			email.WithBody (body);
 			email.UseHtmlBody (true);
 			email.Send ();
-			return true;
-
-			//return SendEmail (recipent, "Proposalonline Password Reset", body);
 		}
 
-        public bool SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents)
+        public void SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents)
         {
             //string subject = emailTemplate.Subject;
             string body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
@@ -199,12 +125,9 @@ namespace TechCertain.Services.Impl
                 email.Attachments(ToAttachments(documents).ToArray());
             }
 			email.Send ();
-			return true;
-
-            //return SendEmail(recipent, subject, body, documents);
         }
 
-        public bool ContactSupport (string sender, string subject, string body)
+        public void ContactSupport (string sender, string subject, string body)
 		{
 			string subjectPrefix = "Proposalonline Support Request: ";
 
@@ -214,12 +137,9 @@ namespace TechCertain.Services.Impl
             email.WithBody (body);
 			email.UseHtmlBody (true);
 			email.Send ();
-			return true;
-
-			//return SendEmail ("support@techcertain.com", sender, subjectPrefix + subject, body); 
 		}
 
-        public bool SendSystemEmailLogin(string recipent)
+        public void SendSystemEmailLogin(string recipent)
         {
             var user = _userService.GetUserByEmail(recipent);
 
@@ -241,11 +161,9 @@ namespace TechCertain.Services.Impl
             systememail.WithBody (systememailbody);
             systememail.UseHtmlBody (true);
             systememail.Send();
-            return true;
-
         }
 
-        public bool SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -279,18 +197,12 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
-
         }
 
-        public bool SendSystemPaymentFailConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemPaymentFailConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -324,18 +236,13 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment Fail config Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
 
         }
 
-        public bool SendSystemFailedInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemFailedInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -369,19 +276,13 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Invoice fail config Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
-
-            return true;
-
         }
 
-        public bool SendSystemSuccessInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemSuccessInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -415,18 +316,13 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Invoice success config Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
 
         }
 
-        public bool SendSystemEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -460,18 +356,14 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Information Sheet Issue Notification Sent"));
-                    uow.Commit();
-                }
+
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-            
-            return true;
 
         }
 
-        public bool SendSystemEmailUISSubmissionConfirmationNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemEmailUISSubmissionConfirmationNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -506,18 +398,12 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
-
         }
 
-        public bool SendSystemEmailUISSubmissionNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemEmailUISSubmissionNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -549,18 +435,12 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
-
         }
 
-        public bool SendSystemEmailAgreementReferNotify(User uISIssued, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
+        public void SendSystemEmailAgreementReferNotify(User uISIssued, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -595,18 +475,12 @@ namespace TechCertain.Services.Impl
 
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, agreement, "Agreement Referral Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
-
         }
 
-        public bool SendSystemEmailAgreementIssueNotify(User issuer, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
+        public void SendSystemEmailAgreementIssueNotify(User issuer, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -641,19 +515,13 @@ namespace TechCertain.Services.Impl
 
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(issuer, sheet, agreement, "Agreement Issue Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(issuer, sheet, agreement, "Agreement Issue Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
-
-            return true;
-
         }
 
 
-        public bool SendSystemEmailAgreementBoundNotify(User binder, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
+        public void SendSystemEmailAgreementBoundNotify(User binder, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -688,18 +556,13 @@ namespace TechCertain.Services.Impl
 
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(binder, sheet, agreement, "Agreement Bound Notification Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(binder, sheet, agreement, "Agreement Bound Notification Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+
             }
-
-            return true;
-
         }
 
-        public bool SendSystemEmailOtherMarinaTCNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public void SendSystemEmailOtherMarinaTCNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -733,18 +596,13 @@ namespace TechCertain.Services.Impl
                 systememail.UseHtmlBody(true);
                 systememail.Send();
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Create Other Marina Notification Email to TC Sent"));
-                    uow.Commit();
-                }
+                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Create Other Marina Notification Email to TC Sent"));
+                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+
             }
-
-            return true;
-
         }
 
-        public bool SendSystemEmailEGlobalTCNotify(string XMLBody)
+        public void SendSystemEmailEGlobalTCNotify(string XMLBody)
         {
                        
             EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
@@ -753,8 +611,6 @@ namespace TechCertain.Services.Impl
             systememail.WithBody(XMLBody);
             systememail.UseHtmlBody(true);
             systememail.Send();
-
-            return true;
 
         }
 
@@ -808,7 +664,7 @@ namespace TechCertain.Services.Impl
 		{
 			IList<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-				attachments.Add (ToAttachment (document));
+				attachments.Add(ToAttachment (document));
 			return attachments;
 		}
 	}

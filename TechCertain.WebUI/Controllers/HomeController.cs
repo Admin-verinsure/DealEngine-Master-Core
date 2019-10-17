@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +18,8 @@ using TechCertain.WebUI.Controllers;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -27,24 +29,19 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class HomeController : BaseController
     {        
-        //IMapper _mapper;
-        //IInformationTemplateService _informationService;
-        ICilentInformationService _customerInformationService;
+        IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
-        IHttpContextAccessor _httpContextAccessor;
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
 
 
-        public HomeController(DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserService userRepository, //IInformationTemplateService informationService,
-                              ICilentInformationService customerInformationService, ICilentInformationService clientInformationService, IPrivateServerService privateServerService,
-                              IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository, SignInManager<DealEngineUser> signInManager)
+        public HomeController(IMapper mapper, IUserService userRepository,
+            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientInformationService clientInformationService,
+            IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base (userRepository)
         {            
-            //_mapper = mapper;
-            //_informationService = informationService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;
@@ -54,7 +51,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         // GET: home/index
-        public ActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
                        
                 // Product Repository, Get Available Products
@@ -106,7 +103,7 @@ namespace TechCertain.WebUI.Controllers
         //[Route("Index")]
         //[Route("/")]
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ViewBag.Title = "Proposalonline Dashboard";
 
@@ -438,14 +435,14 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult Search()
+        public async Task<IActionResult> Search()
         {
             return View("Search");
 
         }
 
         [HttpPost]
-        public ActionResult Search(String Value)
+        public async Task<IActionResult> Search(String Value)
         {
             //return Redirect("/EditBillingConfiguration" + programmeId);
             //return Content("/Home/ViewProgrammeByFilter/" + value);
@@ -457,7 +454,7 @@ namespace TechCertain.WebUI.Controllers
 
         }
         [HttpGet]
-        public ActionResult ViewProgrammeByFilter( String value)
+        public async Task<IActionResult> ViewProgrammeByFilter( String value)
         {
             ProgrammeItem model = new ProgrammeItem();
 
@@ -529,11 +526,11 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult ViewProgramme(Guid id)
+        public async Task<IActionResult> ViewProgramme(Guid id)
         {
             ProgrammeItem model = new ProgrammeItem();
 
-            Programme programme = _programmeRepository.GetById(id);
+            Programme programme = _programmeRepository.GetByIdAsync(id).Result;
             List<DealItem> deals = new List<DealItem>();
 
             if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)
@@ -619,28 +616,28 @@ namespace TechCertain.WebUI.Controllers
 
         // GET: home/inbox
         [HttpGet]
-        public ActionResult Inbox()
+        public async Task<IActionResult> Inbox()
         {
             return View();
         }
 
         // GET: home/calendar
         [HttpGet]
-        public ActionResult Calendar()
+        public async Task<IActionResult> Calendar()
         {
             return View();
         }
 
         // GET: home/google-map
         [HttpGet]
-        public ActionResult GoogleMap()
+        public async Task<IActionResult> GoogleMap()
         {
             return View();
         }
 
         // GET: home/widgets
         [HttpGet]
-        public ActionResult Widgets()
+        public async Task<IActionResult> Widgets()
         {
             //[TEST] to initialize the theme setter
             //could be called via jQuery or somewhere...
@@ -652,27 +649,27 @@ namespace TechCertain.WebUI.Controllers
 
         // GET: home/chat
         [HttpGet]
-        public ActionResult Chat()
+        public async Task<IActionResult> Chat()
         {
             return View();
         }
 
         [HttpGet]
-        public ActionResult Customer()
+        public async Task<IActionResult> Customer()
         {
             return View();
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult Robots()
+        public async Task<IActionResult> Robots()
         {
             Response.ContentType = "text/plain";
             return View();
         }
 
         //[HttpGet]
-        //public ActionResult ViewTask(Guid Id)
+        //public async Task<IActionResult> ViewTask(Guid Id)
         //{
         //    UserTask task = _taskingService.GetTask(Id);
         //    UserTaskViewModel model = new UserTaskViewModel
@@ -691,7 +688,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         //[HttpPost]
-        //public ActionResult AddTask(string taskCategory, string taskDueDate, string taskDetail, string taskDescription )
+        //public async Task<IActionResult> AddTask(string taskCategory, string taskDueDate, string taskDetail, string taskDescription )
         //{
         //    User user = _userService.GetUser(CurrentUser.Id);
         //    DateTime time = Convert.ToDateTime(taskDueDate, CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);

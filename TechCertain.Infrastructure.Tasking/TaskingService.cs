@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
-
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.Infrastructure.Tasking
 {
 	public class TaskingService : ITaskingService
 	{
-		IUnitOfWork _unitOfWork;
         IMapperSession<UserTask> _taskRespository;
 
-		public TaskingService (IUnitOfWork unitOfWork, IMapperSession<UserTask> taskRespository)
+		public TaskingService (IMapperSession<UserTask> taskRespository)
 		{
-			_unitOfWork = unitOfWork;
 			_taskRespository = taskRespository;
 		}
 
@@ -64,11 +61,7 @@ namespace TechCertain.Infrastructure.Tasking
 		{
 			if (task == null)
 				throw new ArgumentNullException (nameof (task));
-
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				_taskRespository.Add (task);
-				uow.Commit ();
-			}
+            _taskRespository.AddAsync(task);
 			return task;
 		}
 	}

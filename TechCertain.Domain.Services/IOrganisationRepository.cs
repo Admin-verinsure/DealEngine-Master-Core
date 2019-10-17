@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Novell.Directory.Ldap;
+using System;
 using TechCertain.Domain.Entities;
 
-namespace TechCertain.Domain.Interfaces
+namespace TechCertain.Domain.Services
 {
 	public interface IOrganisationRepository
 	{
@@ -14,6 +15,7 @@ namespace TechCertain.Domain.Interfaces
 		bool Update (Organisation organisation);
 
 		bool Delete (Organisation organisation);
-	}
+        LdapEntry GetLdapEntry(string dn);
+    }
 }
 
