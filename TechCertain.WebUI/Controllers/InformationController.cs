@@ -1098,7 +1098,7 @@ namespace TechCertain.WebUI.Controllers
                 if (panelName != null)
                 {
 
-                    InformationSection section = _informationSectionRepository.GetById(panelId).Result;
+                    InformationSection section = _informationSectionRepository.GetByIdAsync(panelId).Result;
                     section.Position = panelPosition;
                     // TODO: Add these items at templates so it can be clonned properly 
                     uow.Commit();

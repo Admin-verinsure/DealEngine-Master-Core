@@ -72,7 +72,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public ActionResult StagingBuilder ()
 		{
-			_templateRepository.GetById (new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
+			_templateRepository.GetByIdAsync(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
 
 
 			return View (new ExperimentalInfoBuilderViewModel());

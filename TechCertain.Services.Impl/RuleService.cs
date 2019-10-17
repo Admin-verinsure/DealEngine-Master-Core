@@ -43,7 +43,7 @@ namespace TechCertain.Services.Impl
 
         public Rule GetRuleByID(Guid Id)
         {
-            Rule rule = _ruleRepository.GetById(Id).Result;
+            Rule rule = _ruleRepository.GetByIdAsync(Id).Result;
             return rule;
         }
     }

@@ -46,7 +46,7 @@ namespace TechCertain.Services.Impl
 
         public BusinessActivity GetBusinessActivity(Guid Id)
         {
-            return _businessActivityRepository.GetById(Id).Result;
+            return _businessActivityRepository.GetByIdAsync(Id).Result;
         }
 
         public object GetBusinessActivitiesByClientProgramme(Guid programmeId)

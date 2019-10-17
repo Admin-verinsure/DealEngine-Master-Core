@@ -40,7 +40,7 @@ namespace TechCertain.Services.Impl
 
 		public PolicyTermSection GetTerm (Guid termId)
 		{
-			return _policyTermRepository.GetById(termId).Result;
+			return _policyTermRepository.GetByIdAsync(termId).Result;
 		}
 
 		public PolicyTermSection[] GetTerms()

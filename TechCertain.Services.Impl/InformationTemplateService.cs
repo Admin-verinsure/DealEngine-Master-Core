@@ -33,7 +33,7 @@ namespace TechCertain.Services.Impl
 
 		public InformationTemplate GetTemplate (Guid templateId)
 		{
-			return _informationTemplateRepository.GetById(templateId).Result;
+			return _informationTemplateRepository.GetByIdAsync(templateId).Result;
 		}
 
 		public InformationTemplate AddProductTo (Guid templateId, Product product)

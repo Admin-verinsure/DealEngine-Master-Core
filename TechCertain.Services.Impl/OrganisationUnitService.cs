@@ -23,7 +23,7 @@ namespace TechCertain.Services.Impl
 
         public OrganisationalUnit GetOrganisationalUnit(Guid organisationalUnitId)
         {
-            OrganisationalUnit organisationalUnit = _organisationUnitRepository.GetById(organisationalUnitId).Result;
+            OrganisationalUnit organisationalUnit = _organisationUnitRepository.GetByIdAsync(organisationalUnitId).Result;
             // have a repo organisation? Return it
             if (organisationalUnit != null)
                 return organisationalUnit;

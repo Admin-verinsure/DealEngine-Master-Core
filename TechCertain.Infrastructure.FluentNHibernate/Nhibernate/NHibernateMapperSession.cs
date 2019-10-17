@@ -23,12 +23,12 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             return _session.Query<TEntity>();
         }
 
-        public Task<TEntity> GetById(string id)
+        public Task<TEntity> GetByIdAsync(string id)
         {
             return _session.GetAsync<TEntity>(id);
         }
 
-        public Task<TEntity> GetById(Guid id)
+        public Task<TEntity> GetByIdAsync(Guid id)
         {
             return _session.GetAsync<TEntity>(id);
         }

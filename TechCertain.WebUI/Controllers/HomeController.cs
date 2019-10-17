@@ -36,7 +36,7 @@ namespace TechCertain.WebUI.Controllers
         IClientInformationService _clientInformationService;
 
 
-        public HomeController(DealEngineDBContext dealEngineDBContext, IMapper mapper, IUserService userRepository,
+        public HomeController(IMapper mapper, IUserService userRepository,
             IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientInformationService clientInformationService,
             IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
             : base (userRepository)
@@ -529,7 +529,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ProgrammeItem model = new ProgrammeItem();
 
-            Programme programme = _programmeRepository.GetById(id).Result;
+            Programme programme = _programmeRepository.GetByIdAsync(id).Result;
             List<DealItem> deals = new List<DealItem>();
 
             if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)

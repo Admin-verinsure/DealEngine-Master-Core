@@ -99,7 +99,7 @@ namespace TechCertain.Services.Impl
 
         public Task CloseMileTask(Guid id, string method)
         {
-            Milestone milestone = _milestoneRepository.GetById(id).Result;
+            Milestone milestone = _milestoneRepository.GetByIdAsync(id).Result;
             milestone.Advisory.Method = method;
             milestone.HasTriggered = true;
             milestone.Task.IsActive = true;

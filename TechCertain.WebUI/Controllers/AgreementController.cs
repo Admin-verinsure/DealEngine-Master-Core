@@ -232,7 +232,7 @@ namespace TechCertain.WebUI.Controllers
                                     org.IsApproved = true;
                                 }
                             }
-                            Organisation othermarine = _OrganisationRepository.GetById(bvterm.Boat.BoatWaterLocation.Id).Result;
+                            Organisation othermarine = _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id).Result;
                         }
 
                     }
@@ -480,7 +480,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SendReferredEmail(EmailTemplateViewModel model)
         {
-            ClientProgramme programme = _programmeRepository.GetById(model.ClientProgrammeID).Result;
+            ClientProgramme programme = _programmeRepository.GetByIdAsync(model.ClientProgrammeID).Result;
 
             // TODO - rewrite to save templates on a per programme basis
             ClientAgreement agreement = programme.Agreements[0];
@@ -532,7 +532,7 @@ namespace TechCertain.WebUI.Controllers
             string strrecipentemail = null;
             if (model.Recipent != null)
             {
-                var user = _userRepository.GetById(model.Recipent).Result;
+                var user = _userRepository.GetByIdAsync(model.Recipent).Result;
                 strrecipentemail = user.Email;                
             }
 
@@ -715,7 +715,7 @@ namespace TechCertain.WebUI.Controllers
             ////User insured = _userRepository.GetUser (answerSheet.Owner.Id);
             //Organisation insured = answerSheet.Owner;
 
-            ClientProgramme clientProgramme = _programmeRepository.GetById(id).Result;
+            ClientProgramme clientProgramme = _programmeRepository.GetByIdAsync(id).Result;
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -965,7 +965,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult ViewAgreementDeclaration(Guid id)
         {
             var models = new BaseListViewModel<ViewAgreementViewModel>();
-            ClientProgramme clientProgramme = _programmeRepository.GetById(id).Result;
+            ClientProgramme clientProgramme = _programmeRepository.GetByIdAsync(id).Result;
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -997,7 +997,7 @@ namespace TechCertain.WebUI.Controllers
             //need to review this code duplication
             var models = new BaseListViewModel<ViewAgreementViewModel>();
 
-            ClientProgramme clientProgramme = _programmeRepository.GetById(id).Result;
+            ClientProgramme clientProgramme = _programmeRepository.GetByIdAsync(id).Result;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
             NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
             currencyFormat.CurrencyNegativePattern = 2;
@@ -1266,7 +1266,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult AcceptAgreement(Guid Id)
         {
             List<AgreementDocumentViewModel> models = new List<AgreementDocumentViewModel>();
-            ClientProgramme programme = _programmeRepository.GetById(Id).Result;
+            ClientProgramme programme = _programmeRepository.GetByIdAsync(Id).Result;
 
             foreach (ClientAgreement agreement in programme.Agreements)
             {
@@ -1368,7 +1368,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SendPolicyDocuments(EmailTemplateViewModel model)
         {
-            ClientProgramme programme = _programmeRepository.GetById(model.ClientProgrammeID).Result;
+            ClientProgramme programme = _programmeRepository.GetByIdAsync(model.ClientProgrammeID).Result;
 
             // TODO - rewrite to save templates on a per programme basis
             ClientAgreement agreement = programme.Agreements[0];
@@ -1420,7 +1420,7 @@ namespace TechCertain.WebUI.Controllers
             string strrecipentemail = null;
             if (model.Recipent != null)
             {
-                var user = _userRepository.GetById(model.Recipent).Result;
+                var user = _userRepository.GetByIdAsync(model.Recipent).Result;
                 strrecipentemail = user.Email;                
             }
 
@@ -1536,7 +1536,7 @@ namespace TechCertain.WebUI.Controllers
             string queryString = HttpContext.Request.Query["result"].ToString();
             var status = "Bound";
 
-            ClientProgramme programme = _programmeRepository.GetById(Id).Result;
+            ClientProgramme programme = _programmeRepository.GetByIdAsync(Id).Result;
             Payment payment = _paymentService.GetPayment(programme.Id);
 
 
@@ -1692,7 +1692,7 @@ namespace TechCertain.WebUI.Controllers
                 model.EditEnabled = false;
                 model.Documents = new List<AgreementDocumentViewModel>();
 
-                ClientProgramme programme = _programmeRepository.GetById(id).Result;
+                ClientProgramme programme = _programmeRepository.GetByIdAsync(id).Result;
                 model.InformationSheetId = programme.InformationSheet.Id;
                 model.ClientProgrammeId = id;
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1727,7 +1727,7 @@ namespace TechCertain.WebUI.Controllers
                 model.Documents = new List<AgreementDocumentViewModel>();
                 model.CurrentUser = CurrentUser;
 
-                ClientProgramme programme = _programmeRepository.GetById(id).Result;
+                ClientProgramme programme = _programmeRepository.GetByIdAsync(id).Result;
                 model.InformationSheetId = programme.InformationSheet.Id;
                 model.ClientProgrammeId = id;
                 foreach (ClientAgreement agreement in programme.Agreements)

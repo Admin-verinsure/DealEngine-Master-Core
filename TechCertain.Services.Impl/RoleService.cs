@@ -36,7 +36,7 @@ namespace TechCertain.Services.Impl
 
         public Role GetRole(Guid roleId)
         {
-            return _roleRepository.GetById(roleId).Result;
+            return _roleRepository.GetByIdAsync(roleId).Result;
         }
 
         public IQueryable GetRoles()

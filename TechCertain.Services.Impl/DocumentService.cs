@@ -30,7 +30,7 @@ namespace TechCertain.Services.Impl
 
 		public Old_PolicyDocumentTemplate GetDocumentTemplate (Guid id)
 		{
-			return _old_policyDocumentRepository.GetById(id).Result;
+			return _old_policyDocumentRepository.GetByIdAsync(id).Result;
 		}
 
 		public IList<Old_PolicyDocumentTemplate> GetDocumentTemplates()

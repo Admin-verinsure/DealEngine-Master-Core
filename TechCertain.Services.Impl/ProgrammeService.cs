@@ -34,7 +34,7 @@ namespace TechCertain.Services.Impl
 
 		public ClientProgramme GetClientProgramme(Guid id)
 		{
-			return _clientProgrammeRepository.GetById(id).Result;
+			return _clientProgrammeRepository.GetByIdAsync(id).Result;
 		}
 
 		public IEnumerable<ClientProgramme> GetClientProgrammesByOwner(Guid ownerOrganisationId)
@@ -52,7 +52,7 @@ namespace TechCertain.Services.Impl
 
 		public Programme GetProgramme(Guid id)
 		{
-			return _programmeRepository.GetById(id).Result;
+			return _programmeRepository.GetByIdAsync(id).Result;
 		}
 
 		public IEnumerable<Programme> GetProgrammesByOwner (Guid ownerOrganisationId)

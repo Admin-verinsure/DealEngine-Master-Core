@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -35,7 +36,7 @@ namespace TechCertain.Services.Impl
 
         public BoatUse GetBoatUse(Guid boatUseId)
         {
-            BoatUse boatUse = _boatUseRepository.GetById(boatUseId).Result;
+            BoatUse boatUse = _boatUseRepository.GetByIdAsync(boatUseId).Result;
             // have a repo boatUse? Return it
             if (boatUse != null)
                 return boatUse;
@@ -49,9 +50,9 @@ namespace TechCertain.Services.Impl
             throw new Exception("BoatUse with id [" + boatUseId + "] does not exist in the system");
         }
 
-        public void UpdateBoatUse(BoatUse boatUse)
+        public async void UpdateBoatUse(BoatUse boatUse)
         {
-            _boatUseRepository.AddAsync(boatUse);
+            await _boatUseRepository.AddAsync(boatUse);
         }
     }
 }

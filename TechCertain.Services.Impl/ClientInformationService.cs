@@ -45,7 +45,7 @@ namespace TechCertain.Services.Impl
 
         public ClientInformationSheet GetInformation(Guid informationSheetId)
         {
-            return _customerInformationRepository.GetById(informationSheetId).Result;
+            return _customerInformationRepository.GetByIdAsync(informationSheetId).Result;
         }
 
         public IQueryable<ClientInformationSheet> GetAllInformationFor(User owner)

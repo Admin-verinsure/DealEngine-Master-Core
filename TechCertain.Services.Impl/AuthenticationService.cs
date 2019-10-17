@@ -75,12 +75,12 @@ namespace TechCertain.Services.Impl
 
 		public SingleUseToken GetToken(Guid token)
 		{
-			return _singleTokenRepository.GetById(token).Result;
+			return _singleTokenRepository.GetByIdAsync(token).Result;
 		}
 
 		public bool ValidSingleUseToken(Guid token)
 		{
-			SingleUseToken request = _singleTokenRepository.GetById(token).Result;
+			SingleUseToken request = _singleTokenRepository.GetByIdAsync(token).Result;
 			if (request == null)
 				return false;
 
@@ -94,7 +94,7 @@ namespace TechCertain.Services.Impl
 
 		public bool UseSingleUseToken(Guid token)
 		{
-			SingleUseToken request = _singleTokenRepository.GetById(token).Result;
+			SingleUseToken request = _singleTokenRepository.GetByIdAsync(token).Result;
 			if (request == null)
 				return false;
 

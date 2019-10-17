@@ -33,7 +33,7 @@ namespace TechCertain.Services.Impl
 
 		public ClientAgreement GetAgreement (Guid clientAgreementId)
 		{
-			return _clientAgreementRepository.GetById (clientAgreementId).Result;
+			return _clientAgreementRepository.GetByIdAsync(clientAgreementId).Result;
 		}
 
 		public ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser)

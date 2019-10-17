@@ -32,7 +32,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 
         public User GetUser(Guid userID)
         {
-            return _userRepository.GetById(userID).Result;
+            return _userRepository.GetByIdAsync(userID).Result;
         }
 
         public User GetUser(string userName)

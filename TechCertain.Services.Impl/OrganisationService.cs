@@ -51,7 +51,7 @@ namespace TechCertain.Services.Impl
 
 		public Organisation GetOrganisation (Guid organisationId)
 		{
-			Organisation organisation = _organisationRepository.GetById(organisationId).Result;
+			Organisation organisation = _organisationRepository.GetByIdAsync(organisationId).Result;
 			// have a repo organisation? Return it
 			if (organisation != null)
 				return organisation;

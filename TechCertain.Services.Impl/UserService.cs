@@ -66,7 +66,7 @@ namespace TechCertain.Services.Impl
 
 		public User GetUser (Guid userId)
 		{
-			User user = _userRepository.GetById(userId).Result;
+			User user = _userRepository.GetByIdAsync(userId).Result;
 			// have a repo user? Return them
 			if (user != null)
 				return user;

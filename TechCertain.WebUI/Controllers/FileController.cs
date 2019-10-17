@@ -76,7 +76,7 @@ namespace TechCertain.WebUI.Controllers
             //if (id == Guid.Empty)
             //    return new HttpNotFoundResult();
 
-            SystemDocument doc = _documentRepository.GetById(id).Result;
+            SystemDocument doc = _documentRepository.GetByIdAsync(id).Result;
             string extension = "";
             if (doc.ContentType == MediaTypeNames.Text.Html)
             {
@@ -144,7 +144,7 @@ namespace TechCertain.WebUI.Controllers
 			if (documentId == Guid.Empty)
 				return View (model);
 
-			SystemDocument document = _documentRepository.GetById (documentId).Result;
+			SystemDocument document = _documentRepository.GetByIdAsync(documentId).Result;
 			if (document == null)
 				throw new Exception ("Unable to update document: Could not find document with id " + id);
 
@@ -162,7 +162,7 @@ namespace TechCertain.WebUI.Controllers
 		{
             if (model.DocumentId != Guid.Empty)
             {
-                SystemDocument document = _documentRepository.GetById(model.DocumentId).Result;
+                SystemDocument document = _documentRepository.GetByIdAsync(model.DocumentId).Result;
                 if (document != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())

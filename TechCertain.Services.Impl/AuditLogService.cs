@@ -34,7 +34,7 @@ namespace TechCertain.Services.Impl
 
         public AuditLog GetAuditLog(Guid auditLogId)
         {
-            AuditLog auditLog = _auditLogRepository.GetById(auditLogId).Result;
+            AuditLog auditLog = _auditLogRepository.GetByIdAsync(auditLogId).Result;
             if (auditLog != null)
                 return auditLog;
             if (auditLog != null)

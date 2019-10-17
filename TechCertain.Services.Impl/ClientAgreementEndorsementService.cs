@@ -46,7 +46,7 @@ namespace TechCertain.Services.Impl
 
         public ClientAgreementEndorsement GetClientAgreementEndorsementBy(Guid clientAgreementEndorsementId)
         {
-            return _clientAgreementEndorsementRepository.GetById(clientAgreementEndorsementId).Result;
+            return _clientAgreementEndorsementRepository.GetByIdAsync(clientAgreementEndorsementId).Result;
         }
     }
 }

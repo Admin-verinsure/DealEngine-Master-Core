@@ -52,7 +52,7 @@ namespace TechCertain.Services.Impl
 
         public ClientAgreementRule GetClientAgreementRuleBy(Guid clientAgreementRuleId)
         {
-            return _clientAgreementRuleRepository.GetById(clientAgreementRuleId).Result;
+            return _clientAgreementRuleRepository.GetByIdAsync(clientAgreementRuleId).Result;
         }
     }
 }

@@ -79,10 +79,10 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/forgotpassword
 		[HttpGet]
 		[AllowAnonymous]
-		public ActionResult ForgotPassword()
+		public async Task<IActionResult> ForgotPassword()
 		{
 			//if (Request.IsAuthenticated)
-				return RedirectToLocal();
+				return await RedirectToLocal();
 			
 			// TODO - need to somehow call ResetPassword and return its view so we don't have to duplicate it here.
 			// We do not want to use any existing identity information
@@ -94,10 +94,10 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/resetpassword
 		[HttpGet]
         [AllowAnonymous]
-        public ActionResult ResetPassword()
+        public async Task<IActionResult> ResetPassword()
 		{
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -109,7 +109,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> ResetPassword(AccountResetPasswordModel viewModel)
+		public async Task<IActionResult> ResetPassword(AccountResetPasswordModel viewModel)
 		{
 			string errorMessage = @"We have sent you an email to the email address we have recorded in the system, that email address is different from the one you supplied. 
 				Please check the other email addresses you may have used. If you cannot locate our email, 
@@ -184,7 +184,7 @@ namespace TechCertain.WebUI.Controllers
         // GET: /account/changepassword
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult ChangePassword(Guid id)
+        public async Task<IActionResult> ChangePassword(Guid id)
         {
             if (id != Guid.Empty && _authenticationService.GetToken(id) != null)
             {
@@ -201,7 +201,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
+		public async Task<IActionResult> ChangePassword(Guid id, AccountChangePasswordModel viewModel)
 		{
 			try
 			{
@@ -274,7 +274,7 @@ namespace TechCertain.WebUI.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public ActionResult PasswordChanged ()
+		public async Task<IActionResult> PasswordChanged ()
 		{
 			return View ();
 		}
@@ -282,7 +282,7 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/login
 		[HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl)
         {
             // We do not want to use any existing identity information
             //EnsureLoggedOut();            
@@ -309,7 +309,7 @@ namespace TechCertain.WebUI.Controllers
 			}
 
 			if (User.Identity.IsAuthenticated)
-				return RedirectToLocal();
+				return await RedirectToLocal();
 
             try
             {
@@ -409,7 +409,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public ActionResult OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
+		public async Task<IActionResult> OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
 		{
             throw new Exception("Method needs to be re-written");
 			//if (ModelState.IsValid) {
@@ -439,7 +439,7 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/error
 		[HttpGet]
         [AllowAnonymous]
-        public ActionResult Error()
+        public async Task<IActionResult> Error()
         {
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -450,10 +450,10 @@ namespace TechCertain.WebUI.Controllers
 		// GET: /account/register
 		[HttpGet]
         [AllowAnonymous]
-        public ActionResult Register()
+        public async Task<IActionResult> Register()
 		{
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -465,13 +465,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(AccountRegistrationModel model)
+        public async Task<IActionResult> Register(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
             if (!ModelState.IsValid)
 				return View(model);
 
-			return RedirectToLocal();
+			return await RedirectToLocal();
 
 //			// Disable for now
 //			var user = new TechCertain.Domain.Entities.User (Guid.NewGuid(), model.Username);
@@ -524,10 +524,10 @@ namespace TechCertain.WebUI.Controllers
         // GET: /account/coastguardreg
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult CoastguardReg()
+        public async Task<IActionResult> CoastguardReg()
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -539,7 +539,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CoastguardReg(AccountRegistrationModel model)
+        public async Task<IActionResult> CoastguardReg(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
             //if (!ModelState.IsValid)
@@ -553,10 +553,10 @@ namespace TechCertain.WebUI.Controllers
         // GET: /account/coastguardreg
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult CoastguardForm()
+        public async Task<IActionResult> CoastguardForm()
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToLocal();
+                return await RedirectToLocal();
 
             // We do not want to use any existing identity information
             EnsureLoggedOut();
@@ -568,7 +568,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CoastguardForm(AccountRegistrationModel model)
+        public async Task<IActionResult> CoastguardForm(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
             //if (!ModelState.IsValid)
@@ -580,18 +580,18 @@ namespace TechCertain.WebUI.Controllers
         }
 
         // POST: /account/Logout
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Logout()
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
         {
-            _signInManager.SignOutAsync();
-            HttpContext.SignOutAsync();
+            await _signInManager.SignOutAsync();
+            await  HttpContext.SignOutAsync();
             HttpContext.Response.Cookies.Delete(".AspNet.Consent");
 
-            return RedirectToLocal();
+            return await RedirectToLocal();
         }
 
-        ActionResult RedirectToLocal(string returnUrl = "")
+        async Task<IActionResult> RedirectToLocal(string returnUrl = "")
         {
             // If the return url starts with a slash "/" we assume it belongs to our site
             // so we will redirect to this "action"
@@ -615,7 +615,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult Profile(string id)
+		public async Task<IActionResult> Profile(string id)
 		{
 			var user = string.IsNullOrWhiteSpace (id) ? CurrentUser : _userService.GetUser (id);
 			if (user == null)
@@ -646,7 +646,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ProfileEditor()
+		public async Task<IActionResult> ProfileEditor()
 		{
 			var user = CurrentUser;
 			if (user == null)
@@ -695,7 +695,7 @@ namespace TechCertain.WebUI.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult ProfileEditor(ProfileViewModel model)
+		public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
 		{
 
 			var user = CurrentUser;
@@ -750,14 +750,14 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ChangeOwnPassword()
+		public async Task<IActionResult> ChangeOwnPassword()
 		{
 			return PartialView ("_ChangeOwnPassword");
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult ChangeOwnPassword(ChangePasswordViewModel model)
+		public async Task<IActionResult> ChangeOwnPassword(ChangePasswordViewModel model)
 		{
 			if (!ModelState.IsValid)
 				return PartialView ("_ChangeOwnPassword", model);
@@ -782,7 +782,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ListAllUsers ()
+		public async Task<IActionResult> ListAllUsers ()
 		{
 			BaseListViewModel<UserViewModel> userList = new BaseListViewModel<UserViewModel> ();
 
@@ -811,7 +811,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ManageUser (Guid Id)
+		public async Task<IActionResult> ManageUser (Guid Id)
 		{
             var user = _userService.GetUser(Id);
             var accountModel = new ManageUserViewModel(user);
