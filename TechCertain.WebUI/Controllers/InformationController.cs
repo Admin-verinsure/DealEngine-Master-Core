@@ -34,25 +34,21 @@ namespace TechCertain.WebUI.Controllers
         IEmailService _emailService;
         IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
-        IRoleService _roleService;
         IMilestoneService _milestoneService;
         IUserService _userService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
         IMapperSession<Territory> _territoryRepository;
-
         IMapperSession<BusinessActivity> _busActivityRespository;
         IProgrammeService _programmeService;
         IBusinessActivityService _businessActivityService;
-
         IMapper _mapper;
         IMapperSession<DropdownListItem> _IDropdownListItem;
-        IClientInformationAnswerService _IClientInformationAnswer;
+        IClientInformationAnswerService _clientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
-        IHttpContextAccessor _httpContextAccessor;
+
         public InformationController(
             IUserService userService,
-            IRoleService roleService,
             IInformationItemService informationItemService,
             IInformationSectionService informationSectionService,
             IFileService fileService,
@@ -78,16 +74,13 @@ namespace TechCertain.WebUI.Controllers
             IBusinessActivityService businessActivityService,
             IClientInformationAnswerService clientInformationAnswer,
             IMapperSession<DropdownListItem> dropdownListItem,
-            IMapper mapper,
-            DealEngineDBContext dealEngineDBContext,
-            IHttpContextAccessor httpContextAccessor,
-            SignInManager<DealEngineUser> signInManager)
+            IMapper mapper)
             : base (userService)
         {
             _userService = userService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
-            _IClientInformationAnswer = clientInformationAnswer;
+            _clientInformationAnswer = clientInformationAnswer;
             _informationTemplateService = informationTemplateService;
             _clientAgreementService = clientAgreementService;
             _clientAgreementTermService = clientAgreementTermService;
@@ -96,7 +89,6 @@ namespace TechCertain.WebUI.Controllers
             _clientInformationService = clientInformationService;
             _referenceService = referenceService;
             _milestoneService = milestoneService;
-            _roleService = roleService;
             _uWMService = uWMService;
             //_taskingService = taskingService;
             _fileService = fileService;
@@ -115,7 +107,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetProgrammes()
+        public async Task<IActionResult> GetProgrammes()
         {
             //var informationTemplate = new IList<InformationTemplate>();
             var informationTemplate = new List<InformationTemplate>(_informationTemplateService.GetAllTemplates());
@@ -138,7 +130,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult GetProgrammeSections(Guid informationTemplateID)
+        public async Task<IActionResult> GetProgrammeSections(Guid informationTemplateID)
         {
             //var informationTemplate = new IList<InformationTemplate>();
 
@@ -160,7 +152,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult SectionBuilder(Guid SectionId)
+        public async Task<IActionResult> SectionBuilder(Guid SectionId)
         {
             //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
 
@@ -208,7 +200,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public ActionResult SectionBuilder1(Guid SectionId)
+        public async Task<IActionResult> SectionBuilder1(Guid SectionId)
         {
           //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
 
@@ -256,7 +248,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         //[HttpGet]
-        //public ActionResult SectionBuilder(string status)
+        //public async Task<IActionResult> SectionBuilder(string status)
         //{
 
         //    InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("13544bd5-6a81-45c1-b035-aaa20100a4ca"));
@@ -292,7 +284,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         //[HttpPost]
-        //public ActionResult SectionBuilder1(string status)
+        //public async Task<IActionResult> SectionBuilder1(string status)
         //{
 
         //    InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("13544bd5-6a81-45c1-b035-aaa20100a4ca"));
@@ -862,7 +854,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult ViewAll()
+        public async Task<IActionResult> ViewAll()
         {
             IEnumerable<InformationTemplate> templates = _informationTemplateService.GetAllTemplates();
 
@@ -880,7 +872,7 @@ namespace TechCertain.WebUI.Controllers
 
         // GET: Information
         [HttpGet]
-        public ActionResult ViewInformation(Guid id)
+        public async Task<IActionResult> ViewInformation(Guid id)
         {
             //            var model = LoadTemplate();
             //
@@ -914,7 +906,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult StartInformation(Guid id)
+        public async Task<IActionResult> StartInformation(Guid id)
         {
             //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
 
@@ -942,7 +934,7 @@ namespace TechCertain.WebUI.Controllers
                         else
                             sheet.AddAnswer(item.Name, "");
                     }
-                uow.Commit();
+                await uow.Commit();
             }
 
             model.SharedData = new SharedDataViewModel();
@@ -1089,7 +1081,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditPanel(Guid panelId, string panelName, int panelPosition)
+        public async Task<IActionResult> EditPanel(Guid panelId, string panelName, int panelPosition)
         {
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1101,7 +1093,7 @@ namespace TechCertain.WebUI.Controllers
                     InformationSection section = _informationSectionRepository.GetByIdAsync(panelId).Result;
                     section.Position = panelPosition;
                     // TODO: Add these items at templates so it can be clonned properly 
-                    uow.Commit();
+                    await uow.Commit();
                 }
 
             }
@@ -1110,7 +1102,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public ActionResult ViewProgrammeDetails(Guid Id)
+        public async Task<IActionResult> ViewProgrammeDetails(Guid Id)
         {
             ClientProgramme clientProgramme = _programmeService.GetClientProgramme(Id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
@@ -1130,7 +1122,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult PartialViewProgramme(String name, Guid id)
+        public async Task<IActionResult> PartialViewProgramme(String name, Guid id)
         {
             //////BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
             ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id);
@@ -1332,7 +1324,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CloseAdvisory(MilestoneAdvisoryVM milestoneAdvisoryVM)
+        public async Task<IActionResult> CloseAdvisory(MilestoneAdvisoryVM milestoneAdvisoryVM)
         {
             await _milestoneService.CloseMileTask(milestoneAdvisoryVM.Id, milestoneAdvisoryVM.Method);
 
@@ -1340,7 +1332,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditInformation(Guid id)
+        public async Task<IActionResult> EditInformation(Guid id)
         {
             //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
 
@@ -1375,7 +1367,7 @@ namespace TechCertain.WebUI.Controllers
                 if (sheet.Status == "Not Started")
                 {
                     sheet.Status = "Started";
-                    uow.Commit();
+                    await uow.Commit();
                 }
 
             }
@@ -1403,15 +1395,15 @@ namespace TechCertain.WebUI.Controllers
             model.RevenueByTerritories = new List<RevenueByTerritoryViewModel>();
             //model.RolesByLocation = new List<RoleDetailViewModel>();
             var roleList = new List<RoleDetailViewModel>();
-            foreach(Role role in _roleService.GetRolesByProgramme(clientProgramme.BaseProgramme.Id))
-            {
-                RoleDetailViewModel roleDetail = new RoleDetailViewModel()
-                {
-                    Role = role,
-                };
-                roleList.Add(roleDetail);                
-            }
-            model.RolesByLocation = roleList;
+            //foreach(Role role in _roleService.GetRolesByProgramme(clientProgramme.BaseProgramme.Id))
+            //{
+            //    RoleDetailViewModel roleDetail = new RoleDetailViewModel()
+            //    {
+            //        Role = role,
+            //    };
+            //    roleList.Add(roleDetail);                
+            //}
+            //model.RolesByLocation = roleList;
 
             List<RevenueByTerritoryViewModel> Lterritories = new List<RevenueByTerritoryViewModel>();
             var territories = _territoryRepository.FindAll().ToList(); 
@@ -1941,14 +1933,14 @@ namespace TechCertain.WebUI.Controllers
             model.Status = sheet.Status;
 
 
-            model.ClientInformationAnswers = _IClientInformationAnswer.GetAllClaimHistory().Where(c => c.ClientInformationSheet.Id == sheet.Id);
+            model.ClientInformationAnswers = _clientInformationAnswer.GetAllClaimHistory().Where(c => c.ClientInformationSheet.Id == sheet.Id);
 
 
             return View("InformationWizard", model);
         }
 
         [HttpGet]
-        public ActionResult Unlock(Guid id)
+        public async Task<IActionResult> Unlock(Guid id)
         {
             ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
@@ -1963,7 +1955,7 @@ namespace TechCertain.WebUI.Controllers
                         sheet.UnlockDate = DateTime.UtcNow;
                         sheet.UnlockedBy = CurrentUser;
                     }
-                    uow.Commit();
+                    await uow.Commit();
 
                 }
             }
@@ -1973,7 +1965,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         //[HttpPost]
-        //public IActionResult EditInformation(IFormCollection formcollection)
+        //public Iasync Task<IActionResult> EditInformation(IFormCollection formcollection)
         //{
         //    // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
         //    // so just reroute the call
@@ -2012,7 +2004,7 @@ namespace TechCertain.WebUI.Controllers
         //        }
 
         [HttpPost]
-        public ActionResult SaveInformation(IFormCollection collection)
+        public async Task<IActionResult> SaveInformation(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
@@ -2025,7 +2017,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     _clientInformationService.SaveAnswersFor(sheet, collection);
                     _clientInformationService.UpdateInformation(sheet);
-                    uow.Commit();
+                    await uow.Commit();
                 }
             }
 
@@ -2034,12 +2026,12 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetClaimHistory(Guid ClientInformationSheet)
+        public async Task<IActionResult> GetClaimHistory(Guid ClientInformationSheet)
         {
             String[][] ClaimAnswers = new String[5][];
             var count = 0;
             String[] ClaimItem;
-            foreach (var answer in _IClientInformationAnswer.GetAllClaimHistory().Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
+            foreach (var answer in _clientInformationAnswer.GetAllClaimHistory().Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
                                                                                                                                                           || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5")))
             {
                 ClaimItem = new String[3];
@@ -2060,7 +2052,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         //[HttpPost]
-        //public ActionResult UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
+        //public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
         //{
         //    ClientInformationSheet sheet = null;
         //    try
@@ -2099,7 +2091,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         [HttpPost]
-        public ActionResult UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
+        public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
         {
             ClientInformationSheet sheet = null;
 
@@ -2109,7 +2101,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     for (var x = 0; x < item.Length - 1; x++)
                     {
-                        ClientInformationAnswer answer = _IClientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
+                        ClientInformationAnswer answer = _clientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
                         if (answer != null)
                         {
                             answer.Value = item[1];
@@ -2118,17 +2110,17 @@ namespace TechCertain.WebUI.Controllers
                         else
                         {
                             sheet = _clientInformationService.GetInformation(ClientInformationSheet);
-                            _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet);
+                            _clientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet);
                         }
                     }
-                    uow.Commit();
+                    await uow.Commit();
                 }
             }
             return Json(true);
         }
 
         [HttpPost]
-        public IActionResult SubmitInformation(IFormCollection collection)
+        public async Task<IActionResult> SubmitInformation(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -2147,7 +2139,7 @@ namespace TechCertain.WebUI.Controllers
                         _uWMService.UWM_ICIBNZIMV(CurrentUser, sheet, reference);
 
                         //sheet.Status = "Submitted";
-                        uow.Commit();
+                        await uow.Commit();
                     }
 
                 }
@@ -2163,7 +2155,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult QuoteToAgree(IFormCollection collection)
+        public async Task<IActionResult> QuoteToAgree(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -2177,7 +2169,7 @@ namespace TechCertain.WebUI.Controllers
                         sheet.Status = "Submitted";
                         sheet.SubmitDate = DateTime.UtcNow;
                         sheet.SubmittedBy = CurrentUser;
-                        uow.Commit();
+                        await uow.Commit();
                     }
 
                     ////send out uis submission confirmation email to insured
@@ -2213,7 +2205,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult PaymentInformation(IFormCollection collection)
+        public async Task<IActionResult> PaymentInformation(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -2227,7 +2219,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult UpdateInformation(Guid id)
+        public async Task<IActionResult> UpdateInformation(Guid id)
         {
             ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id);
             if (clientProgramme == null)
@@ -2241,7 +2233,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult RenewInformation(Guid id)
+        public async Task<IActionResult> RenewInformation(Guid id)
         {
             ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id);
             if (clientProgramme == null)
@@ -2255,7 +2247,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateDemoUIS()
+        public async Task<IActionResult> CreateDemoUIS()
         {
             var demoData = LoadTemplate();
 
@@ -2365,7 +2357,7 @@ namespace TechCertain.WebUI.Controllers
                             // Update Inforamtion Item ID in view model
                             // For now see code above, Will fix later with Domain Model
                         }
-                        uow.Commit();
+                        await uow.Commit();
                     }
 
                 }
@@ -2379,7 +2371,7 @@ namespace TechCertain.WebUI.Controllers
                     informationSections.Add(informationSection);
 
                     section.Id = informationSection.Id;
-                    uow.Commit();
+                    await uow.Commit();
                 }
 
             }
@@ -2392,7 +2384,7 @@ namespace TechCertain.WebUI.Controllers
 
                 demoData.Id = template.Id;
 
-                uow.Commit();
+                await uow.Commit();
             }
 
             // Update Id in view model
@@ -2406,7 +2398,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult IssueDemoUIS(string id)
+        public async Task<IActionResult> IssueDemoUIS(string id)
         {
             var user = CurrentUser;
             if (!string.IsNullOrWhiteSpace(id))
@@ -2420,13 +2412,13 @@ namespace TechCertain.WebUI.Controllers
                 {
                     _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, template);
                 }
-                uow.Commit();
+                await uow.Commit();
             }
             return Redirect("~/Home/Index");
         }
 
         [HttpGet]
-        public ActionResult IssueUISForProduct(Guid id)
+        public async Task<IActionResult> IssueUISForProduct(Guid id)
         {
             InformationTemplate infoTemplate = _informationTemplateService.GetAllTemplates().FirstOrDefault(i => i.Product.Id == id);
             if (infoTemplate == null)
@@ -2437,7 +2429,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 var user = CurrentUser;
                 cis = _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, infoTemplate);
-                uow.Commit();
+                await uow.Commit();
             }
 
             return Redirect("/Information/StartInformation/" + cis.Id);

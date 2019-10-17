@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.Domain.Entities;
@@ -38,7 +39,7 @@ namespace TechCertain.WebUI.Controllers
 
         // GET: InformationBuilder
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View(new InformationBuilderViewModel());
         }        
@@ -50,7 +51,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateInformationSheet(InformationBuilderViewModel model)
+        public async Task<IActionResult> CreateInformationSheet(InformationBuilderViewModel model)
         {
             // Should be abstracted to a service
 
@@ -70,16 +71,16 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult StagingBuilder ()
+		public async Task<IActionResult> StagingBuilder ()
 		{
-			_templateRepository.GetByIdAsync(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
+			await _templateRepository.GetByIdAsync(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
 
 
 			return View (new ExperimentalInfoBuilderViewModel());
 		}
 
         //[HttpGet]
-        //public ActionResult SectionBuilder()
+        //public async Task<IActionResult> SectionBuilder()
         //{
         //    // //  _informationItemRepository.FindAll().Where(p => p.infor)
         //    InformationSection informationSection = _informationSectionRepository.GetById(new Guid("3b2ba8c1-48bc-4ec2-b8ef-aaa200bc5376"));
@@ -104,7 +105,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-		public ActionResult StagingBuilder (ExperimentalInfoBuilderViewModel model)
+		public async Task<IActionResult> StagingBuilder (ExperimentalInfoBuilderViewModel model)
 		{
             //Console.WriteLine ("Title: " + model.Title);
             //Console.WriteLine ("Description: " + model.Description);
@@ -192,7 +193,7 @@ namespace TechCertain.WebUI.Controllers
                 //	}
                 //}
 
-             _templateRepository.AddAsync(informationTemplate);
+             await _templateRepository.AddAsync(informationTemplate);
 
             }
             catch (Exception ex)

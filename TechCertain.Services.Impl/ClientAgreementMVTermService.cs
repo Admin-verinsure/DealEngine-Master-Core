@@ -22,9 +22,6 @@ namespace TechCertain.Services.Impl
                 throw new ArgumentNullException(nameof(year));
             if (string.IsNullOrWhiteSpace(make))
                 throw new ArgumentNullException(nameof(make));
-            //Carjam returns null
-            //if (string.IsNullOrWhiteSpace(model))
-            //    throw new ArgumentNullException(nameof(model));
             if (string.IsNullOrWhiteSpace(termLimit.ToString()))
                 throw new ArgumentNullException(nameof(termLimit));
             if (string.IsNullOrWhiteSpace(excess.ToString()))

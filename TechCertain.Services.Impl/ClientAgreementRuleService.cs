@@ -35,6 +35,7 @@ namespace TechCertain.Services.Impl
 
             ClientAgreementRule clientAgreementRule = new ClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
             clientAgreement.ClientAgreementRules.Add(clientAgreementRule);
+            _clientAgreementRuleRepository.AddAsync(clientAgreementRule);
             _clientAgreementRepository.UpdateAsync(clientAgreement);
         }
 

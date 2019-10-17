@@ -54,8 +54,7 @@ namespace TechCertain.Services.Impl
 
         public Merchant GetMerchant(Guid merchantProgrammeId)
         {
-            Merchant merchant = _merchantRepository.FindAll().FirstOrDefault(m => m.Programme_id == merchantProgrammeId);
-            return merchant;
+            return _merchantRepository.FindAll().FirstOrDefault(m => m.Programme_id == merchantProgrammeId);
         }
     }
 }

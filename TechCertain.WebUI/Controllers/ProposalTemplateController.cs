@@ -2,31 +2,25 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models.Proposal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class ProposalTemplateController : BaseController
     {
         IMapperSession<ProposalTemplate> _proposalTemplateRepository;
-        IHttpContextAccessor _httpContextAccessor;
 
-        public ProposalTemplateController(IUserService userRepository, 
-            DealEngineDBContext dealEngineDBContext, 
-            IHttpContextAccessor httpContextAccessor, 
-            SignInManager<DealEngineUser> signInManager) : base (userRepository)
+        public ProposalTemplateController(IUserService userRepository) : base (userRepository)
         {
 
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var proposalTemplates = _proposalTemplateRepository.FindAll().Where(pt => !pt.IsPrivate).ToArray();
 
@@ -37,13 +31,13 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View(new CreateProposalTemplateViewModel());
         }
 
         [HttpPost]
-        public ActionResult Create(CreateProposalTemplateViewModel viewModel)
+        public async Task<IActionResult> Create(CreateProposalTemplateViewModel viewModel)
         {
             if (!ModelState.IsValid)
                 return View(viewModel);

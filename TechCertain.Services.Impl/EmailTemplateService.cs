@@ -39,16 +39,14 @@ namespace TechCertain.Services.Impl
 
         public IQueryable<EmailTemplate> GetEmailTemplateFor(Product product, string type)
         {
-            var emailTemplate = _emailTemplateRepository.FindAll().Where(et => et.Product == product &&
+            return _emailTemplateRepository.FindAll().Where(et => et.Product == product &&
                                                                                     et.Type == type);
-            return emailTemplate;
         }
 
         public IQueryable<EmailTemplate> GetEmailTemplateFor(Programme programme, string type)
         {
-            var emailTemplate = _emailTemplateRepository.FindAll().Where(et => et.Programme == programme &&
+            return _emailTemplateRepository.FindAll().Where(et => et.Programme == programme &&
                                                                                     et.Type == type);
-            return emailTemplate;
         }
     }
 }

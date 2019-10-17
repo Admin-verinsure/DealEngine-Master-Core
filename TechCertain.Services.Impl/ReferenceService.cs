@@ -27,9 +27,9 @@ namespace TechCertain.Services.Impl
             return (nextReference + 1).ToString();
         }
 
-        public void Update(Reference reference)
+        public async void Update(Reference reference)
         {
-            _referenceRepository.AddAsync(reference);
+            await _referenceRepository.AddAsync(reference);
         }
 
         public void CreateClientInformationReference(ClientInformationSheet ClientInformationSheet)

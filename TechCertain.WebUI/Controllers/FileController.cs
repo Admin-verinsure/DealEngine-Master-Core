@@ -17,6 +17,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -46,7 +47,7 @@ namespace TechCertain.WebUI.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public ActionResult Image(string id)
+		public async Task<IActionResult> Image(string id)
 		{
 
             //string uploadFolder = "~/App_Data/uploads/";
@@ -70,7 +71,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult GetDocument (Guid id, string format)
+		public async Task<IActionResult> GetDocument (Guid id, string format)
 		{
             //throw new Exception("This method needs to be re-written");
             //if (id == Guid.Empty)
@@ -113,7 +114,7 @@ namespace TechCertain.WebUI.Controllers
 		//	file.SaveAs(absolutePath);
 		//}
 
-		//ActionResult DownloadFile(string folder, string fileName, string mediaType)
+		//async Task<IActionResult> DownloadFile(string folder, string fileName, string mediaType)
 		//{
 		//	try
 		//	{
@@ -130,7 +131,7 @@ namespace TechCertain.WebUI.Controllers
 		//}
 
 		[HttpGet]
-		public ActionResult CreateDocument (string id)
+		public async Task<IActionResult> CreateDocument (string id)
 		{
 			DocumentViewModel model = new DocumentViewModel ();
 
@@ -158,7 +159,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult CreateDocument (DocumentViewModel model)
+		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
 		{
             if (model.DocumentId != Guid.Empty)
             {
@@ -191,7 +192,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ManageDocuments ()
+		public async Task<IActionResult> ManageDocuments ()
 		{
 			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
 
@@ -250,7 +251,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult Render (string id)
+		public async Task<IActionResult> Render (string id)
 		{
             throw new Exception("Method will need to be re-written");
             //string serverFile = Path.Combine(_appData, _uploadFolder, id);

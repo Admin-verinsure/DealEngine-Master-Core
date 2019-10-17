@@ -38,8 +38,7 @@ namespace TechCertain.Services.Impl
 
         public IQueryable<Endorsement> GetAllEndorsementFor(Product product)
         {
-            var endorsement = _endorsementRepository.FindAll().Where(cagt => cagt.Product == product);
-            return endorsement;
+            return _endorsementRepository.FindAll().Where(cagt => cagt.Product == product);
         }
     }
 }

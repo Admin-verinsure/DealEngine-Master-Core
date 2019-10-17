@@ -92,9 +92,7 @@ namespace TechCertain.Services.Impl
 
         public MilestoneTemplate GetMilestoneTemplate(Guid ClientprogrammeID, string milestoneActivity)
         {
-            MilestoneTemplate milestoneTemplate = _milestoneTemplateService.GetMilestoneTemplate(ClientprogrammeID, milestoneActivity);
-
-            return milestoneTemplate;
+            return _milestoneTemplateService.GetMilestoneTemplate(ClientprogrammeID, milestoneActivity);
         }
 
         public Task CloseMileTask(Guid id, string method)

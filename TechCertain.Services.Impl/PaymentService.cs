@@ -17,7 +17,7 @@ namespace TechCertain.Services.Impl
 
         public void Update(Payment payment)
         {
-             _paymentRepository.UpdateAsync(payment);            
+            _paymentRepository.UpdateAsync(payment);            
         }
 
         public Payment AddNewPayment(User createdBy, ClientProgramme clientProgramme, Merchant merchant, PaymentGateway paymentGateway)
@@ -43,15 +43,13 @@ namespace TechCertain.Services.Impl
 
         public Payment GetPayment(Guid clientProgrammeID, Guid merchantID, Guid paymentGatewayID)
         {
-            Payment payment = GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID &&
+            return GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID &&
                                                              p.PaymentMerchant.Id == merchantID && p.PaymentPaymentGateway.Id == paymentGatewayID);
-            return payment;
         }
 
         public Payment GetPayment(Guid clientProgrammeID)
         {
-            Payment payment = GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID);
-            return payment;
+            return GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID);
         }
 
     }

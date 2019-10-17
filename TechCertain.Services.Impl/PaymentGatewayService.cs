@@ -45,8 +45,7 @@ namespace TechCertain.Services.Impl
 
         public PaymentGateway GetPaymentGateway(Guid paymentGatewayId)
         {
-            PaymentGateway paymentGateway = GetAllPaymentGateways().FirstOrDefault(pgw => pgw.PaymentGatewayId == paymentGatewayId);
-            return paymentGateway;
+            return GetAllPaymentGateways().FirstOrDefault(pgw => pgw.PaymentGatewayId == paymentGatewayId);
         }
     }
 }

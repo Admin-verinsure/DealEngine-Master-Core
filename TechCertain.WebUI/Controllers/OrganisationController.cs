@@ -9,6 +9,7 @@ using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -17,19 +18,15 @@ namespace TechCertain.WebUI.Controllers
         private readonly IOrganisationService _organisationService;
         private readonly IOrganisationTypeService _organisationTypeService;
         IInsuranceAttributeService _insuranceAttributeService;
-        IHttpContextAccessor _httpContextAccessor;
         IUnitOfWork _unitOfWork;
 
         //private readonly ICompanyService _companyService;
 
-        public OrganisationController(IHttpContextAccessor httpContextAccessor,
-            SignInManager<DealEngineUser> signInManager,
-            IOrganisationService organisationService, 
-            DealEngineDBContext dealEngineDBContext, 
+        public OrganisationController(IOrganisationService organisationService,
             IOrganisationTypeService organisationTypeService, 
             IUnitOfWork unitOfWork, 
             IInsuranceAttributeService insuranceAttributeService,
-            IUserService userRepository)//(ICompanyService companyService)
+            IUserService userRepository)
             : base (userRepository)
         {
             _organisationService = organisationService;
@@ -41,7 +38,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             BaseListViewModel<OrganisationViewModel> organisations = new BaseListViewModel<OrganisationViewModel>();
 
@@ -65,7 +62,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(OrganisationViewModel model)
+        public async Task<IActionResult> Update(OrganisationViewModel model)
         {
             Organisation org = CurrentUser.Organisations.FirstOrDefault(o => o.Id == model.ID);
             if (org != null)
@@ -79,7 +76,7 @@ namespace TechCertain.WebUI.Controllers
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     _organisationService.UpdateOrganisation(org);
-                    uow.Commit();
+                    await uow.Commit();
                 }
                 return Content("success");
             }
@@ -88,13 +85,13 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult ManageOrganisations()
+        public async Task<IActionResult> ManageOrganisations()
         {
             return View("ManageOrganisations");
         }
 
         [HttpGet]
-        public ActionResult AddNewOrganisation()
+        public async Task<IActionResult> AddNewOrganisation()
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
             throw new Exception("Method will need to be re-written");
@@ -117,7 +114,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateOrganisation()
+        public async Task<IActionResult> CreateOrganisation()
         {
             User user = null;
             var orgType = Request.Form["OrganisationType"];
@@ -195,14 +192,14 @@ namespace TechCertain.WebUI.Controllers
                 organisation.OrganisationalUnits.Add(ou);                
                 location.OrganisationalUnits.Add(ou);
                 ou.Locations.Add(location);                
-                uow.Commit();
+                await uow.Commit();
             }
 
             return Redirect("~/Organisation/AddNewOrganisation");            
         }
 
 
-        public ActionResult SetPrimary(Guid id)
+        public async Task<IActionResult> SetPrimary(Guid id)
         {
             Organisation org = CurrentUser.Organisations.FirstOrDefault(o => o.Id == id);
             if (org != null)
@@ -218,12 +215,12 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public ActionResult Editing_Popup()
+        public async Task<IActionResult> Editing_Popup()
         {
             return View();
         }
 
-        //public ActionResult EditingPopup_Read ([DataSourceRequest] DataSourceRequest request)
+        //public async Task<IActionResult> EditingPopup_Read ([DataSourceRequest] DataSourceRequest request)
         //{
         //IEnumerable<OrganisationViewModel> items = _companyService.GetCompanies ()
         //	.Select (x => new OrganisationViewModel {
@@ -236,7 +233,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         //[AcceptVerbs (HttpVerbs.Post)]
-        //public ActionResult EditingPopup_Create ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
+        //public async Task<IActionResult> EditingPopup_Create ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
         //{
         //    if (company != null && ModelState.IsValid) {
 
@@ -250,7 +247,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         //[AcceptVerbs (HttpVerbs.Post)]
-        //public ActionResult EditingPopup_Update ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
+        //public async Task<IActionResult> EditingPopup_Update ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
         //{
         //    if (company != null && ModelState.IsValid) {
 
@@ -265,7 +262,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         //[AcceptVerbs (HttpVerbs.Post)]
-        //public ActionResult EditingPopup_Destroy ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
+        //public async Task<IActionResult> EditingPopup_Destroy ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
         //{
         //    if (company != null) {
 
@@ -280,7 +277,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         [HttpGet]
-        public ActionResult Register()
+        public async Task<IActionResult> Register()
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
 
@@ -290,7 +287,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Register(OrganisationViewModel organisationViewModel)
+        public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
         {
             _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
                                                        new OrganisationType(CurrentUser, organisationViewModel.OrganisationTypeName),
@@ -301,7 +298,7 @@ namespace TechCertain.WebUI.Controllers
             return View();
         }
 
-        public ActionResult CreateDefault()
+        public async Task<IActionResult> CreateDefault()
         {
             OrganisationType ot = new OrganisationType(CurrentUser, "financial");
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -310,7 +307,7 @@ namespace TechCertain.WebUI.Controllers
                 _organisationService.UpdateOrganisation(new Organisation(CurrentUser, Guid.NewGuid(), "ASB Bank", ot));
                 _organisationService.UpdateOrganisation(new Organisation(CurrentUser, Guid.NewGuid(), "BNZ Bank", ot));
 
-                uow.Commit();
+                await uow.Commit();
             }
 
             return Redirect("~/Home/Index");

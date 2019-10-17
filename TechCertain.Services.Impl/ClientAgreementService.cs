@@ -24,8 +24,7 @@ namespace TechCertain.Services.Impl
             if (clientInformationSheet == null)
                 throw new ArgumentNullException(nameof(clientInformationSheet));
 
-            ClientAgreement clientAgreement;
-		    clientAgreement = new ClientAgreement (createdBy, insuredName, inceptionDate, expiryDate, brokerage, brokerFee, clientInformationSheet, null, clientInformationSheet.ReferenceId);
+            ClientAgreement clientAgreement = new ClientAgreement (createdBy, insuredName, inceptionDate, expiryDate, brokerage, brokerFee, clientInformationSheet, null, clientInformationSheet.ReferenceId);
             clientInformationSheet.ClientAgreement = clientAgreement;
             _clientInformationSheetRepository.UpdateAsync(clientInformationSheet);
             _clientAgreementRepository.AddAsync(clientAgreement);

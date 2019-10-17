@@ -34,6 +34,7 @@ namespace TechCertain.Services.Impl
 
             ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(createdBy, name, type, product, value, orderNumber, clientAgreement);
             clientAgreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
+            _clientAgreementEndorsementRepository.AddAsync(clientAgreementEndorsement);
             _clientAgreementRepository.UpdateAsync(clientAgreement);
         }
 

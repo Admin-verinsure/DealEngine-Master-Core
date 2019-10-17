@@ -22,13 +22,13 @@ namespace TechCertain.Services.Impl
 
 		public ClientProgramme CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
 		{
-			return CreateClientProgrammeFor (GetProgramme (programmeId), creatingUser, owner);
+			return CreateClientProgrammeFor(GetProgramme(programmeId), creatingUser, owner);
 		}
 
 		public ClientProgramme CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
 		{
 			ClientProgramme clientProgramme = new ClientProgramme (creatingUser, owner, programme);
-			Update (clientProgramme);
+			Update(clientProgramme);
 			return clientProgramme;
 		}
 
@@ -65,11 +65,11 @@ namespace TechCertain.Services.Impl
 			return _programmeRepository.FindAll ();
 		}
 
-		public void Update (params ClientProgramme [] clientProgrammes)
+		public async void Update (params ClientProgramme [] clientProgrammes)
 		{
             foreach (ClientProgramme clientProgramme in clientProgrammes)
             {
-                _clientProgrammeRepository.AddAsync(clientProgramme);
+                await _clientProgrammeRepository.AddAsync(clientProgramme);
             }
 
 		}

@@ -17,11 +17,9 @@ namespace TechCertain.Services.Impl
 
         public InformationSection CreateNewSection(User createdBy, string name, IList<InformationItem> items)
         {
-			InformationSection section = new InformationSection(createdBy, name, items);//_informationSectionFactory.CreateSection(createdBy, name, items);
+			InformationSection section = new InformationSection(createdBy, name, items);
 
             _informationSectionRepository.AddAsync(section);
-
-            // TODO: Add these items at templates so it can be clonned properly 
             return section;
         }
 

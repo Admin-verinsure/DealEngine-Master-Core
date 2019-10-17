@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.WebUI
@@ -9,7 +10,7 @@ namespace TechCertain.WebUI
         // GET: Error
         [ActionName ("Error403")]
 		[HttpGet]
-		public ActionResult Error403 ()
+		public async Task<IActionResult> Error403 ()
 		{
             Response.StatusCode = 403;
 			return View ();
@@ -18,7 +19,7 @@ namespace TechCertain.WebUI
 		// GET: Error
 		[ActionName("Error404")]
 		[HttpGet]
-        public ActionResult Error404 ()
+        public async Task<IActionResult> Error404 ()
         {
             Response.StatusCode = 404;
             return View();
@@ -27,7 +28,7 @@ namespace TechCertain.WebUI
         // GET: Error
 		[ActionName("Error500")]
 		[HttpGet]
-        public ActionResult Error500 ()
+        public async Task<IActionResult> Error500 ()
         {
             Response.StatusCode = 500;
             return View();
@@ -52,14 +53,14 @@ namespace TechCertain.WebUI
 		}
 
 		[HttpGet]
-		public ActionResult DangerousRequest ()
+		public async Task<IActionResult> DangerousRequest ()
 		{
             Response.StatusCode = 400;
             return View();
         }
 
         [HttpGet]
-        public ActionResult PaymentRequestError()
+        public async Task<IActionResult> PaymentRequestError()
         {
             //"bc3c9972 - 1733 - 41a1 - 8786 - fa22229c66f8"
             //Console.WriteLine(Id);

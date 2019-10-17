@@ -12,6 +12,7 @@ using TechCertain.WebUI.Models.Product;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -19,18 +20,16 @@ namespace TechCertain.WebUI.Controllers
 	public class ProductController : BaseController
 	{		
 		IInformationTemplateService _informationService;
-        IHttpContextAccessor _httpContextAccessor;
         IUnitOfWork _unitOfWork;
 		IMapperSession<Product> _productRepository;
         IMapperSession<Territory> _TerritoryRepository;
-
         IMapperSession<RiskCategory> _riskRepository;
 		IMapperSession<RiskCover> _riskCoverRepository;
 		IMapperSession<Organisation> _organisationRepository;
 		IMapperSession<Document> _documentRepository;
 		IMapperSession<Programme> _programmeRepository;
 
-		public ProductController(DealEngineDBContext dealEngineDBContext, SignInManager<DealEngineUser> signInManager, IUserService userRepository, IHttpContextAccessor httpContextAccessor, IInformationTemplateService informationService, 
+		public ProductController(IUserService userRepository, IInformationTemplateService informationService, 
 		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
 								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
@@ -40,7 +39,6 @@ namespace TechCertain.WebUI.Controllers
 			_unitOfWork = unitOfWork;
 			_productRepository = productRepository;
             _TerritoryRepository = territoryRepository;
-
             _riskRepository = riskRepository;
 			_riskCoverRepository = riskCoverRepository;
 			_organisationRepository = organisationRepository;
@@ -49,7 +47,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-        public ActionResult MyProducts()
+        public async Task<IActionResult> MyProducts()
         {
 			try {
 				var products = _productRepository.FindAll ().Where (p => p.OwnerCompany == CurrentUser.PrimaryOrganisation.Id);
@@ -73,7 +71,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult AllProducts ()
+		public async Task<IActionResult> AllProducts ()
 		{
 			try {
 				var products = _productRepository.FindAll ().Where(p => p.Public);
@@ -101,7 +99,7 @@ namespace TechCertain.WebUI.Controllers
 		// Premium Element,
                    		// Policy Element
 		[HttpGet]
-		public ActionResult CreateProduct ()
+		public async Task<IActionResult> CreateProduct ()
 		{
 			return View ();
 		}
@@ -109,7 +107,7 @@ namespace TechCertain.WebUI.Controllers
 		// Can not create a product without different insurance elements existing
 		// Can only map and not add new elements
 		[HttpGet]
-		public ActionResult CreateNew()
+		public async Task<IActionResult> CreateNew()
 		{
 			ProductViewModel model = new ProductViewModel ();
 			model.Description = new ProductDescriptionVM {
@@ -202,7 +200,7 @@ namespace TechCertain.WebUI.Controllers
         // Can not create a product without different insurance elements existing
         // Can only map and not add new elements
         [HttpGet]
-        public ActionResult CreateTerritory()
+        public async Task<IActionResult> CreateTerritory()
         {
             TerritoryViewModel model = new TerritoryViewModel();
 
@@ -257,7 +255,7 @@ namespace TechCertain.WebUI.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult CreateTerritory(TerritoryViewModel model)
+        public async Task<IActionResult> CreateTerritory(TerritoryViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -295,7 +293,7 @@ namespace TechCertain.WebUI.Controllers
                     prog.territory.Add(territory);
                 }
                 territory.Programmes = programm;
-                _TerritoryRepository.AddAsync(territory);
+                await _TerritoryRepository.AddAsync(territory);
 
                 return Redirect("~/Product/MyProducts");
                 //return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
@@ -311,7 +309,7 @@ namespace TechCertain.WebUI.Controllers
 
         [HttpPost]
 		//[ValidateAntiForgeryToken]
-		public ActionResult CreateNew(ProductViewModel model)
+		public async Task<IActionResult> CreateNew(ProductViewModel model)
 		{
 			if (!ModelState.IsValid) {
 				ModelState.AddModelError ("", "Form has not been completed");
@@ -382,7 +380,7 @@ namespace TechCertain.WebUI.Controllers
                 if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                _productRepository.AddAsync(product);
+                await _productRepository.AddAsync(product);
 
 
                 return Redirect ("~/Product/MyProducts");
@@ -396,7 +394,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult ViewProduct (Guid id)
+		public async Task<IActionResult> ViewProduct (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
 			Product product = _productRepository.GetByIdAsync(id).Result;
@@ -417,7 +415,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult CloneProduct (Guid id)
+		public async Task<IActionResult> CloneProduct (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
 			Product originalProduct = _productRepository.GetByIdAsync(id).Result;
@@ -502,13 +500,13 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult CloneProduct (ProductViewModel model)
+		public async Task<IActionResult> CloneProduct (ProductViewModel model)
 		{
-			return CreateNew (model);
+			return await CreateNew(model);
 		}
 
 		[HttpGet]
-		public ActionResult FindProducts ()
+		public async Task<IActionResult> FindProducts ()
 		{
 			ProductRisksVM model = new ProductRisksVM ();
 			foreach (RiskCategory risk in _riskRepository.FindAll ())
@@ -518,7 +516,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult FindProducts (ProductRisksVM model)
+		public async Task<IActionResult> FindProducts (ProductRisksVM model)
 		{
 			BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
 			var riskCovers = _riskCoverRepository.FindAll ();

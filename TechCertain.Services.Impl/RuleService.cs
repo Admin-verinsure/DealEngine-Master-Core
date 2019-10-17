@@ -37,14 +37,12 @@ namespace TechCertain.Services.Impl
 
         public IQueryable<Rule> GetAllRuleFor(Product product)
         {
-            var rule = _ruleRepository.FindAll().Where(cagt => cagt.Product == product);
-            return rule;
+            return _ruleRepository.FindAll().Where(cagt => cagt.Product == product);
         }
 
         public Rule GetRuleByID(Guid Id)
         {
-            Rule rule = _ruleRepository.GetByIdAsync(Id).Result;
-            return rule;
+            return _ruleRepository.GetByIdAsync(Id).Result;
         }
     }
 }

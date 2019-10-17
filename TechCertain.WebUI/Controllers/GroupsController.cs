@@ -2,15 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -32,7 +28,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
 			var models = new BaseListViewModel<GroupViewModel>();
 			foreach (var group in GetAllGroups ()) {
@@ -43,19 +39,19 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-        public ActionResult Details(Guid id)
+        public async Task<IActionResult> Details(Guid id)
         {
             return View ();
         }
 
 		[HttpGet]
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View ();
         } 
 
         [HttpPost]
-		public ActionResult Create(GroupViewModel model)
+		public async Task<IActionResult> Create(GroupViewModel model)
         {
             if (ModelState.IsValid) {
 				_roleService.CreateGroup (model.Name);
@@ -65,7 +61,7 @@ namespace TechCertain.WebUI.Controllers
         }
         
 		[HttpGet]
-        public ActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
 			ApplicationGroup group = GetGroup (id);
             if (group == null)
@@ -76,7 +72,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(Guid id, GroupViewModel group)
+        public async Task<IActionResult> Edit(Guid id, GroupViewModel group)
         {
             try {
                 return RedirectToAction ("Index");
@@ -86,7 +82,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-        public ActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
 			if (id == Guid.Empty) {
                 throw new Exception("Method will need to be re-written");
@@ -101,7 +97,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost, ActionName ("Delete")]
-        public ActionResult DeleteConfirmed (Guid id)
+        public async Task<IActionResult> DeleteConfirmed (Guid id)
         {
             try {
 				if (!_roleService.DeleteGroup (id, CurrentUser))
@@ -116,7 +112,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
 		[HttpGet]
-		public ActionResult GroupRoles (Guid id)
+		public async Task<IActionResult> GroupRoles (Guid id)
 		{
 			ApplicationGroup group = GetGroup (id);
 			var model = new SelectGroupRolesViewModel ();
@@ -137,7 +133,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GroupRoles (SelectGroupRolesViewModel model)
+		public async Task<IActionResult> GroupRoles (SelectGroupRolesViewModel model)
 		{
 			try {
 				List<Guid> selectedRoleIds = new List<Guid> ();
@@ -162,7 +158,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SetUserGroups (SelectUserGroupsViewModel model)
+		public async Task<IActionResult> SetUserGroups (SelectUserGroupsViewModel model)
 		{
 			List<Guid> selectedGroupIds = new List<Guid> ();
 			List<Guid> unselectedGroupIds = new List<Guid> ();

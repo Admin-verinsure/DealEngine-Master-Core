@@ -81,19 +81,6 @@ namespace TechCertain.Services.Impl
         {
             return _organisationRepository.FindAll().FirstOrDefault(o => o.Email == organisationEmail);
         }
-
-        //public Organisation Get(Guid organisationID)
-        //{
-        //    string organisationDn = _ldapConfigService.GetOrganisationDN(organisationID);
-        //    LdapEntry entry = GetLdapEntry(organisationDn);
-
-        //    if (entry == null && _ldapConfigService.ImportOrganisation(organisationID))
-        //        entry = GetLdapEntry(organisationDn);
-
-        //    return LdapConverter.ToOrganisation(entry);
-        //}
-
-
     }
 }
 

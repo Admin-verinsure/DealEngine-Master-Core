@@ -9,6 +9,7 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -24,7 +25,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult Index ()
+		public async Task<IActionResult> Index ()
 		{
 			var models = new BaseListViewModel<RoleViewModel> ();
 			foreach (var role in _roleService.GetAllRoles()) {
@@ -34,13 +35,13 @@ namespace TechCertain.WebUI.Controllers
 			return View (models);
 		}
 
-		public ActionResult Details (int id)
+		public async Task<IActionResult> Details (int id)
 		{
 			return View ();
 		}
 
 		[HttpPost]
-		public ActionResult Create (RoleViewModel roleViewModel)
+		public async Task<IActionResult> Create (RoleViewModel roleViewModel)
 		{
 			try {
                 throw new Exception("Method will need to be re-written");
@@ -59,7 +60,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Edit (RoleViewModel roleViewModel)
+		public async Task<IActionResult> Edit (RoleViewModel roleViewModel)
 		{
 			try {
 				ApplicationRole appRole = _roleService.GetRole (roleViewModel.Id);
@@ -79,7 +80,7 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Delete (Guid Id)
+		public async Task<IActionResult> Delete (Guid Id)
 		{
 			try {
 				if (!_roleService.DeleteRole (Id, CurrentUser))
