@@ -10,7 +10,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.MappingOverrides
     {
         public void Override(AutoMapping<EGlobalSubmission> mapping)
         {
-            mapping.Map(x => x.SubmissionRequestXML).Length(4000);
+            mapping.Map(x => x.SubmissionRequestXML).Length(100000);
         }
     }
 }

@@ -2,8 +2,8 @@
 using System.IO;
 using System.Xml.Serialization;
 using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
-
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 {
@@ -14,6 +14,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         protected EGlobalAPI EGlobalAPI;
         protected string gv_strXML;
         protected string gv_strPaymentType;
+
+        IUnitOfWork _unitOfWork;
 
         /****************************************
         * TODO - MUST BE OVERRIDDEN IN BASE CLASS
@@ -45,6 +47,18 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         xml = EGlobalPolicy.Serialize();
                         //removed for testing
                         //SaveXml(xml, EGlobalPolicy.FTPFolder);
+
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(currentUser);
+                            eGlobalSubmission.SubmissionRequestXML = xml;
+                            eGlobalSubmission.EGlobalSubmissionPackage = package;
+                            programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+
+                            uow.Commit();
+
+                        }
+
                     }
                     else
                         throw new ArgumentNullException(nameof(EGlobalPolicy));

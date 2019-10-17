@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class EGlobalSubmissionService : IEGlobalSubmissionService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<EGlobalSubmission> _eGlobalSubmissionRepository;
 
-        public EGlobalSubmissionService(IUnitOfWork unitOfWork, IMapperSession<EGlobalSubmission> eGlobalSubmissionRepository)
+        public EGlobalSubmissionService(IMapperSession<EGlobalSubmission> eGlobalSubmissionRepository)
         {
-            _unitOfWork = unitOfWork;
             _eGlobalSubmissionRepository = eGlobalSubmissionRepository;
         }
 
@@ -36,7 +34,7 @@ namespace TechCertain.Services.Impl
 
         public EGlobalSubmission GetEGlobalSubmission(Guid eGlobalSubmissionId)
         {
-            EGlobalSubmission eGlobalSubmission = _eGlobalSubmissionRepository.GetById(eGlobalSubmissionId);
+            EGlobalSubmission eGlobalSubmission = _eGlobalSubmissionRepository.GetByIdAsync(eGlobalSubmissionId).Result;
             if (eGlobalSubmission != null)
                 return eGlobalSubmission;
             if (eGlobalSubmission != null)
@@ -49,7 +47,7 @@ namespace TechCertain.Services.Impl
 
         public bool UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission)
         {
-            _eGlobalSubmissionRepository.Add(eGlobalSubmission);
+            _eGlobalSubmissionRepository.UpdateAsync(eGlobalSubmission);
             return true;
         }
 

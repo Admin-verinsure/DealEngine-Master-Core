@@ -1522,15 +1522,15 @@ namespace TechCertain.WebUI.Controllers
             }
 
             var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
-            using (var uow = _unitOfWork.BeginUnitOfWork())
-            {
-                EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
-                eGlobalSubmission.SubmissionRequestXML = xmlPayload;
-                programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+            //using (var uow = _unitOfWork.BeginUnitOfWork())
+            //{
+            //    EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
+            //    eGlobalSubmission.SubmissionRequestXML = xmlPayload;
+            //    programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
 
-                uow.Commit();
+            //    uow.Commit();
 
-            }
+            //}
             var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
             eGlobalSerializer.DeSerializeResponse(byteResponse);
 
