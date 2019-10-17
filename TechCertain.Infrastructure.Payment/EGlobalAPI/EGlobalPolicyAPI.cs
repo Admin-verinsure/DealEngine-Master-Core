@@ -1013,7 +1013,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         public void CalculateInvoiceSummary(EBixPolicy ep, decimal brokerFee)
         {
             // Caculate the final few fields, and update where appropriate
-            decimal taxRate = EGlobalPolicy.ClientProgramme.InformationSheet.Product.TaxRate; //placeholder
+
+            decimal taxRate = EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate; //placeholder
             decimal surchargeGST = EGlobalPolicy.SurchargeRate * (1 + taxRate);
 
             ep.BSCAmount = brokerFee;

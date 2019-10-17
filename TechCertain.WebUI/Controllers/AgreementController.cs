@@ -44,13 +44,14 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<ClientProgramme> _programmeRepository;
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
+        IEGlobalSubmissionService _eGlobalSubmissionService;
 
         public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
                                    IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
-                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService)
+                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService, IEGlobalSubmissionService eGlobalSubmissionService)
             : base (userRepository)
         {
             _informationService = informationService;
@@ -76,6 +77,7 @@ namespace TechCertain.WebUI.Controllers
             _programmeRepository = programmeRepository;
 
             _appSettingService = appSettingService;
+            _eGlobalSubmissionService = eGlobalSubmissionService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -1521,6 +1523,15 @@ namespace TechCertain.WebUI.Controllers
             }
 
             var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
+                eGlobalSubmission.SubmissionRequestXML = xmlPayload;
+                programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+
+                uow.Commit();
+
+            }
             var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
             eGlobalSerializer.DeSerializeResponse(byteResponse);
 

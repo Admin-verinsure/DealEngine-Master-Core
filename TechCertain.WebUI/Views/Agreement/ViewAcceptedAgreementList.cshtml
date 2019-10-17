@@ -54,6 +54,7 @@
                                 {
                                     <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Cancell Agreement</a>
                                 }
+                                <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
 
                             }
                             else if (item.CurrentUser.PrimaryOrganisation.IsInsurer)

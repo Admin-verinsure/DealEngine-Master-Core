@@ -51,6 +51,8 @@ namespace TechCertain.Domain.Entities
             set;
         }
 
+        public virtual decimal TaxRate { get; set; }
+
         public virtual bool ProgrammeEmailCCToBroker { get; set; }
 
         public virtual IList<Package> Packages { get; protected set; }
