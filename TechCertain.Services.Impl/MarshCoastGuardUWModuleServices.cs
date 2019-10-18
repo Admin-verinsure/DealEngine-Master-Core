@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Domain.Services.UnderwritingModules
 {
-    public class MarshCoastGuardUWModule : IUnderwritingModule
+    public class MarshCoastGuardUWModuleServices : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public MarshCoastGuardUWModule()
+        public MarshCoastGuardUWModuleServices()
         {
             Name = "Marsh_CoastGuard";
         }

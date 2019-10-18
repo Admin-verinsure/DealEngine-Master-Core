@@ -1,8 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Xml;
 using System.Xml.Serialization;
-
+using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
+using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 {
@@ -11,7 +15,28 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         #region API fields
 
+        IHttpClientService _httpClientService;
+        /// <summary>
+        /// Sends the ELink XML invoice to be billed (Synchronous)
+        /// </summary>
+        /// <param name="xml">The invoice XML.</param>
+        public byte[] SendInvoiceXML(string xml)
+        {
+            byte[] res = _httpClientService.CreateEGlobalInvoice(xml.Trim()).Result;
 
+            //using (EGlobalInvoiceServiceAPI service = new EGlobalInvoiceServiceAPI())
+            //{
+            //    res = service.EndcreateInvoice(invoice);
+            //}
+
+            ASyncInvoice = Encoding.UTF8.GetString(res, 0, res.Length);
+            EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
+
+            // process it
+            ProcessResponse(xo);
+
+            return res;
+        }
 
         /*public string SendInvoiceXML (string xml)
 		{
@@ -26,28 +51,38 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         public string TestSiteStatus()
         {
             string res = "";
-            EGlobalInvoiceServiceAPI service = new EGlobalInvoiceServiceAPI();
-            getEGlobalSiteStatus site = new getEGlobalSiteStatus
-            {
-                site = "NZL"
-            };
-           
+
             try
             {
-                using (service)
-                {
-                    res = service.getEGlobalSiteStatus(site);
-                }
-                              
+                res = _httpClientService.GetEglobalStatus().Result;
             }
+
             catch(SocketException ex)
             {
                Console.WriteLine(ex.Message);
             }
 
-            service.Dispose();
-
             return res;
+        }
+      
+        /// <summary>
+        /// Processes the Async result.
+        /// </summary>
+        /// <param name="result">The Async result.</param>
+        public void ProcessAsyncResult(byte[] res)
+        {
+            // adjust the response
+            ASyncInvoice = Encoding.UTF8.GetString(res, 0, res.Length);
+            EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
+
+            // Log the response
+            //TC_Shared.LogEvent(TC_Shared.EventType.Information, "ELink response", ASyncInvoice);
+
+            // process it
+            ProcessResponse(xo);
+
+            // indicate we have received a response
+            ASyncInvoiceRecieved = true;
         }
 
         public bool ASyncInvoiceRecieved
@@ -78,193 +113,192 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         #endregion
 
         private void ProcessResponse(EGlobalXmlResponse xo)
-        {
-            throw new Exception("Unimplemented call ProcessResponse " + xo.ToString());
-        }
-            /*try
-            {
-                // process the response
-                string key = "";
-                if (xo.Update != null)
-                    key = xo.Update.UpdExtSysKey;
-                else if (xo.Error != null)
-                {
-                    key = xo.Error.ExtSysKey;
-                    // check for API failure/crash errors
-                    //TC_Shared.LogEvent(TC_Shared.EventType.API_Bug, "ELink API billing failure", xo.XmlSerializeToString());
-                }
-                string[] sysKeys = key.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                key = sysKeys[1].Split(new char[] { '-' }, StringSplitOptions.None)[1];
-                Product product = new Product();
-                IList<Product> subProducts;
+        {            
+        
+            //try
+            //{
+            //    // process the response
+            //    string key = "";
+            //    if (xo.Update != null)
+            //        key = xo.Update.UpdExtSysKey;
+            //    else if (xo.Error != null)
+            //    {
+            //        key = xo.Error.ExtSysKey;
+            //        // check for API failure/crash errors
+            //        //TC_Shared.LogEvent(TC_Shared.EventType.API_Bug, "ELink API billing failure", xo.XmlSerializeToString());
+            //    }
+            //    string[] sysKeys = key.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            //    key = sysKeys[1].Split(new char[] { '-' }, StringSplitOptions.None)[1];
+            //    Product product = new Product();
+            //    IList<Product> subProducts;
 
-                // save the response
-                Guid responseID;
-                SaveInvoiceData(xo, product.Id, out responseID);
-                // determine the original transaction
-                Guid invoiceID = Base_EGlobalPolicy.GetInvoiceID(sysKeys[1], TC_Shared.CNullInt(sysKeys[2], 0));
-                Base_EGlobalPolicy.SetResponseID(responseID, invoiceID);
+            //    // save the response
+            //    Guid responseID;
+            //    SaveInvoiceData(xo, product.Id, out responseID);
+            //    // determine the original transaction
+            //    Guid invoiceID = Base_EGlobalPolicy.GetInvoiceID(sysKeys[1], TC_Shared.CNullInt(sysKeys[2], 0));
+            //    Base_EGlobalPolicy.SetResponseID(responseID, invoiceID);
 
-                // store the invoice number if it is an update
-                if (xo.Update != null)
-                {
-                    product = new Product(Base_EGlobalPolicy.GetQuoteID(sysKeys[1], TC_Shared.CNullInt(sysKeys[2], 0)));
+            //    // store the invoice number if it is an update
+            //    if (xo.Update != null)
+            //    {
+            //        product = new Product(Base_EGlobalPolicy.GetQuoteID(sysKeys[1], TC_Shared.CNullInt(sysKeys[2], 0)));
 
-                    product.SetExternalInvoiceNumber(xo.Update.InvoiceNo.ToString());
+            //        product.SetExternalInvoiceNumber(xo.Update.InvoiceNo.ToString());
 
-                    //Set quote status to bound and allow it gets updated laster
-                    product.SetWorkflowID(10);
+            //        //Set quote status to bound and allow it gets updated laster
+            //        product.SetWorkflowID(10);
 
-                    // also check to see if it is a cancel
-                    if (xo.Update.UpdTranCode == "C" && product.Product.UsesInsuranceSystemAPI)
-                    {
-                        TCInsuranceSystemPolicyCancel objInsuranceSystemPolicyCancel = TCInsuranceSystemPolicyCancel.GetCancelPolicy(product.Id);
-                        TCInsuranceSystem objInsuranceSystem = TCInsuranceSystem.GetInsuranceSystem(product.SchemeProject.Product.InsuranceSystemID);
-                        objInsuranceSystem.SubmitConfirmPolicyCancelation(objInsuranceSystemPolicyCancel);
+            //        // also check to see if it is a cancel
+            //        if (xo.Update.UpdTranCode == "C" && product.Product.UsesInsuranceSystemAPI)
+            //        {
+            //            TCInsuranceSystemPolicyCancel objInsuranceSystemPolicyCancel = TCInsuranceSystemPolicyCancel.GetCancelPolicy(product.Id);
+            //            TCInsuranceSystem objInsuranceSystem = TCInsuranceSystem.GetInsuranceSystem(product.SchemeProject.Product.InsuranceSystemID);
+            //            objInsuranceSystem.SubmitConfirmPolicyCancelation(objInsuranceSystemPolicyCancel);
 
-                        quote.SchemeProject.LogSchemeProjectHistory(quote.BrokerUser.ID, "Comfirm a Policy Cancellation.", quote.Proposal.CompanyName);
-                        quote.SetWorkflowID(25);
-                    }
+            //            quote.SchemeProject.LogSchemeProjectHistory(quote.BrokerUser.ID, "Comfirm a Policy Cancellation.", quote.Proposal.CompanyName);
+            //            quote.SetWorkflowID(25);
+            //        }
 
-                    // if guidewire, send bind request
-                    if (product.Product.UsesInsuranceSystemAPI && (xo.Update.UpdTranCode == "N" || xo.Update.UpdTranCode == "E" || xo.Update.UpdTranCode == "R"))
-                    {
-                        try
-                        {
-                            if (!product.ExternalPolicy)
-                            {
-                                product.SendExternalBindQuoteRequest();
+            //        // if guidewire, send bind request
+            //        if (product.Product.UsesInsuranceSystemAPI && (xo.Update.UpdTranCode == "N" || xo.Update.UpdTranCode == "E" || xo.Update.UpdTranCode == "R"))
+            //        {
+            //            try
+            //            {
+            //                if (!product.ExternalPolicy)
+            //                {
+            //                    product.SendExternalBindQuoteRequest();
 
-                                product.SetWorkflowID((int)TCQuote.TCWorkflowStatus.Invoiced_Pending_Bind);
+            //                    product.SetWorkflowID((int)TCQuote.TCWorkflowStatus.Invoiced_Pending_Bind);
 
-                                new Thread(new ThreadStart(delegate ()
-                                {
-                                    Thread.Sleep(new TimeSpan(0, 3, 0));
-                                    TCQuote objTQuote = new TCQuote(quote.ID);
+            //                    new Thread(new ThreadStart(delegate ()
+            //                    {
+            //                        Thread.Sleep(new TimeSpan(0, 3, 0));
+            //                        TCQuote objTQuote = new TCQuote(quote.ID);
 
-                                    if (!objTQuote.ExternalPolicy)
-                                    {
-                                        //Send Emails
-                                        objTQuote.SendExternalBindFailedToAgency();
-                                        objTQuote.SendExternalBindFailedToBroker();
-                                    }
-                                })).Start();
-                            }
+            //                        if (!objTQuote.ExternalPolicy)
+            //                        {
+            //                            //Send Emails
+            //                            objTQuote.SendExternalBindFailedToAgency();
+            //                            objTQuote.SendExternalBindFailedToBroker();
+            //                        }
+            //                    })).Start();
+            //                }
 
-                        }
-                        catch (Exception ex)
-                        {
-                            TC_Shared.LogEvent(TC_Shared.EventType.API_Bug, "Something went wrong trying to bind a policy, try binding it manually.");
-                        }
-                    }
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                TC_Shared.LogEvent(TC_Shared.EventType.API_Bug, "Something went wrong trying to bind a policy, try binding it manually.");
+            //            }
+            //        }
 
-                    // determine the paymemnt type
-                    string type = quote.Proposal.GetPropData("PaymentMethod");
-                    // if HPF
-                    if (type == "2")
-                    {
-                        HunterPremiumFunding.HunterPremium hpf = new HunterPremiumFunding.HunterPremium(quote.ProductID);
-                        hpf.LoadHunterRecord(quote.ID);
-                        hpf.SetInvoiceNumber(quote.ExternalInvoiceNumber);
-                        hpf.SaveHunterRecord();
-                    }
+            //        // determine the paymemnt type
+            //        string type = quote.Proposal.GetPropData("PaymentMethod");
+            //        // if HPF
+            //        if (type == "2")
+            //        {
+            //            HunterPremiumFunding.HunterPremium hpf = new HunterPremiumFunding.HunterPremium(quote.ProductID);
+            //            hpf.LoadHunterRecord(quote.ID);
+            //            hpf.SetInvoiceNumber(quote.ExternalInvoiceNumber);
+            //            hpf.SaveHunterRecord();
+            //        }
 
-                    // produce policy documents
-                    if (!quote.Product.UsesInsuranceSystemAPI)
-                    {
-                        quote.DeleteFilesNotInBoundCOBs(quote.Proposal.ContactUser);
-                        //Render policy documents
-                        try
-                        {
-                            quote.RenderPolicyDocuments(quote.Proposal.ContactUser);
-                        }
-                        catch (Exception ex)
-                        {
-                            TC_Shared.LogEvent(TC_Shared.EventType.Bug, String.Format("Error while rendering documents for quote reference {0}", quote.ReferenceID.ToString()), ex.GetBaseException().ToString());
-                        }
+            //        // produce policy documents
+            //        if (!quote.Product.UsesInsuranceSystemAPI)
+            //        {
+            //            quote.DeleteFilesNotInBoundCOBs(quote.Proposal.ContactUser);
+            //            //Render policy documents
+            //            try
+            //            {
+            //                quote.RenderPolicyDocuments(quote.Proposal.ContactUser);
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                TC_Shared.LogEvent(TC_Shared.EventType.Bug, String.Format("Error while rendering documents for quote reference {0}", quote.ReferenceID.ToString()), ex.GetBaseException().ToString());
+            //            }
 
-                        //Remove policy documents for custom products
-                        quote.RemoveDocuments();
+            //            //Remove policy documents for custom products
+            //            quote.RemoveDocuments();
 
-                        //Send the Policy documents
-                        if (quote.SchemeProject.MailTemplate_PolicyDocumentsCoveringText.IsValid)
-                        {
-                            if (!quote.SchemeProject.SendPolicyDocuments(quote.Proposal.ContactUser, quote))
-                            {
-                                TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Unable to send documents for quote: " + quote.ReferenceID.ToString());
-                            }
-                        }
-                        else
-                        {
-                            TC_Shared.LogEvent(TC_Shared.EventType.Warning, "Policy Documents Email not configured - automatic issue on acceptance failed", quote.ID.ToString());
-                        }
+            //            //Send the Policy documents
+            //            if (quote.SchemeProject.MailTemplate_PolicyDocumentsCoveringText.IsValid)
+            //            {
+            //                if (!quote.SchemeProject.SendPolicyDocuments(quote.Proposal.ContactUser, quote))
+            //                {
+            //                    TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Unable to send documents for quote: " + quote.ReferenceID.ToString());
+            //                }
+            //            }
+            //            else
+            //            {
+            //                TC_Shared.LogEvent(TC_Shared.EventType.Warning, "Policy Documents Email not configured - automatic issue on acceptance failed", quote.ID.ToString());
+            //            }
 
-                        subProducts = quote.GetSecondaryQuotes();
+            //            subProducts = quote.GetSecondaryQuotes();
 
-                        foreach (TCQuote q in subProducts)
-                        {
-                            if (q != null)
-                            {
-                                q.SetExternalInvoiceNumber(xo.Update.InvoiceNo.ToString());
+            //            foreach (TCQuote q in subProducts)
+            //            {
+            //                if (q != null)
+            //                {
+            //                    q.SetExternalInvoiceNumber(xo.Update.InvoiceNo.ToString());
 
-                                q.RenderPolicyDocuments(q.Proposal.ContactUser);
+            //                    q.RenderPolicyDocuments(q.Proposal.ContactUser);
 
-                                if (q.SchemeProject.MailTemplate_PolicyDocumentsCoveringText.IsValid)
-                                {
-                                    if (!q.SchemeProject.SendPolicyDocuments(q.Proposal.ContactUser, q))
-                                    {
-                                        TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Unable to send documents for quote: " + q.ReferenceID.ToString());
-                                    }
-                                }
-                                else
-                                {
-                                    TC_Shared.LogEvent(TC_Shared.EventType.Warning, "Policy Documents Email not configured - automatic issue on acceptance failed", q.ID.ToString());
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // Eglobal Invoice Failed 
-                    // Unbund quote
-                    // Send notification to client
+            //                    if (q.SchemeProject.MailTemplate_PolicyDocumentsCoveringText.IsValid)
+            //                    {
+            //                        if (!q.SchemeProject.SendPolicyDocuments(q.Proposal.ContactUser, q))
+            //                        {
+            //                            TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Unable to send documents for quote: " + q.ReferenceID.ToString());
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        TC_Shared.LogEvent(TC_Shared.EventType.Warning, "Policy Documents Email not configured - automatic issue on acceptance failed", q.ID.ToString());
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // Eglobal Invoice Failed 
+            //        // Unbund quote
+            //        // Send notification to client
 
-                    if (quote.Policy && string.IsNullOrEmpty(quote.ExternalInvoiceNumber))
-                    {
-                        quote.UnBindQuote(quote.BrokerUser);
+            //        if (quote.Policy && string.IsNullOrEmpty(quote.ExternalInvoiceNumber))
+            //        {
+            //            quote.UnBindQuote(quote.BrokerUser);
 
-                        //                        try
-                        //                        {
-                        //                            TCMail objmail = new TCMail();
-                        //                    
-                        //                            objmail.ToAddress = quote.BrokerUser.Email;
-                        //
-                        //                            objmail.FromName = "Proposalonline";
-                        //                            objmail.ReplyToAddress = "support@techcertain.com";
-                        //                    
-                        //                            objmail.Subject = "EGlobal Invoice Failed for " + quote.ReferenceID;
-                        //                    
-                        //                            string strBody = "Dear " + quote.BrokerUser.FirstName + "," + 
-                        //                                Constants.vbNewLine + 
-                        //                                Constants.vbNewLine + 
-                        //                                "EGlobal Invoice Failed for " + quote.ReferenceID;
-                        //                    
-                        //                            objmail.Body = strBody;
-                        //                    
-                        //                            objmail.Send();
-                        //                        } catch (Exception ex)
-                        //                        {
-                        //                            TC_Shared.LogEvent(TC_Shared.EventType.Bug, "There was an error trying to send out an email.", "EGlobal Invoice Failed for " + quote.ReferenceID);
-                        //                        }
-                    }
+            //            //                        try
+            //            //                        {
+            //            //                            TCMail objmail = new TCMail();
+            //            //                    
+            //            //                            objmail.ToAddress = quote.BrokerUser.Email;
+            //            //
+            //            //                            objmail.FromName = "Proposalonline";
+            //            //                            objmail.ReplyToAddress = "support@techcertain.com";
+            //            //                    
+            //            //                            objmail.Subject = "EGlobal Invoice Failed for " + quote.ReferenceID;
+            //            //                    
+            //            //                            string strBody = "Dear " + quote.BrokerUser.FirstName + "," + 
+            //            //                                Constants.vbNewLine + 
+            //            //                                Constants.vbNewLine + 
+            //            //                                "EGlobal Invoice Failed for " + quote.ReferenceID;
+            //            //                    
+            //            //                            objmail.Body = strBody;
+            //            //                    
+            //            //                            objmail.Send();
+            //            //                        } catch (Exception ex)
+            //            //                        {
+            //            //                            TC_Shared.LogEvent(TC_Shared.EventType.Bug, "There was an error trying to send out an email.", "EGlobal Invoice Failed for " + quote.ReferenceID);
+            //            //                        }
+            //        }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                TC_Shared.LogEvent(TC_Shared.EventType.API_Bug, "Error in EGlobal API response", ex.GetBaseException().ToString());
-            }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TC_Shared.LogEvent(TC_Shared.EventType.API_Bug, "Error in EGlobal API response", ex.GetBaseException().ToString());
+            //}
         }
 
         /*static EGlobalXmlResponse ProcessXMLResponseObject(NpgsqlDataReader dr, EGlobalXmlResponse xo)

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using SystemDocument = TechCertain.Domain.Entities.Document;
-using Elmah;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Agreement;
@@ -15,8 +12,7 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Helpers;
 using TechCertain.Infrastructure.Payment.PxpayAPI;
 using Microsoft.AspNetCore.Http;
-using DealEngine.Infrastructure.Identity.Data;
-using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -24,16 +20,16 @@ namespace TechCertain.WebUI.Controllers
     public class AgreementController : BaseController
     {
         IInformationTemplateService _informationService;
-        ICilentInformationService _customerInformationService;
+        IClientInformationService _customerInformationService;
         IPaymentGatewayService _paymentGatewayService;
         IPaymentService _paymentService;
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
-
+        IHttpClientService _httpClientService;
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
-        IMapperSession<User> _userRepository1;
-
+        IMapperSession<User> _userRepository;
+        IAppSettingService _appSettingService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
@@ -46,17 +42,18 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
 
-        public AgreementController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, IUnitOfWork unitOfWork, IInformationTemplateService informationService, ICilentInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, IClientInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
-                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService,
+                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
-                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, IClientAgreementTermService clientAgreementTermService)
+                                   IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
+                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService)
             : base (userRepository)
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;
             _organisationService = organisationService;
-
+            _httpClientService = httpClientService;
             _productRepository = productRepository;
             _clientAgreementService = clientAgreementService;
             _clientAgreementRuleService = clientAgreementRuleService;
@@ -67,7 +64,7 @@ namespace TechCertain.WebUI.Controllers
             // temp
             _ruleRepository = ruleRepository;
             _documentRepository = documentRepository;
-            _userRepository1 = userRepository1;
+            _userRepository = userRepository1;
             _paymentGatewayService = paymentGatewayService;
             _paymentService = paymentService;
             _merchantService = merchantService;
@@ -75,6 +72,8 @@ namespace TechCertain.WebUI.Controllers
             _insuranceAttributeService = insuranceAttributeService;
             _OrganisationRepository = OrganisationRepository;
             _programmeRepository = programmeRepository;
+
+            _appSettingService = appSettingService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -232,7 +231,7 @@ namespace TechCertain.WebUI.Controllers
                                     org.IsApproved = true;
                                 }
                             }
-                            Organisation othermarine = _OrganisationRepository.GetById(bvterm.Boat.BoatWaterLocation.Id);
+                            Organisation othermarine = _OrganisationRepository.GetById(bvterm.Boat.BoatWaterLocation.Id).Result;
                         }
 
                     }
@@ -480,7 +479,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SendReferredEmail(EmailTemplateViewModel model)
         {
-            ClientProgramme programme = _programmeRepository.GetById(model.ClientProgrammeID);
+            ClientProgramme programme = _programmeRepository.GetById(model.ClientProgrammeID).Result;
 
             // TODO - rewrite to save templates on a per programme basis
             ClientAgreement agreement = programme.Agreements[0];
@@ -532,7 +531,7 @@ namespace TechCertain.WebUI.Controllers
             string strrecipentemail = null;
             if (model.Recipent != null)
             {
-                var user = _userRepository1.GetById(model.Recipent);
+                var user = _userRepository.GetById(model.Recipent).Result;
                 strrecipentemail = user.Email;                
             }
 
@@ -621,7 +620,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm.Excess = clientAgreementBVTerm.Excess;
                 bvTerm.Premium = clientAgreementBVTerm.Premium;
                 bvTerm.FSL = clientAgreementBVTerm.FSL;
-                NewMethod(uow);
+                uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -648,8 +647,8 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm.TermLimit = clientAgreementMVTerm.TermLimit;
                 mvTerm.Excess = clientAgreementMVTerm.Excess;
                 mvTerm.Premium = clientAgreementMVTerm.Premium;
-                mvTerm.FSL = clientAgreementMVTerm.FSL;
-                NewMethod(uow);
+                mvTerm.FSL = clientAgreementMVTerm.FSL;                
+                uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -677,8 +676,7 @@ namespace TechCertain.WebUI.Controllers
                     bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
                     term.BoatTerms.Remove(bvTerm);
                 }
-
-                NewMethod(uow);
+                uow.Commit();                
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -704,13 +702,6 @@ namespace TechCertain.WebUI.Controllers
         //    return RedirectToAction("EditTerms", new { id = clientAgreementId });
         //}
 
-
-
-        private static void NewMethod(IUnitOfWork uow)
-        {
-            uow.Commit();
-        }
-
         [HttpGet]
         public IActionResult ViewAgreement(Guid id)
         {
@@ -723,7 +714,7 @@ namespace TechCertain.WebUI.Controllers
             ////User insured = _userRepository.GetUser (answerSheet.Owner.Id);
             //Organisation insured = answerSheet.Owner;
 
-            ClientProgramme clientProgramme = _programmeRepository.GetById(id);
+            ClientProgramme clientProgramme = _programmeRepository.GetById(id).Result;
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -973,7 +964,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult ViewAgreementDeclaration(Guid id)
         {
             var models = new BaseListViewModel<ViewAgreementViewModel>();
-            ClientProgramme clientProgramme = _programmeRepository.GetById(id);
+            ClientProgramme clientProgramme = _programmeRepository.GetById(id).Result;
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -1005,7 +996,7 @@ namespace TechCertain.WebUI.Controllers
             //need to review this code duplication
             var models = new BaseListViewModel<ViewAgreementViewModel>();
 
-            ClientProgramme clientProgramme = _programmeRepository.GetById(id);
+            ClientProgramme clientProgramme = _programmeRepository.GetById(id).Result;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
             NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
             currencyFormat.CurrencyNegativePattern = 2;
@@ -1274,7 +1265,7 @@ namespace TechCertain.WebUI.Controllers
         public ActionResult AcceptAgreement(Guid Id)
         {
             List<AgreementDocumentViewModel> models = new List<AgreementDocumentViewModel>();
-            ClientProgramme programme = _programmeRepository.GetById(Id);
+            ClientProgramme programme = _programmeRepository.GetById(Id).Result;
 
             foreach (ClientAgreement agreement in programme.Agreements)
             {
@@ -1356,7 +1347,7 @@ namespace TechCertain.WebUI.Controllers
 
                 recipents.Add(new UserViewModel { ID = CurrentUser.Id, UserName = CurrentUser.UserName, FirstName = CurrentUser.FirstName, LastName = CurrentUser.LastName, FullName = CurrentUser.FullName, Email = CurrentUser.Email });
 
-                foreach (User recipent in _userRepository1.FindAll().Where(ur1 => ur1.Organisations.Contains(programme.Owner)))
+                foreach (User recipent in _userRepository.FindAll().Where(ur1 => ur1.Organisations.Contains(programme.Owner)))
                 {
                     recipents.Add(new UserViewModel { ID = recipent.Id, UserName = recipent.UserName, FirstName = recipent.FirstName, LastName = recipent.LastName, FullName = recipent.FullName, Email = recipent.Email });
                 }
@@ -1376,7 +1367,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult SendPolicyDocuments(EmailTemplateViewModel model)
         {
-            ClientProgramme programme = _programmeRepository.GetById(model.ClientProgrammeID);
+            ClientProgramme programme = _programmeRepository.GetById(model.ClientProgrammeID).Result;
 
             // TODO - rewrite to save templates on a per programme basis
             ClientAgreement agreement = programme.Agreements[0];
@@ -1428,7 +1419,7 @@ namespace TechCertain.WebUI.Controllers
             string strrecipentemail = null;
             if (model.Recipent != null)
             {
-                var user = _userRepository1.GetById(model.Recipent);
+                var user = _userRepository.GetById(model.Recipent).Result;
                 strrecipentemail = user.Email;                
             }
 
@@ -1448,14 +1439,12 @@ namespace TechCertain.WebUI.Controllers
 
                 sheet = _customerInformationService.GetInformation(sheetId);
             }
+            
+            ClientProgramme programme = sheet.Programme;
+            programme.PaymentType = "Credit Card";
 
-               ClientProgramme programme = sheet.Programme;
-               programme.PaymentType = "Credit Card";
+            var active = _httpClientService.GetEglobalStatus().Result;
 
-
-            //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-            //eGlobalSerializer.SiteActive();
-            //eGlobalSerializer.SerializePolicy(programme, CurrentUser);
             //Hardcoded variables
             decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
             Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
@@ -1491,8 +1480,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = "localhost:44323";
-            //string domainQueryString = "staging.mydealslive.com";
+            string domainQueryString = _appSettingService.domainQueryString;
+            
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
@@ -1559,7 +1548,8 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
-            string domainQueryString = "localhost:44323";
+            string domainQueryString = _appSettingService.domainQueryString;
+
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
@@ -1712,7 +1702,7 @@ namespace TechCertain.WebUI.Controllers
             string queryString = HttpContext.Request.Query["result"].ToString();
             var status = "Bound";
 
-            ClientProgramme programme = _programmeRepository.GetById(Id);
+            ClientProgramme programme = _programmeRepository.GetById(Id).Result;
             Payment payment = _paymentService.GetPayment(programme.Id);
 
 
@@ -1868,7 +1858,7 @@ namespace TechCertain.WebUI.Controllers
                 model.EditEnabled = false;
                 model.Documents = new List<AgreementDocumentViewModel>();
 
-                ClientProgramme programme = _programmeRepository.GetById(id);
+                ClientProgramme programme = _programmeRepository.GetById(id).Result;
                 model.InformationSheetId = programme.InformationSheet.Id;
                 model.ClientProgrammeId = id;
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1903,7 +1893,7 @@ namespace TechCertain.WebUI.Controllers
                 model.Documents = new List<AgreementDocumentViewModel>();
                 model.CurrentUser = CurrentUser;
 
-                ClientProgramme programme = _programmeRepository.GetById(id);
+                ClientProgramme programme = _programmeRepository.GetById(id).Result;
                 model.InformationSheetId = programme.InformationSheet.Id;
                 model.ClientProgrammeId = id;
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1999,46 +1989,46 @@ namespace TechCertain.WebUI.Controllers
                 if (product != null)
                 {
                     //
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITY1CRate", "North Island City Rate for Category 1C", product, "2.75") { OrderNumber = 5 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWN1CRate", "North Island Town Rate for Category 1C", product, "2.5") { OrderNumber = 6 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITY1CRate", "South Island City Rate for Category 1C", product, "2.225") { OrderNumber = 7 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWN1CRate", "South Island Town Rate for Category 1C", product, "2") { OrderNumber = 8 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1CRate", "North Island City Rate for Category 1C", product, "2.75") { OrderNumber = 5 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1CRate", "North Island Town Rate for Category 1C", product, "2.5") { OrderNumber = 6 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1CRate", "South Island City Rate for Category 1C", product, "2.225") { OrderNumber = 7 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1CRate", "South Island Town Rate for Category 1C", product, "2") { OrderNumber = 8 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITY1UAPRate", "North Island City Rate for Category 1UAP", product, "4") { OrderNumber = 9 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWN1UAPRate", "North Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 10 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITY1UAPRate", "South Island City Rate for Category 1UAP", product, "4") { OrderNumber = 11 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWN1UAPRate", "South Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 12 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1UAPRate", "North Island City Rate for Category 1UAP", product, "4") { OrderNumber = 9 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1UAPRate", "North Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 10 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1UAPRate", "South Island City Rate for Category 1UAP", product, "4") { OrderNumber = 11 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1UAPRate", "South Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 12 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITY1PRate", "North Island City Rate for Category 1P", product, "2") { OrderNumber = 13 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWN1PRate", "North Island Town Rate for Category 1P", product, "1.5") { OrderNumber = 14 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITY1PRate", "South Island City Rate for Category 1P", product, "1.5") { OrderNumber = 15 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWN1PRate", "South Island Town Rate for Category 1P", product, "1") { OrderNumber = 16 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1PRate", "North Island City Rate for Category 1P", product, "2") { OrderNumber = 13 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1PRate", "North Island Town Rate for Category 1P", product, "1.5") { OrderNumber = 14 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1PRate", "South Island City Rate for Category 1P", product, "1.5") { OrderNumber = 15 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1PRate", "South Island Town Rate for Category 1P", product, "1") { OrderNumber = 16 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITY1RRate", "North Island City Rate for Category 1R", product, "4.75") { OrderNumber = 17 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWN1RRate", "North Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 18 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITY1RRate", "South Island City Rate for Category 1R", product, "4.75") { OrderNumber = 19 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWN1RRate", "South Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 20 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1RRate", "North Island City Rate for Category 1R", product, "4.75") { OrderNumber = 17 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1RRate", "North Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 18 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1RRate", "South Island City Rate for Category 1R", product, "4.75") { OrderNumber = 19 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1RRate", "South Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 20 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITY2Rate", "North Island City Rate for Category 2", product, "1.5") { OrderNumber = 21 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWN2Rate", "North Island Town Rate for Category 2", product, "1.25") { OrderNumber = 22 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITY2Rate", "South Island City Rate for Category 2", product, "1.25") { OrderNumber = 23 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWN2Rate", "South Island Town Rate for Category 2", product, "1") { OrderNumber = 24 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY2Rate", "North Island City Rate for Category 2", product, "1.5") { OrderNumber = 21 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN2Rate", "North Island Town Rate for Category 2", product, "1.25") { OrderNumber = 22 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY2Rate", "South Island City Rate for Category 2", product, "1.25") { OrderNumber = 23 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN2Rate", "South Island Town Rate for Category 2", product, "1") { OrderNumber = 24 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITY3Rate", "North Island City Rate for Category 3", product, "1.75") { OrderNumber = 25 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWN3Rate", "North Island Town Rate for Category 3", product, "1.25") { OrderNumber = 26 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITY3Rate", "South Island City Rate for Category 3", product, "1.25") { OrderNumber = 27 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWN3Rate", "South Island Town Rate for Category 3", product, "1") { OrderNumber = 28 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY3Rate", "North Island City Rate for Category 3", product, "1.75") { OrderNumber = 25 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN3Rate", "North Island Town Rate for Category 3", product, "1.25") { OrderNumber = 26 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY3Rate", "South Island City Rate for Category 3", product, "1.25") { OrderNumber = 27 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN3Rate", "South Island Town Rate for Category 3", product, "1") { OrderNumber = 28 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "NICITYSVRate", "North Island City Rate for Category SV", product, "0.25") { OrderNumber = 29 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "NITOWNSVRate", "North Island Town Rate for Category SV", product, "0.25") { OrderNumber = 30 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SICITYSVRate", "South Island City Rate for Category SV", product, "0.25") { OrderNumber = 31 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "SITOWNSVRate", "South Island Town Rate for Category SV", product, "0.25") { OrderNumber = 32 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITYSVRate", "North Island City Rate for Category SV", product, "0.25") { OrderNumber = 29 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWNSVRate", "North Island Town Rate for Category SV", product, "0.25") { OrderNumber = 30 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITYSVRate", "South Island City Rate for Category SV", product, "0.25") { OrderNumber = 31 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWNSVRate", "South Island Town Rate for Category SV", product, "0.25") { OrderNumber = 32 });
                     ///
-                    _ruleRepository.Add(new Rule(CurrentUser, "FSLUNDERFee", "FSL Fee for Vehicle under 3.5T", product, "6.08") { OrderNumber = 33 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "FSLOVER3Rate", "FSL Rate for Vehicle over 3.5T", product, "0.076") { OrderNumber = 34 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "FSLUNDERFeeAfter1July", "FSL Fee for Vehicle under 3.5T After 1 July", product, "6.08") { OrderNumber = 35 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "FSLOVER3RateAfter1July", "FSL Rate for Vehicle over 3.5T After 1 July", product, "0.076") { OrderNumber = 36 });
-                    _ruleRepository.Add(new Rule(CurrentUser, "PaymentPremium", "Premium Payment", product, "Monthly") { OrderNumber = 40 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFee", "FSL Fee for Vehicle under 3.5T", product, "6.08") { OrderNumber = 33 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3Rate", "FSL Rate for Vehicle over 3.5T", product, "0.076") { OrderNumber = 34 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFeeAfter1July", "FSL Fee for Vehicle under 3.5T After 1 July", product, "6.08") { OrderNumber = 35 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3RateAfter1July", "FSL Rate for Vehicle over 3.5T After 1 July", product, "0.076") { OrderNumber = 36 });
+                    _ruleRepository.AddAsync(new Rule(CurrentUser, "PaymentPremium", "Premium Payment", product, "Monthly") { OrderNumber = 40 });
 
                     uow.Commit();
                 }

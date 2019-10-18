@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 
 
-namespace TechCertain.Domain.Interfaces
+namespace TechCertain.Infrastructure.FluentNHibernate
 {
     public class NHibernateUnitOfWork : IUnitOfWork
     {

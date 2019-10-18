@@ -9,20 +9,22 @@ namespace TechCertain.Domain.Entities
 
 		public virtual string ItemName { get; protected set; }
 
-		public virtual ClientInformationAnswer OriginalAnswer { get; protected set; }
+        public virtual string ClaimDetails { get; set; }
+        public virtual ClientInformationAnswer OriginalAnswer { get; protected set; }
+
         public virtual ClientInformationSheet ClientInformationSheet { get; set; }
 
-        protected ClientInformationAnswer () : base (null) { }
+        protected ClientInformationAnswer() : base(null) { }
 
-        public ClientInformationAnswer(User createdBy, string itemName, string value, ClientInformationSheet InformationSheetId)
+        public ClientInformationAnswer(User createdBy, string itemName, string value, string claimDetails, ClientInformationSheet InformationSheetId)
             : base(createdBy)
         {
             ItemName = itemName;
             Value = value;
+            ClaimDetails = claimDetails;
             ClientInformationSheet = InformationSheetId;
 
         }
-
         public ClientInformationAnswer (User createdBy, string itemName, string value)
 			: base (createdBy)
 		{

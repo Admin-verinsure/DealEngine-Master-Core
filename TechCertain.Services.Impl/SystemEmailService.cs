@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class SystemEmailService : ISystemEmailService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<SystemEmail> _systemEmailRepository;
 
-        public SystemEmailService(IUnitOfWork unitOfWork, IMapperSession<SystemEmail> systemEmailRepository)
+        public SystemEmailService(IMapperSession<SystemEmail> systemEmailRepository)
         {
-            _unitOfWork = unitOfWork;
             _systemEmailRepository = systemEmailRepository;
         }
 
-        public bool AddNewSystemEmail(User createdBy, string systemEmailName, string internalNotes, string subject, string body, string systemEmailType)
+        public void AddNewSystemEmail(User createdBy, string systemEmailName, string internalNotes, string subject, string body, string systemEmailType)
         {
             if (string.IsNullOrWhiteSpace(systemEmailName))
                 throw new ArgumentNullException(nameof(systemEmailName));
@@ -26,13 +24,8 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(body))
                 throw new ArgumentNullException(nameof(body));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                _systemEmailRepository.Add(new SystemEmail(createdBy, systemEmailName, internalNotes, subject, body, systemEmailType));
-                work.Commit();
-            }
-
-            return CheckExists(systemEmailName);
+            _systemEmailRepository.AddAsync(new SystemEmail(createdBy, systemEmailName, internalNotes, subject, body, systemEmailType));
+            CheckExists(systemEmailName);
         }
 
         public bool CheckExists(string systemEmailName)
@@ -48,19 +41,13 @@ namespace TechCertain.Services.Impl
             return systemEmails.Where(se => se.DateDeleted == null).OrderBy(se => se.SystemEmailName);
         }
 
-        public bool RemoveSystemEmail(User deletedBy, string systemEmailName)
+        public void RemoveSystemEmail(User deletedBy, string systemEmailName)
         {
             SystemEmail systemEmail = GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailName == systemEmailName);
             if (systemEmail != null)
             {
-                using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-                {
-                    systemEmail.Delete(deletedBy);
-                    _systemEmailRepository.Add(systemEmail);
-                    work.Commit();
-                }
+                _systemEmailRepository.AddAsync(systemEmail);
             }
-            return !CheckExists(systemEmailName);
         }
 
         public SystemEmail GetSystemEmailByName(string name)

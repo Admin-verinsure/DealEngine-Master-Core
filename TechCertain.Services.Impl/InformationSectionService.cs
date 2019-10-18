@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
@@ -19,7 +19,7 @@ namespace TechCertain.Services.Impl
         {
 			InformationSection section = new InformationSection(createdBy, name, items);//_informationSectionFactory.CreateSection(createdBy, name, items);
 
-            _informationSectionRepository.Add(section);
+            _informationSectionRepository.AddAsync(section);
 
             // TODO: Add these items at templates so it can be clonned properly 
             return section;

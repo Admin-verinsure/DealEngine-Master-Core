@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using System.Threading.Tasks;
@@ -10,20 +10,17 @@ namespace TechCertain.Services.Impl
 {
     public class MilestoneService : IMilestoneService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<Milestone> _milestoneRepository;
         ISystemEmailService _systemEmailRepository;
         //ITaskingService _taskingService;
         IMilestoneTemplateService _milestoneTemplateService;
 
 
-        public MilestoneService(IUnitOfWork unitOfWork,
-                                IMapperSession<Milestone> milestoneRepository,
+        public MilestoneService(IMapperSession<Milestone> milestoneRepository,
                                 ISystemEmailService systemEmailService,
                                 //ITaskingService taskingService,
                                 IMilestoneTemplateService milestoneTemplateService)
         {
-            _unitOfWork = unitOfWork;
             _milestoneRepository = milestoneRepository;
             _systemEmailRepository = systemEmailService;
             //_taskingService = taskingService;
@@ -37,11 +34,7 @@ namespace TechCertain.Services.Impl
             milestone.Activity = activity;
             milestone.HasTriggered = false;
             milestone.Programme = programmeId;
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _milestoneRepository.Add(milestone);
-                uow.Commit();
-            }
+            _milestoneRepository.AddAsync(milestone);
 
             return milestone;
         }
@@ -73,12 +66,7 @@ namespace TechCertain.Services.Impl
             }
 
             milestone.EmailTemplates.Add(systemEmailTemplate);
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _milestoneRepository.Update(milestone);
-                uow.Commit();
-            }
-
+            _milestoneRepository.UpdateAsync(milestone);
         }
 
         public void CreateAdvisory(Milestone milestone, string advisory)
@@ -89,11 +77,7 @@ namespace TechCertain.Services.Impl
                 throw new ArgumentNullException(nameof(advisory));
 
             milestone.Advisory = new Advisory(advisory);
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _milestoneRepository.Update(milestone);
-                uow.Commit();
-            }
+            _milestoneRepository.UpdateAsync(milestone);
         }
 
         public void CreateUserTask(Milestone milestone, UserTask userTask)
@@ -103,12 +87,7 @@ namespace TechCertain.Services.Impl
             if (userTask == null)
                 throw new ArgumentNullException(nameof(userTask));
 
-           //milestone.Task = _taskingService.CreateTaskFor(userTask);
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _milestoneRepository.Update(milestone);
-                uow.Commit();
-            }
+            _milestoneRepository.UpdateAsync(milestone);
         }
 
         public MilestoneTemplate GetMilestoneTemplate(Guid ClientprogrammeID, string milestoneActivity)
@@ -120,17 +99,13 @@ namespace TechCertain.Services.Impl
 
         public Task CloseMileTask(Guid id, string method)
         {
-            Milestone milestone = _milestoneRepository.GetById(id);
+            Milestone milestone = _milestoneRepository.GetById(id).Result;
             milestone.Advisory.Method = method;
             milestone.HasTriggered = true;
             milestone.Task.IsActive = true;
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _milestoneRepository.Update(milestone);
-                uow.Commit();
-            }
+            _milestoneRepository.UpdateAsync(milestone);
 
-            return null;
+            return Task.CompletedTask;
         }
 
         public Milestone GetMilestoneProcess(Guid programmeId, string programmeProcess, string Activity)

@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
 	public class OrganisationalUnitService : IOrganisationalUnitService
     {
-		IUnitOfWork _unitOfWork;
 		IMapperSession<OrganisationalUnit> _organisationUnitRepository;
 
 
-        public OrganisationalUnitService(IUnitOfWork unitOfWork, IMapperSession<OrganisationalUnit> organisationUnitRepository)
+        public OrganisationalUnitService(IMapperSession<OrganisationalUnit> organisationUnitRepository)
         {
             _organisationUnitRepository = organisationUnitRepository;
-            _unitOfWork = unitOfWork;
         }
 
         public IQueryable<OrganisationalUnit> GetAllOrganisationalUnits()
@@ -25,7 +23,7 @@ namespace TechCertain.Services.Impl
 
         public OrganisationalUnit GetOrganisationalUnit(Guid organisationalUnitId)
         {
-            OrganisationalUnit organisationalUnit = _organisationUnitRepository.GetById(organisationalUnitId);
+            OrganisationalUnit organisationalUnit = _organisationUnitRepository.GetById(organisationalUnitId).Result;
             // have a repo organisation? Return it
             if (organisationalUnit != null)
                 return organisationalUnit;

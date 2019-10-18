@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class BoatUseService : IBoatUseService
-    {
-        IUnitOfWork _unitOfWork;        
+    {       
         IMapperSession<BoatUse> _boatUseRepository;
 
-        public BoatUseService(IUnitOfWork unitOfWork, IMapperSession<BoatUse> boatUseRepository)
-        {
-            _unitOfWork = unitOfWork;            
+        public BoatUseService(IMapperSession<BoatUse> boatUseRepository)
+        {          
             _boatUseRepository = boatUseRepository;            
         }
 
@@ -23,10 +21,10 @@ namespace TechCertain.Services.Impl
             return boatUse;
         }
 
-        public bool DeleteBoatUse(User deletedBy, BoatUse boatUse)
+        public void DeleteBoatUse(User deletedBy, BoatUse boatUse)
         {
             boatUse.Delete(deletedBy);
-            return UpdateBoatUse(boatUse);
+            UpdateBoatUse(boatUse);
         }
 
         public IQueryable<BoatUse> GetAllBoatUses()
@@ -37,7 +35,7 @@ namespace TechCertain.Services.Impl
 
         public BoatUse GetBoatUse(Guid boatUseId)
         {
-            BoatUse boatUse = _boatUseRepository.GetById(boatUseId);
+            BoatUse boatUse = _boatUseRepository.GetById(boatUseId).Result;
             // have a repo boatUse? Return it
             if (boatUse != null)
                 return boatUse;
@@ -51,32 +49,9 @@ namespace TechCertain.Services.Impl
             throw new Exception("BoatUse with id [" + boatUseId + "] does not exist in the system");
         }
 
-        public bool UpdateBoatUse(BoatUse boatUse)
+        public void UpdateBoatUse(BoatUse boatUse)
         {
-            _boatUseRepository.Add(boatUse);
-            return true;
+            _boatUseRepository.AddAsync(boatUse);
         }
-
-/*
-public BoatUse GetBoatUseById(string boatUseId)
-         {
-             return _boatUseRepository.FindAll().FirstOrDefault(bus => bus.Id == boatUseId);
-         }
-*/
-/*
-public BoatUse GetBoatUseByEmail(string boatUseEmail)
-        {
-            return _boatUseRepository.FindAll().FirstOrDefault(o => o.Email == boatUseEmail);
-        }
-*/
-/*
-public BoatUse CreateNewBoatUse(string p1, BoatUseType boatUseType, string ownerFirstName, string ownerLastName, string ownerEmail)
-{
-    BoatUse boatUse = new BoatUse(null, Guid.NewGuid(), p1, boatUseType);
-    // TODO - finish this later since I need to figure out what calls the controller function that calls this service function
-    throw new NotImplementedException();
-}
-*/
-
     }
 }

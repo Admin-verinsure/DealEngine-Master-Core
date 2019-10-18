@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Server;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.WebUI
 {
     public class ErrorController : Controller
     {
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
         // GET: Error
         [ActionName ("Error403")]
 		[HttpGet]

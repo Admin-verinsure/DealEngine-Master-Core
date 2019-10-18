@@ -46,6 +46,16 @@ namespace TechCertain.Infrastructure.Ldap
                 //return ConfigurationManager.AppSettings ["OpenLdapBaseDN"];
 			}
 		}
-	}
+
+        //public string UserDN
+        //{
+        //    get
+        //    {
+        //        string baseDN = _configuration.GetValue<string>("OpenLdapBaseDN");
+        //        return string.Format(_configuration.GetValue<string>("OpenLdapBaseUserDN"), baseDN);
+        //    }
+        //}
+
+    }
 }
 

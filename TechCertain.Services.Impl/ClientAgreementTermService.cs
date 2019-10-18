@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 
@@ -10,16 +10,16 @@ namespace TechCertain.Services.Impl
 {
     public class ClientAgreementTermService : IClientAgreementTermService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<ClientAgreementTerm> _clientAgreementTermRepository;
+        IMapperSession<ClientAgreement> _clientAgreementRepository;
 
-        public ClientAgreementTermService(IUnitOfWork unitOfWork, IMapperSession<ClientAgreementTerm> clientAgreementTermRepository)
+        public ClientAgreementTermService(IMapperSession<ClientAgreementTerm> clientAgreementTermRepository, IMapperSession<ClientAgreement> clientAgreementRepository)
         {
-            _unitOfWork = unitOfWork;
             _clientAgreementTermRepository = clientAgreementTermRepository;
+            _clientAgreementRepository = clientAgreementRepository;
         }
 
-        public bool AddAgreementTerm(User createdBy, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreement clientAgreement, string subTermType)
+        public void AddAgreementTerm(User createdBy, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreement clientAgreement, string subTermType)
         {
             if (string.IsNullOrWhiteSpace(termLimit.ToString()))
                 throw new ArgumentNullException(nameof(termLimit));
@@ -36,14 +36,11 @@ namespace TechCertain.Services.Impl
             if (clientAgreement == null)
                 throw new ArgumentNullException(nameof(clientAgreement));
             
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-				ClientAgreementTerm clientAgreementTerm = new ClientAgreementTerm(createdBy, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreement, subTermType);
-                clientAgreement.ClientAgreementTerms.Add(clientAgreementTerm);
-                work.Commit();
-            }
+		    ClientAgreementTerm clientAgreementTerm = new ClientAgreementTerm(createdBy, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreement, subTermType);
+            clientAgreement.ClientAgreementTerms.Add(clientAgreementTerm);
+            _clientAgreementTermRepository.AddAsync(clientAgreementTerm);
+            _clientAgreementRepository.UpdateAsync(clientAgreement);
 
-            return true;
         }
 
         
@@ -54,16 +51,15 @@ namespace TechCertain.Services.Impl
             return term;
         }
 
-        public bool UpdateAgreementTerm(ClientAgreementTerm clientAgreementTerm)
+        public void UpdateAgreementTerm(ClientAgreementTerm clientAgreementTerm)
         {
-            _clientAgreementTermRepository.Add(clientAgreementTerm);
-            return true;
+            _clientAgreementTermRepository.AddAsync(clientAgreementTerm);            
         }
 
-		public bool DeleteAgreementTerm (User deletedBy, ClientAgreementTerm clientAgreementTerm)
+		public void DeleteAgreementTerm (User deletedBy, ClientAgreementTerm clientAgreementTerm)
 		{
 			clientAgreementTerm.Delete (deletedBy);
-			return UpdateAgreementTerm (clientAgreementTerm);
+			UpdateAgreementTerm (clientAgreementTerm);
 		}
 
         public IList<ClientAgreementTerm> GetListAgreementTermFor(ClientAgreement clientAgreement)

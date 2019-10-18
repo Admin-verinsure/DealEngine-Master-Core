@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
-    <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.Ldap\TechCertain.Infrastructure.Ldap.csproj" />
   </ItemGroup>
 

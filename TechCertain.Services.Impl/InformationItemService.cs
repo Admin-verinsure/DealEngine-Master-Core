@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
@@ -40,7 +40,7 @@ namespace TechCertain.Services.Impl
         public InformationItem CreateDropdownListItem(User createdBy, string name, string label, string defaultText, IList<DropdownListOption> options, int width, string itemType)
         {
             DropdownListItem infoItem = new DropdownListItem(createdBy, name, label, width, itemType, options, defaultText); //InformationItem.CreateDropdownListItem(createdBy, name, label, width, itemType, defaultText, options ) as DropdownListItem;
-            _dropdownListItemRepository.Add(infoItem);
+            _dropdownListItemRepository.AddAsync(infoItem);
 
             return infoItem;
         }
@@ -48,56 +48,56 @@ namespace TechCertain.Services.Impl
         public InformationItem CreateLabelItem(User createdBy, string name, string label, int width, string itemType)
         {
             InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType); //InformationItem.CreateLabelItem(createdBy, name, label, width, itemType);
-            _labelItemRepository.Add(infoItem as LabelItem);
+            _labelItemRepository.AddAsync(infoItem as LabelItem);
             return infoItem;
         }
 
         public InformationItem CreateTextboxItem(User createdBy, string name, string label, int width, string itemType)
         {
             InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType); // InformationItem.CreateTextboxItem(createdBy, name, label, width, itemType);
-            _textboxItemRepository.Add(infoItem as TextboxItem);
+            _textboxItemRepository.AddAsync(infoItem as TextboxItem);
             return infoItem;
         }
 
 		public InformationItem CreateMultiselectListItem (User createdBy, string name, string label, string defaultText, IList<DropdownListOption> options, int width, string itemType)
 		{
             MultiselectListItem infoItem = new MultiselectListItem(createdBy, name, label, width, itemType, defaultText, options); // InformationItem.CreateMultiselectListItem (createdBy, name, label, width, itemType, defaultText, options) as MultiselectListItem;
-			_dropdownListItemRepository.Add (infoItem);
+			_dropdownListItemRepository.AddAsync(infoItem);
 			return infoItem;
 		}
 
 		public InformationItem CreateTextAreaItem (User createdBy, string name, string label, int width, string itemType)
 		{
             InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType); // InformationItem.CreateTextAreaItem (createdBy, name, label, width, itemType);
-			_textareaItemRepository.Add (infoItem as TextAreaItem);
+			_textareaItemRepository.AddAsync(infoItem as TextAreaItem);
 			return infoItem;
 		}
 
 		public InformationItem CreateJSButtonItem (User createdBy, string name, string label, int width, string itemType, string onclickValue)
 		{
 			InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType);
-			_jsButtonRepository.Add (infoItem as JSButtonItem);
+			_jsButtonRepository.AddAsync(infoItem as JSButtonItem);
 			return infoItem;
 		}
 
 		public InformationItem CreateSubmitButtonItem (User createdBy, string name, string label, int width, string itemType)
 		{
 			InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType);
-			_submitButtonRepository.Add (infoItem as SubmitButtonItem);
+			_submitButtonRepository.AddAsync(infoItem as SubmitButtonItem);
 			return infoItem;
 		}
 
 		public InformationItem CreateSectionBreakItem (User createdBy, string itemType)
 		{
 			InformationItem infoItem = new InformationItem(createdBy, itemType, "", 0, "");
-			_sectionBreakItemRepository.Add (infoItem as SectionBreakItem);
+			_sectionBreakItemRepository.AddAsync(infoItem as SectionBreakItem);
 			return infoItem;
 		}
 
 		public InformationItem CreateMotorVehicleListItem (User createdBy, string name, string label, int width, string itemType)
 		{
 			InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType);
-			_motorVehicleListItemRepository.Add (infoItem as MotorVehicleListItem);
+			_motorVehicleListItemRepository.AddAsync(infoItem as MotorVehicleListItem);
 			return infoItem;
 		}
     }

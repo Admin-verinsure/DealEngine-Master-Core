@@ -21,9 +21,7 @@ namespace TechCertain.Services.Interfaces
         Organisation GetOrganisationByEmail(string organisationEmail);
 
         bool UpdateOrganisation(Organisation organisation);
-       // void Create(User user);
-
-
+        //Organisation Get(Guid organisationID);
     }
 }
 

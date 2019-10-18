@@ -5,12 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -20,11 +20,10 @@ namespace TechCertain.WebUI.Controllers
         IPaymentGatewayService _paymentGatewayService;
         IMerchantService _merchantService;
         IFileService _fileService;
-		IOrganisationService _organisationService;
-		IOrganisationRepository _organisationRepository;
+		IOrganisationService _organisationService;		
 		IUnitOfWork _unitOfWork;
 		IInformationTemplateService _informationTemplateService;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
 		IProgrammeService _programmeService;
 		IVehicleService _vehicleService;
         ISystemEmailService _systemEmailService;
@@ -34,15 +33,14 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 		public AdminController (IUserService userRepository, SignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor,IPrivateServerService privateServerService, IFileService fileService,
-			IOrganisationRepository organisationRepository, IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
-            ICilentInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
+			IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
+            IClientInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
 			: base (userRepository)
 		{		
 			_privateServerService = privateServerService;
 			_fileService = fileService;
 			_organisationService = organisationService;
-			_organisationRepository = organisationRepository;
 			_unitOfWork = unitOfWork;
 			_informationTemplateService = informationTemplateService;
 			_clientInformationService = clientInformationService;
@@ -145,8 +143,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public ActionResult DeletePaymentGateway(string id)
         {
-            if (_paymentGatewayService.RemovePaymentGateway(CurrentUser, id))
-                return PaymentGatewayList();
+            _paymentGatewayService.RemovePaymentGateway(CurrentUser, id);            
             return PaymentGatewayList();
         }
 
@@ -504,7 +501,8 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
 		public ActionResult UnlockUser (string username)
 		{
-			_userService.RemoveGlobalBan (_userService.GetUser (username), CurrentUser);
+            throw new Exception("method needs to be implemented in identity");
+			//_userService.RemoveGlobalBan (_userService.GetUser (username), CurrentUser);
 			return Redirect ("/Admin/Index");
 		}
 

@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class RuleService : IRuleService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<Rule> _ruleRepository;
+        IMapperSession<Product> _productRepository;
 
-        public RuleService(IUnitOfWork unitOfWork, IMapperSession<Rule> ruleRepository)
+        public RuleService(IMapperSession<Rule> ruleRepository, IMapperSession<Product> productRepository)
         {
-            _unitOfWork = unitOfWork;
             _ruleRepository = ruleRepository;
+            _productRepository = productRepository;
         }
 
-        public bool AddRule(User createdBy, string name, string description, Product product, string value)
+        public void AddRule(User createdBy, string name, string description, Product product, string value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -28,14 +28,10 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-				Rule rule = new Rule(createdBy, name, description, product, value);
-                product.Rules.Add(rule);
-                work.Commit();
-            }
-
-            return true;
+			Rule rule = new Rule(createdBy, name, description, product, value);
+            product.Rules.Add(rule);
+            _ruleRepository.AddAsync(rule);
+            _productRepository.UpdateAsync(product);
         }
 
 
@@ -47,7 +43,7 @@ namespace TechCertain.Services.Impl
 
         public Rule GetRuleByID(Guid Id)
         {
-            Rule rule = _ruleRepository.GetById(Id);
+            Rule rule = _ruleRepository.GetById(Id).Result;
             return rule;
         }
     }

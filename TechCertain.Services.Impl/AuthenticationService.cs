@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Exceptions;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
 
@@ -12,14 +12,12 @@ namespace TechCertain.Services.Impl
 
 	public class AuthenticationService : IAuthenticationService
 	{
-		IUnitOfWork _unitOfWork;
 		IUserService _userService;
 		IMapperSession<SingleUseToken> _singleTokenRepository;
 		ILdapService _ldapService;		
 
-		public AuthenticationService (IUnitOfWork unitOfWork, IUserService userRepository, IMapperSession<SingleUseToken> singleTokenRepository, ILdapService ldapService)
+		public AuthenticationService (IUserService userRepository, IMapperSession<SingleUseToken> singleTokenRepository, ILdapService ldapService)
 		{
-			_unitOfWork = unitOfWork;
             _userService = userRepository;
 			_singleTokenRepository = singleTokenRepository;
 			_ldapService = ldapService;		
@@ -65,12 +63,8 @@ namespace TechCertain.Services.Impl
 				if (request == null)
 					throw new Exception("Exception while creating token.");
 
-				using (var uow = _unitOfWork.BeginUnitOfWork())
-				{
-					//uow.Add<SingleUseToken>(request);
-	                _singleTokenRepository.Add(request);
-					uow.Commit();
-				}
+	         _singleTokenRepository.AddAsync(request);
+
 			}
 			catch (Exception ex) {
 				throw new Exception (string.Format ("Unable to generate single use token for {0}.", email), ex);
@@ -81,12 +75,12 @@ namespace TechCertain.Services.Impl
 
 		public SingleUseToken GetToken(Guid token)
 		{
-			return _singleTokenRepository.GetById (token);
+			return _singleTokenRepository.GetById(token).Result;
 		}
 
 		public bool ValidSingleUseToken(Guid token)
 		{
-			SingleUseToken request = _singleTokenRepository.GetById (token);
+			SingleUseToken request = _singleTokenRepository.GetById(token).Result;
 			if (request == null)
 				return false;
 
@@ -100,18 +94,12 @@ namespace TechCertain.Services.Impl
 
 		public bool UseSingleUseToken(Guid token)
 		{
-			SingleUseToken request = _singleTokenRepository.GetById (token);
+			SingleUseToken request = _singleTokenRepository.GetById(token).Result;
 			if (request == null)
 				return false;
 
 			request.SetUsed ();
-
-			using (var uow = _unitOfWork.BeginUnitOfWork())
-			{
-				//uow.Add<SingleUseToken>(request);
-                _singleTokenRepository.Add(request);
-				uow.Commit();
-			}
+            _singleTokenRepository.AddAsync(request);            
 
 			return true;
 		}

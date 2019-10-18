@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
@@ -21,7 +21,7 @@ namespace TechCertain.Services.Impl
         {
             InformationTemplate template = new InformationTemplate(createdBy, name, sections); //_informationTemplateFactory.CreateNewTemplate(createdBy, name, sections);
 
-            _informationTemplateRepository.Add(template);
+            _informationTemplateRepository.AddAsync(template);
 
             return template;
         }
@@ -33,7 +33,7 @@ namespace TechCertain.Services.Impl
 
 		public InformationTemplate GetTemplate (Guid templateId)
 		{
-			return _informationTemplateRepository.GetById (templateId);
+			return _informationTemplateRepository.GetById(templateId).Result;
 		}
 
 		public InformationTemplate AddProductTo (Guid templateId, Product product)
@@ -56,7 +56,7 @@ namespace TechCertain.Services.Impl
 
 			//product.InformationTemplate = template;
 
-			_informationTemplateRepository.Add (template);
+			_informationTemplateRepository.AddAsync(template);
 
 			return template;
 		}

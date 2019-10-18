@@ -17,6 +17,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
+using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
+using Microsoft.Extensions.Logging;
+using DealEngine.Infrastructure.AuthorizationRSA;
+using System.Linq;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 
 #endregion
@@ -26,29 +31,41 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        IAuthenticationService _authenticationService;
+
         IEmailService _emailService;
 		IFileService _fileService;
         SignInManager<DealEngineUser> _signInManager;
         UserManager<DealEngineUser> _userManager;
         ILdapService _ldapService;
         IProgrammeService _programmeService;
-        ICilentInformationService _clientInformationService;
+        IClientInformationService _clientInformationService;
         IOrganisationService _organisationService;
         IOrganisationalUnitService _organisationalUnitService;
-        IHttpContextAccessor _httpContextAccessor;
-        
+        ILogger<AccountController> _logger;
+        IMapperSession<User> _userRepository;
+        IHttpClientService _httpClientService;
+
         public AccountController(
-            SignInManager<DealEngineUser> signInManager,
+            IAuthenticationService authenticationService,
+			SignInManager<DealEngineUser> signInManager,
             UserManager<DealEngineUser> userManager,
+            ILogger<AccountController> logger,
+             IMapperSession<User> userRepository,
+            IHttpClientService httpClientService,
             ILdapService ldapService,
-            IUserService userRepository,
-			IEmailService emailService, IFileService fileService, IProgrammeService programeService, ICilentInformationService clientInformationService, 
-            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userRepository)
+            IUserService userService,
+			IEmailService emailService, IFileService fileService, IProgrammeService programeService, IClientInformationService clientInformationService, 
+            IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService) : base (userService)
 		{
+            _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _userService = userRepository;
+            _userRepository = userRepository;
+			_httpClientService = httpClientService;
+			_logger = logger;
+			_userService = userService;
             _emailService = emailService;
 			_fileService = fileService;
             _programmeService = programeService;
@@ -104,11 +121,12 @@ namespace TechCertain.WebUI.Controllers
                     //var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme");
                     //var organisation = _organisationService.GetOrganisationByEmail("mcgtestuser2@techcertain.com");
                     //var sheet = _clientInformationService.GetInformation(new Guid("bc3c9972-1733-41a1-8786-fa22229c66f8"));
-                    _emailService.SendSystemEmailLogin("mcgtestuser2@techcertain.com");
+                    _emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     //SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
                     //User user = _userService.GetUser(token.UserID);
                     ////change the users password to an intermediate
+
                     //Membership.GetUser(user.UserName).ChangePassword("", IntermediateChangePassword);
                     ////get local domain
                     //string domain = HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
@@ -288,18 +306,20 @@ namespace TechCertain.WebUI.Controllers
                 if (resultCode == 0)
                 {
                     var deUser = _userManager.FindByNameAsync(userName).Result;
-                    if(deUser == null)
+                    if (deUser == null)
                     {
                         deUser = new DealEngineUser { UserName = userName, PasswordHash = password, };
-                        await _userManager.CreateAsync(deUser, password);
+                        await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
                     }
-                                    
+
                     var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
-                    if(identityResult.Succeeded)
+                    if (identityResult.Succeeded)
                     {
                         //add claims, roles etc here
                     }
-                    
+
+                    var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                    var result = await LoginMarsh(user, viewModel.DevicePrint);
                     return LocalRedirect("~/Home/Index");
                 }
 
@@ -320,70 +340,54 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-		[HttpPost]
-		[AllowAnonymous]
-		[ValidateAntiForgeryToken]
-		public ActionResult LoginMarsh (RsaAccountLoginModel viewModel)
+		public Task<IdentityResult> LoginMarsh (User user, string devicePrint)
 		{
-			string username = viewModel.Username.Trim ();
-			//if (ModelState.IsValid) {
+            MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService);
+            MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
 
-			//	_signInManager.SignIn (username, viewModel.Password, viewModel.RememberMe);
+            rsaUser.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            rsaUser.DevicePrint = devicePrint;
+            //for testing purposes
+            rsaUser.Email = user.Email;
+            //rsaUser.Username = rsaAuth.GetHashedId (username + "@dealengine.com");
+            rsaUser.Username = user.Email; //try as Marsh RSA team advised
+            rsaUser.HttpReferer = Url.ToString();
+            //rsaUser.OrgName = System.Web.Configuration.WebConfigurationManager.AppSettings ["RsaOrg"];
+            rsaUser.OrgName = "Marsh_Model";
 
-			//	if (Membership.ValidateUser (username, viewModel.Password)) {
+            try
+            {
+                Console.WriteLine("Analzying RSA User");
+                RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
+                if (rsaStatus == RsaStatus.Allow)
+                {
 
-			//		User user = _userService.GetUser(username);
-			//		Console.WriteLine ("Creating RSA User");
-			//		MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider (_logger);
-			//		MarshRsaUser rsaUser = rsaAuth.GetRsaUser (user.Email);
-                   
-   //                 rsaUser.IpAddress = Request.UserHostAddress;
-			//		rsaUser.DevicePrint = viewModel.DevicePrint;
-   //                 //for testing purposes
-   //                 rsaUser.Email = user.Email;
-   //                 //rsaUser.Username = rsaAuth.GetHashedId (username + "@dealengine.com");
-   //                 rsaUser.Username = user.Email; //try as Marsh RSA team advised
-   //                 rsaUser.HttpReferer = Request.UrlReferrer.ToString ();
-			//		//rsaUser.OrgName = System.Web.Configuration.WebConfigurationManager.AppSettings ["RsaOrg"];
-			//		rsaUser.OrgName = "Marsh_Model";
+                    Console.WriteLine("RSA User allowed, signing in...");
+                    SetCookie("ASP.NET_SessionId", "", DateTime.MinValue);
 
-			//		Console.WriteLine ("Analzying RSA User");
-			//			RsaStatus rsaStatus = rsaAuth.Analyze (rsaUser, true);
-			//		if (rsaStatus == RsaStatus.Allow) {
+                    _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
+                }
+                if (rsaStatus == RsaStatus.RequiresOtp)
+                {
+                    Console.WriteLine("RSA User requires otp. Making request");
+                    string otp = rsaAuth.GetOneTimePassword(rsaUser);
 
-			//			Console.WriteLine ("RSA User allowed, signing in...");
-			//			Session.Abandon ();
-			//			FormsAuthentication.SetAuthCookie (username, true);
-			//			SetCookie ("ASP.NET_SessionId", "", DateTime.MinValue);
+                    Console.WriteLine("One Time Password: " + otp);
+                    _emailService.ContactSupport(_emailService.DefaultSender, "Marsh RSA OTP", otp);
 
-			//			_logger.Info ("RSA Authentication succeeded for [" + username + "]");
+                    Console.WriteLine("Sent otp. Redirecting to Otp page");
+                    // sent otp to user                
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
-			//			return RedirectToLocal (viewModel.ReturnUrl);
-			//		}
-			//		if (rsaStatus == RsaStatus.RequiresOtp) {
-			//			Console.WriteLine ("RSA User requires otp. Making request");
-			//			string otp = rsaAuth.GetOneTimePassword (rsaUser);
+            return Task.FromResult(IdentityResult.Success);
+        }
 
-			//			Console.WriteLine ("One Time Password: " + otp);
-			//			_emailService.ContactSupport (_emailService.DefaultSender, "Marsh RSA OTP", otp);
-
-			//			Console.WriteLine ("Sent otp. Redirecting to Otp page");
-			//			// sent otp to user
-			//			return View ("OneTimePasswordMarsh", new RsaOneTimePasswordModel (username) {
-			//				DevicePrint = rsaUser.DevicePrint,
-			//				SessionId = rsaUser.SessionId,
-			//				TransactionId = rsaUser.TransactionId
-			//			});
-			//		}
-			//	}
-			//}
-
-			//// If we got this far, something failed, redisplay form			
-			ModelState.AddModelError ("", "The user name or password provided is incorrect.");
-			return View (viewModel);
-		}
-
-		[HttpPost]
+        [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
 		public ActionResult OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
@@ -636,37 +640,7 @@ namespace TechCertain.WebUI.Controllers
             //}
         }
 
-        async Task SignInAsync(string username, bool isPersistent)
-        {
-            // Clear any lingering authencation data
-            throw new Exception("this method needs to be re-written in core");
-            //FormsAuthentication.SignOut();
-
-            //Account account = _authenticationService.LoginUser(username);
-
-
-
-            //Write the authentication cookie
-            //FormsAuthentication.SetAuthCookie(username, isPersistent);
-
-            //string userData = account.UserName;
-
-            //FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
-            //    1,
-            //    username,
-            //    DateTime.UtcNow,
-            //    DateTime.UtcNow.AddMinutes(2285),
-            //    false,
-            //    userData,
-            //    FormsAuthentication.FormsCookiePath);
-
-            //string encTicket = FormsAuthentication.Encrypt(ticket);
-
-            //HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName,
-            //        encTicket);
-
-            //Response.Cookies.Add(cookie);
-        }
+        
 
 		void SetCookie(string cookieName, string value, DateTime expiry)
 		{
@@ -684,20 +658,6 @@ namespace TechCertain.WebUI.Controllers
             ////			authCookie.HttpOnly = true;
             ////			authCookie.Secure = true;
             //Response.SetCookie(authCookie);
-        }
-
-		// GET: /account/lock
-		[HttpPost]
-		public ActionResult Lock(UserLockStatusViewModel model)
-        {
-			User user = _userService.GetUser (model.Id);
-			if (model.Status == "lock" && !user.Locked) {
-				_userService.IssueLocalBan (user, CurrentUser);
-			}
-			else if (model.Status == "unlock" && user.Locked) {
-				_userService.RemoveLocalban (user, CurrentUser);
-			}
-            return View();
         }
 
 		[HttpGet]
@@ -828,7 +788,7 @@ namespace TechCertain.WebUI.Controllers
             user.JobTitle = model.JobTitle;
             user.SalesPersonUserName = model.SalesPersonUserName;
 
-            _userService.Update (user);
+            _userService.Update(user);
 
             return Redirect("~/Account/ProfileEditor");
 		}

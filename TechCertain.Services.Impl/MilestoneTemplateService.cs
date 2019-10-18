@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.Services.Impl
 {
     public class MilestoneTemplateService : IMilestoneTemplateService
     {
-        IUnitOfWork _unitOfWork;
         IMapperSession<MilestoneTemplate> _milestoneTemplateRepository;
 
-        public MilestoneTemplateService(IUnitOfWork unitOfWork, IMapperSession<MilestoneTemplate> milestoneTemplateRepository)
+        public MilestoneTemplateService(IMapperSession<MilestoneTemplate> milestoneTemplateRepository)
         {
-            _unitOfWork = unitOfWork;
             _milestoneTemplateRepository = milestoneTemplateRepository;
         }
 
@@ -40,12 +38,9 @@ namespace TechCertain.Services.Impl
             milestoneTemplate.Templates.Add("Agreement Status - Declined");
             milestoneTemplate.Templates.Add("Agreement Status - Bound and Waiting Payment");
             milestoneTemplate.Templates.Add("Agreement Status - Bound and Waiting Invoice");
+            
+            _milestoneTemplateRepository.AddAsync(milestoneTemplate);
 
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                _milestoneTemplateRepository.Add(milestoneTemplate);
-                uow.Commit();
-            }
             return milestoneTemplate;
         }
     }

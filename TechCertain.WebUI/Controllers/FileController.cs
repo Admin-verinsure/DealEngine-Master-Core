@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Mime;
 using SystemDocument = TechCertain.Domain.Entities.Document;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -76,7 +76,7 @@ namespace TechCertain.WebUI.Controllers
             //if (id == Guid.Empty)
             //    return new HttpNotFoundResult();
 
-            SystemDocument doc = _documentRepository.GetById(id);
+            SystemDocument doc = _documentRepository.GetById(id).Result;
             string extension = "";
             if (doc.ContentType == MediaTypeNames.Text.Html)
             {
@@ -144,7 +144,7 @@ namespace TechCertain.WebUI.Controllers
 			if (documentId == Guid.Empty)
 				return View (model);
 
-			SystemDocument document = _documentRepository.GetById (documentId);
+			SystemDocument document = _documentRepository.GetById (documentId).Result;
 			if (document == null)
 				throw new Exception ("Unable to update document: Could not find document with id " + id);
 
@@ -162,7 +162,7 @@ namespace TechCertain.WebUI.Controllers
 		{
             if (model.DocumentId != Guid.Empty)
             {
-                SystemDocument document = _documentRepository.GetById(model.DocumentId);
+                SystemDocument document = _documentRepository.GetById(model.DocumentId).Result;
                 if (document != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -184,12 +184,7 @@ namespace TechCertain.WebUI.Controllers
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = CurrentUser.PrimaryOrganisation;
                 document.IsTemplate = true;
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    _documentRepository.Add(document);
-                    uow.Commit();
-                }
+                _documentRepository.AddAsync(document);
             }
 
 			return View (model);

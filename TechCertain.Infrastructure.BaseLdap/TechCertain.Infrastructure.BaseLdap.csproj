@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Novell.Directory.Ldap.NETStandard\Novell.Directory.Ldap.NETStandard.csproj" />
-    <ProjectReference Include="..\TechCertain.Domain.Interfaces\TechCertain.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Services\TechCertain.Domain.Services.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.Ldap\TechCertain.Infrastructure.Ldap.csproj" />
   </ItemGroup>
 

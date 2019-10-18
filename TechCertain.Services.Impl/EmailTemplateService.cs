@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
     public class EmailTemplateService : IEmailTemplateService
     {
-        IUnitOfWork _unitOfWork;
-        IMapperSession<EmailTemplate> _emailTemplateRepository;
 
-        public EmailTemplateService(IUnitOfWork unitOfWork, IMapperSession<EmailTemplate> emailTemplateRepository)
+        IMapperSession<EmailTemplate> _emailTemplateRepository;
+        IMapperSession<Programme> _programmeRepository;
+
+        public EmailTemplateService(IMapperSession<EmailTemplate> emailTemplateRepository, IMapperSession<Programme> programmeRepository)
         {
-            _unitOfWork = unitOfWork;
             _emailTemplateRepository = emailTemplateRepository;
+            _programmeRepository = programmeRepository;
         }
 
-        public bool AddEmailTemplate(User createdBy, string name, string type, string subject, string body, Product product, Programme programme)
+        public void AddEmailTemplate(User createdBy, string name, string type, string subject, string body, Product product, Programme programme)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -28,14 +29,11 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(body))
                 throw new ArgumentNullException(nameof(body));
 
-            using (IUnitOfWork work = _unitOfWork.BeginUnitOfWork())
-            {
-                EmailTemplate emailTemplate = new EmailTemplate(createdBy, name, type, subject, body, product, programme);
-                programme.EmailTemplates.Add(emailTemplate);
-                work.Commit();
-            }
+            EmailTemplate emailTemplate = new EmailTemplate(createdBy, name, type, subject, body, product, programme);
+            programme.EmailTemplates.Add(emailTemplate);
+            _emailTemplateRepository.AddAsync(emailTemplate);
+            _programmeRepository.UpdateAsync(programme);
 
-            return true;
         }
 
 

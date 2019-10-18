@@ -35,7 +35,13 @@ namespace TechCertain.Services.Impl
             }
         }
 
-
+        public string domainQueryString
+        {
+            get
+            {
+                return _configuration.GetValue<string>("domainQueryString");
+            }
+        }
 
 
     }

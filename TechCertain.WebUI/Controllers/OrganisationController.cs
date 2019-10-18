@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using DealEngine.Infrastructure.Identity.Data;

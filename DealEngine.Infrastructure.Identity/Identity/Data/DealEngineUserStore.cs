@@ -6,7 +6,7 @@
 //using System.Threading.Tasks;
 //using Microsoft.AspNetCore.Identity;
 //using TechCertain.Domain.Entities;
-//using TechCertain.Domain.Interfaces;
+//using TechCertain.Infrastructure.FluentNHibernate;
 //using Claim = System.Security.Claims.Claim;
 
 //namespace DealEngine.Infrastructure.Identity.Data

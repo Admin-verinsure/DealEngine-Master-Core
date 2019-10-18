@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
 using TechCertain.Services.Interfaces;
 using Elmah;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,7 @@ using TechCertain.WebUI.Models.Policy;
 using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -180,11 +180,7 @@ namespace TechCertain.WebUI.Controllers
 				return Risks ();
 
 			RiskCategory risk = new RiskCategory (CurrentUser, category.Name, category.Description);
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				_riskRepository.Add (risk);
-
-				uow.Commit ();
-			}
+            _riskRepository.AddAsync(risk);
 
 			return Risks ();
 		}

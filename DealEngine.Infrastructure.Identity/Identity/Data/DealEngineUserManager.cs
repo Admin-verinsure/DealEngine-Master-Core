@@ -6,7 +6,7 @@
 //using Microsoft.Extensions.Logging;
 //using Microsoft.Extensions.Options;
 //using TechCertain.Domain.Entities;
-//using TechCertain.Domain.Interfaces;
+//using TechCertain.Infrastructure.FluentNHibernate;
 
 //namespace DealEngine.Infrastructure.Identity.Data
 //{

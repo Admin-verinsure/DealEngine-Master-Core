@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
+using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace TechCertain.WebUI.Controllers
 {

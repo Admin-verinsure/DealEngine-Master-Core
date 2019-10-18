@@ -1,22 +1,25 @@
-﻿using System;
+﻿using Bismuth.Ldap;
+using System;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.BaseLdap.Converters;
+using TechCertain.Infrastructure.BaseLdap.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
 	public class OrganisationService : IOrganisationService
-    {
-		IUnitOfWork _unitOfWork;		
+    {	
 		IMapperSession<Organisation> _organisationRepository;
 		ILdapService _ldapService;
+        ILdapConfigService _ldapConfigService;
 
-		public OrganisationService(IUnitOfWork unitOfWork, IMapperSession<Organisation> organisationRepository, ILdapService ldapService)
+        public OrganisationService(IMapperSession<Organisation> organisationRepository, ILdapConfigService ldapConfigService, ILdapService ldapService)
         {
-			_unitOfWork = unitOfWork;			
-			_organisationRepository = organisationRepository;
+            _ldapConfigService = ldapConfigService;
+            _organisationRepository = organisationRepository;
 			_ldapService = ldapService;
 		}
 
@@ -48,7 +51,7 @@ namespace TechCertain.Services.Impl
 
 		public Organisation GetOrganisation (Guid organisationId)
 		{
-			Organisation organisation = _organisationRepository.GetById (organisationId);
+			Organisation organisation = _organisationRepository.GetById(organisationId).Result;
 			// have a repo organisation? Return it
 			if (organisation != null)
 				return organisation;
@@ -64,7 +67,7 @@ namespace TechCertain.Services.Impl
 
 		public bool UpdateOrganisation (Organisation organisation)
 		{
-			_organisationRepository.Add (organisation);
+			_organisationRepository.AddAsync(organisation);
 			_ldapService.Update (organisation);
 			return true;
 		}
@@ -79,25 +82,18 @@ namespace TechCertain.Services.Impl
             return _organisationRepository.FindAll().FirstOrDefault(o => o.Email == organisationEmail);
         }
 
-
-        //public void CreateOrganization(User user)
+        //public Organisation Get(Guid organisationID)
         //{
-        //    CreateDefaultUserOrganisation(user);
-        //    _ldapService.Create(user);
-        //    Update(user);
+        //    string organisationDn = _ldapConfigService.GetOrganisationDN(organisationID);
+        //    LdapEntry entry = GetLdapEntry(organisationDn);
+
+        //    if (entry == null && _ldapConfigService.ImportOrganisation(organisationID))
+        //        entry = GetLdapEntry(organisationDn);
+
+        //    return LdapConverter.ToOrganisation(entry);
         //}
 
-        //protected void CreateDefaultUserOrganisation(User user)
-        //{
-        //    OrganisationType personalOrganisationType = null;
-        //    personalOrganisationType = OrganisationType.GetOrganisationTypeByName("personal");
-        //    if (personalOrganisationType == null)
-        //    {
-        //        personalOrganisationType = new OrganisationType(user, "personal");
-        //    }
-        //    Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation(user, user, personalOrganisationType);
-        //    user.Organisations.Add(defaultOrganisation);
-        //}
+
     }
 }
 

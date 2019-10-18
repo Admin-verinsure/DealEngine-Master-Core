@@ -2,50 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Interfaces;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
 	public class ProgrammeService : IProgrammeService
 	{
-		IUnitOfWork _unitOfWork;
 		IMapperSession<Programme> _programmeRepository;
 		IMapperSession<ClientProgramme> _clientProgrammeRepository;
         IReferenceService _referenceService;
 
-
-        public ProgrammeService (IUnitOfWork unitOfWork, IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
+        public ProgrammeService (IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
         {
-            _unitOfWork = unitOfWork;
 			_programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
         }
 
-		public ClientProgramme CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner)
+		public ClientProgramme CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
 		{
 			return CreateClientProgrammeFor (GetProgramme (programmeId), creatingUser, owner);
 		}
 
-		public ClientProgramme CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner)
+		public ClientProgramme CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
 		{
 			ClientProgramme clientProgramme = new ClientProgramme (creatingUser, owner, programme);
 			Update (clientProgramme);
 			return clientProgramme;
 		}
 
-		public ClientProgramme GetClientProgramme (Guid id)
+		public ClientProgramme GetClientProgramme(Guid id)
 		{
-			return _clientProgrammeRepository.GetById (id);
+			return _clientProgrammeRepository.GetById(id).Result;
 		}
 
-		public IEnumerable<ClientProgramme> GetClientProgrammesByOwner (Guid ownerOrganisationId)
+		public IEnumerable<ClientProgramme> GetClientProgrammesByOwner(Guid ownerOrganisationId)
 		{
-			return _clientProgrammeRepository.FindAll ().Where (cp => cp.Owner.Id == ownerOrganisationId);
+			return _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId);
 		}
 
-		public IEnumerable<ClientProgramme> GetClientProgrammesForProgramme (Guid programmeId)
+		public IEnumerable<ClientProgramme> GetClientProgrammesForProgramme(Guid programmeId)
 		{
 			Programme programme = GetProgramme (programmeId);
 			if (programme == null)
@@ -53,9 +50,9 @@ namespace TechCertain.Services.Impl
 			return programme.ClientProgrammes;
 		}
 
-		public Programme GetProgramme (Guid id)
+		public Programme GetProgramme(Guid id)
 		{
-			return _programmeRepository.GetById (id);
+			return _programmeRepository.GetById(id).Result;
 		}
 
 		public IEnumerable<Programme> GetProgrammesByOwner (Guid ownerOrganisationId)
@@ -70,11 +67,11 @@ namespace TechCertain.Services.Impl
 
 		public void Update (params ClientProgramme [] clientProgrammes)
 		{
-			using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork ()) {
-				foreach (ClientProgramme clientProgramme in clientProgrammes)
-					_clientProgrammeRepository.Add (clientProgramme);
-				uow.Commit ();
-			}
+            foreach (ClientProgramme clientProgramme in clientProgrammes)
+            {
+                _clientProgrammeRepository.AddAsync(clientProgramme);
+            }
+
 		}
 
 		public ClientProgramme CloneForUpdate (ClientProgramme clientProgramme, User cloningUser)
