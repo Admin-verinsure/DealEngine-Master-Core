@@ -11,6 +11,7 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -24,119 +25,160 @@ namespace TechCertain.WebUI.Controllers
 		 */
 
 		IRolePermissionsService _roleService;
-        public GroupsController (IUserService userService,
-            IRolePermissionsService rolePermissionsService)
-			: base (userService)
-		{
-			_roleService = rolePermissionsService;			
-		}
+        RoleManager<IdentityRole> _roleManager;
 
-		[HttpGet]
-        public ActionResult Index()
+
+        //private readonly RoleManager<IdentityRole> roleManager;
+
+        //public GroupsController(RoleManager<IdentityRole> roleManager)
+        //{
+        //    this.roleManager = roleManager;
+        //}
+
+        public GroupsController(IUserService userService,
+            IRolePermissionsService rolePermissionsService, RoleManager<IdentityRole> roleManager)
+            : base(userService)
+        {
+            _roleService = rolePermissionsService;
+            _roleManager = roleManager;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
         {
 			var models = new BaseListViewModel<GroupViewModel>();
-			foreach (var group in GetAllGroups ()) {
-				models.Add (new GroupViewModel (group));
-			}
-
-			return View (models);
+            foreach (var group in _roleManager.Roles)
+            {
+                models.Add(new GroupViewModel(group));
+            }
+            return View (models);
         }
 
 		[HttpGet]
-        public ActionResult Details(Guid id)
+        public async Task<IActionResult> Details(Guid id)
         {
             return View ();
         }
 
 		[HttpGet]
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View ();
         } 
 
         [HttpPost]
-		public ActionResult Create(GroupViewModel model)
+		public async Task<IActionResult> Index(string Name)
         {
             if (ModelState.IsValid) {
-				_roleService.CreateGroup (model.Name);
-				return RedirectToAction ("Index");
-			}
-			return View (model);
-        }
-        
-		[HttpGet]
-        public ActionResult Edit(Guid id)
-        {
-			ApplicationGroup group = GetGroup (id);
-            if (group == null)
-                throw new Exception("Method will need to be re-written");
-				//return HttpNotFound ();
+                //_roleService.CreateGroup (model.Name);
+                IdentityRole identityRole = new IdentityRole
+                {
+                    Name = Name
 
-			return View (new GroupViewModel(group));
-        }
+                };
+                IdentityResult result = await _roleManager.CreateAsync(identityRole);
 
-        [HttpPost]
-        public ActionResult Edit(Guid id, GroupViewModel group)
-        {
-            try {
-                return RedirectToAction ("Index");
-            } catch {
-                return View ();
+                if(result.Succeeded == true)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                foreach(IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
+            return View();
         }
 
-		[HttpGet]
-        public ActionResult Delete(Guid id)
+        //[HttpGet]
+        //      public ActionResult Edit(Guid id)
+        //      {
+        //	ApplicationGroup group = GetGroup (id);
+        //          if (group == null)
+        //              throw new Exception("Method will need to be re-written");
+        //		//return HttpNotFound ();
+
+        //	return View (new GroupViewModel(group));
+        //      }
+
+        //[HttpPost]
+        //public async Task<IActionResult> Edit(Guid id, GroupViewModel group)
+        //{
+        //    try {
+        //        return RedirectToAction ("Index");
+        //    } catch {
+        //        return View ();
+        //    }
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
         {
-			if (id == Guid.Empty) {
+            if (id == null)
+            {
                 throw new Exception("Method will need to be re-written");
                 //return new HttpStatusCodeResult (HttpStatusCode.BadRequest);
-			}
-			ApplicationGroup group = GetGroup (id);
-			if (group == null) {
+            }
+            var role =  await _roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
                 throw new Exception("Method will need to be re-written");
                 //return HttpNotFound ();
-			}
-			return View (new GroupViewModel (group));
+            }
+            else
+            {
+                var result = await _roleManager.DeleteAsync(role);
+
+                if (result.Succeeded == true)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View("Index");
         }
 
-        [HttpPost, ActionName ("Delete")]
-        public ActionResult DeleteConfirmed (Guid id)
-        {
-            try {
-				if (!_roleService.DeleteGroup (id, CurrentUser))
-					throw new Exception ("Unable to delete ApplicationGroup with Id [" + id + "]");
+        //     [HttpPost, ActionName ("Delete")]
+        //     public ActionResult DeleteConfirmed (Guid id)
+        //     {
+        //         try {
+        //	if (!_roleService.DeleteGroup (id, CurrentUser))
+        //		throw new Exception ("Unable to delete ApplicationGroup with Id [" + id + "]");
 
-				return Json (true);
-            }
-			catch (Exception ex) {				
-                throw new Exception("Method will need to be re-written " + ex.Message);
-                //return new HttpStatusCodeResult (HttpStatusCode.InternalServerError, ex.Message);
-            }
-        }
+        //	return Json (true);
+        //         }
+        //catch (Exception ex) {				
+        //             throw new Exception("Method will need to be re-written " + ex.Message);
+        //             //return new HttpStatusCodeResult (HttpStatusCode.InternalServerError, ex.Message);
+        //         }
+        //     }
 
-		[HttpGet]
-		public ActionResult GroupRoles (Guid id)
-		{
-			ApplicationGroup group = GetGroup (id);
-			var model = new SelectGroupRolesViewModel ();
-			model.GroupId = group.Id;
-			model.GroupName = group.Name;
-			foreach (var role in GetAllRoles()) {
-				var evm = new SelectRoleEditorViewModel (role);
-				evm.Selected = false;
-				model.Roles.Add (evm);
-			}
-			foreach (var groupRole in group.Roles) {
-				var selectedRole = model.Roles.FirstOrDefault (r => r.RoleId == groupRole.Id);
-				if (selectedRole != null)
-					selectedRole.Selected = true;
-			}
+        //[HttpGet]
+        //public ActionResult GroupRoles (Guid id)
+        //{
+        //	ApplicationGroup group = GetGroup (id);
+        //	var model = new SelectGroupRolesViewModel ();
+        //	model.GroupId = group.Id;
+        //	model.GroupName = group.Name;
+        //	foreach (var role in GetAllRoles()) {
+        //		var evm = new SelectRoleEditorViewModel (role);
+        //		evm.Selected = false;
+        //		model.Roles.Add (evm);
+        //	}
+        //	foreach (var groupRole in group.Roles) {
+        //		var selectedRole = model.Roles.FirstOrDefault (r => r.RoleId == groupRole.Id);
+        //		if (selectedRole != null)
+        //			selectedRole.Selected = true;
+        //	}
 
-			return View (model);
-		}
+        //	return View (model);
+        //}
 
-		[HttpPost]
+        [HttpPost]
 		public ActionResult GroupRoles (SelectGroupRolesViewModel model)
 		{
 			try {

@@ -30,19 +30,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                                            @Html.ActionLink("Permissions", "GroupRoles", new { id = item.Id }) |
-                                            <a href="javascript:void(0);" onclick="DeleteGroup('@item.Id');">Delete</a>
-                                        </td>
-                                    </tr>
-                                }
+                                @*@foreach (var item in Model) {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                                                @Html.ActionLink("Permissions", "GroupRoles", new { id=item.Id }) |
+                                                <a href="javascript:void(0);" onclick="DeleteGroup('@item.Id');">Delete</a>
+                                            </td>
+                                        </tr>
+                                    }*@
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -65,6 +64,7 @@
     </div>
 </div>
 <!-- END MAIN CONTENT -->
+<!-- Edit Boat -->
 
 <div class="modal" id="newGroupModal" tabindex="-1" role="dialog" data-backdrop="static">
     <div class="modal-dialog">
@@ -83,7 +83,7 @@
                         </section>
                         <section class="col col-xs-9 col-sm-9 col-md-9 col-lg-9">
                             <label class="input ">
-                                <input data-type="TEXTBOX" data-name="groupName" id="groupName" name="Name" placeholder="Group Name">
+                                <input data-type="TEXTBOX" data-name="groupName" id="groupName" name="Name" placeholder="Group Name" value="">
                             </label>
                         </section>
                     </section>
@@ -92,11 +92,7 @@
             </div>
             <div class="modal-footer">
                 <section class="col col-xs-12">
-                    @*<input type="Reset" value="Submit" class="btn btn-success" id="btnSubmit">*@
-                    <button onclick="AddGroup();" class="btn-sm ">Add</button>
-
-                    <a href="#" class="btn btn-danger" onclick="$('#newGroupModal').hide()">Cancel<i class="fa fa-close"></i></a>
-
+                    <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').hide();" class="btn-sm ">Add</button>
                 </section>
             </div>
         </div>
@@ -105,68 +101,86 @@
 
 
 
+<div id="newGrousdspModal" class="modal fade " role="dialog">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" style="color:blue; font-size:22px">Add New Group</h4>
+        </div>
+        <div class="modal-body">
+            @*<form id="GroupForm">
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Name)</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="Name" value="" placeholder="Enter Group name here" type="text">
+                    </div>
+                </div>*@
+
+            @*<div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Add" class="btn btn-default" />
+                    </div>
+                </div>*@
+
+            @*</form>*@
+
+            <h1> hellow</h1>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" value="Add" class="btn btn-default" />
+
+            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+        </div>
+    </div>
+</div>
+
+
 
 @section pagespecific {
     @*<script src="/Scripts/datatables"></script>*@
 
     <script type="text/javascript">
-//$(document).ready(function () {
-//	//$('#tableGroups').DataTable({
-//	//	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
-// //               "t" +
-// //               "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
-// //           	"autoWidth": true
-//	//})
+$(document).ready(function () {
+	//$('#tableGroups').DataTable({
+	//	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+ //               "t" +
+ //               "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+ //           	"autoWidth": true
+	//})
+});
 
-//    });
-  
+function ShowCreateModal()
+{
+    debugger;
+	$('#newGroupModal').show();
+}
+
 function DeleteGroup(groupId)
 {
 	if (confirm("Delete this Group?") == false)
-        return;
-    debugger;
+		return;
+
 	$.ajax({
      	// change back once mono decides to fix
         url: '@Url.Action("Delete", "Groups")',
         type: "POST",
 	    data: { Id: groupId}
     })
-        .done(function (data) {
-                alert("Role Deleted Sucessfully.");
-
-		location.reload();
-    })
-    .fail(function (xhr, httpStatusMessage, customErrorMessage) {
-        alert(customErrorMessage);
-    });
-    }
-
-
-function AddGroup()
-{
-    var agreement = $('#groupName').val();
-
-    var groupname = $("#groupName").val();
-        debugger;
-
-    var postdate = {
-        "Name": groupname
-    }
-	$.ajax({
-     	// change back once mono decides to fix
-        url: '@Url.Action("Index", "Groups")',
-        type: "POST",
-	    data: postdate
-    })
     .done(function (data) {
-        debugger;
-        //$('#groupName').val() = "";
+        $.smallBox({
+            title: "Success",
+            content: "The group has been removed",
+            color: "#5F895F",
+            iconSmall: "fa fa-check bounce animated",
+            timeout: 4000
+        });
 		location.reload();
     })
     .fail(function (xhr, httpStatusMessage, customErrorMessage) {
         alert(customErrorMessage);
     });
 }
-
     </script>
 }
