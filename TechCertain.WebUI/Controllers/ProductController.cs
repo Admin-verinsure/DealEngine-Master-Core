@@ -293,7 +293,7 @@ namespace TechCertain.WebUI.Controllers
                     prog.territory.Add(territory);
                 }
                 territory.Programmes = programm;
-                await _TerritoryRepository.AddAsync(territory);
+                _TerritoryRepository.AddAsync(territory);
 
                 return Redirect("~/Product/MyProducts");
                 //return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
@@ -380,7 +380,7 @@ namespace TechCertain.WebUI.Controllers
                 if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                await _productRepository.AddAsync(product);
+                _productRepository.AddAsync(product);
 
 
                 return Redirect ("~/Product/MyProducts");

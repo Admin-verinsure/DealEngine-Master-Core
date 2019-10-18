@@ -7,11 +7,11 @@ namespace TechCertain.Services.Interfaces
     {
         string GetLatestReferenceId();
         void CreateClientInformationReference(ClientInformationSheet ClientInformationSheet);
-        void CreateClientAgreementReference(string reference, Guid ClientAgreementId);
+        void CreateClientAgreementReference(string Reference, Guid ClientAgreementId);
         bool HasInformationId(Guid id);
         bool HasAgreementId(Guid id);
-        bool HasReference(string reference);
-        void Update(Reference reference);
+        bool HasReference(string Reference);
+        void Update(Reference Reference);
     }
 }
 

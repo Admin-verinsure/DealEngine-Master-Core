@@ -27,9 +27,9 @@ namespace TechCertain.Services.Impl
             return (nextReference + 1).ToString();
         }
 
-        public async void Update(Reference reference)
+        public async void Update(Reference Reference)
         {
-            await _referenceRepository.AddAsync(reference);
+            _referenceRepository.AddAsync(Reference);
         }
 
         public void CreateClientInformationReference(ClientInformationSheet ClientInformationSheet)
@@ -53,25 +53,25 @@ namespace TechCertain.Services.Impl
             }           
         }
 
-        public void CreateClientAgreementReference(string reference, Guid ClientAgreementId)
+        public void CreateClientAgreementReference(string Reference, Guid ClientAgreementId)
         {
             if (ClientAgreementId == Guid.Empty)
                 throw new ArgumentNullException(nameof(ClientAgreementId));
 
             if (!HasAgreementId(ClientAgreementId))
             {
-                if (!HasReference(reference))
+                if (!HasReference(Reference))
                 {
-                    reference = GetLatestReferenceId();
+                    Reference = GetLatestReferenceId();
                 }
 
-                if (reference == null)
-                    throw new ArgumentNullException(nameof(reference));
+                if (Reference == null)
+                    throw new ArgumentNullException(nameof(Reference));
 
                 Reference referenceObj = new Reference
                 {
                     ClientAgreementId = ClientAgreementId,
-                    ReferenceId = reference,
+                    ReferenceId = Reference,
                 };
 
                 Update(referenceObj);
@@ -99,9 +99,9 @@ namespace TechCertain.Services.Impl
             return false;
         }
 
-        public bool HasReference(string reference)
+        public bool HasReference(string Reference)
         {
-            var referenceExist =_referenceRepository.FindAll().FirstOrDefault(m => m.ReferenceId == reference);
+            var referenceExist =_referenceRepository.FindAll().FirstOrDefault(m => m.ReferenceId == Reference);
 
             if(referenceExist != null)
                 return true;

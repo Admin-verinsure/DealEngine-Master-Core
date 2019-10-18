@@ -170,7 +170,7 @@ namespace TechCertain.WebUI.Controllers
 				return await Risks();
 
 			RiskCategory risk = new RiskCategory (CurrentUser, category.Name, category.Description);
-            await _riskRepository.AddAsync(risk);
+            _riskRepository.AddAsync(risk);
 
             return await Risks();
         }

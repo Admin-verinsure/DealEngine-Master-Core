@@ -38,33 +38,28 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             return session.Query<TEntity>();
         }
 
-        public Task UpdateAsync(TEntity entity)
+        public async void UpdateAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
-            session.UpdateAsync(entity);
-            return Task.CompletedTask;
+            await session.UpdateAsync(entity);
         }
 
-        public Task RemoveAsync(TEntity entity)
+        public async void RemoveAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
-            session.DeleteAsync(entity);
-            return Task.CompletedTask;
+            await session.DeleteAsync(entity);
         }
 
-        public Task AddAsync(TEntity entity)
+        public async void AddAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             session.SaveOrUpdate(entity);
-            return Task.CompletedTask;
         }
 
-        public Task SaveAsync(TEntity entity)
+        public async void SaveAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
-
-            session.SaveAsync(entity);
-            return Task.CompletedTask;
+            await session.SaveAsync(entity);
         }
     }
 }

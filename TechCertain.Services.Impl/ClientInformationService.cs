@@ -37,8 +37,7 @@ namespace TechCertain.Services.Impl
 
             clientProgramme.InformationSheet = sheet;
             sheet.Programme = clientProgramme;
-
-            UpdateInformation(sheet);
+            _customerInformationRepository.AddAsync(sheet);            
             return sheet;
         }
 
@@ -64,7 +63,7 @@ namespace TechCertain.Services.Impl
 
         public async void UpdateInformation(ClientInformationSheet sheet)
         {
-            await _customerInformationRepository.UpdateAsync(sheet);
+            _customerInformationRepository.UpdateAsync(sheet);
         }
 
         public void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)

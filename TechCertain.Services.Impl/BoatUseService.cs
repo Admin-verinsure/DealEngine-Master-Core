@@ -52,7 +52,7 @@ namespace TechCertain.Services.Impl
 
         public async void UpdateBoatUse(BoatUse boatUse)
         {
-            await _boatUseRepository.AddAsync(boatUse);
+            _boatUseRepository.AddAsync(boatUse);
         }
     }
 }

@@ -62,14 +62,14 @@ namespace TechCertain.Services.Impl
 
 		public IEnumerable<Programme> GetAllProgrammes ()
 		{
-			return _programmeRepository.FindAll ();
+			return _programmeRepository.FindAll();
 		}
 
 		public async void Update (params ClientProgramme [] clientProgrammes)
 		{
             foreach (ClientProgramme clientProgramme in clientProgrammes)
             {
-                await _clientProgrammeRepository.AddAsync(clientProgramme);
+                _clientProgrammeRepository.AddAsync(clientProgramme);
             }
 
 		}

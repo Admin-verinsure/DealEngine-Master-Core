@@ -542,10 +542,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CoastguardReg(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
-            //if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View(model);
 
-            //return RedirectToLocal();
+            return await RedirectToLocal();
 
 
         }

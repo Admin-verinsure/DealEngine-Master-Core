@@ -122,7 +122,8 @@ namespace TechCertain.Services.Impl
 		public void Create (User user)
 		{
             CreateDefaultUserOrganisation (user);
-			_ldapService.Create (user);
+            _userRepository.AddAsync(user);
+            _ldapService.Create (user);
 			Update (user);
 		}
 

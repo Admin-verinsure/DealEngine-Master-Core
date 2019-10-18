@@ -193,7 +193,7 @@ namespace TechCertain.WebUI.Controllers
                 //	}
                 //}
 
-             await _templateRepository.AddAsync(informationTemplate);
+             _templateRepository.AddAsync(informationTemplate);
 
             }
             catch (Exception ex)

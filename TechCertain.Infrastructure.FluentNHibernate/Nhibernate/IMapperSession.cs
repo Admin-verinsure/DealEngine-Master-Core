@@ -9,9 +9,9 @@ namespace TechCertain.Infrastructure.FluentNHibernate
         IQueryable<TEntity> FindAll();
         Task<TEntity> GetByIdAsync(string id);
         Task<TEntity> GetByIdAsync(Guid id);
-        Task RemoveAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity);        
-        Task AddAsync(TEntity entity);        
-        Task SaveAsync(TEntity entity);
+        void RemoveAsync(TEntity entity);
+        void UpdateAsync(TEntity entity);
+        void AddAsync(TEntity entity);
+        void SaveAsync(TEntity entity);
     }
 }

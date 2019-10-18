@@ -2694,6 +2694,8 @@ namespace TechCertain.WebUI.Controllers
                 try
                 {
                     user = _userService.GetUserByEmail(email);
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
                 }
                 catch (Exception)
                 {
@@ -2737,27 +2739,28 @@ namespace TechCertain.WebUI.Controllers
                         user.Organisations.Add(organisation);
 
                     user.SetPrimaryOrganisation(organisation);
-                    await _userRepository.UpdateAsync(user);
+                    _userRepository.UpdateAsync(user);
                     
                 }
 
+                Thread.Sleep(1000);
                 var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme"); //Marsh Coastguard
                 var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
-
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                
                 User user3 = _userService.GetUserByEmail(email);
-                //Thread.Sleep(4000);
+                Thread.Sleep(1000);
 
                 var reference = _referenceService.GetLatestReferenceId();
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
 
                 var sheet = _clientInformationService.IssueInformationFor(user3, organisation, clientProgramme, reference);
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
 
                 _referenceService.CreateClientInformationReference(sheet);
+                Thread.Sleep(1000);
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     OrganisationalUnit ou = new OrganisationalUnit(user3, ouname);
                     Boat vessel = new Boat(user3)
@@ -2776,6 +2779,7 @@ namespace TechCertain.WebUI.Controllers
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
                     try
                     {
+                        Thread.Sleep(1000);
                         await uow.Commit();
                     }
                     catch(Exception ex)
@@ -2786,7 +2790,7 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 //send out login email
-                //_emailService.SendSystemEmailLogin(email);
+                _emailService.SendSystemEmailLogin(email);
                 //send out instruction email
                 EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
                 if (emailTemplate != null)
@@ -2798,8 +2802,8 @@ namespace TechCertain.WebUI.Controllers
                     throw new Exception("There is no Information Sheet Instruction email template been set up.");
                 }
                 //send out information sheet issue notification email
-               _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
-                
+                _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+
             }
             else
             {

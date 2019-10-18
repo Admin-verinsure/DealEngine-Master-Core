@@ -33,7 +33,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             return _session.GetAsync<TEntity>(id);
         }
 
-        public async Task AddAsync(TEntity entity)
+        public async void AddAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             var transaction = _session.BeginTransaction();
@@ -54,7 +54,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
 
 
 
-        public async Task RemoveAsync(TEntity entity)
+        public async void RemoveAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             var transaction = _session.BeginTransaction();
@@ -72,7 +72,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             transaction.Dispose();
         }
 
-        public async Task SaveAsync(TEntity entity)
+        public async void SaveAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             var transaction = _session.BeginTransaction();
@@ -91,7 +91,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             transaction.Dispose();
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public async void UpdateAsync(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             var transaction = _session.BeginTransaction();

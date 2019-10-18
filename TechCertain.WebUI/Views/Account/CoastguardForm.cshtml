@@ -369,7 +369,6 @@
         }
 
         function saveQuickQuote() {
-            debugger;
             if (cgdata.length > 0) {
                 cgdata = [];
             }
@@ -433,7 +432,6 @@
 
         function validationCheck() {
             //get boxes
-            debugger;
             var indiQuoteSpan = document.getElementById("indiQuoteSpan");
             var quoteInc = document.getElementById("quoteIncludes");
             var next = document.getElementById("next");
@@ -518,6 +516,7 @@
             })
                 .done(function (data, textStatus, jQxhr) {
                     console.log(data);
+                    debugger;
                     if (data) {
                         t3.classList.add("active");
                         $('#response pre').html(data);
@@ -527,6 +526,7 @@
                     }
                 })
                 .error(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
                     console.log(errorThrown);
                 });
         }
@@ -581,7 +581,6 @@
         }
 
         function quickQuote() {
-            debugger;
             var insVal = document.getElementById("vival").value;
             var craftType = document.getElementById("CraftType").innerHTML;
             var qref = document.getElementById("qref");

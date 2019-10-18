@@ -245,7 +245,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit();
+                 uow.Commit();
 
             }
 
@@ -299,7 +299,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit();
+                 uow.Commit();
 
             }
 
@@ -348,7 +348,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit();
+                 uow.Commit();
 
             }
 
@@ -379,7 +379,7 @@ namespace TechCertain.WebUI.Controllers
                     AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                    await uow.Commit();
+                     uow.Commit();
 
                 }
             }
@@ -496,7 +496,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.LastModifiedBy = CurrentUser;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
 
-                    await uow.Commit();
+                     uow.Commit();
                 }
             }
             else
@@ -506,7 +506,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
 
-                    await uow.Commit();
+                     uow.Commit();
                 }
             }
 
@@ -621,7 +621,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm.Excess = clientAgreementBVTerm.Excess;
                 bvTerm.Premium = clientAgreementBVTerm.Premium;
                 bvTerm.FSL = clientAgreementBVTerm.FSL;
-                await uow.Commit();
+                 uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -649,7 +649,7 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm.Excess = clientAgreementMVTerm.Excess;
                 mvTerm.Premium = clientAgreementMVTerm.Premium;
                 mvTerm.FSL = clientAgreementMVTerm.FSL;                
-                await uow.Commit();
+                 uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -677,7 +677,7 @@ namespace TechCertain.WebUI.Controllers
                     bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
                     term.BoatTerms.Remove(bvTerm);
                 }
-                await uow.Commit();                
+                 uow.Commit();                
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -952,7 +952,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, clientAgreement.ClientInformationSheet, clientAgreement, auditLogDetail);
                 clientAgreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit();
+                 uow.Commit();
             }
 
            
@@ -1136,7 +1136,7 @@ namespace TechCertain.WebUI.Controllers
                 agreement.ClientNumber = model.ClientNumber;
                 agreement.PolicyNumber = model.PolicyNumber;
 
-                await uow.Commit();
+                 uow.Commit();
             }
 
             return Redirect("/Agreement/ViewAcceptedAgreement/" + answerSheet.Programme.Id);
@@ -1187,7 +1187,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID).Value = crv.Value;
                     }
-                    await uow.Commit();
+                     uow.Commit();
                 }
             }
 
@@ -1252,7 +1252,7 @@ namespace TechCertain.WebUI.Controllers
                         _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID).Value = cev.Value;
                     }
 
-                    await uow.Commit();
+                     uow.Commit();
                 }
 
             }
@@ -1384,7 +1384,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.LastModifiedBy = CurrentUser;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
 
-                    await uow.Commit();
+                     uow.Commit();
                 }
             }
             else
@@ -1394,7 +1394,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
 
-                    await uow.Commit();
+                     uow.Commit();
                 }
             }
 
@@ -1460,7 +1460,7 @@ namespace TechCertain.WebUI.Controllers
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
                 programme.InformationSheet.Status = "Bound";
-                await uow.Commit();
+                 uow.Commit();
             }
 
 
@@ -1562,7 +1562,7 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
-                            await uow.Commit();
+                             uow.Commit();
                         }
                     }
 
@@ -1576,7 +1576,7 @@ namespace TechCertain.WebUI.Controllers
 
                     {
                         programme.InformationSheet.Status = status;
-                        await uow.Commit();
+                         uow.Commit();
                     }
                 }
                 //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
@@ -1620,7 +1620,7 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
-                            await uow.Commit();
+                             uow.Commit();
                         }
                     }
 
@@ -1673,7 +1673,7 @@ namespace TechCertain.WebUI.Controllers
                     if (programme.InformationSheet.Status != status)
                     {
                         programme.InformationSheet.Status = status;
-                        await uow.Commit();
+                         uow.Commit();
                     }
                 }
             }
@@ -1751,48 +1751,48 @@ namespace TechCertain.WebUI.Controllers
                 if (product != null)
                 {
                     //
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1CRate", "North Island City Rate for Category 1C", product, "2.75") { OrderNumber = 5 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1CRate", "North Island Town Rate for Category 1C", product, "2.5") { OrderNumber = 6 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1CRate", "South Island City Rate for Category 1C", product, "2.225") { OrderNumber = 7 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1CRate", "South Island Town Rate for Category 1C", product, "2") { OrderNumber = 8 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1CRate", "North Island City Rate for Category 1C", product, "2.75") { OrderNumber = 5 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1CRate", "North Island Town Rate for Category 1C", product, "2.5") { OrderNumber = 6 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1CRate", "South Island City Rate for Category 1C", product, "2.225") { OrderNumber = 7 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1CRate", "South Island Town Rate for Category 1C", product, "2") { OrderNumber = 8 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1UAPRate", "North Island City Rate for Category 1UAP", product, "4") { OrderNumber = 9 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1UAPRate", "North Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 10 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1UAPRate", "South Island City Rate for Category 1UAP", product, "4") { OrderNumber = 11 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1UAPRate", "South Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 12 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1UAPRate", "North Island City Rate for Category 1UAP", product, "4") { OrderNumber = 9 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1UAPRate", "North Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 10 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1UAPRate", "South Island City Rate for Category 1UAP", product, "4") { OrderNumber = 11 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1UAPRate", "South Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 12 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1PRate", "North Island City Rate for Category 1P", product, "2") { OrderNumber = 13 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1PRate", "North Island Town Rate for Category 1P", product, "1.5") { OrderNumber = 14 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1PRate", "South Island City Rate for Category 1P", product, "1.5") { OrderNumber = 15 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1PRate", "South Island Town Rate for Category 1P", product, "1") { OrderNumber = 16 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1PRate", "North Island City Rate for Category 1P", product, "2") { OrderNumber = 13 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1PRate", "North Island Town Rate for Category 1P", product, "1.5") { OrderNumber = 14 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1PRate", "South Island City Rate for Category 1P", product, "1.5") { OrderNumber = 15 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1PRate", "South Island Town Rate for Category 1P", product, "1") { OrderNumber = 16 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1RRate", "North Island City Rate for Category 1R", product, "4.75") { OrderNumber = 17 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1RRate", "North Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 18 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1RRate", "South Island City Rate for Category 1R", product, "4.75") { OrderNumber = 19 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1RRate", "South Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 20 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1RRate", "North Island City Rate for Category 1R", product, "4.75") { OrderNumber = 17 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1RRate", "North Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 18 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1RRate", "South Island City Rate for Category 1R", product, "4.75") { OrderNumber = 19 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1RRate", "South Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 20 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY2Rate", "North Island City Rate for Category 2", product, "1.5") { OrderNumber = 21 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN2Rate", "North Island Town Rate for Category 2", product, "1.25") { OrderNumber = 22 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY2Rate", "South Island City Rate for Category 2", product, "1.25") { OrderNumber = 23 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN2Rate", "South Island Town Rate for Category 2", product, "1") { OrderNumber = 24 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY2Rate", "North Island City Rate for Category 2", product, "1.5") { OrderNumber = 21 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN2Rate", "North Island Town Rate for Category 2", product, "1.25") { OrderNumber = 22 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY2Rate", "South Island City Rate for Category 2", product, "1.25") { OrderNumber = 23 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN2Rate", "South Island Town Rate for Category 2", product, "1") { OrderNumber = 24 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY3Rate", "North Island City Rate for Category 3", product, "1.75") { OrderNumber = 25 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN3Rate", "North Island Town Rate for Category 3", product, "1.25") { OrderNumber = 26 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY3Rate", "South Island City Rate for Category 3", product, "1.25") { OrderNumber = 27 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN3Rate", "South Island Town Rate for Category 3", product, "1") { OrderNumber = 28 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY3Rate", "North Island City Rate for Category 3", product, "1.75") { OrderNumber = 25 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN3Rate", "North Island Town Rate for Category 3", product, "1.25") { OrderNumber = 26 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY3Rate", "South Island City Rate for Category 3", product, "1.25") { OrderNumber = 27 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN3Rate", "South Island Town Rate for Category 3", product, "1") { OrderNumber = 28 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITYSVRate", "North Island City Rate for Category SV", product, "0.25") { OrderNumber = 29 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWNSVRate", "North Island Town Rate for Category SV", product, "0.25") { OrderNumber = 30 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITYSVRate", "South Island City Rate for Category SV", product, "0.25") { OrderNumber = 31 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWNSVRate", "South Island Town Rate for Category SV", product, "0.25") { OrderNumber = 32 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITYSVRate", "North Island City Rate for Category SV", product, "0.25") { OrderNumber = 29 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWNSVRate", "North Island Town Rate for Category SV", product, "0.25") { OrderNumber = 30 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITYSVRate", "South Island City Rate for Category SV", product, "0.25") { OrderNumber = 31 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWNSVRate", "South Island Town Rate for Category SV", product, "0.25") { OrderNumber = 32 });
                     ///
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFee", "FSL Fee for Vehicle under 3.5T", product, "6.08") { OrderNumber = 33 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3Rate", "FSL Rate for Vehicle over 3.5T", product, "0.076") { OrderNumber = 34 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFeeAfter1July", "FSL Fee for Vehicle under 3.5T After 1 July", product, "6.08") { OrderNumber = 35 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3RateAfter1July", "FSL Rate for Vehicle over 3.5T After 1 July", product, "0.076") { OrderNumber = 36 }).ConfigureAwait(false);
-                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "PaymentPremium", "Premium Payment", product, "Monthly") { OrderNumber = 40 }).ConfigureAwait(false);
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFee", "FSL Fee for Vehicle under 3.5T", product, "6.08") { OrderNumber = 33 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3Rate", "FSL Rate for Vehicle over 3.5T", product, "0.076") { OrderNumber = 34 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFeeAfter1July", "FSL Fee for Vehicle under 3.5T After 1 July", product, "6.08") { OrderNumber = 35 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3RateAfter1July", "FSL Rate for Vehicle over 3.5T After 1 July", product, "0.076") { OrderNumber = 36 });
+                     _ruleRepository.AddAsync(new Rule(CurrentUser, "PaymentPremium", "Premium Payment", product, "Monthly") { OrderNumber = 40 });
 
-                    await uow.Commit();
+                     await uow.Commit();
                 }
             }
 

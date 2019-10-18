@@ -15,12 +15,12 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
             _userRepository = userRepository;
         }
 
-        public void Create(User user)
+        public async void Create(User user)
         {
             _userRepository.AddAsync(user);            
         }
 
-        public void Delete(User user)
+        public async void Delete(User user)
         {
             _userRepository.RemoveAsync(user);
         }
@@ -37,33 +37,27 @@ namespace TechCertain.Infrastructure.FluentNHibernate.Repositories
 
         public User GetUser(string userName)
 		{
-			return _userRepository.FindAll ().FirstOrDefault (u => u.UserName == userName);
+			return _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
         }
 
         public User GetUser(string userName, string userPassword)
         {
-			User user = GetUser (userName);
+			User user = GetUser(userName);
 
 			return (user != null && user.Password == userPassword) ? user : null;
         }
 
 		public User GetUserByEmail(string email)
 		{
-			return _userRepository.FindAll ().FirstOrDefault (u => u.Email == email);
+			return _userRepository.FindAll().FirstOrDefault(u => u.Email == email);
 		}
-
-        public Task<User> GetUserByEmailAsync(string email)
-        {
-            var user = _userRepository.FindAll().FirstOrDefault(u => u.Email == email);
-            return Task.FromResult(user);
-        }
 
         public IEnumerable<User> GetUsers ()
 		{
-			return _userRepository.FindAll ();
+			return _userRepository.FindAll();
 		}
 
-        public void Update(User user)
+        public async void Update(User user)
         {
             _userRepository.UpdateAsync(user);
         }
