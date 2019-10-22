@@ -1,6 +1,9 @@
 ﻿using Bismuth.Ldap;
+using NHibernate.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.BaseLdap.Converters;
 using TechCertain.Infrastructure.BaseLdap.Interfaces;
@@ -23,10 +26,10 @@ namespace TechCertain.Services.Impl
 			_ldapService = ldapService;
 		}
 
-		public Organisation CreateNewOrganisation (Organisation organisation)
+		public async Task<Organisation> CreateNewOrganisation (Organisation organisation)
 		{
 			_ldapService.Create (organisation);
-			UpdateOrganisation (organisation);
+			await UpdateOrganisation(organisation);
 			return organisation;
 		}
 
@@ -37,19 +40,19 @@ namespace TechCertain.Services.Impl
 			throw new NotImplementedException ();
 		}
 
-		public bool DeleteOrganisation (User deletedBy, Organisation organisation)
+		public async Task DeleteOrganisation (User deletedBy, Organisation organisation)
 		{
 			organisation.Delete (deletedBy);
-			return UpdateOrganisation (organisation);
+			await UpdateOrganisation(organisation);
 		}
 
-		public IQueryable<Organisation> GetAllOrganisations ()
+		public async Task<List<Organisation>> GetAllOrganisations ()
 		{
 			// we don't want to query ldap. That way lies timeouts. Or Dragons.
-			return _organisationRepository.FindAll ();
+			return await _organisationRepository.FindAll().ToListAsync();
 		}
 
-		public Organisation GetOrganisation (Guid organisationId)
+		public async Task<Organisation> GetOrganisation (Guid organisationId)
 		{
 			Organisation organisation = _organisationRepository.GetByIdAsync(organisationId).Result;
 			// have a repo organisation? Return it
@@ -58,28 +61,27 @@ namespace TechCertain.Services.Impl
 			organisation = _ldapService.GetOrganisation (organisationId);
 			// have a ldap organisation but no repo? Update NHibernate & return
 			if (organisation != null) {
-				UpdateOrganisation (organisation);
+				await UpdateOrganisation (organisation);
 				return organisation;
 			}
 			// no organisation at all? Throw exception
 			throw new Exception ("Organisation with id [" + organisationId + "] does not exist in the system");
 		}
 
-		public bool UpdateOrganisation (Organisation organisation)
+		public async Task UpdateOrganisation (Organisation organisation)
 		{
-			_organisationRepository.AddAsync(organisation);
+			await _organisationRepository.AddAsync(organisation);
 			_ldapService.Update (organisation);
-			return true;
 		}
 
-        public Organisation GetOrganisationByName(string organisationName)
+        public async Task<Organisation> GetOrganisationByName(string organisationName)
         {
-            return _organisationRepository.FindAll().FirstOrDefault(o => o.Name == organisationName);
+            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Name == organisationName);
         }
 
-        public Organisation GetOrganisationByEmail(string organisationEmail)
+        public async Task<Organisation> GetOrganisationByEmail(string organisationEmail)
         {
-            return _organisationRepository.FindAll().FirstOrDefault(o => o.Email == organisationEmail);
+            return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
         }
     }
 }

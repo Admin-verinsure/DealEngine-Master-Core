@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
+using NHibernate.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -22,20 +24,20 @@ namespace TechCertain.Services.Impl
 
 		#region Old IPolicyDocumentService implementation
 
-		public Old_PolicyDocumentTemplate SaveDocumentTemplate (Old_PolicyDocumentTemplate policyDocument)
+		public async Task<Old_PolicyDocumentTemplate> SaveDocumentTemplate (Old_PolicyDocumentTemplate policyDocument)
 		{
-            _old_policyDocumentRepository.AddAsync(policyDocument);
+            await _old_policyDocumentRepository.AddAsync(policyDocument);
 			return policyDocument;
 		}
 
-		public Old_PolicyDocumentTemplate GetDocumentTemplate (Guid id)
+		public async Task<Old_PolicyDocumentTemplate> GetDocumentTemplate (Guid id)
 		{
-			return _old_policyDocumentRepository.GetByIdAsync(id).Result;
+			return await _old_policyDocumentRepository.GetByIdAsync(id);
 		}
 
-		public IList<Old_PolicyDocumentTemplate> GetDocumentTemplates()
+		public async Task<List<Old_PolicyDocumentTemplate>> GetDocumentTemplates()
 		{
-			List<Old_PolicyDocumentTemplate> documents = _old_policyDocumentRepository.FindAll ().ToList ();
+			List<Old_PolicyDocumentTemplate> documents = _old_policyDocumentRepository.FindAll().ToListAsync().Result;
 
 			return documents;
 		}
@@ -44,7 +46,7 @@ namespace TechCertain.Services.Impl
 
 		#region IPolicyDocumentService implementation
 
-		public PolicyDocumentTemplate CreateDocumentTemplate(User createdBy, string documentTitle, IList<PolicyTermSection> sections)
+		public async Task<PolicyDocumentTemplate> CreateDocumentTemplate(User createdBy, string documentTitle, IList<PolicyTermSection> sections)
 		{
 			PolicyDocumentTemplate template = new PolicyDocumentTemplate (createdBy, documentTitle, "", "", Guid.Empty, Guid.Empty, false);
 			foreach (PolicyTermSection section in sections)
@@ -54,14 +56,14 @@ namespace TechCertain.Services.Impl
 			return template;
 		}
 
-		public IEnumerable<PolicyDocumentTemplate> GetAllTemplates()
+		public async Task<List<PolicyDocumentTemplate>> GetAllTemplates()
 		{
-			return _policyDocumentRepository.FindAll ().AsEnumerable ();
+			return await _policyDocumentRepository.FindAll().ToListAsync();
 		}
 
-		public string RenderDocument(string documentTitle, List<KeyValuePair<string, string>> mergeFields)
+		public async Task<string> RenderDocument(string documentTitle, List<KeyValuePair<string, string>> mergeFields)
 		{
-			Old_PolicyDocumentTemplate template = GetDocumentTemplates ().Where (t => t.Title == documentTitle).OrderByDescending (t => t.Revision).FirstOrDefault ();
+			Old_PolicyDocumentTemplate template = GetDocumentTemplates().Result.Where(t => t.Title == documentTitle).OrderByDescending(t => t.Revision).FirstOrDefault();
 
 			if (template == null)
 				return "";
@@ -69,7 +71,7 @@ namespace TechCertain.Services.Impl
 			string content = template.Text;
 			foreach (KeyValuePair<string, string> field in mergeFields)
 				content = content.Replace (field.Key, field.Value);
-
+            
 			return content;
 		}
 

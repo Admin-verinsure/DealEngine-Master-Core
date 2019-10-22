@@ -4,7 +4,9 @@ using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Linq;
 using System.Linq.Dynamic;
-
+using System.Threading.Tasks;
+using NHibernate.Linq;
+using System.Collections.Generic;
 
 namespace TechCertain.Services.Impl
 {
@@ -19,7 +21,7 @@ namespace TechCertain.Services.Impl
 			_policyTermRepository = policyTermRepository;
 		}
 
-		public PolicyTermSection Create (User createdBy, string name, string description, string version, int revision, string content, Guid creator, Guid territory, Guid jurisdiction)
+		public async Task<PolicyTermSection> Create (User createdBy, string name, string description, string version, int revision, string content, Guid creator, Guid territory, Guid jurisdiction)
 		{
 			PolicyTermSection section = new PolicyTermSection (createdBy);
 			section.Clause = Guid.Empty;
@@ -33,32 +35,32 @@ namespace TechCertain.Services.Impl
 			section.Territory = territory;
 			section.Version = version;
 
-            _policyTermRepository.AddAsync(section);
+            await _policyTermRepository.AddAsync(section);
 
             return section;
 		}
 
-		public PolicyTermSection GetTerm (Guid termId)
+		public async Task<PolicyTermSection> GetTerm (Guid termId)
 		{
-			return _policyTermRepository.GetByIdAsync(termId).Result;
+			return await _policyTermRepository.GetByIdAsync(termId);
 		}
 
-		public PolicyTermSection[] GetTerms()
+		public async Task<List<PolicyTermSection>> GetTerms()
 		{
-			return _policyTermRepository.FindAll ().ToArray ();
+            return await _policyTermRepository.FindAll().ToListAsync();
 		}
 
-		public PolicyTermSection[] GetTerms(string orderField, string direction)
+		public async Task<List<PolicyTermSection>> GetTerms(string orderField, string direction)
 		{
-            return _policyTermRepository.FindAll().OrderBy(orderField + " " + direction).ToArray();
+            return await _policyTermRepository.FindAll().OrderBy(orderField + " " + direction).ToListAsync();
 		}
 
-		public bool Deprecate (User deletedBy, Guid termId)
+		public async Task<bool> Deprecate (User deletedBy, Guid termId)
 		{
-			PolicyTermSection term = GetTerm (termId);
-            _policyTermRepository.AddAsync(term);
+			PolicyTermSection term = GetTerm(termId).Result;
+            await _policyTermRepository.RemoveAsync(term);
 
-            return GetTerm (termId).DateDeleted != null;
+            return GetTerm(termId).Result.DateDeleted != null;
 		}
 
 		#endregion

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -12,12 +14,12 @@ namespace TechCertain.Services.Interfaces
         /// <param name="serverAddress">The address of the server to be added.</param>
         /// <returns><code>true</code> if server had been added, <code>false</code> if the server exists and did not get added.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when Server Address or Server Name is null, empty or a white space.</exception>
-        bool AddNewServer(User createdBy, string serverName, string serverAddress);
+        Task AddNewServer(User createdBy, string serverName, string serverAddress);
 
-        bool RemoveServer(User deletedBy, string serverAddress);
+        Task RemoveServer(User deletedBy, string serverAddress);
 
-        bool CheckExists(string serverAddress);
+        Task<bool> CheckExists(string serverAddress);
 
-        IQueryable<PrivateServer> GetAllPrivateServers();
+        Task<List<PrivateServer>> GetAllPrivateServers();
     }
 }

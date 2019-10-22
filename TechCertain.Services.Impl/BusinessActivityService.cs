@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,22 +17,22 @@ namespace TechCertain.Services.Impl
             _businessActivityRepository = businessActivityRepository;
         }
 
-        public void AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity)
+        public async Task AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity)
         {
             businessActivity.Programme = programme;
-            Update(businessActivity);
+            await Update(businessActivity);
         }
 
-        public void Update(BusinessActivity businessActivity)
+        public async Task Update(BusinessActivity businessActivity)
         {
-            _businessActivityRepository.UpdateAsync(businessActivity);
+            await _businessActivityRepository.UpdateAsync(businessActivity);
         }
 
-        public void CreateBusinessActivity(BusinessActivity businessActivity)
+        public async Task CreateBusinessActivity(BusinessActivity businessActivity)
         {
             if (businessActivity.AnzsciCode != null || businessActivity.Description != null)
             {
-                _businessActivityRepository.AddAsync(businessActivity);
+                await _businessActivityRepository.AddAsync(businessActivity);
             }
         }
 
@@ -44,14 +46,14 @@ namespace TechCertain.Services.Impl
             return GetBusinessActivities().Where(ba => ba.Classification == classification);
         }
 
-        public BusinessActivity GetBusinessActivity(Guid Id)
+        public async Task<BusinessActivity> GetBusinessActivity(Guid Id)
         {
-            return _businessActivityRepository.GetByIdAsync(Id).Result;
+            return await _businessActivityRepository.GetByIdAsync(Id);
         }
 
-        public object GetBusinessActivitiesByClientProgramme(Guid programmeId)
+        public async Task<BusinessActivity> GetBusinessActivitiesByClientProgramme(Guid programmeId)
         {
-            return _businessActivityRepository.FindAll().Where(t => t.Programme.Id == programmeId);
+            return await _businessActivityRepository.FindAll().FirstOrDefaultAsync(t => t.Programme.Id == programmeId);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace TechCertain.Services.Impl
 			_ldapService.Validate (username, password, out resultCode, out resultMessage);
 
 			if (resultCode == 0)
-				return _userService.GetUser (username);
+				return _userService.GetUser(username).Result;
 			
 			try {
 				if (resultCode == 49)
@@ -55,7 +55,7 @@ namespace TechCertain.Services.Impl
 			SingleUseToken request = null;
 			try
 			{
-				User user = _userService.GetUserByEmail (email);
+				User user = _userService.GetUserByEmail(email).Result;
 				if (user == null)
 					throw new ObjectNotFoundException("Email may be incorrect in ldap and/or application database.");
 
@@ -84,7 +84,7 @@ namespace TechCertain.Services.Impl
 			if (request == null)
 				return false;
 
-			User user = _userService.GetUser (request.UserID);
+			User user = _userService.GetUser (request.UserID).Result;
 			if (user == null)
 				return false;
 
@@ -106,7 +106,7 @@ namespace TechCertain.Services.Impl
 
 		public IEnumerable<SingleUseToken> GetTokensFor (Guid userId)
 		{
-			return _singleTokenRepository.FindAll ().Where (t => t.UserID == userId);
+			return _singleTokenRepository.FindAll().Where(t => t.UserID == userId);
 		}
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using TechCertain.Domain.Entities;
+﻿using System.Threading.Tasks;
+using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
@@ -6,11 +7,11 @@ namespace TechCertain.Services.Interfaces
     {
         //void AddNew(string name);
 
-       // IEnumerable<InsuranceAttribute> GetOrganisationTypes();
+        // IEnumerable<InsuranceAttribute> GetOrganisationTypes();
 
-        InsuranceAttribute CreateNewInsuranceAttribute(User user, string insuranceAttribute);
+        Task<InsuranceAttribute> CreateNewInsuranceAttribute(User user, string insuranceAttribute);
 
-        InsuranceAttribute GetInsuranceAttributeByName(string InsuranceAttribute);
+        Task<InsuranceAttribute> GetInsuranceAttributeByName(string InsuranceAttribute);
 
        // bool UpdateOrganisationType(InsuranceAttribute insuranceAttribute);
     }

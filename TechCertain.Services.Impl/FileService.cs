@@ -8,6 +8,8 @@ using TechCertain.Domain.Entities;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Threading.Tasks;
+using NHibernate.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -29,7 +31,7 @@ namespace TechCertain.Services.Impl
 		IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementBVTermService _clientAgreementBVTermService;        
 
-        public FileService (IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
+        public FileService(IMapperSession<Image> imageRepository, IMapperSession<Document> documentRepository, IClientAgreementMVTermService clientAgreementMVTermService, IClientAgreementBVTermService clientAgreementBVTermService)
 		{
 			_imageRepository = imageRepository;
 			_documentRepository = documentRepository;
@@ -47,14 +49,15 @@ namespace TechCertain.Services.Impl
 
 		public string FileDirectory { get; protected set; }
 
-		public bool IsApplication (byte [] buffer, string contentType, string fileName)
+		public bool IsApplication(byte [] buffer, string contentType, string fileName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public bool IsImageFile (byte [] buffer, string contentType, string fileName)
+		public bool IsImageFile(byte [] buffer, string contentType, string fileName)
 		{
 			// references
+            //can we make this a task async -- potentially screwing up the system if its not converted..
 			// https://en.wikipedia.org/wiki/Magic_number_%28programming%29
 			// http://stackoverflow.com/a/8755028
 
@@ -82,7 +85,7 @@ namespace TechCertain.Services.Impl
 			return false;
 		}
 
-		public bool IsTextFile (byte [] buffer, string contentType, string fileName)
+		public bool IsTextFile(byte [] buffer, string contentType, string fileName)
 		{
 			// references
 			// http://stackoverflow.com/a/14587821
@@ -99,35 +102,35 @@ namespace TechCertain.Services.Impl
 			return false;
 		}
 
-		public bool UploadFile (Document document)
+		public bool UploadFile(Document document)
 		{
             _documentRepository.AddAsync(document);
 			return true;
 		}
 
-		public bool UploadFile (Image image)
+		public bool UploadFile(Image image)
 		{
 		    _imageRepository.AddAsync(image);
 			return true;
 		}
 
-		public Document GetDocument (string documentName)
+		public async Task<Document> GetDocument(string documentName)
 		{
-			return _documentRepository.FindAll ().FirstOrDefault (i => i.Name == documentName);
+			return await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.Name == documentName);
         }
 
-        public Document GetDocumentByType(Organisation primaryOrganisation, int DocumentType)
+        public async Task<Document> GetDocumentByType(Organisation primaryOrganisation, int DocumentType)
         {
-            Document document = _documentRepository.FindAll().FirstOrDefault(i => i.OwnerOrganisation == primaryOrganisation && i.DocumentType == DocumentType);
+            Document document = await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.OwnerOrganisation == primaryOrganisation && i.DocumentType == DocumentType);
             return document;
         }
 
-        public Image GetImage (string imageName)
+        public async Task<Image> GetImage(string imageName)
 		{
-			return _imageRepository.FindAll ().FirstOrDefault (i => i.Name == imageName);
+			return await _imageRepository.FindAll().FirstOrDefaultAsync(i => i.Name == imageName);
 		}
 
-		public T RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement) where T : Document
+		public async Task<T> RenderDocument<T>(User renderedBy, T template, ClientAgreement agreement) where T : Document
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
@@ -214,7 +217,7 @@ namespace TechCertain.Services.Impl
 				dt.Columns.Add ("Interest Parties");
 				dt.Columns.Add ("Sum Insured");
 
-				foreach (ClientAgreementMVTerm mVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor (agreement.ClientAgreementTerms.FirstOrDefault (at => at.SubTermType == "MV")).OrderBy (camvt => camvt.Registration)) {
+				foreach (ClientAgreementMVTerm mVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor (agreement.ClientAgreementTerms.FirstOrDefault (at => at.SubTermType == "MV")).Result.OrderBy (camvt => camvt.Registration)) {
 					DataRow dr = dt.NewRow ();
 
 					dr ["Category"] = mVTerm.VehicleCategory;
@@ -265,7 +268,7 @@ namespace TechCertain.Services.Impl
 				dt2.Columns.Add ("Sum Insured");
 				//dt2.Columns.Add ("End Date");
 
-				foreach (ClientAgreementMVTerm mVTerm2 in _clientAgreementMVTermService.GetAllAgreementMVTermFor (agreement.ClientAgreementTerms.FirstOrDefault (at => at.SubTermType == "MV")).OrderBy (camvt => camvt.Registration)) {
+				foreach (ClientAgreementMVTerm mVTerm2 in _clientAgreementMVTermService.GetAllAgreementMVTermFor (agreement.ClientAgreementTerms.FirstOrDefault (at => at.SubTermType == "MV")).Result.OrderBy (camvt => camvt.Registration)) {
 					DataRow dr2 = dt2.NewRow ();
 
 					dr2 ["Year"] = mVTerm2.Year;
@@ -369,7 +372,7 @@ namespace TechCertain.Services.Impl
                 //dtbv4.Columns.Add("Model");
                 dtbv5.Columns.Add("Interest Party");
 
-                foreach (ClientAgreementBVTerm bVTerm in _clientAgreementBVTermService.GetAllAgreementBVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV")).OrderBy(cabvt => cabvt.BoatName))
+                foreach (ClientAgreementBVTerm bVTerm in _clientAgreementBVTermService.GetAllAgreementBVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV")).Result.OrderBy(cabvt => cabvt.BoatName))
                 {
                     intBVNumberOfUnits += 1;
 
@@ -459,9 +462,9 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[BVRaceDetailsTable]]", ConvertDataTableToHTML(dtbv4)));
                 mergeFields.Add(new KeyValuePair<string, string>("[[BVInterestPartyTable]]", ConvertDataTableToHTML(dtbv5)));
 
-                if (_clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null)).Count() > 0)
+                if (_clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null)).Result.Count() > 0)
                 {
-                    foreach (ClientAgreementMVTerm mVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null)).OrderBy(camvt => camvt.Registration))
+                    foreach (ClientAgreementMVTerm mVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null)).Result.OrderBy(camvt => camvt.Registration))
                     {
 
                         DataTable dtmv1 = new DataTable();
@@ -471,7 +474,7 @@ namespace TechCertain.Services.Impl
                         dtmv1.Columns.Add("Registration");
                         dtmv1.Columns.Add("Sum Insured");
 
-                        foreach (ClientAgreementMVTerm bVMVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV")).OrderBy(camvt => camvt.Registration))
+                        foreach (ClientAgreementMVTerm bVMVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV")).Result.OrderBy(camvt => camvt.Registration))
                         {
                             DataRow drmv1 = dtmv1.NewRow();
 

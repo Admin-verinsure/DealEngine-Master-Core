@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -7,15 +9,15 @@ namespace TechCertain.Services.Interfaces
     public interface IMerchantService
     {
 
-        bool AddNewMerchant(User createdBy, string merchantUserName, string merchantPassword, string merchantKey, string merchantReference);
+        Task AddNewMerchant(User createdBy, string merchantUserName, string merchantPassword, string merchantKey, string merchantReference);
 
-        bool RemoveMerchant(User deletedBy, string merchantKey);
+        Task RemoveMerchant(User deletedBy, string merchantKey);
 
-        bool CheckExists(string merchantKey);
+        Task<bool> CheckExists(string merchantKey);
 
-        IQueryable<Merchant> GetAllMerchants();
+        Task<List<Merchant>> GetAllMerchants();
 
-        Merchant GetMerchant(Guid ProgrammeId);
+        Task<Merchant> GetMerchant(Guid ProgrammeId);
 
     }
 }

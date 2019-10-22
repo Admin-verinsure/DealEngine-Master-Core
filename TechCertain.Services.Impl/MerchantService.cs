@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,46 +18,46 @@ namespace TechCertain.Services.Impl
             _merchantRepository = merchantRepository;
         }
 
-        public bool AddNewMerchant(User createdBy, string merchantUserName, string merchantPassword, string merchantKey, string merchantReference)
+        public async Task AddNewMerchant(User createdBy, string merchantUserName, string merchantPassword, string merchantKey, string merchantReference)
         {
             if (string.IsNullOrWhiteSpace(merchantUserName))
                 throw new ArgumentNullException(nameof(merchantUserName));
             if (string.IsNullOrWhiteSpace(merchantKey))
                 throw new ArgumentNullException(nameof(merchantKey));
 
-            _merchantRepository.AddAsync(new Merchant(createdBy, merchantUserName, merchantPassword, merchantKey, merchantReference));
-            return CheckExists(merchantKey);
+            if (!CheckExists(merchantKey).Result)
+                await _merchantRepository.AddAsync(new Merchant(createdBy, merchantUserName, merchantPassword, merchantKey, merchantReference));            
         }
 
-        public bool CheckExists(string merchantKey)
+        public async Task<bool> CheckExists(string merchantKey)
         {
             if (string.IsNullOrWhiteSpace(merchantKey))
                 throw new ArgumentNullException(nameof(merchantKey));
-            return _merchantRepository.FindAll().FirstOrDefault(m => m.MerchantKey == merchantKey) != null;
+            return await _merchantRepository.FindAll().FirstOrDefaultAsync(m => m.MerchantKey == merchantKey) != null;
         }
 
-        public IQueryable<Merchant> GetAllMerchants()
+        public async Task<List<Merchant>> GetAllMerchants()
         {
-            var merchants = _merchantRepository.FindAll();
-            return merchants.Where(m => m.DateDeleted == null).OrderBy(m => m.MerchantUserName);
+            return await _merchantRepository.FindAll().Where(m => m.DateDeleted == null).OrderBy(m => m.MerchantUserName).ToListAsync();
         }
 
-        public bool RemoveMerchant(User deletedBy, string merchantKey)
+        public async Task RemoveMerchant(User deletedBy, string merchantKey)
         {
-            Merchant merchant = GetAllMerchants().FirstOrDefault(m => m.MerchantKey == merchantKey);
+            Merchant merchant = GetAllMerchants().Result.FirstOrDefault(m => m.MerchantKey == merchantKey);
             if (merchant != null)
             {
                 merchant.Delete(deletedBy);
-                _merchantRepository.RemoveAsync(merchant);
+                await _merchantRepository.RemoveAsync(merchant);
 
             }
             // check that it has been removed, and return the inverse result
-            return !CheckExists(merchantKey);
+            if (CheckExists(merchantKey).Result)
+                throw new Exception("Should be removed");
         }
 
-        public Merchant GetMerchant(Guid merchantProgrammeId)
+        public async Task<Merchant> GetMerchant(Guid merchantProgrammeId)
         {
-            return _merchantRepository.FindAll().FirstOrDefault(m => m.Programme_id == merchantProgrammeId);
+            return await _merchantRepository.FindAll().FirstOrDefaultAsync(m => m.Programme_id == merchantProgrammeId);
         }
     }
 }

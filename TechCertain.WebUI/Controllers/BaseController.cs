@@ -37,7 +37,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 if (string.IsNullOrWhiteSpace (userName))
                     return null;
-				return _userService.GetUser(userName); 
+				return _userService.GetUser(userName).Result; 
             }
         }
 

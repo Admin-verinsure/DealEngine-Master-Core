@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -7,13 +9,13 @@ namespace TechCertain.Services.Interfaces
     public interface IPaymentService
     {
 
-        Payment AddNewPayment(User createdBy, ClientProgramme clientProgramme, Merchant merchant, PaymentGateway paymentGateway);
+        Task<Payment> AddNewPayment(User createdBy, ClientProgramme clientProgramme, Merchant merchant, PaymentGateway paymentGateway);
 
-        IQueryable<Payment> GetAllPayment();
+        Task<List<Payment>> GetAllPayment();
 
         [Obsolete]
-        Payment GetPayment(Guid clientProgrammeID, Guid merchantID, Guid paymentGatewayID);
-        void Update(Payment payment);
-        Payment GetPayment(Guid clientProgrammeID);
+        Task<Payment> GetPayment(Guid clientProgrammeID, Guid merchantID, Guid paymentGatewayID);
+        Task Update(Payment payment);
+        Task<Payment> GetPayment(Guid clientProgrammeID);
     }
 }

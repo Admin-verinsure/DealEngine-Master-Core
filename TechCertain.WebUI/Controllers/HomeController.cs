@@ -229,7 +229,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (var org in CurrentUser.Organisations)
                     {
-                        var answerSheets = _customerInformationService.GetAllInformationFor(org).Where(s => s.Product == product).OrderByDescending(s => s.DateCreated);
+                        var answerSheets = _customerInformationService.GetAllInformationFor(org).Result.Where(s => s.Product == product).OrderByDescending(s => s.DateCreated);
 
                         // conditions
                         // no uis = display start
@@ -334,7 +334,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (!DemoEnvironment)
             {
-                var privateServers = _privateServerService.GetAllPrivateServers().ToList();
+                var privateServers = _privateServerService.GetAllPrivateServers().Result;
 
                 foreach (var individualprivateServer in privateServers)
                 {
@@ -462,7 +462,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)
             {
-                foreach (ClientInformationSheet sheet in _clientInformationService.GetAllInformationFor(value))
+                foreach (ClientInformationSheet sheet in _clientInformationService.GetAllInformationFor(value).Result)
                 {
 
                     ClientProgramme client = sheet.Programme;

@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IClientInformationAnswerService
     {
-        ClientInformationAnswer CreateNewClaimHistory(ClientInformationAnswer clientInformationAnswer);
+        Task<ClientInformationAnswer> CreateNewClaimHistory(ClientInformationAnswer clientInformationAnswer);
 
-        ClientInformationAnswer CreateNewClaimHistory(string ClaimName, string value, string details, ClientInformationSheet InformationSheetID);
+        Task<ClientInformationAnswer> CreateNewClaimHistory(string ClaimName, string value, string details, ClientInformationSheet InformationSheetID);
 
-        ClientInformationAnswer GetClaimHistoryByName(string ClaimName, Guid InformationSheetID);
+        Task<ClientInformationAnswer> GetClaimHistoryByName(string ClaimName, Guid InformationSheetID);
 
-        IQueryable<ClientInformationAnswer> GetAllClaimHistory();
+        Task<List<ClientInformationAnswer>> GetAllClaimHistory();
     }
 }
 

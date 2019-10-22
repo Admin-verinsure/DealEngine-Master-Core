@@ -6,7 +6,8 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
-
+using System.Threading.Tasks;
+using NHibernate.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -21,14 +22,14 @@ namespace TechCertain.Services.Impl
 
         #region ICustomerInformationService implementation
 
-        public ClientInformationSheet IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
+        public async Task<ClientInformationSheet> IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
         {
             ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, informationTemplate);
-            UpdateInformation(sheet);
+            await UpdateInformation(sheet);
             return sheet;
         }
 
-        public ClientInformationSheet IssueInformationFor(User createdBy, Organisation createdFor, ClientProgramme clientProgramme, string reference)
+        public async Task<ClientInformationSheet> IssueInformationFor(User createdBy, Organisation createdFor, ClientProgramme clientProgramme, string reference)
         {
             if (clientProgramme.InformationSheet != null)
                 throw new Exception("ClientProgramme [" + clientProgramme.Id + "] already has an InformationSheet assigned");
@@ -37,36 +38,36 @@ namespace TechCertain.Services.Impl
 
             clientProgramme.InformationSheet = sheet;
             sheet.Programme = clientProgramme;
-            _customerInformationRepository.AddAsync(sheet);            
+            await _customerInformationRepository.AddAsync(sheet);            
             return sheet;
         }
 
-        public ClientInformationSheet GetInformation(Guid informationSheetId)
+        public async Task<ClientInformationSheet> GetInformation(Guid informationSheetId)
         {
-            return _customerInformationRepository.GetByIdAsync(informationSheetId).Result;
+            return await _customerInformationRepository.GetByIdAsync(informationSheetId);
         }
 
-        public IQueryable<ClientInformationSheet> GetAllInformationFor(User owner)
+        public async Task<List<ClientInformationSheet>> GetAllInformationFor(User owner)
         {
-            return _customerInformationRepository.FindAll().Where(s => owner.Organisations.Contains(s.Owner));
+            return await _customerInformationRepository.FindAll().Where(s => owner.Organisations.Contains(s.Owner)).ToListAsync();
         }
 
-        public IQueryable<ClientInformationSheet> GetAllInformationFor(Organisation owner)
+        public async Task<List<ClientInformationSheet>> GetAllInformationFor(Organisation owner)
         {
-            return _customerInformationRepository.FindAll().Where(s => s.Owner == owner);
+            return await _customerInformationRepository.FindAll().Where(s => s.Owner == owner).ToListAsync();
         }
 
-        public IQueryable<ClientInformationSheet> GetAllInformationFor(String referenceId)
+        public async Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId)
         {
-            return _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId);
+            return await _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId).ToListAsync();
         }
 
-        public async void UpdateInformation(ClientInformationSheet sheet)
+        public async Task UpdateInformation(ClientInformationSheet sheet)
         {
-            _customerInformationRepository.UpdateAsync(sheet);
+            await _customerInformationRepository.UpdateAsync(sheet);
         }
 
-        public void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
+        public async Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
         {
             if (sheet == null)
                 throw new ArgumentNullException(nameof(sheet));
@@ -86,7 +87,7 @@ namespace TechCertain.Services.Impl
             NameValueCollection activityRevenueData = new NameValueCollection();
             foreach (string key in activityRevenue)
                 activityRevenueData.Add(key, collection[key].FirstOrDefault());
-            SaveRevenueData(sheet, activityRevenueData, null);
+            await SaveRevenueData(sheet, activityRevenueData, null);
 
             // get shared data
             var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
@@ -106,30 +107,30 @@ namespace TechCertain.Services.Impl
 
         #endregion
 
-        void ConfigureSharedData(ClientInformationSheet sheet)
-        {
-            // if not shared data object on UIS
-            if (sheet.SharedData == null)
-            {
-                // assume we don't have any shared data
-                var hasSharedData = false;
-                // check products for other UIS's, and see if they have a shared data object
-                foreach (var otherSheet in GetAllInformationFor(sheet.Owner))
-                {
-                    if (sheet.Product.ProductPackage.Contains(otherSheet.Product))
-                    {
-                        hasSharedData = true;
-                        sheet.SharedData = otherSheet.SharedData;
-                        break;
-                    }
-                }
-                // if no shared data object, create one
-                if (!hasSharedData)
-                    sheet.SharedData = new ClientSharedData(sheet.CreatedBy, sheet.Product.ProductPackage);
-            }
-        }
+        //void ConfigureSharedData(ClientInformationSheet sheet)
+        //{
+        //    // if not shared data object on UIS
+        //    if (sheet.SharedData == null)
+        //    {
+        //        // assume we don't have any shared data
+        //        var hasSharedData = false;
+        //        // check products for other UIS's, and see if they have a shared data object
+        //        foreach (var otherSheet in GetAllInformationFor(sheet.Owner))
+        //        {
+        //            if (sheet.Product.ProductPackage.Contains(otherSheet.Product))
+        //            {
+        //                hasSharedData = true;
+        //                sheet.SharedData = otherSheet.SharedData;
+        //                break;
+        //            }
+        //        }
+        //        // if no shared data object, create one
+        //        if (!hasSharedData)
+        //            sheet.SharedData = new ClientSharedData(sheet.CreatedBy, sheet.Product.ProductPackage);
+        //    }
+        //}
 
-        void SaveRevenueData(ClientInformationSheet sheet, NameValueCollection revenueData, User creatingUser)
+        async Task SaveRevenueData(ClientInformationSheet sheet, NameValueCollection revenueData, User creatingUser)
         {
             foreach (string key in revenueData.Keys)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHibernate;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,9 +10,9 @@ namespace TechCertain.Infrastructure.FluentNHibernate
         IQueryable<TEntity> FindAll();
         Task<TEntity> GetByIdAsync(string id);
         Task<TEntity> GetByIdAsync(Guid id);
-        void RemoveAsync(TEntity entity);
-        void UpdateAsync(TEntity entity);
-        void AddAsync(TEntity entity);
-        void SaveAsync(TEntity entity);
+        Task RemoveAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity);
+        Task AddAsync(TEntity entity);
+        //Task SaveAsync(TEntity entity);
     }
 }

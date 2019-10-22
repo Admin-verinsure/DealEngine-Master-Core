@@ -6713,6 +6713,7 @@ async: true
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
 
+        debugger;
         if ($('#paymentCreditCard').is(":checked")) {
             $.ajax({
                 type: "POST",

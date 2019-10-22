@@ -65,7 +65,7 @@ namespace TechCertain.WebUI.Controllers
             //    (extension == "gif") ? MediaTypeNames.Image.Gif :
             //    (extension == "tiff") ? MediaTypeNames.Image.Tiff : MediaTypeNames.Application.Octet;
             throw new Exception("This method needs to be re-written");
-            Image img = _fileService.GetImage(id);
+            Image img = _fileService.GetImage(id).Result;
             return File(img.Contents, img.ContentType, img.Name);
 
         }

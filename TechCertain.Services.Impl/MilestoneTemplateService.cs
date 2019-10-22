@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 
@@ -15,17 +17,17 @@ namespace TechCertain.Services.Impl
             _milestoneTemplateRepository = milestoneTemplateRepository;
         }
 
-        public MilestoneTemplate GetMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity)
+        public async Task<MilestoneTemplate> GetMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity)
         {
-            MilestoneTemplate milestoneTemplate = _milestoneTemplateRepository.FindAll().FirstOrDefault(m => m.ClientProgramme == clientprogrammeID && m.Activity == milestoneActivity);
+            MilestoneTemplate milestoneTemplate = await _milestoneTemplateRepository.FindAll().FirstOrDefaultAsync(m => m.ClientProgramme == clientprogrammeID && m.Activity == milestoneActivity);
             if (milestoneTemplate == null)
             {
-                milestoneTemplate = CreateMilestoneTemplate(clientprogrammeID, milestoneActivity);
+                milestoneTemplate = await CreateMilestoneTemplate(clientprogrammeID, milestoneActivity);
             }
             return milestoneTemplate;
         }
 
-        public MilestoneTemplate CreateMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity)
+        public async Task<MilestoneTemplate> CreateMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity)
         {
             MilestoneTemplate milestoneTemplate = new MilestoneTemplate();
             milestoneTemplate.ClientProgramme = clientprogrammeID;
@@ -39,7 +41,7 @@ namespace TechCertain.Services.Impl
             milestoneTemplate.Templates.Add("Agreement Status - Bound and Waiting Payment");
             milestoneTemplate.Templates.Add("Agreement Status - Bound and Waiting Invoice");
             
-            _milestoneTemplateRepository.AddAsync(milestoneTemplate);
+            await _milestoneTemplateRepository.AddAsync(milestoneTemplate);
 
             return milestoneTemplate;
         }

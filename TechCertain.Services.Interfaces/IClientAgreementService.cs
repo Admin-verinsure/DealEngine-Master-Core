@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IClientAgreementService
     {
-        void CreateClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet);
+        Task CreateClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet);
 
-        ClientAgreement GetAgreement(Guid clientAgreementId);
+        Task<ClientAgreement> GetAgreement(Guid clientAgreementId);
 
-		ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser);
+        Task<ClientAgreement> AcceptAgreement (ClientAgreement agreement, User acceptingUser);
     }
 }

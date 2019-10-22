@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -17,7 +20,7 @@ namespace TechCertain.Services.Impl
             _clientAgreementRepository = clientAgreementRepository;
         }
 
-        public void AddClientAgreementEndorsement(User createdBy, string name, string type, Product product, string value, int orderNumber, ClientAgreement clientAgreement)
+        public async Task AddClientAgreementEndorsement(User createdBy, string name, string type, Product product, string value, int orderNumber, ClientAgreement clientAgreement)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -34,20 +37,19 @@ namespace TechCertain.Services.Impl
 
             ClientAgreementEndorsement clientAgreementEndorsement = new ClientAgreementEndorsement(createdBy, name, type, product, value, orderNumber, clientAgreement);
             clientAgreement.ClientAgreementEndorsements.Add(clientAgreementEndorsement);
-            _clientAgreementEndorsementRepository.AddAsync(clientAgreementEndorsement);
-            _clientAgreementRepository.UpdateAsync(clientAgreement);
+            await _clientAgreementEndorsementRepository.AddAsync(clientAgreementEndorsement);
+            await _clientAgreementRepository.UpdateAsync(clientAgreement);
         }
 
 
-        public IQueryable<ClientAgreementEndorsement> GetAllClientAgreementEndorsementFor(ClientAgreement clientAgreement)
+        public async Task<List<ClientAgreementEndorsement>> GetAllClientAgreementEndorsementFor(ClientAgreement clientAgreement)
         {
-            var clientAgreementEndorsement = _clientAgreementEndorsementRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement);
-            return clientAgreementEndorsement;
+            return await _clientAgreementEndorsementRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement).ToListAsync();            
         }
 
-        public ClientAgreementEndorsement GetClientAgreementEndorsementBy(Guid clientAgreementEndorsementId)
+        public async Task<ClientAgreementEndorsement> GetClientAgreementEndorsementBy(Guid clientAgreementEndorsementId)
         {
-            return _clientAgreementEndorsementRepository.GetByIdAsync(clientAgreementEndorsementId).Result;
+            return await _clientAgreementEndorsementRepository.GetByIdAsync(clientAgreementEndorsementId);
         }
     }
 }

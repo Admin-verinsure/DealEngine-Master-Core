@@ -38,7 +38,7 @@ namespace DealEngine.Infrastructure.AppInitialize
 				new ApplicationGroup(null, "Client", true)
 			};
 
-				string [] groupNames = _groupRespoitory.FindAll ().Select (g => g.Name).ToArray ();
+				string [] groupNames = _groupRespoitory.FindAll().Select (g => g.Name).ToArray ();
 				foreach (var systemGroup in defaultSystemGroups) {
 					if (!groupNames.Contains (systemGroup.Name))
 						_groupRespoitory.AddAsync(systemGroup);
@@ -56,8 +56,8 @@ namespace DealEngine.Infrastructure.AppInitialize
 					//	Console.WriteLine ("Skip adding role: " + systemRole.Name);
 				}
 
-				var adminGroup = _groupRespoitory.FindAll ().FirstOrDefault (g => g.Name == "SystemAdmin");
-				foreach (var appRole in _roleRepository.FindAll ()) {
+				var adminGroup = _groupRespoitory.FindAll().FirstOrDefault (g => g.Name == "SystemAdmin");
+				foreach (var appRole in _roleRepository.FindAll()) {
 					if (!adminGroup.Roles.Contains (appRole))
 						adminGroup.Roles.Add(appRole);
 					//	Console.WriteLine ("Adding role (" + appRole.Name + ") to group: " + adminGroup.Name);

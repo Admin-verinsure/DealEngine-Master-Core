@@ -3,6 +3,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using System.Linq;
 using TechCertain.Services.Interfaces;
 using System;
+using System.Threading.Tasks;
 
 namespace TechCertain.Services.Impl
 {
@@ -15,7 +16,7 @@ namespace TechCertain.Services.Impl
             _proposalTemplateRepository = proposalTemplateRepository;
         }
 
-        public ProposalTemplate CreateProposalTemplate(Owner owner, string proposalTemplateName, bool isPrivate, Organisation organisation)
+        public async Task<ProposalTemplate> CreateProposalTemplate(Owner owner, string proposalTemplateName, bool isPrivate, Organisation organisation)
         {
             ProposalTemplate proposalTemplate = null;
 
@@ -24,7 +25,7 @@ namespace TechCertain.Services.Impl
                 throw new ArgumentException("There is already a proposal template with that name!");
             }
                 proposalTemplate = new ProposalTemplate(owner, owner, proposalTemplateName, isPrivate);
-                _proposalTemplateRepository.AddAsync(proposalTemplate);
+                await _proposalTemplateRepository.AddAsync(proposalTemplate);
 
             return proposalTemplate;
         }

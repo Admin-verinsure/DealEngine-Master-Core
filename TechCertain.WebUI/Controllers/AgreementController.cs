@@ -107,7 +107,7 @@ namespace TechCertain.WebUI.Controllers
 
         public async Task<IActionResult> AgreementBuilder()
         {
-            var templates = _informationService.GetAllTemplates();
+            var templates = _informationService.GetAllTemplates().Result;
             var products = _productRepository.FindAll();
 
 
@@ -158,7 +158,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AuthoriseReferrals(Guid sheetId,Guid informationsheet, Guid agreementId)
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(agreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(agreementId).Result;
             //  ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             //  model.ClientAgreementId = id;
             model.InformationSheetId = sheetId;
@@ -182,7 +182,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId).Result;
 
             var premium = 0.0m;
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -220,12 +220,12 @@ namespace TechCertain.WebUI.Controllers
                         if (bvterm.Boat.BoatWaterLocation != null)
                         {
 
-                            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
+                            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina").Result;
 
-                            var orgList = _organisationService.GetAllOrganisations().Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
+                            var orgList = _organisationService.GetAllOrganisations().Result.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
                             foreach (var org in orgList)
                             {
-                                InsuranceAttribute insuranceAttribute1 = _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
+                                InsuranceAttribute insuranceAttribute1 = _insuranceAttributeService.GetInsuranceAttributeByName(org.Name).Result;
                                 if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
                                 {
 
@@ -245,7 +245,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
 
             }
 
@@ -261,7 +261,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
             ClientProgramme programme = answerSheet.Programme;
@@ -280,7 +280,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> CancellAgreement(AgreementViewModel clientAgreementModel)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId).Result;
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -299,7 +299,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
 
             }
 
@@ -312,7 +312,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
             ClientProgramme programme = answerSheet.Programme;
@@ -330,7 +330,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeclineAgreement(AgreementViewModel clientAgreementModel)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId).Result;
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -348,7 +348,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
 
             }
 
@@ -360,7 +360,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> UndeclineAgreement(Guid id)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
 
             if (agreement != null)
             {
@@ -379,7 +379,7 @@ namespace TechCertain.WebUI.Controllers
                     AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                     uow.Commit();
+                    await uow.Commit().ConfigureAwait(false);
 
                 }
             }
@@ -496,7 +496,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.LastModifiedBy = CurrentUser;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
 
-                     uow.Commit();
+                     await uow.Commit().ConfigureAwait(false);
                 }
             }
             else
@@ -506,7 +506,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
 
-                     uow.Commit();
+                    await uow.Commit().ConfigureAwait(false);
                 }
             }
 
@@ -536,7 +536,7 @@ namespace TechCertain.WebUI.Controllers
                 strrecipentemail = user.Email;                
             }
 
-            _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
+            await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents).ConfigureAwait(false);
 
             return Redirect("~/Home/Index");
 
@@ -552,7 +552,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> EditTerms(Guid id)
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             model.ClientAgreementId = id;
             foreach (var terms in agreement.ClientAgreementTerms)
@@ -603,7 +603,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId).Result;
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
 
@@ -621,7 +621,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm.Excess = clientAgreementBVTerm.Excess;
                 bvTerm.Premium = clientAgreementBVTerm.Premium;
                 bvTerm.FSL = clientAgreementBVTerm.FSL;
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -630,7 +630,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMotorTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementMVTerm)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId).Result;
             //ClientAgreementTerm term = agreement.ClientAgreementTerms;
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
@@ -649,7 +649,7 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm.Excess = clientAgreementMVTerm.Excess;
                 mvTerm.Premium = clientAgreementMVTerm.Premium;
                 mvTerm.FSL = clientAgreementMVTerm.FSL;                
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -659,7 +659,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId).Result;
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             ClientAgreementBVTerm bvTerm = null;
@@ -677,7 +677,7 @@ namespace TechCertain.WebUI.Controllers
                     bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
                     term.BoatTerms.Remove(bvTerm);
                 }
-                 uow.Commit();                
+                await uow.Commit().ConfigureAwait(false);                
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -919,7 +919,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveDate(Guid id , string Startdate)
         {
-            ClientAgreement clientAgreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement clientAgreement = _clientAgreementService.GetAgreement(id).Result;
 
             var date = true;
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -952,7 +952,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, clientAgreement.ClientInformationSheet, clientAgreement, auditLogDetail);
                 clientAgreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
             }
 
            
@@ -1094,7 +1094,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
             ClientProgramme programme = answerSheet.Programme;
@@ -1122,7 +1122,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditAgreement(ViewAgreementViewModel model)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementId);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementId).Result;
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1136,7 +1136,7 @@ namespace TechCertain.WebUI.Controllers
                 agreement.ClientNumber = model.ClientNumber;
                 agreement.PolicyNumber = model.PolicyNumber;
 
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
             }
 
             return Redirect("/Agreement/ViewAcceptedAgreement/" + answerSheet.Programme.Id);
@@ -1148,7 +1148,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementRuleViewModel model = new ViewAgreementRuleViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
 
@@ -1178,16 +1178,16 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ViewAgreementRule(ViewAgreementRuleViewModel model)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID).Result;
             if (model.ClientAgreementRules.Any(mcr => mcr != null && mcr.Value != null))
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     foreach (ClientAgreementRuleViewModel crv in model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
                     {
-                        _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID).Value = crv.Value;
+                        crv.Value = _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID).Result.Value;
                     }
-                     uow.Commit();
+                     await uow.Commit().ConfigureAwait(false);
                 }
             }
 
@@ -1200,7 +1200,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementEndorsementViewModel model = new ViewAgreementEndorsementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
 
@@ -1235,12 +1235,11 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ViewAgreementEndorsement(ViewAgreementEndorsementViewModel model)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID);
+            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID).Result;
 
             if (model.EndorsementNameToAdd != null && model.EndorsementTextToAdd != null)
             {
-                _clientAgreementEndorsementService.AddClientAgreementEndorsement(CurrentUser, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.EndorsementTextToAdd, 100, agreement);
-
+                await _clientAgreementEndorsementService.AddClientAgreementEndorsement(CurrentUser, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.EndorsementTextToAdd, 100, agreement);
             }
 
             if (model.ClientAgreementEndorsements != null)
@@ -1249,10 +1248,10 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
                     {
-                        _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID).Value = cev.Value;
+                        cev.Value =  _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID).Result.Value;
                     }
 
-                     uow.Commit();
+                     await uow.Commit().ConfigureAwait(false);
                 }
 
             }
@@ -1280,13 +1279,13 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (SystemDocument template in agreement.Product.Documents)
                 {
-                    SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement);
+                    SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement).Result;
                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                     agreement.Documents.Add(renderedDoc);
                     _fileService.UploadFile(renderedDoc);
                 }
 
-                ClientAgreement reloadedAgreement = _clientAgreementService.GetAgreement(agreement.Id);
+                ClientAgreement reloadedAgreement = _clientAgreementService.GetAgreement(agreement.Id).Result;
                 foreach (SystemDocument doc in reloadedAgreement.Documents.Where(d => d.DateDeleted == null))
                 {
                     if (doc.DocumentType == 4)
@@ -1302,7 +1301,7 @@ namespace TechCertain.WebUI.Controllers
 
                 if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
                 { //Arcco
-                    _clientAgreementService.AcceptAgreement(agreement, CurrentUser);
+                   await _clientAgreementService.AcceptAgreement(agreement, CurrentUser);
                 }
 
             }
@@ -1314,7 +1313,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> SendPolicyDocuments(Guid id)
         {
-            ClientInformationSheet sheet = _customerInformationService.GetInformation(id);
+            ClientInformationSheet sheet = _customerInformationService.GetInformation(id).Result;
 
             // TODO - rewrite to save templates on a per programme basis
 
@@ -1384,7 +1383,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.LastModifiedBy = CurrentUser;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
 
-                     uow.Commit();
+                    await uow.Commit().ConfigureAwait(false);
                 }
             }
             else
@@ -1394,7 +1393,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
 
-                     uow.Commit();
+                    await uow.Commit().ConfigureAwait(false);
                 }
             }
 
@@ -1424,7 +1423,7 @@ namespace TechCertain.WebUI.Controllers
                 strrecipentemail = user.Email;                
             }
 
-            _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
+            await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents).ConfigureAwait(false);
 
             return Redirect("~/Home/Index");
 
@@ -1438,7 +1437,7 @@ namespace TechCertain.WebUI.Controllers
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
 
-                sheet = _customerInformationService.GetInformation(sheetId);
+                sheet = _customerInformationService.GetInformation(sheetId).Result;
             }
             
             ClientProgramme programme = sheet.Programme;
@@ -1448,11 +1447,11 @@ namespace TechCertain.WebUI.Controllers
 
             //Hardcoded variables
             decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
-            Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id);
-            Payment payment = _paymentService.GetPayment(programme.Id);
+            Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id).Result;
+            Payment payment = _paymentService.GetPayment(programme.Id).Result;
             if (payment == null)
             {
-                payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
+                payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway).Result;
             }
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1460,7 +1459,7 @@ namespace TechCertain.WebUI.Controllers
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
                 programme.InformationSheet.Status = "Bound";
-                 uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
             }
 
 
@@ -1470,7 +1469,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 ProgrammeId = programme.Id;
                 brokerFee += clientAgreement.BrokerFee;
-                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
+                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement).Result;
                 foreach (ClientAgreementTerm clientAgreementTerm in terms)
                 {
                     totalPremium += clientAgreementTerm.Premium;
@@ -1506,7 +1505,7 @@ namespace TechCertain.WebUI.Controllers
             //throw new Exception("Method will need to be re-written");
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out Guid sheetId))
             {
-                sheet = _customerInformationService.GetInformation(sheetId);
+                sheet = _customerInformationService.GetInformation(sheetId).Result;
             }
 
             //Hardcoded variables
@@ -1537,7 +1536,7 @@ namespace TechCertain.WebUI.Controllers
             var status = "Bound";
 
             ClientProgramme programme = _programmeRepository.GetByIdAsync(Id).Result;
-            Payment payment = _paymentService.GetPayment(programme.Id);
+            Payment payment = _paymentService.GetPayment(programme.Id).Result;
 
 
             PxPay pxPay = new PxPay(payment.PaymentMerchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, payment.PaymentMerchant.MerchantPaymentGateway.PxpayUserId, payment.PaymentMerchant.MerchantPaymentGateway.PxpayKey);
@@ -1549,7 +1548,7 @@ namespace TechCertain.WebUI.Controllers
             payment.IsPaid = responseOutput.Success == "1" ? true : false;
             payment.PaymentAmount = Convert.ToDecimal(responseOutput.AmountSettlement);
             payment.PaymentCurrency = "NZD";
-            _paymentService.Update(payment);
+            await _paymentService.Update(payment).ConfigureAwait(false);
 
             if (!payment.IsPaid)
             {
@@ -1562,7 +1561,7 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
-                             uow.Commit();
+                            await uow.Commit().ConfigureAwait(false);
                         }
                     }
 
@@ -1576,7 +1575,7 @@ namespace TechCertain.WebUI.Controllers
 
                     {
                         programme.InformationSheet.Status = status;
-                         uow.Commit();
+                        await uow.Commit().ConfigureAwait(false);
                     }
                 }
                 //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
@@ -1620,7 +1619,7 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
-                             uow.Commit();
+                            await uow.Commit().ConfigureAwait(false);
                         }
                     }
 
@@ -1636,7 +1635,7 @@ namespace TechCertain.WebUI.Controllers
                         //render docs except invoice
                         if (template.DocumentType != 4)
                         {
-                            SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement);
+                            SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement).Result;
                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                             agreement.Documents.Add(renderedDoc);
                             documents.Add(renderedDoc);
@@ -1673,7 +1672,7 @@ namespace TechCertain.WebUI.Controllers
                     if (programme.InformationSheet.Status != status)
                     {
                         programme.InformationSheet.Status = status;
-                         uow.Commit();
+                        await uow.Commit().ConfigureAwait(false);
                     }
                 }
             }
@@ -1751,48 +1750,48 @@ namespace TechCertain.WebUI.Controllers
                 if (product != null)
                 {
                     //
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1CRate", "North Island City Rate for Category 1C", product, "2.75") { OrderNumber = 5 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1CRate", "North Island Town Rate for Category 1C", product, "2.5") { OrderNumber = 6 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1CRate", "South Island City Rate for Category 1C", product, "2.225") { OrderNumber = 7 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1CRate", "South Island Town Rate for Category 1C", product, "2") { OrderNumber = 8 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1CRate", "North Island City Rate for Category 1C", product, "2.75") { OrderNumber = 5 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1CRate", "North Island Town Rate for Category 1C", product, "2.5") { OrderNumber = 6 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1CRate", "South Island City Rate for Category 1C", product, "2.225") { OrderNumber = 7 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1CRate", "South Island Town Rate for Category 1C", product, "2") { OrderNumber = 8 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1UAPRate", "North Island City Rate for Category 1UAP", product, "4") { OrderNumber = 9 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1UAPRate", "North Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 10 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1UAPRate", "South Island City Rate for Category 1UAP", product, "4") { OrderNumber = 11 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1UAPRate", "South Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 12 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1UAPRate", "North Island City Rate for Category 1UAP", product, "4") { OrderNumber = 9 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1UAPRate", "North Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 10 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1UAPRate", "South Island City Rate for Category 1UAP", product, "4") { OrderNumber = 11 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1UAPRate", "South Island Town Rate for Category 1UAP", product, "4") { OrderNumber = 12 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1PRate", "North Island City Rate for Category 1P", product, "2") { OrderNumber = 13 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1PRate", "North Island Town Rate for Category 1P", product, "1.5") { OrderNumber = 14 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1PRate", "South Island City Rate for Category 1P", product, "1.5") { OrderNumber = 15 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1PRate", "South Island Town Rate for Category 1P", product, "1") { OrderNumber = 16 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1PRate", "North Island City Rate for Category 1P", product, "2") { OrderNumber = 13 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1PRate", "North Island Town Rate for Category 1P", product, "1.5") { OrderNumber = 14 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1PRate", "South Island City Rate for Category 1P", product, "1.5") { OrderNumber = 15 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1PRate", "South Island Town Rate for Category 1P", product, "1") { OrderNumber = 16 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1RRate", "North Island City Rate for Category 1R", product, "4.75") { OrderNumber = 17 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1RRate", "North Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 18 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1RRate", "South Island City Rate for Category 1R", product, "4.75") { OrderNumber = 19 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1RRate", "South Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 20 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY1RRate", "North Island City Rate for Category 1R", product, "4.75") { OrderNumber = 17 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN1RRate", "North Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 18 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY1RRate", "South Island City Rate for Category 1R", product, "4.75") { OrderNumber = 19 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN1RRate", "South Island Town Rate for Category 1R", product, "4.75") { OrderNumber = 20 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY2Rate", "North Island City Rate for Category 2", product, "1.5") { OrderNumber = 21 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN2Rate", "North Island Town Rate for Category 2", product, "1.25") { OrderNumber = 22 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY2Rate", "South Island City Rate for Category 2", product, "1.25") { OrderNumber = 23 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN2Rate", "South Island Town Rate for Category 2", product, "1") { OrderNumber = 24 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY2Rate", "North Island City Rate for Category 2", product, "1.5") { OrderNumber = 21 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN2Rate", "North Island Town Rate for Category 2", product, "1.25") { OrderNumber = 22 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY2Rate", "South Island City Rate for Category 2", product, "1.25") { OrderNumber = 23 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN2Rate", "South Island Town Rate for Category 2", product, "1") { OrderNumber = 24 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY3Rate", "North Island City Rate for Category 3", product, "1.75") { OrderNumber = 25 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN3Rate", "North Island Town Rate for Category 3", product, "1.25") { OrderNumber = 26 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY3Rate", "South Island City Rate for Category 3", product, "1.25") { OrderNumber = 27 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN3Rate", "South Island Town Rate for Category 3", product, "1") { OrderNumber = 28 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITY3Rate", "North Island City Rate for Category 3", product, "1.75") { OrderNumber = 25 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWN3Rate", "North Island Town Rate for Category 3", product, "1.25") { OrderNumber = 26 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITY3Rate", "South Island City Rate for Category 3", product, "1.25") { OrderNumber = 27 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWN3Rate", "South Island Town Rate for Category 3", product, "1") { OrderNumber = 28 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITYSVRate", "North Island City Rate for Category SV", product, "0.25") { OrderNumber = 29 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWNSVRate", "North Island Town Rate for Category SV", product, "0.25") { OrderNumber = 30 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITYSVRate", "South Island City Rate for Category SV", product, "0.25") { OrderNumber = 31 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWNSVRate", "South Island Town Rate for Category SV", product, "0.25") { OrderNumber = 32 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NICITYSVRate", "North Island City Rate for Category SV", product, "0.25") { OrderNumber = 29 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "NITOWNSVRate", "North Island Town Rate for Category SV", product, "0.25") { OrderNumber = 30 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SICITYSVRate", "South Island City Rate for Category SV", product, "0.25") { OrderNumber = 31 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "SITOWNSVRate", "South Island Town Rate for Category SV", product, "0.25") { OrderNumber = 32 }).ConfigureAwait(false);
                     ///
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFee", "FSL Fee for Vehicle under 3.5T", product, "6.08") { OrderNumber = 33 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3Rate", "FSL Rate for Vehicle over 3.5T", product, "0.076") { OrderNumber = 34 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFeeAfter1July", "FSL Fee for Vehicle under 3.5T After 1 July", product, "6.08") { OrderNumber = 35 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3RateAfter1July", "FSL Rate for Vehicle over 3.5T After 1 July", product, "0.076") { OrderNumber = 36 });
-                     _ruleRepository.AddAsync(new Rule(CurrentUser, "PaymentPremium", "Premium Payment", product, "Monthly") { OrderNumber = 40 });
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFee", "FSL Fee for Vehicle under 3.5T", product, "6.08") { OrderNumber = 33 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3Rate", "FSL Rate for Vehicle over 3.5T", product, "0.076") { OrderNumber = 34 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLUNDERFeeAfter1July", "FSL Fee for Vehicle under 3.5T After 1 July", product, "6.08") { OrderNumber = 35 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "FSLOVER3RateAfter1July", "FSL Rate for Vehicle over 3.5T After 1 July", product, "0.076") { OrderNumber = 36 }).ConfigureAwait(false);
+                    await _ruleRepository.AddAsync(new Rule(CurrentUser, "PaymentPremium", "Premium Payment", product, "Monthly") { OrderNumber = 40 }).ConfigureAwait(false);
 
-                     await uow.Commit();
+                     await uow.Commit().ConfigureAwait(false);
                 }
             }
 
@@ -1803,7 +1802,7 @@ namespace TechCertain.WebUI.Controllers
         {
             if (id == Guid.Empty)
                 throw new ArgumentNullException(nameof(id));
-            ClientInformationSheet answerSheet = _customerInformationService.GetInformation(id);
+            ClientInformationSheet answerSheet = _customerInformationService.GetInformation(id).Result;
             if (answerSheet == null)
                 throw new Exception(string.Format("RenderDocuments: No Answer Sheet found for [{0}]", id));
             ClientProgramme clientProgramme = answerSheet.Programme;
@@ -1822,7 +1821,7 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (Document template in agreement.Product.Documents)
                 {
-                    Document renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement);
+                    Document renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement).Result;
                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                     agreement.Documents.Add(renderedDoc);
                     _fileService.UploadFile(renderedDoc);

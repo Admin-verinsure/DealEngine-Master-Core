@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -17,7 +20,7 @@ namespace TechCertain.Services.Impl
             _productRepository = productRepository;
         }
 
-        public void AddRule(User createdBy, string name, string description, Product product, string value)
+        public async Task AddRule(User createdBy, string name, string description, Product product, string value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -30,19 +33,19 @@ namespace TechCertain.Services.Impl
 
 			Rule rule = new Rule(createdBy, name, description, product, value);
             product.Rules.Add(rule);
-            _ruleRepository.AddAsync(rule);
-            _productRepository.UpdateAsync(product);
+            await _ruleRepository.AddAsync(rule);
+            await _productRepository.UpdateAsync(product);
         }
 
 
-        public IQueryable<Rule> GetAllRuleFor(Product product)
+        public async Task<List<Rule>> GetAllRuleFor(Product product)
         {
-            return _ruleRepository.FindAll().Where(cagt => cagt.Product == product);
+            return await _ruleRepository.FindAll().Where(cagt => cagt.Product == product).ToListAsync();
         }
 
-        public Rule GetRuleByID(Guid Id)
+        public async Task<Rule> GetRuleByID(Guid Id)
         {
-            return _ruleRepository.GetByIdAsync(Id).Result;
+            return await _ruleRepository.GetByIdAsync(Id);
         }
     }
 }

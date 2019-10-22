@@ -6,13 +6,13 @@ namespace TechCertain.Services.Interfaces
 {
     public interface IMilestoneService
     {
-        Milestone CreateMilestone(User createdBy, string programmeProcess, string activity, Programme programmeId);
-        Milestone GetMilestone(string milestoneType);
-        void CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, string template);
-        void CreateAdvisory(Milestone milestone, string advisory);
-        void CreateUserTask(Milestone milestone, UserTask userTask);
-        MilestoneTemplate GetMilestoneTemplate(Guid id, string milestoneActivity);
-        Milestone GetMilestoneProcess(Guid programmeId, string programmeProcess, string Activity);
+        Task<Milestone> CreateMilestone(User createdBy, string programmeProcess, string activity, Programme programmeId);
+        Task<Milestone> GetMilestone(string milestoneType);
+        Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, string template);
+        Task CreateAdvisory(Milestone milestone, string advisory);
+        Task CreateUserTask(Milestone milestone, UserTask userTask);
+        Task<MilestoneTemplate> GetMilestoneTemplate(Guid id, string milestoneActivity);
+        Task<Milestone> GetMilestoneProcess(Guid programmeId, string programmeProcess, string Activity);
         Task CloseMileTask(Guid id, string method);
     }
     

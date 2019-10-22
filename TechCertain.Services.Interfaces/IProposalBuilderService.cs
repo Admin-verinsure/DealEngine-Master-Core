@@ -1,9 +1,10 @@
-﻿using TechCertain.Domain.Entities;
+﻿using System.Threading.Tasks;
+using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IProposalBuilderService
     {
-        ProposalTemplate CreateProposalTemplate(Owner owner, string proposalTemplateName, bool isPrivate, Organisation organisation);
+        Task<ProposalTemplate> CreateProposalTemplate(Owner owner, string proposalTemplateName, bool isPrivate, Organisation organisation);
     }
 }

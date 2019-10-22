@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -18,7 +21,7 @@ namespace TechCertain.Services.Impl
             _clientAgreementRepository = clientAgreementRepository;
         }
 
-		public void AddClientAgreementRule (User createdBy, Rule rule, string name, string description, Product product, string value, int orderNumber, string ruleCategory, string ruleRoleType, bool isPublic, ClientAgreement clientAgreement)
+		public async Task AddClientAgreementRule (User createdBy, Rule rule, string name, string description, Product product, string value, int orderNumber, string ruleCategory, string ruleRoleType, bool isPublic, ClientAgreement clientAgreement)
 		{
 			if (string.IsNullOrWhiteSpace (name))
 				throw new ArgumentNullException (nameof (name));
@@ -35,25 +38,24 @@ namespace TechCertain.Services.Impl
 
             ClientAgreementRule clientAgreementRule = new ClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
             clientAgreement.ClientAgreementRules.Add(clientAgreementRule);
-            _clientAgreementRuleRepository.AddAsync(clientAgreementRule);
-            _clientAgreementRepository.UpdateAsync(clientAgreement);
+            await _clientAgreementRuleRepository.AddAsync(clientAgreementRule);
+            await _clientAgreementRepository.UpdateAsync(clientAgreement);
         }
 
-        public void AddClientAgreementRule(User createdBy, Rule rule, ClientAgreement clientAgreement)
+        public async Task AddClientAgreementRule(User createdBy, Rule rule, ClientAgreement clientAgreement)
         {
-			AddClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
+			await AddClientAgreementRule(createdBy, rule, rule.Name, rule.Description, rule.Product, rule.Value, rule.OrderNumber, rule.RuleCategory, rule.RuleRoleType, rule.IsPublic, clientAgreement);
         }
 
 
-        public IQueryable<ClientAgreementRule> GetAllClientAgreementRuleFor(ClientAgreement clientAgreement)
+        public async Task<List<ClientAgreementRule>> GetAllClientAgreementRuleFor(ClientAgreement clientAgreement)
         {
-            var clientAgreementRule = _clientAgreementRuleRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement);
-            return clientAgreementRule;
+            return await _clientAgreementRuleRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement).ToListAsync();            
         }
 
-        public ClientAgreementRule GetClientAgreementRuleBy(Guid clientAgreementRuleId)
+        public async Task<ClientAgreementRule> GetClientAgreementRuleBy(Guid clientAgreementRuleId)
         {
-            return _clientAgreementRuleRepository.GetByIdAsync(clientAgreementRuleId).Result;
+            return await _clientAgreementRuleRepository.GetByIdAsync(clientAgreementRuleId);
         }
     }
 }
