@@ -24,6 +24,9 @@ namespace TechCertain.Infrastructure.FluentNHibernate
 
         public async Task Commit()
         {
+            if (!_session.IsOpen)
+                _session = _sessionFactory.OpenSession();
+            _transaction = _session.BeginTransaction();
 
             try
             {               
