@@ -6709,11 +6709,13 @@ async: true
     }
 
     function submitPayment() {
-        //event.preventDefault();
+        debugger;
+         event.preventDefault();
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
 
         if ($('#paymentCreditCard').is(":checked")) {
+            debugger;
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
@@ -6731,17 +6733,24 @@ async: true
                     window.location = data.responseJSON.url;
                 });
         }
-        else if($('#paymentEGlobal').is(":checked")) {
+        else if ($('#paymentEGlobal').is(":checked")) {
+            debugger;
             $.ajax({
                 type: "POST",
-                url: '@Url.ActionLink("GenerateEGlobal", "Agreement")',
+                url: '@Url.Action("GenerateEGlobal", "Agreement")',
                 data: $("#tab1 :input").serialize({ json: true })
 
             })
                 .done(function (url) {
+                                        debugger;
+
                     $("#documentsSection").on('load', url, function () {
                     });
-                });
+                }).fail(function (a, s, d) {
+                               
+                    debugger;
+                               alert("Unable to save.");
+                           });
         }
     }
 </script>
