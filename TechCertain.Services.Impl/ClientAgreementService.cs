@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -36,7 +37,12 @@ namespace TechCertain.Services.Impl
 			return await _clientAgreementRepository.GetByIdAsync(clientAgreementId);
 		}
 
-		public async Task<ClientAgreement> AcceptAgreement (ClientAgreement agreement, User acceptingUser)
+        public async Task<ClientAgreement> GetAgreementbyReferenceNum(string reference)
+        {
+            return _clientAgreementRepository.FindAll().FirstOrDefault(cp => cp.ReferenceId == reference);
+        }
+
+        public async Task<ClientAgreement> AcceptAgreement (ClientAgreement agreement, User acceptingUser)
 		{
 			if (agreement == null)
 				throw new ArgumentNullException (nameof (agreement));

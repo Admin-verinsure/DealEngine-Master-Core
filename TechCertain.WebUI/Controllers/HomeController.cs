@@ -30,11 +30,12 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
         IClientInformationService _clientInformationService;
-
+        IClientAgreementService _clientAgreementService;
 
         public HomeController(IMapper mapper, IUserService userRepository,
-            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientInformationService clientInformationService,
+            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientAgreementService clientAgreementService, IClientInformationService clientInformationService,
             IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
+
             : base (userRepository)
         {            
             _customerInformationService = customerInformationService;
@@ -42,6 +43,8 @@ namespace TechCertain.WebUI.Controllers
             //_taskingService = taskingService;
             _clientInformationService = clientInformationService;
             _productRepositoy = productRepository;
+            _clientAgreementService = clientAgreementService;
+
             _programmeRepository = programmeRepository;
         }
 
@@ -482,6 +485,36 @@ namespace TechCertain.WebUI.Controllers
                             ReferenceId = referenceid// Move into ClientProgramme?
                         });
                     
+
+                }
+
+                ClientAgreement agreement = await _clientAgreementService.GetAgreementbyReferenceNum(value);
+
+                ClientInformationSheet sheet2 = await _clientInformationService.GetInformation(agreement.ClientInformationSheet.Id);
+                
+                if(sheet2 != null)
+                {
+                    ClientProgramme client = sheet2.Programme;
+
+                    string status = client.InformationSheet.Status;
+                    string referenceid = client.InformationSheet.ReferenceId;
+                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
+                    string localDateSubmitted = null;
+
+                    if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+                    {
+                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
+                    }
+
+                    deals.Add(new DealItem
+                    {
+                        Id = client.Id.ToString(),
+                        Name = sheet2.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+                        LocalDateCreated = localDateCreated,
+                        LocalDateSubmitted = localDateSubmitted,
+                        Status = status,
+                        ReferenceId = referenceid// Move into ClientProgramme?
+                    });
 
                 }
 
