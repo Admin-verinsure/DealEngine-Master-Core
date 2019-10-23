@@ -33,6 +33,7 @@ namespace TechCertain.WebUI.Areas.Identity
                     //.AddRoleManager<DealEngineRoleManager>()                    
                     //.AddClaimsPrincipalFactory<DealEngineClaimsPrincipalFactory>()
                     //.AddSignInManager<SignInManager<DealEngineUser>>()
+                    //.AddCla
                     .AddEntityFrameworkStores<DealEngineDBContext>();
 
                 //services.AddTransient<UserClaimsPrincipalFactory<DealEngineUser>, DealEngineClaimsPrincipalFactory>();

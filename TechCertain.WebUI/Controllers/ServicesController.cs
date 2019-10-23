@@ -2752,6 +2752,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 finally
                 {
+                    Thread.Sleep(2000);
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
 
@@ -2760,13 +2761,15 @@ namespace TechCertain.WebUI.Controllers
                     
                 }
 
+                Thread.Sleep(2000);
                 var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme"); //Marsh Coastguard
+                Thread.Sleep(2000);
                 var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
 
                 Thread.Sleep(2000);
                
                 User user3 = _userService.GetUserByEmail(email);
-                //Thread.Sleep(4000);
+                //Thread.Sleep(2000);
 
                 var reference = _referenceService.GetLatestReferenceId();
                 Thread.Sleep(2000);
@@ -2795,6 +2798,7 @@ namespace TechCertain.WebUI.Controllers
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
                     try
                     {
+                        //Thread.Sleep(2000);
                         await uow.Commit();
                     }
                     catch(Exception ex)
@@ -2807,15 +2811,15 @@ namespace TechCertain.WebUI.Controllers
                 //send out login email
                 //_emailService.SendSystemEmailLogin(email);
                 //send out instruction email
-                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                if (emailTemplate != null)
-                {
-                    //_emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
-                }
-                else
-                {
-                    throw new Exception("There is no Information Sheet Instruction email template been set up.");
-                }
+                //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                //if (emailTemplate != null)
+                //{
+                //    //_emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                //}
+                //else
+                //{
+                //    throw new Exception("There is no Information Sheet Instruction email template been set up.");
+                //}
                 //send out information sheet issue notification email
                //_emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                 

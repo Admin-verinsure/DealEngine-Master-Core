@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
-    public class GroupsController : BaseController
+    public class GroupsController : BaseController 
     {
 		/**
 		 * References
@@ -24,8 +24,11 @@ namespace TechCertain.WebUI.Controllers
 		 * https://github.com/TypecastException/AspNetGroupBasedPermissions
 		 */
 
-		IRolePermissionsService _roleService;
+		//IRolePermissionsService _roleService;
         RoleManager<IdentityRole> _roleManager;
+        UserManager<DealEngineUser> _userManager;
+        IClaimService _ClaimService;
+
 
 
         //private readonly RoleManager<IdentityRole> roleManager;
@@ -36,11 +39,17 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         public GroupsController(IUserService userService,
-            IRolePermissionsService rolePermissionsService, RoleManager<IdentityRole> roleManager)
+            UserManager<DealEngineUser> userManager,
+            IClaimService claimService,
+            RoleManager<IdentityRole> roleManager)
             : base(userService)
         {
-            _roleService = rolePermissionsService;
+            //_roleService = rolePermissionsService;
+            _ClaimService = claimService;
             _roleManager = roleManager;
+            _userManager = userManager;
+            //_roleClaims = roleClaims;
+
         }
 
         [HttpGet]
@@ -54,17 +63,47 @@ namespace TechCertain.WebUI.Controllers
             return View (models);
         }
 
-		[HttpGet]
-        public async Task<IActionResult> Details(Guid id)
+        //[HttpGet]
+        //public async Task<IActionResult> Create()
+        //{
+        //    return View ();
+        //}
+
+
+        //[HttpGet]
+        //public IActionResult GetClaim()
+        //{
+        //    var models = new BaseListViewModel<GroupViewModel>();
+
+        //    //foreach (var claim in _roleClaims.GetClaimsAsync<System.Security.Claims.Claim>)
+        //    //{
+        //    //    models.Add(new GroupViewModel(group));
+        //    //}
+
+        //    return View(models);
+        //}
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateClaim(string Name)
         {
-            return View ();
+            if (ModelState.IsValid)
+            {
+                //_roleService.CreateGroup (model.Name);
+                IdentityRole identityRole = new IdentityRole
+                {
+                    Name = Name
+
+                };
+                System.Security.Claims.Claim cl = new System.Security.Claims.Claim(Name, Name);
+                //await _roleClaims.AddClaimAsync(identityRole, cl);
+
+
+            }
+            return View();
         }
 
-		[HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            return View ();
-        } 
+
 
         [HttpPost]
 		public async Task<IActionResult> Index(string Name)
@@ -157,109 +196,123 @@ namespace TechCertain.WebUI.Controllers
         //         }
         //     }
 
-        //[HttpGet]
-        //public ActionResult GroupRoles (Guid id)
-        //{
-        //	ApplicationGroup group = GetGroup (id);
-        //	var model = new SelectGroupRolesViewModel ();
-        //	model.GroupId = group.Id;
-        //	model.GroupName = group.Name;
-        //	foreach (var role in GetAllRoles()) {
-        //		var evm = new SelectRoleEditorViewModel (role);
-        //		evm.Selected = false;
-        //		model.Roles.Add (evm);
-        //	}
-        //	foreach (var groupRole in group.Roles) {
-        //		var selectedRole = model.Roles.FirstOrDefault (r => r.RoleId == groupRole.Id);
-        //		if (selectedRole != null)
-        //			selectedRole.Selected = true;
-        //	}
+        [HttpGet]
+        public async Task<ActionResult> GroupRoles(string id)
+        {
+            IdentityRole identityRole = await _roleManager.FindByIdAsync(id);
 
-        //	return View (model);
+            var model = new SelectClaimsRolesViewModel();
+            model.GroupId = Guid.Parse(identityRole.Id);
+            model.GroupName = identityRole.Name;
+            foreach (var claim in GetAllClaims())
+            {
+                var evm = new SelectClaimEditorViewModel(claim);
+                evm.Selected = false;
+                model.Claims.Add(evm);
+            }
+            //foreach (var groupclaim in identityRole..Claims)
+            //{
+            //    var selectedRole = model.Claims.FirstOrDefault(r => r.ClaimId == groupclaim.Id);
+            //    if (selectedRole != null)
+            //        selectedRole.Selected = true;
+            //}
+
+            return View(model);
+        }
+        AuthClaims GetClaim(Guid groupId)
+        {
+            return GetAllClaims().FirstOrDefault(g => g.Id == groupId);
+        }
+
+        IEnumerable<AuthClaims> GetAllClaims()
+        {
+            return _ClaimService.GetAllClaims();
+        }
+
+        //[HttpPost]
+        //public ActionResult GroupRoles(SelectGroupRolesViewModel model)
+        //{
+        //    try
+        //    {
+        //        List<Guid> selectedRoleIds = new List<Guid>();
+        //        List<Guid> unselectedRoleIds = new List<Guid>();
+
+        //        foreach (var roleModel in model.Roles)
+        //            if (roleModel.Selected)
+        //                selectedRoleIds.Add(roleModel.RoleId);
+        //            else
+        //                unselectedRoleIds.Add(roleModel.RoleId);
+
+        //        _ClaimService.AddClaimAsync.RemoveRolesFromGroup(unselectedRoleIds.ToArray(), model.GroupId);
+        //        _roleService.AddRolesToGroup(selectedRoleIds.ToArray(), model.GroupId);
+
+        //        return RedirectToAction("Index");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+        //        ModelState.AddModelError("", "Unable to modifiy roles for the given group.");
+        //        return View(model);
+        //    }
         //}
 
-        [HttpPost]
-		public ActionResult GroupRoles (SelectGroupRolesViewModel model)
-		{
-			try {
-				List<Guid> selectedRoleIds = new List<Guid> ();
-				List<Guid> unselectedRoleIds = new List<Guid> ();
+        //[HttpPost]
+        //public ActionResult SetUserGroups (SelectUserGroupsViewModel model)
+        //{
+        //	List<Guid> selectedGroupIds = new List<Guid> ();
+        //	List<Guid> unselectedGroupIds = new List<Guid> ();
 
-				foreach (var roleModel in model.Roles)
-					if (roleModel.Selected)
-						selectedRoleIds.Add (roleModel.RoleId);
-					else
-						unselectedRoleIds.Add (roleModel.RoleId);
+        //	foreach (var groupModel in model.Groups)
+        //		if (groupModel.Selected)
+        //			selectedGroupIds.Add (groupModel.GroupId);
+        //		else
+        //			unselectedGroupIds.Add (groupModel.GroupId);
 
-				_roleService.RemoveRolesFromGroup (unselectedRoleIds.ToArray(), model.GroupId);
-				_roleService.AddRolesToGroup (selectedRoleIds.ToArray(), model.GroupId);
+        //	_roleService.AddUserToGroups (model.UserId, selectedGroupIds.ToArray ());
+        //	_roleService.RemoveUserFromGroups (model.UserId, unselectedGroupIds.ToArray ());
 
-				return RedirectToAction ("Index");
-			}
-			catch (Exception ex) {
-				Elmah.ErrorSignal.FromCurrentContext ().Raise (ex);
-				ModelState.AddModelError ("", "Unable to modifiy roles for the given group.");
-				return View (model);
-			}
-		}
+        //	return RedirectToAction ("ManageUser", "Account", new { id = model.UserId });
+        //}
 
-		[HttpPost]
-		public ActionResult SetUserGroups (SelectUserGroupsViewModel model)
-		{
-			List<Guid> selectedGroupIds = new List<Guid> ();
-			List<Guid> unselectedGroupIds = new List<Guid> ();
+        //IEnumerable<ApplicationRole> GetAllRoles ()
+        //{
+        //	return _roleService.GetAllRoles ();
+        //}
 
-			foreach (var groupModel in model.Groups)
-				if (groupModel.Selected)
-					selectedGroupIds.Add (groupModel.GroupId);
-				else
-					unselectedGroupIds.Add (groupModel.GroupId);
+        //IEnumerable<ApplicationGroup> GetAllGroups ()
+        //{
+        //	return _roleService.GetAllGroups ();
+        //}
 
-			_roleService.AddUserToGroups (model.UserId, selectedGroupIds.ToArray ());
-			_roleService.RemoveUserFromGroups (model.UserId, unselectedGroupIds.ToArray ());
+        //ApplicationGroup GetGroup (Guid groupId)
+        //{
+        //	return GetAllGroups ().FirstOrDefault (g => g.Id == groupId);
+        //}
 
-			return RedirectToAction ("ManageUser", "Account", new { id = model.UserId });
-		}
+        ///// <summary>
+        ///// Checks to make sure that the current user belongs to one of the specified roles, otherwise a 403 Forbidden error is raised.
+        ///// </summary>
+        ///// <param name="roles">List of possible Roles the user can belong to.</param>
+        //protected void AuthorizeRoles (params string [] roles)
+        //{
+        //	bool hasAccess = false;
+        //	foreach (var role in roles) {
+        //		if (_roleService.DoesUserHaveRole (CurrentUser.UserName, role)) {
+        //			hasAccess = true;
+        //			break;
+        //		}
+        //	}
+        //	if (!hasAccess)
+        //		throw new HttpException ((int)HttpStatusCode.Forbidden, "Forbidden");
+        //}
 
-		IEnumerable<ApplicationRole> GetAllRoles ()
-		{
-			return _roleService.GetAllRoles ();
-		}
-
-		IEnumerable<ApplicationGroup> GetAllGroups ()
-		{
-			return _roleService.GetAllGroups ();
-		}
-
-		ApplicationGroup GetGroup (Guid groupId)
-		{
-			return GetAllGroups ().FirstOrDefault (g => g.Id == groupId);
-		}
-
-		///// <summary>
-		///// Checks to make sure that the current user belongs to one of the specified roles, otherwise a 403 Forbidden error is raised.
-		///// </summary>
-		///// <param name="roles">List of possible Roles the user can belong to.</param>
-		//protected void AuthorizeRoles (params string [] roles)
-		//{
-		//	bool hasAccess = false;
-		//	foreach (var role in roles) {
-		//		if (_roleService.DoesUserHaveRole (CurrentUser.UserName, role)) {
-		//			hasAccess = true;
-		//			break;
-		//		}
-		//	}
-		//	if (!hasAccess)
-		//		throw new HttpException ((int)HttpStatusCode.Forbidden, "Forbidden");
-		//}
-
-		///// <summary>
-		///// Checks to make sure the current user has the Admin role, otherwise raises a 403 Forbidden error.
-		///// </summary>
-		//protected void AuthorizeAdminOnly ()
-		//{
-		//	AuthorizeRoles ("Admin");
-		//}
+        ///// <summary>
+        ///// Checks to make sure the current user has the Admin role, otherwise raises a 403 Forbidden error.
+        ///// </summary>
+        //protected void AuthorizeAdminOnly ()
+        //{
+        //	AuthorizeRoles ("Admin");
+        //}
     }
 }
  

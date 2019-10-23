@@ -40,6 +40,11 @@ namespace TechCertain.WebUI
             services.AddBaseLdapPackage();
             services.AddResponseCaching();            
             services.AddServices();
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));
+            //});
+            //services.AddTransient(IRolePermissionsService);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

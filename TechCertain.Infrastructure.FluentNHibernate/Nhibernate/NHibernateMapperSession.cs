@@ -10,11 +10,11 @@ namespace TechCertain.Infrastructure.FluentNHibernate
     public class NHibernateMapperSession<TEntity> : IMapperSession<TEntity> where TEntity : class
     {
         private readonly ISession _session;
-        ILogger _logger;
+        //ILogger _logger;
 
-        public NHibernateMapperSession(ISession session, ILogger logger)
+        public NHibernateMapperSession(ISession session)
         {
-            _logger = logger;
+            //_logger = logger;
             _session = session;
         }
 
@@ -44,7 +44,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             }
             catch(Exception ex)
             {
-                _logger.LogDebug(ex.Message);
+                //_logger.LogDebug(ex.Message);
                 await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
@@ -64,7 +64,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex.Message);
+                //_logger.LogDebug(ex.Message);
                 await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
@@ -83,7 +83,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex.Message);
+                //_logger.LogDebug(ex.Message);
                 await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
@@ -102,7 +102,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex.Message);
+                //_logger.LogDebug(ex.Message);
                 await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }

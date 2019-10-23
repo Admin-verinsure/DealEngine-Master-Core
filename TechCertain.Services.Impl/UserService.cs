@@ -6,6 +6,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
+using NHibernate.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -90,7 +91,7 @@ namespace TechCertain.Services.Impl
             User user = null;
             try
             {
-                user = _userRepository.FindAll().FirstOrDefault(u => u.Email == email);
+                user = _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email).Result;
             }
             catch(Exception ex)
             {

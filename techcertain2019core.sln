@@ -36,6 +36,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Infrastructure.Payment", "TechCertain.Infrastructure.Payment\TechCertain.Infrastructure.Payment.csproj", "{00448825-FC66-49E7-9DF9-7421751BC8BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{1A636723-5713-4AA2-AAEC-DB0A2DA7787F}"
+	ProjectSection(SolutionItems) = preProject
+		TechCertain.Services.Impl\AuthenticationService.cs = TechCertain.Services.Impl\AuthenticationService.cs
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechCertain.Services.Impl", "TechCertain.Services.Impl\TechCertain.Services.Impl.csproj", "{45C6A0C9-18E6-41A4-B246-51EA80820945}"
 EndProject

@@ -526,7 +526,8 @@
                         t4.classList.add("active");
                     }
                 })
-                .error(function (jqXhr, textStatus, errorThrown) {
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
                     console.log(errorThrown);
                 });
         }
