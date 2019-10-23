@@ -2,8 +2,8 @@
 using System.IO;
 using System.Xml.Serialization;
 using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
-
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 {
@@ -28,7 +28,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
         /// </summary>
         /// <param name="objPolicy">Object policy.</param>
-        public string SerializePolicy(ClientProgramme programme, User currentUser)
+        public string SerializePolicy(ClientProgramme programme, User currentUser, IUnitOfWork _unitOfWork)
         {
             string xml = "Failed to Serialize programme ";
             EGlobalAPI = new EGlobalAPI();
@@ -45,6 +45,19 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         xml = EGlobalPolicy.Serialize();
                         //removed for testing
                         //SaveXml(xml, EGlobalPolicy.FTPFolder);
+
+                        //Save the request transaction
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(currentUser);
+                            eGlobalSubmission.SubmissionRequestXML = xml;
+                            eGlobalSubmission.EGlobalSubmissionPackage = package;
+                            programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+
+                            uow.Commit();
+
+                        }
+
                     }
                     else
                         throw new ArgumentNullException(nameof(EGlobalPolicy));
@@ -58,18 +71,30 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return xml;
         }
 
-        public string DeSerializeResponse(string byteResponse)
+        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User currentUser, IUnitOfWork _unitOfWork)
         {
             string xml = "Failed to Deserialize programme";            
             try
             {
-                EGlobalAPI.ProcessAsyncResult(byteResponse);
-                xml = "true";
+                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, currentUser, _unitOfWork);
+
+                ////Save the response transaction
+                //using (var uow = _unitOfWork.BeginUnitOfWork())
+                //{
+                //    EGlobalResponse eGlobalResponse = new EGlobalResponse(currentUser);
+                //    eGlobalResponse.ResponseXML = xml;
+                //    programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
+
+                //    uow.Commit();
+
+                //}
             }
             catch (Exception ex)
             {
                 xml += ex.InnerException + " " + ex.StackTrace;
             }
+
+            
 
             return xml;
         }

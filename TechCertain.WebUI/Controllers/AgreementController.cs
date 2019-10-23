@@ -44,13 +44,14 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<ClientProgramme> _programmeRepository;
         IUnitOfWork _unitOfWork;
         IInsuranceAttributeService _insuranceAttributeService;
+        IEGlobalSubmissionService _eGlobalSubmissionService;
 
         public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, IClientInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
                                    IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
-                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService)
+                                   IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService, IEGlobalSubmissionService eGlobalSubmissionService)
             : base (userRepository)
         {
             _informationService = informationService;
@@ -76,6 +77,7 @@ namespace TechCertain.WebUI.Controllers
             _programmeRepository = programmeRepository;
 
             _appSettingService = appSettingService;
+            _eGlobalSubmissionService = eGlobalSubmissionService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -1344,14 +1346,13 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet sheet = null;
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
-
                 sheet = _customerInformationService.GetInformation(sheetId).Result;
             }
             
             ClientProgramme programme = sheet.Programme;
             programme.PaymentType = "Credit Card";
 
-            var active = _httpClientService.GetEglobalStatus().Result;
+            //var active = _httpClientService.GetEglobalStatus().Result;
 
             //Hardcoded variables
             decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
@@ -1387,9 +1388,9 @@ namespace TechCertain.WebUI.Controllers
 
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
-            //string domainQueryString = WebConfigurationManager.AppSettings["DomainQueryString"].ToString();
             string domainQueryString = _appSettingService.domainQueryString;
-            
+            Guid example = Guid.NewGuid();
+
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
@@ -1397,6 +1398,7 @@ namespace TechCertain.WebUI.Controllers
                 TxnType = "Purchase",
                 UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
                 UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
+                TxnId = example.ToString("N").Substring(0, 16),
                 //TxnId = payment.Id.ToString("N").Substring(0, 16),
             };
 
@@ -1426,9 +1428,11 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
 
-            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser, _unitOfWork);
+
             var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
-            eGlobalSerializer.DeSerializeResponse(byteResponse);
+
+            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
 
             return Redirect("~/Agreement/ViewAcceptedAgreement/" + programme.Id.ToString());
         }
@@ -1531,19 +1535,20 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
 
+                    var user = CurrentUser;
 
                     agreement.Status = status;
 
                     foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
                     {
-                        doc.Delete(CurrentUser);
+                        doc.Delete(user);
                     }
                     foreach (SystemDocument template in agreement.Product.Documents)
                     {
                         //render docs except invoice
                         if (template.DocumentType != 4)
                         {
-                            SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement).Result;
+                            SystemDocument renderedDoc = _fileService.RenderDocument(user, template, agreement).Result;
                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                             agreement.Documents.Add(renderedDoc);
                             documents.Add(renderedDoc);

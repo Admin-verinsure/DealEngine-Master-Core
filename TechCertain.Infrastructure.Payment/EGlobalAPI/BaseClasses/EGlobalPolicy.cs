@@ -41,6 +41,24 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
         public string PaymentType;
 
 
+        /// <summary>
+		/// Returns true if we are running on a Unix style OS (including Linux and OS X), and false if Windows.
+		/// </summary>
+		/// <value><c>true</c> if is linux; otherwise, <c>false</c>.</value>
+		public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public string UserTimeZone
+        {
+            get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
+        }
+
         public EGlobalPolicy() {}
 
         public EGlobalPolicy(Package package, ClientProgramme programme)
@@ -86,7 +104,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                     else
                         description = Package.DescriptionNew;
                 }
-            
+
 
 
                 /*if (gv_transactionType == TransactionType.Lapse)
@@ -95,10 +113,20 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                 /*if (EGlobalPolicy.CancelledEffectiveDate != DateTime.MinValue || gv_transactionType == TransactionType.Cancel)
                     return Package.DescriptionCancel;*/
 
+                ClientAgreement objClientAgreement = null;
+                foreach (ClientAgreement clientAgreement in ClientProgramme.Agreements)
+                {
+                    if (objClientAgreement == null && clientAgreement.MasterAgreement)
+                    {
+                        objClientAgreement = clientAgreement;
+                    }
+                }
+
 
                 Description1 = string.Format(description,
-                            Package.DateCreated.GetValueOrDefault().ToString("dd MMMM yyyy"),
-                            Package.DateCreated.GetValueOrDefault().ToString("dd MMMM yyyy"));  //placeholder dates
+                            //objClientAgreement.InceptionDate.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")),
+                            objClientAgreement.InceptionDate.ToString("dd MMMM yyyy"),
+                            objClientAgreement.ExpiryDate.ToString("dd MMMM yyyy"));
 
                     return Description1;
                 }
@@ -162,15 +190,18 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
             {
                 get
                 {
-                //placeholder
-                string incomeClass = "invoice";  /*TCPolicy.Proposal.GetPropData("ClientIncomeClass");
-                    if (string.IsNullOrEmpty(incomeClass))
+                string incomeClass = ClientProgramme.EGlobalClientStatus;
+                if (string.IsNullOrEmpty(incomeClass))
+                {
+                    if (ClientProgramme.InformationSheet.IsRenewawl)
                     {
-                        if (TCPolicy.Proposal.RenewalProposal)
-                            return TransactionIncomeClass.Renewal;
-                        return TransactionIncomeClass.New;
-                    }*/
-                    return incomeClass;
+                        incomeClass = "Renewal";
+                    } else
+                    {
+                        incomeClass = "New";
+                    }
+                }
+                return incomeClass;
                 }
             }
 
@@ -373,7 +404,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                 }
                 set
                 {
-                    MultiRisk = Convert.ToInt32(value);//TC_Shared.CNullDec(value, -1.0m);
+                    MultiRisk = -1;
             }
             }
 

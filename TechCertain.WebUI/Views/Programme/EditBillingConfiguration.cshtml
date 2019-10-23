@@ -44,7 +44,7 @@
 
                                     <td align="center">
                                         <select class="browser-default custom-select custom-select-lg mb-3 col-sm-3" id="branch">
-                                            <option selected>ALK</option>
+                                            <option selected="selected" value="">-- Select here --</option>
                                             <option>AKL</option>
                                             <option>CHC</option>
                                             <option>DUN</option>
@@ -91,7 +91,8 @@
                                         <div class="form-group drop-down-list">
                                             <div class="col-sm-5" style="text-align: center">
                                                 <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
-                                                    <option selected>New</option>
+                                                    <option selected="selected" value="">-- Select here --</option>
+                                                    <option>New</option>
                                                     <option>Renew</option>
                                                 </select>
                                             </div>
@@ -156,12 +157,12 @@
             traditional: true,
             })
                 .done(function (data) {
-                    $.smallBox({
-                        title: "Invoice has been sent",
-                        color: "#5F895F",
-                        iconSmall: "fa fa-check bounce animated",
-                        timeout: 4000
-                    });
+                    //$.smallBox({
+                    //    title: "Invoice has been sent",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     alert("There was an error while trying to send your invoice.");
@@ -178,12 +179,13 @@
             traditional: true,
             })
                 .done(function (data) {
-                    $.smallBox({
-                        title: "billing configuration has been saved",
-                        color: "#5F895F",
-                        iconSmall: "fa fa-check bounce animated",
-                        timeout: 4000
-                    });
+                    //$.smallBox({
+                    //    title: "billing configuration has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
+                    alert("Saved.");
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     alert("There was an error while trying to save billing configuration.");
