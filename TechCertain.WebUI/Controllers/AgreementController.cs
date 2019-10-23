@@ -16,6 +16,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -1340,7 +1341,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GeneratePxPayment(IFormCollection collection)
+        public IActionResult GeneratePxPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -1351,7 +1352,7 @@ namespace TechCertain.WebUI.Controllers
             
             ClientProgramme programme = sheet.Programme;
             programme.PaymentType = "Credit Card";
-
+            
             //var active = _httpClientService.GetEglobalStatus().Result;
 
             //Hardcoded variables
@@ -1368,9 +1369,8 @@ namespace TechCertain.WebUI.Controllers
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
                 programme.InformationSheet.Status = "Bound";
-                await uow.Commit().ConfigureAwait(false);
+                uow.Commit();
             }
-
 
             //add check to count how many failed payments
             var ProgrammeId = sheetId;
@@ -1401,7 +1401,6 @@ namespace TechCertain.WebUI.Controllers
             };
 
             RequestOutput requestOutput = pxPay.GenerateRequest(input);
-
             //opens on same page - hard to return back to current process
             return Json(new { url = requestOutput.Url });
         }       
