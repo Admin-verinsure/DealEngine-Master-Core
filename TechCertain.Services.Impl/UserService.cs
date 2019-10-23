@@ -91,11 +91,8 @@ namespace TechCertain.Services.Impl
             User user = null;
             try
             {
-<<<<<<< HEAD
                 user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email);
-=======
-                user = _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email).Result;
->>>>>>> techcertain2019coreIdentity
+
             }
             catch(Exception ex)
             {

@@ -14,10 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
-<<<<<<< HEAD
-=======
 using TechCertain.Infrastructure.FluentNHibernate;
->>>>>>> techcertain2019coreIdentity
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
@@ -2695,14 +2692,10 @@ namespace TechCertain.WebUI.Controllers
 
                 try
                 {
-<<<<<<< HEAD
                     user = _userService.GetUserByEmail(email).Result;
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
-=======
-                    user = _userService.GetUserByEmail(email);
                     var username = user.FirstName;
->>>>>>> techcertain2019coreIdentity
                 }
                 catch (Exception ex)
                 {
@@ -2751,25 +2744,11 @@ namespace TechCertain.WebUI.Controllers
                     
                 }
 
-<<<<<<< HEAD
                 var programme = _programmeService.GetCoastGuardProgramme().Result;
                 var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation).ConfigureAwait(false);
                 var reference = _referenceService.GetLatestReferenceId().Result;
                 var sheet = _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference).Result;
-=======
-                Thread.Sleep(2000);
-                var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == "Demo Coastguard Programme"); //Marsh Coastguard
-                Thread.Sleep(2000);
-                var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
-
-                Thread.Sleep(2000);
                
-                User user3 = _userService.GetUserByEmail(email);
-                //Thread.Sleep(2000);
-
-                var reference = _referenceService.GetLatestReferenceId();
-                Thread.Sleep(2000);
->>>>>>> techcertain2019coreIdentity
 
                 await _referenceService.CreateClientInformationReference(sheet).ConfigureAwait(false);
 
@@ -2792,13 +2771,8 @@ namespace TechCertain.WebUI.Controllers
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
                     try
                     {
-<<<<<<< HEAD
                         Thread.Sleep(1000);
                         await uow.Commit().ConfigureAwait(false);
-=======
-                        //Thread.Sleep(2000);
-                        await uow.Commit();
->>>>>>> techcertain2019coreIdentity
                     }
                     catch(Exception ex)
                     {
@@ -2807,35 +2781,7 @@ namespace TechCertain.WebUI.Controllers
                    
                 }
 
-                ////send out login email
-                //_emailService.SendSystemEmailLogin(email);
-<<<<<<< HEAD
-                ////send out instruction email
-                //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                //if (emailTemplate != null)
-                //{
-                //    _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
-=======
-                //send out instruction email
-                //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                //if (emailTemplate != null)
-                //{
-                //    //_emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
->>>>>>> techcertain2019coreIdentity
-                //}
-                //else
-                //{
-                //    throw new Exception("There is no Information Sheet Instruction email template been set up.");
-                //}
-<<<<<<< HEAD
-                ////send out information sheet issue notification email
-                //_emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
-
-=======
-                //send out information sheet issue notification email
-               //_emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
-                
->>>>>>> techcertain2019coreIdentity
+              
             }
             else
             {

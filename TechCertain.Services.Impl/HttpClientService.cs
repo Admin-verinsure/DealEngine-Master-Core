@@ -12,19 +12,10 @@ namespace TechCertain.Services.Impl
 {
     public class HttpClientService : IHttpClientService
     {
-<<<<<<< HEAD
         IMapperSession<LogInfo> _logInfoMapperSession;
         public HttpClientService(IMapperSession<LogInfo> logInfoMapperSession)
         {
             _logInfoMapperSession = logInfoMapperSession;
-=======
-
-        IUnitOfWork _unitOfWork;
-
-        public HttpClientService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
->>>>>>> techcertain2019coreIdentity
         }
 
         public Task<string> Analyze(string request)

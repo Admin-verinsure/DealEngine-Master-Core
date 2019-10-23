@@ -9,12 +9,9 @@ using DealEngine.Infrastructure.AppInitialize.Services;
 using DealEngine.Infrastructure.AppInitialize.Repositories;
 using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
-<<<<<<< HEAD
 using DealEngine.Infrastructure.AppInitialize;
-=======
 using Microsoft.AspNetCore.Identity;
-using DealEngine.Infrastructure.Identity.Data;
->>>>>>> techcertain2019coreIdentity
+//using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI
 {
@@ -33,13 +30,8 @@ namespace TechCertain.WebUI
             services.AddMvc();
             services.AddRazorPages();
             services.AddNHibernate();
-<<<<<<< HEAD
             services.AddIdentityExtentions();
-=======
-            //services.AddIdentity<IdentityUser, IdentityRole>()
-            //        .AddEntityFrameworkStores<DealEngineDBContext>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
->>>>>>> techcertain2019coreIdentity
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
             services.AddRepositories();
