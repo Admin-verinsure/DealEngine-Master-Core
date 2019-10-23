@@ -186,7 +186,8 @@
                 $.ajax({
                     url: '@Url.Action("PaymentInformation", "Information")',
                     type: "POST",
-                    data: $("#tab1 :input").serialize({ json: true })
+                    data: $("#tab1 :input").serialize({ json: true }),
+                                       
                 })
                     .done(function (url) {
                         $("#pxpaymentView").load(url, function () {
@@ -6717,11 +6718,18 @@ async: true
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true })
-
+                data: $("#tab1 :input").serialize({ json: true }),
+                async: false,
+                beforeSend: function () {
+                    setTimeout(2000);
+                },
+                complete: function (data) {
+                    debugger;
+                    window.location = data.responseJSON.url;
+                },
             })
                 .done(function (data) {
-                    window.location = data.url;
+                    window.location = data.responseJSON.url;
                 });
         }
         else if($('#paymentEGlobal').is(":checked")) {
