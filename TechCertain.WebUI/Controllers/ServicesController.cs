@@ -15,6 +15,7 @@ using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
 using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -2634,7 +2635,7 @@ namespace TechCertain.WebUI.Controllers
         #region CoastGuardSelfReg
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+        public async Task<IActionResult> CoastGuardSelfRegAsync(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
 
@@ -2713,8 +2714,9 @@ namespace TechCertain.WebUI.Controllers
                 try
                 {
                     user = _userService.GetUserByEmail(email);
+                    var username = user.FirstName;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     string username = firstName + "_" + lastName;
 

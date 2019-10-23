@@ -18,7 +18,10 @@ namespace TechCertain.Services.Interfaces
 
 		IQueryable<ClientInformationSheet> GetAllInformationFor (Organisation owner);
 
-		void UpdateInformation (ClientInformationSheet sheet);
+        IQueryable<ClientInformationSheet> GetAllInformationFor(String referenceId);
+
+
+        void UpdateInformation (ClientInformationSheet sheet);
 
 		void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
 	}
