@@ -13,6 +13,7 @@ namespace TechCertain.Domain.Entities
         public virtual ClientInformationSheet InformationSheet { get; set; }
         public virtual IList<ClientAgreement> Agreements { get; protected set; }
         public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }
+        public virtual IList<EGlobalResponse> ClientAgreementEGlobalResponses { get; set; }
         public virtual string PaymentType { get; set; }
         public virtual User BrokerContactUser { get; set; }
         protected ClientProgramme() : this(null, null, null) { }
@@ -31,6 +32,7 @@ namespace TechCertain.Domain.Entities
 			BaseProgramme = baseProgramme;
 			Agreements = new List<ClientAgreement> ();
             ClientAgreementEGlobalSubmissions = new List<EGlobalSubmission>();
+            ClientAgreementEGlobalResponses = new List<EGlobalResponse>();
         }
 
 		public virtual IEnumerable<Product> GetSelectedProducts ()

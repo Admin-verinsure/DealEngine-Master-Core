@@ -12,6 +12,17 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         private string EbixUser;
         private string EbixDepartment; //branchcode
 
+        //New = 1,
+        //Endorse = 2,
+        //Update = 21,
+        //Reverse = 22,
+        //Renewal = 3,
+        //Lapse = 5,
+        //Cancel = 6,
+        private int gv_transactionType;
+        private string gv_strUISReference;
+        private string gv_strMasterAgreementReference;
+
         public EGlobalPolicyAPI(EGlobalPolicy _EGlobalPolicy, User _CurrentUser)
         {
             EGlobalPolicy = _EGlobalPolicy;
@@ -26,6 +37,17 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// <param name="risks">Risks.</param>
         public void CreatePolicyInvoice()
         {
+            ClientAgreement objClientAgreement = null;
+            foreach (ClientAgreement clientAgreement in EGlobalPolicy.ClientProgramme.Agreements)
+            {
+                if (objClientAgreement == null && clientAgreement.MasterAgreement)
+                {
+                    objClientAgreement = clientAgreement;
+                }
+            }
+
+            AutoDetectTransactionType(objClientAgreement);
+
             // Create the PolicyRisks
             GetPolicyRisks();
 
@@ -33,7 +55,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             GetInsurers();
 
             // Create the Policy
-            GetPolicy();
+            GetPolicy(objClientAgreement);
 
             // Create the SubAgents
             GetSubAgents();
@@ -153,12 +175,21 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// <param name="risks">Risks.</param>
         public virtual void CreateCancelPolicyInvoice(List<EBixPolicyRisk> risks)
         {
+            ClientAgreement objClientAgreement = null;
+            foreach (ClientAgreement clientAgreement in EGlobalPolicy.ClientProgramme.Agreements)
+            {
+                if (objClientAgreement == null && clientAgreement.MasterAgreement)
+                {
+                    objClientAgreement = clientAgreement;
+                }
+            }
+
             //PolicyRisks = risks;
 
             GetInsurers();
 
             // Create the Policy
-            GetPolicy();
+            GetPolicy(objClientAgreement);
 
             // Update Policy fields
             EGlobalPolicy.PaymentDirection = -1;
@@ -633,71 +664,63 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
            }*/
         }
 
-        /*void AutoDetectTransactionType()
+        void AutoDetectTransactionType(ClientAgreement objClientAgreement)
         {
-            TCQuote objPolicy = TCPolicy;
-            TCQuote objNextPolicy = null;
+            ClientInformationSheet ClientUIS = EGlobalPolicy.ClientProgramme.InformationSheet;
+            ClientInformationSheet previousClientUIS = null;
             // assume new transaction by default
-            gv_transactionType = TransactionType.New;
+            gv_transactionType = 1;
 
             bool bolTransactionTypeCalculated = false;
 
-            // temp hack
-            //            if (policy.SchemeProjectID != new Guid("2c05174b-d7f8-46b2-ad8d-52ae0923ebee"))
-            //                return;
             do
             {
                 // try and find the original policy
-                if (objPolicy.Proposal.RenewedFromProposal != null)
+                if (ClientUIS.PreviousInformationSheet != null)
                 {
-                    objNextPolicy = objPolicy.Proposal.RenewedFromProposal.ProposalPolicy;
+                    previousClientUIS = ClientUIS.PreviousInformationSheet;
 
-                    if (objNextPolicy == null)
+                    if (previousClientUIS == null)
                         break;
 
                     // if the previous policy's scheme project isn't using EGlobal, then stop 
-                    if (!objNextPolicy.SchemeProject.UsesEGlobal)
+                    if (!previousClientUIS.Programme.BaseProgramme.UsesEGlobal)
                         break;
 
 
-                    if (objNextPolicy.Cancelled || objNextPolicy.Expired)
+                    if (previousClientUIS.Status != "Bound")
                         break;
-
-                    // set the type to be renewal
-                    //                    if (objPolicy.InceptionDate != objNextPolicy.InceptionDate)
-                    //                        gv_transactionType = TransactionType.Renewal;
-                    //                    else
 
                     if (!bolTransactionTypeCalculated)
                     {
-                        if (objPolicy.InceptionDate != objNextPolicy.InceptionDate)
-                            gv_transactionType = TransactionType.Renewal;
+                        if (ClientUIS.PreviousInformationSheet.IsRenewawl)
+                            gv_transactionType = 3;
                         else
-                            gv_transactionType = TransactionType.Endorse;
+                            gv_transactionType = 2;
 
                         bolTransactionTypeCalculated = true;
                     }
                     // if there is a policy attached the the proposal's parent, set it as the current policy
-                    objPolicy = objNextPolicy;
+                    ClientUIS = previousClientUIS;
 
                     // otherise check to see if there if the current policy is the same as the original policy
-                    if (objPolicy.ID == TCPolicy.ID)
+                    if (ClientUIS.Id == previousClientUIS.Id)
                     {
                         // and if so, set the transaction type to true (since any existing policies haven't been submitted)
-                        gv_transactionType = TransactionType.New;
+                        gv_transactionType = 1;
                         break;
                     }
 
                     // get its reference id
-                    gv_intPolicyReference = objPolicy.ReferenceID;
+                    gv_strUISReference = ClientUIS.ReferenceId;
 
                 }
                 else
-                    objPolicy = null;
-            } while (objPolicy != null);
+                    ClientUIS = null;
+            } while (ClientUIS != null);
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Sets the type of the transaction.
         /// </summary>
         /// <param name="type">Enum transaction type</param>
@@ -928,36 +951,38 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         #region Section Assembly
 
-        protected virtual void GetPolicy()
+        protected virtual void GetPolicy(ClientAgreement objClientAgreement)
         {
             EBixPolicy EBixPolicy = new EBixPolicy();
 
             // Fill in its fields
+            gv_strUISReference = EGlobalPolicy.ClientProgramme.InformationSheet.ReferenceId;
+            gv_strMasterAgreementReference = objClientAgreement.ReferenceId;
 
             // Dates
-            EBixPolicy.PolicyDateTime = (DateTime)EGlobalPolicy.Package.DateCreated;
-            EBixPolicy.EffectiveDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder 
-            EBixPolicy.ExpiryDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
-            EBixPolicy.InceptionDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
-            EBixPolicy.LastRenewalDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
-            EBixPolicy.PolicyTime = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
-            EBixPolicy.TermsofTradeDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
-            EBixPolicy.RenewalDate = (DateTime)EGlobalPolicy.Package.DateCreated; //placeholder
+            EBixPolicy.PolicyDateTime = DateTime.Now;
+            EBixPolicy.EffectiveDate = DateTime.Now; //Change later 
+            EBixPolicy.ExpiryDate = objClientAgreement.ExpiryDate; 
+            EBixPolicy.InceptionDate = objClientAgreement.InceptionDate; 
+            EBixPolicy.LastRenewalDate = objClientAgreement.InceptionDate; 
+            EBixPolicy.PolicyTime = objClientAgreement.InceptionDate;
+            EBixPolicy.TermsofTradeDate = objClientAgreement.InceptionDate;
+            EBixPolicy.RenewalDate = objClientAgreement.ExpiryDate;
 
             // Set variables
             EBixPolicy.Branch = EGlobalPolicy.ClientProgramme.EGlobalBranchCode;
-            EBixPolicy.IncomeClass = EGlobalPolicy.ClientProgramme.EGlobalClientStatus; //placeholder
+            EBixPolicy.IncomeClass = EGlobalPolicy.IncomeClass;
 
             EBixPolicy.Department = EbixDepartment; //placeholder
             EBixPolicy.RiskCode = EGlobalPolicy.Package.RiskCode;
             EBixPolicy.UserIDServ = EbixUser;
             EBixPolicy.CreatedByUser = EbixUser;
             EBixPolicy.StatementDescription = EGlobalPolicy.GetDescription2;    // Invoice description
-            EBixPolicy.MultiRisk = 1;                                   // placeholder
-            EBixPolicy.ExternalSystemContractID = String.Format("TC-{0}-{1}", EGlobalPolicy.PolicyReference, EGlobalPolicy.ExtensionCode); //placeholder
+            EBixPolicy.MultiRisk = EGlobalPolicy.MultiRisk;                                   // set multisk flag
+            EBixPolicy.ExternalSystemContractID = String.Format("TC-{0}-{1}", gv_strMasterAgreementReference, EGlobalPolicy.ExtensionCode);
             EBixPolicy.Description = EGlobalPolicy.GetDescription1;
             EBixPolicy.ClientNumber = EGlobalPolicy.ClientProgramme.EGlobalClientNumber;
-            EBixPolicy.TransactionType = 1; //(int)gv_transactionType;
+            EBixPolicy.TransactionType = gv_transactionType;
             EBixPolicy.PremiumFunded = (int)EGlobalPolicy.PremiumFunding;
 
             // Set defaults
@@ -1038,8 +1063,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EBixPolicyRisk pr = new EBixPolicyRisk();
             pr.TCMergeCode = clientAgreementTerm.MergeCode;
             pr.TCClassOfBusiness = clientAgreementTerm.Id;
-            pr.RiskCode = clientAgreementTerm.RiskCode;
-            pr.SubCoverString = clientAgreementTerm.SubCoverString;
+            pr.RiskCode = packageProduct.PackageProductRiskCode;
+            pr.SubCoverString = packageProduct.PackageProductSubCover;
             pr.CoyPremium = (clientAgreementTerm.Premium * EGlobalPolicy.DiscountRate);
             pr.GSTPremium = (pr.CoyPremium * packageProduct.PackageProductProduct.TaxRate);
             pr.BrokerAmountDue = ((clientAgreementTerm.Brokerage / 100m) * pr.CoyPremium);

@@ -1521,18 +1521,11 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
 
-            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser);
-            //using (var uow = _unitOfWork.BeginUnitOfWork())
-            //{
-            //    EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
-            //    eGlobalSubmission.SubmissionRequestXML = xmlPayload;
-            //    programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser, _unitOfWork);
 
-            //    uow.Commit();
-
-            //}
             var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
-            eGlobalSerializer.DeSerializeResponse(byteResponse);
+
+            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
 
             return Redirect("~/Agreement/ViewAcceptedAgreement/" + programme.Id.ToString());
         }

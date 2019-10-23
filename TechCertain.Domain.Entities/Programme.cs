@@ -57,6 +57,8 @@ namespace TechCertain.Domain.Entities
 
         public virtual IList<Package> Packages { get; protected set; }
 
+        public virtual Boolean UsesEGlobal { get; set; }
+
         protected Programme () : this (null) {}
 
 		public Programme (User createdBy) : base(createdBy)
