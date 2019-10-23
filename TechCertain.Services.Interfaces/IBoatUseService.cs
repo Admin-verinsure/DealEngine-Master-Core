@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IBoatUseService
     {
-        BoatUse CreateNewBoatUse(BoatUse boatUse);
+        Task<BoatUse> CreateNewBoatUse(BoatUse boatUse);
 
-        void DeleteBoatUse(User deletedBy, BoatUse boatUse);
+        Task DeleteBoatUse(User deletedBy, BoatUse boatUse);
 
         IQueryable<BoatUse> GetAllBoatUses();
 
-        BoatUse GetBoatUse(Guid boatUseId);
+        Task<BoatUse> GetBoatUse(Guid boatUseId);
 
-        void UpdateBoatUse(BoatUse boatUse);
+        Task UpdateBoatUse(BoatUse boatUse);
 
     }
 }

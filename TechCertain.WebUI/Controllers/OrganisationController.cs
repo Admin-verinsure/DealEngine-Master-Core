@@ -120,20 +120,20 @@ namespace TechCertain.WebUI.Controllers
             var orgType = Request.Form["OrganisationType"];
             var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');          
 
-            OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName(orgType);
+            OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName(orgType).Result;
             if (organisationType == null)
             {
-                organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, orgType);
+                organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, orgType).Result;
             }
 
             var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
-            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
+            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName).Result;
             if (insuranceAttribute == null)
             {
-                insuranceAttribute = _insuranceAttributeService.CreateNewInsuranceAttribute(CurrentUser, insuranceAttributeName);
+                insuranceAttribute = _insuranceAttributeService.CreateNewInsuranceAttribute(CurrentUser, insuranceAttributeName).Result;
             }
 
-            Organisation organisation = _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
+            Organisation organisation = _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]).Result;
             if (organisation == null)
             {
                 organisation = new Organisation(CurrentUser, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
@@ -158,7 +158,7 @@ namespace TechCertain.WebUI.Controllers
             var userName = "TCMarinaAdmin"+ rand;
             try
             {
-                user = _userService.GetUser(Request.Form["OrganisationUser"]);
+                user = _userService.GetUser(Request.Form["OrganisationUser"]).Result;
             }
             catch (Exception)
             {

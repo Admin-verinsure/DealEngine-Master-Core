@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using NHibernate.Linq;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,17 +17,17 @@ namespace TechCertain.Services.Impl
             _informationSectionRepository = informationSectionRepository;
         }
 
-        public InformationSection CreateNewSection(User createdBy, string name, IList<InformationItem> items)
+        public async Task<InformationSection> CreateNewSection(User createdBy, string name, IList<InformationItem> items)
         {
 			InformationSection section = new InformationSection(createdBy, name, items);
 
-            _informationSectionRepository.AddAsync(section);
+            await _informationSectionRepository.AddAsync(section);
             return section;
         }
 
-        public IQueryable<InformationSection> GetAllSections()
+        public async Task<List<InformationSection>> GetAllSections()
         {
-            return _informationSectionRepository.FindAll();
+            return await _informationSectionRepository.FindAll().ToListAsync();
         }
     }
 }

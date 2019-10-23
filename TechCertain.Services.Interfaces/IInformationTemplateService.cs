@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IInformationTemplateService
     {
-        InformationTemplate CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections);
+        Task<InformationTemplate> CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections);
 
-        IQueryable<InformationTemplate> GetAllTemplates();
+        Task<List<InformationTemplate>> GetAllTemplates();
 
-		InformationTemplate GetTemplate (Guid templateId);
+        Task<InformationTemplate> GetTemplate(Guid templateId);
 
-		InformationTemplate AddProductTo (Guid templateId, Product product);
+        Task<InformationTemplate> AddProductTo(Guid templateId, Product product);
 
-		InformationTemplate AddProductTo (InformationTemplate template, Product product);
+        Task<InformationTemplate> AddProductTo(InformationTemplate template, Product product);
     }
 }

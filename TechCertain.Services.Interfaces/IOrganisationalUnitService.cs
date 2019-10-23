@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IOrganisationalUnitService
     {
-		IQueryable<OrganisationalUnit> GetAllOrganisationalUnits();
+        Task<List<OrganisationalUnit>> GetAllOrganisationalUnits();
 
-		OrganisationalUnit GetOrganisationalUnit(Guid organisationalUnitId);
+        Task<OrganisationalUnit> GetOrganisationalUnit(Guid organisationalUnitId);
 
-        OrganisationalUnit GetOrganisationalUnitByName (string organisationalUnitName);
+        Task<OrganisationalUnit> GetOrganisationalUnitByName (string organisationalUnitName);
 
     }
 }

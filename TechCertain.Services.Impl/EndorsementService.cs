@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
@@ -18,7 +20,7 @@ namespace TechCertain.Services.Impl
             _endorsementRepository = endorsementRepository;
         }
 
-        public void AddEndorsementAsync(User createdBy, string name, string type, Product product, string value)
+        public async Task AddEndorsementAsync(User createdBy, string name, string type, Product product, string value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -31,14 +33,14 @@ namespace TechCertain.Services.Impl
 
             Endorsement endorsement = new Endorsement(createdBy, name, type, product, value);
             product.Endorsements.Add(endorsement);
-            _endorsementRepository.AddAsync(endorsement);
-            _productRepository.UpdateAsync(product);
+            await _endorsementRepository.AddAsync(endorsement);
+            await _productRepository.UpdateAsync(product);
         }
 
 
-        public IQueryable<Endorsement> GetAllEndorsementFor(Product product)
+        public async Task<List<Endorsement>> GetAllEndorsementFor(Product product)
         {
-            return _endorsementRepository.FindAll().Where(cagt => cagt.Product == product);
+            return await _endorsementRepository.FindAll().Where(cagt => cagt.Product == product).ToListAsync();
         }
     }
 }

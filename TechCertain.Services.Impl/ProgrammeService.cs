@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -20,77 +22,77 @@ namespace TechCertain.Services.Impl
             _referenceService = referenceService;
         }
 
-		public ClientProgramme CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
+		public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
 		{
-			return CreateClientProgrammeFor(GetProgramme(programmeId), creatingUser, owner);
+			return await CreateClientProgrammeFor(GetProgramme(programmeId).Result, creatingUser, owner);
 		}
 
-		public ClientProgramme CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
+		public async Task<ClientProgramme> CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
 		{
-			ClientProgramme clientProgramme = new ClientProgramme (creatingUser, owner, programme);
-			Update(clientProgramme);
+			ClientProgramme clientProgramme = new ClientProgramme(creatingUser, owner, programme);
+			await Update(clientProgramme);
 			return clientProgramme;
 		}
 
-		public ClientProgramme GetClientProgramme(Guid id)
+		public async Task<ClientProgramme> GetClientProgramme(Guid id)
 		{
-			return _clientProgrammeRepository.GetByIdAsync(id).Result;
+			return await _clientProgrammeRepository.GetByIdAsync(id);
 		}
 
-		public IEnumerable<ClientProgramme> GetClientProgrammesByOwner(Guid ownerOrganisationId)
+		public async Task<List<ClientProgramme>> GetClientProgrammesByOwner(Guid ownerOrganisationId)
 		{
-			return _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId);
+			return await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
 		}
 
-		public IEnumerable<ClientProgramme> GetClientProgrammesForProgramme(Guid programmeId)
+		public async Task<IList<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
 		{
-			Programme programme = GetProgramme (programmeId);
+			Programme programme = GetProgramme(programmeId).Result;
 			if (programme == null)
 				return null;
 			return programme.ClientProgrammes;
 		}
 
-		public Programme GetProgramme(Guid id)
+		public async Task<Programme> GetProgramme(Guid id)
 		{
-			return _programmeRepository.GetByIdAsync(id).Result;
+			return await _programmeRepository.GetByIdAsync(id);
 		}
 
-		public IEnumerable<Programme> GetProgrammesByOwner (Guid ownerOrganisationId)
+		public async Task<Programme> GetProgrammesByOwner (Guid ownerOrganisationId)
 		{
-			return GetAllProgrammes ().Where (cp => cp.Owner.Id == ownerOrganisationId);
-		}
+            return await _programmeRepository.FindAll().FirstOrDefaultAsync(cp => cp.Owner.Id == ownerOrganisationId);
+        }
 
-		public IEnumerable<Programme> GetAllProgrammes ()
-		{
-			return _programmeRepository.FindAll ();
-		}
+        public async Task<Programme> GetCoastGuardProgramme()
+        {
+            return await _programmeRepository.FindAll().FirstOrDefaultAsync(p => p.Name == "Demo Coastguard Programme");
+        }
 
-		public async void Update (params ClientProgramme [] clientProgrammes)
+        public async Task Update (params ClientProgramme [] clientProgrammes)
 		{
             foreach (ClientProgramme clientProgramme in clientProgrammes)
             {
-                await _clientProgrammeRepository.AddAsync(clientProgramme);
+                await _clientProgrammeRepository.AddAsync(clientProgramme).ConfigureAwait(true);
             }
 
 		}
 
-		public ClientProgramme CloneForUpdate (ClientProgramme clientProgramme, User cloningUser)
+		public async Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser)
 		{
-			ClientProgramme newClientProgramme = CreateClientProgrammeFor (clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
+			ClientProgramme newClientProgramme = CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner).Result;
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
             newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
-            var reference = _referenceService.GetLatestReferenceId();
+            var reference = _referenceService.GetLatestReferenceId().Result;
             newClientProgramme.InformationSheet.ReferenceId = reference;
             newClientProgramme.InformationSheet.IsChange = true;
-            _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
+            await _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
 
             return newClientProgramme;
 		}
 
-		public ClientProgramme CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)
+		public async Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)
 		{
-			ClientProgramme newClientProgramme = CreateClientProgrammeFor (clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
+			ClientProgramme newClientProgramme = CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner).Result;
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
 

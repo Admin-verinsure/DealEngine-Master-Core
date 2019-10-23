@@ -92,10 +92,10 @@ namespace TechCertain.WebUI.Controllers
         {
             IList<string> emailTo = new List<string>();
 
-            Programme programme = _programmeService.GetProgramme(Guid.Parse(listModel.ProgrammeId));            
+            Programme programme = _programmeService.GetProgramme(Guid.Parse(listModel.ProgrammeId)).Result;            
             emailTo.Add(programme.BrokerContactUser.Address);            
 
-            var templates = _milestoneService.GetMilestoneTemplate(programme.Id, listModel.MilestoneActivity);
+            var templates = _milestoneService.GetMilestoneTemplate(programme.Id, listModel.MilestoneActivity).Result;
 
             MilestoneTemplateVM milestoneTemplateVM = new MilestoneTemplateVM
             {
@@ -139,17 +139,17 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SubmitMilestone(MilestoneBuilderViewModel model)
         {
 
-            Programme programme = _programmeService.GetProgramme(model.ProgrammeId);
-            Milestone milestone = _milestoneService.CreateMilestone(CurrentUser, "ProgrammeChange", "Quoted", programme);
+            Programme programme = _programmeService.GetProgramme(model.ProgrammeId).Result;
+            Milestone milestone = _milestoneService.CreateMilestone(CurrentUser, "ProgrammeChange", "Quoted", programme).Result;
 
             if (model.EmailTemplate.Body != null)
             {
-                _milestoneService.CreateEmailTemplate(CurrentUser, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.Type);
+                await _milestoneService.CreateEmailTemplate(CurrentUser, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.Type);
             }
 
             if (model.AdvisoryContent.Advisory != null)
             {
-                _milestoneService.CreateAdvisory(milestone, System.Net.WebUtility.HtmlDecode(model.AdvisoryContent.Advisory));
+                await _milestoneService.CreateAdvisory(milestone, System.Net.WebUtility.HtmlDecode(model.AdvisoryContent.Advisory));
             }
 
             if (model.UserTask.DueDate != null)
@@ -162,7 +162,7 @@ namespace TechCertain.WebUI.Controllers
                     IsActive = false,
                 };
 
-                _milestoneService.CreateUserTask(milestone, userTask);
+                await _milestoneService.CreateUserTask(milestone, userTask);
             }
             return null;
         

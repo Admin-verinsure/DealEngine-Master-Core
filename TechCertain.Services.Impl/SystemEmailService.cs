@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,7 +18,7 @@ namespace TechCertain.Services.Impl
             _systemEmailRepository = systemEmailRepository;
         }
 
-        public void AddNewSystemEmail(User createdBy, string systemEmailName, string internalNotes, string subject, string body, string systemEmailType)
+        public async Task AddNewSystemEmail(User createdBy, string systemEmailName, string internalNotes, string subject, string body, string systemEmailType)
         {
             if (string.IsNullOrWhiteSpace(systemEmailName))
                 throw new ArgumentNullException(nameof(systemEmailName));
@@ -24,35 +27,35 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(body))
                 throw new ArgumentNullException(nameof(body));
 
-            _systemEmailRepository.AddAsync(new SystemEmail(createdBy, systemEmailName, internalNotes, subject, body, systemEmailType));
-            CheckExists(systemEmailName);
+            if(CheckExists(systemEmailName).Result)
+                await _systemEmailRepository.AddAsync(new SystemEmail(createdBy, systemEmailName, internalNotes, subject, body, systemEmailType));
+            
         }
 
-        public bool CheckExists(string systemEmailName)
+        public async Task<bool> CheckExists(string systemEmailName)
         {
             if (string.IsNullOrWhiteSpace(systemEmailName))
                 throw new ArgumentNullException(nameof(systemEmailName));
-            return _systemEmailRepository.FindAll().FirstOrDefault(se => se.SystemEmailName == systemEmailName) != null;
+            return await _systemEmailRepository.FindAll().FirstOrDefaultAsync(se => se.SystemEmailName == systemEmailName) != null;
         }
 
-        public IQueryable<SystemEmail> GetAllSystemEmails()
+        public async Task<List<SystemEmail>> GetAllSystemEmails()
         {
-            var systemEmails = _systemEmailRepository.FindAll();
-            return systemEmails.Where(se => se.DateDeleted == null).OrderBy(se => se.SystemEmailName);
+            return await _systemEmailRepository.FindAll().Where(se => se.DateDeleted == null).OrderBy(se => se.SystemEmailName).ToListAsync();
         }
 
-        public void RemoveSystemEmail(User deletedBy, string systemEmailName)
+        public async Task RemoveSystemEmail(User deletedBy, string systemEmailName)
         {
-            SystemEmail systemEmail = GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailName == systemEmailName);
+            SystemEmail systemEmail = await _systemEmailRepository.FindAll().FirstOrDefaultAsync(se => se.SystemEmailName == systemEmailName && se.DateDeleted == null);
             if (systemEmail != null)
             {
-                _systemEmailRepository.AddAsync(systemEmail);
+                await _systemEmailRepository.RemoveAsync(systemEmail);
             }
         }
 
-        public SystemEmail GetSystemEmailByName(string name)
+        public async Task<SystemEmail> GetSystemEmailByName(string name)
         {
-            SystemEmail systemEmail = GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailName == name);
+            SystemEmail systemEmail = await _systemEmailRepository.FindAll().FirstOrDefaultAsync(se => se.SystemEmailName == name && se.DateDeleted == null);
             if (systemEmail != null)
             {
                 return systemEmail;
@@ -63,9 +66,9 @@ namespace TechCertain.Services.Impl
             
         }
 
-        public SystemEmail GetSystemEmailByType(string systemEmailType)
+        public async Task<SystemEmail> GetSystemEmailByType(string systemEmailType)
         {
-            SystemEmail systemEmail = GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == systemEmailType);
+            SystemEmail systemEmail = await _systemEmailRepository.FindAll().FirstOrDefaultAsync(se => se.SystemEmailType == systemEmailType && se.DateDeleted == null);
             if (systemEmail != null)
             {
                 return systemEmail;

@@ -3,6 +3,8 @@ using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
+using NHibernate.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -15,19 +17,19 @@ namespace TechCertain.Services.Impl
             _InsuranceAttributeRepository = insuranceAttributeRepository;
         }
 
-        public InsuranceAttribute CreateNewInsuranceAttribute(User user, string insuranceAttributeName)
+        public async Task<InsuranceAttribute> CreateNewInsuranceAttribute(User user, string insuranceAttributeName)
         {
             InsuranceAttribute insuranceAttribute = new InsuranceAttribute(user, insuranceAttributeName);
-            _InsuranceAttributeRepository.AddAsync(insuranceAttribute);
+            await _InsuranceAttributeRepository.AddAsync(insuranceAttribute);
 
             return insuranceAttribute;
         }
         #region IOrganisationTypeService implementation
 
 
-        public InsuranceAttribute GetInsuranceAttributeByName(string InsuranceAttributeName)
+        public async Task<InsuranceAttribute> GetInsuranceAttributeByName(string InsuranceAttributeName)
         {
-            return _InsuranceAttributeRepository.FindAll().FirstOrDefault(ot => ot.InsuranceAttributeName == InsuranceAttributeName);
+            return await _InsuranceAttributeRepository.FindAll().FirstOrDefaultAsync(ot => ot.InsuranceAttributeName == InsuranceAttributeName);
         }
 
         #endregion

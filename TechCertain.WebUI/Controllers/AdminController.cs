@@ -58,9 +58,9 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> Index ()
 		{
 
-            var privateServers = _privateServerService.GetAllPrivateServers ().ToList();
-            var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
-            var merchants = _merchantService.GetAllMerchants().ToList();
+            var privateServers = _privateServerService.GetAllPrivateServers().Result;
+            var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().Result;
+            var merchants = _merchantService.GetAllMerchants().Result;
             return View (new AdminViewModel() {
 				PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers),
                 PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways),
@@ -72,7 +72,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> PrivateServerList()
         {
-			var privateServers = _privateServerService.GetAllPrivateServers().ToList();
+			var privateServers = _privateServerService.GetAllPrivateServers().Result;
 
 			return PartialView ("_PrivateServerList", _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>> (privateServers));
 			//return Json(privateServers, JsonRequestBehavior.AllowGet) ;
@@ -81,17 +81,17 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
         public async Task<IActionResult> AddPrivateServer(PrivateServerViewModel privateServer)
         {
-			var privateServers = _privateServerService.GetAllPrivateServers ().ToList();
+			var privateServers = _privateServerService.GetAllPrivateServers().Result;
 				
             try
             {
 				// check to see if we are updating a private server
 				if (privateServers.Any(ps => ps.ServerAddress == privateServer.ServerAddress))
-					_privateServerService.RemoveServer(CurrentUser, privateServer.ServerAddress);  
+					await _privateServerService.RemoveServer(CurrentUser, privateServer.ServerAddress).ConfigureAwait(false);  
 
-				_privateServerService.AddNewServer(CurrentUser, privateServer.ServerName, privateServer.ServerAddress);
+				await _privateServerService.AddNewServer(CurrentUser, privateServer.ServerName, privateServer.ServerAddress).ConfigureAwait(false);
 				// reload servers
-				privateServers = _privateServerService.GetAllPrivateServers ().ToList();
+				privateServers = _privateServerService.GetAllPrivateServers().Result;
 				return PartialView ("_PrivateServerList", _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>> (privateServers));
             }
 			catch (Exception ex)
@@ -104,15 +104,14 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> DeletePrivateServer(string id)
 		{
-			if (_privateServerService.RemoveServer (CurrentUser, id))
-				return await PrivateServerList();
-			return await PrivateServerList();
+            await _privateServerService.RemoveServer(CurrentUser, id).ConfigureAwait(false);
+			return await PrivateServerList().ConfigureAwait(false);
 		}
 
         [HttpGet]
         public async Task<IActionResult> PaymentGatewayList()
         {
-            var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
+            var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().Result;
 
             return PartialView("_PaymentGatewayList", _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways));
         }
@@ -120,18 +119,18 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPaymentGateway(PaymentGatewayViewModel paymentGateway)
         {
-            var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
+            var paymentGateways = _paymentGatewayService.GetAllPaymentGateways().Result;
 
             try
             {
                 // check to see if we are updating a payment gateway
                 if (paymentGateways.Any(pgws => pgws.PaymentGatewayWebServiceURL == paymentGateway.PaymentGatewayWebServiceURL))
-                    _paymentGatewayService.RemovePaymentGateway(CurrentUser, paymentGateway.PaymentGatewayWebServiceURL);
+                    await _paymentGatewayService.RemovePaymentGateway(CurrentUser, paymentGateway.PaymentGatewayWebServiceURL).ConfigureAwait(false);
 
-                _paymentGatewayService.AddNewPaymentGateway(CurrentUser, paymentGateway.PaymentGatewayName, paymentGateway.PaymentGatewayWebServiceURL, paymentGateway.PaymentGatewayResponsePageURL,
-                    paymentGateway.PaymentGatewayType);
+                await _paymentGatewayService.AddNewPaymentGateway(CurrentUser, paymentGateway.PaymentGatewayName, paymentGateway.PaymentGatewayWebServiceURL, paymentGateway.PaymentGatewayResponsePageURL,
+                    paymentGateway.PaymentGatewayType).ConfigureAwait(false);
                 // reload payment gateways
-                paymentGateways = _paymentGatewayService.GetAllPaymentGateways().ToList();
+                paymentGateways = _paymentGatewayService.GetAllPaymentGateways().Result;
                 return PartialView("_PaymentGatewayList", _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways));
             }
             catch (Exception ex)
@@ -144,17 +143,17 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePaymentGateway(string id)
         {
-            _paymentGatewayService.RemovePaymentGateway(CurrentUser, id);            
-            return await PaymentGatewayList();
+            _paymentGatewayService.RemovePaymentGateway(CurrentUser, id).ConfigureAwait(false);            
+            return await PaymentGatewayList().ConfigureAwait(false);
         }
 
         [HttpGet]
         public async Task<IActionResult> MerchantList()
         {
-            var merchants = _merchantService.GetAllMerchants().ToList();
+            var merchants = _merchantService.GetAllMerchants().Result;
             MerchantViewModel merchantModel = new MerchantViewModel();
             var allPaymentGateways = new List<PaymentGatewayViewModel>();
-            foreach (PaymentGateway pg in _paymentGatewayService.GetAllPaymentGateways())
+            foreach (PaymentGateway pg in _paymentGatewayService.GetAllPaymentGateways().Result)
             {
                 allPaymentGateways.Add(PaymentGatewayViewModel.FromEntity(pg));
             }
@@ -166,17 +165,17 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMerchant(MerchantViewModel merchant)
         {
-            var merchants = _merchantService.GetAllMerchants().ToList();
+            var merchants = _merchantService.GetAllMerchants().Result;
 
             try
             {
                 if (merchants.Any(ms => ms.MerchantKey == merchant.MerchantKey))
-                    _merchantService.RemoveMerchant(CurrentUser, merchant.MerchantKey);
+                    await _merchantService.RemoveMerchant(CurrentUser, merchant.MerchantKey).ConfigureAwait(false);
 
-                _merchantService.AddNewMerchant(CurrentUser, merchant.MerchantUserName, merchant.MerchantPassword, merchant.MerchantKey, 
-                    merchant.MerchantReference);
+                await _merchantService.AddNewMerchant(CurrentUser, merchant.MerchantUserName, merchant.MerchantPassword, merchant.MerchantKey, 
+                    merchant.MerchantReference).ConfigureAwait(false);
                 // reload merchants
-                merchants = _merchantService.GetAllMerchants().ToList();
+                merchants = _merchantService.GetAllMerchants().Result;
                 return PartialView("_MerchantList", _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants));
             }
             catch (Exception ex)
@@ -189,9 +188,8 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteMerchant(string id)
         {
-            if (_merchantService.RemoveMerchant(CurrentUser, id))
-                return await MerchantList();
-            return await MerchantList();
+            await _merchantService.RemoveMerchant(CurrentUser, id).ConfigureAwait(false);                
+            return await MerchantList().ConfigureAwait(false);
         }
 
         //[HttpPost]
@@ -508,7 +506,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> SysEmailTemplate(String systemEmailType, String internalNotes)
         {
-            SystemEmail systemEmailTemplate = _systemEmailService.GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == systemEmailType);
+            SystemEmail systemEmailTemplate = _systemEmailService.GetSystemEmailByType(systemEmailType).Result;
              
             SystemEmailTemplateViewModel model = new SystemEmailTemplateViewModel();
 
@@ -537,7 +535,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SysEmailTemplate(SystemEmailTemplateViewModel model)
         {
-            SystemEmail systemEmailTemplate = _systemEmailService.GetAllSystemEmails().FirstOrDefault(se => se.SystemEmailType == model.SystemEmailType);
+            SystemEmail systemEmailTemplate = _systemEmailService.GetSystemEmailByType(model.SystemEmailType).Result;
 
             string systememailtemplatename = null;
 
@@ -618,12 +616,12 @@ namespace TechCertain.WebUI.Controllers
                     systemEmailTemplate.LastModifiedBy = CurrentUser;
                     systemEmailTemplate.LastModifiedOn = DateTime.UtcNow;
 
-                    uow.Commit();
+                    await uow.Commit().ConfigureAwait(false);
                 }
             }
             else
             {
-               _systemEmailService.AddNewSystemEmail(CurrentUser, systememailtemplatename, model.InternalNotes, model.Subject, model.Body, model.SystemEmailType);
+               await _systemEmailService.AddNewSystemEmail(CurrentUser, systememailtemplatename, model.InternalNotes, model.Subject, model.Body, model.SystemEmailType).ConfigureAwait(false);
             }
            
             return Redirect("~/Admin/Index");
@@ -640,8 +638,8 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SysExchange(OrganisationViewModel model)
         {
-            Organisation org = _organisationService.GetOrganisationByEmail(model.Email);            
-            User user = _userService.GetUserByEmail(model.Email);
+            Organisation org = _organisationService.GetOrganisationByEmail(model.Email).Result;            
+            User user = _userService.GetUserByEmail(model.Email).Result;
 
             return Redirect("~/Admin/Index");
 

@@ -4,6 +4,8 @@ using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
+using NHibernate.Linq;
+using System.Threading.Tasks;
 
 namespace TechCertain.Services.Impl
 {
@@ -27,17 +29,18 @@ namespace TechCertain.Services.Impl
 			throw new NotImplementedException ();
 		}
 
-        public OrganisationType CreateNewOrganisationType(User user, string organisationTypeName)
+        public async Task<OrganisationType> CreateNewOrganisationType(User user, string organisationTypeName)
         {
             OrganisationType OrganisationType = new OrganisationType(user, organisationTypeName);          
-            _organisationTypeRepository.AddAsync(OrganisationType);
+            await _organisationTypeRepository.AddAsync(OrganisationType);
 
             return OrganisationType;
         }
 
-        public OrganisationType GetOrganisationTypeByName(string organisationTypeName)
+        public async Task<OrganisationType> GetOrganisationTypeByName(string organisationTypeName)
         {
-            return _organisationTypeRepository.FindAll().FirstOrDefault(ot => ot.Name == organisationTypeName);
+            //return _organisationTypeRepository.FindAll().FirstOrDefault(ot => ot.Name == organisationTypeName);
+            return await _organisationTypeRepository.FindAll().FirstOrDefaultAsync(ot => ot.Name == organisationTypeName);
         }
 
         #endregion

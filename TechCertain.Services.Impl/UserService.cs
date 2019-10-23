@@ -6,6 +6,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
+using NHibernate.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -30,12 +31,12 @@ namespace TechCertain.Services.Impl
         //    //return await _userRepository.GetByIdAsync(_currentUserGuid);
         //}
 
-        public User GetUser (string username)
+        public async Task<User> GetUser (string username)
 		{
             User user = null;
             try
             {
-                user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == username);
+                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
             }
             catch (Exception ex)
             {
@@ -51,46 +52,46 @@ namespace TechCertain.Services.Impl
 				// in this case, we'll get the ldap user, and only if the uppercase'd ldap username doesn't exist in postgres, we'll add the user.
                 var localUser = _userRepository.FindAll().FirstOrDefault(u => u.UserName == user.UserName);
                 if (localUser == null)
-					Update (user);
+                    await Update(user);
 				return user;
 			}
 			user = _legacyLdapService.GetLegacyUser (username);
 			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
 			if (user != null) {
-				Create (user);
+                await Create(user);
 				return user;
 			}
 			// no user at all? Throw exception
 			throw new Exception ("User with username '" + username + "' does not exist in the system");
 		}
 
-		public User GetUser (Guid userId)
+		public async Task<User> GetUser (Guid userId)
 		{
-			User user = _userRepository.GetByIdAsync(userId).Result;
+			User user = await _userRepository.GetByIdAsync(userId);
 			// have a repo user? Return them
 			if (user != null)
 				return user;
 			user = _ldapService.GetUser (userId);
 			// have a ldap user but no repo? Update NHibernate & return them
 			if (user != null) {
-				Update (user);
+                await Update(user);
 				return user;
 			}
 			user = _legacyLdapService.GetLegacyUser (userId);
 			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
 			if (user != null) {
-				Create (user);
+                await Create(user);
 				return user;
 			}
 			throw new Exception ("User with Id '" + userId + "' does not exist in the system");
 		}
 
-		public User GetUserByEmail(string email)
+		public async Task<User> GetUserByEmail(string email)
 		{
             User user = null;
             try
             {
-                user = _userRepository.FindAll().FirstOrDefault(u => u.Email == email);
+                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email);
             }
             catch(Exception ex)
             {
@@ -103,39 +104,40 @@ namespace TechCertain.Services.Impl
 			user = _ldapService.GetUserByEmail (email);
 			// have a ldap user but no repo? Update NHibernate & return them
 			if (user != null) {
-				Update (user);
-				return user;
-			}
+				await Update (user);
+                return user;
+            }
 			//user = _legacyLdapService.GetLegacyUserByEmail (email);
 			// have a legacy ldap user only? Create them in Ldap & NHibernate & return them
 			if (user != null) {
-				Create (user);				
+				await Create (user);				
 			}
-            return user;            
-		}        
+            return user;
+        }        
 
-        public IEnumerable<User> GetAllUsers ()
+        public async Task<List<User>> GetAllUsers ()
 		{
-			return _userRepository.FindAll();
+			return await _userRepository.FindAll().ToListAsync();
 		}
 
-		public void Create (User user)
+		public async Task Create (User user)
 		{
             CreateDefaultUserOrganisation (user);
-			_ldapService.Create (user);
-			Update (user);
+            await _userRepository.AddAsync(user);
+            _ldapService.Create (user);
+			await Update (user);
 		}
 
-		public void Update (User user)
+		public async Task Update (User user)
 		{
-		    _userRepository.UpdateAsync(user);
+		    await _userRepository.UpdateAsync(user);
 			_ldapService.Update (user);
 		}
 
-        public void Delete (User user, User authorizingUser)
+        public async Task Delete (User user, User authorizingUser)
 		{
             user.Delete(authorizingUser, DateTime.UtcNow);
-            Update(user);
+            await _userRepository.RemoveAsync(user);
         }
 
 		public void SetPasswordPolicyFor (User user, string passwordPolicyName)
@@ -143,16 +145,16 @@ namespace TechCertain.Services.Impl
 			_ldapService.SetPasswordPolicyFor (user, passwordPolicyName);
 		}
 
-		public void IssueLocalBan (User user, User banningUser)
+		public async Task IssueLocalBan (User user, User banningUser)
 		{
 			user.Lock ();
-			Update (user);
+			await Update (user);
 		}
 
-		public void RemoveLocalban (User user, User banningUser)
+		public async Task RemoveLocalban (User user, User banningUser)
 		{
 			user.Unlock ();
-			Update (user);
+			await Update (user);
 		}
 
 		public bool IsUserLocalBanned (User user)
@@ -170,11 +172,6 @@ namespace TechCertain.Services.Impl
 			_ldapService.RemoveGlobalBan (user);
 		}
 
-		public User GetUser (string username, string password)
-		{
-			return GetUser (username);
-		}
-
 		public bool IsUserGlobalBanned (User user)
 		{
 			throw new NotImplementedException();
@@ -183,7 +180,7 @@ namespace TechCertain.Services.Impl
         protected void CreateDefaultUserOrganisation (User user)
 		{
             OrganisationType personalOrganisationType = null;
-            personalOrganisationType = _organisationTypeService.GetOrganisationTypeByName("personal");
+            personalOrganisationType = _organisationTypeService.GetOrganisationTypeByName("personal").Result;
             if (personalOrganisationType == null)
             {
                 personalOrganisationType = new OrganisationType(user, "personal");

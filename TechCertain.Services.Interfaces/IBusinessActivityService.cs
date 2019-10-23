@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -8,10 +9,10 @@ namespace TechCertain.Services.Interfaces
     {
         IQueryable<BusinessActivity> GetBusinessActivitiesByClassification (int classification);
         IQueryable<BusinessActivity> GetBusinessActivities();
-        void CreateBusinessActivity(BusinessActivity businessActivity);
-        BusinessActivity GetBusinessActivity(Guid Id);
-        void AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity);
-        object GetBusinessActivitiesByClientProgramme(Guid programmeId);
+        Task CreateBusinessActivity(BusinessActivity businessActivity);
+        Task<BusinessActivity> GetBusinessActivity(Guid Id);
+        Task AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity);
+        Task<BusinessActivity> GetBusinessActivitiesByClientProgramme(Guid programmeId);
     }
     
 }

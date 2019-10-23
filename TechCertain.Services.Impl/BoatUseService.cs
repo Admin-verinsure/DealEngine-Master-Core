@@ -16,16 +16,16 @@ namespace TechCertain.Services.Impl
             _boatUseRepository = boatUseRepository;            
         }
 
-        public BoatUse CreateNewBoatUse(BoatUse boatUse)
+        public async Task<BoatUse> CreateNewBoatUse(BoatUse boatUse)
         {
-            UpdateBoatUse(boatUse);
+            await UpdateBoatUse(boatUse);
             return boatUse;
         }
 
-        public void DeleteBoatUse(User deletedBy, BoatUse boatUse)
+        public async Task DeleteBoatUse(User deletedBy, BoatUse boatUse)
         {
             boatUse.Delete(deletedBy);
-            UpdateBoatUse(boatUse);
+            await UpdateBoatUse(boatUse);
         }
 
         public IQueryable<BoatUse> GetAllBoatUses()
@@ -34,7 +34,7 @@ namespace TechCertain.Services.Impl
             return _boatUseRepository.FindAll();
         }
 
-        public BoatUse GetBoatUse(Guid boatUseId)
+        public async Task<BoatUse> GetBoatUse(Guid boatUseId)
         {
             BoatUse boatUse = _boatUseRepository.GetByIdAsync(boatUseId).Result;
             // have a repo boatUse? Return it
@@ -43,14 +43,14 @@ namespace TechCertain.Services.Impl
             // have a ldap boatUse but no repo? Update NHibernate & return
             if (boatUse != null)
             {
-                UpdateBoatUse(boatUse);
+                await UpdateBoatUse(boatUse);
                 return boatUse;
             }
             // no boatUse at all? Throw exception
             throw new Exception("BoatUse with id [" + boatUseId + "] does not exist in the system");
         }
 
-        public async void UpdateBoatUse(BoatUse boatUse)
+        public async Task UpdateBoatUse(BoatUse boatUse)
         {
             await _boatUseRepository.AddAsync(boatUse);
         }

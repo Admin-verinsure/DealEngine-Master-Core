@@ -36,7 +36,7 @@ namespace TechCertain.Infrastructure.Tasking
 			if (organisation == null)
 				throw new ArgumentNullException (nameof (organisation));
 			
-			var tasks = _taskRespository.FindAll ().Where (t => t.For == organisation);
+			var tasks = _taskRespository.FindAll().Where(t => t.For == organisation);
 			return tasks.ToList ();
 		}
 
@@ -47,7 +47,7 @@ namespace TechCertain.Infrastructure.Tasking
 
 			List<UserTask> tasks = new List<UserTask> ();
 			foreach (Organisation org in user.Organisations)
-				tasks.AddRange (_taskRespository.FindAll ().Where (t => t.For == org));
+				tasks.AddRange (_taskRespository.FindAll().Where(t => t.For == org));
 			return tasks;
 		}
 

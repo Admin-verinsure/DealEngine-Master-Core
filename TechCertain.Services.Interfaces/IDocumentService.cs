@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
 	public interface IDocumentService
 	{
-		#region old
-		Old_PolicyDocumentTemplate SaveDocumentTemplate(Old_PolicyDocumentTemplate policyDocument);
+        #region old
+        Task<Old_PolicyDocumentTemplate> SaveDocumentTemplate(Old_PolicyDocumentTemplate policyDocument);
 
-		Old_PolicyDocumentTemplate GetDocumentTemplate (Guid id);
+        Task<Old_PolicyDocumentTemplate> GetDocumentTemplate (Guid id);
 
-		IList<Old_PolicyDocumentTemplate> GetDocumentTemplates();
+		Task<List<Old_PolicyDocumentTemplate>> GetDocumentTemplates();
 		#endregion
 
-		PolicyDocumentTemplate CreateDocumentTemplate(User createdBy, string documentTitle, IList<PolicyTermSection> sections);
+		Task<PolicyDocumentTemplate> CreateDocumentTemplate(User createdBy, string documentTitle, IList<PolicyTermSection> sections);
 
-		IEnumerable<PolicyDocumentTemplate> GetAllTemplates();
+		Task<List<PolicyDocumentTemplate>> GetAllTemplates();
 
-		string RenderDocument (string documentTitle, List<KeyValuePair<string, string>> mergeFields);
+		Task<string> RenderDocument (string documentTitle, List<KeyValuePair<string, string>> mergeFields);
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -9,9 +10,9 @@ namespace TechCertain.Services.Interfaces
 
         IEnumerable<OrganisationType> GetOrganisationTypes();
 
-        OrganisationType CreateNewOrganisationType(User user, string organisationTypeName);
+        Task<OrganisationType> CreateNewOrganisationType(User user, string organisationTypeName);
 
-        OrganisationType GetOrganisationTypeByName(string organisationTypeName);
+        Task<OrganisationType> GetOrganisationTypeByName(string organisationTypeName);
 
     }
 }

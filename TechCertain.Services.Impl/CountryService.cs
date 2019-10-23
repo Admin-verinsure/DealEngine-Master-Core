@@ -3,6 +3,7 @@ using TechCertain.Services.Interfaces;
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TechCertain.Services.Impl
 {
@@ -15,7 +16,7 @@ namespace TechCertain.Services.Impl
 
 		#region ICountryService implementation
 
-		public List<Country> GetAllCountries ()
+		public async Task<List<Country>> GetAllCountries ()
 		{
             return new List<Country>();
 		}

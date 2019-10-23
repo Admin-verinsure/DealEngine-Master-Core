@@ -9,17 +9,22 @@ namespace TechCertain.Infrastructure.FluentNHibernate
     {
         private ISession _session;
         private ITransaction _transaction;
+        private ISessionFactory _sessionFactory;
 
-        public NHibernateUnitOfWork(ISession session)
+        public NHibernateUnitOfWork(ISession session, ISessionFactory sessionFactory)
         {
             if (session == null) throw new ArgumentNullException("session");
             _session = session;
+            _sessionFactory = sessionFactory;
+            if (!_session.IsOpen)
+                _session = _sessionFactory.OpenSession();
             _transaction = _session.BeginTransaction();
 
         }
 
         public async Task Commit()
         {
+
             try
             {               
               _transaction.Commit();
@@ -59,7 +64,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
 
         public IUnitOfWork BeginUnitOfWork()
         {
-            return new NHibernateUnitOfWork(_session);
+            return new NHibernateUnitOfWork(_session, _sessionFactory);
         }
     }
 }

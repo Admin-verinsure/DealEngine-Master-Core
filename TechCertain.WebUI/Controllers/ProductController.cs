@@ -50,7 +50,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> MyProducts()
         {
 			try {
-				var products = _productRepository.FindAll ().Where (p => p.OwnerCompany == CurrentUser.PrimaryOrganisation.Id);
+				var products = _productRepository.FindAll().Where (p => p.OwnerCompany == CurrentUser.PrimaryOrganisation.Id);
 				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
 				foreach (Product p in products) {
 					ProductInfoViewModel model = new ProductInfoViewModel {
@@ -74,7 +74,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> AllProducts ()
 		{
 			try {
-				var products = _productRepository.FindAll ().Where(p => p.Public);
+				var products = _productRepository.FindAll().Where(p => p.Public);
 				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
 				foreach (Product p in products) {
 					ProductInfoViewModel model = new ProductInfoViewModel {
@@ -128,7 +128,7 @@ namespace TechCertain.WebUI.Controllers
 			//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
 				model.Description.BaseProducts.Add (new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString () });
 
-			foreach (Product product in _productRepository.FindAll ().Where (p => p.IsBaseProduct)) {
+			foreach (Product product in _productRepository.FindAll().Where (p => p.IsBaseProduct)) {
 				model.Description.BaseProducts.Add (new SelectListItem { Text = product.Name, Value = product.Id.ToString () });
 			}
 
@@ -142,7 +142,7 @@ namespace TechCertain.WebUI.Controllers
 			//	new RiskEntityViewModel { Insured = "Transport", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false },
 			//	new RiskEntityViewModel { Insured = "Marine", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false }
 			//};
-			foreach (RiskCategory risk in _riskRepository.FindAll ())
+			foreach (RiskCategory risk in _riskRepository.FindAll())
 				model.Risks.Add (new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
 
 			//model.InformationSheet = new ProductInformationSheetVM ();
@@ -156,12 +156,12 @@ namespace TechCertain.WebUI.Controllers
 			//	);
 
 			// set product settings
-			foreach (Document doc in _documentRepository.FindAll ().Where (d => d.OwnerOrganisation == CurrentUser.PrimaryOrganisation))
+			foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == CurrentUser.PrimaryOrganisation))
 				model.Settings.Documents.Add (new SelectListItem { Text = doc.Name, Value = doc.Id.ToString () });
 
 			model.Settings.InformationSheets = new List<SelectListItem> ();
 			model.Settings.InformationSheets.Add (new SelectListItem { Text = "Select Information Sheet", Value = "" });
-			var templates = _informationService.GetAllTemplates ();
+			var templates = _informationService.GetAllTemplates().Result;
 			foreach (var template in templates)
 				model.Settings.InformationSheets.Add (
 					new SelectListItem {
@@ -173,13 +173,13 @@ namespace TechCertain.WebUI.Controllers
 			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = "Select Product Owner", Value = "" });
 			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = CurrentUser.PrimaryOrganisation.Name, Value = CurrentUser.PrimaryOrganisation.Id.ToString () });
 			// loop over all non personal organisations and add them, excluding our own since its already added
-			foreach (Organisation org in _organisationRepository.FindAll ().Where (org => org.OrganisationType.Name != "personal").OrderBy (o => o.Name))
+			foreach (Organisation org in _organisationRepository.FindAll().Where (org => org.OrganisationType.Name != "personal").OrderBy (o => o.Name))
 				if (org.Id.ToString () != model.Settings.PossibleOwnerOrganisations [1].Value)
 					model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = org.Name, Value = org.Id.ToString () });
 
 			var programmes = new List<Programme>();
 			//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser.Organisations.Contains(p.Owner)))
-			foreach (Programme programme in _programmeRepository.FindAll ())
+			foreach (Programme programme in _programmeRepository.FindAll())
 				model.Settings.InsuranceProgrammes.Add (
 					new SelectListItem {
 						Text = programme.Name,
@@ -293,7 +293,7 @@ namespace TechCertain.WebUI.Controllers
                     prog.territory.Add(territory);
                 }
                 territory.Programmes = programm;
-                await _TerritoryRepository.AddAsync(territory);
+                _TerritoryRepository.AddAsync(territory);
 
                 return Redirect("~/Product/MyProducts");
                 //return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
@@ -361,7 +361,7 @@ namespace TechCertain.WebUI.Controllers
 					// temp, remove once the question builder is intergrated into the product builder
 					Guid informationTemplateId = Guid.Empty;
 					if (Guid.TryParse (model.Settings.SelectedInformationSheet, out informationTemplateId)) {
-						var sheet = _informationService.GetTemplate (informationTemplateId);
+						var sheet = _informationService.GetTemplate (informationTemplateId).Result;
 						if (sheet == null)
 							throw new Exception ("No UIS Template found for id " + informationTemplateId);
 						_informationService.AddProductTo (sheet.Id, product);
@@ -380,7 +380,7 @@ namespace TechCertain.WebUI.Controllers
                 if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                await _productRepository.AddAsync(product);
+                _productRepository.AddAsync(product);
 
 
                 return Redirect ("~/Product/MyProducts");
@@ -441,12 +441,12 @@ namespace TechCertain.WebUI.Controllers
 					IsBaseProduct = originalProduct.IsBaseProduct
 				};
 
-				foreach (Product product in _productRepository.FindAll ().Where (p => p.IsBaseProduct)) {
+				foreach (Product product in _productRepository.FindAll().Where (p => p.IsBaseProduct)) {
 					model.Description.BaseProducts.Add (new SelectListItem { Text = product.Name, Value = product.Id.ToString () });
 				}
 
 				model.Risks = new ProductRisksVM ();
-				foreach (RiskCategory risk in _riskRepository.FindAll ()) {
+				foreach (RiskCategory risk in _riskRepository.FindAll()) {
 					RiskCover productRisk = originalProduct.RiskCategoriesCovered.FirstOrDefault (r => r.BaseRisk == risk);
 					if (productRisk == null)
 						productRisk = new RiskCover (CurrentUser) { CoverAll = false, Loss = false, Interuption = false, ThirdParty = false };
@@ -472,11 +472,11 @@ namespace TechCertain.WebUI.Controllers
 
 				model.Settings = new ProductSettingsVM ();
 				model.Settings.Documents = new List<SelectListItem> ();
-				foreach (Document doc in _documentRepository.FindAll ().Where (d => d.OwnerOrganisation == CurrentUser.PrimaryOrganisation))
+				foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == CurrentUser.PrimaryOrganisation))
 					model.Settings.Documents.Add (new SelectListItem { Text = doc.Name, Value = doc.Id.ToString () });
 
 				model.Settings.InformationSheets = new List<SelectListItem> ();
-				var templates = _informationService.GetAllTemplates ();
+				var templates = _informationService.GetAllTemplates().Result;
 				foreach (var template in templates)
 					model.Settings.InformationSheets.Add (
 						new SelectListItem {
@@ -487,7 +487,7 @@ namespace TechCertain.WebUI.Controllers
 
 				model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = CurrentUser.PrimaryOrganisation.Name, Value = CurrentUser.PrimaryOrganisation.Id.ToString () });
 				// loop over all non personal organisations and add them, excluding our own since its already added
-				foreach (Organisation org in _organisationRepository.FindAll ().Where (org => org.OrganisationType.Name != "personal").OrderByDescending (o => o.Name))
+				foreach (Organisation org in _organisationRepository.FindAll().Where (org => org.OrganisationType.Name != "personal").OrderByDescending (o => o.Name))
 					if (org.Id.ToString () != model.Settings.PossibleOwnerOrganisations [0].Value)
 						model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = org.Name, Value = org.Id.ToString () });
 
@@ -509,7 +509,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> FindProducts ()
 		{
 			ProductRisksVM model = new ProductRisksVM ();
-			foreach (RiskCategory risk in _riskRepository.FindAll ())
+			foreach (RiskCategory risk in _riskRepository.FindAll())
 				model.Add (new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
 
 			return View (model);
@@ -519,7 +519,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> FindProducts (ProductRisksVM model)
 		{
 			BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
-			var riskCovers = _riskCoverRepository.FindAll ();
+			var riskCovers = _riskCoverRepository.FindAll();
 			foreach (var m in model) {
 				var covers = riskCovers.Where(rc => rc.BaseRisk.Id == m.Id &&
 				                              		rc.CoverAll == m.CoverAll &&

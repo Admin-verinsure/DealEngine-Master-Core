@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -18,7 +21,7 @@ namespace TechCertain.Services.Impl
             _programmeRepository = programmeRepository;
         }
 
-        public void AddEmailTemplate(User createdBy, string name, string type, string subject, string body, Product product, Programme programme)
+        public async Task AddEmailTemplate(User createdBy, string name, string type, string subject, string body, Product product, Programme programme)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -31,22 +34,22 @@ namespace TechCertain.Services.Impl
 
             EmailTemplate emailTemplate = new EmailTemplate(createdBy, name, type, subject, body, product, programme);
             programme.EmailTemplates.Add(emailTemplate);
-            _emailTemplateRepository.AddAsync(emailTemplate);
-            _programmeRepository.UpdateAsync(programme);
+            await _emailTemplateRepository.AddAsync(emailTemplate);
+            await _programmeRepository.UpdateAsync(programme);
 
         }
 
 
-        public IQueryable<EmailTemplate> GetEmailTemplateFor(Product product, string type)
+        public async Task<List<EmailTemplate>> GetEmailTemplateFor(Product product, string type)
         {
-            return _emailTemplateRepository.FindAll().Where(et => et.Product == product &&
-                                                                                    et.Type == type);
+            return await _emailTemplateRepository.FindAll().Where(et => et.Product == product &&
+                                                                                    et.Type == type).ToListAsync();
         }
 
-        public IQueryable<EmailTemplate> GetEmailTemplateFor(Programme programme, string type)
+        public async Task<List<EmailTemplate>> GetEmailTemplateFor(Programme programme, string type)
         {
-            return _emailTemplateRepository.FindAll().Where(et => et.Programme == programme &&
-                                                                                    et.Type == type);
+            return await _emailTemplateRepository.FindAll().Where(et => et.Programme == programme &&
+                                                                                    et.Type == type).ToListAsync();
         }
     }
 }

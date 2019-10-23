@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -16,23 +19,23 @@ namespace TechCertain.Services.Impl
             _organisationUnitRepository = organisationUnitRepository;
         }
 
-        public IQueryable<OrganisationalUnit> GetAllOrganisationalUnits()
+        public async Task<List<OrganisationalUnit>> GetAllOrganisationalUnits()
         {
-            return _organisationUnitRepository.FindAll();
+            return await _organisationUnitRepository.FindAll().ToListAsync();
         }
 
-        public OrganisationalUnit GetOrganisationalUnit(Guid organisationalUnitId)
+        public async Task<OrganisationalUnit> GetOrganisationalUnit(Guid organisationalUnitId)
         {
-            OrganisationalUnit organisationalUnit = _organisationUnitRepository.GetByIdAsync(organisationalUnitId).Result;
+            OrganisationalUnit organisationalUnit = await _organisationUnitRepository.GetByIdAsync(organisationalUnitId);
             // have a repo organisation? Return it
             if (organisationalUnit != null)
                 return organisationalUnit;
             throw new Exception("Organisation with id [" + organisationalUnitId + "] does not exist in the system");
         }
 
-        public OrganisationalUnit GetOrganisationalUnitByName(string organisationalUnitName)
+        public async Task<OrganisationalUnit> GetOrganisationalUnitByName(string organisationalUnitName)
         {
-            return _organisationUnitRepository.FindAll().FirstOrDefault(o => o.Name == organisationalUnitName);
+            return await _organisationUnitRepository.FindAll().FirstOrDefaultAsync(o => o.Name == organisationalUnitName);
         }
     }
 }

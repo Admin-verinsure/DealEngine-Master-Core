@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
 	public interface IProgrammeService
 	{
-		Programme GetProgramme (Guid id);
+        Task<Programme> GetProgramme (Guid id);
 
-		IEnumerable<Programme> GetProgrammesByOwner (Guid ownerOrganisationId);
+        Task<Programme> GetCoastGuardProgramme();
 
-		IEnumerable<Programme> GetAllProgrammes ();
+        Task<Programme> GetProgrammesByOwner (Guid ownerOrganisationId);
 
-		ClientProgramme GetClientProgramme (Guid id);
+		Task<ClientProgramme> GetClientProgramme (Guid id);
 
-		IEnumerable<ClientProgramme> GetClientProgrammesByOwner (Guid ownerOrganisationId);
+		Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId);
 
-		IEnumerable<ClientProgramme> GetClientProgrammesForProgramme (Guid programmeId);
+		Task<IList<ClientProgramme>> GetClientProgrammesForProgramme (Guid programmeId);
 
-		ClientProgramme CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);
+        Task<ClientProgramme> CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);
 
-		ClientProgramme CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
+        Task<ClientProgramme> CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
 
-		void Update (params ClientProgramme[] clientProgrammes);
+		Task Update (params ClientProgramme[] clientProgrammes);
 
-		ClientProgramme CloneForUpdate (ClientProgramme clientProgramme, User cloningUser);
+        Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser);
 
-		ClientProgramme CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
+        Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
 	}
 }
 

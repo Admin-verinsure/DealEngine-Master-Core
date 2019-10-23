@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,44 +18,41 @@ namespace TechCertain.Services.Impl
 			_privateServerRepository = privateServerRepository;
         }
         
-        public bool AddNewServer(User createdBy, string serverName, string serverAddress)
+        public async Task AddNewServer(User createdBy, string serverName, string serverAddress)
         {
             if (string.IsNullOrWhiteSpace(serverName))
 				throw new ArgumentNullException(nameof(serverName));
             if (string.IsNullOrWhiteSpace(serverName))
 				throw new ArgumentNullException(nameof(serverAddress));
-            _privateServerRepository.AddAsync(new PrivateServer(createdBy, serverName, serverAddress));
 
-
-            return CheckExists(serverAddress);
+            if(!CheckExists(serverAddress).Result)
+                await _privateServerRepository.AddAsync(new PrivateServer(createdBy, serverName, serverAddress));            
         }
 
         /// <exception cref="System.ArgumentNullException">Thrown when Server Address or Server Name is null, empty or a white space.</exception>
-        public bool CheckExists(string serverAddress)
+        public async Task<bool> CheckExists(string serverAddress)
 		{
 			// have we specified an address?
 			if (string.IsNullOrWhiteSpace(serverAddress))
 				throw new ArgumentNullException(nameof(serverAddress));
-			return _privateServerRepository.FindAll ().FirstOrDefault (ps => ps.ServerAddress == serverAddress) != null;
+			return await _privateServerRepository.FindAll().FirstOrDefaultAsync(ps => ps.ServerAddress == serverAddress) != null;
         }
 
-        public IQueryable<PrivateServer> GetAllPrivateServers()
+        public async Task<List<PrivateServer>> GetAllPrivateServers()
         {
 			// find all servers that haven't been deleted.
-			var servers = _privateServerRepository.FindAll ();
-			return servers.Where(ps => ps.DateDeleted == null).OrderBy(ps => ps.ServerName);
+			return await _privateServerRepository.FindAll().Where(ps => ps.DateDeleted == null).OrderBy(ps => ps.ServerName).ToListAsync();
         }
 
-        public bool RemoveServer(User deletedBy, string serverAddress)
+        public async Task RemoveServer(User deletedBy, string serverAddress)
         {
 			// find private server that matches the specified address, and delete it
-			PrivateServer server = GetAllPrivateServers ().FirstOrDefault (ps => ps.ServerAddress == serverAddress);
+			PrivateServer server = GetAllPrivateServers().Result.FirstOrDefault(ps => ps.ServerAddress == serverAddress);
 			if (server != null)
 			{
-                _privateServerRepository.AddAsync(server);
+                await _privateServerRepository.RemoveAsync(server);
             }
 			// check that it has been removed, and return the inverse result
-			return !CheckExists(serverAddress);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Novell.Directory.Ldap;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.BaseLdap.Converters;
 using TechCertain.Infrastructure.BaseLdap.Interfaces;
@@ -25,7 +27,7 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 
 		#region IOrganisationRepository implementation
 
-		public Organisation GetOrganisation(Guid organisationID)
+		public async Task<Organisation> GetOrganisation(Guid organisationID)
 		{
 			string organisationDn = _ldapConfigService.GetOrganisationDN (organisationID);
 			LdapEntry entry = GetLdapEntry(organisationDn);
@@ -36,7 +38,7 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			return LdapConverter.ToOrganisation(entry);
 		}
 
-		public Organisation CreateNewOrganisation(Organisation organisation)
+		public async Task<Organisation> CreateNewOrganisation(Organisation organisation)
 		{
 			string organisationDn = _ldapConfigService.GetOrganisationDN (organisation.Id);
 			LdapEntry entry = LdapConverter.ToEntry (organisation, organisationDn);
@@ -45,7 +47,7 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			//throw new NotImplementedException ();
 		}
 
-		public bool Update (Organisation organisation)
+		public async Task Update (Organisation organisation)
 		{
 //			var mods = LdapConverter.ToModificationArray(organisation);
 //			string organisationDn = _ldapConfigService.GetOrganisationDN (organisation.Id);
@@ -54,12 +56,12 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
 			throw new NotImplementedException ();
 		}
 
-        public Organisation GetOrganisation(string organisationName)
+        public async Task<Organisation> GetOrganisation(string organisationName)
         {
             throw new NotImplementedException();
         }
 
-        public bool DeleteOrganisation(User deletedBy, Organisation organisation)
+        public async Task DeleteOrganisation(User deletedBy, Organisation organisation)
 		{
 			throw new NotImplementedException ();
 		}
@@ -76,22 +78,22 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
             throw new NotImplementedException();
         }
 
-        public IQueryable<Organisation> GetAllOrganisations()
+        public async Task<List<Organisation>> GetAllOrganisations()
         {
             throw new NotImplementedException();
         }
 
-        public Organisation GetOrganisationByName(string organisationName)
+        public async Task<Organisation> GetOrganisationByName(string organisationName)
         {
             throw new NotImplementedException();
         }
 
-        public Organisation GetOrganisationByEmail(string organisationEmail)
+        public async Task<Organisation> GetOrganisationByEmail(string organisationEmail)
         {
             throw new NotImplementedException();
         }
 
-        public bool UpdateOrganisation(Organisation organisation)
+        public async Task UpdateOrganisation(Organisation organisation)
         {
             throw new NotImplementedException();
         }

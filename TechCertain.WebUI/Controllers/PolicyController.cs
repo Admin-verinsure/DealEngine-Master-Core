@@ -50,7 +50,7 @@ namespace TechCertain.WebUI.Controllers
 
 			documents.Documents = new List<PolicyDocumentViewModel> ();
 
-			foreach (Old_PolicyDocumentTemplate doc in _policyDocumentService.GetDocumentTemplates())
+			foreach (Old_PolicyDocumentTemplate doc in _policyDocumentService.GetDocumentTemplates().Result)
 			{
 				PolicyDocumentViewModel model = new PolicyDocumentViewModel ();
 				model.Creator = doc.Creator;
@@ -134,7 +134,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Risks ()
 		{
-			IQueryable<RiskCategory> risks = _riskRepository.FindAll ();
+			IQueryable<RiskCategory> risks = _riskRepository.FindAll();
 
 			IList<InsuranceRiskCategory> riskCategories = _mapper.Map<IList<InsuranceRiskCategory>> (risks);
 			IList<SelectListItem> selectList = new List<SelectListItem> ();
@@ -166,11 +166,11 @@ namespace TechCertain.WebUI.Controllers
 
 		public async Task<IActionResult> Risks (InsuranceRiskCategory category)
 		{
-			if (_riskRepository.FindAll ().FirstOrDefault (r => r.Name == category.Name) != null)
+			if (_riskRepository.FindAll().FirstOrDefault (r => r.Name == category.Name) != null)
 				return await Risks();
 
 			RiskCategory risk = new RiskCategory (CurrentUser, category.Name, category.Description);
-            await _riskRepository.AddAsync(risk);
+            _riskRepository.AddAsync(risk);
 
             return await Risks();
         }
@@ -192,12 +192,12 @@ namespace TechCertain.WebUI.Controllers
 			try 
 			{
 				// FIX - fields don't map nicely.
-				PolicyTermSection[] sections = _termBuilderService.GetTerms (sidx, sord);
+				List<PolicyTermSection> sections = _termBuilderService.GetTerms(sidx, sord).Result;
 				int perPage = Convert.ToInt32(rows);
 
 				JqGridViewModel model = new JqGridViewModel ();
 				model.Page = Convert.ToInt32(page);
-				model.TotalRecords = sections.Length;
+				model.TotalRecords = sections.Count;
 				model.TotalPages = ((model.TotalRecords - 1) / perPage) + 1;
 
 				foreach (PolicyTermSection doc in sections)
@@ -206,8 +206,8 @@ namespace TechCertain.WebUI.Controllers
 					{
 						JqGridRow row = new JqGridRow(doc.Id);
 						row.AddValue(doc.Name);
-						row.AddValue(_userService.GetUser(doc.Creator).FullName);
-						row.AddValue(_userService.GetUser(doc.Creator).FullName);
+						row.AddValue(_userService.GetUser(doc.Creator).Result.FullName);
+						row.AddValue(_userService.GetUser(doc.Creator).Result.FullName);
 						row.AddValue(doc.Description);
 						row.AddValue("");
 						row.AddValue(doc.Version);
@@ -237,22 +237,20 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ViewDocumentTemplate(string id)
 		{
 			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId);
+			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId).Result;
 
 			//Mapper.CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
 
-			PolicyDocumentViewModel model = _mapper.Map<PolicyDocumentViewModel>(document);
+			PolicyDocumentViewModel model = _mapper.Map<PolicyDocumentViewModel>(document);			
 
-			Console.WriteLine (id);
-
-			return View (model);
+			return View(model);
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> EditDocument(string id)
 		{
 			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId);
+			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId).Result;
 			// increment revision
 			document.SetRevision(document.Revision + 1);
 
@@ -267,7 +265,7 @@ namespace TechCertain.WebUI.Controllers
 		public bool DeprecateDocument(string id)
 		{
 			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId);
+			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId).Result;
 			document.SetDeprecated (true);
 			_policyDocumentService.SaveDocumentTemplate (document);
 			return true;
@@ -302,7 +300,7 @@ namespace TechCertain.WebUI.Controllers
 			mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", 		"18 Febuary 2016"));
 
 			// gets the most recent revision of the specified document and produces a complete version based off the merge fields
-			string document = _policyDocumentService.RenderDocument ("WAHAP Certificate", mergeFields);
+			string document = _policyDocumentService.RenderDocument ("WAHAP Certificate", mergeFields).Result;
 
 			return document;
 		}
@@ -401,16 +399,16 @@ namespace TechCertain.WebUI.Controllers
 			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
 
 			Guid termId = new Guid (id);
-			PolicyTermSection section = _termBuilderService.GetTerms ().FirstOrDefault (t => t.Id == termId);
+			PolicyTermSection section = _termBuilderService.GetTerm(termId).Result;
 
 			PolicySectionVM model = new PolicySectionVM ();
 			model.Description = new DescriptionSectionVM () {
 				Creator = section.Creator,
-				CreatorName = _userService.GetUser(section.Creator).FullName,
+				CreatorName = _userService.GetUser(section.Creator).Result.FullName,
 				Description = section.Description,
 				Name = section.Name,
 				Owner = section.Owner,
-				OwnerName = _userService.GetUser(section.Creator).FullName,
+				OwnerName = _userService.GetUser(section.Creator).Result.FullName,
 				Revision = section.Revision,
 				Version = section.Version
 			};
@@ -454,16 +452,16 @@ namespace TechCertain.WebUI.Controllers
 			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
 
 			Guid termId = new Guid (id);
-			PolicyTermSection section = _termBuilderService.GetTerms ().FirstOrDefault (t => t.Id == termId);
+            PolicyTermSection section = _termBuilderService.GetTerm(termId).Result;
 
 			PolicySectionVM model = new PolicySectionVM ();
 			model.Description = new DescriptionSectionVM () {
 				Creator = section.Creator,
-				CreatorName = _userService.GetUser(section.Creator).FullName,
+				CreatorName = _userService.GetUser(section.Creator).Result.FullName,
 				Description = section.Description,
 				Name = section.Name,
 				Owner = section.Owner,
-				OwnerName = _userService.GetUser(section.Creator).FullName,
+				OwnerName = _userService.GetUser(section.Creator).Result.FullName,
 				Revision = section.Revision + 1,
 				Version = section.Version
 			};

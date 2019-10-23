@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Impl
 {
     public interface IMilestoneTemplateService
     {
-        MilestoneTemplate GetMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity);
-        MilestoneTemplate CreateMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity);
+        Task<MilestoneTemplate> GetMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity);
+        Task<MilestoneTemplate> CreateMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity);
     }
 }

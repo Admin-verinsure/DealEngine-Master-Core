@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,9 +17,10 @@ namespace TechCertain.Services.Impl
             _referenceRepository = referenceRepository;
         }
 
-        public string GetLatestReferenceId()
+        public async Task<string> GetLatestReferenceId()
         {
-            Reference reference = _referenceRepository.FindAll().Where(r => r.DateDeleted == null).OrderByDescending(r => r.ReferenceId).FirstOrDefault();
+            var reference = await _referenceRepository.FindAll().Where(r => r.DateDeleted == null).OrderByDescending(r => r.ReferenceId).FirstOrDefaultAsync();
+           
             if (reference == null)
             {
                 return (1000000).ToString();
@@ -27,17 +30,17 @@ namespace TechCertain.Services.Impl
             return (nextReference + 1).ToString();
         }
 
-        public async void Update(Reference reference)
+        public async Task CreateAsync(Reference Reference)
         {
-            await _referenceRepository.AddAsync(reference);
+            await _referenceRepository.AddAsync(Reference);
         }
 
-        public void CreateClientInformationReference(ClientInformationSheet ClientInformationSheet)
+        public async Task CreateClientInformationReference(ClientInformationSheet ClientInformationSheet)
         {
             if (ClientInformationSheet == null)
                 throw new ArgumentNullException(nameof(ClientInformationSheet));
 
-            if (!HasInformationId(ClientInformationSheet.Id))
+            if (!HasInformationId(ClientInformationSheet.Id).Result)
             {
 
                 if (ClientInformationSheet.ReferenceId == null)
@@ -49,39 +52,39 @@ namespace TechCertain.Services.Impl
                     ReferenceId = ClientInformationSheet.ReferenceId,
                 };
 
-                Update(referenceObj);
-            }           
+                await CreateAsync(referenceObj);
+            }
         }
 
-        public void CreateClientAgreementReference(string reference, Guid ClientAgreementId)
+        public async Task CreateClientAgreementReference(string Reference, Guid ClientAgreementId)
         {
             if (ClientAgreementId == Guid.Empty)
                 throw new ArgumentNullException(nameof(ClientAgreementId));
 
-            if (!HasAgreementId(ClientAgreementId))
+            if (!HasAgreementId(ClientAgreementId).Result)
             {
-                if (!HasReference(reference))
+                if (!HasReference(Reference).Result)
                 {
-                    reference = GetLatestReferenceId();
+                    Reference = GetLatestReferenceId().Result;
                 }
 
-                if (reference == null)
-                    throw new ArgumentNullException(nameof(reference));
+                if (Reference == null)
+                    throw new ArgumentNullException(nameof(Reference));
 
                 Reference referenceObj = new Reference
                 {
                     ClientAgreementId = ClientAgreementId,
-                    ReferenceId = reference,
+                    ReferenceId = Reference,
                 };
 
-                Update(referenceObj);
+                await CreateAsync(referenceObj);
             }
               
         }
 
-        public bool HasInformationId(Guid id)
+        public async Task<bool> HasInformationId(Guid id)
         {
-            var referenceExist = _referenceRepository.FindAll().FirstOrDefault(m => m.ClientInformationSheetId == id);
+            var referenceExist = await _referenceRepository.FindAll().FirstOrDefaultAsync(m => m.ClientInformationSheetId == id);
 
             if (referenceExist != null)
                 return true;
@@ -89,9 +92,9 @@ namespace TechCertain.Services.Impl
             return false;
         }
 
-        public bool HasAgreementId(Guid id)
+        public async Task<bool> HasAgreementId(Guid id)
         {
-            var referenceExist = _referenceRepository.FindAll().FirstOrDefault(m => m.ClientAgreementId == id);
+            var referenceExist = await _referenceRepository.FindAll().FirstOrDefaultAsync(m => m.ClientAgreementId == id);
 
             if (referenceExist != null)
                 return true;
@@ -99,9 +102,9 @@ namespace TechCertain.Services.Impl
             return false;
         }
 
-        public bool HasReference(string reference)
+        public async Task<bool> HasReference(string Reference)
         {
-            var referenceExist =_referenceRepository.FindAll().FirstOrDefault(m => m.ReferenceId == reference);
+            var referenceExist = await _referenceRepository.FindAll().FirstOrDefaultAsync(m => m.ReferenceId == Reference);
 
             if(referenceExist != null)
                 return true;

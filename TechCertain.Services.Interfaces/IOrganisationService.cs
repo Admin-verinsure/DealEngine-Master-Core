@@ -1,26 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IOrganisationService
     {
-		Organisation CreateNewOrganisation (Organisation organisation);
+		Task<Organisation> CreateNewOrganisation (Organisation organisation);
 
 		Organisation CreateNewOrganisation (string p1, OrganisationType organisationType, string ownerFirstName, string ownerLastName, string ownerEmail);
 
-		bool DeleteOrganisation (User deletedBy, Organisation organisation);
+		Task DeleteOrganisation (User deletedBy, Organisation organisation);
 
-		IQueryable<Organisation> GetAllOrganisations ();
+        Task<List<Organisation>> GetAllOrganisations ();
 
-		Organisation GetOrganisation(Guid organisationId);
+        Task<Organisation> GetOrganisation(Guid organisationId);
 
-		Organisation GetOrganisationByName (string organisationName);
+        Task<Organisation> GetOrganisationByName(string organisationName);
 
-        Organisation GetOrganisationByEmail(string organisationEmail);
+        Task<Organisation> GetOrganisationByEmail(string organisationEmail);
 
-        bool UpdateOrganisation(Organisation organisation);
+        Task UpdateOrganisation(Organisation organisation);
         //Organisation Get(Guid organisationID);
     }
 }

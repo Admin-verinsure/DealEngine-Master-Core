@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -17,7 +18,7 @@ namespace TechCertain.Services.Impl
             _clientInformationSheetRepository = clientInformationSheetRepository;
         }
 
-        public void CreateClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet)
+        public async Task CreateClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet)
         {
             if (string.IsNullOrWhiteSpace(insuredName))
                 throw new ArgumentNullException(nameof(insuredName));
@@ -26,16 +27,16 @@ namespace TechCertain.Services.Impl
 
             ClientAgreement clientAgreement = new ClientAgreement (createdBy, insuredName, inceptionDate, expiryDate, brokerage, brokerFee, clientInformationSheet, null, clientInformationSheet.ReferenceId);
             clientInformationSheet.ClientAgreement = clientAgreement;
-            _clientInformationSheetRepository.UpdateAsync(clientInformationSheet);
-            _clientAgreementRepository.AddAsync(clientAgreement);
+            await _clientInformationSheetRepository.UpdateAsync(clientInformationSheet);
+            await _clientAgreementRepository.AddAsync(clientAgreement);
         }
 
-		public ClientAgreement GetAgreement (Guid clientAgreementId)
+		public async Task<ClientAgreement> GetAgreement (Guid clientAgreementId)
 		{
-			return _clientAgreementRepository.GetByIdAsync(clientAgreementId).Result;
+			return await _clientAgreementRepository.GetByIdAsync(clientAgreementId);
 		}
 
-		public ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser)
+		public async Task<ClientAgreement> AcceptAgreement (ClientAgreement agreement, User acceptingUser)
 		{
 			if (agreement == null)
 				throw new ArgumentNullException (nameof (agreement));
@@ -46,7 +47,7 @@ namespace TechCertain.Services.Impl
 			agreement.ClientInformationSheet.SubmitDate = DateTime.UtcNow;
 			agreement.ClientInformationSheet.SubmittedBy = acceptingUser;
 			
-            _clientAgreementRepository.UpdateAsync(agreement);
+            await _clientAgreementRepository.UpdateAsync(agreement);
             return agreement;
 		}
     }

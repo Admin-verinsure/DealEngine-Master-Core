@@ -15,6 +15,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using TechCertain.Infrastructure.Email;
 using HtmlToOpenXml;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace TechCertain.Services.Impl
 {
@@ -84,9 +85,9 @@ namespace TechCertain.Services.Impl
             }
 		}		
 
-		public void SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
+		public async Task SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
 		{
-			var user = _userService.GetUserByEmail (recipent);
+			var user = _userService.GetUserByEmail(recipent).Result;
 
 			// hard code the body for now, should be stored in the db
 			string body = "<p>Hi There,</p>";
@@ -102,7 +103,7 @@ namespace TechCertain.Services.Impl
 			body += "<p>Proposalonline is technology of TechCertain Group Limited who provide technical support.</p>";
 			body += string.Format("<p>Proposalonline login: {0}<br/>Email support: support@techcertain.com<br/>Telephone support: 09 377 6564 (9am to 5pm NZST)</p>", originDomain);
 
-			EmailBuilder email = GetLocalizedEmailBuilder (DefaultSender, recipent);
+			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
 			email.WithSubject ("Proposalonline Password Reset");
 			email.WithBody (body);
@@ -110,28 +111,28 @@ namespace TechCertain.Services.Impl
 			email.Send ();
 		}
 
-        public void SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents)
+        public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents)
         {
             //string subject = emailTemplate.Subject;
             string body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
 
-			EmailBuilder email = GetLocalizedEmailBuilder (DefaultSender, recipent);
+			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
 			email.WithSubject (emailTemplate.Subject);
 			email.WithBody (body);
 			email.UseHtmlBody (true);
             if(documents != null)
             {
-                email.Attachments(ToAttachments(documents).ToArray());
+                email.Attachments(ToAttachments(documents).Result.ToArray());
             }
 			email.Send ();
         }
 
-        public void ContactSupport (string sender, string subject, string body)
+        public async Task ContactSupport (string sender, string subject, string body)
 		{
 			string subjectPrefix = "Proposalonline Support Request: ";
 
-			EmailBuilder email = GetLocalizedEmailBuilder (sender, "support@techcertain.com");
+			EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@techcertain.com");
 			email.From (sender);
             email.WithSubject (subjectPrefix + subject);
             email.WithBody (body);
@@ -139,15 +140,15 @@ namespace TechCertain.Services.Impl
 			email.Send ();
 		}
 
-        public void SendSystemEmailLogin(string recipent)
+        public async Task SendSystemEmailLogin(string recipent)
         {
-            var user = _userService.GetUserByEmail(recipent);
+            var user = _userService.GetUserByEmail(recipent).Result;
 
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
             
-            SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("LoginEmail");
+            SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("LoginEmail").Result;
             string systememailsubject = systemEmailTemplate.Subject;
             string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)
@@ -155,7 +156,7 @@ namespace TechCertain.Services.Impl
                 systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                 systememailbody = systememailbody.Replace(field.Key, field.Value);
             }
-            EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, recipent);
+            EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             systememail.From(DefaultSender);
             systememail.WithSubject (systememailsubject);
             systememail.WithBody (systememailbody);
@@ -163,7 +164,7 @@ namespace TechCertain.Services.Impl
             systememail.Send();
         }
 
-        public void SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -181,7 +182,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("PaymentSuccessConfig");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("PaymentSuccessConfig").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -189,7 +190,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -198,11 +199,11 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
-        public void SendSystemPaymentFailConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemPaymentFailConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -220,7 +221,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("PaymentFailConfig");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("PaymentFailConfig").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -228,7 +229,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -237,12 +238,12 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
         }
 
-        public void SendSystemFailedInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemFailedInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -260,7 +261,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("InvoiceFailConfig");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("InvoiceFailConfig").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -268,7 +269,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -277,12 +278,12 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
         }
 
-        public void SendSystemSuccessInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemSuccessInvoiceConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -300,7 +301,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("InvoiceSuccessConfig");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("InvoiceSuccessConfig").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -308,7 +309,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -317,12 +318,12 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
         }
 
-        public void SendSystemEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -340,7 +341,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISIssueNotificationEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISIssueNotificationEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -348,7 +349,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -358,12 +359,12 @@ namespace TechCertain.Services.Impl
 
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssuer, sheet, null, "Payment success config Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
 
         }
 
-        public void SendSystemEmailUISSubmissionConfirmationNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemEmailUISSubmissionConfirmationNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -376,7 +377,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISSubmissionConfirmationEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISSubmissionConfirmationEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -384,7 +385,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From("postmaster@techcertain.com");
                 //systememail.From(DefaultSender);
                 //systememail.To(recipent.ToArray());
@@ -399,11 +400,11 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
-        public void SendSystemEmailUISSubmissionNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemEmailUISSubmissionNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -419,7 +420,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -427,7 +428,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -436,11 +437,11 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
-        public void SendSystemEmailAgreementReferNotify(User uISIssued, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
+        public async Task SendSystemEmailAgreementReferNotify(User uISIssued, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -457,7 +458,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -465,7 +466,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -476,11 +477,11 @@ namespace TechCertain.Services.Impl
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Information Sheet Submission Confirmation Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
-        public void SendSystemEmailAgreementIssueNotify(User issuer, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
+        public async Task SendSystemEmailAgreementIssueNotify(User issuer, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -497,7 +498,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementIssueNotificationEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementIssueNotificationEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -505,7 +506,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -516,12 +517,12 @@ namespace TechCertain.Services.Impl
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(issuer, sheet, agreement, "Agreement Issue Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
             }
         }
 
 
-        public void SendSystemEmailAgreementBoundNotify(User binder, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
+        public async Task SendSystemEmailAgreementBoundNotify(User binder, Programme programme, ClientAgreement agreement, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -538,7 +539,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementBoundNotificationEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementBoundNotificationEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -546,7 +547,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 systememail.WithSubject(systememailsubject);
@@ -557,12 +558,12 @@ namespace TechCertain.Services.Impl
                 ClientInformationSheet sheet = agreement.ClientInformationSheet;
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(binder, sheet, agreement, "Agreement Bound Notification Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
         }
 
-        public void SendSystemEmailOtherMarinaTCNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
+        public async Task SendSystemEmailOtherMarinaTCNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg)
         {
             var recipent = new List<string>();
 
@@ -576,7 +577,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ReferenceID]]", sheet.ReferenceId));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("OtherMarinaTCNotifyEmail");
+                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("OtherMarinaTCNotifyEmail").Result;
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -584,7 +585,7 @@ namespace TechCertain.Services.Impl
                     systememailsubject = systememailsubject.Replace(field.Key, field.Value);
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
-                EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+                EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
                 if (programme.ProgrammeEmailCCToBroker)
@@ -597,15 +598,15 @@ namespace TechCertain.Services.Impl
                 systememail.Send();
 
                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(uISIssued, sheet, null, "Create Other Marina Notification Email to TC Sent"));
-                _clientInformationSheetmapperSession.UpdateAsync(sheet);
+                await _clientInformationSheetmapperSession.UpdateAsync(sheet);
 
             }
         }
 
-        public void SendSystemEmailEGlobalTCNotify(string XMLBody)
+        public async Task SendSystemEmailEGlobalTCNotify(string XMLBody)
         {
                        
-            EmailBuilder systememail = GetLocalizedEmailBuilder(DefaultSender, null);
+            EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
             systememail.From(DefaultSender);
             systememail.WithSubject("ProposalOnline System Event");
             systememail.WithBody(XMLBody);
@@ -622,7 +623,7 @@ namespace TechCertain.Services.Impl
         /// <returns>The localized email builder.</returns>
         /// <param name="defaultSender">Default sender.</param>
         /// <param name="recipient">Recipient.</param>
-        EmailBuilder GetLocalizedEmailBuilder (string defaultSender, string recipient)
+        public async Task<EmailBuilder> GetLocalizedEmailBuilder (string defaultSender, string recipient)
 		{
 			EmailBuilder email = new EmailBuilder (DefaultSender);
 			if (string.IsNullOrWhiteSpace(CatchAllEmail))
@@ -639,7 +640,7 @@ namespace TechCertain.Services.Impl
 			return email;
 		}
 
-		Attachment ToAttachment (SystemDocument document)
+        public async Task<Attachment> ToAttachment (SystemDocument document)
 		{
 			if (document.ContentType == MediaTypeNames.Text.Html) {
 				// Testing HtmlToOpenXml
@@ -660,11 +661,11 @@ namespace TechCertain.Services.Impl
 			return null;
 		}
 
-		IEnumerable<Attachment> ToAttachments (IEnumerable<SystemDocument> documents)
+		public async Task<List<Attachment>> ToAttachments (IEnumerable<SystemDocument> documents)
 		{
-			IList<Attachment> attachments = new List<Attachment> ();
+			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-				attachments.Add(ToAttachment (document));
+				attachments.Add(ToAttachment(document).Result);
 			return attachments;
 		}
 	}

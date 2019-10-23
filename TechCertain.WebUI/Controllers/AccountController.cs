@@ -126,7 +126,7 @@ namespace TechCertain.WebUI.Controllers
                     //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
-                    User user = _userService.GetUser(token.UserID);
+                    User user = _userService.GetUser(token.UserID).Result;
                     if (user != null)
                     {
                         //change the users password to an intermediate
@@ -224,7 +224,7 @@ namespace TechCertain.WebUI.Controllers
 					return View ();
 				}
                 SingleUseToken st = _authenticationService.GetToken(id);
-                User user = _userService.GetUser(st.UserID);
+                User user = _userService.GetUser(st.UserID).Result;
                 if (user == null)
                     // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
                     throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
@@ -542,10 +542,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CoastguardReg(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
-            //if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View(model);
 
-            //return RedirectToLocal();
+            return await RedirectToLocal();
 
 
         }
@@ -617,7 +617,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Profile(string id)
 		{
-			var user = string.IsNullOrWhiteSpace (id) ? CurrentUser : _userService.GetUser (id);
+			var user = string.IsNullOrWhiteSpace (id) ? CurrentUser : _userService.GetUser(id).Result;
 			if (user == null)
 				return PageNotFound ();
 
@@ -666,7 +666,7 @@ namespace TechCertain.WebUI.Controllers
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
 
-            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits().GroupBy(o => o.Name).ToList();
+            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits().Result.GroupBy(o => o.Name).ToList();
             foreach (var group in OrgUnitList)
             {
                 foreach (OrganisationalUnit ou in group)
@@ -731,7 +731,7 @@ namespace TechCertain.WebUI.Controllers
             if (branchId.Count == 1)
             {
                 defaultOU = Guid.Parse(branchId);
-                OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU);
+                OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU).Result;
                 user.DefaultOU = DefaultOU;
             }
 
@@ -786,7 +786,7 @@ namespace TechCertain.WebUI.Controllers
 		{
 			BaseListViewModel<UserViewModel> userList = new BaseListViewModel<UserViewModel> ();
 
-			foreach (var user in _userService.GetAllUsers()) {
+			foreach (var user in _userService.GetAllUsers().Result) {
 				userList.Add (new UserViewModel {
 					ID = user.Id,
 					UserName = user.UserName,
@@ -801,7 +801,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public PartialViewResult UserPermissions (Guid Id)
 		{
-			User user = _userService.GetUser (Id);
+			User user = _userService.GetUser(Id).Result;
 			if (user == null)
 				return null;
 
@@ -813,7 +813,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ManageUser (Guid Id)
 		{
-            var user = _userService.GetUser(Id);
+            var user = _userService.GetUser(Id).Result;
             var accountModel = new ManageUserViewModel(user);
             //accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
 

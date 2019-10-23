@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -17,35 +19,35 @@ namespace TechCertain.Services.Impl
             _informationTemplateRepository = informationTemplateRepository;
         }
 
-        public InformationTemplate CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections)
+        public async Task<InformationTemplate> CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections)
         {
             InformationTemplate template = new InformationTemplate(createdBy, name, sections); //_informationTemplateFactory.CreateNewTemplate(createdBy, name, sections);
 
-            _informationTemplateRepository.AddAsync(template);
+            await _informationTemplateRepository.AddAsync(template);
 
             return template;
         }
 
-        public IQueryable<InformationTemplate> GetAllTemplates()
+        public async Task<List<InformationTemplate>> GetAllTemplates()
         {
-            return _informationTemplateRepository.FindAll();
+            return await _informationTemplateRepository.FindAll().ToListAsync();
         }
 
-		public InformationTemplate GetTemplate (Guid templateId)
+		public async Task<InformationTemplate> GetTemplate (Guid templateId)
 		{
-			return _informationTemplateRepository.GetByIdAsync(templateId).Result;
+			return await _informationTemplateRepository.GetByIdAsync(templateId);
 		}
 
-		public InformationTemplate AddProductTo (Guid templateId, Product product)
+		public async Task<InformationTemplate> AddProductTo (Guid templateId, Product product)
 		{
-			InformationTemplate template = GetTemplate (templateId);
+			InformationTemplate template = await GetTemplate(templateId);
 			if (template == null)
 				throw new NullReferenceException ("Unable to find Information Sheet Template for " + templateId);
 
-			return AddProductTo (template, product);
+			return await AddProductTo(template, product);
 		}
 
-		public InformationTemplate AddProductTo (InformationTemplate template, Product product)
+		public async Task<InformationTemplate> AddProductTo (InformationTemplate template, Product product)
 		{
 			if (template.Product != null)
 				throw new Exception ("There is already a product assigned to this Information Sheet Template");
@@ -56,7 +58,7 @@ namespace TechCertain.Services.Impl
 
 			//product.InformationTemplate = template;
 
-			_informationTemplateRepository.AddAsync(template);
+			await _informationTemplateRepository.AddAsync(template);
 
 			return template;
 		}

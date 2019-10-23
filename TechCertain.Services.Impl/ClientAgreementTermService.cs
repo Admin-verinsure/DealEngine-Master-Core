@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -19,7 +21,7 @@ namespace TechCertain.Services.Impl
             _clientAgreementRepository = clientAgreementRepository;
         }
 
-        public void AddAgreementTerm(User createdBy, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreement clientAgreement, string subTermType)
+        public async Task AddAgreementTerm(User createdBy, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreement clientAgreement, string subTermType)
         {
             if (string.IsNullOrWhiteSpace(termLimit.ToString()))
                 throw new ArgumentNullException(nameof(termLimit));
@@ -38,35 +40,33 @@ namespace TechCertain.Services.Impl
             
 		    ClientAgreementTerm clientAgreementTerm = new ClientAgreementTerm(createdBy, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreement, subTermType);
             clientAgreement.ClientAgreementTerms.Add(clientAgreementTerm);
-            _clientAgreementTermRepository.AddAsync(clientAgreementTerm);
-            _clientAgreementRepository.UpdateAsync(clientAgreement);
+            await _clientAgreementTermRepository.AddAsync(clientAgreementTerm);
+            await _clientAgreementRepository.UpdateAsync(clientAgreement);
 
         }
 
         
-        public IQueryable<ClientAgreementTerm> GetAllAgreementTermFor(ClientAgreement clientAgreement)
+        public async Task<List<ClientAgreementTerm>> GetAllAgreementTermFor(ClientAgreement clientAgreement)
         {
-            var term = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement && 
-                                                                              cagt.DateDeleted == null);
-            return term;
+            return await _clientAgreementTermRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement && 
+                                                                              cagt.DateDeleted == null).ToListAsync();            
         }
 
-        public void UpdateAgreementTerm(ClientAgreementTerm clientAgreementTerm)
+        public async Task UpdateAgreementTerm(ClientAgreementTerm clientAgreementTerm)
         {
-            _clientAgreementTermRepository.AddAsync(clientAgreementTerm);            
+            await _clientAgreementTermRepository.AddAsync(clientAgreementTerm);            
         }
 
-		public void DeleteAgreementTerm (User deletedBy, ClientAgreementTerm clientAgreementTerm)
+		public async Task DeleteAgreementTerm (User deletedBy, ClientAgreementTerm clientAgreementTerm)
 		{
 			clientAgreementTerm.Delete (deletedBy);
-			UpdateAgreementTerm (clientAgreementTerm);
+			await UpdateAgreementTerm (clientAgreementTerm);
 		}
 
-        public IList<ClientAgreementTerm> GetListAgreementTermFor(ClientAgreement clientAgreement)
+        public async Task<List<ClientAgreementTerm>> GetListAgreementTermFor(ClientAgreement clientAgreement)
         {
-            var term = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement &&
-                                                                              cagt.DateDeleted == null).ToList();
-            return term;
+            return await _clientAgreementTermRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement &&
+                                                                              cagt.DateDeleted == null).ToListAsync();            
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,12 +18,12 @@ namespace TechCertain.Services.Impl
             _paymentRepository = paymentRepository;
         }
 
-        public void Update(Payment payment)
+        public async Task Update(Payment payment)
         {
-            _paymentRepository.UpdateAsync(payment);            
+            await _paymentRepository.UpdateAsync(payment);            
         }
 
-        public Payment AddNewPayment(User createdBy, ClientProgramme clientProgramme, Merchant merchant, PaymentGateway paymentGateway)
+        public async Task<Payment> AddNewPayment(User createdBy, ClientProgramme clientProgramme, Merchant merchant, PaymentGateway paymentGateway)
         {
             if (string.IsNullOrWhiteSpace(clientProgramme.ToString()))
                 throw new ArgumentNullException(nameof(clientProgramme));
@@ -30,26 +33,25 @@ namespace TechCertain.Services.Impl
                 throw new ArgumentNullException(nameof(paymentGateway));
 
             Payment payment = new Payment(createdBy, clientProgramme, merchant, paymentGateway);
-            _paymentRepository.AddAsync(payment);
+            await _paymentRepository.AddAsync(payment);
             //check with craig best way to check
             return payment;//CheckExists(paymentGatewayWebServiceURL);
         }
 
-        public IQueryable<Payment> GetAllPayment()
+        public async Task<List<Payment>> GetAllPayment()
         {
-            var payment = _paymentRepository.FindAll();
-            return payment.Where(p => p.DateDeleted == null);
+            return await _paymentRepository.FindAll().Where(p => p.DateDeleted == null).ToListAsync();
         }
 
-        public Payment GetPayment(Guid clientProgrammeID, Guid merchantID, Guid paymentGatewayID)
+        public async Task<Payment> GetPayment(Guid clientProgrammeID, Guid merchantID, Guid paymentGatewayID)
         {
-            return GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID &&
+            return await _paymentRepository.FindAll().FirstOrDefaultAsync(p => p.PaymentClientProgramme.Id == clientProgrammeID && p.DateDeleted == null &&
                                                              p.PaymentMerchant.Id == merchantID && p.PaymentPaymentGateway.Id == paymentGatewayID);
         }
 
-        public Payment GetPayment(Guid clientProgrammeID)
+        public async Task<Payment> GetPayment(Guid clientProgrammeID)
         {
-            return GetAllPayment().FirstOrDefault(p => p.PaymentClientProgramme.Id == clientProgrammeID);
+            return await _paymentRepository.FindAll().FirstOrDefaultAsync(p => p.PaymentClientProgramme.Id == clientProgrammeID);
         }
 
     }

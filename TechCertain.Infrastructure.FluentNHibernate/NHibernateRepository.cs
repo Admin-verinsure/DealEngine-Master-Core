@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities.Abstracts;
 
@@ -13,58 +14,54 @@ namespace TechCertain.Infrastructure.FluentNHibernate
     /// If we Delete an entity it should be deleted from the db.
     /// No need for Update() or Save() or Write() or nonsense like that!
     /// </remarks>
-    public class NHibernateRepository<TEntity> : IMapperSession<TEntity> where TEntity : class, IAggregateRoot
-    {
-        private readonly ISession session;
+    //public class NHibernateRepository<TEntity> : IMapperSession<TEntity> where TEntity : class, IAggregateRoot
+    //{
+    //    private readonly ISession session;
 
-        public NHibernateRepository(ISession session)
-        {
-            if (session == null) throw new ArgumentNullException("session");
-            this.session = session;
-        }
+    //    public NHibernateRepository(ISession session)
+    //    {
+    //        if (session == null) throw new ArgumentNullException("session");
+    //        this.session = session;
+    //    }
 
-        public Task<TEntity> GetByIdAsync(Guid id)
-        {
-            return Task.FromResult(session.GetAsync<TEntity>(id).Result);
-        }
+    //    public async Task<TEntity> GetByIdAsync(Guid id)
+    //    {
+    //        return session.GetAsync<TEntity>(id).Result;
+    //    }
 
-        public Task<TEntity> GetByIdAsync(String id)
-        {
-            return Task.FromResult(session.GetAsync<TEntity>(id).Result);
-        }
+    //    public async Task<TEntity> GetByIdAsync(string id)
+    //    {
+    //        return session.GetAsync<TEntity>(id).Result;
+    //    }
 
-        public IQueryable<TEntity> FindAll()
-        {
-            return session.Query<TEntity>();
-        }
+    //    public async Task<IQueryable<TEntity>> FindAll()
+    //    {
+    //        Thread.Sleep(1000);
+    //        return  session.Query<TEntity>();
+    //    }
 
-        public Task UpdateAsync(TEntity entity)
-        {
-            if (entity == null) throw new ArgumentNullException("entity");
-            session.UpdateAsync(entity);
-            return Task.CompletedTask;
-        }
+    //    public async Task UpdateAsync(TEntity entity)
+    //    {
+    //        if (entity == null) throw new ArgumentNullException("entity");
+    //        await session.UpdateAsync(entity);
+    //    }
 
-        public Task RemoveAsync(TEntity entity)
-        {
-            if (entity == null) throw new ArgumentNullException("entity");
-            session.DeleteAsync(entity);
-            return Task.CompletedTask;
-        }
+    //    public async Task RemoveAsync(TEntity entity)
+    //    {
+    //        if (entity == null) throw new ArgumentNullException("entity");
+    //        await session.DeleteAsync(entity);
+    //    }
 
-        public Task AddAsync(TEntity entity)
-        {
-            if (entity == null) throw new ArgumentNullException("entity");
-            session.SaveOrUpdate(entity);
-            return Task.CompletedTask;
-        }
+    //    public async Task AddAsync(TEntity entity)
+    //    {
+    //        if (entity == null) throw new ArgumentNullException("entity");           
+    //        await session.SaveOrUpdateAsync(entity);
+    //    }
 
-        public Task SaveAsync(TEntity entity)
-        {
-            if (entity == null) throw new ArgumentNullException("entity");
-
-            session.SaveAsync(entity);
-            return Task.CompletedTask;
-        }
-    }
+    //    public async Task SaveAsync(TEntity entity)
+    //    {
+    //        if (entity == null) throw new ArgumentNullException("entity");
+    //        await session.SaveAsync(entity);
+    //    }
+    //}
 }

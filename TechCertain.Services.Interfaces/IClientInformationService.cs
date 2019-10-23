@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -8,22 +10,22 @@ namespace TechCertain.Services.Interfaces
 	public interface IClientInformationService
     {
 		[Obsolete]
-		ClientInformationSheet IssueInformationFor (User createdBy, Organisation createdFor, InformationTemplate informationTemplate);
+        Task<ClientInformationSheet> IssueInformationFor (User createdBy, Organisation createdFor, InformationTemplate informationTemplate);
 
-		ClientInformationSheet IssueInformationFor (User createdBy, Organisation createdFor, ClientProgramme clientProgramme, string reference);
+        Task<ClientInformationSheet> IssueInformationFor (User createdBy, Organisation createdFor, ClientProgramme clientProgramme, string reference);
 
-		ClientInformationSheet GetInformation (Guid informationSheetId);
+        Task<ClientInformationSheet> GetInformation (Guid informationSheetId);
 
-		IQueryable<ClientInformationSheet> GetAllInformationFor (User owner);
+        Task<List<ClientInformationSheet>> GetAllInformationFor (User owner);
 
-		IQueryable<ClientInformationSheet> GetAllInformationFor (Organisation owner);
+        Task<List<ClientInformationSheet>> GetAllInformationFor (Organisation owner);
 
-        IQueryable<ClientInformationSheet> GetAllInformationFor(String referenceId);
+        Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId);
 
 
-        void UpdateInformation (ClientInformationSheet sheet);
+        Task UpdateInformation (ClientInformationSheet sheet);
 
-		void SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
+		Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
 	}
 }
 

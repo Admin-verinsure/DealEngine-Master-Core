@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -16,7 +19,7 @@ namespace TechCertain.Services.Impl
             _clientAgreementMVTermRepository = clientAgreementMVTermRepository;
         }
 
-        public void AddAgreementMVTerm(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
+        public async Task AddAgreementMVTerm(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
         {
             if (string.IsNullOrWhiteSpace(year))
                 throw new ArgumentNullException(nameof(year));
@@ -42,32 +45,30 @@ namespace TechCertain.Services.Impl
                 throw new ArgumentNullException(nameof(vehicle));
 
             ClientAgreementMVTerm clientAgreementMVTerm = new ClientAgreementMVTerm(createdBy, registration, year, make, model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, fleetNumber, clientAgreementTerm, vehicle, burnerpremium);
-            _clientAgreementMVTermRepository.AddAsync(clientAgreementMVTerm);
+            await _clientAgreementMVTermRepository.AddAsync(clientAgreementMVTerm);
         }
 
-        public IQueryable<ClientAgreementMVTerm> GetAllAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm)
+        public async Task<List<ClientAgreementMVTerm>> GetAllAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm)
         {
-            var mvterm = _clientAgreementMVTermRepository.FindAll().Where(cagmvt => cagmvt.ClientAgreementTerm == clientAgreementTerm &&
-                                                                                    cagmvt.DateDeleted == null && cagmvt.TermCategory == "active");
-            return mvterm;
+            return await _clientAgreementMVTermRepository.FindAll().Where(cagmvt => cagmvt.ClientAgreementTerm == clientAgreementTerm &&
+                                                                                    cagmvt.DateDeleted == null && cagmvt.TermCategory == "active").ToListAsync();
         }
 
-        public void UpdateAgreementMVTerm(ClientAgreementMVTerm clientAgreementMVTerm)
+        public async Task UpdateAgreementMVTerm(ClientAgreementMVTerm clientAgreementMVTerm)
         {
-            _clientAgreementMVTermRepository.AddAsync(clientAgreementMVTerm);
+            await _clientAgreementMVTermRepository.AddAsync(clientAgreementMVTerm);
         }
 
-		public void DeleteAgreementMVTerm (User deletedBy, ClientAgreementMVTerm clientAgreementMVTerm)
+		public async Task DeleteAgreementMVTerm (User deletedBy, ClientAgreementMVTerm clientAgreementMVTerm)
 		{
 			clientAgreementMVTerm.Delete (deletedBy);
-			UpdateAgreementMVTerm (clientAgreementMVTerm);
+			await UpdateAgreementMVTerm (clientAgreementMVTerm);
 		}
 
-        public IQueryable<ClientAgreementMVTerm> GetAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm, Vehicle vehicle)
+        public async Task<List<ClientAgreementMVTerm>> GetAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm, Vehicle vehicle)
         {
-            var mvterm = _clientAgreementMVTermRepository.FindAll().Where(cagmvt => cagmvt.ClientAgreementTerm == clientAgreementTerm &&
-                                                                                    cagmvt.Vehicle == vehicle);
-            return mvterm;
+            return await _clientAgreementMVTermRepository.FindAll().Where(cagmvt => cagmvt.ClientAgreementTerm == clientAgreementTerm &&
+                                                                                    cagmvt.Vehicle == vehicle).ToListAsync();            
         }
     }
 }
