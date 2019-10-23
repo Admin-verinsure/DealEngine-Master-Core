@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
+using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
@@ -2694,8 +2695,9 @@ namespace TechCertain.WebUI.Controllers
                     user = _userService.GetUserByEmail(email).Result;
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
+                    var username = user.FirstName;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     string username = firstName + "_" + lastName;
 
@@ -2733,6 +2735,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 finally
                 {
+                    Thread.Sleep(2000);
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
 
@@ -2745,6 +2748,7 @@ namespace TechCertain.WebUI.Controllers
                 var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation).ConfigureAwait(false);
                 var reference = _referenceService.GetLatestReferenceId().Result;
                 var sheet = _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference).Result;
+               
 
                 await _referenceService.CreateClientInformationReference(sheet).ConfigureAwait(false);
 
@@ -2777,21 +2781,7 @@ namespace TechCertain.WebUI.Controllers
                    
                 }
 
-                ////send out login email
-                //_emailService.SendSystemEmailLogin(email);
-                ////send out instruction email
-                //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                //if (emailTemplate != null)
-                //{
-                //    _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
-                //}
-                //else
-                //{
-                //    throw new Exception("There is no Information Sheet Instruction email template been set up.");
-                //}
-                ////send out information sheet issue notification email
-                //_emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
-
+              
             }
             else
             {

@@ -60,4 +60,9 @@
     <ProjectReference Include="..\TechCertain.Services.Impl\TechCertain.Services.Impl.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="wwwroot\ckeditor\" />
+  </ItemGroup>
+
 </Project>

@@ -1807,12 +1807,13 @@ namespace TechCertain.WebUI.Controllers
             userDetails.Email = CurrentUser.Email;
 
             User user = _userService.GetUser(CurrentUser.UserName).Result;
+            
             var roles = new List<String>();
 
-            for (var i = 0; i < user.Groups.Count(); i++)
-            {
-                roles.Add(user.Groups.ElementAtOrDefault(i).Name);
-            }
+            //for (var i = 0; i < user.Groups.Count(); i++)
+            //{
+            //    roles.Add(user.Groups.ElementAtOrDefault(i).Name);
+            //}
 
             model.UserRole = roles;
 
@@ -1831,7 +1832,7 @@ namespace TechCertain.WebUI.Controllers
             //model.InterestedParties = interestedParties;
             model.AvailableProducts = availableProducts;
             model.OrganisationDetails = organisationDetails;
-            model.UserDetails = userDetails;
+            //model.UserDetails = userDetails;
 
             model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id).Result);
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);

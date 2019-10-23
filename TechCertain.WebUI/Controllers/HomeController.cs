@@ -14,6 +14,9 @@ using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using TechCertain.WebUI.Controllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 #endregion
@@ -23,25 +26,29 @@ namespace TechCertain.WebUI.Controllers
     //[Route("Home")]
     [Authorize]
     public class HomeController : BaseController
-    {        
+    {
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
         IClientInformationService _clientInformationService;
-
+        IClientAgreementService _clientAgreementService;
 
         public HomeController(IMapper mapper, IUserService userRepository,
-            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientInformationService clientInformationService,
+            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientAgreementService clientAgreementService, IClientInformationService clientInformationService,
             IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
+
             : base (userRepository)
         {            
+
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;
             _clientInformationService = clientInformationService;
             _productRepositoy = productRepository;
+            _clientAgreementService = clientAgreementService;
+
             _programmeRepository = programmeRepository;
         }
 
@@ -53,42 +60,7 @@ namespace TechCertain.WebUI.Controllers
 
                 // If Product is NOT Empty
 
-                // List Products
-
-                // If Product is Empty
-
-                // Loop Through All Available Servers
-
-                // Product Awareness and Migration
-                // New System
-                // First Login Call all servers to get products and also permissions
-                // Save all products returned if not saved 
-                // Assign User to the specific product they have permissions to
-                // Load Products from Application Database
-
-                // Save List of private servers we maintain
-
-                // Old System
-                // Add New User
-                // Call New System To Log in
-                // Perform 1st Time Log In
-
-                // Give existing User new Product Permissions
-                // Push notification to Public Server that new Permissions has been given 
-                // Add link between Product and User
-
-                // Take away existing User Product Permissions
-                // Push notification to Public Server that Permission to product has been taken away
-                // Delete Link between Product and User
-
-                // Add Product
-                // Push notification to public server that new product is added
-                // Add new Product Record
-
-                // Remove Product            
-                // Push notification that a product has been removed 
-                // Set product record to deleted and save a time stamp
-
+               
 
                 return View();
         }
@@ -482,6 +454,36 @@ namespace TechCertain.WebUI.Controllers
                             ReferenceId = referenceid// Move into ClientProgramme?
                         });
                     
+
+                }
+
+                ClientAgreement agreement = await _clientAgreementService.GetAgreementbyReferenceNum(value);
+
+                ClientInformationSheet sheet2 = await _clientInformationService.GetInformation(agreement.ClientInformationSheet.Id);
+                
+                if(sheet2 != null)
+                {
+                    ClientProgramme client = sheet2.Programme;
+
+                    string status = client.InformationSheet.Status;
+                    string referenceid = client.InformationSheet.ReferenceId;
+                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
+                    string localDateSubmitted = null;
+
+                    if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+                    {
+                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
+                    }
+
+                    deals.Add(new DealItem
+                    {
+                        Id = client.Id.ToString(),
+                        Name = sheet2.Programme.BaseProgramme.Name + " for " + client.Owner.Name,
+                        LocalDateCreated = localDateCreated,
+                        LocalDateSubmitted = localDateSubmitted,
+                        Status = status,
+                        ReferenceId = referenceid// Move into ClientProgramme?
+                    });
 
                 }
 

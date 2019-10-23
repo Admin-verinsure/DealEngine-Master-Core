@@ -92,6 +92,7 @@ namespace TechCertain.Services.Impl
             try
             {
                 user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.Email == email);
+
             }
             catch(Exception ex)
             {

@@ -45,7 +45,7 @@ namespace TechCertain.Services.Impl
             {
                 var logInfo = new LogInfo();
                 logInfo.AnalyzeXMLRSA = "test save";
-                _logInfoMapperSession.AddAsync(logInfo);
+                //_logInfoMapperSession.AddAsync(logInfo);
 
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = client.SendAsync(_httpRequestMessage).Result;

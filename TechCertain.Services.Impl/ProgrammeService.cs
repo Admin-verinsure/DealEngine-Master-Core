@@ -39,9 +39,10 @@ namespace TechCertain.Services.Impl
 			return await _clientProgrammeRepository.GetByIdAsync(id);
 		}
 
-		public async Task<List<ClientProgramme>> GetClientProgrammesByOwner(Guid ownerOrganisationId)
-		{
-			return await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
+
+        public async Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId)
+        {
+            return await _clientProgrammeRepository.FindAll().Where(cp => cp.Owner.Id == ownerOrganisationId).ToListAsync();
 		}
 
 		public async Task<IList<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)

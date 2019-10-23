@@ -30,5 +30,6 @@
       "library": "multiselect@2.2.9",
       "destination": "wwwroot/lib/multiselect/"
     }
+    
   ]
 }

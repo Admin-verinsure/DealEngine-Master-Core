@@ -15,6 +15,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
         public NHibernateMapperSession(ISession session, ISessionFactory sessionFactory)
         {
             _sessionFactory = sessionFactory;
+
             _session = session;
         }
 
@@ -77,24 +78,25 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             transaction.Dispose();
         }
 
-        //public async Task SaveAsync(TEntity entity)
-        //{
-        //    if (entity == null) throw new ArgumentNullException("entity");
-        //    var transaction = _session.BeginTransaction();
-        //    try
-        //    {
-        //        await _session.SaveAsync(entity);
-        //        await transaction.CommitAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //_logger.LogDebug(ex.Message);
-        //        await transaction.RollbackAsync();
-        //        throw new Exception(ex.Message);
-        //    }
+
+        public async Task SaveAsync(TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            var transaction = _session.BeginTransaction();
+            try
+            {
+                await _session.SaveAsync(entity);
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogDebug(ex.Message);
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
 
         //    transaction.Dispose();
-        //}
+        }
 
         public async Task UpdateAsync(TEntity entity)
         {

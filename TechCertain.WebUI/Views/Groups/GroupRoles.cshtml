@@ -1,4 +1,4 @@
-﻿@model TechCertain.WebUI.Models.Permission.SelectGroupRolesViewModel
+﻿@model TechCertain.WebUI.Models.Permission.SelectClaimsRolesViewModel
 
 <!-- MAIN CONTENT -->
 <div id="content">
@@ -42,25 +42,25 @@
 					        <hr />
 					        <fieldset>
 							@* Ugly, but needed since the Html.CheckboxFor breaks styling due to its following hidden input *@
-					        @for (int i = 0; i < Model.Roles.Count; i++)
+					        @for (int i = 0; i < Model.Claims.Count; i++)
 					        {
-								@Html.HiddenFor(item => Model.Roles[i].RoleId)
+								@Html.HiddenFor(item => Model.Claims[i].ClaimId)
 
 								<div class="form-group">
 									<div class="col-md-5">
 										<div class="checkbox">
 											<label>
 												@* Somehow this if statement hack works, not sure how exactly *@
-												<input @if(Model.Roles[i].Selected == true) { <text>checked="checked"</text> }
+												<input @if(Model.Claims[i].Selected == true) { <text>checked="checked"</text> }
 													class="checkbox style-0" data-val="true" data-val-required="The Selected field is required." id="Roles_@(i)__Selected" name="Roles[@(i)].Selected" value="true" type="checkbox">
-												<span>@Html.DisplayFor(item => Model.Roles[i].RoleName)</span>
+												<span>@Html.DisplayFor(item => Model.Claims[i].ClaimName)</span>
 											</label>
 										</div>
 									</div>
 									<div class="col-md-7">
 										<div class="checkbox">
 											<label>
-									        	@Html.DisplayFor(item => Model.Roles[i].Description)
+									        	@Html.DisplayFor(item => Model.Claims[i].Description)
 											</label>
 										</div>
 									</div>
