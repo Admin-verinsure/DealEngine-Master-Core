@@ -11,5 +11,8 @@ namespace TechCertain.Services.Interfaces
         Task<ClientAgreement> GetAgreement(Guid clientAgreementId);
 
         Task<ClientAgreement> AcceptAgreement (ClientAgreement agreement, User acceptingUser);
+        //ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser);
+        Task<ClientAgreement> GetAgreementbyReferenceNum(string reference);
+
     }
 }

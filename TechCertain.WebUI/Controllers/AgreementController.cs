@@ -1340,8 +1340,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        //public async Task<IActionResult> GeneratePxPayment(IFormCollection collection)
-        public IActionResult GeneratePxPayment(IFormCollection collection)
+        public async Task<IActionResult> GeneratePxPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -1369,8 +1368,7 @@ namespace TechCertain.WebUI.Controllers
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
                 programme.InformationSheet.Status = "Bound";
-                //await uow.Commit().ConfigureAwait(false);
-                uow.Commit();
+                await uow.Commit().ConfigureAwait(false);
             }
 
 
