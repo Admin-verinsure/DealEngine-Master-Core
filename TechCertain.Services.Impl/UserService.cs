@@ -36,7 +36,7 @@ namespace TechCertain.Services.Impl
             User user = null;
             try
             {
-                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
+                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

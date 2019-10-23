@@ -1,17 +1,19 @@
-﻿using FluentNHibernate.Automapping;
-using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
-using System;
-using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.FluentNHibernate.MappingConventions;
-using TechCertain.Infrastructure.FluentNHibernate.MappingOverrides;
-using NHibernate.Dialect;
+﻿using System;
 using Npgsql;
 using System.Text.RegularExpressions;
 using NHibernate.Tool.hbm2ddl;
-using Microsoft.Extensions.Configuration;
 using NHibernate;
-
+using NHibernate.Cfg;
+using NHibernate.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
+using NHibernate.Dialect;
+using FluentNHibernate.Automapping;
+using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.FluentNHibernate.MappingConventions;
+using TechCertain.Infrastructure.FluentNHibernate.MappingOverrides;
+using NHibernate.Extensions.NpgSql;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
 {
@@ -21,6 +23,13 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
         private static string NpgsqlConnectionString;
         public static ISessionFactory BuildSessionFactory(string connectionStringName)
         {
+
+            //var cfg = new Configuration();
+            //var file = @"C:\inetpub\wwwroot\techcertain2019core\TechCertain.WebUI\hibernate.config";
+
+            //cfg.Configure(file);
+            //cfg.AddIdentityMappingsForPostgres();
+            //var session = cfg.BuildSessionFactory();
             var configuration = new ConfigurationBuilder()
                                         .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                                         .AddJsonFile("appsettings.json")
@@ -31,14 +40,20 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
             var session = Fluently.Configure()
                 .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
                     .Dialect<PostgreSQL82Dialect>()
+                    .AdoNetBatchSize(10)
+                    .Driver<NpgSqlDriver>()
+                    .FormatSql()
+                    .ShowSql()
                  )
                 .CurrentSessionContext("web")
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())
                 .Conventions.Add<CascadeConvention>()
-                .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())               
-                ).BuildSessionFactory();
-
+                .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
+                ).BuildConfiguration()
+                .AddIdentityMappingsForPostgres()
+                .BuildSessionFactory();
+            
             return session;
                                            
         }
@@ -74,7 +89,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                 }
             }          
         }
-
+       
         private static void CreateDatabase(string connectionStringName)
         {
             var masterConnectionString = Regex.Replace(connectionStringName, "(Database|Initial Catalog)=[^;]+", "Database=postgres", RegexOptions.IgnoreCase);

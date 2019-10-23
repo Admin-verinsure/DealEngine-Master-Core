@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using TechCertain.Domain.Entities.Abstracts;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NHibernate.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate

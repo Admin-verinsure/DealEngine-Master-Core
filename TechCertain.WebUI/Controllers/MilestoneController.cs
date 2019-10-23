@@ -10,10 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models.Milestone;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using TechCertain.WebUI.Models;
-using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
@@ -38,8 +35,6 @@ namespace TechCertain.WebUI.Controllers
             IProgrammeService programmeService,
             IMapperSession<Programme> programmeRepository,
             IUWMService uWMService,
-            DealEngineDBContext dealEngineDBContext,
-            SignInManager<DealEngineUser> signInManager,
             IMilestoneService milestoneService)
             : base (userRepository)
         {

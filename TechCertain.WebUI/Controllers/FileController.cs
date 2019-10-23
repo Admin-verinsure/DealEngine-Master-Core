@@ -14,7 +14,6 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
 using HtmlToOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using DealEngine.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
@@ -29,12 +28,11 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<SystemDocument> _documentRepository;
 		IMapperSession<Image> _imageRepository;
         IMapperSession<Product> _productRepository;
-        IHttpContextAccessor _httpContextAccessor;
 
         string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, SignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IFileService fileService,
+		public FileController(IUserService userRepository, IUnitOfWork unitOfWork, IFileService fileService,
 		                      IMapperSession<SystemDocument> documentRepository, IMapperSession<Image> imageRepository, IMapperSession<Product> productRepository)
 			: base (userRepository)
 		{			

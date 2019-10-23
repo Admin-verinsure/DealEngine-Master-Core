@@ -183,15 +183,7 @@ namespace TechCertain.Services.Impl
         {
 
             return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-   <soap:Header>
-       <wsse:Security soap:mustUnderstand = ""1"" xmlns: wsse = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
-              <wsse:UsernameToken wsu:Id = ""UsernameToken-bd15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns: wsu = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
-                     <wsse:Username>MarshNZSOAPUser</wsse:Username>              
-                          <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                     
-                                 <wsse:Nonce EncodingType = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"">ufoWBVGZ+MgRHRcw5j0EQQ==</wsse:Nonce>                              
-                                          <wsu:Created>2019-07-29T07:47:49.072Z</wsu:Created>                                        
-                                                 </wsse:UsernameToken>                                         
-                                               </wsse:Security>                                          
+                                             <soap:Header>                                       
                                              </soap:Header>                                           
                                               <soap:Body>                                            
                                                   <analyze xmlns = ""http://ws.csd.rsa.com"">                                             
@@ -242,7 +234,19 @@ namespace TechCertain.Services.Impl
                                                             </request>                                                                                                                                                                                                                                                                                                              
                                                             </analyze>                                                                                                                                                                                                                                                                                                              
                                                             </soap:Body>
-                                                            </soap:Envelope>"; 
+                                                            </soap:Envelope>";
+
+              //     < wsse:Security soap:mustUnderstand = ""1"" xmlns: wsse = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
+              //< wsse:UsernameToken wsu:Id = ""UsernameToken - bd15e0d7 - 37fa - 4de8 - 8bd9 - 758caa95112c"" xmlns: wsu = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
+              //       < wsse:Username > MarshNZSOAPUser </ wsse:Username >
+     
+              //                 < wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                     
+              //                   < wsse:Nonce EncodingType = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"">ufoWBVGZ+MgRHRcw5j0EQQ==</wsse:Nonce>                              
+              //                            < wsu:Created > 2019 - 07 - 29T07: 47:49.072Z </ wsu:Created >
+          
+              //                                             </ wsse:UsernameToken >
+           
+              //                                            </ wsse:Security >
         }
     }
 }

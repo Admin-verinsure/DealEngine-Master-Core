@@ -15,10 +15,11 @@ using Microsoft.AspNetCore.Http;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TechCertain.WebUI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class AgreementController : BaseController
     {
         IInformationTemplateService _informationService;
@@ -150,10 +151,6 @@ namespace TechCertain.WebUI.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> AuthoriseReferrals(Guid sheetId,Guid informationsheet, Guid agreementId)
         {
@@ -386,95 +383,6 @@ namespace TechCertain.WebUI.Controllers
 
             return Redirect("/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id);
         }
-
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> AuthorisedReferrals(Guid clientAgreementId, Guid sheetId, string type)
-        //{
-        //    ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
-
-        //    using (var uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
-        //        {
-        //            terms.Status = "Cleared";
-        //        }
-
-        //        uow.Commit();
-        //    }
-        //    //var url = "/Information/EditInformation/" + programmeId;
-
-        //    return RedirectToAction("SendReferralsEmail", new { ClientAgreementId = clientAgreementId, SheetId= sheetId , Type = type });
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> SendReferralsEmail(Guid ClientAgreementId, Guid SheetId, string Type)
-        //{
-        //    ClientProgramme clientProgramme = _programmeRepository.GetById(SheetId);
-        //    Organisation insured = clientProgramme.Owner;
-        //    ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
-
-        //    // TODO - rewrite to save templates on a per programme basis
-
-        //    ClientProgramme programme = answerSheet.Programme;
-        //  ClientAgreement agreement = _clientAgreementService.GetAgreement(ClientAgreementId);
-
-        //    //ClientAgreement agreement = _clientAgreementService.GetAgreement(sheetId);
-
-        //    using (var uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        foreach (var terms in agreement.ClientAgreementReferrals.Where(r => r.Status == "Pending"))
-        //        {
-        //            terms.Status = "Cleared";
-        //        }
-
-        //        uow.Commit();
-        //    }
-        //    //Organisation insured = programme.Owner;
-
-        //    //EmailTemplate emailTemplate = agreement.Product.EmailTemplates.FirstOrDefault (et => et.Type == "SendPolicyDocuments");
-        //    EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == Type);
-
-        //    EmailTemplateViewModel model = new EmailTemplateViewModel();
-        //    model.Type = Type;
-        //    if (emailTemplate != null)
-        //    {
-        //        model.Name = emailTemplate.Name;
-        //        model.Subject = emailTemplate.Subject;
-        //        model.Body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
-        //    }
-        //    else
-        //    {
-        //        model.Name = "";
-        //        model.Subject = "";
-        //        model.Body = "";
-        //    }
-
-        //    model.ClientProgrammeID = programme.Id;
-
-        //    if (programme.Owner != null)
-        //    {
-        //        var recipents = new List<UserViewModel>();
-
-        //        recipents.Add(new UserViewModel { ID = CurrentUser.Id, UserName = CurrentUser.UserName, FirstName = CurrentUser.FirstName, LastName = CurrentUser.LastName, FullName = CurrentUser.FullName, Email = CurrentUser.Email });
-
-        //        foreach (User recipent in _userRepository1.FindAll().Where(ur1 => ur1.Organisations.Contains(programme.Owner)))
-        //        {
-        //            recipents.Add(new UserViewModel { ID = recipent.Id, UserName = recipent.UserName, FirstName = recipent.FirstName, LastName = recipent.LastName, FullName = recipent.FullName, Email = recipent.Email });
-        //        }
-
-        //        model.Recipents = recipents;
-        //    }
-        //    else
-        //    {
-        //        model.Recipents = null;
-        //    }
-
-        //    ViewBag.Title = programme.BaseProgramme.Name + " Referrals";
-
-        //    return View("SendReferralsEmail", model);
-        //}
 
 
         [HttpPost]
@@ -1239,7 +1147,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.EndorsementNameToAdd != null && model.EndorsementTextToAdd != null)
             {
-                await _clientAgreementEndorsementService.AddClientAgreementEndorsement(CurrentUser, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.EndorsementTextToAdd, 100, agreement);
+                await _clientAgreementEndorsementService.AddClientAgreementEndorsement(CurrentUser, model.EndorsementNameToAdd, "Exclusion", agreement.Product, model.EndorsementTextToAdd, 100, agreement).ConfigureAwait(false);
             }
 
             if (model.ClientAgreementEndorsements != null)
@@ -1301,7 +1209,7 @@ namespace TechCertain.WebUI.Controllers
 
                 if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
                 { //Arcco
-                   await _clientAgreementService.AcceptAgreement(agreement, CurrentUser);
+                   await _clientAgreementService.AcceptAgreement(agreement, CurrentUser).ConfigureAwait(false);
                 }
 
             }
@@ -1489,7 +1397,7 @@ namespace TechCertain.WebUI.Controllers
                 TxnType = "Purchase",
                 UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
                 UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
-                TxnId = payment.Id.ToString("N").Substring(0, 16),
+                //TxnId = payment.Id.ToString("N").Substring(0, 16),
             };
 
             RequestOutput requestOutput = pxPay.GenerateRequest(input);
@@ -1811,17 +1719,18 @@ namespace TechCertain.WebUI.Controllers
             //ClientAgreement agreement = answerSheet.ClientAgreement;
             //if (agreement == null)
             //	throw new Exception (string.Format ("No Information found for {0}", id));
+            var user = CurrentUser;
 
             foreach (ClientAgreement agreement in clientProgramme.Agreements)
             {
                 foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
                 {
-                    doc.Delete(CurrentUser);
+                    doc.Delete(user);
                 }
 
                 foreach (Document template in agreement.Product.Documents)
                 {
-                    Document renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement).Result;
+                    Document renderedDoc = _fileService.RenderDocument(user, template, agreement).Result;
                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                     agreement.Documents.Add(renderedDoc);
                     _fileService.UploadFile(renderedDoc);

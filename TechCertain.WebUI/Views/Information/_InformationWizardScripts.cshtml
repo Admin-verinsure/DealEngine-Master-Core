@@ -6709,11 +6709,10 @@ async: true
     }
 
     function submitPayment() {
-        event.preventDefault();
+        //event.preventDefault();
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
 
-        debugger;
         if ($('#paymentCreditCard').is(":checked")) {
             $.ajax({
                 type: "POST",
