@@ -9,7 +9,12 @@ using DealEngine.Infrastructure.AppInitialize.Services;
 using DealEngine.Infrastructure.AppInitialize.Repositories;
 using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
+<<<<<<< HEAD
 using DealEngine.Infrastructure.AppInitialize;
+=======
+using Microsoft.AspNetCore.Identity;
+using DealEngine.Infrastructure.Identity.Data;
+>>>>>>> techcertain2019coreIdentity
 
 namespace TechCertain.WebUI
 {
@@ -28,7 +33,13 @@ namespace TechCertain.WebUI
             services.AddMvc();
             services.AddRazorPages();
             services.AddNHibernate();
+<<<<<<< HEAD
             services.AddIdentityExtentions();
+=======
+            //services.AddIdentity<IdentityUser, IdentityRole>()
+            //        .AddEntityFrameworkStores<DealEngineDBContext>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+>>>>>>> techcertain2019coreIdentity
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
             services.AddRepositories();
@@ -36,6 +47,11 @@ namespace TechCertain.WebUI
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
             services.AddServices();
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));
+            //});
+            //services.AddTransient(IRolePermissionsService);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

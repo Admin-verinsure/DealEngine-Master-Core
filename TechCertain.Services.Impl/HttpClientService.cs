@@ -12,10 +12,19 @@ namespace TechCertain.Services.Impl
 {
     public class HttpClientService : IHttpClientService
     {
+<<<<<<< HEAD
         IMapperSession<LogInfo> _logInfoMapperSession;
         public HttpClientService(IMapperSession<LogInfo> logInfoMapperSession)
         {
             _logInfoMapperSession = logInfoMapperSession;
+=======
+
+        IUnitOfWork _unitOfWork;
+
+        public HttpClientService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+>>>>>>> techcertain2019coreIdentity
         }
 
         public Task<string> Analyze(string request)
@@ -45,7 +54,7 @@ namespace TechCertain.Services.Impl
             {
                 var logInfo = new LogInfo();
                 logInfo.AnalyzeXMLRSA = "test save";
-                _logInfoMapperSession.AddAsync(logInfo);
+                //_logInfoMapperSession.AddAsync(logInfo);
 
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = client.SendAsync(_httpRequestMessage).Result;

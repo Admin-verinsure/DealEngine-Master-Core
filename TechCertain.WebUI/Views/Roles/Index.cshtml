@@ -1,10 +1,9 @@
-﻿@model IEnumerable<TechCertain.WebUI.Models.Permission.RoleViewModel>
-
+﻿@model IEnumerable<TechCertain.WebUI.Models.Permission.ClaimViewModels>
 <!-- MAIN CONTENT -->
 <div id="content">
     <div class="row">
-		
-    	<!-- NEW WIDGET START -->
+
+        <!-- NEW WIDGET START -->
         <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 
             <!-- Widget ID (each widget will need unique ID)-->
@@ -27,107 +26,131 @@
                         <table id="tableRoles" class="table table-striped table-bordered table-hover" width="100%">
                             <thead>
                                 <tr>
-							        <th>
-							            @Html.DisplayNameFor(model => model.RoleName)
-							        </th>
-							        <th>
-							            @Html.DisplayNameFor(model => model.Description)
-							        </th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-							@foreach (var item in Model) {
-								<tr>
-							        <td>
-									@if (item.IsSystemRole == false) {
-							            <p><a href="#" name="RoleName" class="editable" data-type="text" data-pk="@item.Id" data-title="Enter RoleName">@item.RoleName</a></p>
-							        }
-									else {
-										<p>@Html.DisplayFor(modelItem => item.RoleName)</p>
-									}
-							        </td>
-							        <td>
-							            <p><a href="#" name="Description" class="editable" data-type="text" data-pk="@item.Id" data-title="Enter RoleName">@item.Description</a></p>
-							        </td>
-							        <td>
-										<a href="javascript:void(0);" onclick="SaveRole('@item.Id');">Save</a> |
-										<a href="javascript:void(0);" onclick="DeleteRole('@item.Id');">Delete</a>
-									</td>
-								</tr>
-							}
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="3"><a href="javascript:void(0);" onclick = "ShowCreateModal();">Create New Role</a></td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-				</div>
-			</div>
-		</article>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ClaimName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Description)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model) {
+                                        <tr>
+                                            <td>
+                                          
+                                                <p>@Html.DisplayFor(modelItem => item.ClaimName)</p>
+                                           
+                                            </td>
+                                            <td>
+                                                <p><a href="#" name="Description" class="editable" data-type="text" data-pk="@item.Id" data-title="Enter RoleName">@item.Description</a></p>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" onclick="SaveRole('@item.Id');">Save</a> |
+                                                <a href="javascript:void(0);" onclick="DeleteRole('@item.Id');">Delete</a>
+                                            </td>
+                                        </tr>
+                                    }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    @*<td colspan="2">@Html.ActionLink("Create New Group", "Create")</td>*@
+                                    <td colspan="2">
+                                        <a onclick="$('#newGroupModal').show();" aria-hidden="true" style="color:green" data-toggle="modal"><ul>Create New Group</ul></a>
 
-    	@*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("newRoleModal").Closeable()))
-		{
-		    @modal.Header("Add New Role")
-		    using (modal.BeginBody())
-		    {
-		        using (Html.BeginForm("Create", "Roles"))
-				{
-					@Html.AntiForgeryToken()
+                                        @*<a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-delname="@item.BoatName"><span class="glyphicon glyphicon-trash"></span></a>*@
 
-					<div class="form-horizontal">
-				        @Html.ValidationSummary(true)
+                                        @*<a href="javascript:void(0);" onclick="ShowCreateModal();">Create New Group</a>*@
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                        <td colspan="3"><a href="javascript:void(0);" onclick="ShowCreateModal();">Create New Role</a></td>
+                                    </tr>*@
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </article>
 
-						@Html.Hidden("Id", "", new { @id = "newRoleId" })
 
-				        <div class="form-group">
-				            <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.RoleName)</label>
-				            <div class="col-md-10">
-								<input class="form-control" name="RoleName" value="" placeholder="Enter Rolename here" type="text">
-				            </div>
-				        </div>
-
-				        <div class="form-group">
-				            <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Description)</label>
-				            <div class="col-md-10">
-								<input class="form-control" name="Description" value="" placeholder="Enter Role Description here" type="text">
-				            </div>
-				        </div>
-
-				        <div class="form-group">
-				            <div class="col-md-offset-2 col-md-10">
-				                <input type="submit" value="Add" class="btn btn-default" />
-				            </div>
-				        </div>
-					</div>
-				}
-		    }
-		}*@
-	</div>
+    </div>
 </div>
+
+
+
+<div class="modal" id="newGroupModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="$('#newGroupModal').hide()">&times;</button>
+                <h4 class="modal-title">Claim Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+                            <label>Claim Name</label>
+                        </section>
+                        <section class="col col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <label class="input ">
+                                <input data-type="TEXTBOX" data-name="groupName" id="groupName" name="Name" placeholder="Claim Name">
+                            </label>
+                        </section>
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+                            <label>Claim Description</label>
+                        </section>
+                        <section class="col col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <label class="input ">
+                                <input data-type="TEXTBOX" data-name="groupName" id="claimDescription" name="Description" placeholder="Claim Description">
+                            </label>
+                        </section>
+                    </section>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <section class="col col-xs-12">
+                    @*<input type="Reset" value="Submit" class="btn btn-success" id="btnSubmit">*@
+                    <button onclick="AddGroup();" class="btn-sm ">Add</button>
+
+                    <a href="#" class="btn btn-danger" onclick="$('#newGroupModal').hide()">Cancel<i class="fa fa-close"></i></a>
+
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- END MAIN CONTENT -->
 
 @section pagespecific {
-<!-- PAGE RELATED PLUGIN(S) -->
-<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="/Scripts/datatables"></script>
+    <!-- PAGE RELATED PLUGIN(S) -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="/Scripts/datatables"></script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 $(document).ready(function () {
-	$('#tableRoles').DataTable({
-		"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
-                "t" +
-                "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
-            	"autoWidth": true
-	});
+	//$('#tableRoles').DataTable({
+	//	"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+ //               "t" +
+ //               "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+ //           	"autoWidth": true
+	//});
 
-	$.fn.editable.defaults.mode = 'inline';
-	$('.editable').each(function() {
-		$(this).editable();
-	});
+	//$.fn.editable.defaults.mode = 'inline';
+	//$('.editable').each(function() {
+	//	$(this).editable();
+	//});
 });
 
 function ShowCreateModal()
@@ -135,11 +158,38 @@ function ShowCreateModal()
 	$('#newRoleModal').modal('show');
 }
 
+        
+function AddGroup()
+{
+    var name = $('#groupName').val();
+    var description = $('#claimDescription').val();
+
+    var postdate = {
+        "ClaimName": name ,
+        "Description": description
+    }
+	$.ajax({
+     	// change back once mono decides to fix
+        url: '@Url.Action("Create", "Roles")',
+        type: "POST",
+	    data: postdate
+    })
+    .done(function (data) {
+        debugger;
+        //$('#groupName').val() = "";
+		location.reload();
+    })
+    .fail(function (xhr, httpStatusMessage, customErrorMessage) {
+        alert(customErrorMessage);
+    });
+}
+
+
 function SaveRole(roleId)
 {
 	if (confirm("Do you want to update the name and description of this role?") == false)
 		return;
-	
+
 	var postData = {};
 	$('[data-pk="' + roleId + '"]').each(function() {
 		console.log(this.name + " " + this.text);
@@ -172,7 +222,7 @@ function DeleteRole(roleId)
 {
 	if (confirm("Delete this Role?") == false)
 		return;
-	
+
 	$.ajax({
      	// change back once mono decides to fix
         url: '@Url.Action("Delete", "Roles")',
@@ -193,5 +243,5 @@ function DeleteRole(roleId)
         alert(customErrorMessage);
     });
 }
-</script>
+    </script>
 }

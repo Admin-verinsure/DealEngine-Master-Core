@@ -1,5 +1,7 @@
 ﻿using System;
 using TechCertain.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace TechCertain.WebUI.Models.Permission
 {
@@ -9,13 +11,13 @@ namespace TechCertain.WebUI.Models.Permission
 
 		public string Name { get; set; }
 
-		public GroupViewModel ()
-		{
-		}
+		////public GroupViewModel (IdentityRole group)
+		////{
+		////}
 
-		public GroupViewModel (ApplicationGroup group)
+		public GroupViewModel (IdentityRole group)
 		{
-			Id = group.Id;
+			Id = Guid.Parse(group.Id);
 			Name = group.Name;
 		}
 

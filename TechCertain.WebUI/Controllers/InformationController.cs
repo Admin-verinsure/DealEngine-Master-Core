@@ -1799,6 +1799,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
 
+<<<<<<< HEAD
             var availableProducts = new List<ProductItem>();          
             var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
             userDetails.PostalAddress = CurrentUser.Address;
@@ -1807,12 +1808,97 @@ namespace TechCertain.WebUI.Controllers
             userDetails.Email = CurrentUser.Email;
 
             User user = _userService.GetUser(CurrentUser.UserName).Result;
+=======
+            var availableProducts = new List<ProductItem>();
+            //<<<<<<< HEAD
+            //			//if (sheet.Product.ProductPackage != null) {
+            //			//	var products = sheet.Product.ProductPackage.Products;
+            //			//	Console.WriteLine ("Products in package: " + products.Count);
+            //			//	Console.WriteLine ("Getting all sheets");
+            //			//	var sheets = _clientInformationService.GetAllInformationFor (sheet.Owner);
+            //			//	Console.WriteLine (sheets.Count ());
+
+            //			//	foreach (Product p in products) Console.WriteLine (p.Id);
+            //			//	foreach (var s in sheets) Console.WriteLine (s.Product.Id);
+
+            //			//	foreach (var product in products) {
+            //			//		var otherSheet = sheets.FirstOrDefault (s => s.Product.Id == product.Id);
+            //			//		Console.WriteLine (otherSheet);
+            //			//		// skip any information sheet that has been renewed or updated, otherwise add it
+            //			//		if (otherSheet == null)
+            //			//			availableProducts.Add (new ProductItem {
+            //			//				Name = product.Name + " for " + sheet.Owner.Name,
+            //			//				Status = "Not issued",
+            //			//				RedirectLink = "/Information/IssueUISForProduct/" + product.Id,
+            //			//			});
+            //			//		else if (otherSheet.NextInformationSheet == null)
+            //			//			availableProducts.Add (new ProductItem {
+            //			//				Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
+            //			//				Status = otherSheet.Status,
+            //			//				RedirectLink = "/Information/EditInformational/" + otherSheet.Id
+            //			//			});
+            //			//	}
+            //			//}
+            //=======
+            //			if (sheet.Product.ProductPackage != null) {
+            //				var products = sheet.Product.ProductPackage.Products;
+            //				//Console.WriteLine ("Products in package: " + products.Count);
+            //				//Console.WriteLine ("Getting all sheets");
+            //				var sheets = _clientInformationService.GetAllInformationFor (sheet.Owner);
+            //				//Console.WriteLine (sheets.Count ());
+
+            //				//foreach (Product p in products) Console.WriteLine (p.Id);
+            //				//foreach (var s in sheets) Console.WriteLine (s.Product.Id);
+
+            //				foreach (var product in products) {
+            //					var otherSheet = sheets.FirstOrDefault (s => s.InformationTemplate.Product.Id == product.Id);
+            //					//Console.WriteLine (otherSheet);
+            //					// skip any information sheet that has been renewed or updated, otherwise add it
+            //					if (otherSheet == null)
+            //						availableProducts.Add (new ProductItem {
+            //							Name = product.Name + " for " + sheet.Owner.Name,
+            //							Status = "Not issued",
+            //							RedirectLink = "/Information/IssueUISForProduct/" + product.Id,
+            //						});
+            //					else if (otherSheet.NextInformationSheet == null)
+            //						availableProducts.Add (new ProductItem {
+            //							Name = otherSheet.InformationTemplate.Product.Name + " for " + sheet.Owner.Name,
+            //							Status = otherSheet.Status,
+            //							RedirectLink = "/Information/EditInformational/" + otherSheet.Id
+            //						});
+            //				}
+            //			}
+            //>>>>>>> ldaprework
+
+            //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
+            //	// skip any information sheet that has been renewed or updated
+            //	if (otherSheet.NextInformationSheet != null)
+            //		continue;
+            //	availableProducts.Add (new ProductItem {
+            //		Name = otherSheet.InformationTemplate.Product.Name + " for " + sheet.Owner.Name,
+            //		Status = otherSheet.Status,
+            //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
+            //	});
+            //}
+
+            //var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
+            //userDetails.PostalAddress = CurrentUser.Address;
+            //userDetails.StreetAddress = CurrentUser.Address;
+            //userDetails.FirstName = CurrentUser.FirstName;
+            //userDetails.Email = CurrentUser.Email;
+
+            //< ApplicationRole > UserRole
+
+            //var role= userDetails.
+            //section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
+            //User user = _userService.GetUser(CurrentUser.UserName);
+>>>>>>> techcertain2019coreIdentity
             var roles = new List<String>();
 
-            for (var i = 0; i < user.Groups.Count(); i++)
-            {
-                roles.Add(user.Groups.ElementAtOrDefault(i).Name);
-            }
+            //for (var i = 0; i < user.Groups.Count(); i++)
+            //{
+            //    roles.Add(user.Groups.ElementAtOrDefault(i).Name);
+            //}
 
             model.UserRole = roles;
 
@@ -1831,7 +1917,7 @@ namespace TechCertain.WebUI.Controllers
             //model.InterestedParties = interestedParties;
             model.AvailableProducts = availableProducts;
             model.OrganisationDetails = organisationDetails;
-            model.UserDetails = userDetails;
+            //model.UserDetails = userDetails;
 
             model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id).Result);
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);

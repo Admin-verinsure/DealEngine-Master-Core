@@ -9,12 +9,21 @@ namespace TechCertain.Infrastructure.FluentNHibernate
 {
     public class NHibernateMapperSession<TEntity> : IMapperSession<TEntity> where TEntity : class
     {
+<<<<<<< HEAD
         private ISession _session;
         private readonly ISessionFactory _sessionFactory;
 
         public NHibernateMapperSession(ISession session, ISessionFactory sessionFactory)
         {
             _sessionFactory = sessionFactory;
+=======
+        private readonly ISession _session;
+        //ILogger _logger;
+
+        public NHibernateMapperSession(ISession session)
+        {
+            //_logger = logger;
+>>>>>>> techcertain2019coreIdentity
             _session = session;
         }
 
@@ -77,6 +86,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             transaction.Dispose();
         }
 
+<<<<<<< HEAD
         //public async Task SaveAsync(TEntity entity)
         //{
         //    if (entity == null) throw new ArgumentNullException("entity");
@@ -92,6 +102,23 @@ namespace TechCertain.Infrastructure.FluentNHibernate
         //        await transaction.RollbackAsync();
         //        throw new Exception(ex.Message);
         //    }
+=======
+        public async Task SaveAsync(TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            var transaction = _session.BeginTransaction();
+            try
+            {
+                await _session.SaveAsync(entity);
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogDebug(ex.Message);
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
+>>>>>>> techcertain2019coreIdentity
 
         //    transaction.Dispose();
         //}

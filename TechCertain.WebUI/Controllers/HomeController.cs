@@ -14,6 +14,14 @@ using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
+=======
+using TechCertain.WebUI.Controllers;
+using DealEngine.Infrastructure.Identity.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using TechCertain.Infrastructure.FluentNHibernate;
+>>>>>>> techcertain2019coreIdentity
 using System.Threading.Tasks;
 
 #endregion
@@ -23,13 +31,18 @@ namespace TechCertain.WebUI.Controllers
     //[Route("Home")]
     [Authorize]
     public class HomeController : BaseController
+<<<<<<< HEAD
     {        
+=======
+    {
+>>>>>>> techcertain2019coreIdentity
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
         //ITaskingService _taskingService;
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
         IClientInformationService _clientInformationService;
+<<<<<<< HEAD
         IClientAgreementService _clientAgreementService;
 
         public HomeController(IMapper mapper, IUserService userRepository,
@@ -38,6 +51,15 @@ namespace TechCertain.WebUI.Controllers
 
             : base (userRepository)
         {            
+=======
+
+
+        public HomeController(IMapper mapper, IUserService userRepository,
+            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientInformationService clientInformationService,
+            IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
+            : base(userRepository)
+        {
+>>>>>>> techcertain2019coreIdentity
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             //_taskingService = taskingService;
