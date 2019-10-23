@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -29,11 +28,10 @@ namespace TechCertain.WebUI.Controllers
 		IVehicleService _vehicleService;
         ISystemEmailService _systemEmailService;
         IReferenceService _referenceService;
-        IHttpContextAccessor _httpContextAccessor;
 
         IMapper _mapper;
 
-		public AdminController (IUserService userRepository, SignInManager<DealEngineUser> signInManager, DealEngineDBContext dealEngineDBContext, IHttpContextAccessor httpContextAccessor,IPrivateServerService privateServerService, IFileService fileService,
+		public AdminController (IUserService userRepository, IPrivateServerService privateServerService, IFileService fileService,
 			IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
             IClientInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
             IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)

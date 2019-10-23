@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -10,6 +9,7 @@ using DealEngine.Infrastructure.AppInitialize.Services;
 using DealEngine.Infrastructure.AppInitialize.Repositories;
 using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
+using DealEngine.Infrastructure.AppInitialize;
 
 namespace TechCertain.WebUI
 {
@@ -28,7 +28,7 @@ namespace TechCertain.WebUI
             services.AddMvc();
             services.AddRazorPages();
             services.AddNHibernate();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddIdentityExtentions();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
             services.AddRepositories();

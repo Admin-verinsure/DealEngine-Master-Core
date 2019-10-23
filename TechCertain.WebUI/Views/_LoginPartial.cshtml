@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using DealEngine.Infrastructure.Identity.Data
+@using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 
-@inject SignInManager<DealEngineUser> SignInManager
-@inject UserManager<DealEngineUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {

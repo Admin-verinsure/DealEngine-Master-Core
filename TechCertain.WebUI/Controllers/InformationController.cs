@@ -10,12 +10,12 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
-using DealEngine.Infrastructure.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TechCertain.WebUI.Controllers
 {
+    [Authorize]
     public class InformationController : BaseController
     {
 
@@ -1799,88 +1799,13 @@ namespace TechCertain.WebUI.Controllers
             }
 
 
-            var availableProducts = new List<ProductItem>();
-            //<<<<<<< HEAD
-            //			//if (sheet.Product.ProductPackage != null) {
-            //			//	var products = sheet.Product.ProductPackage.Products;
-            //			//	Console.WriteLine ("Products in package: " + products.Count);
-            //			//	Console.WriteLine ("Getting all sheets");
-            //			//	var sheets = _clientInformationService.GetAllInformationFor (sheet.Owner);
-            //			//	Console.WriteLine (sheets.Count ());
-
-            //			//	foreach (Product p in products) Console.WriteLine (p.Id);
-            //			//	foreach (var s in sheets) Console.WriteLine (s.Product.Id);
-
-            //			//	foreach (var product in products) {
-            //			//		var otherSheet = sheets.FirstOrDefault (s => s.Product.Id == product.Id);
-            //			//		Console.WriteLine (otherSheet);
-            //			//		// skip any information sheet that has been renewed or updated, otherwise add it
-            //			//		if (otherSheet == null)
-            //			//			availableProducts.Add (new ProductItem {
-            //			//				Name = product.Name + " for " + sheet.Owner.Name,
-            //			//				Status = "Not issued",
-            //			//				RedirectLink = "/Information/IssueUISForProduct/" + product.Id,
-            //			//			});
-            //			//		else if (otherSheet.NextInformationSheet == null)
-            //			//			availableProducts.Add (new ProductItem {
-            //			//				Name = otherSheet.Product.Name + " for " + sheet.Owner.Name,
-            //			//				Status = otherSheet.Status,
-            //			//				RedirectLink = "/Information/EditInformational/" + otherSheet.Id
-            //			//			});
-            //			//	}
-            //			//}
-            //=======
-            //			if (sheet.Product.ProductPackage != null) {
-            //				var products = sheet.Product.ProductPackage.Products;
-            //				//Console.WriteLine ("Products in package: " + products.Count);
-            //				//Console.WriteLine ("Getting all sheets");
-            //				var sheets = _clientInformationService.GetAllInformationFor (sheet.Owner);
-            //				//Console.WriteLine (sheets.Count ());
-
-            //				//foreach (Product p in products) Console.WriteLine (p.Id);
-            //				//foreach (var s in sheets) Console.WriteLine (s.Product.Id);
-
-            //				foreach (var product in products) {
-            //					var otherSheet = sheets.FirstOrDefault (s => s.InformationTemplate.Product.Id == product.Id);
-            //					//Console.WriteLine (otherSheet);
-            //					// skip any information sheet that has been renewed or updated, otherwise add it
-            //					if (otherSheet == null)
-            //						availableProducts.Add (new ProductItem {
-            //							Name = product.Name + " for " + sheet.Owner.Name,
-            //							Status = "Not issued",
-            //							RedirectLink = "/Information/IssueUISForProduct/" + product.Id,
-            //						});
-            //					else if (otherSheet.NextInformationSheet == null)
-            //						availableProducts.Add (new ProductItem {
-            //							Name = otherSheet.InformationTemplate.Product.Name + " for " + sheet.Owner.Name,
-            //							Status = otherSheet.Status,
-            //							RedirectLink = "/Information/EditInformational/" + otherSheet.Id
-            //						});
-            //				}
-            //			}
-            //>>>>>>> ldaprework
-
-            //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
-            //	// skip any information sheet that has been renewed or updated
-            //	if (otherSheet.NextInformationSheet != null)
-            //		continue;
-            //	availableProducts.Add (new ProductItem {
-            //		Name = otherSheet.InformationTemplate.Product.Name + " for " + sheet.Owner.Name,
-            //		Status = otherSheet.Status,
-            //		RedirectLink = "/Information/EditInformational/" + otherSheet.Id
-            //	});
-            //}
-
+            var availableProducts = new List<ProductItem>();          
             var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
             userDetails.PostalAddress = CurrentUser.Address;
             userDetails.StreetAddress = CurrentUser.Address;
             userDetails.FirstName = CurrentUser.FirstName;
             userDetails.Email = CurrentUser.Email;
 
-            //< ApplicationRole > UserRole
-
-            //var role= userDetails.
-            //section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
             User user = _userService.GetUser(CurrentUser.UserName).Result;
             var roles = new List<String>();
 
@@ -1889,27 +1814,7 @@ namespace TechCertain.WebUI.Controllers
                 roles.Add(user.Groups.ElementAtOrDefault(i).Name);
             }
 
-            //foreach (var role in user.Groups)
-            //{
-            //    roles.Add(role.Name);
-            //}
             model.UserRole = roles;
-            //var role = user.GetRoles();
-
-
-            //using (var uow = _unitOfWork.BeginUnitOfWork())
-            //{
-            //    if (sheet.Status == "Quoted")
-            //    {
-            //        User user = uow.u.Abcs.SingleOrDefault(a => a.id == model.Asset.id);
-
-            //        sheet.Status = "Started";
-            //        uow.Commit();
-            //    }
-
-            //}
-
-
 
             var organisationDetails = new OrganisationDetailsVM
             {
@@ -1964,45 +1869,7 @@ namespace TechCertain.WebUI.Controllers
             return Redirect(url);
         }
 
-        //[HttpPost]
-        //public Iasync Task<IActionResult> EditInformation(IFormCollection formcollection)
-        //{
-        //    // for some reason changing the jquery accordion by js triggers a post to this endpoint instead of SaveInformation
-        //    // so just reroute the call
-        //    return SaveInformation(formcollection);
-        //}
-
-
-
-        //
-        //            InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == id);
-        //
-        //            Mapper.CreateMap<InformationTemplate, InformationViewModel>();
-        //            Mapper.CreateMap<InformationSection, InformationSectionViewModel>();
-        //
-        ////            Mapper.CreateMap<TextboxItem, InformationItemViewModel>()
-        ////                .ForMember(m => m.Type, o => o.MapFrom(s => Enum.Parse(typeof(ItemType), s.Type)));
-        ////            Mapper.CreateMap<DropdownListItem, InformationItemViewModel>()
-        ////                .ForMember(m => m.Type, o => o.MapFrom(s => Enum.Parse(typeof(ItemType), s.Type)));
-        ////            Mapper.CreateMap<LabelItem, InformationItemViewModel>()
-        ////                .ForMember(m => m.Type, o => o.MapFrom(s => Enum.Parse(typeof(ItemType), s.Type)));
-        //
-        //			Mapper.CreateMap<TextboxItem, InformationItemViewModel> ()
-        //				.ForMember (m => m.Type, o => o.Condition (c => (c.Type == ItemType.TEXTBOX.ToString ())));
-        //			Mapper.CreateMap<DropdownListItem, InformationItemViewModel> ()
-        //				.ForMember (m => m.Type, o => o.Condition (c => (c.Type == ItemType.DROPDOWNLIST.ToString ())));
-        //			Mapper.CreateMap<LabelItem, InformationItemViewModel> ()
-        //				.ForMember (m => m.Type, o => o.Condition (c => (c.Type == ItemType.LABEL.ToString ())));
-        //
-        //            Mapper.CreateMap<SelectListItem, DropdownListOption>();
-        //            Mapper.CreateMap<DropdownListOption, SelectListItem>();
-        //
-        //            InformationViewModel model = new InformationViewModel();
-        //            model = Mapper.Map<InformationViewModel>(template);
-        //
-        //            return View("ViewInformation", model);
-        //        }
-
+        
         [HttpPost]
         public async Task<IActionResult> SaveInformation(IFormCollection collection)
         {
@@ -2050,45 +1917,6 @@ namespace TechCertain.WebUI.Controllers
             return Json(ClaimAnswers);
         }
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
-        //{
-        //    ClientInformationSheet sheet = null;
-        //    try
-        //    {
-
-        //        using (var uow = _unitOfWork.BeginUnitOfWork())
-        //        {
-
-        //            foreach (var item in Claims)
-        //           {
-        //             for (var x = 0; x < item.Length-1; x++)
-        //              {
-        //                ClientInformationAnswer answer = _IClientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
-        //                if (answer != null)
-        //                    answer.Value = item[1];
-        //                else
-        //                {
-        //                    sheet = _clientInformationService.GetInformation(ClientInformationSheet);
-        //                    _IClientInformationAnswer.CreateNewClaimHistory(item[0], item[1], sheet);
-        //                }
-        //                    uow.Commit();
-
-        //                }
-
-
-        //            }
-        //        }
-
-        //    }catch(Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-
-        //}
-
-        //   return Json(true);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
@@ -2170,32 +1998,7 @@ namespace TechCertain.WebUI.Controllers
                         sheet.SubmitDate = DateTime.UtcNow;
                         sheet.SubmittedBy = CurrentUser;
                         await uow.Commit().ConfigureAwait(false);
-                    }
-
-                    ////send out uis submission confirmation email to insured
-                    //_emailService.SendSystemEmailUISSubmissionConfirmationNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                    ////send out information sheet submission notification email
-                    //_emailService.SendSystemEmailUISSubmissionNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                    ////send out agreement referral notification email
-                    //string agreementStatus = "Quoted";
-                    //bool agreementReferToTC = false;
-                    //foreach (ClientAgreement agreement in sheet.Programme.Agreements)
-                    //{
-                    //    if (agreementStatus != "Referred" && agreement.Status == "Referred")
-                    //    {
-                    //        agreementStatus = "Referred";
-                    //        if (!agreementReferToTC && agreement.ReferToTC)
-                    //        {
-                    //            agreementReferToTC = true;
-                    //            _emailService.SendSystemEmailOtherMarinaTCNotify(CurrentUser, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                    //        }
-                    //        else
-                    //        {
-                    //            _emailService.SendSystemEmailAgreementReferNotify(CurrentUser, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
-                    //        }
-
-                    //    }
-                    //}
+                    }                   
 
                 }
             }
@@ -2250,21 +2053,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CreateDemoUIS()
         {
             var demoData = LoadTemplate();
-
-            // Create Information Template
-            // InformationTemplateService Required
-
-            // Add Sections to information Template
-            // Section needs to exist without bellonging to a Information Template
-            // InformationSection Service Required
-
-            // Add Questions to Information Template
-            // Question Need to exist without belonging to a section
-            // InforamtionQuestion Service Required            
-
-
-
-
+      
             List<InformationSection> informationSections = new List<InformationSection>();
 
             foreach (var section in demoData.Sections)
@@ -2376,8 +2165,6 @@ namespace TechCertain.WebUI.Controllers
 
             }
 
-            // Create information sheet
-
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 InformationTemplate template = _informationTemplateService.CreateInformationTemplate(CurrentUser, demoData.Name, informationSections).Result;
@@ -2386,13 +2173,6 @@ namespace TechCertain.WebUI.Controllers
 
                 await uow.Commit().ConfigureAwait(false);
             }
-
-            // Update Id in view model
-
-            // Add Sections
-
-            // Add Questions
-
 
             return Json(demoData, System.Web.Mvc.JsonRequestBehavior.AllowGet);
         }
@@ -2500,10 +2280,7 @@ namespace TechCertain.WebUI.Controllers
         {
             List<InformationSectionViewModel> sections = new List<InformationSectionViewModel>
             {
-                //new InformationSectionViewModel { Name = "", CustomView = "CommonYou", Items = new List<InformationItemViewModel>() },
-                //new InformationSectionViewModel { Name = "", CustomView = "CommonLocation", Items = new List<InformationItemViewModel>() },
-                //new InformationSectionViewModel { Name = "", CustomView = "CommonOrganisation", Items = new List<InformationItemViewModel>() },
-                //new InformationSectionViewModel { Name = "", CustomView = "CommonOU", Items = new List<InformationItemViewModel>() }
+
             };
             return sections;
         }

@@ -45,7 +45,7 @@
            });
 
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-           debugger;
+           
            var informationsheetstatus = $('#Status').val();
            var clientInformationSheet = $('#AnswerSheetId').val();
 
@@ -110,7 +110,7 @@
                                //});
                            })
                            .fail(function (a, s, d) {
-                               debugger;
+                               
 
                                alert("Unable to save.");
                            });
@@ -128,14 +128,14 @@
                    data: $("#tab1 :input").serialize({ json: true })
                })
                    .done(function (url) {
-                       debugger;
+                       
                        //$("#agreementView").on('load', url, function () {
                        $("#agreementView").load(url, function () {
                            $('#getAgreementModal').hide();
                        });
                    })
                    .fail(function (data) {
-                       debugger;
+                       
                        $('#getAgreementModal').hide();
                        console.log(data);
                        alert("There was an error getting your agreement.");
@@ -163,7 +163,7 @@
                         });
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
-                        debugger;
+                        
                         $('#getAgreementDecModal').hide();
                         alert("There was an error getting your agreement declaration.");
                     });
@@ -681,7 +681,7 @@
     });
 
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
-        debugger;
+        
 
         var validity = true;
 
@@ -806,7 +806,7 @@
 
 
     function validateClaimDetails(Claim) {
-        debugger;
+        
           var claim = document.getElementById(Claim);
 
         if (claim.options[claim.selectedIndex].value == "true") {
@@ -895,7 +895,7 @@
 
 
     function ValidateAddBoatForm(tabId, tableId, currentTab) {
-        debugger;
+        
         event.preventDefault();
         var BoatName = $('#AddBoatName').val();
         var BoatType1 = $('#AddBoatType1').val();
@@ -931,7 +931,7 @@
 
         var validity = true;
 
-        //debugger;
+        //
         // if (Addeffectivedate == "") {
         //    $('#validateAddboateffectivedate').html("<font color='red'>Field is required</font>")
         //    if (validity) {
@@ -1172,7 +1172,7 @@
 
     function ValidateBoatForm(event, tabId, tableId, currentTab) {
         event.preventDefault();
-        debugger;
+        
         var BoatName = $('#BoatName').val();
         var BoatType1 = $('#BoatType1').val();
         var BoatType2 = $('#BoatType2').val();
@@ -1434,7 +1434,7 @@
         }
         if (validity) {
             $(".search-choice-close").click();
-            debugger;
+            
             AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, BuiltProfessionally, MotorType, HullConfiguration,othermarinaName)
             SetCurrentTab(currentTab);
         } else {
@@ -1454,7 +1454,7 @@
     }
 
     function SetCurrentTab(tabPaneId) {
-        debugger;
+        
         //event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         //$('#tblLocation').trigger('reloadGrid
@@ -1618,7 +1618,7 @@ function UpdateChosen() {
     }
 
     function ValidateMotorVehicleModal() {
-        debugger;
+        
         if (!(document.getElementById("YearModal").validity.valueMissing) && !(document.getElementById("MakeModal").validity.valueMissing)
             && !(document.getElementById("ModelModal").validity.valueMissing) && !(document.getElementById("VehicleLocationModal").validity.valueMissing)
             && !(document.getElementById("SumInsuredModal").validity.valueMissing)) {
@@ -1685,7 +1685,7 @@ function UpdateChosen() {
                 //    iconSmall: "fa fa-check bounce animated",
                 //    timeout: 4000
                 //});
-                debugger;
+                
 
                 $('#addTrailerModal' + " :input").val("");
                  var trailer = document.getElementsByName('TrailerSelection');
@@ -2601,7 +2601,7 @@ function EditClaim(claimId, tableId) {
     };
 
     function validateOperatorModal(firstName, lastName, yearsXP, Email) {
-        debugger;
+        
 
         if (!(document.getElementById("OperatorFirstNameModal").validity.valueMissing) && !(document.getElementById("OperatorLastNameModal").validity.valueMissing)
              && !(document.getElementById("organisationEmail").validity.valueMissing)) {
@@ -2612,7 +2612,7 @@ function EditClaim(claimId, tableId) {
     }
 
     function AddOperatorModal(event,firstName, lastName, yearsXP, Email) {
-        debugger;
+        
         event.preventDefault();
         var operatorFirstName = $(firstName).serialize();
         var operatorLastName = $(lastName).serialize();
@@ -2630,7 +2630,7 @@ function EditClaim(claimId, tableId) {
             type: "POST",
             data: postdata
         }).done(function (data) {
-            debugger;
+            
                         setTimeout("alert('Operator has been saved');", 4000);
 
                 //$.smallBox({
@@ -2661,7 +2661,7 @@ function EditClaim(claimId, tableId) {
     };
 
     function ValidateAddLandLocModal(storageType, storageDescription, location) {
-        debugger;
+        
          if (!(document.getElementById("BuildingLocationModal").validity.valueMissing) && !(document.getElementById("BuildingCategoryModal").validity.valueMissing)
              && !(document.getElementById("BuildingNameModal").validity.valueMissing)) {
              AddLandLocModal(event,storageType, storageDescription, location);
@@ -2792,7 +2792,7 @@ function EditClaim(claimId, tableId) {
     };
 
     function validateLocModal(streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, selOULoc) {
-        debugger;
+        
 
          if (!(document.getElementById("LocationTypeModal").validity.valueMissing) && !(document.getElementById("StreetModal").validity.valueMissing)
              && !(document.getElementById("SuburbModal").validity.valueMissing) && !(document.getElementById("CityModal").validity.valueMissing)) {
@@ -2803,7 +2803,7 @@ function EditClaim(claimId, tableId) {
 
     }
     function AddLocModal(event,streetLoc, suburbLoc, postcodeLoc, cityLoc, countryLoc, cnameLoc, loctype, selOULoc) {
-        debugger;
+        
                 event.preventDefault();
 
          $('#getLandLocModal').show();
@@ -2826,7 +2826,7 @@ function EditClaim(claimId, tableId) {
 
         })
             .done(function (data) {
-                debugger;
+                
                 console.log(data);
             //$.smallBox({
             //     title: "Location has been saved",
@@ -2838,7 +2838,7 @@ function EditClaim(claimId, tableId) {
             $('#addLocModal' + " :input").val("");
 
                 if ($('#addLandLocModal').hasClass('in')) {
-                    debugger;
+                    
                     $('#addLocModal').hide();
                     $("#BuildingLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
                     $("#BuildingLocationModal.b [value='add']").remove();
@@ -2878,7 +2878,7 @@ function EditClaim(claimId, tableId) {
 
 
                 else if ($('#addTrailerModal').hasClass('in')) {
-                    debugger;
+                    
                     $('#addLocModal').hide();
 
                     $("#VehicleLocationModal.b").append($('<option>', { value: data.locationId, text: data.street + ", " + data.suburb + ", " + data.postcode + ", " + data.country }));
@@ -3042,7 +3042,7 @@ function EditClaim(claimId, tableId) {
     };
 
     function ClearBoats(event, tabId, currentTab) {
-        debugger;
+        
         event.preventDefault();
 
         if (confirm("I don't want to add.")) {
@@ -3054,7 +3054,7 @@ function EditClaim(claimId, tableId) {
         }
     }
     function AddBoat(event,tabId, boatusess, tableId, interestedParty, maxSumInsured, builtProf, Motortype, hullconfig,othermarinaName) {
-        debugger;
+        
 
         $('#AddBoatModal').show();
         var informationId = $('#AnswerSheetId').serialize();
@@ -3104,7 +3104,7 @@ function EditClaim(claimId, tableId) {
     };
 
     function EditBoat(classId, boatId) {
-        debugger;
+        
                 //event.preventDefault();
 
         var _sheetId = $('#AnswerSheetId').val();
@@ -3124,7 +3124,7 @@ function EditClaim(claimId, tableId) {
             data: postData
     })
             .done(function (data) {
-                debugger;
+                
             console.log(data);
             if (data.boatType1 == "CruisersandLaunches" || data.boatType1 == "YachtsandCatamarans") {
                 $('#VesselUseSection').show('2000');
@@ -3175,14 +3175,14 @@ function EditClaim(claimId, tableId) {
                 };
 
                 if (data.boatWaterLocation != null && data.boatWaterLocation != "00000000-0000-0000-0000-000000000000") {
-                    debugger;
+                    
                     $('#BoatWaterLocation.b').val(data.boatWaterLocation);
                     $('#othermarinSection').addClass("hidden");
                     $('#BoatMooredTypeSection').addClass("hidden");
                                         GetMooredType(data.boatWaterLocation);
 
                 } else {
-                    debugger;
+                    
                     $('#BoatWaterLocation.' + classId).val("add");
                     $('#othermarinSection').removeClass("hidden");
                     $('#BoatMooredTypeSection').removeClass("hidden");
@@ -3210,7 +3210,7 @@ function EditClaim(claimId, tableId) {
 };
 
     function updateEditBoat(data) {
-        debugger;
+        
         if (data.hullConfiguration == "Other") {
             $('#HullConfigurationOtherSection').removeClass("hidden");
         }
@@ -3272,7 +3272,7 @@ function EditClaim(claimId, tableId) {
     }
 
     function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
-        debugger;
+        
                 event.preventDefault();
 
         var postData = {
@@ -3290,7 +3290,7 @@ async: true
     })
         .done(function (data) {
              $('#getDetailsModal').hide();
-            debugger;
+            
         if (data === true) {
             $(sourceTable).trigger( 'reloadGrid' );
             $(destTable).trigger( 'reloadGrid' );
@@ -3516,7 +3516,7 @@ async: true
     }
 
     function AddAddNamedParty(event,tabId, tableId) {
-        debugger;
+        
                             event.preventDefault();
 
         $('#getPartyModal').show();
@@ -3566,7 +3566,7 @@ async: true
                  // iconSmall: "fa fa-check bounce animated",
                  // timeout: 4000
                  //});
-                    debugger;
+                    
                 $('#AdminSectionAdd').addClass('hidden');
                 $('#AddAdminUserSec').addClass('hidden');
                 $('#UserSec').addClass('hidden');
@@ -3618,7 +3618,7 @@ async: true
                  // iconSmall: "fa fa-check bounce animated",
                  // timeout: 4000
                  //});
-                    debugger;
+                    
                 $('#BoatOperator').append("<option value=\"" + data.iD + "\">" + data.firstName + " " + data.lastName + "</option>")
                 $("#BoatOperator.b [value='add']").remove();
                 $('#BoatOperator.b').append($('<option>', { value: "add", text: "Add Skipper" }));
@@ -3692,7 +3692,7 @@ async: true
 
 
      function AddNamedParty(event,tabId, tableId) {
-         debugger;
+         
                              event.preventDefault();
 
                  var informationId = $('#AnswerSheetId').val();
@@ -3761,7 +3761,7 @@ async: true
     //	$(tabId + " :input").val("");
     //})
  //       .fail(function (jqXHR, textStatus, errorThrown) {
- //           debugger;
+ //           
  //       alert("There was an error while trying to save the Boat Use.");
     //});
  //   };*@
@@ -3839,7 +3839,7 @@ async: true
     };
 
     function validateIP() {
-        debugger;
+        
         if (!(document.getElementById("OrganisationTypeName").validity.valueMissing) && !(document.getElementById("organisationName").validity.valueMissing)
             && !(document.getElementById("organisationPhone").validity.valueMissing)) {
             addInterestedParty(event);
@@ -3868,7 +3868,7 @@ async: true
             Financial = true;
             Private = true;
         }
-        debugger;
+        
         var AnswerSheetId = $('#AnswerSheetId').serialize();
         var InterestedPartyName = $('#organisationName').serialize();
         var InterestedPartyEmail = $('#IPorganisationEmail').serialize();
@@ -3884,7 +3884,7 @@ async: true
         var OrganisationType = $("#OrganisationTypeName").serialize();
         var OrganisationTyp1111e = "OrganisationTypeName=" + OrganisationType;
 
-        debugger;
+        
         var z = $.grep([InterestedPartyName, InterestedPartyEmail, InterestedPartyPhone, OrganisationType,
             UserFName, UserLName, Email,insuranceAtrribute, Phone, IsAdmin, AnswerSheetId], Boolean).join("&");
         var z = z + "&IsAdmin=" + IsAdmin;
@@ -3943,7 +3943,7 @@ async: true
 
     function ValidateBoatUseModal() {
 
-        debugger;
+        
         selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
 
         if (selectedBoatUseCategory == "Race" || selectedBoatUseCategory == "Both") {
@@ -3986,7 +3986,7 @@ async: true
         selectedBoatUseCategory = "";
         var informationId = $('#AnswerSheetId').serialize();
         if (live == true) {
-                            debugger;
+                            
 
                 $('#SelectedBoatUse').trigger('chosen:updated');
             var boatUseEffectiveDate = $('#BoatUseLiveEffectiveDateModal').serialize();
@@ -4011,7 +4011,7 @@ async: true
                 //iconSmall: "fa fa-check bounce animated",
                 //timeout: 4000
                 //});
-                                debugger;
+                                
 
                 console.log(data);
                 $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
@@ -4025,7 +4025,7 @@ async: true
 
             })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                                    debugger;
+                                    
 
                   $('#getBoatUseModal').hide();
 
@@ -4035,7 +4035,7 @@ async: true
         }
 
         if (race == true) {
-                            debugger;
+                            
 
             var boatUseEffectiveDate = $('#BoatUseRaceEffectiveDateModal').serialize();
             var boatUseCeaseDate = $('#BoatUseRaceCeaseDateModal').serialize();
@@ -4059,7 +4059,7 @@ async: true
                 //iconSmall: "fa fa-check bounce animated",
                 //timeout: 4000
                 //});
-                                    debugger;
+                                    
 
                 $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
@@ -4072,7 +4072,7 @@ async: true
 
             })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                                    debugger;
+                                    
 
                                 $('#getBoatUseModal').hide();
 
@@ -4082,7 +4082,7 @@ async: true
         }
 
         if (live == false && race == false) {
-                            debugger;
+                            
 
             $('#SelectedBoatUse').trigger('chosen:updated');
             var boatusecategory = "BoatUseCategory=NoRacingNoLiveOnBoard";
@@ -4105,7 +4105,7 @@ async: true
                 //iconSmall: "fa fa-check bounce animated",
                 //timeout: 4000
                 //});
-                debugger;
+                
                 console.log(data);
                 $('#SelectedBoatUse').append("<option selected value=\"" + data.boatUseId + "\">" + data.boatUseCategory + "</option>")
                 $('#SelectedBoatUse').trigger('chosen:updated');
@@ -4115,7 +4115,7 @@ async: true
 
             })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                                    debugger;
+                                    
 
                 $('#getBoatUseModal').hide();
 
@@ -4147,7 +4147,7 @@ async: true
         data: JSON.stringify({ partyID: boatUseId, answerSheetId : _sheetId })
     })
         .done(function (data) {
-            debugger;
+            
             if (data.OperatorYearsOfExp != "" && data.OperatorYearsOfExp != null ) {
                 $('#SkprExpSec').show('2000');
                 $('#SkprExpSec').removeClass("hidden");
@@ -4177,7 +4177,7 @@ async: true
 		'partyID': boatUseId,
 		'answerSheetId': _sheetId
 	};
-        debugger;
+        
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("GetNamedParty", "Services")',
@@ -4188,7 +4188,7 @@ async: true
 async: true
     })
         .done(function (data) {
-            debugger;
+            
             //if (data.OperatorYearsOfExp != "" && data.OperatorYearsOfExp != null ) {
             //    $('#SkprExpSec').show('2000');
             //    $('#SkprExpSec').removeClass("hidden");
@@ -4228,7 +4228,7 @@ async: true
         async: true
     })
         .done(function (data) {
-            debugger;
+            
         $('#BoatUseId.' + classId).val(data.boatUseId);
         $('#BoatUseCategory.' + classId).val(data.boatUseCategory);
         $('#BoatUseLiveOnBoard.' + classId).val(data.boatUseLiveOnBoard);
@@ -4268,7 +4268,7 @@ async: true
         async: true
     })
         .done(function (data) {
-                    debugger;
+                    
         $('#getDetailsModal').hide();
 
         $('#Registration').val(data.registration);
@@ -4309,7 +4309,7 @@ async: true
 
     function UpdateChosen() {
         // find all multiselect items and apply Chosen
-        debugger;
+        
     $('.cselect').each(function() {
         $('#'+this.id).trigger("chosen:updated");
     });
@@ -4387,7 +4387,7 @@ async: true
     };
 
     function CreateProgramme() {
-        debugger;
+        
                             event.preventDefault();
 
         var programmeName = $("#ProgName").val();
@@ -4400,7 +4400,7 @@ async: true
         data: JSON.stringify({ ProgramName : programmeName })
     })
             .done(function (data) {
-                debugger;
+                
                     // $.smallBox({
                     //      title: "User Not Found ",
 		                  //color: "#5F895F",
@@ -4412,7 +4412,7 @@ async: true
     })
 
        .fail(function (jqXHR, textStatus, errorThrown) {
-                debugger;
+                
         alert("Unable to get Vehicle details.");
     });
 
@@ -4421,7 +4421,7 @@ async: true
 
 
     function GetUser(email) {
-        debugger;
+        
         var UserEmail = $(email).val();
                             event.preventDefault();
 
@@ -4433,7 +4433,7 @@ async: true
         data: JSON.stringify({ Useremail : UserEmail })
     })
             .done(function (data) {
-                debugger;
+                
                 if (data == "NotFound") {
 
                      //$.smallBox({
@@ -4455,7 +4455,7 @@ async: true
                 }
     })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                debugger;
+                
         alert("Unable to get Vehicle details.");
     });
 
@@ -4463,7 +4463,7 @@ async: true
 
 
      function AddGetUser(email) {
-         debugger;
+         
                              event.preventDefault();
 
         var UserEmail = $(email).val();
@@ -4476,7 +4476,7 @@ async: true
         data: JSON.stringify({ Useremail : UserEmail })
     })
             .done(function (data) {
-                debugger;
+                
                 if (data == "NotFound") {
 
                     $('#UserDetail').val("UserNotFound");
@@ -4508,7 +4508,7 @@ async: true
     })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 $('#getExistingUser').hide();
-                debugger;
+                
         alert("Unable to get Vehicle details.");
     });
 
@@ -4520,7 +4520,7 @@ async: true
 function GetRegisteredMVDetails(elementBaseName)
    {                    event.preventDefault();
 
-    debugger;
+    
     var TrailerModal = false;
     if (elementBaseName == "#RegistrationModal") {
         TrailerModal = true;
@@ -4541,7 +4541,7 @@ async: true
     })
         .done(function (data) {
             if (TrailerModal==true) {
-                debugger;
+                
                 $('#ValidatedTrailer.b').val(data.validated);
                 $('#YearModal.b').val(data.year);
                 $('#MakeModal.b').val(data.make);
@@ -4565,7 +4565,7 @@ async: true
                 $('#addSection').removeClass('hidden');
             }
             else {
-                debugger;
+                
                 $('#AddValidated.rmv').val(data.validated);
                 $('#AddYear.rmv').val(data.year);
                 $('#AddMake.rmv').val(data.make);
@@ -5169,7 +5169,7 @@ async: true
     }
 
     function InsuranceAttributeSelected() {
-        debugger;
+        
          var InsuranceAttribute = document.getElementById("InsuranceAttributes");
         var IA = InsuranceAttribute.options[InsuranceAttribute.selectedIndex].value;
         $('#useremailSec').addClass("hidden");
@@ -5273,13 +5273,13 @@ async: true
 
 
     function AddupdateExcess() {
-        debugger;
+        
         var boatType1Selected = AddboatType1.options[AddboatType1.selectedIndex].value;
         var boatType2Selected = AddboatType2.options[AddboatType2.selectedIndex].value;
         var MotorType = $('#AddMotorType').val();
 
         $('#Addexcess').val('');
-        debugger;
+        
         var sumInsured = document.getElementById("AddMaxSumInsured").value;
         var sumInsured = sumInsured.replace(/[^0-9\.-]+/g, "");
         var exc250 = document.getElementById("Addexcess250");
@@ -5341,7 +5341,7 @@ async: true
 
 
     function AddhasTrailer() {
-        debugger;
+        
         var hasT = $('#AddBoatIsTrailered').val();
         console.log(hasT);
         if (hasT == "True") {
@@ -5403,7 +5403,7 @@ async: true
     function AddaddNewSkipper() {
         var selectedBoatOperator = AddboatOperator.options[AddboatOperator.selectedIndex].value;
         if (selectedBoatOperator == "add") {
-            debugger;
+            
             $('#addOperatorModal').show();
             AddboatOperator.selectedIndex = 0;
         }
@@ -5412,10 +5412,10 @@ async: true
 
 
     function AddaddNewTrailer() {
-        debugger;
+        
         var selectedTrailer = AddboatTrailer.options[AddboatTrailer.selectedIndex].value;
         if (selectedTrailer == "add") {
-            debugger;
+            
             $('#addTrailerModal').show();
             AddboatTrailer.selectedIndex = 0;
             $('#openModal').val('#addTrailerModal');
@@ -5607,7 +5607,7 @@ async: true
     //}
 
     function AddaddNewLoc() {
-        debugger;
+        
         var selectedLoc = BuildingLocationModal.options[BuildingLocationModal.selectedIndex].value;
         var selectedLoc2 = AddboatLoc2.options[AddboatLoc2.selectedIndex].value;
         var selectedLoc3 = AddboatLoc3.options[AddboatLoc3.selectedIndex].value;
@@ -5709,7 +5709,7 @@ async: true
     var adminUser = '#AdminUser';
 
     function vesselType1Selected() {
-        debugger;
+        
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         console.log(boatType1Selected);
         $('#excess').val('');
@@ -6018,12 +6018,12 @@ async: true
     function vesselType2Selected() {
         var boatType2Selected = boatType2.options[boatType2.selectedIndex].value;
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
-        debugger;
+        
         console.log("You have selected: ", boatType2Selected, "Using this element: ", boatType2);
         $('#excess').val('');
         $('#MaxSumInsured').val('');
         if (boatType2Selected == "Roadtrailer") {
-            debugger;
+            
             //$('#VesselTrailer').hide('2000');
             boatType1Jetski.classList.remove("hidden");
             constructionType.selectedIndex = 0;
@@ -6078,7 +6078,7 @@ async: true
     }
 
     function updateExcess() {
-        debugger;
+        
         var boatType1Selected = boatType1.options[boatType1.selectedIndex].value;
         var boatType2Selected = boatType2.options[boatType2.selectedIndex].value;
         var MotorType = $('#MotorType').val();
@@ -6175,7 +6175,7 @@ async: true
     }
 
     function addNewTrailer() {
-        debugger;
+        
         var selectedTrailer = boatTrailer.options[boatTrailer.selectedIndex].value;
         if (selectedTrailer == "add") {
             $('#addTrailerModal').show();
@@ -6217,7 +6217,7 @@ async: true
     }
 
     function addNewWaterLoc() {
-        debugger;
+        
         var selectedWaterLoc = boatWaterLoc.options[boatWaterLoc.selectedIndex].value;
         if (selectedWaterLoc == "add") {
             $('#othermarinSection').removeClass('hidden');
@@ -6241,7 +6241,7 @@ async: true
     }
 
      function AddaddNewWaterLoc() {
-        debugger;
+        
         var AddSelectedWaterLoc = AddboatWaterLoc.options[AddboatWaterLoc.selectedIndex].value;;
          if (AddSelectedWaterLoc == "add") {
              $('#AddothermarinSection').removeClass('hidden');
@@ -6263,7 +6263,7 @@ async: true
 
     function GetMooredType(othermarinaname) {
          var orgId = othermarinaname;
-        debugger;
+        
         $('#getMooredModal').show();
          var postData = { OrgID: orgId};
 
@@ -6275,7 +6275,7 @@ async: true
              //contentType: "application/json; charset=utf-8"
       })
             .done(function (data) {
-                debugger;
+                
 
                  $('#BoatMooredTypeSection').removeClass('hidden');
                 $('#AddBoatMooredTypeSection').removeClass('hidden');
@@ -6302,7 +6302,7 @@ async: true
 
     })
             .fail(function (jqXHR, textStatus) {
-                debugger;
+                
                     $('#BoatMooredTypeSection').removeClass('hidden');
                 $('#AddBoatMooredTypeSection').removeClass('hidden');
                  $("#MooredType").find('option').not(':selected').remove();
@@ -6326,7 +6326,7 @@ async: true
 
 
      function addNewLoc() {
-        debugger;
+        
         var selectedLoc2 = boatLoc2.options[boatLoc2.selectedIndex].value;
         if (selectedLoc2 == "add") {
             $('#addLocModal').show();
@@ -6337,7 +6337,7 @@ async: true
     }
 
     function addNewTrailerLoc() {
-        debugger;
+        
         var selectedLoc3 = boatLoc3.options[boatLoc3.selectedIndex].value;
         if (selectedLoc3 =="add") {
             $('#addLocModal').show();
@@ -6348,7 +6348,7 @@ async: true
     }
 
      function addTrailerLoc() {
-         debugger;
+         
         var VehicleLocation =  document.getElementById("VehicleLocation");
 
         var selectedLoc3 = VehicleLocation.options[VehicleLocation.selectedIndex].value;
@@ -6360,7 +6360,7 @@ async: true
     }
 
       function AddaddTrailerLoc() {
-         debugger;
+         
         var VehicleLocation =  document.getElementById("AddVehicleLocation");
 
         var selectedLoc3 = VehicleLocation.options[VehicleLocation.selectedIndex].value;
@@ -6373,7 +6373,7 @@ async: true
     }
 
      function addLandLoc() {
-         debugger;
+         
         var VehicleLocation =  document.getElementById("BuildingLocation");
 
         var selectedLoc3 = VehicleLocation.options[VehicleLocation.selectedIndex].value;
@@ -6385,7 +6385,7 @@ async: true
         }
     }
      function AddaddLandLoc() {
-         debugger;
+         
         var VehicleLocation =  document.getElementById("AddBuildingLocation");
 
         var selectedLoc3 = VehicleLocation.options[VehicleLocation.selectedIndex].value;
@@ -6397,7 +6397,7 @@ async: true
         }
     }
         function addPlantLoc() {
-         debugger;
+         
         var VehicleLocation =  document.getElementById("MotorLocation");
 
         var selectedLoc3 = VehicleLocation.options[VehicleLocation.selectedIndex].value;
@@ -6410,7 +6410,7 @@ async: true
     }
 
         function AddaddPlantLoc() {
-         debugger;
+         
         var VehicleLocation =  document.getElementById("AddMotorLocation");
 
         var selectedLoc3 = VehicleLocation.options[VehicleLocation.selectedIndex].value;
@@ -6423,7 +6423,7 @@ async: true
     }
 
     function closeLocModal() {
-        debugger;
+        
        // if ($('#addLandLocModal').hasClass('in') || $('#addTrailerModal').hasClass('in')) {
         var opMod = $(openModal).val();
         $(opMod).show();
@@ -6527,7 +6527,7 @@ async: true
     }
 
     function AddAdminUpdated() {
-        debugger;
+        
         var AdminUser = $('#AdminSectionAdd');
         var selectedIsAdmin = $('input[name=AddIsAdmin]:checked').val();
         if (selectedIsAdmin == "Yes") {
@@ -6545,7 +6545,7 @@ async: true
         var interestedPartyFinancial = $('#FinancialSection');
         var interestedPartyPrivate = $('#PrivateSection');
         var selectedBoatUseCategory = $('input[name=InsuranceAttribute]:checked').val();
-        debugger;
+        
         if (selectedBoatUseCategory == "Financial") {
             interestedPartyFinancial.removeClass('hidden');
             interestedPartyPrivate.addClass('hidden');
@@ -6574,7 +6574,7 @@ async: true
     }
 
     function boutUseCategoryUpdated() {
-        debugger;
+        
         var selectedBoatUseCategory = $('input[name=BoatUseCategory]:checked').val();
         if (selectedBoatUseCategory == "LiveOnBoard") {
             $(vesselUseSectionLive).show('2000');
@@ -6614,7 +6614,7 @@ async: true
     }
 
     function hasTrailer() {
-        debugger;
+        
         var hasT = $('#BoatIsTrailered').val();
         console.log(hasT);
 
@@ -6709,11 +6709,10 @@ async: true
     }
 
     function submitPayment() {
-        event.preventDefault();
+        //event.preventDefault();
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
 
-        debugger;
         if ($('#paymentCreditCard').is(":checked")) {
             $.ajax({
                 type: "POST",

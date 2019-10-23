@@ -6,11 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 

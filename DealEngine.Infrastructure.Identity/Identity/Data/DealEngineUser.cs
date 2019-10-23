@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using NHibernate.AspNetCore.Identity;
 using TechCertain.Domain.Entities;
+
 
 namespace DealEngine.Infrastructure.Identity.Data
 {

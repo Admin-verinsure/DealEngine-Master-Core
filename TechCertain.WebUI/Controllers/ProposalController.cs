@@ -3,9 +3,6 @@ using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Proposal;
-using DealEngine.Infrastructure.Identity.Data;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers

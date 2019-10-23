@@ -2,13 +2,9 @@
 using System;
 using System.Net;
 using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
-using DealEngine.Infrastructure.Identity.Data;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Permission;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers

@@ -14,11 +14,6 @@ using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using TechCertain.WebUI.Controllers;
-using DealEngine.Infrastructure.Identity.Data;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 
 #endregion

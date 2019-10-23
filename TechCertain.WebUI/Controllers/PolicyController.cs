@@ -11,9 +11,6 @@ using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.ControlModels;
 using TechCertain.WebUI.Models.Policy;
-using DealEngine.Infrastructure.Identity.Data;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 

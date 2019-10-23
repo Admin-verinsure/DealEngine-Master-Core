@@ -12,8 +12,6 @@ using TechCertain.WebUI.Models;
 using Elmah;
 using TechCertain.WebUI.Models.Account;
 using TechCertain.WebUI.Models.Permission;
-using DealEngine.Infrastructure.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
@@ -22,6 +20,8 @@ using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.AuthorizationRSA;
 using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
+using Microsoft.AspNetCore.Identity;
+using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 
 
 #endregion
@@ -35,8 +35,8 @@ namespace TechCertain.WebUI.Controllers
 
         IEmailService _emailService;
 		IFileService _fileService;
-        SignInManager<DealEngineUser> _signInManager;
-        UserManager<DealEngineUser> _userManager;
+        SignInManager<IdentityUser> _signInManager;
+        UserManager<IdentityUser> _userManager;
         ILdapService _ldapService;
         IProgrammeService _programmeService;
         IClientInformationService _clientInformationService;
@@ -49,8 +49,8 @@ namespace TechCertain.WebUI.Controllers
 
         public AccountController(
             IAuthenticationService authenticationService,
-			SignInManager<DealEngineUser> signInManager,
-            UserManager<DealEngineUser> userManager,
+			SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
             ILogger<AccountController> logger,
             IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
@@ -314,7 +314,8 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 var userName = viewModel.Username.Trim();
-				string password = viewModel.Password.Trim();                
+				string password = viewModel.Password.Trim();
+                var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                 int resultCode = -1;
                 string resultMessage = "";
 
@@ -322,11 +323,14 @@ namespace TechCertain.WebUI.Controllers
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
-                    var deUser = _userManager.FindByNameAsync(userName).Result;
+                    IdentityUser deUser = _userManager.FindByNameAsync(userName).Result;
                     if (deUser == null)
                     {
-                        deUser = new DealEngineUser { UserName = userName, PasswordHash = password };
-                        await _userManager.CreateAsync(deUser, password).ConfigureAwait(true);
+
+                        deUser = new IdentityUser();// { UserName = userName, PasswordHash = password, Email = user.Email};
+                        deUser.Email = user.Email;
+                        deUser.UserName = userName;
+                        await _userManager.CreateAsync(deUser, password);
                     }
 
                     var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
@@ -334,14 +338,8 @@ namespace TechCertain.WebUI.Controllers
                     {
                         //add claims, roles etc here
                     }
-
-                    //var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
-                    //user.UserName = "testUserName";
-                    //await _userRepository.UpdateAsync(user).ConfigureAwait(false);
-                    //user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == user.UserName);
-
-                    //var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
-                    //var result = await LoginMarsh(user, viewModel.DevicePrint);
+                    
+                    var result = await LoginMarsh(user, viewModel.DevicePrint);
                     return LocalRedirect("~/Home/Index");
                 }
 
