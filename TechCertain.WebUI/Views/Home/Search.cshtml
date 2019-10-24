@@ -49,7 +49,7 @@
 			})
             .done(function (url) {
 
-                window.location = url;
+                window.location.href = url;
                 console.log(json);
 	        })
             .fail(function (err, ajaxOptions, thrownError) {

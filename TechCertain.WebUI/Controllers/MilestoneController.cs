@@ -90,6 +90,7 @@ namespace TechCertain.WebUI.Controllers
             Programme programme = await _programmeService.GetProgramme(Id);            
 
 
+            
             MilestoneBuilderViewModel model = new MilestoneBuilderViewModel()
             {
                 //UserTasks = new List<UserTask>(),
@@ -105,18 +106,20 @@ namespace TechCertain.WebUI.Controllers
                 ProgrammeId = programme.Id,
                 MilestoneActivity = milestoneActivity,
             };
-            
+            var ProId = programme.Id;
+            var Milestoneactivity = milestoneActivity;
+            return Content("/Milestone/MilestoneBuilder/?proId=" + ProId + "&milesActivity=" + milestoneActivity);
 
-            return RedirectToAction("MilestoneBuilder", model);
+            //return RedirectToAction("MilestoneBuilder", model);
         }
 
         [HttpGet]
-        public async Task<IActionResult> MilestoneBuilder(MilestoneBuilderViewModel model)
+        public async Task<IActionResult> MilestoneBuilder(string ProId, string milesActivity)
         {
             IList<string> emailTo = new List<string>();
-            Programme programme = await _programmeService.GetProgramme(model.ProgrammeId);
+            Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProId));
             emailTo.Add(programme.BrokerContactUser.Address);
-            var templates = await _milestoneService.GetMilestoneTemplate(programme.Id, model.MilestoneActivity);
+            var templates = await _milestoneService.GetMilestoneTemplate(programme.Id, milesActivity);
 
             MilestoneTemplateVM milestoneTemplateVM = new MilestoneTemplateVM
             {
@@ -128,7 +131,7 @@ namespace TechCertain.WebUI.Controllers
                     new SelectListItem { Text = "Important", Value = "1" },
                     new SelectListItem { Text = "Critical", Value = "2" },
             };
-
+            MilestoneBuilderViewModel model = new MilestoneBuilderViewModel();
             model.UserTasks = new List<UserTask>();
             model.Actions = new List<string>();
             model.EmailTemplates = new List<EmailTemplate>();
@@ -140,7 +143,7 @@ namespace TechCertain.WebUI.Controllers
             model.AdvisoryContent = new AdvisoryVM();
             model.Priorities = priorityTypes;
 
-            return Content("MilestoneBuilder");
+            return View("MilestoneBuilder", model);
         }
 
 

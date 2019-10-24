@@ -108,14 +108,14 @@
                     type: "POST",
                     data: mergedData
                 })
-                    .done(function (data) {
-                        console.log(data);
-                        debugger;
-                        $("#MilestoneBuilder").load(data);
-                        //window.location = url;
-                        //location.href = 'Url.Action("MilestoneBuilder", "Milestone")'
-                    })
+                   .done(function (url) {
+                       debugger;
+
+                window.location.href = url;
+                console.log("url"+url);
+	        })
                     .fail(function (err) {
+                        debugger;
                         console.log(err);
                         alert("Unable to save." + err.responseText);
                     });
