@@ -6719,19 +6719,11 @@ async: true
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true }),
-                async: false,
-                beforeSend: function () {
-                    setTimeout(2000);
-                },
+                data: $("#tab1 :input").serialize({ json: true }),                
                 complete: function (data) {
-                    debugger;
                     window.location = data.responseJSON.url;
                 },
             })
-                .done(function (data) {
-                    window.location = data.responseJSON.url;
-                });
         }
         else if ($('#paymentEGlobal').is(":checked")) {
             debugger;

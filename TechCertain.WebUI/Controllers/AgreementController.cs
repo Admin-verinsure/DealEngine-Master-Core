@@ -1341,7 +1341,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePxPayment(IFormCollection collection)
+        public async Task<IActionResult> GeneratePxPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -1369,7 +1369,7 @@ namespace TechCertain.WebUI.Controllers
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
                 programme.InformationSheet.Status = "Bound";
-                uow.Commit();
+                await uow.Commit();
             }
 
             //add check to count how many failed payments
@@ -1389,8 +1389,7 @@ namespace TechCertain.WebUI.Controllers
             PxPay pxPay = new PxPay(merchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, merchant.MerchantPaymentGateway.PxpayUserId, merchant.MerchantPaymentGateway.PxpayKey);
 
             string domainQueryString = _appSettingService.domainQueryString;
-            Guid example = Guid.NewGuid();
-            Thread.Sleep(5000);
+
             RequestInput input = new RequestInput
             {
                 AmountInput = totalPayment.ToString("0.00"),
@@ -1398,8 +1397,7 @@ namespace TechCertain.WebUI.Controllers
                 TxnType = "Purchase",
                 UrlFail = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlFail + ProgrammeId.ToString(),
                 UrlSuccess = "https://" + domainQueryString + payment.PaymentPaymentGateway.PxpayUrlSuccess + ProgrammeId.ToString(),
-                TxnId = example.ToString("N").Substring(0, 16),
-                //TxnId = payment.Id.ToString("N").Substring(0, 16),
+                TxnId = payment.Id.ToString("N").Substring(0, 16),
             };
 
             RequestOutput requestOutput = pxPay.GenerateRequest(input);
