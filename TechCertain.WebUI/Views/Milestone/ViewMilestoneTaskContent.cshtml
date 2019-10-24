@@ -1,38 +1,56 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
 
-    <div id="MilestoneStart-form" class="smart-form" novalidate="novalidate">
+<div id="MilestoneStart-form" class="smart-form" novalidate="novalidate">
 
-        <div id="taskPriority">
-            <label>Task Priority</label>
-            @Html.DropDownList("Priortylist", Model.Priorities)
-        </div>
-
-        <div id="taskDueDate">
-            <label>Due Date</label>
-            <input placeholder="Due Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" type="text" id="DueDate">
-        </div>
-
-        <div id="taskReference">
-            <label>Task Reference</label>
-            @Html.TextAreaFor(m => m.UserTask.Details)
-        </div>
-
-        <div id="taskDescription">
-            <label>Task Description</label>
-            @Html.TextAreaFor(m => m.UserTask.Description)
-            <script>CKEDITOR.replace('@(Html.IdFor(m => m.UserTask.Description))');</script>
-        </div>
-
+    <div id="taskPriority">
+        <label>Task Priority</label>
+        @Html.DropDownList("Priortylist", Model.Priorities)
     </div>
 
-<script type="text/javascript">
-    function GetUserTaskContentJson()
+    <div id="taskDueDate">
+        <label>Due Date</label>
+        <input placeholder="Due Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" type="text" id="DueDate">
+    </div>
+
+    <div id="taskReference">
+        <label>Task Reference</label>
+        @Html.TextAreaFor(m => m.UserTask.Details)
+    </div>
+
+    <div id="taskDescription">
+        <label>Task Description</label>
+        @Html.TextAreaFor(m => m.UserTask.Description, new { id = "Milestoneeditor", name = "content", cols = "10", rows = "80" })
+
+        <script>
+            ClassicEditor
+                .create(document.querySelector('#Milestoneeditor'))
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
+
+        @*@Html.TextAreaFor(m => m.UserTask.Description)
+            <script>CKEDITOR.replace('@(Html.IdFor(m => m.UserTask.Description))');</script>*@
+    </div>
+
+</div>
+
+@section pagespecific {
+    <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+    <script src="~/lib/popper.js/umd/popper.js"></script>
+
+    <script type="text/javascript">
+        @*function GetUserTaskContentJson()
     {
         return {
-            Priority: $("#Priortylist").val(), 
-            DueDate: $("#DueDate").val(), 
+            Priority: $("#Priortylist").val(),
+            DueDate: $("#DueDate").val(),
             Details: $("#@(Html.IdFor(m => m.UserTask.Details))").val(),
             Description: CKEDITOR.instances["@(Html.IdFor(m => m.UserTask.Description))"].getData()
     	};
-    }
-</script>
+    }*@
+
+
+    </script>
+}

@@ -1,5 +1,4 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneListViewModel
-
 <!-- MAIN CONTENT -->
 <div id="content">
     <div class="row">
@@ -99,17 +98,23 @@
         }
 
         function CreateMilestone(process) {
-            console.log($("#milestoneprogramme").val());
+            event.preventDefault();
             if (Validate($("#milestoneprogramme").val())) {
-                var mergedData = { ProgrammeId: $("#milestoneprogramme").val(), MilestoneActivity: process };
-                var postData = JSON.stringify(mergedData);
+                var mergedData = { stringId: $("#milestoneprogramme").val(), milestoneActivity: process };
 
+                $.ajax({
+                    url: "/Milestone/MilestoneTemplate",
+                    type: "POST",
+                    data: mergedData
+                })
+                    .done(function (url) {
+                        debugger;
 
-                $.ajax({ url: "/Milestone/CreateMilestone", type: "POST", contentType: "application/json; charset=utf-8", data: postData })
-                    .done(function (json) {
-                        location.href = '@Url.Action("MilestoneBuilder", "Milestone")'
+                        window.location.href = url;
+                        console.log("url" + url);
                     })
                     .fail(function (err) {
+                        debugger;
                         console.log(err);
                         alert("Unable to save." + err.responseText);
                     });
