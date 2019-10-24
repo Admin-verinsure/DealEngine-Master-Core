@@ -14,6 +14,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate.MappingConventions;
 using TechCertain.Infrastructure.FluentNHibernate.MappingOverrides;
 using NHibernate.Extensions.NpgSql;
+using System.Reflection;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
 {
@@ -24,12 +25,6 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
         public static ISessionFactory BuildSessionFactory(string connectionStringName)
         {
 
-            //var cfg = new Configuration();
-            //var file = @"C:\inetpub\wwwroot\techcertain2019core\TechCertain.WebUI\hibernate.config";
-
-            //cfg.Configure(file);
-            //cfg.AddIdentityMappingsForPostgres();
-            //var session = cfg.BuildSessionFactory();
             var configuration = new ConfigurationBuilder()
                                         .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                                         .AddJsonFile("appsettings.json")
@@ -45,22 +40,24 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                     .FormatSql()
                     .ShowSql()
                  )
-                .CurrentSessionContext("web")
+                .CurrentSessionContext("web")                
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())
                 .Conventions.Add<CascadeConvention>()
+                .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
                 .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
                 ).BuildConfiguration()
                 .AddIdentityMappingsForPostgres()
                 .BuildSessionFactory();
-            
+
             return session;
-                                           
         }
-        /// <summary>  
-        /// Build the schema of the database.  
-        /// </summary>  
-        /// <param name="config">Configuration.</param>  
+
+            //}
+            /// <summary>  
+            /// Build the schema of the database.  
+            /// </summary>  
+            /// <param name="config">Configuration.</param>  
         private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
         {
 

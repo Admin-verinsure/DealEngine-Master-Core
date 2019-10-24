@@ -62,7 +62,8 @@ namespace TechCertain.Services.Impl
 		public async Task DeleteAgreementMVTerm (User deletedBy, ClientAgreementMVTerm clientAgreementMVTerm)
 		{
 			clientAgreementMVTerm.Delete (deletedBy);
-			await UpdateAgreementMVTerm (clientAgreementMVTerm);
+            await _clientAgreementMVTermRepository.UpdateAsync(clientAgreementMVTerm);
+			await _clientAgreementMVTermRepository.RemoveAsync(clientAgreementMVTerm);
 		}
 
         public async Task<List<ClientAgreementMVTerm>> GetAgreementMVTermFor(ClientAgreementTerm clientAgreementTerm, Vehicle vehicle)

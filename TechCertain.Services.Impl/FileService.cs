@@ -102,16 +102,14 @@ namespace TechCertain.Services.Impl
 			return false;
 		}
 
-		public bool UploadFile(Document document)
+		public async Task UploadFile(Document document)
 		{
-            _documentRepository.AddAsync(document);
-			return true;
+            await _documentRepository.AddAsync(document);
 		}
 
-		public bool UploadFile(Image image)
+        public async Task UploadFile(Image image)
 		{
 		    _imageRepository.AddAsync(image);
-			return true;
 		}
 
 		public async Task<Document> GetDocument(string documentName)
@@ -217,7 +215,10 @@ namespace TechCertain.Services.Impl
 				dt.Columns.Add ("Interest Parties");
 				dt.Columns.Add ("Sum Insured");
 
-				foreach (ClientAgreementMVTerm mVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor (agreement.ClientAgreementTerms.FirstOrDefault (at => at.SubTermType == "MV")).Result.OrderBy (camvt => camvt.Registration)) {
+                var AgreementMVTerms = await _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "MV"));
+                AgreementMVTerms.OrderBy(camvt => camvt.Registration);
+
+                foreach (ClientAgreementMVTerm mVTerm in AgreementMVTerms) {
 					DataRow dr = dt.NewRow ();
 
 					dr ["Category"] = mVTerm.VehicleCategory;
@@ -266,9 +267,12 @@ namespace TechCertain.Services.Impl
 				dt2.Columns.Add ("Model");
 				dt2.Columns.Add ("Registration");
 				dt2.Columns.Add ("Sum Insured");
-				//dt2.Columns.Add ("End Date");
+                //dt2.Columns.Add ("End Date");
 
-				foreach (ClientAgreementMVTerm mVTerm2 in _clientAgreementMVTermService.GetAllAgreementMVTermFor (agreement.ClientAgreementTerms.FirstOrDefault (at => at.SubTermType == "MV")).Result.OrderBy (camvt => camvt.Registration)) {
+                AgreementMVTerms = await _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "MV"));
+                AgreementMVTerms.OrderBy(camvt => camvt.Registration);
+
+                foreach (ClientAgreementMVTerm mVTerm2 in AgreementMVTerms) {
 					DataRow dr2 = dt2.NewRow ();
 
 					dr2 ["Year"] = mVTerm2.Year;
@@ -372,7 +376,10 @@ namespace TechCertain.Services.Impl
                 //dtbv4.Columns.Add("Model");
                 dtbv5.Columns.Add("Interest Party");
 
-                foreach (ClientAgreementBVTerm bVTerm in _clientAgreementBVTermService.GetAllAgreementBVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV")).Result.OrderBy(cabvt => cabvt.BoatName))
+                var AgreementBVTerms = await _clientAgreementBVTermService.GetAllAgreementBVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV"));
+                AgreementBVTerms.OrderBy(cabvt => cabvt.BoatName);
+
+                foreach (ClientAgreementBVTerm bVTerm in AgreementBVTerms)
                 {
                     intBVNumberOfUnits += 1;
 
@@ -464,7 +471,10 @@ namespace TechCertain.Services.Impl
 
                 if (_clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null)).Result.Count() > 0)
                 {
-                    foreach (ClientAgreementMVTerm mVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null)).Result.OrderBy(camvt => camvt.Registration))
+                    var AgreementMVTerm = await _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV" && at.DateDeleted == null));
+                    AgreementMVTerm.OrderBy(camvt => camvt.Registration);
+
+                    foreach (ClientAgreementMVTerm mVTerm in AgreementMVTerm)
                     {
 
                         DataTable dtmv1 = new DataTable();
@@ -474,7 +484,10 @@ namespace TechCertain.Services.Impl
                         dtmv1.Columns.Add("Registration");
                         dtmv1.Columns.Add("Sum Insured");
 
-                        foreach (ClientAgreementMVTerm bVMVTerm in _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV")).Result.OrderBy(camvt => camvt.Registration))
+                        AgreementMVTerm = await _clientAgreementMVTermService.GetAllAgreementMVTermFor(agreement.ClientAgreementTerms.FirstOrDefault(at => at.SubTermType == "BV"));
+                        AgreementMVTerm.OrderBy(camvt => camvt.Registration);
+
+                        foreach (ClientAgreementMVTerm bVMVTerm in AgreementMVTerm)
                         {
                             DataRow drmv1 = dtmv1.NewRow();
 

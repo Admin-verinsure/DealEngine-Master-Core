@@ -13,9 +13,9 @@ namespace TechCertain.Services.Interfaces
 
 		bool IsTextFile (byte[] buffer, string contentType, string fileName);
 
-		bool UploadFile (Document document);
+		Task UploadFile (Document document);
 
-		bool UploadFile (Image image);
+		Task UploadFile (Image image);
 
         Task<Document> GetDocument (string documentName);
 
