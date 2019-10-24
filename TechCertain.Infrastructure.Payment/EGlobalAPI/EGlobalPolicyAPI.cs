@@ -763,8 +763,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EGlobalPolicy.DiscountRate = 1m;
 
             // Get Broker Info
-            EbixUser = CurrentUser.SalesPersonUserName;
-            EbixDepartment = CurrentUser.DefaultOU.EbixDepartmentCode;
+            EbixUser = EGlobalPolicy.ClientProgramme.BrokerContactUser.SalesPersonUserName;
+            EbixDepartment = EGlobalPolicy.ClientProgramme.BrokerContactUser.DefaultOU.EbixDepartmentCode;
 
             // Create the Queue
             EGlobalPolicy.Queue = new EBixQueue()

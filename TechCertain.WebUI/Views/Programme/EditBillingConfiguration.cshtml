@@ -138,7 +138,7 @@
                 </div>
                 <div class="col-sm-offset-5">
                     @*@Html.Bootstrap().Button().Text("Send Invoice").HtmlAttributes(new { onclick = "SendInvoice()" }).Class("btn-sm")*@
-                    <button onclick="SendInvoice()" class="btn-sm" id="SendInvoice">Send Invoice</button>
+                    @*<button onclick="SendInvoice()" class="btn-sm" id="SendInvoice">Send Invoice</button>*@
                 </div>
             </div>
         </div>
@@ -207,7 +207,7 @@
                     alert("Saved.");
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                    alert("There was an error while trying to save billing configuration.");
+                    alert("You are going to save billing configuration.");
                 });
         }
 

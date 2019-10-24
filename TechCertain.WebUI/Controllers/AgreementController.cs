@@ -1476,6 +1476,7 @@ namespace TechCertain.WebUI.Controllers
             //QueryString queryString = HttpContext.Request.QueryString;
             string queryString = HttpContext.Request.Query["result"].ToString();
             var status = "Bound";
+            var user = CurrentUser;
 
             ClientProgramme programme = _programmeRepository.GetByIdAsync(Id).Result;
             Payment payment = _paymentService.GetPayment(programme.Id).Result;
@@ -1543,22 +1544,27 @@ namespace TechCertain.WebUI.Controllers
                 //    }
                 //}
                 
+                //var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
 
-                var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
+                bool hasEglobalNo = false;
+                if (programme.EGlobalClientNumber != "")
+                {
+                    hasEglobalNo = true;
+                }
+
                 bool eglobalsuccess = false;
 
                 if (hasEglobalNo)
                 {
                     status = "Bound and invoiced";
 
-                    //======================
                     var eGlobalSerializer = new EGlobalSerializerAPI();
                                        
-                    var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser, _unitOfWork);
+                    var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
 
                     var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
 
-                    eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
+                    eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
 
                     if (programme.ClientAgreementEGlobalResponses.Count > 0)
                     {
@@ -1569,7 +1575,6 @@ namespace TechCertain.WebUI.Controllers
                         }
 
                     }
-                    //======================
 
                 }
                 else
@@ -1589,7 +1594,7 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
 
-                    var user = CurrentUser;
+                    
 
                     agreement.Status = status;
 
