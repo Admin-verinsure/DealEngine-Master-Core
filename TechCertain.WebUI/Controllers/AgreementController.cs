@@ -1341,7 +1341,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePxPayment(IFormCollection collection)
+        public async Task<IActionResult> GeneratePxPayment(IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
@@ -1369,7 +1369,7 @@ namespace TechCertain.WebUI.Controllers
                 programme.PaymentType = "Credit Card";
                 programme.Payment = payment;
                 programme.InformationSheet.Status = "Bound";
-                uow.Commit();
+                await uow.Commit();
             }
 
             //add check to count how many failed payments
