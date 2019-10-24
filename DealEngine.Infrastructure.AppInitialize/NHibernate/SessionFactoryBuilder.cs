@@ -14,7 +14,7 @@ using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate.MappingConventions;
 using TechCertain.Infrastructure.FluentNHibernate.MappingOverrides;
 using NHibernate.Extensions.NpgSql;
-using NHibernate.Mapping.ByCode;
+using System.Reflection;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
 {
@@ -22,49 +22,42 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
     {
 
         private static string NpgsqlConnectionString;
-        //public static ISessionFactory BuildSessionFactory(string connectionStringName)
-        //{
+        public static ISessionFactory BuildSessionFactory(string connectionStringName)
+        {
 
-        //    //var cfg = new Configuration();
-        //    //var file = @"C:\inetpub\wwwroot\techcertain2019core\TechCertain.WebUI\hibernate.config";
+            var configuration = new ConfigurationBuilder()
+                                        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                                        .AddJsonFile("appsettings.json")
+                                        .Build();
 
-        //    //cfg.Configure(file);
-        //    //cfg.AddIdentityMappingsForPostgres();
-        //    //var session = cfg.BuildSessionFactory();
-        //    //var configuration = new ConfigurationBuilder()
-        //    //                            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-        //    //                            .AddJsonFile("appsettings.json")
-        //    //                            .Build();
+            NpgsqlConnectionString = configuration.GetConnectionString("TechCertainConnection");
 
-        //    //NpgsqlConnectionString = configuration.GetConnectionString("TechCertainConnection");
+            var session = Fluently.Configure()
+                .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
+                    .Dialect<PostgreSQL82Dialect>()
+                    .AdoNetBatchSize(10)
+                    .Driver<NpgSqlDriver>()
+                    .FormatSql()
+                    .ShowSql()
+                 )
+                .CurrentSessionContext("web")                
+                .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
+                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())
+                .Conventions.Add<CascadeConvention>()
+                .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
+                .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
+                ).BuildConfiguration()
+                .AddIdentityMappingsForPostgres()
+                .BuildSessionFactory();
 
-        //    //var mapper = new ModelMapper();
+            return session;
+        }
 
-        //    //mapper.AddMapping(typeof(Organisation).Assembly.ExportedTypes);
-        //    //var session = Configure()
-        //    //    .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
-        //    //        .Dialect<PostgreSQL82Dialect>()
-        //    //        .AdoNetBatchSize(10)
-        //    //        .Driver<NpgSqlDriver>()
-        //    //        .FormatSql()
-        //    //        .ShowSql()
-        //    //     )
-        //    //    .CurrentSessionContext("web")
-        //    //    .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
-        //    //    .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())
-        //    //    .Conventions.Add<CascadeConvention>()
-        //    //    .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
-        //    //    ).BuildConfiguration()
-        //    //    .AddIdentityMappingsForPostgres()
-        //    //    .BuildSessionFactory();
-            
-        //    //return session;
-                                           
-        //}
-        /// <summary>  
-        /// Build the schema of the database.  
-        /// </summary>  
-        /// <param name="config">Configuration.</param>  
+            //}
+            /// <summary>  
+            /// Build the schema of the database.  
+            /// </summary>  
+            /// <param name="config">Configuration.</param>  
         private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
         {
 

@@ -7,6 +7,7 @@ using NHibernate.Dialect;
 using NHibernate.Extensions.NpgSql;
 using NHibernate.Mapping.ByCode;
 using System;
+using System.Reflection;
 using TechCertain.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
@@ -17,50 +18,8 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
         {
 
             var connectionStringName = "TechCertainConnection";
-            //var sessionFactory = SessionFactoryBuilder.BuildSessionFactory(connectionStringName);
-
-            var configurationbuilder = new ConfigurationBuilder()
-                            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                            .AddJsonFile("appsettings.json")
-                            .Build();
-            var NpgsqlConnectionString = configurationbuilder.GetConnectionString("TechCertainConnection");
-
-            var mapper = new ModelMapper();
-            mapper.AddMappings(typeof(NHibernateExtensions).Assembly.ExportedTypes);
-            HbmMapping domainMapping = mapper.CompileMappingForAllExplicitlyAddedEntities();
-
-            var configuration = new Configuration();
-
-            configuration.DataBaseIntegration(c =>
-            {
-                c.Dialect<PostgreSQL82Dialect>();
-                c.ConnectionString = NpgsqlConnectionString;
-                c.SchemaAction = SchemaAutoAction.Validate;
-                c.Driver<NpgSqlDriver>();
-                c.KeywordsAutoImport = Hbm2DDLKeyWords.AutoQuote;
-
-            });
-            configuration.AddIdentityMappingsForPostgres();
-            configuration.AddMapping(domainMapping);            
-            var sessionFactory = configuration.BuildSessionFactory();
-    //            .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
-    //    .Dialect<PostgreSQL82Dialect>()
-    //    .AdoNetBatchSize(10)
-    //    .Driver<NpgSqlDriver>()
-    //    .FormatSql()
-    //    .ShowSql()
-    // )
-    //.CurrentSessionContext("web")
-    //.ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
-    //.Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())
-    //.Conventions.Add<CascadeConvention>()
-    //.UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
-    //).BuildConfiguration()
-    //.AddIdentityMappingsForPostgres()
-    //.BuildSessionFactory();
-
-
-
+            var sessionFactory = SessionFactoryBuilder.BuildSessionFactory(connectionStringName);
+            
             services.AddSingleton(sessionFactory);
             services.AddScoped(factory => sessionFactory.OpenSession());
             services.AddTransient(typeof(IMapperSession<>), typeof(NHibernateMapperSession<>));

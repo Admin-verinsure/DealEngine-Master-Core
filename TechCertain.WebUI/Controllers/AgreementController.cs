@@ -1547,11 +1547,11 @@ namespace TechCertain.WebUI.Controllers
                         //render docs except invoice
                         if (template.DocumentType != 4)
                         {
-                            SystemDocument renderedDoc = _fileService.RenderDocument(user, template, agreement).Result;
+                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                             agreement.Documents.Add(renderedDoc);
                             documents.Add(renderedDoc);
-                            _fileService.UploadFile(renderedDoc);
+                            await _fileService.UploadFile(renderedDoc);
                         }
 
                     }
