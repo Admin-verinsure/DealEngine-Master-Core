@@ -16,6 +16,6 @@ namespace TechCertain.Services.Interfaces
 
         Task<InformationTemplate> AddProductTo(Guid templateId, Product product);
 
-        Task<InformationTemplate> AddProductTo(InformationTemplate template, Product product);
+        Task<InformationTemplate> AddProductTo(InformationTemplate template, Product product);        
     }
 }

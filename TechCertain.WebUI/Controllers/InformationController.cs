@@ -111,7 +111,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetProgrammes()
         {
             //var informationTemplate = new IList<InformationTemplate>();
-            var informationTemplate = new List<InformationTemplate>(_informationTemplateService.GetAllTemplates().Result);
+            var informationTemplate = await _informationTemplateService.GetAllTemplates();
             // InformationSection informationSection = _informationSectionRepository.GetById(new Guid("3b2ba8c1-48bc-4ec2-b8ef-aaa200bc5376"));
             InformationBuilderViewModel model = new InformationBuilderViewModel();
             var template = new List<InformationTemplate>();
@@ -135,7 +135,7 @@ namespace TechCertain.WebUI.Controllers
         {
             //var informationTemplate = new IList<InformationTemplate>();
 
-            InformationTemplate template = _informationTemplateService.GetAllTemplates().Result.FirstOrDefault(t => t.Id == informationTemplateID);
+            InformationTemplate template = await _informationTemplateService.GetTemplate(informationTemplateID);
 
             Information model = new Information();
             var Litems = new List<InformationItems>();
@@ -157,7 +157,7 @@ namespace TechCertain.WebUI.Controllers
         {
             //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
 
-            InformationSection section = _informationSectionService.GetAllSections().Result.FirstOrDefault(t => t.Id == SectionId);
+            InformationSection section = await _informationSectionService.GetSection(SectionId);
             InformationViewModel model = new InformationViewModel();
           
             model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
@@ -170,7 +170,7 @@ namespace TechCertain.WebUI.Controllers
         {
           //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
 
-            InformationSection section = _informationSectionService.GetAllSections().Result.FirstOrDefault(t => t.Id == SectionId);
+            InformationSection section = await _informationSectionService.GetSection(SectionId);
             InformationViewModel model = new InformationViewModel();
             
             model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
@@ -714,7 +714,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewAll()
         {
-            IEnumerable<InformationTemplate> templates = _informationTemplateService.GetAllTemplates().Result;
+            IEnumerable<InformationTemplate> templates = await _informationTemplateService.GetAllTemplates();
 
             //Mapper.CreateMap<InformationTemplate, InformationViewModel>();
             //Mapper.CreateMap<InformationSection, InformationSectionViewModel>();
@@ -758,7 +758,7 @@ namespace TechCertain.WebUI.Controllers
             // Insurance History  -- Customer Insurance Section
 
             // Submit 
-            InformationViewModel model = GetClientInformationSheetViewModel(id);
+            InformationViewModel model = await GetClientInformationSheetViewModel(id);
 
             return View(model);
         }
@@ -770,9 +770,9 @@ namespace TechCertain.WebUI.Controllers
 
             //InformationViewModel model = GetInformationViewModel(sheet.Programme.Id);
 
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
-            InformationViewModel model = GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+            InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
 
             model.AnswerSheetId = sheet.Id;
             model.OrganisationId = sheet.Owner.Id;
@@ -948,10 +948,10 @@ namespace TechCertain.WebUI.Controllers
                 if (panelName != null)
                 {
 
-                    InformationSection section = _informationSectionRepository.GetByIdAsync(panelId).Result;
+                    InformationSection section = await _informationSectionRepository.GetByIdAsync(panelId);
                     section.Position = panelPosition;
                     // TODO: Add these items at templates so it can be clonned properly 
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
             }
@@ -962,10 +962,10 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewProgrammeDetails(Guid Id)
         {
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(Id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-            InformationViewModel model = GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+            InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
             try
             {
                 model.Id = Id;
@@ -983,10 +983,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> PartialViewProgramme(String name, Guid id)
         {
             //////BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-            InformationViewModel model = GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+            InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
             model.SectionView = name;
@@ -1194,10 +1194,10 @@ namespace TechCertain.WebUI.Controllers
         {
             //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
 
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-            InformationViewModel model = GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+            InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
 
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
@@ -1205,7 +1205,7 @@ namespace TechCertain.WebUI.Controllers
 
             //testing Milestone Example
             //need to add programmeId to search to make it programme specific
-            var advisory = _milestoneService.GetMilestoneProcess(clientProgramme.BaseProgramme.Id, "ProgrammeChange", "Quoted").Result;
+            var advisory = await _milestoneService.GetMilestoneProcess(clientProgramme.BaseProgramme.Id, "ProgrammeChange", "Quoted");
             MilestoneAdvisoryVM milestoneAdvisoryVM = new MilestoneAdvisoryVM();
             if (advisory != null)
             {
@@ -1225,7 +1225,7 @@ namespace TechCertain.WebUI.Controllers
                 if (sheet.Status == "Not Started")
                 {
                     sheet.Status = "Started";
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
             }
@@ -1604,7 +1604,8 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
 
-            model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id).Result);
+            var businessActivity = await _businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id);
+            model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(businessActivity);
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             model.Status = sheet.Status;
 
@@ -1672,20 +1673,29 @@ namespace TechCertain.WebUI.Controllers
             List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
             informationAnswers.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
                                                                                                                                                           || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5"));
-            foreach (var answer in informationAnswers)
+
+            try
             {
-                ClaimItem = new String[3];
-
-                for (var i = 0; i < 1; i++)
+                foreach (var answer in informationAnswers)
                 {
-                    ClaimItem[i] = answer.ItemName;
-                    ClaimItem[i + 1] = answer.Value;
-                    ClaimItem[i + 2] = answer.ClaimDetails;
-                }
+                    ClaimItem = new String[3];
 
-                ClaimAnswers[count] = ClaimItem;
-                count++;
+                    for (var i = 0; i < 1; i++)
+                    {
+                        ClaimItem[i] = answer.ItemName;
+                        ClaimItem[i + 1] = answer.Value;
+                        ClaimItem[i + 2] = answer.ClaimDetails;
+                    }
+
+                    ClaimAnswers[count] = ClaimItem;
+                    count++;
+                }
             }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
 
             return Json(ClaimAnswers);
         }
@@ -1811,13 +1821,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> RenewInformation(Guid id)
         {
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             if (clientProgramme == null)
                 throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + CurrentUser.UserName);
 
-            ClientProgramme newClientProgramme = _programmeService.CloneForRewenal(clientProgramme, CurrentUser).Result;
+            ClientProgramme newClientProgramme = await _programmeService.CloneForRewenal(clientProgramme, CurrentUser);
 
-            await _programmeService.Update(newClientProgramme).ConfigureAwait(false);
+            await _programmeService.Update(newClientProgramme);
 
             return Redirect("/Information/StartInformation/" + newClientProgramme.Id);
         }
@@ -1854,13 +1864,13 @@ namespace TechCertain.WebUI.Controllers
                             {
                                 case ItemType.TEXTAREA:
                                 case ItemType.TEXTBOX:
-                                    var textboxItem = _informationItemService.CreateTextboxItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName).Result as TextboxItem;
+                                    var textboxItem = await _informationItemService.CreateTextboxItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as TextboxItem;
                                     items.Add(textboxItem);
                                     item.Id = textboxItem.Id;
                                     break;
 
                                 case ItemType.LABEL:
-                                    var labelItem = _informationItemService.CreateLabelItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName).Result as LabelItem;
+                                    var labelItem = await _informationItemService.CreateLabelItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as LabelItem;
                                     items.Add(labelItem);
                                     item.Id = labelItem.Id;
                                     break;
@@ -1870,7 +1880,7 @@ namespace TechCertain.WebUI.Controllers
                                     //Mapper.CreateMap<SelectListItem, DropdownListOption>();
                                     //Mapper.CreateMap<DropdownListOption, SelectListItem>()
                                     var options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-                                    var newDropdownList = _informationItemService.CreateDropdownListItem(CurrentUser, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName).Result as DropdownListItem;
+                                    var newDropdownList = await _informationItemService.CreateDropdownListItem(CurrentUser, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as DropdownListItem;
                                     //newDropdownList.AddItems(options);
                                     items.Add(newDropdownList);
                                     item.Id = newDropdownList.Id;
@@ -1878,27 +1888,27 @@ namespace TechCertain.WebUI.Controllers
 
                                 case ItemType.MULTISELECT:
                                     options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-                                    var multiselectList = _informationItemService.CreateMultiselectListItem(CurrentUser, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName).Result as MultiselectListItem;
+                                    var multiselectList = await _informationItemService.CreateMultiselectListItem(CurrentUser, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as MultiselectListItem;
                                     items.Add(multiselectList);
                                     item.Id = multiselectList.Id;
                                     break;
 
                                 case ItemType.JSBUTTON:
-                                    newItem = _informationItemService.CreateJSButtonItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName, item.Value).Result as JSButtonItem;
+                                    newItem = await _informationItemService.CreateJSButtonItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName, item.Value) as JSButtonItem;
                                     break;
 
                                 case ItemType.SUBMITBUTTON:
-                                    newItem = _informationItemService.CreateSubmitButtonItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName).Result as SubmitButtonItem;
+                                    newItem = await _informationItemService.CreateSubmitButtonItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
                                     break;
 
                                 case ItemType.SECTIONBREAK:
-                                    var terminatorItem = _informationItemService.CreateSectionBreakItem(CurrentUser, itemTypeName).Result;
+                                    var terminatorItem = await _informationItemService.CreateSectionBreakItem(CurrentUser, itemTypeName);
                                     items.Add(terminatorItem);
                                     break;
 
                                 case ItemType.STATICVEHICLEPLANTLIST:
                                 case ItemType.MOTORVEHICLELIST:
-                                    var motorVehicleListItem = _informationItemService.CreateMotorVehicleListItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName).Result as MotorVehicleListItem;
+                                    var motorVehicleListItem = await _informationItemService.CreateMotorVehicleListItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as MotorVehicleListItem;
                                     items.Add(motorVehicleListItem);
                                     item.Id = motorVehicleListItem.Id;
                                     break;
@@ -1919,7 +1929,7 @@ namespace TechCertain.WebUI.Controllers
                             // Update Inforamtion Item ID in view model
                             // For now see code above, Will fix later with Domain Model
                         }
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
 
                 }
@@ -1928,23 +1938,23 @@ namespace TechCertain.WebUI.Controllers
                 {
                     // Create New Section
 
-                    InformationSection informationSection = _informationSectionService.CreateNewSection(CurrentUser, section.Name, items).Result;
+                    InformationSection informationSection = await _informationSectionService.CreateNewSection(CurrentUser, section.Name, items);
                     informationSection.CustomView = section.CustomView;
                     informationSections.Add(informationSection);
 
                     section.Id = informationSection.Id;
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
             }
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
-                InformationTemplate template = _informationTemplateService.CreateInformationTemplate(CurrentUser, demoData.Name, informationSections).Result;
+                InformationTemplate template = await _informationTemplateService.CreateInformationTemplate(CurrentUser, demoData.Name, informationSections);
 
                 demoData.Id = template.Id;
 
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return Json(demoData, System.Web.Mvc.JsonRequestBehavior.AllowGet);
@@ -1955,17 +1965,17 @@ namespace TechCertain.WebUI.Controllers
         {
             var user = CurrentUser;
             if (!string.IsNullOrWhiteSpace(id))
-                user = _userService.GetUser(id).Result;
+                user = await _userService.GetUser(id);
 
             // issues a demo UIS for every template in the system, assuming it hasn't been issued yet
-            var templates = _informationTemplateService.GetAllTemplates().Result;
+            var templates = await _informationTemplateService.GetAllTemplates();
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 foreach (var template in templates)
                 {
-                    await _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, template).ConfigureAwait(false);
+                    await _clientInformationService.IssueInformationFor(user, user.PrimaryOrganisation, template);
                 }
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
             return Redirect("~/Home/Index");
         }
@@ -1973,7 +1983,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> IssueUISForProduct(Guid id)
         {
-            InformationTemplate infoTemplate = _informationTemplateService.GetAllTemplates().Result.FirstOrDefault(i => i.Product.Id == id);
+            InformationTemplate infoTemplate = await _informationTemplateService.GetTemplate(id);
             if (infoTemplate == null)
                 throw new Exception("Insurance Product " + id + " lacks question set");
 
@@ -1981,16 +1991,16 @@ namespace TechCertain.WebUI.Controllers
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 var user = CurrentUser;
-                cis = _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, infoTemplate).Result;
-                await uow.Commit().ConfigureAwait(false);
+                cis = await _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, infoTemplate);
+                await uow.Commit();
             }
 
             return Redirect("/Information/StartInformation/" + cis.Id);
         }
 
-        InformationViewModel GetInformationViewModel(Guid programmeId)
+        public async Task<InformationViewModel> GetInformationViewModel(Guid programmeId)
         {
-            Programme programme = _programmeService.GetProgramme(programmeId).Result;
+            Programme programme = await _programmeService.GetProgramme(programmeId);
 
             InformationViewModel model = new InformationViewModel
             {
@@ -2026,11 +2036,11 @@ namespace TechCertain.WebUI.Controllers
             return model;
         }
 
-        InformationViewModel GetClientInformationSheetViewModel(Guid sheetId)
+        public async Task<InformationViewModel> GetClientInformationSheetViewModel(Guid sheetId)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(sheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
 
-            InformationViewModel model = GetInformationViewModel(sheet.Programme.Id);
+            InformationViewModel model = await GetInformationViewModel(sheet.Programme.Id);
             model.Sections = model.Sections.OrderBy(sec => sec.Position);
 
             model.Status = sheet.Status;
