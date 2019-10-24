@@ -85,14 +85,44 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateMilestone (MilestoneListViewModel listModel)
+        public async Task<IActionResult> MilestoneTemplate(string stringId, string milestoneActivity)
+        {
+
+
+            Guid Id = Guid.Parse(stringId);
+
+            Programme programme = await _programmeService.GetProgramme(Id);
+
+
+
+            //MilestoneBuilderViewModel model = new MilestoneBuilderViewModel()
+            //{
+            //    //UserTasks = new List<UserTask>(),
+            //    //Actions = new List<string>(),
+            //    //EmailTemplates = new List<EmailTemplate>(),
+            //    //Advisories = new List<string>(),
+            //    //UserTask = new UserTaskVM(),
+            //    //EmailTemplate = new EmailTemplateVM(),
+            //    //MilestoneTemplate = milestoneTemplateVM,
+            //    //EmailAddresses = emailTo,
+            //    //AdvisoryContent = new AdvisoryVM(),
+            //    //Priorities = priorityTypes,
+            //    ProgrammeId = programme.Id,
+            //    MilestoneActivity = milestoneActivity,
+            //};
+            var ProdId = programme.Id;
+            return Content("/Milestone/MilestoneBuilder/?proId=" + ProdId + "&milesActivity=" + milestoneActivity);
+
+            //return RedirectToAction("MilestoneBuilder", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MilestoneBuilder(string ProId, string milesActivity)
         {
             IList<string> emailTo = new List<string>();
-
-            Programme programme = _programmeService.GetProgramme(Guid.Parse(listModel.ProgrammeId)).Result;            
-            emailTo.Add(programme.BrokerContactUser.Address);            
-
-            var templates = _milestoneService.GetMilestoneTemplate(programme.Id, listModel.MilestoneActivity).Result;
+            Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProId));
+            emailTo.Add(programme.BrokerContactUser.Address);
+            var templates = await _milestoneService.GetMilestoneTemplate(programme.Id, milesActivity);
 
             MilestoneTemplateVM milestoneTemplateVM = new MilestoneTemplateVM
             {
@@ -104,30 +134,18 @@ namespace TechCertain.WebUI.Controllers
                     new SelectListItem { Text = "Important", Value = "1" },
                     new SelectListItem { Text = "Critical", Value = "2" },
             };
+            MilestoneBuilderViewModel model = new MilestoneBuilderViewModel();
+            model.UserTasks = new List<UserTask>();
+            model.Actions = new List<string>();
+            model.EmailTemplates = new List<EmailTemplate>();
+            model.Advisories = new List<string>();
+            model.UserTask = new UserTaskVM();
+            model.EmailTemplate = new EmailTemplateVM();
+            model.MilestoneTemplate = milestoneTemplateVM;
+            model.EmailAddresses = emailTo;
+            model.AdvisoryContent = new AdvisoryVM();
+            model.Priorities = priorityTypes;
 
-            MilestoneBuilderViewModel model = new MilestoneBuilderViewModel()
-            {
-                UserTasks = new List<UserTask>(),
-                Actions = new List<string>(),
-                EmailTemplates = new List<EmailTemplate>(),
-                Advisories = new List<string>(),
-                UserTask = new UserTaskVM(),
-                EmailTemplate = new EmailTemplateVM(),
-                MilestoneTemplate = milestoneTemplateVM,
-                EmailAddresses = emailTo,
-                AdvisoryContent = new AdvisoryVM(),
-                Priorities = priorityTypes,
-                ProgrammeId = programme.Id,
-            };
-
-            TempData["MilestoneBuilderViewModel"] = model;
-            return Json(data: model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> MilestoneBuilder()
-        {
-            MilestoneBuilderViewModel model = (MilestoneBuilderViewModel)TempData["MilestoneBuilderViewModel"];
             return View("MilestoneBuilder", model);
         }
 
