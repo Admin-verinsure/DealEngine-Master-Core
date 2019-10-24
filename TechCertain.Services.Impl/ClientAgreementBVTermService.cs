@@ -44,9 +44,9 @@ namespace TechCertain.Services.Impl
             await _clientAgreementBVTermRepository.AddAsync(clientAgreementBVTerm);
         }
 
-        public async Task<List<ClientAgreementBVTerm>> GetAllAgreementBVTermFor(ClientAgreementTerm clientAgreementTerm)
+        public async Task<IQueryable<ClientAgreementBVTerm>> GetAllAgreementBVTermFor(ClientAgreementTerm clientAgreementTerm)
         {
-            return await _clientAgreementBVTermRepository.FindAll().Where(cagbvt => cagbvt.ClientAgreementTerm == clientAgreementTerm && cagbvt.DateDeleted == null && cagbvt.TermCategory == "active").ToListAsync();
+            return  _clientAgreementBVTermRepository.FindAll().Where(cagbvt => cagbvt.ClientAgreementTerm == clientAgreementTerm && cagbvt.DateDeleted == null && cagbvt.TermCategory == "active");
         }
 
         public async Task UpdateAgreementBVTerm(ClientAgreementBVTerm clientAgreementBVTerm)

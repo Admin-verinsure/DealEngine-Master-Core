@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
@@ -8,7 +9,7 @@ namespace TechCertain.Services.Interfaces
     {
         Task AddAgreementBVTerm(User createdBy, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreementTerm clientAgreementTerm, Boat boat);
 
-        Task<List<ClientAgreementBVTerm>> GetAllAgreementBVTermFor(ClientAgreementTerm clientAgreementTerm);
+        Task<IQueryable<ClientAgreementBVTerm>> GetAllAgreementBVTermFor(ClientAgreementTerm clientAgreementTerm);
 
         Task UpdateAgreementBVTerm(ClientAgreementBVTerm clientAgreementBVTerm);
 
