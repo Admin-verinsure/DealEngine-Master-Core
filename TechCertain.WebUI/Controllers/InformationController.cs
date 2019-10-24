@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
+using TechCertain.Infrastructure.Tasking;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -29,7 +30,7 @@ namespace TechCertain.WebUI.Controllers
         IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementRuleService _clientAgreementRuleService;
         IUWMService _uWMService;
-        //ITaskingService _taskingService;
+        ITaskingService _taskingService;
         IMapperSession<PolicyDocumentTemplate> _documentRepository;
         IEmailService _emailService;
         IUnitOfWork _unitOfWork;
@@ -62,7 +63,7 @@ namespace TechCertain.WebUI.Controllers
             IClientAgreementRuleService clientAgreementRuleService,
             IUWMService uWMService,
             IReferenceService referenceService,
-            //ITaskingService taskingService,
+            ITaskingService taskingService,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
@@ -90,7 +91,7 @@ namespace TechCertain.WebUI.Controllers
             _referenceService = referenceService;
             _milestoneService = milestoneService;
             _uWMService = uWMService;
-            //_taskingService = taskingService;
+            _taskingService = taskingService;
             _fileService = fileService;
             _businessActivityService = businessActivityService;
             _IDropdownListItem = dropdownListItem;
@@ -158,42 +159,7 @@ namespace TechCertain.WebUI.Controllers
 
             InformationSection section = _informationSectionService.GetAllSections().Result.FirstOrDefault(t => t.Id == SectionId);
             InformationViewModel model = new InformationViewModel();
-
-            //var Litems = new List<InformationItems>();
-
-
-
-            //foreach (var item in section.Items)
-            //{
-            //    var list = new List<DropdownList>();
-
-            //    foreach (var dropdown in item.droplistItems)
-            //    {
-            //        foreach (var option in dropdown.Options)
-            //        {
-            //            list.Add(new DropdownList(option.Text, option.Value));
-
-            //        }
-            //        //list.Add(dropdown.)
-            //    }
-            //    Litems.Add(new InformationItems()
-            //    {
-            //        Id = SectionId,
-            //        Type = item.Type,
-            //        Label = item.Label,
-            //        option = list
-
-            //    });
-            //}
-
-
-            // InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("fd442ea1-353d-4f98-86cd-aab200d933f4"));
-            // InformationBuilderViewModel model = new InformationBuilderViewModel();
-            // var template = new List<InformationTemplate>();
-
-            //template.Add(informationTemplate);
-
-            // model.InformationTemplates = template;
+          
             model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
             return View(model);
         }
@@ -206,118 +172,10 @@ namespace TechCertain.WebUI.Controllers
 
             InformationSection section = _informationSectionService.GetAllSections().Result.FirstOrDefault(t => t.Id == SectionId);
             InformationViewModel model = new InformationViewModel();
-
-            //var Litems = new List<InformationItems>();
-
-
-
-            //        foreach (var item in section.Items)
-            //      {
-            //        var list = new List<DropdownList>();
-
-            //        foreach (var dropdown in item.droplistItems)
-            //        {
-            //            foreach (var option in dropdown.Options)
-            //            {
-            //                    list.Add(new DropdownList(option.Text, option.Value));
-
-            //            }
-            //            //list.Add(dropdown.)
-            //        }
-            //        Litems.Add(new InformationItems()
-            //        {
-            //            Id = SectionId,
-            //            Type = item.Type,
-            //            Label = item.Label,
-            //            option = list
-
-            //        });
-            //    }
-
-
-            // InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("fd442ea1-353d-4f98-86cd-aab200d933f4"));
-            // InformationBuilderViewModel model = new InformationBuilderViewModel();
-            // var template = new List<InformationTemplate>();
-
-            //template.Add(informationTemplate);
-
-            // model.InformationTemplates = template;
+            
             model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
             return View(model);
         }
-
-
-        //[HttpGet]
-        //public async Task<IActionResult> SectionBuilder(string status)
-        //{
-
-        //    InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("13544bd5-6a81-45c1-b035-aaa20100a4ca"));
-        //    // InformationSection informationSection = _informationSectionRepository.GetById(new Guid("3b2ba8c1-48bc-4ec2-b8ef-aaa200bc5376"));
-        //    InformationBuilderViewModel model = new InformationBuilderViewModel();
-        //    var sections = new List<InformationSection>();
-
-        //    foreach (var section in informationTemplate.Sections)
-        //    {
-        //        sections.Add(section);
-        //    }
-
-        //    var options = new List<InformationItem>();
-        //    //informationSection.InformationTemplate
-        //    foreach (var item in sections)
-        //    {
-        //        foreach (var controls in item.Items)
-        //        {
-        //            options.Add(controls);
-
-        //        }
-        //        //if (item.Type == "TEXTBOX")
-        //        //{
-        //        // options.Add(new SelectListItem { Text = item.Type, Value = "nz" });
-        //        // }
-        //    }
-        //    model.SectionItems = options;
-        //    var len = model.SectionItems.Count();
-        //    // model.Sections = informationSection;
-
-        //    //model = CreateDemoUIS();
-        //    return View(model.SectionItems);
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> SectionBuilder1(string status)
-        //{
-
-        //    InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("13544bd5-6a81-45c1-b035-aaa20100a4ca"));
-        //    // InformationSection informationSection = _informationSectionRepository.GetById(new Guid("3b2ba8c1-48bc-4ec2-b8ef-aaa200bc5376"));
-        //    InformationViewModel model = new InformationViewModel();
-        //    var sections = new List<InformationSection>();
-
-        //    foreach (var section in informationTemplate.Sections)
-        //    {
-        //        sections.Add(section);
-        //    }
-
-        //    var options = new List<InformationItem>();
-        //    //informationSection.InformationTemplate
-        //    foreach (var item in sections)
-        //    {
-        //        foreach (var controls in item.Items)
-        //        {
-        //            options.Add(controls);
-
-        //        }
-        //        //if (item.Type == "TEXTBOX")
-        //        //{
-        //        // options.Add(new SelectListItem { Text = item.Type, Value = "nz" });
-        //        // }
-        //    }
-        //    model.SectionItems = options;
-        //    // model.Sections = informationSection;
-
-        //    //model = CreateDemoUIS();
-        //    return Json(model);
-        //}
-
 
         [HttpGet]
         public InformationViewModel LoadTemplate()
@@ -1562,32 +1420,6 @@ namespace TechCertain.WebUI.Controllers
                 Console.WriteLine(ex.Message);
             }
            
-
-
-            //foreach (Organisation org in _organisationRepository.FindAll().Result.Where(o => o.OrganisationType.Name == "Financial"))
-            //{
-
-            //    //foreach (var str in org.InsuranceAttributes)
-            //    //{
-            //    //    if (str.InsuranceAttributeName == "Financial")
-            //    //    {
-            //    //        OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-            //    //        ovm.OrganisationName = org.Name;
-            //    //        interestedParties.Add(ovm);
-            //    //    }
-            //    //}
-
-
-               
-
-            //}
-
-            //List<SelectListItem> linterestedparty = new List<SelectListItem>();
-
-            //foreach (InterestedParty ip in interestedParties)
-            //{
-            //    linterestedparty.Add(ip);
-            //}
             model.InterestedParties = interestedParties;
 
             List<SelectListItem> linterestedparty = new List<SelectListItem>();
@@ -1602,16 +1434,7 @@ namespace TechCertain.WebUI.Controllers
                     Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
                 });
             }
-
-            //foreach (var ip in model.InterestedParties)
-            //{
-            //    linterestedparty.Add(new SelectListItem
-            //    {
-            //        Selected = false,
-            //        Text = ip.OrganisationName,
-            //        Value = ip.ID.ToString(),
-            //    });
-            //}
+    
             model.InterestedPartyList = linterestedparty;
 
 
@@ -1623,12 +1446,6 @@ namespace TechCertain.WebUI.Controllers
 
             }
 
-            //foreach (BoatUse bu in sheet.BoatUses)
-            //{
-            //    boatUses.Add(BoatUseViewModel.FromEntity(bu));
-            //}
-
-            //model.BoatUses = boatUses;
             List<SelectListItem> list = new List<SelectListItem>();
 
             try
@@ -1647,20 +1464,6 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                //foreach (var bu in boatUses)
-                //{
-                //    var text = bu.BoatUseCategory.Substring(0, 4);
-                //    var val = bu.BoatUseId.ToString();
-
-                //    list.Add(new SelectListItem
-                //    {
-                //        Selected = false,
-                //        Value = val,
-                //        Text = text
-                //    });
-
-
-                //}
             }
             catch (Exception ex)
             {
@@ -1751,39 +1554,6 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
                 }
-
-
-
-                //foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Result.Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
-                //{
-                //    foreach (var org in IA.IAOrganisations)
-                //    {
-                //        if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability")
-                //        {
-                //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                //            ovm.OrganisationName = org.Name;
-                //            MarinaLocations.Add(ovm);
-                //        }
-                //    }
-                //}
-
-
-                //    foreach (Organisation org in _organisationRepository.FindAll().Result.Where(o => o.OrganisationType.Name == "Marina" || o.OrganisationType.Name == "Other Marina").OrderBy(o => o.OrganisationType.Name))
-                //{
-                //    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                //    ovm.OrganisationName = org.Name;
-                //    MarinaLocations.Add(ovm);
-                //    //organisationalunit.Add(org.OrganisationalUnits);
-                //    // MarinaLocations.Add(org);
-                //}
-
-                //foreach (OrganisationalUnit ou in _organisationRepository..FindAll().Result.Where(o => o.OrganisationType.Name == "Marina" ).OrderBy(o => o.OrganisationType.Name))
-                //{
-                //    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                //    ovm.OrganisationName = org.Name;
-                //    MarinaLocations.Add(ovm);
-                //    // MarinaLocations.Add(org);
-                //}
             }
             catch (Exception ex)
             {
@@ -1806,7 +1576,7 @@ namespace TechCertain.WebUI.Controllers
             userDetails.FirstName = CurrentUser.FirstName;
             userDetails.Email = CurrentUser.Email;
 
-            User user = _userService.GetUser(CurrentUser.UserName).Result;
+            User user = await _userService.GetUser(CurrentUser.UserName);
             
             var roles = new List<String>();
 
@@ -1838,9 +1608,9 @@ namespace TechCertain.WebUI.Controllers
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             model.Status = sheet.Status;
 
-
-            model.ClientInformationAnswers = _clientInformationAnswer.GetAllClaimHistory().Result.Where(c => c.ClientInformationSheet.Id == sheet.Id);
-
+            List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+            informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
+            model.ClientInformationAnswers = informationAnswers;
 
             return View("InformationWizard", model);
         }
@@ -1848,7 +1618,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Unlock(Guid id)
         {
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
             if (sheet != null)
@@ -1861,7 +1631,7 @@ namespace TechCertain.WebUI.Controllers
                         sheet.UnlockDate = DateTime.UtcNow;
                         sheet.UnlockedBy = CurrentUser;
                     }
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
 
                 }
             }
@@ -1877,15 +1647,15 @@ namespace TechCertain.WebUI.Controllers
             Guid sheetId = Guid.Empty;
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
-                ClientInformationSheet sheet = _clientInformationService.GetInformation(sheetId).Result;
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    await _clientInformationService.SaveAnswersFor(sheet, collection).ConfigureAwait(false);
-                    await _clientInformationService.UpdateInformation(sheet).ConfigureAwait(false);
-                    await uow.Commit().ConfigureAwait(false);
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    await _clientInformationService.UpdateInformation(sheet);
+                    await uow.Commit();
                 }
             }
 
@@ -1899,8 +1669,10 @@ namespace TechCertain.WebUI.Controllers
             String[][] ClaimAnswers = new String[5][];
             var count = 0;
             String[] ClaimItem;
-            foreach (var answer in _clientInformationAnswer.GetAllClaimHistory().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
-                                                                                                                                                          || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5")))
+            List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
+            informationAnswers.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
+                                                                                                                                                          || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5"));
+            foreach (var answer in informationAnswers)
             {
                 ClaimItem = new String[3];
 
@@ -1930,7 +1702,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     for (var x = 0; x < item.Length - 1; x++)
                     {
-                        ClientInformationAnswer answer = _clientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet).Result;
+                        ClientInformationAnswer answer = await _clientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
                         if (answer != null)
                         {
                             answer.Value = item[1];
@@ -1938,11 +1710,11 @@ namespace TechCertain.WebUI.Controllers
                         }
                         else
                         {
-                            sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
+                            sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
                             await _clientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet).ConfigureAwait(false);
                         }
                     }
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
             }
             return Json(true);
@@ -1956,9 +1728,9 @@ namespace TechCertain.WebUI.Controllers
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
 
-                sheet = _clientInformationService.GetInformation(sheetId).Result;
+                sheet = await _clientInformationService.GetInformation(sheetId);
 
-                var reference = _referenceService.GetLatestReferenceId().Result;
+                var reference = await _referenceService.GetLatestReferenceId();
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -1968,13 +1740,13 @@ namespace TechCertain.WebUI.Controllers
                         _uWMService.UWM_ICIBNZIMV(CurrentUser, sheet, reference);
 
                         //sheet.Status = "Submitted";
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
 
                 }
                 foreach (ClientAgreement agreement in sheet.Programme.Agreements)
                 {
-                    await _referenceService.CreateClientAgreementReference(reference, agreement.Id).ConfigureAwait(false);
+                    await _referenceService.CreateClientAgreementReference(reference, agreement.Id);
                 }
             }
 
@@ -1990,7 +1762,7 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet sheet = null;
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
-                sheet = _clientInformationService.GetInformation(sheetId).Result;
+                sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2016,7 +1788,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
-                sheet = _clientInformationService.GetInformation(sheetId).Result;
+                sheet = await _clientInformationService.GetInformation(sheetId);
             }
 
             return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
@@ -2025,13 +1797,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateInformation(Guid id)
         {
-            ClientProgramme clientProgramme = _programmeService.GetClientProgramme(id).Result;
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             if (clientProgramme == null)
                 throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + CurrentUser.UserName);
 
-            ClientProgramme newClientProgramme = _programmeService.CloneForUpdate(clientProgramme, CurrentUser).Result;
+            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, CurrentUser);
 
-            await _programmeService.Update(newClientProgramme).ConfigureAwait(false);
+            await _programmeService.Update(newClientProgramme);
 
             return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
         }

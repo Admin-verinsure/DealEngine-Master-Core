@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using TechCertain.Infrastructure.Tasking;
 using TechCertain.Services.Impl;
 
 namespace DealEngine.Infrastructure.AppInitialize.Services
@@ -20,6 +21,8 @@ namespace DealEngine.Infrastructure.AppInitialize.Services
             {
                 services.AddTransient(reg.Service, reg.Implementation);
             }
+
+            services.AddTransient<ITaskingService, TaskingService>();
 
             return services;
         }

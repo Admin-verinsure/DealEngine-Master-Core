@@ -17,12 +17,9 @@ namespace TechCertain.WebUI.Models.Milestone
         public AdvisoryVM AdvisoryContent { get; set; }        
         public EmailTemplateVM EmailTemplate { get; set; }
         public UserTaskVM UserTask { get; set; }
-        public string Type { get; set; }
-
-
-        //New setup 
+        public string Type { get; set; }        
         public MilestoneTemplateVM MilestoneTemplate { get; set; }
-
+        public string MilestoneActivity { get; set; }
     }
 
     public class EmailTemplateVM

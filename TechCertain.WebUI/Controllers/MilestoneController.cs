@@ -20,28 +20,24 @@ namespace TechCertain.WebUI.Controllers
     {
 
         IUWMService _uWMService;
-        //ITaskingService _taskingService;
+        ITaskingService _taskingService;
         IEmailService _emailService;
         IMilestoneService _milestoneService;
         IProgrammeService _programmeService;
         IMapperSession<Programme> _programmeRepository;
-        //IPaymentGatewayService _paymentGatewayService;
-        IHttpContextAccessor _httpContextAccessor;
 
         public MilestoneController(
             IUserService userRepository,
-            IHttpContextAccessor httpContextAccessor,
             IEmailService emailService,
             IProgrammeService programmeService,
             IMapperSession<Programme> programmeRepository,
-            IUWMService uWMService,
+            ITaskingService taskingService,
             IMilestoneService milestoneService)
             : base (userRepository)
         {
             _programmeService = programmeService;
             _programmeRepository = programmeRepository;
-            _uWMService = uWMService;
-            //_taskingService = taskingService;
+            _taskingService = taskingService;
             _milestoneService = milestoneService;
             _emailService = emailService;
         }
@@ -85,14 +81,42 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateMilestone (MilestoneListViewModel listModel)
+        public async Task<IActionResult> MilestoneTemplate(string stringId, string milestoneActivity)
+        {
+            
+            
+            Guid Id = Guid.Parse(stringId);
+
+            Programme programme = await _programmeService.GetProgramme(Id);            
+
+
+            MilestoneBuilderViewModel model = new MilestoneBuilderViewModel()
+            {
+                //UserTasks = new List<UserTask>(),
+                //Actions = new List<string>(),
+                //EmailTemplates = new List<EmailTemplate>(),
+                //Advisories = new List<string>(),
+                //UserTask = new UserTaskVM(),
+                //EmailTemplate = new EmailTemplateVM(),
+                //MilestoneTemplate = milestoneTemplateVM,
+                //EmailAddresses = emailTo,
+                //AdvisoryContent = new AdvisoryVM(),
+                //Priorities = priorityTypes,
+                ProgrammeId = programme.Id,
+                MilestoneActivity = milestoneActivity,
+            };
+            
+
+            return RedirectToAction("MilestoneBuilder", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MilestoneBuilder(MilestoneBuilderViewModel model)
         {
             IList<string> emailTo = new List<string>();
-
-            Programme programme = _programmeService.GetProgramme(Guid.Parse(listModel.ProgrammeId)).Result;            
-            emailTo.Add(programme.BrokerContactUser.Address);            
-
-            var templates = _milestoneService.GetMilestoneTemplate(programme.Id, listModel.MilestoneActivity).Result;
+            Programme programme = await _programmeService.GetProgramme(model.ProgrammeId);
+            emailTo.Add(programme.BrokerContactUser.Address);
+            var templates = await _milestoneService.GetMilestoneTemplate(programme.Id, model.MilestoneActivity);
 
             MilestoneTemplateVM milestoneTemplateVM = new MilestoneTemplateVM
             {
@@ -105,30 +129,18 @@ namespace TechCertain.WebUI.Controllers
                     new SelectListItem { Text = "Critical", Value = "2" },
             };
 
-            MilestoneBuilderViewModel model = new MilestoneBuilderViewModel()
-            {
-                UserTasks = new List<UserTask>(),
-                Actions = new List<string>(),
-                EmailTemplates = new List<EmailTemplate>(),
-                Advisories = new List<string>(),
-                UserTask = new UserTaskVM(),
-                EmailTemplate = new EmailTemplateVM(),
-                MilestoneTemplate = milestoneTemplateVM,
-                EmailAddresses = emailTo,
-                AdvisoryContent = new AdvisoryVM(),
-                Priorities = priorityTypes,
-                ProgrammeId = programme.Id,
-            };
+            model.UserTasks = new List<UserTask>();
+            model.Actions = new List<string>();
+            model.EmailTemplates = new List<EmailTemplate>();
+            model.Advisories = new List<string>();
+            model.UserTask = new UserTaskVM();
+            model.EmailTemplate = new EmailTemplateVM();
+            model.MilestoneTemplate = milestoneTemplateVM;
+            model.EmailAddresses = emailTo;
+            model.AdvisoryContent = new AdvisoryVM();
+            model.Priorities = priorityTypes;
 
-            TempData["MilestoneBuilderViewModel"] = model;
-            return Json(data: model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> MilestoneBuilder()
-        {
-            MilestoneBuilderViewModel model = (MilestoneBuilderViewModel)TempData["MilestoneBuilderViewModel"];
-            return View("MilestoneBuilder", model);
+            return Content("MilestoneBuilder");
         }
 
 
@@ -136,8 +148,8 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SubmitMilestone(MilestoneBuilderViewModel model)
         {
 
-            Programme programme = _programmeService.GetProgramme(model.ProgrammeId).Result;
-            Milestone milestone = _milestoneService.CreateMilestone(CurrentUser, "ProgrammeChange", "Quoted", programme).Result;
+            Programme programme = await _programmeService.GetProgramme(model.ProgrammeId);
+            Milestone milestone = await _milestoneService.CreateMilestone(CurrentUser, "ProgrammeChange", "Quoted", programme);
 
             if (model.EmailTemplate.Body != null)
             {

@@ -111,7 +111,7 @@ namespace TechCertain.WebUI.Controllers
 
         public async Task<IActionResult> AgreementBuilder()
         {
-            var templates = _informationService.GetAllTemplates().Result;
+            var templates = await _informationService.GetAllTemplates();
             var products = _productRepository.FindAll();
 
 
@@ -158,7 +158,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AuthoriseReferrals(Guid sheetId,Guid informationsheet, Guid agreementId)
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(agreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(agreementId);
             //  ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             //  model.ClientAgreementId = id;
             model.InformationSheetId = sheetId;
@@ -182,7 +182,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
 
             var premium = 0.0m;
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -220,19 +220,20 @@ namespace TechCertain.WebUI.Controllers
                         if (bvterm.Boat.BoatWaterLocation != null)
                         {
 
-                            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina").Result;
+                            InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
 
-                            var orgList = _organisationService.GetAllOrganisations().Result.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
+                            var orgList = await _organisationService.GetAllOrganisations();
+                            orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
                             foreach (var org in orgList)
                             {
-                                InsuranceAttribute insuranceAttribute1 = _insuranceAttributeService.GetInsuranceAttributeByName(org.Name).Result;
+                                InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
                                 if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
                                 {
 
                                     org.IsApproved = true;
                                 }
                             }
-                            Organisation othermarine = _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id).Result;
+                            Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
                         }
 
                     }
@@ -245,7 +246,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
 
             }
 
@@ -261,7 +262,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
             ClientProgramme programme = answerSheet.Programme;
@@ -280,7 +281,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> CancellAgreement(AgreementViewModel clientAgreementModel)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -312,7 +313,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
             ClientProgramme programme = answerSheet.Programme;
@@ -330,7 +331,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeclineAgreement(AgreementViewModel clientAgreementModel)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -348,7 +349,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
 
             }
 
@@ -360,7 +361,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> UndeclineAgreement(Guid id)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
 
             if (agreement != null)
             {
@@ -379,7 +380,7 @@ namespace TechCertain.WebUI.Controllers
                     AuditLog auditLog = new AuditLog(CurrentUser, agreement.ClientInformationSheet, agreement, auditLogDetail);
                     agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
 
                 }
             }
@@ -391,7 +392,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SendReferredEmail(EmailTemplateViewModel model)
         {
-            ClientProgramme programme = _programmeRepository.GetByIdAsync(model.ClientProgrammeID).Result;
+            ClientProgramme programme = await _programmeRepository.GetByIdAsync(model.ClientProgrammeID);
 
             // TODO - rewrite to save templates on a per programme basis
             ClientAgreement agreement = programme.Agreements[0];
@@ -443,7 +444,7 @@ namespace TechCertain.WebUI.Controllers
             string strrecipentemail = null;
             if (model.Recipent != null)
             {
-                var user = _userRepository.GetByIdAsync(model.Recipent).Result;
+                var user = await _userRepository.GetByIdAsync(model.Recipent);
                 strrecipentemail = user.Email;                
             }
 
@@ -463,7 +464,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> EditTerms(Guid id)
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             model.ClientAgreementId = id;
             foreach (var terms in agreement.ClientAgreementTerms)
@@ -514,7 +515,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
 
@@ -532,7 +533,7 @@ namespace TechCertain.WebUI.Controllers
                 bvTerm.Excess = clientAgreementBVTerm.Excess;
                 bvTerm.Premium = clientAgreementBVTerm.Premium;
                 bvTerm.FSL = clientAgreementBVTerm.FSL;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -541,7 +542,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMotorTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementMVTerm)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
             //ClientAgreementTerm term = agreement.ClientAgreementTerms;
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
@@ -560,7 +561,7 @@ namespace TechCertain.WebUI.Controllers
                 mvTerm.Excess = clientAgreementMVTerm.Excess;
                 mvTerm.Premium = clientAgreementMVTerm.Premium;
                 mvTerm.FSL = clientAgreementMVTerm.FSL;                
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
@@ -570,7 +571,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             ClientAgreementBVTerm bvTerm = null;
@@ -615,7 +616,7 @@ namespace TechCertain.WebUI.Controllers
         //}
 
         [HttpGet]
-        public IActionResult ViewAgreement(Guid id)
+        public async Task<IActionResult> ViewAgreement(Guid id)
         {
             var models = new BaseListViewModel<ViewAgreementViewModel>();
 
@@ -626,7 +627,7 @@ namespace TechCertain.WebUI.Controllers
             ////User insured = _userRepository.GetUser (answerSheet.Owner.Id);
             //Organisation insured = answerSheet.Owner;
 
-            ClientProgramme clientProgramme = _programmeRepository.GetByIdAsync(id).Result;
+            ClientProgramme clientProgramme = await _programmeRepository.GetByIdAsync(id);
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -830,7 +831,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveDate(Guid id , string Startdate)
         {
-            ClientAgreement clientAgreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement clientAgreement = await _clientAgreementService.GetAgreement(id);
 
             var date = true;
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -863,7 +864,7 @@ namespace TechCertain.WebUI.Controllers
                 AuditLog auditLog = new AuditLog(CurrentUser, clientAgreement.ClientInformationSheet, clientAgreement, auditLogDetail);
                 clientAgreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
            
@@ -876,7 +877,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> ViewAgreementDeclaration(Guid id)
         {
             var models = new BaseListViewModel<ViewAgreementViewModel>();
-            ClientProgramme clientProgramme = _programmeRepository.GetByIdAsync(id).Result;
+            ClientProgramme clientProgramme = await _programmeRepository.GetByIdAsync(id);
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -908,7 +909,7 @@ namespace TechCertain.WebUI.Controllers
             //need to review this code duplication
             var models = new BaseListViewModel<ViewAgreementViewModel>();
 
-            ClientProgramme clientProgramme = _programmeRepository.GetByIdAsync(id).Result;
+            ClientProgramme clientProgramme = await _programmeRepository.GetByIdAsync(id);
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
             NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
             currencyFormat.CurrencyNegativePattern = 2;
@@ -952,30 +953,7 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 bool isActive = true;
-                
-                //new implementation using httpclient
-                //EGlobalSerializerAPI eGlobalSerializer = new EGlobalSerializerAPI();
-                //try
-                //{
-                //    throw new Exception("method needs to use new httpclient");
-                //    //if (eGlobalSerializer.SiteActive())
-                //    //{
-                //    //    _logger.Info("Active");
-                //    //    isActive = true;
-                //    //}
-                //}
-                //catch (Exception ex)
-                //{
-                //    _logger.Info("Inactive");
-                //    isActive = false;
-                //    ErrorSignal.FromCurrentContext().Raise(ex);
-                //    _emailService.ContactSupport(_emailService.DefaultSender, "eglobal API inactive", ex.Message);
-                //    //if (ex != null)
-                //    //{
-                //    //    _logger.Error(ex.InnerException.Message);
-                //    //    _logger.Error(ex.Message);
-                    //}
-               // }
+                                
                 model.EGlobalIsActive = isActive;
 
                 // Populate the ViewModel
@@ -1005,7 +983,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementViewModel model = new ViewAgreementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
             ClientProgramme programme = answerSheet.Programme;
@@ -1033,7 +1011,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditAgreement(ViewAgreementViewModel model)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementId).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementId);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1047,7 +1025,7 @@ namespace TechCertain.WebUI.Controllers
                 agreement.ClientNumber = model.ClientNumber;
                 agreement.PolicyNumber = model.PolicyNumber;
 
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return Redirect("/Agreement/ViewAcceptedAgreement/" + answerSheet.Programme.Id);
@@ -1059,7 +1037,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementRuleViewModel model = new ViewAgreementRuleViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
 
@@ -1089,16 +1067,17 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ViewAgreementRule(ViewAgreementRuleViewModel model)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
             if (model.ClientAgreementRules.Any(mcr => mcr != null && mcr.Value != null))
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     foreach (ClientAgreementRuleViewModel crv in model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
                     {
-                        crv.Value = _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID).Result.Value;
+                        var clientAgreementRule = await _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID);
+                        crv.Value = clientAgreementRule.Value;
                     }
-                     await uow.Commit().ConfigureAwait(false);
+                     await uow.Commit();
                 }
             }
 
@@ -1111,7 +1090,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ViewAgreementEndorsementViewModel model = new ViewAgreementEndorsementViewModel();
 
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(id).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
             Organisation insured = answerSheet.Owner;
 
@@ -1146,7 +1125,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ViewAgreementEndorsement(ViewAgreementEndorsementViewModel model)
         {
-            ClientAgreement agreement = _clientAgreementService.GetAgreement(model.ClientAgreementID).Result;
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementID);
 
             if (model.EndorsementNameToAdd != null && model.EndorsementTextToAdd != null)
             {
@@ -1159,10 +1138,11 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (ClientAgreementEndorsementViewModel cev in model.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
                     {
-                        cev.Value =  _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID).Result.Value;
+                        var clientAgreement = await _clientAgreementEndorsementService.GetClientAgreementEndorsementBy(cev.ClientAgreementEndorsementID);
+                        cev.Value = clientAgreement.Value;
                     }
 
-                     await uow.Commit().ConfigureAwait(false);
+                     await uow.Commit();
                 }
 
             }
@@ -1176,8 +1156,8 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AcceptAgreement(Guid Id)
         {
             List<AgreementDocumentViewModel> models = new List<AgreementDocumentViewModel>();
-            ClientProgramme programme = _programmeRepository.GetByIdAsync(Id).Result;
-
+            ClientProgramme programme = await _programmeRepository.GetByIdAsync(Id);
+            var user = CurrentUser;
             foreach (ClientAgreement agreement in programme.Agreements)
             {
                 if (agreement == null)
@@ -1185,18 +1165,18 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
                 {
-                    doc.Delete(CurrentUser);
+                    doc.Delete(user);
                 }
 
                 foreach (SystemDocument template in agreement.Product.Documents)
                 {
-                    SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, template, agreement).Result;
+                    SystemDocument renderedDoc = await _fileService.RenderDocument(CurrentUser, template, agreement);
                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                     agreement.Documents.Add(renderedDoc);
-                    _fileService.UploadFile(renderedDoc);
+                    await _fileService.UploadFile(renderedDoc);
                 }
 
-                ClientAgreement reloadedAgreement = _clientAgreementService.GetAgreement(agreement.Id).Result;
+                ClientAgreement reloadedAgreement = await _clientAgreementService.GetAgreement(agreement.Id);
                 foreach (SystemDocument doc in reloadedAgreement.Documents.Where(d => d.DateDeleted == null))
                 {
                     if (doc.DocumentType == 4)
@@ -1212,7 +1192,7 @@ namespace TechCertain.WebUI.Controllers
 
                 if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
                 { //Arcco
-                   await _clientAgreementService.AcceptAgreement(agreement, CurrentUser).ConfigureAwait(false);
+                   await _clientAgreementService.AcceptAgreement(agreement, user);
                 }
 
             }
@@ -1224,7 +1204,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> SendPolicyDocuments(Guid id)
         {
-            ClientInformationSheet sheet = _customerInformationService.GetInformation(id).Result;
+            ClientInformationSheet sheet = await _customerInformationService.GetInformation(id);
 
             // TODO - rewrite to save templates on a per programme basis
 
@@ -1278,7 +1258,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SendPolicyDocuments(EmailTemplateViewModel model)
         {
-            ClientProgramme programme = _programmeRepository.GetByIdAsync(model.ClientProgrammeID).Result;
+            ClientProgramme programme = await _programmeRepository.GetByIdAsync(model.ClientProgrammeID);
 
             // TODO - rewrite to save templates on a per programme basis
             ClientAgreement agreement = programme.Agreements[0];
@@ -1294,7 +1274,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.LastModifiedBy = CurrentUser;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
 
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
             }
             else
@@ -1304,7 +1284,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate = new EmailTemplate(CurrentUser, "Agreement Documents Covering Text", "SendPolicyDocuments", model.Subject, model.Body, null, programme.BaseProgramme);
                     programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
 
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
             }
 
@@ -1330,11 +1310,11 @@ namespace TechCertain.WebUI.Controllers
             string strrecipentemail = null;
             if (model.Recipent != null)
             {
-                var user = _userRepository.GetByIdAsync(model.Recipent).Result;
+                var user = await _userRepository.GetByIdAsync(model.Recipent);
                 strrecipentemail = user.Email;                
             }
 
-            await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents).ConfigureAwait(false);
+            await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
 
             return Redirect("~/Home/Index");
 
@@ -1347,7 +1327,7 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet sheet = null;
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
-                sheet = _customerInformationService.GetInformation(sheetId).Result;
+                sheet = await _customerInformationService.GetInformation(sheetId);
             }
             
             ClientProgramme programme = sheet.Programme;
@@ -1357,11 +1337,11 @@ namespace TechCertain.WebUI.Controllers
 
             //Hardcoded variables
             decimal totalPremium = 0, totalPayment, brokerFee = 0, GST = 1.15m, creditCharge = 1.02m;
-            Merchant merchant = _merchantService.GetMerchant(programme.BaseProgramme.Id).Result;
-            Payment payment = _paymentService.GetPayment(programme.Id).Result;
+            Merchant merchant = await _merchantService.GetMerchant(programme.BaseProgramme.Id);
+            Payment payment = await _paymentService.GetPayment(programme.Id);
             if (payment == null)
             {
-                payment = _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway).Result;
+                payment = await _paymentService.AddNewPayment(sheet.CreatedBy, programme, merchant, merchant.MerchantPaymentGateway);
             }
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1378,7 +1358,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 ProgrammeId = programme.Id;
                 brokerFee += clientAgreement.BrokerFee;
-                var terms = _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement).Result;
+                var terms = await _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
                 foreach (ClientAgreementTerm clientAgreementTerm in terms)
                 {
                     totalPremium += clientAgreementTerm.Premium;
@@ -1412,7 +1392,7 @@ namespace TechCertain.WebUI.Controllers
             //throw new Exception("Method will need to be re-written");
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out Guid sheetId))
             {
-                sheet = _customerInformationService.GetInformation(sheetId).Result;
+                sheet = await _customerInformationService.GetInformation(sheetId);
             }
 
             //Hardcoded variables
@@ -1427,7 +1407,7 @@ namespace TechCertain.WebUI.Controllers
 
             var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser, _unitOfWork);
 
-            var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
+            var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
             eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
 
@@ -1444,8 +1424,8 @@ namespace TechCertain.WebUI.Controllers
             string queryString = HttpContext.Request.Query["result"].ToString();
             var status = "Bound";
 
-            ClientProgramme programme = _programmeRepository.GetByIdAsync(Id).Result;
-            Payment payment = _paymentService.GetPayment(programme.Id).Result;
+            ClientProgramme programme = await _programmeRepository.GetByIdAsync(Id);
+            Payment payment = await _paymentService.GetPayment(programme.Id);
 
 
             PxPay pxPay = new PxPay(payment.PaymentMerchant.MerchantPaymentGateway.PaymentGatewayWebServiceURL, payment.PaymentMerchant.MerchantPaymentGateway.PxpayUserId, payment.PaymentMerchant.MerchantPaymentGateway.PxpayKey);
@@ -1470,7 +1450,7 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
-                            await uow.Commit().ConfigureAwait(false);
+                            await uow.Commit();
                         }
                     }
 
@@ -1484,7 +1464,7 @@ namespace TechCertain.WebUI.Controllers
 
                     {
                         programme.InformationSheet.Status = status;
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
                 }
                 //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
@@ -1528,7 +1508,7 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
-                            await uow.Commit().ConfigureAwait(false);
+                            await uow.Commit();
                         }
                     }
 
@@ -1582,7 +1562,7 @@ namespace TechCertain.WebUI.Controllers
                     if (programme.InformationSheet.Status != status)
                     {
                         programme.InformationSheet.Status = status;
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
                 }
             }
@@ -1593,7 +1573,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProcessedAgreements(Guid id)
         {
-            PartialViewResult result = (PartialViewResult)ViewAgreement(id);
+            PartialViewResult result = (PartialViewResult)ViewAgreement(id).Result;
 
             var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
             foreach (ViewAgreementViewModel model in models)
@@ -1601,7 +1581,7 @@ namespace TechCertain.WebUI.Controllers
                 model.EditEnabled = false;
                 model.Documents = new List<AgreementDocumentViewModel>();
 
-                ClientProgramme programme = _programmeRepository.GetByIdAsync(id).Result;
+                ClientProgramme programme = await _programmeRepository.GetByIdAsync(id);
                 model.InformationSheetId = programme.InformationSheet.Id;
                 model.ClientProgrammeId = id;
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1626,7 +1606,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewAcceptedAgreement(Guid id)
         {
-            PartialViewResult result = (PartialViewResult)ViewAgreement(id);
+            PartialViewResult result = (PartialViewResult)ViewAgreement(id).Result;
 
             var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
 
@@ -1636,7 +1616,7 @@ namespace TechCertain.WebUI.Controllers
                 model.Documents = new List<AgreementDocumentViewModel>();
                 model.CurrentUser = CurrentUser;
 
-                ClientProgramme programme = _programmeRepository.GetByIdAsync(id).Result;
+                ClientProgramme programme = await _programmeRepository.GetByIdAsync(id);
                 model.InformationSheetId = programme.InformationSheet.Id;
                 model.ClientProgrammeId = id;
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1712,7 +1692,7 @@ namespace TechCertain.WebUI.Controllers
         {
             if (id == Guid.Empty)
                 throw new ArgumentNullException(nameof(id));
-            ClientInformationSheet answerSheet = _customerInformationService.GetInformation(id).Result;
+            ClientInformationSheet answerSheet = await _customerInformationService.GetInformation(id);
             if (answerSheet == null)
                 throw new Exception(string.Format("RenderDocuments: No Answer Sheet found for [{0}]", id));
             ClientProgramme clientProgramme = answerSheet.Programme;
@@ -1732,10 +1712,10 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (Document template in agreement.Product.Documents)
                 {
-                    Document renderedDoc = _fileService.RenderDocument(user, template, agreement).Result;
+                    Document renderedDoc = await _fileService.RenderDocument(user, template, agreement);
                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                     agreement.Documents.Add(renderedDoc);
-                    _fileService.UploadFile(renderedDoc);
+                    await _fileService.UploadFile(renderedDoc);
                 }
             }
 

@@ -6709,13 +6709,11 @@ async: true
     }
 
     function submitPayment() {
-        debugger;
          event.preventDefault();
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
 
         if ($('#paymentCreditCard').is(":checked")) {
-            debugger;
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
@@ -6726,7 +6724,6 @@ async: true
             })
         }
         else if ($('#paymentEGlobal').is(":checked")) {
-            debugger;
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("GenerateEGlobal", "Agreement")',
