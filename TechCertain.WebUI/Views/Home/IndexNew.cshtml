@@ -400,8 +400,7 @@
                     <!-- end widget div -->
                 </div>
 
-                @if (Model.CurrentUserIsBroker != "True" && Model.CurrentUserIsInsurer != "True" && Model.CurrentUserIsTC != "True")
-                {
+               
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
                         <!-- widget options:
@@ -529,12 +528,12 @@
                         </div>
                         <!-- end widget div -->
                     </div>
-                }
+                
 
                 @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
+                         data-widget-editbutton="false" data-widget-colorbutton="false" >
                         <!-- widget options:
                         usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
@@ -622,6 +621,7 @@
                                         <tbody>
                                             @foreach (var item in Model.ProgrammeItems)
                                             {
+
                                                 <tr>
                                                     <td>
                                                         @item.Name
@@ -633,23 +633,8 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        @*
-                                                            @foreach (var button in item.Buttons) {*@
-                                                        @*@switch (Model.DisplayRole)
-                                                            {
-                                                                case "Broker":
-                                                                    <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
-                                                                   break;
-                                                                case "Client":*@
-                                                        <a class="btn btn-success btn-xs" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
-                                                        @*break;
-                                                            }*@
+                                                        <a class="btn btn-success btn-xs" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                     </td>
-                                                    @*<td>
-                                                            @foreach (var button in item.Buttons) {
-                                                            <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
-                                                            }
-                                                        </td>*@
                                                 </tr>
                                             }
                                         </tbody>
@@ -710,124 +695,98 @@
                                             @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                             {
 
-                                                @*<tr>
-                                                        <td>Milestones</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Sections</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> View</a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Special Terms</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs" href="/Policy/SectionBuilder"><i class="fa fa-search"></i> View</a></td>
-                                                    </tr>*@
 
-                                                @*<tr onclick="location.href='/Policy/SectionBuilder';" style="cursor:pointer">
-                                                        <td>Special Term Builder</td>
 
-                                                    </tr>*@
-                                                @*<tr onclick="location.href='/InformationBuilder/StagingBuilder';" style="cursor:pointer">
-                                                        <td>Section Builder</td>
-                                                    </tr>*@
-                                                @*<tr onclick="location.href='/Milestone/MilestoneList';" style="cursor:pointer">
+                                            @*<tr onclick="location.href='/Programme/ActivityBuilder';" style="cursor:pointer">*@
+                                                <tr>
+                                                <td>Activities</td>
+                                                <td>ANZSIC Codes</td>
+                                                <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
-                                                        <td>Milestone Builder</td>
-                                                    </tr>*@
-                                                @*<tr onclick="location.href='#';" style="cursor:pointer">
-                                                        <td>Move Policy to new Product</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
-                                                    </tr
-                                                    <tr onclick="location.href='#';" style="cursor:pointer">
-                                                        <td>Clone Contract to new Product</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
-                                                    </tr>
-                                                    <tr onclick="location.href='/Product/MyProducts';" style="cursor:pointer">
-                                                        <td>Manage Products</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
-                                                    </tr>>*@
-                                                <tr onclick="location.href='/Programme/MyProgrammes';" style="cursor:pointer">
+                                            </tr>
+                                                <tr>
+                                                    <td>Addresses</td>
+                                                    <td>Address API used </td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
+
+                                                <tr onclick="location.href='/File/ManageDocuments';" style="cursor:pointer">
+                                                    <td>Manage Documents</td>
+                                                    <td>Certs,Schedules,Wording,Invoices</td>
+                                                    <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+
+                                                </tr>
+                                                @*<tr onclick="location.href='/Programme/MyProgrammes';" style="cursor:pointer">
                                                     <td>Manage Programmes</td>
                                                     <td>   </td>
                                                     <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
+                                                </tr>*@
+                                                <tr>
+                                                    <td>Emails</td>
+                                                    <td>System and proggramme specific</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                 </tr>
-                                                <tr onclick="location.href='/File/ManageDocuments';" style="cursor:pointer">
-                                                    <td>Manage Documents</td>
-                                                    <td>   </td>
-                                                    <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
+                                                <tr>
+                                                    <td>Financial Institutions</td>
+                                                    <td>For selecting as Named Parties</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>
                                                 </tr>
-                                                @*<tr onclick="location.href='/Groups/Index';" style="cursor:pointer">
-                                                        <td>Manage Groups</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
-                                                    </tr>
-                                                    <tr onclick="location.href='/Roles/Index';" style="cursor:pointer">
-                                                        <td>Manage Claims</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+                                                <tr>
+                                                    <td>Milestones</td>
+                                                    <td>Milestones</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    </tr>
-                                                    <tr onclick="location.href='/Organisation/ManageOrganisations';" style="cursor:pointer">
-                                                        <td>Manage Organisations</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+                                                <tr>
+                                                    <td>Motor</td>
+                                                    <td>Motor API used   </td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    </tr>
 
-                                                    <tr onclick="location.href='/InformationBuilder/StagingBuilder';" style="cursor:pointer">
-                                                        <td>Information Builder</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+                                                <tr>
+                                                    <td>Products</td>
+                                                    <td>Insurance Policies for adding to a programme   </td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="/Product/CreateNew"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    </tr>
-                                                    <tr onclick="location.href='/Product/CreateNew';" style="cursor:pointer">
-                                                        <td>Product Builder</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
-                                                    </tr>
+                                                <tr>
+                                                    <td>Sections</td>
+                                                    <td>Sections for the Client Information Sheet   </td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    <tr onclick="location.href='/Product/CreateTerritory';" style="cursor:pointer">
-                                                        <td>Territory Builder</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
-                                                    </tr>
+                                                <tr>
+                                                    <td>Special Terms</td>
+                                                    <td>Endorsements</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="/Policy/SectionBuilder"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    <tr onclick="location.href='/Information/GetProgrammes';" style="cursor:pointer">
-                                                        <td>Section</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+                                                <tr>
+                                                    <td>Underwriting Rules</td>
+                                                    <td>Underwriting Rules</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    </tr>
+                                                <tr>
+                                                    <td>Users</td>
+                                                    <td>User Management</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    <tr onclick="location.href='/File/CreateDocument';" style="cursor:pointer">
-                                                        <td>Document Builder</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+                                                <tr>
+                                                    <td>Water</td>
+                                                    <td>Water Location API used</td>
+                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                </tr>
 
-                                                    </tr>
-                                                    <tr onclick="location.href='/Programme/ActivityBuilder';" style="cursor:pointer">
-                                                        <td>Activity Builder</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
-                                                    </tr>
-                                                    <tr onclick="location.href='/Programme/RoleBuilder';" style="cursor:pointer">
-                                                        <td>Role Builder</td>
-                                                        <td>   </td>
-                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
-                                                    </tr>*@
                                             }
                                         </tbody>
                                     </table>

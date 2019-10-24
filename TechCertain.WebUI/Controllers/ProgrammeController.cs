@@ -548,13 +548,13 @@ namespace TechCertain.WebUI.Controllers
             programme.EGlobalClientStatus = billingConfig[2];
             if (string.IsNullOrEmpty(billingConfig[3]))
             {
-                programme.HasEGlobalCustomDescription = true;
+                programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
                 programme.EGlobalCustomDescription = billingConfig[3];
             }
             else
             {
-                programme.HasEGlobalCustomDescription = false;
-                programme.EGlobalCustomDescription = null;
+                programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
+                programme.EGlobalCustomDescription = billingConfig[3]; 
             }
                     
             await _programmeService.Update(programme).ConfigureAwait(false);
@@ -713,7 +713,24 @@ namespace TechCertain.WebUI.Controllers
             return View(model);
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> TermSheetConfirguration(Guid Id)
+        {
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
+            try
+            {
+                model.Id = Id;
+                model.programmeName = programme.Name;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            ViewBag.Title = "Term Sheet Template ";
+            return View(model);
+        }
+
         [HttpGet]
         public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {
