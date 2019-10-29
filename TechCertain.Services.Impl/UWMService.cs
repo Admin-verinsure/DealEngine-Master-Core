@@ -1190,6 +1190,7 @@ namespace TechCertain.Services.Impl
                 DateTime inceptionDate = DateTime.UtcNow;
                 DateTime expiryDate = DateTime.UtcNow.AddYears(1);
                 clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
+                clientAgreement.MasterAgreement = true;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
 
