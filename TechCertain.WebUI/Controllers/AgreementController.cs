@@ -1543,9 +1543,9 @@ namespace TechCertain.WebUI.Controllers
                 //        uow.Commit();
                 //    }
                 //}
-                
-                //var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
 
+                //var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
+                status = "Bound and invoice pending";
                 bool hasEglobalNo = false;
                 if (programme.EGlobalClientNumber != "")
                 {
@@ -1554,33 +1554,29 @@ namespace TechCertain.WebUI.Controllers
 
                 bool eglobalsuccess = false;
 
-                if (hasEglobalNo)
-                {
-                    status = "Bound and invoiced";
+                //if (hasEglobalNo)
+                //{
+                //    status = "Bound and invoiced";
 
-                    var eGlobalSerializer = new EGlobalSerializerAPI();
+                //    var eGlobalSerializer = new EGlobalSerializerAPI();
                                        
-                    var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
+                //    var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
 
-                    var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
+                //    var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
 
-                    eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
+                //    eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
 
-                    if (programme.ClientAgreementEGlobalResponses.Count > 0)
-                    {
-                        EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
-                        if (eGlobalResponse != null)
-                        {
-                            eglobalsuccess = true;
-                        }
+                //    if (programme.ClientAgreementEGlobalResponses.Count > 0)
+                //    {
+                //        EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                //        if (eGlobalResponse != null)
+                //        {
+                //            eglobalsuccess = true;
+                //        }
 
-                    }
+                //    }
 
-                }
-                else
-                {
-                    status = "Bound and invoice pending";
-                }
+                //}
 
                 var documents = new List<SystemDocument>();
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1593,8 +1589,6 @@ namespace TechCertain.WebUI.Controllers
                             await uow.Commit().ConfigureAwait(false);
                         }
                     }
-
-                    
 
                     agreement.Status = status;
 
@@ -1681,14 +1675,7 @@ namespace TechCertain.WebUI.Controllers
                     model.ClientAgreementId = agreement.Id;
                     foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
                     {
-                        if(doc.DocumentType == 4)
-                        {
-                            if(programme.EGlobalClientNumber != null)
-                            {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
-                            }
-                        } else
-                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
+                        model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
                     }
                 }
             }

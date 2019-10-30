@@ -66,7 +66,6 @@ namespace TechCertain.Services.Impl
         public async Task<Programme> GetCoastGuardProgramme()
         {
             return await _programmeRepository.FindAll().FirstOrDefaultAsync(p => p.Name == "First Mate Cover");
-
         }
 
         public async Task Update (params ClientProgramme [] clientProgrammes)

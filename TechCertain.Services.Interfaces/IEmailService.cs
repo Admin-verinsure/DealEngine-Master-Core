@@ -19,7 +19,9 @@ namespace TechCertain.Services.Interfaces
 		string SystemEmail { get; }
 
 		string CatchAllEmail { get; }
-		Task SendPasswordResetEmail(string recipent, Guid resetToken, string originDomain);
+
+        string BCCEmail { get; }
+        Task SendPasswordResetEmail(string recipent, Guid resetToken, string originDomain);
 
         Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents);
 
