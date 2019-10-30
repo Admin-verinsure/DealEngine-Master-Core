@@ -1,6 +1,7 @@
 ﻿@model TechCertain.WebUI.Models.DocumentViewModel
-<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
+<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+<script src="~/ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter.js"></script>
 
 <div id="content" style="background-color: #A6E2EF">
     <!-- widget grid -->
@@ -87,7 +88,21 @@
                                                     </textarea>*@
                                                 <script>
                                                     ClassicEditor
-                                                        .create(document.querySelector('#editor'))
+                                                        .create(document.querySelector('#editor', {
+                                                            toolbar: {
+                                                                items: ['bold', 'italic', 'underline', 'highlight', 'toolbarGroup']
+                                                            },
+                                                            toolbarGroup: {
+                                                                options: [
+                                                                    { model: 'paragraph', title: 'Paragraph' },
+                                                                    { model: 'heading1', title: 'Heading 1' },
+                                                                    { model: 'heading2', title: 'Heading 2' },
+                                                                    { model: 'link', title: 'Insert Link' },
+                                                                    { model: 'ckfinder', title: 'Upload Image' }
+                                                                ]
+                                                            }
+                                                        })
+                                                        )
                                                         .catch(error => {
                                                             console.error(error);
                                                         });
