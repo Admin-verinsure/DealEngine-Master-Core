@@ -81,11 +81,18 @@ namespace TechCertain.Services.Impl
 		{
 			get {
                 return _configuration.GetValue<string>("CatchAllEmail");
-                //return ConfigurationManager.AppSettings["CatchAllEmail"];
             }
-		}		
+		}
 
-		public async Task SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
+        public string BCCEmail
+        {
+            get
+            {
+                return _configuration.GetValue<string>("BCCEmail");
+            }
+        }
+
+        public async Task SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
 		{
 			var user = _userService.GetUserByEmail(recipent).Result;
 
@@ -105,7 +112,8 @@ namespace TechCertain.Services.Impl
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
-			email.WithSubject ("Proposalonline Password Reset");
+            email.BCC(BCCEmail);
+            email.WithSubject ("Deal Engine Password Reset");
 			email.WithBody (body);
 			email.UseHtmlBody (true);
 			email.Send ();
@@ -118,7 +126,8 @@ namespace TechCertain.Services.Impl
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
-			email.WithSubject (emailTemplate.Subject);
+            email.BCC(BCCEmail);
+            email.WithSubject (emailTemplate.Subject);
 			email.WithBody (body);
 			email.UseHtmlBody (true);
             if(documents != null)
@@ -158,6 +167,7 @@ namespace TechCertain.Services.Impl
             }
             EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, recipent);
             systememail.From(DefaultSender);
+            systememail.BCC(BCCEmail);
             systememail.WithSubject (systememailsubject);
             systememail.WithBody (systememailbody);
             systememail.UseHtmlBody (true);
@@ -193,6 +203,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -232,6 +243,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -272,6 +284,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -312,6 +325,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -352,6 +366,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -386,10 +401,9 @@ namespace TechCertain.Services.Impl
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
-                systememail.From("postmaster@techcertain.com");
-                //systememail.From(DefaultSender);
-                //systememail.To(recipent.ToArray());
-                systememail.To("postmaster@techcertain.com");
+                systememail.From(DefaultSender);
+                systememail.BCC(BCCEmail);
+                systememail.To(recipent.ToArray());
                 if (programme.ProgrammeEmailCCToBroker)
                 {
                     //systememail.CC(sheet.Programme.BrokerContactUser.Email);
@@ -431,6 +445,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -469,6 +484,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -509,6 +525,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -550,6 +567,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
                 systememail.UseHtmlBody(true);
@@ -588,6 +606,7 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
+                systememail.BCC(BCCEmail);
                 if (programme.ProgrammeEmailCCToBroker)
                 {
                     systememail.CC(sheet.Programme.BrokerContactUser.Email);
@@ -608,6 +627,7 @@ namespace TechCertain.Services.Impl
                        
             EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
             systememail.From(DefaultSender);
+            systememail.BCC(BCCEmail);
             systememail.WithSubject("ProposalOnline System Event");
             systememail.WithBody(XMLBody);
             systememail.UseHtmlBody(true);

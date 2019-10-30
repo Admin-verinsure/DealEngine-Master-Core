@@ -139,7 +139,7 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
-        //Quoted, Referred, Bound, Bound and Pending Invoice, Bound and Invoiced
+        //Quoted; Referred; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Declined by Insurer; Declined by Insured; Cancelled
         public virtual string Status
         {
             get;
