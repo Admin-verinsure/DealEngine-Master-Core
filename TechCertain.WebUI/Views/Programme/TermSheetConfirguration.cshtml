@@ -91,13 +91,14 @@
                             <tr>
                                 <td>Rules</td>
                                 <td>Configure the Rules</td>
-                                <td><a class="btn btn-success btn-xs disable" href="#"><i class="fa fa-search"></i> View</a></td>
+                                <td><a class="btn btn-success btn-xs" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                
                             </tr>
 
                             <tr>
                                 <td>Emails</td>
                                 <td>System and proggramme specific</td>
-                                <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                <td><a class="btn btn-success btn-xs" href="@Url.Action("EmailTemplate", "Programme",new { Id =@Model.Id })"><i class="fa fa-search"></i> View</a></td>
                             </tr>
 
                             <tr>
@@ -153,6 +154,7 @@
                                 <td>Underwriting Rules</td>
                                 <td>Underwriting Rules</td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
                             </tr>
 
                             <tr>
