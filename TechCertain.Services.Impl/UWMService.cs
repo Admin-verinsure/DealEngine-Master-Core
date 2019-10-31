@@ -908,16 +908,44 @@ namespace TechCertain.Services.Impl
             //calculate boat premium and FSL (BV Term)
             foreach (var boat in informationSheet.Boats.Where(v => !v.Removed && v.DateDeleted == null))
             {
-                if (boat.BoatEffectiveDate < agreement.InceptionDate || boat.BoatEffectiveDate > agreement.InceptionDate.AddDays(30))
+
+                //Pre-rate premiums based on the vehicle effectiove date and cease date
+                DateTime boatinceptiondate;
+                DateTime boatexpirydate;
+                DateTime boateffectivedate;
+                int boatperiodindays = 0;
+
+                if (!informationSheet.IsChange && (boat.BoatEffectiveDate < agreement.InceptionDate || boat.BoatEffectiveDate > agreement.InceptionDate.AddDays(30)))
                 {
                     boat.BoatEffectiveDate = agreement.InceptionDate;
                 }
 
-                boat.BoatInceptionDate = boat.BoatEffectiveDate;
-                boat.BoatExpireDate = agreement.ExpiryDate;
+                //default for new boat
+                boateffectivedate = (boat.BoatEffectiveDate > DateTime.MinValue) ? boat.BoatEffectiveDate : agreement.InceptionDate;
+                boatexpirydate = (boat.BoatCeaseDate > DateTime.MinValue) ? boat.BoatCeaseDate : agreement.ExpiryDate;
+                boatinceptiondate = boateffectivedate;
+                
+                if (boat.OriginalBoat != null) //exsiting boat
+                {
+                    boatinceptiondate = boat.OriginalBoat.BoatInceptionDate;
+                    boatexpirydate = boat.OriginalBoat.BoatExpireDate;
+                    boateffectivedate = (boat.BoatEffectiveDate > DateTime.MinValue) ? boat.BoatEffectiveDate : boat.OriginalBoat.BoatInceptionDate;
 
-                int boatperiodindays = 0;
-                boatperiodindays = (boat.BoatExpireDate - boat.BoatInceptionDate).Days;
+                    if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue)
+                    {
+                        boatexpirydate = boat.BoatCeaseDate;
+                    }
+                    else if (boat.OriginalBoat.BoatCeaseDate > DateTime.MinValue && boat.BoatCeaseDate == DateTime.MinValue)
+                    {
+                        boatinceptiondate = (boat.BoatEffectiveDate > DateTime.MinValue) ? boat.BoatEffectiveDate : boat.OriginalBoat.BoatInceptionDate;
+                        boatexpirydate = agreement.ExpiryDate;
+                    }
+                }
+
+                boat.BoatInceptionDate = boatinceptiondate;
+                boat.BoatExpireDate = boatexpirydate;
+
+                boatperiodindays = (boatexpirydate - boatinceptiondate).Days;
 
                 decimal boatRate = 0m;
                 decimal boatMinPremium = 0m;
@@ -1185,12 +1213,26 @@ namespace TechCertain.Services.Impl
         ClientAgreement GetClientAgreement(User currentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
         {
             ClientAgreement clientAgreement = programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
+            ClientAgreement previousClientAgreement = null;
             if (clientAgreement == null)
             {
                 DateTime inceptionDate = DateTime.UtcNow;
                 DateTime expiryDate = DateTime.UtcNow.AddYears(1);
+                if (informationSheet.IsChange) //change agreement to keep the original inception date and expiry date
+                {
+                    if (informationSheet.PreviousInformationSheet != null)
+                    {
+                        previousClientAgreement = informationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault(prea => prea.Product != null && prea.Product.Id == product.Id);
+                        if (previousClientAgreement != null)
+                        {
+                            inceptionDate = previousClientAgreement.InceptionDate;
+                            expiryDate = previousClientAgreement.ExpiryDate;
+                        }
+                    }
+                }
                 clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
                 clientAgreement.MasterAgreement = true;
+                clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
 
