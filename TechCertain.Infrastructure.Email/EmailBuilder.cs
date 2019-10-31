@@ -58,7 +58,16 @@ namespace TechCertain.Infrastructure.Email
 			return this;
 		}
 
-		public IEmailBuilder WithSubject (string subject)
+        public IEmailBuilder ReplyTo(params string[] replyToAddresses)
+        {
+            foreach (string replyToAddress in replyToAddresses)
+            {
+                _mailMessage.ReplyToList.Add(new MailAddress(replyToAddress));
+            }
+            return this;
+        }
+
+        public IEmailBuilder WithSubject (string subject)
 		{
 			_mailMessage.Subject = subject;
 			return this;
