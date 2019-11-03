@@ -31,29 +31,9 @@
 
                                 <div class="alert alert-warning">
                                     This information sheet has already been submitted, and cannot be updated.
-                                </div>
-
-                                @*@Html.Bootstrap().Alert("This information sheet has already been submitted, and cannot be updated.").Style(AlertColor.Warning);*@
+                                </div>                             
 
                             }
-                            @*_else {
-                                <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" data-backdrop="static">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Important!</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Insurance is offerred on the basis of the information you supply. If your not sure press the "Seek Advice" button at any time.</p>
-                                                <p>Untruthful answers will result in cancellation without compensation.</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn-default btn" type="button" onclick="$('#advisoryModal').modal('hide');">I Understand</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                }*@
                             <div class="widget-body">
                                     <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
 
@@ -1068,7 +1048,7 @@
     </script>
 
 
-    @Html.Partial("_InformationWizardScripts")
+    @await Html.PartialAsync("_InformationWizardScripts")
 }
 
 

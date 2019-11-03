@@ -36,7 +36,6 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
         IMilestoneService _milestoneService;
-        IUserService _userService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
         IMapperSession<Territory> _territoryRepository;
@@ -1203,22 +1202,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsChange = sheet.IsChange;
             model.Id = id;
 
-            //testing Milestone Example
-            //need to add programmeId to search to make it programme specific
-            var advisory = await _milestoneService.GetMilestoneProcess(clientProgramme.BaseProgramme.Id, "ProgrammeChange", "Quoted");
-            MilestoneAdvisoryVM milestoneAdvisoryVM = new MilestoneAdvisoryVM();
-            if (advisory != null)
-            {
-                if (advisory.Advisory != null)
-                {
-                    model.MilestoneId = advisory.Id;
-                    milestoneAdvisoryVM.Advisory = advisory.Advisory;
-                    model.MilestoneStatus = "Active";
-                    model.MilestoneAdvisoryVM = milestoneAdvisoryVM;                   
-
-                }
-                
-            }
+            //add milestone process here
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {

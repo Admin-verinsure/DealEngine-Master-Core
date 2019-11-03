@@ -1,26 +1,44 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
+<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
-    <div id="fuelux-wizard" class="smart-form" novalidate="novalidate">
-        <select class="form-control b" id="emailaddress" required>
-            <option selected="selected" value="">-- Select --</option>
-            @foreach (var emailAdd in Model.EmailAddresses)
-            {
-                <option value="@emailAdd"> @emailAdd</option>
-            }
-        </select>
-        <hr />
-        @Html.TextAreaFor(m => m.EmailTemplate.Subject)
-        <hr />
-        @Html.TextAreaFor(m => m.EmailTemplate.Body)
-        <script>CKEDITOR.replace('@(Html.IdFor(m => m.EmailTemplate.Body))');</script>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <div class="input-group">
+                <select class="form-control b" id="emailaddress" required>
+                    <option selected="selected" value="">-- Select --</option>
+                    @foreach (var emailAdd in Model.EmailAddresses)
+                    {
+                        <option value="@emailAdd"> @emailAdd</option>
+                    }
+                </select>
+                <hr />
+                @Html.TextAreaFor(m => m.EmailTemplate.Subject)
+                <hr />
+                @Html.TextAreaFor(m => m.EmailTemplate.Body, new { id = "emailTemplate", name = "content", cols = "10", rows = "10" })
+            </div>
+        </div>
     </div>
+</div>
+
 
 <script type="text/javascript">
-    function GetEmailContentJson()
-    {
-        return {
-            Subject: $("#@(Html.IdFor(m => m.EmailTemplate.Subject))").val(),
-            Body: CKEDITOR.instances["@(Html.IdFor(m => m.EmailTemplate.Body))"].getData()
-    	};
-    }
+        ClassicEditor
+            .create(document.querySelector('#emailTemplate'))
+            .then(newEmailBody => {
+                editorEmail = newEmailBody;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+           function GetEmailContentJson()
+           {               
+               return {
+                   Subject: $("#@(Html.IdFor(m => m.EmailTemplate.Subject))").val(),
+                   Body: editorEmail.getData()
+               };
+           }
+
 </script>
+

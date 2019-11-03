@@ -40,6 +40,7 @@
                                             <td>
                                                 @vm.Process
                                             </td>
+
                                             <td>
                                                 @foreach (var Programme in vm.Programmes)
                                                 {
@@ -62,10 +63,8 @@
                                                 </div>
                                             </td>
 
-
                                             <td>
-                                                <a class="btn btn-primary btn-xs" onclick="CreateMilestone('@vm.Process')">Create Milestone</a>
-                                                @*<a class="btn btn-primary btn-xs" onclick="location.href='/Milestone/MilestoneBuilder(test)';">Edit Milestone</a>*@
+                                                <a class="btn btn-primary btn-xs" onclick="CreateMilestone('@vm.Process')">Create/Edit Milestone</a>                                                
                                             </td>
 
                                         </tr>
@@ -89,11 +88,9 @@
 
         function Validate(value) {
             if (value != '') {
-                console.log('true');
                 return true;
             }
             else {
-                console.log('true');
                 return false;
             }
         }
@@ -101,21 +98,19 @@
         function CreateMilestone(process) {
             event.preventDefault();
             if (Validate($("#milestoneprogramme").val())) {
-                var mergedData = { stringId: $("#milestoneprogramme").val(), milestoneActivity: process };
-
+                var mergedData = { ProgrammeId: $("#milestoneprogramme").val(), programmeProcess: process };
+                console.log(mergedData);
                 $.ajax({
                     url: "/Milestone/MilestoneTemplate",
                     type: "POST",
                     data: mergedData
                 })
                    .done(function (url) {
-                       debugger;
 
                 window.location.href = url;
                 console.log("url"+url);
 	        })
                     .fail(function (err) {
-                        debugger;
                         console.log(err);
                         alert("Unable to save." + err.responseText);
                     });

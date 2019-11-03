@@ -27,7 +27,7 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(body))
                 throw new ArgumentNullException(nameof(body));
 
-            if(CheckExists(systemEmailName).Result)
+            if(await CheckExists(systemEmailName))
                 await _systemEmailRepository.AddAsync(new SystemEmail(createdBy, systemEmailName, internalNotes, subject, body, systemEmailType));
             
         }

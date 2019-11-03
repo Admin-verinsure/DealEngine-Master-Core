@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TechCertain.Domain.Entities;
 
 namespace TechCertain.WebUI.Models.Milestone
 {
@@ -13,7 +14,7 @@ namespace TechCertain.WebUI.Models.Milestone
     public class MilestoneConfigurationViewModel
     {
         public string Process { get; set; }
-        public IList<TechCertain.Domain.Entities.Programme> Programmes { get; set; }
+        public IList<Domain.Entities.Programme> Programmes { get; set; }
         public bool IsActive { get; set; }
     }
 

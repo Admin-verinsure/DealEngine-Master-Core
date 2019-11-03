@@ -1,0 +1,19 @@
+﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <div class="input-group">
+                <div id="AdvisoryPartial">
+                    @await Html.PartialAsync("ViewMilestoneAdvisoryContent", Model)
+                </div>
+                <div id="EmailPartial" hidden="hidden">
+                    @await Html.PartialAsync("ViewMilestoneEmailContent", Model)
+                </div>
+                <div id="TaskPartial" hidden="hidden">
+                    @await Html.PartialAsync("ViewMilestoneTaskContent", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
