@@ -117,7 +117,7 @@ namespace TechCertain.Services.Impl
             Name = "ICIB_ARCCO";
         }
 
-        public bool Underwrite(User currentUser, ClientInformationSheet informationSheet)
+        public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
         {
             throw new NotImplementedException();
         }
@@ -491,7 +491,7 @@ namespace TechCertain.Services.Impl
 
         }
 
-        ClientAgreement GetClientAgreement(User currentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
+        ClientAgreement GetClientAgreement(User CurrentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
         {
             ClientAgreement clientAgreement = programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
             if (clientAgreement == null)
@@ -500,19 +500,19 @@ namespace TechCertain.Services.Impl
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow;
 
-                clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
+                clientAgreement = new ClientAgreement(CurrentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
                 programme.Agreements.Add(clientAgreement);
 
             }
             return clientAgreement;
         }
 
-        ClientAgreementTerm GetAgreementTerm(User currentUser, ClientAgreement agreement, string subTerm)
+        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm)
         {
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted == null);
             if (term == null)
             {
-                term = new ClientAgreementTerm(currentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
+                term = new ClientAgreementTerm(CurrentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
                 agreement.ClientAgreementTerms.Add(term);
 
                 //set $20 broker fee for change agreement
@@ -570,7 +570,7 @@ namespace TechCertain.Services.Impl
             Name = "ICIB_HIANZ";
         }
 
-        public bool Underwrite(User currentUser, ClientInformationSheet informationSheet)
+        public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
         {
             throw new NotImplementedException();
         }
@@ -680,7 +680,7 @@ namespace TechCertain.Services.Impl
             //throw new NotImplementedException ();
         }
 
-        ClientAgreement GetClientAgreement(User currentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
+        ClientAgreement GetClientAgreement(User CurrentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
         {
             ClientAgreement clientAgreement = programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
             if (clientAgreement == null)
@@ -688,19 +688,19 @@ namespace TechCertain.Services.Impl
                 DateTime inceptionDate = (product.DefaultInceptionDate > DateTime.MinValue) ? product.DefaultInceptionDate : DateTime.UtcNow;
                 DateTime expiryDate = (product.DefaultExpiryDate > DateTime.MinValue) ? product.DefaultExpiryDate : DateTime.UtcNow;
 
-                clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
+                clientAgreement = new ClientAgreement(CurrentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
                 programme.Agreements.Add(clientAgreement);
 
             }
             return clientAgreement;
         }
 
-        ClientAgreementTerm GetAgreementTerm(User currentUser, ClientAgreement agreement, string subTerm)
+        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm)
         {
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted == null);
             if (term == null)
             {
-                term = new ClientAgreementTerm(currentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
+                term = new ClientAgreementTerm(CurrentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
                 agreement.ClientAgreementTerms.Add(term);
             }
 
@@ -829,7 +829,7 @@ namespace TechCertain.Services.Impl
             Name = "Marsh_CoastGuard";
         }
 
-        public bool Underwrite(User currentUser, ClientInformationSheet informationSheet)
+        public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
         {
             throw new NotImplementedException();
         }
@@ -1182,14 +1182,14 @@ namespace TechCertain.Services.Impl
 
         }
 
-        ClientAgreement GetClientAgreement(User currentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
+        ClientAgreement GetClientAgreement(User CurrentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
         {
             ClientAgreement clientAgreement = programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
             if (clientAgreement == null)
             {
                 DateTime inceptionDate = DateTime.UtcNow;
                 DateTime expiryDate = DateTime.UtcNow.AddYears(1);
-                clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
+                clientAgreement = new ClientAgreement(CurrentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
                 clientAgreement.MasterAgreement = true;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
@@ -1198,12 +1198,12 @@ namespace TechCertain.Services.Impl
             return clientAgreement;
         }
 
-        ClientAgreementTerm GetAgreementTerm(User currentUser, ClientAgreement agreement, string subTerm)
+        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm)
         {
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted == null);
             if (term == null)
             {
-                term = new ClientAgreementTerm(currentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
+                term = new ClientAgreementTerm(CurrentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
                 agreement.ClientAgreementTerms.Add(term);
             }
 

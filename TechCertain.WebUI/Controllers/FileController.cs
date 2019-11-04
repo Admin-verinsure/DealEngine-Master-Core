@@ -63,7 +63,7 @@ namespace TechCertain.WebUI.Controllers
             //    (extension == "gif") ? MediaTypeNames.Image.Gif :
             //    (extension == "tiff") ? MediaTypeNames.Image.Tiff : MediaTypeNames.Application.Octet;
             throw new Exception("This method needs to be re-written");
-            Image img = _fileService.GetImage(id).Result;
+            Image img = await _fileService.GetImage(id);
             return File(img.Contents, img.ContentType, img.Name);
 
         }
@@ -75,7 +75,7 @@ namespace TechCertain.WebUI.Controllers
             //if (id == Guid.Empty)
             //    return new HttpNotFoundResult();
 
-            SystemDocument doc = _documentRepository.GetByIdAsync(id).Result;
+            SystemDocument doc = await _documentRepository.GetByIdAsync(id);
             string extension = "";
             if (doc.ContentType == MediaTypeNames.Text.Html)
             {
@@ -143,7 +143,7 @@ namespace TechCertain.WebUI.Controllers
 			if (documentId == Guid.Empty)
 				return View (model);
 
-			SystemDocument document = _documentRepository.GetByIdAsync(documentId).Result;
+			SystemDocument document = await _documentRepository.GetByIdAsync(documentId);
 			if (document == null)
 				throw new Exception ("Unable to update document: Could not find document with id " + id);
 
@@ -159,9 +159,10 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
 		{
+            var user = await CurrentUser();
             if (model.DocumentId != Guid.Empty)
             {
-                SystemDocument document = _documentRepository.GetByIdAsync(model.DocumentId).Result;
+                SystemDocument document = await _documentRepository.GetByIdAsync(model.DocumentId);
                 if (document != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -170,7 +171,7 @@ namespace TechCertain.WebUI.Controllers
                         document.DocumentType = model.DocumentType;
                         document.Description = model.Description;
                         document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
-                        document.LastModifiedBy = CurrentUser;
+                        document.LastModifiedBy = user;
                         document.LastModifiedOn = DateTime.UtcNow;
                         await uow.Commit();
                     }
@@ -178,10 +179,10 @@ namespace TechCertain.WebUI.Controllers
 
             } else
             {
-                SystemDocument document = new SystemDocument(CurrentUser, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
+                SystemDocument document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
                 document.Description = model.Description;
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
-                document.OwnerOrganisation = CurrentUser.PrimaryOrganisation;
+                document.OwnerOrganisation = user.PrimaryOrganisation;
                 document.IsTemplate = true;
                 await _documentRepository.AddAsync(document);
             }
@@ -193,10 +194,10 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ManageDocuments ()
 		{
 			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
+            var user = await CurrentUser();
+            var docs = _documentRepository.FindAll().Where(d => user.Organisations.Contains(d.OwnerOrganisation) && !d.DateDeleted.HasValue);
 
-            var docs = _documentRepository.FindAll().Where(d => CurrentUser.Organisations.Contains(d.OwnerOrganisation) && !d.DateDeleted.HasValue);
-
-            if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsTC || CurrentUser.PrimaryOrganisation.IsInsurer)
+            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
             {
                 docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
             }

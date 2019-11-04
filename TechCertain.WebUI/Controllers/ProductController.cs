@@ -47,14 +47,16 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> MyProducts()
         {
 			try {
-				var products = _productRepository.FindAll().Where (p => p.OwnerCompany == CurrentUser.PrimaryOrganisation.Id);
+                var user = await CurrentUser();
+				var products = _productRepository.FindAll().Where (p => p.OwnerCompany == user.PrimaryOrganisation.Id);
 				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
 				foreach (Product p in products) {
-					ProductInfoViewModel model = new ProductInfoViewModel {
+                    var company = await _organisationRepository.GetByIdAsync(p.CreatorCompany);
+                    ProductInfoViewModel model = new ProductInfoViewModel {
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault()),
 						Id = p.Id,
 						Name = p.Name,
-						OwnerCompany = _organisationRepository.GetByIdAsync(p.CreatorCompany).Result.Name,
+						OwnerCompany = company.Name,
 						SelectedLanguages = p.Languages
 					};
 					models.Add (model);
@@ -74,11 +76,12 @@ namespace TechCertain.WebUI.Controllers
 				var products = _productRepository.FindAll().Where(p => p.Public);
 				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
 				foreach (Product p in products) {
-					ProductInfoViewModel model = new ProductInfoViewModel {
+                    var creatorCompany = await _organisationRepository.GetByIdAsync(p.CreatorCompany);
+                    ProductInfoViewModel model = new ProductInfoViewModel {
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault ()),
 						Id = p.Id,
 						Name = p.Name,
-						OwnerCompany = _organisationRepository.GetByIdAsync(p.CreatorCompany).Result.Name,
+						OwnerCompany = creatorCompany.Name,
 						SelectedLanguages = p.Languages
 					};
 					models.Add (model);
@@ -106,10 +109,11 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> CreateNew()
 		{
+            var user = await CurrentUser();
 			ProductViewModel model = new ProductViewModel ();
 			model.Description = new ProductDescriptionVM {
-				CreatorOrganisation = CurrentUser.PrimaryOrganisation.Id,
-				OwnerOrganisation = CurrentUser.PrimaryOrganisation.Id,
+				CreatorOrganisation = user.PrimaryOrganisation.Id,
+				OwnerOrganisation = user.PrimaryOrganisation.Id,
 				// TODO - load this from db
 				Languages = new List<SelectListItem> {
 					new SelectListItem { Text = "English (NZ)", Value = "nz" },
@@ -153,12 +157,12 @@ namespace TechCertain.WebUI.Controllers
 			//	);
 
 			// set product settings
-			foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == CurrentUser.PrimaryOrganisation))
+			foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == user.PrimaryOrganisation))
 				model.Settings.Documents.Add (new SelectListItem { Text = doc.Name, Value = doc.Id.ToString () });
 
 			model.Settings.InformationSheets = new List<SelectListItem> ();
 			model.Settings.InformationSheets.Add (new SelectListItem { Text = "Select Information Sheet", Value = "" });
-			var templates = _informationService.GetAllTemplates().Result;
+			var templates = await _informationService.GetAllTemplates();
 			foreach (var template in templates)
 				model.Settings.InformationSheets.Add (
 					new SelectListItem {
@@ -168,14 +172,14 @@ namespace TechCertain.WebUI.Controllers
 				);
 
 			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = "Select Product Owner", Value = "" });
-			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = CurrentUser.PrimaryOrganisation.Name, Value = CurrentUser.PrimaryOrganisation.Id.ToString () });
+			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString () });
 			// loop over all non personal organisations and add them, excluding our own since its already added
 			foreach (Organisation org in _organisationRepository.FindAll().Where (org => org.OrganisationType.Name != "personal").OrderBy (o => o.Name))
 				if (org.Id.ToString () != model.Settings.PossibleOwnerOrganisations [1].Value)
 					model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = org.Name, Value = org.Id.ToString () });
 
 			var programmes = new List<Programme>();
-			//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser.Organisations.Contains(p.Owner)))
+			//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
 			foreach (Programme programme in _programmeRepository.FindAll())
 				model.Settings.InsuranceProgrammes.Add (
 					new SelectListItem {
@@ -200,7 +204,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CreateTerritory()
         {
             TerritoryViewModel model = new TerritoryViewModel();
-
+            var user = await CurrentUser();
             model.Builder = new TerritoryBuilderVM
             {
                 Location = "",
@@ -216,7 +220,7 @@ namespace TechCertain.WebUI.Controllers
             };
 
             List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == CurrentUser.PrimaryOrganisation.Id))
+            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
             {
                  proglist.Add(new SelectListItem
                  {
@@ -227,7 +231,7 @@ namespace TechCertain.WebUI.Controllers
                 
             }
 
-            //foreach (var org in CurrentUser.Organisations)
+            //foreach (var org in CurrentUser().Organisations)
             //{
             //    foreach (var prog in org.Programmes)
             //    {
@@ -262,7 +266,8 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                Territory territory = new Territory(CurrentUser , model.Builder.Location);
+                var user = await CurrentUser();
+                Territory territory = new Territory(user, model.Builder.Location);
                 territory.Ispublic = model.Builder.Ispublic;
                 territory.Zoneorder = model.Builder.Zoneorder;
                 territory.ExclorIncl = model.Builder.SelectedInclorExcl[0];
@@ -282,7 +287,7 @@ namespace TechCertain.WebUI.Controllers
                 var programm = new List<Programme>();
                 for (var i = 0; i < model.TerritoryAttach.SelectedProgramme.Length; i++)
                 {
-                    programm.Add(_programmeRepository.GetByIdAsync(Guid.Parse(model.TerritoryAttach.SelectedProgramme[i])).Result);
+                    programm.Add(await _programmeRepository.GetByIdAsync(Guid.Parse(model.TerritoryAttach.SelectedProgramme[i])));
 
                 }
                 foreach (Programme prog in programm)
@@ -290,7 +295,7 @@ namespace TechCertain.WebUI.Controllers
                     prog.territory.Add(territory);
                 }
                 territory.Programmes = programm;
-                _TerritoryRepository.AddAsync(territory);
+                await _TerritoryRepository.AddAsync(territory);
 
                 return Redirect("~/Product/MyProducts");
                 //return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
@@ -314,16 +319,17 @@ namespace TechCertain.WebUI.Controllers
 			}
 
 			try {
+                var user = await CurrentUser();
 				Product baseProduct = null;
 				Guid baseProductId = Guid.Empty;
 				if (Guid.TryParse (model.Description.SelectedBaseProduct, out baseProductId))
-					baseProduct = _productRepository.GetByIdAsync(baseProductId).Result;
+					baseProduct = await _productRepository.GetByIdAsync(baseProductId);
 
 				Guid ownerCompanyGuid = Guid.Empty;
 				if (!Guid.TryParse (model.Settings.SelectedOwnerOrganisation, out ownerCompanyGuid))
 					throw new Exception ("Invalid owner organisation id: " + model.Settings.SelectedOwnerOrganisation);
 
-				Product product = new Product (CurrentUser, model.Description.CreatorOrganisation, model.Description.Name) {
+				Product product = new Product (user, model.Description.CreatorOrganisation, model.Description.Name) {
 					Description = model.Description.Description,
 					OwnerCompany = ownerCompanyGuid,
 					Languages = new List<string> (model.Description.SelectedLanguages),
@@ -333,8 +339,8 @@ namespace TechCertain.WebUI.Controllers
 				};
 
 				foreach (RiskEntityViewModel risk in model.Risks) {
-					RiskCover cover = new RiskCover (CurrentUser) {
-						BaseRisk = _riskRepository.GetByIdAsync(risk.Id).Result,
+					RiskCover cover = new RiskCover (user) {
+						BaseRisk = await _riskRepository.GetByIdAsync(risk.Id),
 						CoverAll = risk.CoverAll,
 						Interuption = risk.CoverInterruption,
 						Loss = risk.CoverLoss,
@@ -350,7 +356,7 @@ namespace TechCertain.WebUI.Controllers
 					foreach (string sid in model.Settings.SelectedDocuments) {
 						Guid id = Guid.Empty;
 						if (Guid.TryParse (sid, out id))
-							product.Documents.Add (_documentRepository.GetByIdAsync(id).Result);
+							product.Documents.Add (await _documentRepository.GetByIdAsync(id));
 					}
 				}
 
@@ -358,10 +364,10 @@ namespace TechCertain.WebUI.Controllers
 					// temp, remove once the question builder is intergrated into the product builder
 					Guid informationTemplateId = Guid.Empty;
 					if (Guid.TryParse (model.Settings.SelectedInformationSheet, out informationTemplateId)) {
-						var sheet = _informationService.GetTemplate (informationTemplateId).Result;
+						var sheet = await _informationService.GetTemplate (informationTemplateId);
 						if (sheet == null)
 							throw new Exception ("No UIS Template found for id " + informationTemplateId);
-						_informationService.AddProductTo (sheet.Id, product);
+                        await _informationService.AddProductTo (sheet.Id, product);
 					}
 				}
 
@@ -369,7 +375,7 @@ namespace TechCertain.WebUI.Controllers
                     Guid programmeId = Guid.Empty;
                     if (Guid.TryParse(model.Settings.SelectedInsuranceProgramme, out programmeId))
                     {
-                        Programme programme = _programmeRepository.GetByIdAsync(programmeId).Result;
+                        Programme programme = await _programmeRepository.GetByIdAsync(programmeId);
                         programme.Products.Add(product);
                     }
                 }
@@ -377,7 +383,7 @@ namespace TechCertain.WebUI.Controllers
                 if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                _productRepository.AddAsync(product);
+                await _productRepository.AddAsync(product);
 
 
                 return Redirect ("~/Product/MyProducts");
@@ -394,7 +400,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ViewProduct (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
-			Product product = _productRepository.GetByIdAsync(id).Result;
+			Product product = await _productRepository.GetByIdAsync(id);
 			if (product != null) {
 				model.Description = new ProductDescriptionVM {
 					DateCreated = LocalizeTime (product.DateCreated.GetValueOrDefault ()),
@@ -414,13 +420,14 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> CloneProduct (Guid id)
 		{
+            var user = await CurrentUser();
 			ProductViewModel model = new ProductViewModel ();
-			Product originalProduct = _productRepository.GetByIdAsync(id).Result;
+			Product originalProduct = await _productRepository.GetByIdAsync(id);
 			if (originalProduct != null) {
 				model.Description = new ProductDescriptionVM {
 					OriginalProductId = originalProduct.Id,
-					CreatorOrganisation = CurrentUser.PrimaryOrganisation.Id,
-					OwnerOrganisation = CurrentUser.PrimaryOrganisation.Id,
+					CreatorOrganisation = user.PrimaryOrganisation.Id,
+					OwnerOrganisation = user.PrimaryOrganisation.Id,
 					Name = originalProduct.Name,
 					Description = originalProduct.Description,
 					SelectedLanguages = originalProduct.Languages.ToArray(),
@@ -437,7 +444,7 @@ namespace TechCertain.WebUI.Controllers
 					SelectedBaseProduct = id.ToString (),
 					IsBaseProduct = originalProduct.IsBaseProduct
 				};
-
+                
 				foreach (Product product in _productRepository.FindAll().Where (p => p.IsBaseProduct)) {
 					model.Description.BaseProducts.Add (new SelectListItem { Text = product.Name, Value = product.Id.ToString () });
 				}
@@ -446,7 +453,7 @@ namespace TechCertain.WebUI.Controllers
 				foreach (RiskCategory risk in _riskRepository.FindAll()) {
 					RiskCover productRisk = originalProduct.RiskCategoriesCovered.FirstOrDefault (r => r.BaseRisk == risk);
 					if (productRisk == null)
-						productRisk = new RiskCover (CurrentUser) { CoverAll = false, Loss = false, Interuption = false, ThirdParty = false };
+						productRisk = new RiskCover (user) { CoverAll = false, Loss = false, Interuption = false, ThirdParty = false };
 					model.Risks.Add (
 						new RiskEntityViewModel {
 							Insured = risk.Name,
@@ -469,11 +476,11 @@ namespace TechCertain.WebUI.Controllers
 
 				model.Settings = new ProductSettingsVM ();
 				model.Settings.Documents = new List<SelectListItem> ();
-				foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == CurrentUser.PrimaryOrganisation))
+				foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == user.PrimaryOrganisation))
 					model.Settings.Documents.Add (new SelectListItem { Text = doc.Name, Value = doc.Id.ToString () });
 
 				model.Settings.InformationSheets = new List<SelectListItem> ();
-				var templates = _informationService.GetAllTemplates().Result;
+				var templates = await _informationService.GetAllTemplates();
 				foreach (var template in templates)
 					model.Settings.InformationSheets.Add (
 						new SelectListItem {
@@ -482,7 +489,7 @@ namespace TechCertain.WebUI.Controllers
 						}
 					);
 
-				model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = CurrentUser.PrimaryOrganisation.Name, Value = CurrentUser.PrimaryOrganisation.Id.ToString () });
+				model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString () });
 				// loop over all non personal organisations and add them, excluding our own since its already added
 				foreach (Organisation org in _organisationRepository.FindAll().Where (org => org.OrganisationType.Name != "personal").OrderByDescending (o => o.Name))
 					if (org.Id.ToString () != model.Settings.PossibleOwnerOrganisations [0].Value)
@@ -525,13 +532,14 @@ namespace TechCertain.WebUI.Controllers
 				                              		rc.ThirdParty == m.CoverThirdParty);
 				Console.WriteLine (covers.Count ());
 				foreach (var r in covers) {
-					Console.WriteLine (r.ToString ());
-					Product p = r.Product;
-					ProductInfoViewModel vm = new ProductInfoViewModel {
+					Console.WriteLine (r.ToString ());                   
+                    Product p = r.Product;
+                    var creatorCompany = await _organisationRepository.GetByIdAsync(p.CreatorCompany);
+                    ProductInfoViewModel vm = new ProductInfoViewModel {
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault ()),
 						Id = p.Id,
 						Name = p.Name,
-						OwnerCompany = _organisationRepository.GetByIdAsync(p.CreatorCompany).Result.Name,
+						OwnerCompany = creatorCompany.Name,
 						SelectedLanguages = p.Languages
 					};
 					models.Add (vm);

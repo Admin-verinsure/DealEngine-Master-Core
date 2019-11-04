@@ -25,7 +25,8 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(merchantKey))
                 throw new ArgumentNullException(nameof(merchantKey));
 
-            if (!CheckExists(merchantKey).Result)
+            var hasMerchantKey = await CheckExists(merchantKey);
+            if (!hasMerchantKey)
                 await _merchantRepository.AddAsync(new Merchant(createdBy, merchantUserName, merchantPassword, merchantKey, merchantReference));            
         }
 
@@ -43,15 +44,16 @@ namespace TechCertain.Services.Impl
 
         public async Task RemoveMerchant(User deletedBy, string merchantKey)
         {
-            Merchant merchant = GetAllMerchants().Result.FirstOrDefault(m => m.MerchantKey == merchantKey);
+            var merchantList = await GetAllMerchants();
+            Merchant merchant = merchantList.FirstOrDefault(m => m.MerchantKey == merchantKey);
             if (merchant != null)
             {
                 merchant.Delete(deletedBy);
-                await _merchantRepository.RemoveAsync(merchant);
+                await _merchantRepository.UpdateAsync(merchant);
 
             }
             // check that it has been removed, and return the inverse result
-            if (CheckExists(merchantKey).Result)
+            if (await CheckExists(merchantKey))
                 throw new Exception("Should be removed");
         }
 

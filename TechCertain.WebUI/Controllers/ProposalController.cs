@@ -37,9 +37,9 @@ namespace TechCertain.WebUI.Controllers
         {
             if (createProposalTemplateViewModel.Id == Guid.Empty)
             {
-                //Organisation organisation = CurrentUser.Organisations.First();
+                //Organisation organisation = CurrentUser().Organisations.First();
 
-                //ProposalTemplate proposalTemplate = _proposalTemplateFactory.CreateProposalTemplate(CurrentUser as Owner, createProposalTemplateViewModel.Name, false, organisation);
+                //ProposalTemplate proposalTemplate = _proposalTemplateFactory.CreateProposalTemplate(CurrentUser() as Owner, createProposalTemplateViewModel.Name, false, organisation);
 
                 //createProposalTemplateViewModel.Id = proposalTemplate.Id;
 
@@ -396,7 +396,7 @@ namespace TechCertain.WebUI.Controllers
         //           //ProposalTemplate proposalTemplate = _proposalBuilderService.CreateProposalTemplate(proposalBuilderViewModel.Title);
         //           if (proposalBuilderViewModel.Id == Guid.Empty)
         //           {
-        //               var proposalTemplate = _proposalBuilderService.CreateProposalTemplate(CurrentUser as Owner, proposalBuilderViewModel.Title, false);
+        //               var proposalTemplate = _proposalBuilderService.CreateProposalTemplate(CurrentUser() as Owner, proposalBuilderViewModel.Title, false);
 
         //               proposalBuilderViewModel.Id = proposalTemplate.Id;
         //           }

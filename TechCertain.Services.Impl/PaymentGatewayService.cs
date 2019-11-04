@@ -37,11 +37,12 @@ namespace TechCertain.Services.Impl
         public async Task RemovePaymentGateway(User deletedBy, string paymentGatewayWebServiceURL)
         {
             // find payment gateway that matches the specified Web Service URL, and delete it
-            PaymentGateway paymentGateway = GetAllPaymentGateways().Result.FirstOrDefault(pgw => pgw.PaymentGatewayWebServiceURL == paymentGatewayWebServiceURL);
+            var PaymentGatewayList = await GetAllPaymentGateways();
+            PaymentGateway paymentGateway = PaymentGatewayList.FirstOrDefault(pgw => pgw.PaymentGatewayWebServiceURL == paymentGatewayWebServiceURL);
             if (paymentGateway != null)
             {
                 paymentGateway.Delete(deletedBy);
-                await _paymentGatewayRepository.RemoveAsync(paymentGateway);
+                await _paymentGatewayRepository.UpdateAsync(paymentGateway);
             }
         }
 

@@ -413,12 +413,12 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public InformationViewModel LoadHianzTemplate()
+        public async Task<InformationViewModel> LoadHianzTemplate()
         {
             InformationViewModel model = new InformationViewModel();
 
             model.Name = "HIANZ Motor Vehicle";
-
+            var user = await CurrentUser();
             // Applicant     
             var appItemList = new List<InformationItemViewModel>();
 
@@ -437,17 +437,17 @@ namespace TechCertain.WebUI.Controllers
 
             // Organisation Location     
             var locItemList = new List<InformationItemViewModel>();
-            string organisation = CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Name;
+            string organisation = user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Name;
             locItemList.Add(new InformationItemViewModel { Label = "Organisation Name:", Width = 4, Type = ItemType.LABEL });
             locItemList.Add(new InformationItemViewModel { Label = organisation, Width = 8, Type = ItemType.LABEL });
             locItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
 
-            string organisationLocation = CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.CommonName + "<br />" +
-                CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Street + "<br />" +
-                CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Suburb + "<br />" +
-                CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Postcode + "<br />" +
-                CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.City + "<br />" +
-                CurrentUser.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Country;
+            string organisationLocation = user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.CommonName + "<br />" +
+                user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Street + "<br />" +
+                user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Suburb + "<br />" +
+                user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Postcode + "<br />" +
+                user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.City + "<br />" +
+                user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Country;
             locItemList.Add(new InformationItemViewModel { Label = "Organisation Location:", Width = 4, Type = ItemType.LABEL });
             locItemList.Add(new InformationItemViewModel { Label = organisationLocation, Width = 8, Type = ItemType.LABEL });
             locItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
@@ -821,7 +821,7 @@ namespace TechCertain.WebUI.Controllers
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
             InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
-
+            var user = await CurrentUser();
             model.AnswerSheetId = sheet.Id;
             model.OrganisationId = sheet.Owner.Id;
 
@@ -958,9 +958,9 @@ namespace TechCertain.WebUI.Controllers
             //	});
             //}
 
-            var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
-            userDetails.PostalAddress = CurrentUser.Address;
-            userDetails.StreetAddress = CurrentUser.Address;
+            var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
+            userDetails.PostalAddress = user.Address;
+            userDetails.StreetAddress = user.Address;
 
             var organisationDetails = new OrganisationDetailsVM
             {
@@ -981,7 +981,7 @@ namespace TechCertain.WebUI.Controllers
             model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
 
-            //_taskingService.CreateTaskFor (CurrentUser, sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
+            //_taskingService.CreateTaskFor (CurrentUser(), sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
 
             return View("InformationWizard", model);
         }
@@ -1039,7 +1039,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsChange = sheet.IsChange;
             model.SectionView = name;
             model.Id = id;
-
+            var user = await CurrentUser();
             try
             {
 
@@ -1197,9 +1197,9 @@ namespace TechCertain.WebUI.Controllers
                 var availableProducts = new List<ProductItem>();
 
 
-                var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
-                userDetails.PostalAddress = CurrentUser.Address;
-                userDetails.StreetAddress = CurrentUser.Address;
+                var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
+                userDetails.PostalAddress = user.Address;
+                userDetails.StreetAddress = user.Address;
 
                 var organisationDetails = new OrganisationDetailsVM
                 {
@@ -1250,7 +1250,7 @@ namespace TechCertain.WebUI.Controllers
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
             model.Id = id;
-
+            var user = await CurrentUser();
             //add milestone process here
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1570,7 +1570,7 @@ namespace TechCertain.WebUI.Controllers
                 //InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
                 //if (insuranceAttribute == null)
                 //{
-                //    insuranceAttribute = new InsuranceAttribute(CurrentUser, "Skipper");
+                //    insuranceAttribute = new InsuranceAttribute(CurrentUser(), "Skipper");
 
                 //    _insuranceAttributeService.CreateNewInsuranceAttribute(insuranceAttribute);
                 //}
@@ -1603,13 +1603,11 @@ namespace TechCertain.WebUI.Controllers
 
 
             var availableProducts = new List<ProductItem>();          
-            var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser);
-            userDetails.PostalAddress = CurrentUser.Address;
-            userDetails.StreetAddress = CurrentUser.Address;
-            userDetails.FirstName = CurrentUser.FirstName;
-            userDetails.Email = CurrentUser.Email;
-
-            User user = await _userService.GetUser(CurrentUser.UserName);
+            var userDetails = _mapper.Map<UserDetailsVM>(user);
+            userDetails.PostalAddress = user.Address;
+            userDetails.StreetAddress = user.Address;
+            userDetails.FirstName = user.FirstName;
+            userDetails.Email = user.Email;
             
             var roles = new List<String>();
 
@@ -1654,7 +1652,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
-
+            var user = await CurrentUser();
             if (sheet != null)
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1663,7 +1661,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         sheet.Status = "Started";
                         sheet.UnlockDate = DateTime.UtcNow;
-                        sheet.UnlockedBy = CurrentUser;
+                        sheet.UnlockedBy = user;
                     }
                     await uow.Commit();
 
@@ -1757,6 +1755,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
+            var user = await CurrentUser();
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
 
@@ -1769,7 +1768,7 @@ namespace TechCertain.WebUI.Controllers
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
                         //UWM ICIB
-                        _uWMService.UWM_ICIBNZIMV(CurrentUser, sheet, reference);
+                        _uWMService.UWM_ICIBNZIMV(user, sheet, reference);
 
                         //sheet.Status = "Submitted";
                         await uow.Commit();
@@ -1792,6 +1791,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
+            var user = await CurrentUser();
             if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
             {
                 sheet = await _clientInformationService.GetInformation(sheetId);
@@ -1801,8 +1801,8 @@ namespace TechCertain.WebUI.Controllers
                     {
                         sheet.Status = "Submitted";
                         sheet.SubmitDate = DateTime.UtcNow;
-                        sheet.SubmittedBy = CurrentUser;
-                        await uow.Commit().ConfigureAwait(false);
+                        sheet.SubmittedBy = user;
+                        await uow.Commit();
                     }                   
 
                 }
@@ -1829,11 +1829,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateInformation(Guid id)
         {
+            var user = await CurrentUser();
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + CurrentUser.UserName);
+                throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + user.UserName);
 
-            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, CurrentUser);
+            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user);
 
             await _programmeService.Update(newClientProgramme);
 
@@ -1844,10 +1845,11 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> RenewInformation(Guid id)
         {
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+            var user = await CurrentUser();
             if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + CurrentUser.UserName);
+                throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + user.UserName);
 
-            ClientProgramme newClientProgramme = await _programmeService.CloneForRewenal(clientProgramme, CurrentUser);
+            ClientProgramme newClientProgramme = await _programmeService.CloneForRewenal(clientProgramme, user);
 
             await _programmeService.Update(newClientProgramme);
 
@@ -1858,7 +1860,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CreateDemoUIS()
         {
             var demoData = LoadTemplate();
-      
+            var user = await CurrentUser();
             List<InformationSection> informationSections = new List<InformationSection>();
 
             foreach (var section in demoData.Sections)
@@ -1886,13 +1888,13 @@ namespace TechCertain.WebUI.Controllers
                             {
                                 case ItemType.TEXTAREA:
                                 case ItemType.TEXTBOX:
-                                    var textboxItem = await _informationItemService.CreateTextboxItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as TextboxItem;
+                                    var textboxItem = await _informationItemService.CreateTextboxItem(user, item.Name, item.Label, item.Width, itemTypeName) as TextboxItem;
                                     items.Add(textboxItem);
                                     item.Id = textboxItem.Id;
                                     break;
 
                                 case ItemType.LABEL:
-                                    var labelItem = await _informationItemService.CreateLabelItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as LabelItem;
+                                    var labelItem = await _informationItemService.CreateLabelItem(user, item.Name, item.Label, item.Width, itemTypeName) as LabelItem;
                                     items.Add(labelItem);
                                     item.Id = labelItem.Id;
                                     break;
@@ -1902,7 +1904,7 @@ namespace TechCertain.WebUI.Controllers
                                     //Mapper.CreateMap<SelectListItem, DropdownListOption>();
                                     //Mapper.CreateMap<DropdownListOption, SelectListItem>()
                                     var options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-                                    var newDropdownList = await _informationItemService.CreateDropdownListItem(CurrentUser, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as DropdownListItem;
+                                    var newDropdownList = await _informationItemService.CreateDropdownListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as DropdownListItem;
                                     //newDropdownList.AddItems(options);
                                     items.Add(newDropdownList);
                                     item.Id = newDropdownList.Id;
@@ -1910,17 +1912,17 @@ namespace TechCertain.WebUI.Controllers
 
                                 case ItemType.MULTISELECT:
                                     options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-                                    var multiselectList = await _informationItemService.CreateMultiselectListItem(CurrentUser, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as MultiselectListItem;
+                                    var multiselectList = await _informationItemService.CreateMultiselectListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as MultiselectListItem;
                                     items.Add(multiselectList);
                                     item.Id = multiselectList.Id;
                                     break;
 
                                 case ItemType.JSBUTTON:
-                                    newItem = await _informationItemService.CreateJSButtonItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName, item.Value) as JSButtonItem;
+                                    newItem = await _informationItemService.CreateJSButtonItem(user, item.Name, item.Label, item.Width, itemTypeName, item.Value) as JSButtonItem;
                                     break;
 
                                 case ItemType.SUBMITBUTTON:
-                                    newItem = await _informationItemService.CreateSubmitButtonItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
+                                    newItem = await _informationItemService.CreateSubmitButtonItem(user, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
                                     break;
 
                                 //case ItemType.SECTIONBREAK:
@@ -1928,9 +1930,10 @@ namespace TechCertain.WebUI.Controllers
                                 //    items.Add(terminatorItem);
                                 //    break;
 
+
                                 case ItemType.STATICVEHICLEPLANTLIST:
                                 case ItemType.MOTORVEHICLELIST:
-                                    var motorVehicleListItem = await _informationItemService.CreateMotorVehicleListItem(CurrentUser, item.Name, item.Label, item.Width, itemTypeName) as MotorVehicleListItem;
+                                    var motorVehicleListItem = await _informationItemService.CreateMotorVehicleListItem(user, item.Name, item.Label, item.Width, itemTypeName) as MotorVehicleListItem;
                                     items.Add(motorVehicleListItem);
                                     item.Id = motorVehicleListItem.Id;
                                     break;
@@ -1960,7 +1963,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     // Create New Section
 
-                    InformationSection informationSection = await _informationSectionService.CreateNewSection(CurrentUser, section.Name, items);
+                    InformationSection informationSection = await _informationSectionService.CreateNewSection(user, section.Name, items);
                     informationSection.CustomView = section.CustomView;
                     informationSections.Add(informationSection);
 
@@ -1972,7 +1975,7 @@ namespace TechCertain.WebUI.Controllers
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
-                InformationTemplate template = await _informationTemplateService.CreateInformationTemplate(CurrentUser, demoData.Name, informationSections);
+                InformationTemplate template = await _informationTemplateService.CreateInformationTemplate(user, demoData.Name, informationSections);
 
                 demoData.Id = template.Id;
 
@@ -1985,7 +1988,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> IssueDemoUIS(string id)
         {
-            var user = CurrentUser;
+            var user = await CurrentUser();
             if (!string.IsNullOrWhiteSpace(id))
                 user = await _userService.GetUser(id);
 
@@ -2012,8 +2015,8 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet cis = null;
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
-                var user = CurrentUser;
-                cis = await _clientInformationService.IssueInformationFor(CurrentUser, user.PrimaryOrganisation, infoTemplate);
+                var user = await CurrentUser();
+                cis = await _clientInformationService.IssueInformationFor(user, user.PrimaryOrganisation, infoTemplate);
                 await uow.Commit();
             }
 
@@ -2040,19 +2043,6 @@ namespace TechCertain.WebUI.Controllers
                 }
                 (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(template).Sections);
 
-            }
-            foreach (var section in model.Sections)
-            {
-                foreach (var item in section.Items)
-                {
-                    var conditional = new InformationItemConditionalViewModel()
-                    {
-                        Targets = item.Conditional.Targets.Select(x => new InformationItemViewModel { Name = x.Name }),
-                        TriggerValue = item.Conditional.TriggerValue,
-                        VisibilityOnTrigger = item.Conditional.VisibilityOnTrigger
-                    };
-                    item.Conditional = conditional;
-                }
             }
 
             return model;

@@ -43,12 +43,11 @@ namespace TechCertain.Domain.Entities
 		public virtual bool Required { get; set; }
 
         public virtual bool ProgrammeId { get; set; }
-
         public virtual bool ProgrammeName { get; set; }
 
         public virtual string EditorId { get; set; }
 
-		public virtual InformationItemConditional Conditional { get; set; }
+		//public virtual InformationItemConditional Conditional { get; set; }
 
         public virtual IList<DropdownListItem> droplistItems { get; set; }
 
@@ -235,12 +234,13 @@ namespace TechCertain.Domain.Entities
 		}
 	}
 
-	public class InformationItemConditional : ValueObject
-	{
-		public virtual string TriggerValue { get; set; }
+	//public class InformationItemConditional : ValueObject
+	//{
+	//	public virtual string TriggerValue { get; set; }
 
-		public virtual int VisibilityOnTrigger { get; set; }
+	//	public virtual int VisibilityOnTrigger { get; set; }
 
-		public virtual IList<InformationItem> Targets { get; set; }
-	}
+	//	public virtual IList<InformationItem> Targets { get; set; }
+	//}
+
 }

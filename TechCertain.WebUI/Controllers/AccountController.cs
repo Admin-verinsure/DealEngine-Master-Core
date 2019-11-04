@@ -129,17 +129,17 @@ namespace TechCertain.WebUI.Controllers
                     //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
-                    User user = _userService.GetUser(token.UserID).Result;
+                    User user = await _userService.GetUser(token.UserID);
                     if (user != null)
                     {
                         //change the users password to an intermediate
                         _ldapService.ChangePassword(user.UserName, "", _appSettingService.IntermediatePassword);
 
-                        var deUser = _userManager.FindByNameAsync(user.UserName).Result;
+                        var deUser = await _userManager.FindByNameAsync(user.UserName);
                         if (deUser != null)
                         {
-                            var removePasswordResult = _userManager.RemovePasswordAsync(deUser).Result;
-                            var addPasswordResult = _userManager.AddPasswordAsync(deUser, _appSettingService.IntermediatePassword).Result;
+                            var removePasswordResult = await _userManager.RemovePasswordAsync(deUser);
+                            var addPasswordResult = await _userManager.AddPasswordAsync(deUser, _appSettingService.IntermediatePassword);
                             if (addPasswordResult.Succeeded)
                             {
                                 
@@ -173,7 +173,7 @@ namespace TechCertain.WebUI.Controllers
 				Exception exception = ex;
 				while (exception.InnerException != null) exception = exception.InnerException;
 
-				_emailService.ContactSupport (_emailService.DefaultSender, exception.GetType().Name + ": " + exception.Message, "");
+				await _emailService.ContactSupport (_emailService.DefaultSender, exception.GetType().Name + ": " + exception.Message, "");
 
 				ModelState.AddModelError("FailureMessage", errorMessage);
 				if (exception is MultipleUsersFoundException)
@@ -227,7 +227,7 @@ namespace TechCertain.WebUI.Controllers
 					return View ();
 				}
                 SingleUseToken st = _authenticationService.GetToken(id);
-                User user = _userService.GetUser(st.UserID).Result;
+                User user = await _userService.GetUser(st.UserID);
                 if (user == null)
                     // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
                     throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
@@ -240,11 +240,11 @@ namespace TechCertain.WebUI.Controllers
                     //change the users password to an intermediate
                     if (_ldapService.ChangePassword(user.UserName, _appSettingService.IntermediatePassword, viewModel.Password))
                     {
-                        var deUser = _userManager.FindByNameAsync(user.UserName).Result;
+                        var deUser = await _userManager.FindByNameAsync(user.UserName);
                         if (deUser != null)
                         {
-                            var removePasswordResult = _userManager.RemovePasswordAsync(deUser).Result;
-                            var addPasswordResult = _userManager.AddPasswordAsync(deUser, viewModel.Password).Result;
+                            var removePasswordResult = await _userManager.RemovePasswordAsync(deUser);
+                            var addPasswordResult = await _userManager.AddPasswordAsync(deUser, viewModel.Password);
                             if (addPasswordResult.Succeeded)
                             {
 
@@ -326,7 +326,7 @@ namespace TechCertain.WebUI.Controllers
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
-                    IdentityUser deUser = _userManager.FindByNameAsync(userName).Result;
+                    IdentityUser deUser = await _userManager.FindByNameAsync(userName);
                     if (deUser == null)
                     {
 
@@ -336,7 +336,7 @@ namespace TechCertain.WebUI.Controllers
                         await _userManager.CreateAsync(deUser, password);
                     }
 
-                    var identityResult = _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false).Result;
+                    var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false);
                     if (identityResult.Succeeded)
                     {
                         //add claims, roles etc here
@@ -623,7 +623,8 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Profile(string id)
 		{
-			var user = string.IsNullOrWhiteSpace (id) ? CurrentUser : _userService.GetUser(id).Result;
+            var currentUser = await CurrentUser();
+            var user = string.IsNullOrWhiteSpace (id) ? currentUser : await _userService.GetUser(id);
 			if (user == null)
 				return PageNotFound ();
 
@@ -632,7 +633,7 @@ namespace TechCertain.WebUI.Controllers
 			model.LastName = user.LastName;
 			model.Email = user.Email;
 			model.Phone = user.Phone;
-            model.CurrentUser = CurrentUser;
+            model.CurrentUser = currentUser;
             model.DefaultOU = user.DefaultOU;
             model.EmployeeNumber = user.EmployeeNumber;
             model.JobTitle = user.JobTitle;
@@ -646,7 +647,7 @@ namespace TechCertain.WebUI.Controllers
 			if (user.ProfilePicture != null)
 				model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
 
-			model.ViewingSelf = string.IsNullOrEmpty(id) || (CurrentUser.UserName == id);
+			model.ViewingSelf = string.IsNullOrEmpty(id) || (currentUser.UserName == id);
 
 			return View(model);
 		}
@@ -654,42 +655,41 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ProfileEditor()
 		{
-			var user = CurrentUser;
+			var user = await CurrentUser();
 			if (user == null)
 				return PageNotFound ();
 			
 			ProfileViewModel model = new ProfileViewModel();
             var organisationalUnits = new List<OrganisationalUnitViewModel>();
 
-            model.FirstName = CurrentUser.FirstName;
-			model.LastName = CurrentUser.LastName;
-			model.Email = CurrentUser.Email;
-			model.Phone = CurrentUser.Phone;
-            model.JobTitle = CurrentUser.JobTitle;            
-            model.CurrentUser = CurrentUser;
+            model.FirstName = user.FirstName;
+			model.LastName = user.LastName;
+			model.Email = user.Email;
+			model.Phone = user.Phone;
+            model.JobTitle = user.JobTitle;            
+            model.CurrentUser = user;
             //model.DefaultOU = user.DefaultOU;
             model.EmployeeNumber = user.EmployeeNumber;
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
 
-            var OrgUnitList = _organisationalUnitService.GetAllOrganisationalUnits().Result.GroupBy(o => o.Name).ToList();
-            foreach (var group in OrgUnitList)
+            var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnits();
+            OrgUnitList.GroupBy(o => o.Name);
+            foreach (OrganisationalUnit ou in OrgUnitList)
             {
-                foreach (OrganisationalUnit ou in group)
+                organisationalUnits.Add(new OrganisationalUnitViewModel
                 {
-                    organisationalUnits.Add(new OrganisationalUnitViewModel
-                    {
-                        OrganisationalUnitId = ou.Id,
-                        Name = ou.Name
-                    });
-                    break;
-                    //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
-                }
+                    OrganisationalUnitId = ou.Id,
+                    Name = ou.Name
+                });
+                break;
+                //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
             }
 
-            if (CurrentUser.PrimaryOrganisation != null)
+
+            if (user.PrimaryOrganisation != null)
                 model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
-            model.Description = CurrentUser.Description;
+            model.Description = user.Description;
 			if (user.ProfilePicture != null)
 				model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
 
@@ -704,7 +704,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
 		{
 
-			var user = CurrentUser;
+			var user = await CurrentUser();
 			if (user == null)
 				return PageNotFound ();
             Guid defaultOU = Guid.Empty;
@@ -723,7 +723,7 @@ namespace TechCertain.WebUI.Controllers
                         //_fileService.UploadFile (buffer, file.ContentType, file.FileName);
                         Image img = new Image(user, file.FileName, file.ContentType);
                         img.Contents = buffer;
-                        _fileService.UploadFile(img);
+                        await _fileService.UploadFile(img);
                         model.ProfilePicture = file.FileName;
                         user.ProfilePicture = img;
                     }
@@ -737,7 +737,7 @@ namespace TechCertain.WebUI.Controllers
             if (branchId.Count == 1)
             {
                 defaultOU = Guid.Parse(branchId);
-                OrganisationalUnit DefaultOU = _organisationalUnitService.GetOrganisationalUnit(defaultOU).Result;
+                OrganisationalUnit DefaultOU = await _organisationalUnitService.GetOrganisationalUnit(defaultOU);
                 user.DefaultOU = DefaultOU;
             }
 
@@ -791,8 +791,8 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ListAllUsers ()
 		{
 			BaseListViewModel<UserViewModel> userList = new BaseListViewModel<UserViewModel> ();
-
-			foreach (var user in _userService.GetAllUsers().Result) {
+            var allUsers = await _userService.GetAllUsers();
+            foreach (var user in allUsers) {
 				userList.Add (new UserViewModel {
 					ID = user.Id,
 					UserName = user.UserName,
@@ -805,9 +805,9 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public PartialViewResult UserPermissions (Guid Id)
+		public async Task<PartialViewResult> UserPermissions (Guid Id)
 		{
-			User user = _userService.GetUser(Id).Result;
+			User user = await _userService.GetUser(Id);
 			if (user == null)
 				return null;
 
@@ -819,7 +819,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ManageUser (Guid Id)
 		{
-            var user = _userService.GetUser(Id).Result;
+            var user = await _userService.GetUser(Id);
             var accountModel = new ManageUserViewModel(user);
             //accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
 

@@ -42,11 +42,12 @@ namespace TechCertain.WebUI.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
 
+            var user = await CurrentUser();
             if (viewModel.Id == Guid.Empty)
             {
                 ProposalTemplate proposalTemplate = new ProposalTemplate(
-                    CurrentUser,
-                    CurrentUser as Owner,
+                    user,
+                    user as Owner,
                     viewModel.Name, false);
                     
                     viewModel.Id = proposalTemplate.Id;

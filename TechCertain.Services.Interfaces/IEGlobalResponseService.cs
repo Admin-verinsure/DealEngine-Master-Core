@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IEGlobalResponseService
     {
-        EGlobalResponse CreateNewEGlobalResponse(EGlobalResponse eGlobalResponse);
+        Task<EGlobalResponse> CreateNewEGlobalResponse(EGlobalResponse eGlobalResponse);
 
-        bool DeleteEGlobalResponse(User deletedBy, EGlobalResponse eGlobalResponse);
+        Task<bool> DeleteEGlobalResponse(User deletedBy, EGlobalResponse eGlobalResponse);
 
-        IQueryable<EGlobalResponse> GetAllEGlobalResponses();
+        Task<List<EGlobalResponse>> GetAllEGlobalResponses();
 
-        EGlobalResponse GetEGlobalResponse(Guid eGlobalResponseId);
+        Task<EGlobalResponse> GetEGlobalResponse(Guid eGlobalResponseId);
 
-        bool UpdateEGlobalResponse(EGlobalResponse eGlobalResponse);
+        Task<bool> UpdateEGlobalResponse(EGlobalResponse eGlobalResponse);
 
     }
 }

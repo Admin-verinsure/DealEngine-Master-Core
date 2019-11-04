@@ -47,10 +47,10 @@ namespace TechCertain.WebUI.Models
                 .Include<SubmitButtonItem, InformationItemViewModel>()
                 .Include<SectionBreakItem, InformationItemViewModel>()
                 .Include<MotorVehicleListItem, InformationItemViewModel>();
+                //.Include<InformationItemConditional, InformationItemViewModel>();
+
             CreateMap<SelectListItem, DropdownListOption>().ReverseMap();
             //CreateMap<DropdownListOption, SelectListItem> ();
-
-            //CreateMap<InformationItemConditional, InformationItemConditionalViewModel>().ReverseMap();
 
             CreateMap<TextboxItem, InformationItemViewModel>();
             CreateMap<DropdownListItem, InformationItemViewModel>();

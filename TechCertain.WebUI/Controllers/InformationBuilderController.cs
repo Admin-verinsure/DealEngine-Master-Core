@@ -133,11 +133,12 @@ namespace TechCertain.WebUI.Controllers
             try
             {
 
-                InformationTemplate informationTemplate = new InformationTemplate(CurrentUser, model.Title, null);
+                var user = await CurrentUser();
+                InformationTemplate informationTemplate = new InformationTemplate(user, model.Title, null);
 
                 foreach (var page in model.Pages)
                 {
-                    InformationSection section = new InformationSection(CurrentUser, page.Title, null);
+                    InformationSection section = new InformationSection(user, page.Title, null);
 
                     for (int i = 0; i < page.Questions.Count(); i++)
                     {
@@ -150,17 +151,17 @@ namespace TechCertain.WebUI.Controllers
                         switch (question.QuestionType)
                         {
                             case "text":
-                                item = new TextboxItem(CurrentUser, randomName, question.QuestionTitle, randomId, 10, "TEXTBOX");
+                                item = new TextboxItem(user, randomName, question.QuestionTitle, randomId, 10, "TEXTBOX");
                                 break;
                             case "radiobutton":
 
                                 break;
                             case "dropdown":
                                 List<DropdownListOption> ddOptions = new List<DropdownListOption>();
-                                ddOptions.Add(new DropdownListOption(CurrentUser, "-- Select --", ""));
+                                ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
                                 for (int j = 0; j < question.OptionsArray.Length; j++)
-                                    ddOptions.Add(new DropdownListOption(CurrentUser, question.OptionsArray[j], j.ToString()));
-                                item = new DropdownListItem(CurrentUser, randomName, question.QuestionTitle, randomId, 10, "DROPDOWNLIST", ddOptions, "");
+                                    ddOptions.Add(new DropdownListOption(user, question.OptionsArray[j], j.ToString()));
+                                item = new DropdownListItem(user, randomName, question.QuestionTitle, randomId, 10, "DROPDOWNLIST", ddOptions, "");
                                 break;
                             case "mvRegPanelTemplate":
                                 section.CustomView = "ICIBHianzMotor";
@@ -199,11 +200,9 @@ namespace TechCertain.WebUI.Controllers
                 //	}
                 //}
 
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    _templateRepository.AddAsync(informationTemplate);
-                    uow.Commit();
-                }
+
+             await _templateRepository.AddAsync(informationTemplate);
+
             }
             catch (Exception ex)
             {

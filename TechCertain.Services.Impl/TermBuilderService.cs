@@ -57,10 +57,11 @@ namespace TechCertain.Services.Impl
 
 		public async Task<bool> Deprecate (User deletedBy, Guid termId)
 		{
-			PolicyTermSection term = GetTerm(termId).Result;
+			PolicyTermSection term = await GetTerm(termId);
             await _policyTermRepository.RemoveAsync(term);
+            var terms = await GetTerm(termId);
 
-            return GetTerm(termId).Result.DateDeleted != null;
+            return terms.DateDeleted != null;
 		}
 
 		#endregion
