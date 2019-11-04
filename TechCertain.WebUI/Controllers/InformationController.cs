@@ -1654,36 +1654,24 @@ namespace TechCertain.WebUI.Controllers
             String[][] ClaimAnswers = new String[5][];
             var count = 0;
             String[] ClaimItem;
-            List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
-            informationAnswers.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
-                                                                                                                                                          || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5"));
-
-            try
+            foreach (var answer in _clientInformationAnswer.GetAllClaimHistory().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
+                                                                                                                                                          || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5")))
             {
-                foreach (var answer in informationAnswers)
+                ClaimItem = new String[3];
+
+                for (var i = 0; i < 1; i++)
                 {
-                    ClaimItem = new String[3];
-
-                    for (var i = 0; i < 1; i++)
-                    {
-                        ClaimItem[i] = answer.ItemName;
-                        ClaimItem[i + 1] = answer.Value;
-                        ClaimItem[i + 2] = answer.ClaimDetails;
-                    }
-
-                    ClaimAnswers[count] = ClaimItem;
-                    count++;
+                    ClaimItem[i] = answer.ItemName;
+                    ClaimItem[i + 1] = answer.Value;
+                    ClaimItem[i + 2] = answer.ClaimDetails;
                 }
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
 
+                ClaimAnswers[count] = ClaimItem;
+                count++;
+            }
 
             return Json(ClaimAnswers);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
@@ -1696,7 +1684,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     for (var x = 0; x < item.Length - 1; x++)
                     {
-                        ClientInformationAnswer answer = await _clientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet);
+                        ClientInformationAnswer answer = _clientInformationAnswer.GetClaimHistoryByName(item[0], ClientInformationSheet).Result;
                         if (answer != null)
                         {
                             answer.Value = item[1];
@@ -1704,15 +1692,16 @@ namespace TechCertain.WebUI.Controllers
                         }
                         else
                         {
-                            sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
+                            sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
                             await _clientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet).ConfigureAwait(false);
                         }
                     }
-                    await uow.Commit();
+                    await uow.Commit().ConfigureAwait(false);
                 }
             }
             return Json(true);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> SubmitInformation(IFormCollection collection)
