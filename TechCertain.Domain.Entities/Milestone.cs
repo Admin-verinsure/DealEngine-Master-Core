@@ -17,7 +17,6 @@ namespace TechCertain.Domain.Entities
         public virtual ProgrammeProcess ProgrammeProcess { get; set; }
         public virtual Activity Activity { get; set; }
         public virtual Programme Programme { get; set; }
-        public virtual string test { get; set; }
     }
 
     public class Advisory : EntityBase, IAggregateRoot

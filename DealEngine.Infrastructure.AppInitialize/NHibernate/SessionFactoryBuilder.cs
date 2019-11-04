@@ -40,25 +40,24 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                     .FormatSql()
                     .ShowSql()
                  )
-                .CurrentSessionContext("web")                
+                .CurrentSessionContext("web")
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
-                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())
-                .Conventions.Add<CascadeConvention>()
-                .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
+                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())                    
+                    .Conventions.Add<CascadeConvention>()
+                    .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
                 .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
                 ).BuildConfiguration()
                 .AddIdentityMappingsForPostgres()
                 .BuildSessionFactory();
 
             return session;
-        }
 
-            //}
+            }
             /// <summary>  
             /// Build the schema of the database.  
             /// </summary>  
             /// <param name="config">Configuration.</param>  
-        private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
+            private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
         {
 
             using (var connection = new NpgsqlConnection(connectionStringName))

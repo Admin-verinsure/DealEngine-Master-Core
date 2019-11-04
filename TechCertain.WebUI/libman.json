@@ -29,7 +29,14 @@
     {
       "library": "multiselect@2.2.9",
       "destination": "wwwroot/lib/multiselect/"
+    },
+    {
+      "library": "bootstrap-slider@10.6.2",
+      "destination": "wwwroot/lib/bootstrap-slider/"
+    },
+    {
+      "library": "select2@4.0.10",
+      "destination": "wwwroot/lib/select2/"
     }
-    
   ]
 }
