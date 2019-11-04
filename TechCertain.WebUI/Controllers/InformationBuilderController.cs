@@ -107,66 +107,43 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
 		public async Task<IActionResult> StagingBuilder (ExperimentalInfoBuilderViewModel model)
 		{
-            //Console.WriteLine ("Title: " + model.Title);
-            //Console.WriteLine ("Description: " + model.Description);
-            //Console.WriteLine ("Pages: " + model.Pages.Count ());
-            //foreach (var page in model.Pages) {
-            //	Console.WriteLine ("  Questions: " + page.Questions.Count ());
-            //	foreach (var question in page.Questions) {
-            //		Console.WriteLine ("    QuestionType: " + question.QuestionType);
-            //		Console.WriteLine ("    EditorId: " + question.EditorId);
-            //		Console.WriteLine ("    Required: " + question.Required);
-            //		Console.WriteLine ("    ReferUnderWriting: " + question.ReferUnderWriting);
-            //		Console.WriteLine ("    NeedsReview: " + question.NeedsReview);
-            //		Console.WriteLine ("    Question: " + question.QuestionTitle);
-            //		Console.WriteLine ("    HorizontalLayout: " + question.HorizontalLayout);
-            //		Console.WriteLine ("    Options: " + question.OptionsArray);
-            //		Console.WriteLine ("    ----------");
-            //	}
-            //}
-            //Console.WriteLine ("Conditionals: " + model.Conditionals.Count ());
-            //foreach (var conditional in model.Conditionals) {
-            //	Console.WriteLine ("  Conditional for: " + conditional.QuestionId);
-            //	Console.WriteLine ("  Triggers on value: " + conditional.TriggerValue);
-            //	Console.WriteLine ("  Show/Hide: " + (conditional.Visibility == 1 ? "Show" : "Hide"));
-            //	Console.WriteLine ("  Targets: " + string.Join (", ", conditional.Controls));
-            //}
             try
             {
                 var user = CurrentUser;
 
                 InformationTemplate informationTemplate = new InformationTemplate (user, model.Title, null);
     
-			foreach (var page in model.Pages) {
-				InformationSection section = new InformationSection (user, page.Title, null);
+			    foreach (var page in model.Pages) {
+				    InformationSection section = new InformationSection (user, page.Title, null);
 
-				for (int i = 0; i < page.Questions.Count(); i++) {
-					var question = page.Questions.ElementAt (i);
-					InformationItem item = null;
-					string randomName = System.IO.Path.GetRandomFileName ().Replace (".", "");
-					switch (question.QuestionType) {
-					case "text":
-						item = new TextboxItem (user, randomName, question.QuestionTitle, 10, "TEXTBOX");
-						break;
-					case "radiobutton":
-
-						break;
-					case "dropdown":
-						List<DropdownListOption> ddOptions = new List<DropdownListOption> ();
-						ddOptions.Add (new DropdownListOption (user, "-- Select --", ""));
-						for (int j = 0; j < question.OptionsArray.Length; j++)
-							ddOptions.Add (new DropdownListOption (user, question.OptionsArray [j], j.ToString()));
-						item = new DropdownListItem (user, randomName, question.QuestionTitle, 10, "DROPDOWNLIST", ddOptions ,"" );
-						break;
-					case "mvRegPanelTemplate":
-						section.CustomView = "ICIBHianzMotor";
-						break;
-					case "mvUnRegPanelTemplate":
-						section.CustomView = "ICIBHianzPlant";
-						break;
-					default:
-						throw new Exception ("Unable to map element (" + question.QuestionType + ")");
+				    for (int i = 0; i < page.Questions.Count(); i++) {
+					    var question = page.Questions.ElementAt (i);
+					    InformationItem item = null;
+					    string randomName = System.IO.Path.GetRandomFileName ().Replace (".", "");
+					
+                        switch (question.QuestionType) {
+                            case "text":
+                                item = new TextboxItem (user, randomName, question.QuestionTitle, 10, "TEXTBOX");
+                                break;
+                            case "radiobutton":
+                                break;
+                            case "dropdown":
+                                List<DropdownListOption> ddOptions = new List<DropdownListOption> ();
+						        ddOptions.Add (new DropdownListOption (user, "-- Select --", ""));
+						        for (int j = 0; j < question.OptionsArray.Length; j++)
+                                    ddOptions.Add (new DropdownListOption (user, question.OptionsArray [j], j.ToString()));
+						        item = new DropdownListItem (user, randomName, question.QuestionTitle, 10, "DROPDOWNLIST", ddOptions ,"" );
+						        break;
+					        case "mvRegPanelTemplate":
+						        section.CustomView = "ICIBHianzMotor";
+						        break;
+					        case "mvUnRegPanelTemplate":
+						        section.CustomView = "ICIBHianzPlant";
+						        break;
+					        default:
+						        throw new Exception ("Unable to map element (" + question.QuestionType + ")");
 					}
+
 					item.EditorId = question.EditorId;
 					item.ItemOrder = i;
 					// set flags
@@ -179,6 +156,7 @@ namespace TechCertain.WebUI.Controllers
 
 					section.AddItem (item);
 				}
+
 				informationTemplate.AddSection (section);
 			}
 
@@ -194,7 +172,7 @@ namespace TechCertain.WebUI.Controllers
                 //	}
                 //}
 
-             _templateRepository.AddAsync(informationTemplate);
+             await _templateRepository.AddAsync(informationTemplate);
 
             }
             catch (Exception ex)

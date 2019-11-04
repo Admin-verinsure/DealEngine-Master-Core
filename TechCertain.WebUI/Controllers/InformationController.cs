@@ -1992,19 +1992,6 @@ namespace TechCertain.WebUI.Controllers
                 (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(template).Sections);
 
             }
-            foreach (var section in model.Sections)
-            {
-                foreach (var item in section.Items)
-                {
-                    var conditional = new InformationItemConditionalViewModel()
-                    {
-                        Targets = item.Conditional.Targets.Select(x => new InformationItemViewModel { Name = x.Name }),
-                        TriggerValue = item.Conditional.TriggerValue,
-                        VisibilityOnTrigger = item.Conditional.VisibilityOnTrigger
-                    };
-                    item.Conditional = conditional;
-                }
-            }
 
             return model;
         }
