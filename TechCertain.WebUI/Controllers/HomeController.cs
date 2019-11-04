@@ -86,14 +86,14 @@ namespace TechCertain.WebUI.Controllers
             model.CompletedTaskItems = new List<TaskItem>();
 
             var c = System.Threading.Thread.CurrentThread.CurrentCulture;
-
+            var user = await CurrentUser();
             if (DemoEnvironment)
             {
                 model.DisplayDeals = true;
                 model.DisplayProducts = false;
                 model.DisplayRole = "Client";
 
-                if (CurrentUser.PrimaryOrganisation.IsBroker)
+                if (user.PrimaryOrganisation.IsBroker)
                 {
                     model.CurrentUserIsBroker = "True";
                 }
@@ -101,7 +101,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     model.CurrentUserIsBroker = "False";
                 }
-                if (CurrentUser.PrimaryOrganisation.IsInsurer)
+                if (user.PrimaryOrganisation.IsInsurer)
                 {
                     model.CurrentUserIsInsurer = "True";
                 }
@@ -109,7 +109,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     model.CurrentUserIsInsurer = "False";
                 }
-                if (CurrentUser.PrimaryOrganisation.IsTC)
+                if (user.PrimaryOrganisation.IsTC)
                 {
                     model.CurrentUserIsTC = "True";
                 }
@@ -124,7 +124,7 @@ namespace TechCertain.WebUI.Controllers
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 foreach (Programme programme in _programmeRepository.FindAll())
                 {
-                    var userRoles = CurrentUser.GetRoles().ToArray();
+                    var userRoles = user.GetRoles().ToArray();
                     var hasRole = false;
                     var hasViewAllRole = userRoles.FirstOrDefault(r => r.Name == "CanViewAllInformation") != null;
 
@@ -189,9 +189,10 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (var product in _productRepositoy.FindAll().Where(p => p.Public && !p.IsBaseProduct))
                 {
-                    foreach (var org in CurrentUser.Organisations)
+                    foreach (var org in user.Organisations)
                     {
-                        var answerSheets = _customerInformationService.GetAllInformationFor(org).Result.Where(s => s.Product == product).OrderByDescending(s => s.DateCreated);
+                        var informationForList = await _customerInformationService.GetAllInformationFor(org);
+                        var answerSheets = informationForList.Where(s => s.Product == product).OrderByDescending(s => s.DateCreated);
 
                         // conditions
                         // no uis = display start
@@ -296,7 +297,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (!DemoEnvironment)
             {
-                var privateServers = _privateServerService.GetAllPrivateServers().Result;
+                var privateServers = await _privateServerService.GetAllPrivateServers();
 
                 foreach (var individualprivateServer in privateServers)
                 {
@@ -421,10 +422,12 @@ namespace TechCertain.WebUI.Controllers
             ProgrammeItem model = new ProgrammeItem();
 
             List<DealItem> deals = new List<DealItem>();
+            var user = await CurrentUser();
 
-            if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)
+            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
             {
-                foreach (ClientInformationSheet sheet in _clientInformationService.GetAllInformationFor(value).Result)
+                var informationForList = await _clientInformationService.GetAllInformationFor(value);
+                foreach (ClientInformationSheet sheet in informationForList)
                 {
 
                     ClientProgramme client = sheet.Programme;
@@ -487,7 +490,7 @@ namespace TechCertain.WebUI.Controllers
 
             model.Deals = deals;
 
-            if (CurrentUser.PrimaryOrganisation.IsBroker)
+            if (user.PrimaryOrganisation.IsBroker)
             {
                 model.CurrentUserIsBroker = "True";
             }
@@ -495,7 +498,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 model.CurrentUserIsBroker = "False";
             }
-            if (CurrentUser.PrimaryOrganisation.IsInsurer)
+            if (user.PrimaryOrganisation.IsInsurer)
             {
                 model.CurrentUserIsInsurer = "True";
             }
@@ -503,7 +506,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 model.CurrentUserIsInsurer = "False";
             }
-            if (CurrentUser.PrimaryOrganisation.IsTC)
+            if (user.PrimaryOrganisation.IsTC)
             {
                 model.CurrentUserIsTC = "True";
             }
@@ -521,11 +524,11 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> ViewProgramme(Guid id)
         {
             ProgrammeItem model = new ProgrammeItem();
-
-            Programme programme = _programmeRepository.GetByIdAsync(id).Result;
+            var user = await CurrentUser();
+            Programme programme = await _programmeRepository.GetByIdAsync(id);
             List<DealItem> deals = new List<DealItem>();
 
-            if (CurrentUser.PrimaryOrganisation.IsBroker || CurrentUser.PrimaryOrganisation.IsInsurer || CurrentUser.PrimaryOrganisation.IsTC)
+            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
             {
                 foreach (ClientProgramme client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
@@ -552,7 +555,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             } else
             {
-                foreach (ClientProgramme client in programme.ClientProgrammes.Where(cp => cp.Owner == CurrentUser.PrimaryOrganisation).OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                foreach (ClientProgramme client in programme.ClientProgrammes.Where(cp => cp.Owner == user.PrimaryOrganisation).OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
 
                     string status = client.InformationSheet.Status;
@@ -579,14 +582,14 @@ namespace TechCertain.WebUI.Controllers
 
             model.Deals = deals;
 
-            if (CurrentUser.PrimaryOrganisation.IsBroker)
+            if (user.PrimaryOrganisation.IsBroker)
             {
                 model.CurrentUserIsBroker = "True";
             } else
             {
                 model.CurrentUserIsBroker = "False";
             }
-            if (CurrentUser.PrimaryOrganisation.IsInsurer)
+            if (user.PrimaryOrganisation.IsInsurer)
             {
                 model.CurrentUserIsInsurer = "True";
             }
@@ -594,7 +597,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 model.CurrentUserIsInsurer = "False";
             }
-            if (CurrentUser.PrimaryOrganisation.IsTC)
+            if (user.PrimaryOrganisation.IsTC)
             {
                 model.CurrentUserIsTC = "True";
             }

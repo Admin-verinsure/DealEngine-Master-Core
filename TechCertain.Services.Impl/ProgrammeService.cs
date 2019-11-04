@@ -24,7 +24,8 @@ namespace TechCertain.Services.Impl
 
 		public async Task<ClientProgramme> CreateClientProgrammeFor(Guid programmeId, User creatingUser, Organisation owner)
 		{
-			return await CreateClientProgrammeFor(GetProgramme(programmeId).Result, creatingUser, owner);
+            var programme = await GetProgramme(programmeId);
+            return await CreateClientProgrammeFor(programme, creatingUser, owner);
 		}
 
 		public async Task<ClientProgramme> CreateClientProgrammeFor(Programme programme, User creatingUser, Organisation owner)
@@ -47,8 +48,8 @@ namespace TechCertain.Services.Impl
 
 		public async Task<IList<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
 		{
-			Programme programme = GetProgramme(programmeId).Result;
-			if (programme == null)
+			Programme programme = await GetProgramme(programmeId);
+            if (programme == null)
 				return null;
 			return programme.ClientProgrammes;
 		}
@@ -72,18 +73,18 @@ namespace TechCertain.Services.Impl
 		{
             foreach (ClientProgramme clientProgramme in clientProgrammes)
             {
-                await _clientProgrammeRepository.AddAsync(clientProgramme).ConfigureAwait(true);
+                await _clientProgrammeRepository.AddAsync(clientProgramme);
             }
 
 		}
 
 		public async Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser)
 		{
-			ClientProgramme newClientProgramme = CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner).Result;
+			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
             newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
-            var reference = _referenceService.GetLatestReferenceId().Result;
+            var reference = await _referenceService.GetLatestReferenceId();
             newClientProgramme.InformationSheet.ReferenceId = reference;
             newClientProgramme.InformationSheet.IsChange = true;
             await _referenceService.CreateClientInformationReference(newClientProgramme.InformationSheet);
@@ -93,7 +94,7 @@ namespace TechCertain.Services.Impl
 
 		public async Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)
 		{
-			ClientProgramme newClientProgramme = CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner).Result;
+			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
 

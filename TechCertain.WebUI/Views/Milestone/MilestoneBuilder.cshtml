@@ -197,6 +197,7 @@
         function Submit() {          
             var elements = document.getElementsByName('customRadio');
             var activityId = elements[0].getAttribute('id');
+            console.log(GetAdvisoryContentJson());
 
             var mergedData = {
                 EmailTemplate: GetEmailContentJson(), AdvisoryContent: GetAdvisoryContentJson(),

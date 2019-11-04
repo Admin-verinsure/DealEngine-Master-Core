@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
@@ -28,15 +30,15 @@ namespace TechCertain.Services.Impl
             await UpdateBoatUse(boatUse);
         }
 
-        public IQueryable<BoatUse> GetAllBoatUses()
+        public async Task<List<BoatUse>> GetAllBoatUses()
         {
             // we don't want to query ldap. That way lies timeouts. Or Dragons.
-            return _boatUseRepository.FindAll();
+            return await _boatUseRepository.FindAll().ToListAsync();
         }
 
         public async Task<BoatUse> GetBoatUse(Guid boatUseId)
         {
-            BoatUse boatUse = _boatUseRepository.GetByIdAsync(boatUseId).Result;
+            BoatUse boatUse = await _boatUseRepository.GetByIdAsync(boatUseId);
             // have a repo boatUse? Return it
             if (boatUse != null)
                 return boatUse;
@@ -52,7 +54,7 @@ namespace TechCertain.Services.Impl
 
         public async Task UpdateBoatUse(BoatUse boatUse)
         {
-            await _boatUseRepository.AddAsync(boatUse);
+            await _boatUseRepository.UpdateAsync(boatUse);
         }
     }
 }

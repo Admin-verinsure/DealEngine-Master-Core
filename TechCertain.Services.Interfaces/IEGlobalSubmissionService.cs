@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IEGlobalSubmissionService
     {
-        EGlobalSubmission CreateNewEGlobalSubmission(EGlobalSubmission eGlobalSubmission);
+        Task<EGlobalSubmission> CreateNewEGlobalSubmission(EGlobalSubmission eGlobalSubmission);
 
-        bool DeleteEGlobalSubmission(User deletedBy, EGlobalSubmission eGlobalSubmission);
+        Task<bool> DeleteEGlobalSubmission(User deletedBy, EGlobalSubmission eGlobalSubmission);
 
-        IQueryable<EGlobalSubmission> GetAllEGlobalSubmissions();
+        Task<List<EGlobalSubmission>> GetAllEGlobalSubmissions();
 
-        EGlobalSubmission GetEGlobalSubmission(Guid eGlobalSubmissionId);
+        Task<EGlobalSubmission> GetEGlobalSubmission(Guid eGlobalSubmissionId);
 
-        bool UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission);
+        Task<bool> UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission);
 
     }
 }

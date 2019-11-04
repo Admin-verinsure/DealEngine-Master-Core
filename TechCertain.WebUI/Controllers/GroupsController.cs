@@ -232,7 +232,7 @@
 //        //     public ActionResult DeleteConfirmed (Guid id)
 //        //     {
 //        //         try {
-//        //	if (!_roleService.DeleteGroup (id, CurrentUser))
+//        //	if (!_roleService.DeleteGroup (id, CurrentUser()))
 //        //		throw new Exception ("Unable to delete ApplicationGroup with Id [" + id + "]");
 
 //        //	return Json (true);
@@ -345,7 +345,7 @@
 //        //{
 //        //	bool hasAccess = false;
 //        //	foreach (var role in roles) {
-//        //		if (_roleService.DoesUserHaveRole (CurrentUser.UserName, role)) {
+//        //		if (_roleService.DoesUserHaveRole (CurrentUser().UserName, role)) {
 //        //			hasAccess = true;
 //        //			break;
 //        //		}
@@ -442,7 +442,7 @@
 //		//{
 //		//	bool hasAccess = false;
 //		//	foreach (var role in roles) {
-//		//		if (_roleService.DoesUserHaveRole (CurrentUser.UserName, role)) {
+//		//		if (_roleService.DoesUserHaveRole (CurrentUser().UserName, role)) {
 //		//			hasAccess = true;
 //		//			break;
 //		//		}

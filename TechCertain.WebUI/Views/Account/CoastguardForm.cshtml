@@ -272,7 +272,7 @@
                                     <h5 class="modal-title">Advisory</h5>
                                 </div>
                                 <div class="modal-body">
-                                    @Model.Advisory
+                                    @Html.Raw(Model.Advisory)
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="Close()">Close</button>

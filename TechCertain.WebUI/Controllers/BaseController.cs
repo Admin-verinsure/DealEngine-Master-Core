@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
 using TechCertain.Infrastructure.FluentNHibernate;
+using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -22,30 +23,29 @@ namespace TechCertain.WebUI.Controllers
             _userService = userService;
         }
 
-        
-        public User CurrentUser
+
+        public async Task<User> CurrentUser()
         {
-            get
-            {
                 var userName = "";
-                try {
+                try
+                {
                     userName = User.Identity.Name;
                 }
                 catch (Exception ex)
                 {
                     return null;
                 }
-                if (string.IsNullOrWhiteSpace (userName))
+                if (string.IsNullOrWhiteSpace(userName))
                     return null;
-				return _userService.GetUser(userName).Result; 
-            }
+
+                return await _userService.GetUser(userName);            
         }
 
-		/// <summary>
-		/// Returns true if we are running on a Unix style OS (including Linux and OS X), and false if Windows.
-		/// </summary>
-		/// <value><c>true</c> if is linux; otherwise, <c>false</c>.</value>
-		public static bool IsLinux {
+        /// <summary>
+        /// Returns true if we are running on a Unix style OS (including Linux and OS X), and false if Windows.
+        /// </summary>
+        /// <value><c>true</c> if is linux; otherwise, <c>false</c>.</value>
+        public static bool IsLinux {
 			get {
 				int p = (int)Environment.OSVersion.Platform;
 				return (p == 4) || (p == 6) || (p == 128);
@@ -71,7 +71,7 @@ namespace TechCertain.WebUI.Controllers
 		//	}
 		//}
 
-//        public Account CurrentUserAccount
+//        public Account CurrentUser()Account
 //        {
 //            get
 //            {
@@ -124,15 +124,15 @@ namespace TechCertain.WebUI.Controllers
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             ViewBag.Title = "Proposalonline";
-            User account = CurrentUser;
+            User account = CurrentUser().Result;
             if (account != null)
             {
                 //ViewBag.Name = account.FullName;
                 ViewBag.Account = account;
                 //ViewBag.Organisations = account.Organisations;
 
-                //if (CurrentUserAccount.Organisations.FirstOrDefault() != null)
-                //    ViewBag.CurrentOrganisation = CurrentUserAccount.Organisations.FirstOrDefault().Name;
+                //if (CurrentUser()Account.Organisations.FirstOrDefault() != null)
+                //    ViewBag.CurrentOrganisation = CurrentUser()Account.Organisations.FirstOrDefault().Name;
             }
 
             base.OnActionExecuting(filterContext);
