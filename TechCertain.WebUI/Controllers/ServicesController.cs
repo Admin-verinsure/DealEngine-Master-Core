@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
-using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers

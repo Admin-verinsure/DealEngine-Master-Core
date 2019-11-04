@@ -75,12 +75,6 @@ namespace TechCertain.Domain.Entities
 			return this;
 		}
 
-		public virtual Old_PolicyDocumentTemplate ChangeType(PolicyDocumentType type)
-		{
-			//DocumentType = type;
-			return this;
-		}
-
 		public virtual Old_PolicyDocumentTemplate ChangeVersion(string version)
 		{
 			Version = version;

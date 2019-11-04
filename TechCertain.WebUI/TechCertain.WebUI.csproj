@@ -55,6 +55,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DealEngine.Infrastructure.AppInitialize\DealEngine.Infrastructure.AppInitialize.csproj" />
     <ProjectReference Include="..\DealEngine.Infrastructure.AuthorizationRSA\DealEngine.Infrastructure.AuthorizationRSA.csproj" />
+    <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.FluentNHibernate\TechCertain.Infrastructure.FluentNHibernate.csproj" />
     <ProjectReference Include="..\TechCertain.Infrastructure.Payment\TechCertain.Infrastructure.Payment.csproj" />
     <ProjectReference Include="..\TechCertain.Services.Impl\TechCertain.Services.Impl.csproj" />

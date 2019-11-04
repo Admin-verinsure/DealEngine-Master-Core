@@ -58,7 +58,7 @@
 
 
            if (stepNumber === 0) {
-
+               event.preventDefault();
                if (stepDirection == "forward") {
                    var claim1 = $('#Claimexp1').val();
                    var claim2 = $('#Claimexp2').val();
@@ -109,8 +109,6 @@
                                //});
                            })
                            .fail(function (a, s, d) {
-                               
-
                                alert("Unable to save.");
                            });
                    }
@@ -6709,13 +6707,11 @@ async: true
     }
 
     function submitPayment() {
-        debugger;
          event.preventDefault();
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
             return false;
 
         if ($('#paymentCreditCard').is(":checked")) {
-            debugger;
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
@@ -6726,7 +6722,6 @@ async: true
             })
         }
         else if ($('#paymentEGlobal').is(":checked")) {
-            debugger;
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("GenerateEGlobal", "Agreement")',

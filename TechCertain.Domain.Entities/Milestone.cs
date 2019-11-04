@@ -13,12 +13,9 @@ namespace TechCertain.Domain.Entities
         public virtual UserTask Task { get; set; }
         public virtual IList<SystemEmail> EmailTemplates { get; set; }
         public virtual Advisory Advisory { get; set; }
-        public virtual string Type { get; set; }
-        public virtual int Phase { get; set; }
-        public virtual MilestoneTemplate MilestoneTemplate { get; set; }
         public virtual bool HasTriggered { get; set; }
-        public virtual string ProgrammeProcess { get; set; }
-        public virtual string Activity { get; set; }
+        public virtual ProgrammeProcess ProgrammeProcess { get; set; }
+        public virtual Activity Activity { get; set; }
         public virtual Programme Programme { get; set; }
     }
 

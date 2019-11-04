@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 
@@ -15,54 +17,56 @@ namespace TechCertain.Infrastructure.Tasking
 			_taskRespository = taskRespository;
 		}
 
-		//public UserTask CreateTaskFor (User createdBy, Organisation createdFor, string name, DateTime dueDate)
-		//{
-		//	if (createdBy == null)
-		//		throw new ArgumentNullException (nameof (createdBy));
-		//	if (createdFor == null)
-		//		throw new ArgumentNullException (nameof (createdFor));
-		//	if (string.IsNullOrWhiteSpace(name))
-		//		throw new ArgumentNullException (nameof (name));
-		//	if (dueDate == null)
-		//		throw new ArgumentNullException (nameof (dueDate));
+        public async Task<UserTask> CreateTaskFor(User createdBy, Organisation createdFor, string name, DateTime dueDate)
+        {
+            if (createdBy == null)
+                throw new ArgumentNullException(nameof(createdBy));
+            if (createdFor == null)
+                throw new ArgumentNullException(nameof(createdFor));
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+            if (dueDate == null)
+                throw new ArgumentNullException(nameof(dueDate));
 
-		//	UserTask task = new UserTask (createdBy, createdFor, name, dueDate);
-		//	UpdateTask (task);
-		//	return task;
-		//}
+            UserTask task = new UserTask(createdBy, createdFor, name, dueDate);
+            await _taskRespository.AddAsync(task);
+            return task;
+        }
 
-		public IList<UserTask> GetAllTasksFor (Organisation organisation)
+        public async Task<List<UserTask>> GetAllTasksFor(Organisation organisation)
 		{
 			if (organisation == null)
 				throw new ArgumentNullException (nameof (organisation));
 			
-			var tasks = _taskRespository.FindAll().Where(t => t.For == organisation);
-			return tasks.ToList ();
+			return await _taskRespository.FindAll().Where(t => t.For == organisation).ToListAsync();			
 		}
 
-		public IList<UserTask> GetAllTasksFor (User user)
+		public async Task<List<UserTask>> GetAllTasksFor(User user)
 		{
 			if (user == null)
-				throw new ArgumentNullException (nameof (user));
+				throw new ArgumentNullException(nameof (user));
 
-			List<UserTask> tasks = new List<UserTask> ();
-			foreach (Organisation org in user.Organisations)
-				tasks.AddRange (_taskRespository.FindAll().Where(t => t.For == org));
-			return tasks;
+			List<UserTask> tasks = new List<UserTask>();
+            List<UserTask> list;
+            foreach (Organisation org in user.Organisations)
+            {
+                list = await GetAllTasksFor(org);
+                tasks.AddRange(list);
+            }
+                                
+            return tasks;
 		}
 
-        public UserTask GetTask(Guid Id)
+        public async Task<UserTask> GetTask(Guid Id)
         {
-            var task = _taskRespository.FindAll().FirstOrDefault(t => t.Id == Id);
-            return task;
+            return await _taskRespository.GetByIdAsync(Id);            
         }
 
-		public UserTask CreateTaskFor(UserTask task)
+		public async Task CreateTaskFor(UserTask task)
 		{
 			if (task == null)
 				throw new ArgumentNullException (nameof (task));
-            _taskRespository.AddAsync(task);
-			return task;
+            await _taskRespository.AddAsync(task);			
 		}
 	}
 }

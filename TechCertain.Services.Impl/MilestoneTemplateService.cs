@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
+using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
 {
@@ -17,30 +18,46 @@ namespace TechCertain.Services.Impl
             _milestoneTemplateRepository = milestoneTemplateRepository;
         }
 
-        public async Task<MilestoneTemplate> GetMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity)
+        public async Task<MilestoneTemplate> GetMilestoneTemplate(User user)
         {
-            MilestoneTemplate milestoneTemplate = await _milestoneTemplateRepository.FindAll().FirstOrDefaultAsync(m => m.ClientProgramme == clientprogrammeID && m.Activity == milestoneActivity);
+            MilestoneTemplate milestoneTemplate = await _milestoneTemplateRepository.FindAll().FirstOrDefaultAsync(m => m.CreatedBy == user);
             if (milestoneTemplate == null)
             {
-                milestoneTemplate = await CreateMilestoneTemplate(clientprogrammeID, milestoneActivity);
+                milestoneTemplate = await CreateMilestoneTemplate(user);
             }
             return milestoneTemplate;
         }
 
-        public async Task<MilestoneTemplate> CreateMilestoneTemplate(Guid clientprogrammeID, string milestoneActivity)
+        public async Task<MilestoneTemplate> CreateMilestoneTemplate(User user)
         {
-            MilestoneTemplate milestoneTemplate = new MilestoneTemplate();
-            milestoneTemplate.ClientProgramme = clientprogrammeID;
-            milestoneTemplate.Activity = milestoneActivity;
-            milestoneTemplate.Templates = new List<string>();
-            milestoneTemplate.Templates.Add("Agreement Status - Not Started");
-            milestoneTemplate.Templates.Add("Agreement Status - Started");
-            milestoneTemplate.Templates.Add("Agreement Status - Completed");
-            milestoneTemplate.Templates.Add("Agreement Status - Quoted");
-            milestoneTemplate.Templates.Add("Agreement Status - Declined");
-            milestoneTemplate.Templates.Add("Agreement Status - Bound and Waiting Payment");
-            milestoneTemplate.Templates.Add("Agreement Status - Bound and Waiting Invoice");
-            
+            MilestoneTemplate milestoneTemplate = new MilestoneTemplate(user);
+            string[] programmeProcess = new[] { "Process New Agreement", "Change Agreement", "Process Renewal Agreement", "Process Cancel Agreement" };
+            string[] activity = new[] { "Agreement Status - Not Started", "Agreement Status - Started", "Agreement Status - Completed", "Agreement Status - Quoted", "Agreement Status - Declined", "Agreement Status - Bound and Waiting Payment", "Agreement Status - Bound and Waiting Invoice" };
+
+            var programmeProcessList = new List<ProgrammeProcess>();
+            foreach(string pp in programmeProcess)
+            {
+                var process = new ProgrammeProcess(user)
+                {
+                    Name = pp
+                };
+
+                programmeProcessList.Add(process);
+            }
+
+            var activityList = new List<Activity>();
+            foreach (string act in activity)
+            {
+                var active = new Activity(user)
+                {
+                    Name = act
+                };
+
+                activityList.Add(active);
+            }
+
+            milestoneTemplate.Activities = activityList;
+            milestoneTemplate.ProgrammeProcesses = programmeProcessList;
             await _milestoneTemplateRepository.AddAsync(milestoneTemplate);
 
             return milestoneTemplate;

@@ -172,7 +172,7 @@ namespace TechCertain.WebUI.Controllers
                         document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                         document.LastModifiedBy = CurrentUser;
                         document.LastModifiedOn = DateTime.UtcNow;
-                        uow.Commit();
+                        await uow.Commit();
                     }
                 }
 
@@ -183,7 +183,7 @@ namespace TechCertain.WebUI.Controllers
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = CurrentUser.PrimaryOrganisation;
                 document.IsTemplate = true;
-                _documentRepository.AddAsync(document);
+                await _documentRepository.AddAsync(document);
             }
 
 			return View (model);
