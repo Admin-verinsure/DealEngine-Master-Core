@@ -13,7 +13,7 @@ namespace TechCertain.WebUI.Models.Milestone
 
     public class MilestoneConfigurationViewModel
     {
-        public string Process { get; set; }
+        public ProgrammeProcess ProgrammeProcess { get; set; }
         public IList<Domain.Entities.Programme> Programmes { get; set; }
         public bool IsActive { get; set; }
     }

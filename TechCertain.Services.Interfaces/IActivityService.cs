@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IActivityService
-    {
-        Task<Activity> GetActivity(string Name);
+    { 
+        Task<Activity> GetActivityId(Guid activityId);
     }
 }

@@ -3,6 +3,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Domain.Entities;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using System;
 
 namespace TechCertain.Services.Impl
 {
@@ -15,9 +16,9 @@ namespace TechCertain.Services.Impl
             _programmeProcessRepository = programmeProcessRepository;
         }
 
-        public async Task<ProgrammeProcess> GetProcess(string Name)
+        public async Task<ProgrammeProcess> GetProcessId(Guid processId)
         {
-            return await _programmeProcessRepository.FindAll().FirstOrDefaultAsync(p => p.Name == Name);
+            return await _programmeProcessRepository.GetByIdAsync(processId);
         }
 
     }

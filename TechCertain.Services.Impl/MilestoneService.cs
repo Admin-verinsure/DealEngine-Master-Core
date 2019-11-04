@@ -32,10 +32,10 @@ namespace TechCertain.Services.Impl
             //_taskingService = taskingService;
         }
 
-        public async Task<Milestone> CreateMilestone(User createdBy, string programmeProcessName, string activityName, Programme programme)
+        public async Task<Milestone> CreateMilestone(User createdBy, Guid programmeProcessId, Guid activityId, Programme programme)
         {
-            var programmeProcess = await _programmeProcessService.GetProcess(programmeProcessName);
-            var activity = await _activityService.GetActivity(activityName);
+            var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
+            var activity = await _activityService.GetActivityId(activityId);
 
             Milestone milestone = new Milestone(createdBy);
             milestone.ProgrammeProcess = programmeProcess;
@@ -108,5 +108,9 @@ namespace TechCertain.Services.Impl
                                                                                             && m.Activity == activity);
         }
 
+        public async Task<Milestone> GetMilestone(string activity)
+        {
+            return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Activity.Name == activity);
+        }
     }
 }

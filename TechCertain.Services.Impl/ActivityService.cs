@@ -3,6 +3,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Domain.Entities;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using System;
 
 namespace TechCertain.Services.Impl
 {
@@ -15,9 +16,9 @@ namespace TechCertain.Services.Impl
             _activityRepository = activityRepository;
         }
 
-        public async Task<Activity> GetActivity(string Name)
+        public async Task<Activity> GetActivityId(Guid activityId)
         {
-            return await _activityRepository.FindAll().FirstOrDefaultAsync(a => a.Name == Name);
+            return await _activityRepository.GetByIdAsync(activityId);
         }
 
     }

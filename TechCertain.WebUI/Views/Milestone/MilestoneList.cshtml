@@ -38,7 +38,7 @@
                                         <tr>
 
                                             <td>
-                                                @vm.Process
+                                                @vm.ProgrammeProcess.Name
                                             </td>
 
                                             <td>
@@ -64,7 +64,7 @@
                                             </td>
 
                                             <td>
-                                                <a class="btn btn-primary btn-xs" onclick="CreateMilestone('@vm.Process')">Create/Edit Milestone</a>                                                
+                                                <a class="btn btn-primary btn-xs" onclick="CreateMilestone('@vm.ProgrammeProcess.Id')">Create/Edit Milestone</a>                                                
                                             </td>
 
                                         </tr>
@@ -98,8 +98,9 @@
         function CreateMilestone(process) {
             event.preventDefault();
             if (Validate($("#milestoneprogramme").val())) {
-                var mergedData = { ProgrammeId: $("#milestoneprogramme").val(), programmeProcess: process };
+                var mergedData = { strProgrammeId: $("#milestoneprogramme").val(), strProgrammeProcessId: process };
                 console.log(mergedData);
+                debugger;
                 $.ajax({
                     url: "/Milestone/MilestoneTemplate",
                     type: "POST",

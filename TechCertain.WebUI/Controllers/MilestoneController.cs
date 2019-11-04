@@ -76,14 +76,12 @@ namespace TechCertain.WebUI.Controllers
             foreach (var programmeProcesses in templates.ProgrammeProcesses)
             {
                 MilestoneConfigurationViewModel milestoneViewModel = new MilestoneConfigurationViewModel();
-                milestoneViewModel.Process = programmeProcesses.Name;
+                milestoneViewModel.ProgrammeProcess = programmeProcesses;
 
 
-                var priorityTypes = new List<SelectListItem> {
-                    new SelectListItem { Text = "Important", Value = "1" },
-                    new SelectListItem { Text = "Critical", Value = "2" },
-            };
-
+                //var priorityTypes = new List<SelectListItem> {
+                //    new SelectListItem { Text = "Important", Value = "1" },
+                //    new SelectListItem { Text = "Critical", Value = "2" },            
 
                 milestoneViewModel.Programmes = programmes;
                 model.MilestoneVM.Add(milestoneViewModel);
@@ -94,23 +92,23 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> MilestoneTemplate(string programmeId, string programmeProcess)
+        public async Task<IActionResult> MilestoneTemplate(string strProgrammeId, string strProgrammeProcessId)
         {
-            Programme programme = await _programmeService.GetProgramme(Guid.Parse(programmeId));            
-            
+            Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
+
             MilestoneBuilderViewModel model = new MilestoneBuilderViewModel()
             {
                 ProgrammeId = programme.Id,
-                ProgrammeProcess = programmeProcess,
+                ProgrammeProcessId = strProgrammeProcessId,
             };
 
-            return Content("/Milestone/MilestoneBuilder/?programmeId=" + programme.Id + "&programmeProcess=" + programmeProcess);
+            return Content("/Milestone/MilestoneBuilder/?strProgrammeId=" + programme.Id  + "&strProgrammeProcessId=" + strProgrammeProcessId);
         }
 
         [HttpGet]
-        public async Task<IActionResult> MilestoneBuilder(string programmeId, string programmeProcess)
+        public async Task<IActionResult> MilestoneBuilder(string strProgrammeId, string strProgrammeProcessId)
         {
-            Programme programme = await _programmeService.GetProgramme(Guid.Parse(programmeId));
+            Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
             var templates = await _milestoneTemplateService.GetMilestoneTemplate(CurrentUser);
 
             MilestoneTemplateVM milestoneTemplateVM = new MilestoneTemplateVM
@@ -122,27 +120,27 @@ namespace TechCertain.WebUI.Controllers
             MilestoneBuilderViewModel model = new MilestoneBuilderViewModel();
             model.MilestoneTemplate = milestoneTemplateVM;
             model.ProgrammeId = programme.Id;
-            model.ProgrammeProcess = programmeProcess;
+            model.ProgrammeProcessId = strProgrammeProcessId;
            
             return View("MilestoneBuilder", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> MilestoneSelect(string programmeId, string milestoneActivity, string programmeProcess)
+        public async Task<IActionResult> MilestoneSelect(string strProgrammeId, string strMilestoneActivityId, string strProgrammeProcessId)
         {
-            Programme programme = await _programmeService.GetProgramme(Guid.Parse(programmeId));
+            Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
 
             MilestoneBuilderViewModel model = new MilestoneBuilderViewModel();
             model.ProgrammeId = programme.Id;
-            model.ProgrammeProcess = programmeProcess;
-            model.Activity = milestoneActivity;
+            model.ProgrammeProcessId = strProgrammeProcessId;
+            model.ActivityId = strMilestoneActivityId;
 
 
-            return Content("/Milestone/MilestoneType/?programmeId=" + programmeId + "&milestoneActivity=" + model.Activity + "&programmeProcess=" + model.ProgrammeProcess);           
+            return Content("/Milestone/MilestoneType/?strProgrammeId=" + strProgrammeId + "&strMilestoneActivityId=" + model.ActivityId + "&strProgrammeProcessId=" + model.ProgrammeProcessId);           
         }
 
         [HttpGet]
-        public async Task<IActionResult> MilestoneType(string strProgrammeId, string strMilestoneActivity, string strProgrammeProcess)
+        public async Task<IActionResult> MilestoneType(string strProgrammeId, string strMilestoneActivityId, string strProgrammeProcessId)
         {
             IList<string> emailTo = new List<string>();
             Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
@@ -153,8 +151,8 @@ namespace TechCertain.WebUI.Controllers
                     new SelectListItem { Text = "Critical", Value = "2" },
             };
 
-            var programmeProcess = await _programmeProcess.GetProcess(strProgrammeProcess);
-            var milestoneActivity = await _activityService.GetActivity(strMilestoneActivity);
+            var programmeProcess = await _programmeProcess.GetProcessId(Guid.Parse(strProgrammeProcessId));
+            var milestoneActivity = await _activityService.GetActivityId(Guid.Parse(strMilestoneActivityId));
 
             MilestoneBuilderViewModel model = new MilestoneBuilderViewModel();
             model.UserTask = new UserTaskVM();
@@ -163,7 +161,7 @@ namespace TechCertain.WebUI.Controllers
             model.AdvisoryContent = new AdvisoryVM();
             model.Priorities = priorityTypes;
             model.ProgrammeId = programme.Id;
-            model.ProgrammeProcess = programmeProcess.Name;
+            model.ProgrammeProcessId = programmeProcess.Id.ToString();
 
             var milestone = await _milestoneService.GetMilestoneProcess(programme.Id, programmeProcess, milestoneActivity);
             if (milestone != null)
@@ -180,11 +178,11 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SubmitMilestone(MilestoneBuilderViewModel model)
         {
             Programme programme = await _programmeService.GetProgramme(model.ProgrammeId);
-            Milestone milestone = await _milestoneService.CreateMilestone(CurrentUser, model.ProgrammeProcess, model.Activity, programme);
+            Milestone milestone = await _milestoneService.CreateMilestone(CurrentUser, Guid.Parse(model.ProgrammeProcessId), Guid.Parse(model.ActivityId), programme);
 
             if (model.EmailTemplate.Body != null)
             {
-                await _milestoneService.CreateEmailTemplate(CurrentUser, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.Activity);
+                await _milestoneService.CreateEmailTemplate(CurrentUser, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.ActivityId);
             }
 
             if (model.AdvisoryContent.Advisory != null)

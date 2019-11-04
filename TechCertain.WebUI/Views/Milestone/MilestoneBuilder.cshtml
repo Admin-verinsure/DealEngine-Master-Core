@@ -3,7 +3,7 @@
     <div id="content">
 
         @Html.HiddenFor(m => m.ProgrammeId)
-        @Html.HiddenFor(m => m.ProgrammeProcess)
+        @Html.HiddenFor(m => m.ProgrammeProcessId)
 
         <!-- widget grid -->
         <section id="widget-grid" class="">
@@ -150,20 +150,19 @@
 
         function AdvisoryView() {
             var elements = document.getElementsByName('customRadio');
-            var activity = elements[0].getAttribute( 'id' );
+            var activityId = elements[0].getAttribute( 'id' );
             //var activity = document.getElementById('milestoneType').i;
-            var programmeID = $('#ProgrammeId').val();
-            var programmeProcess = $('#ProgrammeProcess').val()
+            var programmeId = $('#ProgrammeId').val();
+            var programmeProcessId = $('#ProgrammeProcessId').val()
 
-            console.log(activity);
-            console.log(programmeID);
-            console.log(programmeProcess);
-            debugger;
-            mergedData = {
-                programmeId : programmeID,
-                milestoneActivity: activity,
-                programmeProcess : programmeProcess
+            var mergedData = {
+                strProgrammeProcessId: programmeProcessId,
+                strProgrammeId: programmeId,
+                strMilestoneActivityId: activityId                
             };
+
+            console.log(mergedData);
+            debugger;
 
             $.ajax({
                 url: "/Milestone/MilestoneSelect",
@@ -195,11 +194,14 @@
             location.href='@Url.Action("MilestoneList", "Milestone")'
         }
 
-        function Submit() {            
+        function Submit() {          
+            var elements = document.getElementsByName('customRadio');
+            var activityId = elements[0].getAttribute('id');
+
             var mergedData = {
                 EmailTemplate: GetEmailContentJson(), AdvisoryContent: GetAdvisoryContentJson(),
-                Type: document.getElementById('milestoneType').textContent, UserTask: GetUserTaskContentJson(), UserTasks: GetUserTaskContentJson(),
-                ProgrammeId: $('#ProgrammeId').val(), ProgrammeProcess: $('#ProgrammeProcess').val()
+                ActivityId: activityId, UserTask: GetUserTaskContentJson(), UserTasks: GetUserTaskContentJson(),
+                ProgrammeId: $('#ProgrammeId').val(), ProgrammeProcessId: $('#ProgrammeProcessId').val()
             };                                          
 
             $.ajax({

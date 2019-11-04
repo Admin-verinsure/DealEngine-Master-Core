@@ -14,14 +14,14 @@ namespace TechCertain.WebUI.Models.Milestone
     public class MilestoneBuilderViewModel : BaseViewModel
     {
         public Guid ProgrammeId { get; set; }
-        public string ProgrammeProcess { get; set; }
+        public string ProgrammeProcessId { get; set; }
         public MilestoneTemplateVM MilestoneTemplate { get; set; }
         public IList<string> EmailAddresses { get; set; }
         public IEnumerable<SelectListItem> Priorities { get; set; }
         public AdvisoryVM AdvisoryContent { get; set; }        
         public EmailTemplateVM EmailTemplate { get; set; }
         public UserTaskVM UserTask { get; set; }
-        public string Activity { get; set; }        
+        public string ActivityId { get; set; }        
     }
 
     public class EmailTemplateVM

@@ -30,7 +30,7 @@ namespace TechCertain.Services.Impl
 
         public async Task<MilestoneTemplate> CreateMilestoneTemplate(User user)
         {
-            MilestoneTemplate milestoneTemplate = new MilestoneTemplate();
+            MilestoneTemplate milestoneTemplate = new MilestoneTemplate(user);
             string[] programmeProcess = new[] { "Process New Agreement", "Change Agreement", "Process Renewal Agreement", "Process Cancel Agreement" };
             string[] activity = new[] { "Agreement Status - Not Started", "Agreement Status - Started", "Agreement Status - Completed", "Agreement Status - Quoted", "Agreement Status - Declined", "Agreement Status - Bound and Waiting Payment", "Agreement Status - Bound and Waiting Invoice" };
 
@@ -57,7 +57,7 @@ namespace TechCertain.Services.Impl
             }
 
             milestoneTemplate.Activities = activityList;
-            milestoneTemplate.ProgrammeProcesses = programmeProcessList;            
+            milestoneTemplate.ProgrammeProcesses = programmeProcessList;
             await _milestoneTemplateRepository.AddAsync(milestoneTemplate);
 
             return milestoneTemplate;
