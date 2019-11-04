@@ -156,6 +156,7 @@ namespace TechCertain.Domain.Entities
         public virtual bool MasterAgreement { get; set; }
 
         public virtual ClientAgreement PreviousAgreement { get; set; }
+
     }
 }
 
