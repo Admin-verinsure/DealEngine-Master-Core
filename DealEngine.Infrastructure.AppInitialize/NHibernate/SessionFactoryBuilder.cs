@@ -69,7 +69,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                 catch (NpgsqlException)
                 {
                     CreateDatabase(connectionStringName);
-                    CreateLoggingTable(connectionStringName);
+                    //CreateLoggingTable(connectionStringName);
                 }
                 finally
                 {
