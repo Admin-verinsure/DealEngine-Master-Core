@@ -99,8 +99,7 @@ namespace TechCertain.WebUI.Controllers
 			document.ChangeOwner(CurrentUser.FullName);
 			document.ChangeDescription (model.Description);
 			document.SetRevision(model.Revision);
-			document.ChangeText(model.Text);
-			document.ChangeType(new PolicyDocumentType(model.DocumentType));
+			document.ChangeText(model.Text);			
 			document.ChangeVersion(model.Version);
 			document.ChangeTerritory (model.Territory);
 			document.ChangeJurisdiction (model.Jurisdiction);

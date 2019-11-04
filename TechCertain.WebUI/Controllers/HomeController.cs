@@ -128,12 +128,7 @@ namespace TechCertain.WebUI.Controllers
                     var hasRole = false;
                     var hasViewAllRole = userRoles.FirstOrDefault(r => r.Name == "CanViewAllInformation") != null;
 
-                    if (programme.Permissions != null)
-                    {
-                        var userRoleIds = userRoles.Select(r => r.Id).ToArray();
-                        hasRole = userRoleIds.Contains(programme.Permissions.ViewInformationRole.Id);
-                    }
-                    else if (!hasViewAllRole)
+                    if (!hasViewAllRole)
                         continue;
 
                     //if (!hasRole && !hasViewAllRole)

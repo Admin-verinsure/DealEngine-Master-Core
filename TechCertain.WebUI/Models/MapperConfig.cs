@@ -50,7 +50,7 @@ namespace TechCertain.WebUI.Models
             CreateMap<SelectListItem, DropdownListOption>().ReverseMap();
             //CreateMap<DropdownListOption, SelectListItem> ();
 
-            CreateMap<InformationItemConditional, InformationItemConditionalViewModel>().ReverseMap();
+            //CreateMap<InformationItemConditional, InformationItemConditionalViewModel>().ReverseMap();
 
             CreateMap<TextboxItem, InformationItemViewModel>();
             CreateMap<DropdownListItem, InformationItemViewModel>();
