@@ -50,6 +50,11 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
+        public virtual string test1
+        {
+            get;
+            set;
+        }
 
         public virtual string BoatUseRaceCategory
         {
