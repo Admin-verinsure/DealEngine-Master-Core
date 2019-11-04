@@ -903,6 +903,13 @@ namespace TechCertain.Services.Impl
             decimal totalBoatPremium = 0m;
             decimal totalBoatBrokerage = 0m;
 
+            decimal totalBoatFslPre = 0m;
+            decimal totalBoatFslDiffer = 0m;
+            decimal totalBoatPremiumPre = 0m;
+            decimal totalBoatPremiumDiffer = 0m;
+            int totalBoatTermLimitPre = 0;
+            int totalBoatTermLimitDiffer = 0;
+
             agreement.QuoteDate = DateTime.UtcNow;
 
             //calculate boat premium and FSL (BV Term)
@@ -945,7 +952,7 @@ namespace TechCertain.Services.Impl
                 boat.BoatInceptionDate = boatinceptiondate;
                 boat.BoatExpireDate = boatexpirydate;
 
-                boatperiodindays = (boatexpirydate - boatinceptiondate).Days;
+                boatperiodindays = (boatexpirydate - boateffectivedate).Days;
 
                 decimal boatRate = 0m;
                 decimal boatMinPremium = 0m;
@@ -1044,6 +1051,156 @@ namespace TechCertain.Services.Impl
                     bvTerm.AnnualFSL = boatFsl;
                     bvTerm.AnnualBrokerage = boatBrokerage;
                 }
+
+                //===========
+                //For Change Agreement
+                decimal boatFslPre = 0m;
+                decimal boatFslDiffer = 0m;
+                decimal boatPremiumPre = 0m;
+                decimal boatPremiumDiffer = 0m;
+                decimal boatExcessPre = 0m;
+                decimal boatExcessDiffer = 0m;
+                int boatTermLimitPre = 0;
+                int boatTermLimitDiffer = 0;
+                int preboatperiodindays = 0;
+
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null && boat.OriginalBoat != null)
+                {
+                    ClientAgreementTerm termPre = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
+                    if (termPre != null)
+                    {
+                        ClientAgreementBVTerm bvTermPre = termPre.BoatTerms.FirstOrDefault(bvpret => bvpret.Boat == boat.OriginalBoat && bvpret.DateDeleted == null);
+
+                        if (bvTermPre != null)
+                        {
+                            if (boat.OriginalBoat.BoatEffectiveDate > DateTime.MinValue)
+                            {
+                                preboatperiodindays = (boat.OriginalBoat.BoatExpireDate - boat.OriginalBoat.BoatEffectiveDate).Days;
+                            }
+                            else
+                            {
+                                preboatperiodindays = (boat.OriginalBoat.BoatExpireDate - boat.OriginalBoat.BoatInceptionDate).Days;
+                            }
+
+                            if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue)
+                            {
+                                preboatperiodindays = (boat.BoatExpireDate - boat.BoatInceptionDate).Days;
+                            }
+                            if (boat.OriginalBoat.BoatEffectiveDate > DateTime.MinValue && boat.BoatEffectiveDate > DateTime.MinValue)
+                            {
+                                if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue && boat.OriginalBoat.BoatEffectiveDate == boat.BoatEffectiveDate)
+                                {
+                                    preboatperiodindays = (boat.BoatExpireDate - boat.BoatEffectiveDate).Days;
+                                }
+                            }
+
+                            if (boat.OriginalBoat.BoatEffectiveDate > DateTime.MinValue && boat.BoatEffectiveDate > DateTime.MinValue)
+                            {
+                                if (boat.OriginalBoat.BoatCeaseDate == DateTime.MinValue && boat.BoatCeaseDate > DateTime.MinValue && boat.OriginalBoat.BoatEffectiveDate == boat.BoatEffectiveDate)
+                                {
+                                    preboatperiodindays = (boat.BoatExpireDate - boat.BoatEffectiveDate).Days;
+                                }
+                            }
+
+                            boatFslPre = bvTermPre.FSL;
+                            boatPremiumPre = bvTermPre.Premium;
+                            boatExcessPre = bvTermPre.Excess;
+                            boatTermLimitPre = bvTermPre.TermLimit;
+
+                            totalBoatFslPre += bvTermPre.FSL;
+                            totalBoatPremiumPre += bvTermPre.Premium;
+                            totalBoatTermLimitPre += bvTermPre.TermLimit;
+
+                            if ((boat.MaxSumInsured == boat.OriginalBoat.MaxSumInsured && boat.BoatEffectiveDate == boat.OriginalBoat.BoatEffectiveDate &&
+                                boat.BoatCeaseDate == boat.OriginalBoat.BoatCeaseDate) ||
+                                (boat.BoatCeaseDate > DateTime.MinValue && boat.BoatCeaseReason == 3))
+                            {
+                                boatFslDiffer = 0m;
+                                boatPremiumDiffer = 0m;
+                                boatExcessDiffer = 0;
+                                boatTermLimitDiffer = 0;
+
+                                totalBoatFslDiffer += 0m;
+                                totalBoatPremiumDiffer += 0m;
+                                totalBoatTermLimitDiffer += 0;
+
+                            }
+                            else
+                            {
+                                if (boat.OriginalBoat.BoatCeaseDate > DateTime.MinValue && boat.BoatCeaseDate == DateTime.MinValue)
+                                {
+                                    boatFslDiffer = boatproratedFsl;
+                                    boatPremiumDiffer = boatproratedPremium;
+                                    boatExcessDiffer = boat.BoatQuoteExcessOption;
+                                    boatTermLimitDiffer = boat.MaxSumInsured;
+
+                                    totalBoatFslDiffer += boatproratedFsl;
+                                    totalBoatPremiumDiffer += boatproratedPremium;
+                                    totalBoatTermLimitDiffer += boat.MaxSumInsured;
+                                }
+                                else if (preboatperiodindays == 0)
+                                {
+                                    boatFslDiffer = boatproratedFsl - bvTermPre.FSL;
+                                    boatPremiumDiffer = boatproratedPremium - bvTermPre.Premium;
+                                    boatExcessDiffer = boat.BoatQuoteExcessOption - bvTermPre.Excess;
+                                    boatTermLimitDiffer = boat.MaxSumInsured - bvTermPre.TermLimit;
+
+                                    totalBoatFslDiffer += boatproratedFsl - bvTermPre.FSL;
+                                    totalBoatPremiumDiffer += boatproratedPremium - bvTermPre.Premium;
+                                    totalBoatTermLimitDiffer += (boat.OriginalBoat.BoatCeaseDate > DateTime.MinValue) ? (boat.MaxSumInsured) : (boat.MaxSumInsured - bvTermPre.TermLimit);
+                                }
+                                else
+                                {
+                                    boatFslDiffer = boatproratedFsl - (bvTermPre.FSL * boatperiodindays / preboatperiodindays);
+                                    boatPremiumDiffer = boatproratedPremium - (bvTermPre.Premium * boatperiodindays / preboatperiodindays);
+                                    boatExcessDiffer = boat.BoatQuoteExcessOption - bvTermPre.Excess;
+                                    boatTermLimitDiffer = boat.MaxSumInsured - bvTermPre.TermLimit;
+
+                                    totalBoatFslDiffer += boatproratedFsl - (bvTermPre.FSL * boatperiodindays / preboatperiodindays);
+                                    totalBoatPremiumDiffer += boatproratedPremium - (bvTermPre.Premium * boatperiodindays / preboatperiodindays);
+                                    totalBoatTermLimitDiffer += (boat.OriginalBoat.BoatCeaseDate > DateTime.MinValue) ? (boat.MaxSumInsured) : (boat.MaxSumInsured - bvTermPre.TermLimit);
+                                }
+                            }
+
+
+                        }
+                    }
+
+                }
+                else
+                {
+                    boatFslDiffer = boatproratedFsl;
+                    boatPremiumDiffer = boatproratedPremium;
+                    boatExcessDiffer = boat.BoatQuoteExcessOption;
+                    boatTermLimitDiffer = boat.MaxSumInsured;
+
+                    totalBoatFslDiffer += boatproratedFsl;
+                    totalBoatPremiumDiffer += boatproratedPremium;
+                    totalBoatTermLimitDiffer += boat.MaxSumInsured;
+                }
+
+                bvTerm.FSLPre = boatFslPre;
+                bvTerm.FSLDiffer = boatFslDiffer;
+                bvTerm.PremiumPre = boatPremiumPre;
+                bvTerm.PremiumDiffer = boatPremiumDiffer;
+                bvTerm.ExcessPre = boatExcessPre;
+                bvTerm.ExcessDiffer = boatExcessDiffer;
+                bvTerm.TermLimitPre = boatTermLimitPre;
+                bvTerm.TermLimitDiffer = boatTermLimitDiffer;
+
+                if (boat.BoatCeaseDate > DateTime.MinValue && boat.BoatCeaseReason == 4)
+                {
+                    bvTerm.TermCategory = "transfered";
+                }
+                else if (boat.BoatCeaseDate > DateTime.MinValue && boat.BoatCeaseReason != 4)
+                {
+                    bvTerm.TermCategory = "ceased";
+                }
+                else
+                {
+                    bvTerm.TermCategory = "active";
+                }
+                //===========
 
                 totalTermLimit += boat.MaxSumInsured;
                 totalTermFsl += boatproratedFsl;
