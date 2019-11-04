@@ -65,8 +65,9 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> MyProgrammes()
         {
             try {
-                var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser.PrimaryOrganisation);
-                var userRoles = CurrentUser.GetRoles().ToArray();
+                var user = await CurrentUser();
+                var programmes = _programmeRepository.FindAll().Where(p => p.Owner == user.PrimaryOrganisation);
+                var userRoles = user.GetRoles().ToArray();
                 var hasViewAllRole = userRoles.FirstOrDefault(r => r.Name == "CanViewAllInformation") != null;
                 if (hasViewAllRole) {
                     programmes = _programmeRepository.FindAll();
@@ -133,7 +134,8 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 // ClientProgramme programme = _programmeService.GetClientProgrammesForProgramme(Id);
-                foreach (var programme in _programmeService.GetClientProgrammesForProgramme(Id).Result)
+                var clientProgrammeList = await _programmeService.GetClientProgrammesForProgramme(Id);
+                foreach (var programme in clientProgrammeList)
                 {
                     Ownerlist.Add(programme.Owner);
                     clientProgrammes.Add(programme);
@@ -179,7 +181,7 @@ namespace TechCertain.WebUI.Controllers
         //            while ((line = reader.ReadLine()) != null)
         //            {
         //                string[] parts = line.Split(',');
-        //                BusinessActivity ba = new BusinessActivity(CurrentUser);
+        //                BusinessActivity ba = new BusinessActivity(CurrentUser());
 
         //                if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
         //                {
@@ -244,11 +246,11 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                Programme programme = _programmeService.GetProgramme(Guid.Parse(model.ActivityAttach.SelectedProgramme[0])).Result;
+                Programme programme = await _programmeService.GetProgramme(Guid.Parse(model.ActivityAttach.SelectedProgramme[0]));
                 foreach (string str in model.Builder.SelectedActivities)
                 {
-                    BusinessActivity businessActivity = _busActivityService.GetBusinessActivity(Guid.Parse(str)).Result;                    
-                    await _busActivityService.AttachClientProgrammeToActivities(programme, businessActivity).ConfigureAwait(false);
+                    BusinessActivity businessActivity = await _busActivityService.GetBusinessActivity(Guid.Parse(str));                    
+                    await _busActivityService.AttachClientProgrammeToActivities(programme, businessActivity);
                 }
           
                 return Redirect("~/Programme/ActivityBuilder");
@@ -281,6 +283,7 @@ namespace TechCertain.WebUI.Controllers
             };
 
             var classification = _busActivityService.GetBusinessActivities().GroupBy(ba => ba.Classification);
+            var user = await CurrentUser();
             foreach (var group in classification)
             {
                 var optionGroup = new SelectListGroup() { Name = group.Key.ToString() };
@@ -297,7 +300,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == CurrentUser.PrimaryOrganisation.Id))
+            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
             {
                 proglist.Add(new SelectListItem
                 {
@@ -320,10 +323,11 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CreateBusinessActivity(ActivityModal model)
         {
             //TODO: tidy up code use a list to loop through model 
+            var user = await CurrentUser();
             IList<BusinessActivity> BAList = new List<BusinessActivity>();
             if (model.ClassOne != null)
             {
-                BusinessActivity ba1 = new BusinessActivity(CurrentUser)
+                BusinessActivity ba1 = new BusinessActivity(user)
                 {
                     AnzsciCode = model.ClassOne.AnzsciCode,
                     Description = model.ClassOne.Description,
@@ -334,7 +338,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClassTwo != null)
             {
-                BusinessActivity ba2 = new BusinessActivity(CurrentUser)
+                BusinessActivity ba2 = new BusinessActivity(user)
                 {
                     AnzsciCode = model.ClassTwo.AnzsciCode,
                     Description = model.ClassTwo.Description,
@@ -345,7 +349,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClassThree != null)
             {
-                BusinessActivity ba3 = new BusinessActivity(CurrentUser)
+                BusinessActivity ba3 = new BusinessActivity(user)
                 {
                     AnzsciCode = model.ClassThree.AnzsciCode,
                     Description = model.ClassThree.Description,
@@ -356,7 +360,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClassFour != null)
             {
-                BusinessActivity ba4 = new BusinessActivity(CurrentUser)
+                BusinessActivity ba4 = new BusinessActivity(user)
                 {
                     AnzsciCode = model.ClassFour.AnzsciCode,
                     Description = model.ClassFour.Description,
@@ -367,7 +371,7 @@ namespace TechCertain.WebUI.Controllers
 
             foreach (BusinessActivity businessActivity in BAList)
             {
-               await _busActivityService.CreateBusinessActivity(businessActivity).ConfigureAwait(false);
+               await _busActivityService.CreateBusinessActivity(businessActivity);
             }
 
             return Redirect("/Programme/ActivityBuilder");
@@ -391,7 +395,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                Programme programme = _programmeService.GetProgramme(Guid.Parse(model.RoleAttach.SelectedProgramme[0])).Result;
+                Programme programme = await _programmeService.GetProgramme(Guid.Parse(model.RoleAttach.SelectedProgramme[0]));
                 foreach (string str in model.Builder.SelectedRoles)
                 {
                     //Role role = _roleService.GetRole(Guid.Parse(str));
@@ -412,11 +416,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SendInvoice(Guid programmeId)
         {
-            ClientProgramme programme = _programmeService.GetClientProgramme(programmeId).Result;
+            ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
             if (programme.EGlobalClientNumber == null)
             {
                 throw new NullReferenceException("Client number is null");
             }
+            var user = await CurrentUser();
 
             //var status = "Bound and invoiced";
 
@@ -443,7 +448,7 @@ namespace TechCertain.WebUI.Controllers
             //    if (invoiceDoc != null)
             //    {
 
-            //        SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, invoiceDoc, agreement).Result;
+            //        SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser(), invoiceDoc, agreement).Result;
             //        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
             //        documents.Add(renderedDoc);
             //        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents).ConfigureAwait(false);
@@ -462,11 +467,11 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
 
-            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser, _unitOfWork);
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
 
-            var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
+            var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
-            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
+            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
 
             if (programme.ClientAgreementEGlobalResponses.Count > 0)
             {
@@ -478,7 +483,6 @@ namespace TechCertain.WebUI.Controllers
                     {
                         if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
                         {
-                            var user = CurrentUser;
                             foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
                             {
                                 doc.Delete(user);
@@ -540,7 +544,8 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                foreach (var programme in _programmeService.GetClientProgrammesByOwner(ownerId).Result)
+                var programeListByOwner = await _programmeService.GetClientProgrammesByOwner(ownerId);
+                foreach (var programme in programeListByOwner)
                 {
                     clientProgrammes.Add(programme);
 
@@ -578,7 +583,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                ClientProgramme programme = _programmeService.GetClientProgramme(programmeId).Result;
+                ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
                 //foreach (var owner in programme)
                 //{
                 clientviewmodel.Name = programme.Owner.Name;
@@ -602,7 +607,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> EditBillingConfiguration(Guid programmeId)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            ClientProgramme programme = _programmeService.GetClientProgramme(programmeId).Result;
+            ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
             model.Id = programme.Id;
             model.BrokerContactUser = programme.BrokerContactUser;
             model.EGlobalBranchCode = programme.EGlobalBranchCode;
@@ -617,7 +622,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {
-            ClientProgramme programme = _programmeService.GetClientProgramme(programmeId).Result;
+            ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
             programme.EGlobalBranchCode = billingConfig[0];
             programme.EGlobalClientNumber = billingConfig[1];
             programme.EGlobalClientStatus = billingConfig[2];
@@ -644,7 +649,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                ClientProgramme programme = _programmeService.GetClientProgramme(programmeId).Result;
+                ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
                 //foreach (var owner in programme)
                 //{
                 clientviewmodel.Name = programme.Owner.Name;
@@ -667,7 +672,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveClientProgrammeDetails(Guid programme_id, ClientProgrammeInfoViewModel clientviewmodel, Guid id)
         {
-            ClientProgramme programme = _programmeService.GetClientProgramme(programme_id).Result;
+            ClientProgramme programme = await _programmeService.GetClientProgramme(programme_id);
 
             //clientviewmodel.Id = id;
             Guid ownerid = clientviewmodel.OwnerId;
@@ -809,13 +814,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {
-            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
 
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var rules = new List<Rule>();
             model.Id = Id;
             model.ProductId = productId;
-            var product = _productRepository.GetByIdAsync(productId).Result;
+            var product = await _productRepository.GetByIdAsync(productId);
             
             foreach (var rule in product.Rules)
             {
@@ -836,7 +841,7 @@ namespace TechCertain.WebUI.Controllers
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var rules = new List<Rule>();
             //model.Id = Id;
-            Rule Rule = _RuleService.GetRuleByID(rule.ClientAgreementRuleID).Result;
+            Rule Rule = await _RuleService.GetRuleByID(rule.ClientAgreementRuleID);
             if(Rule != null)
             {
                 try
@@ -847,7 +852,7 @@ namespace TechCertain.WebUI.Controllers
                         Rule.Description = rule.Description;
                         Rule.OrderNumber = rule.OrderNumber;
                         Rule.Value = rule.Value;
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
 
                 }
@@ -867,7 +872,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageRules(Guid Id)
         {
-            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
 
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var product = new List<ProductInfoViewModel>();
@@ -903,7 +908,7 @@ namespace TechCertain.WebUI.Controllers
         //    model.Parties = programme.Parties;
 
         //    //model.OrgUser = _organisationRepository.GetById(programme.Parties.);
-        //    //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser.PrimaryOrganisation);
+        //    //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
 
         //    ViewBag.Title = "Add/Edit Programme Email Template";
 
@@ -915,7 +920,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AddselectedParty(string[] selectedParty,Guid informationId)
         {
             PartyUserViewModel model = new PartyUserViewModel();
-            Programme programme = _programmeRepository.GetByIdAsync(informationId).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(informationId);
             //model.Id = informationId;
             //model.Parties = programme.Parties;
            
@@ -927,10 +932,10 @@ namespace TechCertain.WebUI.Controllers
                     {
                         foreach (var party in selectedParty)
                         {
-                            var user = _userService.GetUserByEmail(party).Result;
+                            var user = await _userService.GetUserByEmail(party);
                             programme.UISIssueNotifyUsers.Add(user);
                         }
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
                     
                 }
@@ -949,10 +954,10 @@ namespace TechCertain.WebUI.Controllers
             //PartyUserViewModel model = new PartyUserViewModel();
             PartyUserViewModel model = new PartyUserViewModel();
 
-            Programme programme = _programmeRepository.GetByIdAsync(informationId).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(informationId);
             //model.Id = informationId;
             //model.Parties = programme.Parties;
-            Organisation organisation = _organisationRepository.GetByIdAsync(selectedParty).Result;
+            Organisation organisation = await _organisationRepository.GetByIdAsync(selectedParty);
             List<PartyUserViewModel> selectedorg = new List<PartyUserViewModel>();
             if ("organisation" != null)
             {
@@ -1016,7 +1021,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         //        ////model.OrgUser = _organisationRepository.GetById(programme.Parties.);
-        //        ////var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser.PrimaryOrganisation);
+        //        ////var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
         //        //using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
         //        //{
         //        //    uow.Commit();
@@ -1036,13 +1041,13 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> IssueNotification(Guid Id)
         {
             var orguser = new List<string>();
-            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             model.Id = Id;
             model.Parties = programme.Parties;
 
             //model.OrgUser = _organisationRepository.GetById(programme.Parties.);
-            //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser.PrimaryOrganisation);
+            //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
 
             ViewBag.Title = "Add/Edit Programme Email Template";
 
@@ -1053,7 +1058,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> SendEmailTemplates(Guid Id, String type,String description)
         {
-            Programme programme = _programmeRepository.GetByIdAsync(Id).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
            
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == type);
             
@@ -1085,12 +1090,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmailTemplates(EmailTemplateViewModel model)
         {
-            Programme programme = _programmeRepository.GetByIdAsync(model.BaseProgrammeID).Result;
+            Programme programme = await _programmeRepository.GetByIdAsync(model.BaseProgrammeID);
 
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == model.Type);
 
             string emailtemplatename = null;
-
+            var user = await CurrentUser();
             switch (model.Type)
             {
                 case "SendSchemeEmail":
@@ -1155,7 +1160,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     emailTemplate.Subject = model.Subject;
                     emailTemplate.Body = model.Body;
-                    emailTemplate.LastModifiedBy = CurrentUser;
+                    emailTemplate.LastModifiedBy = user;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
                     await uow.Commit().ConfigureAwait(false);
                 }
@@ -1164,9 +1169,9 @@ namespace TechCertain.WebUI.Controllers
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    emailTemplate = new EmailTemplate(CurrentUser, emailtemplatename, model.Type, model.Subject, model.Body, null, programme);
+                    emailTemplate = new EmailTemplate(user, emailtemplatename, model.Type, model.Subject, model.Body, null, programme);
                     programme.EmailTemplates.Add(emailTemplate);
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
             }
 

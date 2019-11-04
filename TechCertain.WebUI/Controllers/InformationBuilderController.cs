@@ -109,7 +109,7 @@ namespace TechCertain.WebUI.Controllers
 		{
             try
             {
-                var user = CurrentUser;
+                var user = await CurrentUser();
 
                 InformationTemplate informationTemplate = new InformationTemplate (user, model.Title, null);
     

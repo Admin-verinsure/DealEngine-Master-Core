@@ -40,7 +40,8 @@ namespace TechCertain.Services.Impl
             if (ClientInformationSheet == null)
                 throw new ArgumentNullException(nameof(ClientInformationSheet));
 
-            if (!HasInformationId(ClientInformationSheet.Id).Result)
+            var hasInfoSheet = await HasInformationId(ClientInformationSheet.Id);
+            if (!hasInfoSheet)
             {
 
                 if (ClientInformationSheet.ReferenceId == null)
@@ -61,11 +62,13 @@ namespace TechCertain.Services.Impl
             if (ClientAgreementId == Guid.Empty)
                 throw new ArgumentNullException(nameof(ClientAgreementId));
 
-            if (!HasAgreementId(ClientAgreementId).Result)
+            var hasAgreement = await HasAgreementId(ClientAgreementId);
+            if (!hasAgreement)
             {
-                if (!HasReference(Reference).Result)
+                var hasReference = await HasReference(Reference);
+                if (!hasReference)
                 {
-                    Reference = GetLatestReferenceId().Result;
+                    Reference = await GetLatestReferenceId();
                 }
 
                 if (Reference == null)

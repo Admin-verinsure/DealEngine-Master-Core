@@ -54,7 +54,7 @@ namespace TechCertain.Services.Impl
 
 		public async Task<Organisation> GetOrganisation (Guid organisationId)
 		{
-			Organisation organisation = _organisationRepository.GetByIdAsync(organisationId).Result;
+			Organisation organisation = await _organisationRepository.GetByIdAsync(organisationId);
 			// have a repo organisation? Return it
 			if (organisation != null)
 				return organisation;

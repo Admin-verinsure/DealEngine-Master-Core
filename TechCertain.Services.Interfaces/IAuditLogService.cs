@@ -1,23 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
     public interface IAuditLogService
     {
-        AuditLog CreateNewAuditLog(AuditLog auditLog);
+        Task<AuditLog> CreateNewAuditLog(AuditLog auditLog);
 
-        void DeleteAuditLog(User deletedBy, AuditLog auditLog);
+        Task DeleteAuditLog(User deletedBy, AuditLog auditLog);
 
-        IQueryable<AuditLog> GetAllAuditLogs();
+        Task<List<AuditLog>> GetAllAuditLogs();
 
-        AuditLog GetAuditLog(Guid auditLogId);
+        Task<AuditLog> GetAuditLog(Guid auditLogId);
 
-        void UpdateAuditLog(AuditLog auditLog);
+        Task UpdateAuditLog(AuditLog auditLog);
 
-        IQueryable<AuditLog> GetAuditLogForAuditLogClientInformationSheet(ClientInformationSheet clientInformationSheet);
+        Task<List<AuditLog>> GetAuditLogForAuditLogClientInformationSheet(ClientInformationSheet clientInformationSheet);
 
-        IQueryable<AuditLog> GetAuditLogForAuditLogClientAgreement(ClientAgreement clientAgreement);
+        Task<List<AuditLog>> GetAuditLogForAuditLogClientAgreement(ClientAgreement clientAgreement);
     }
 }

@@ -39,7 +39,7 @@ namespace TechCertain.WebUI.Controllers
         {
             BaseListViewModel<OrganisationViewModel> organisations = new BaseListViewModel<OrganisationViewModel>();
 
-            User user = CurrentUser;
+            User user = await CurrentUser();
             foreach (Organisation org in user.Organisations)
             {
                 OrganisationViewModel model = new OrganisationViewModel
@@ -61,7 +61,8 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(OrganisationViewModel model)
         {
-            Organisation org = CurrentUser.Organisations.FirstOrDefault(o => o.Id == model.ID);
+            var user = await CurrentUser();
+            Organisation org = user.Organisations.FirstOrDefault(o => o.Id == model.ID);
             if (org != null)
             {
                 org.ChangeOrganisationName(model.OrganisationName);
@@ -113,27 +114,27 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrganisation()
         {
-            User user = null;
+            var user = await CurrentUser();
             var orgType = Request.Form["OrganisationType"];
             var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');          
 
-            OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName(orgType).Result;
+            OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgType);
             if (organisationType == null)
             {
-                organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, orgType).Result;
+                organisationType = await _organisationTypeService.CreateNewOrganisationType(user, orgType);
             }
 
             var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
-            InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName).Result;
+            InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
             if (insuranceAttribute == null)
             {
-                insuranceAttribute = _insuranceAttributeService.CreateNewInsuranceAttribute(CurrentUser, insuranceAttributeName).Result;
+                insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
             }
 
-            Organisation organisation = _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]).Result;
+            Organisation organisation = await _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
             if (organisation == null)
             {
-                organisation = new Organisation(CurrentUser, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
+                organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
                 organisation.Phone = Request.Form["OrganisationPhone"];
                 organisation.Email = Request.Form["OrganisationEmail"];
                 organisation.Domain = Request.Form["OrganisationWebsite"];
@@ -147,7 +148,7 @@ namespace TechCertain.WebUI.Controllers
 
                 organisation.InsuranceAttributes.Add(insuranceAttribute);
                 insuranceAttribute.IAOrganisations.Add(organisation);
-                _organisationService.CreateNewOrganisation(organisation);
+                await _organisationService.CreateNewOrganisation(organisation);
             }
 
             Random random = new Random();
@@ -155,17 +156,17 @@ namespace TechCertain.WebUI.Controllers
             var userName = "TCMarinaAdmin"+ rand;
             try
             {
-                user = _userService.GetUser(Request.Form["OrganisationUser"]).Result;
+                user = await _userService.GetUser(Request.Form["OrganisationUser"]);
             }
             catch (Exception)
             {
-                    user = new User(CurrentUser, Guid.NewGuid(), userName);
+                    user = new User(user, Guid.NewGuid(), userName);
                     user.FirstName = Request.Form["UserFirstName"];
                     user.LastName = Request.Form["UserLastName"];
                     user.FullName = user.FirstName + " " + user.LastName;
                     user.Email = Request.Form["UserEmail"];
                     user.Phone = Request.Form["UserPhone"];
-                    _userService.Create(user);
+                    await _userService.Create(user);
             }
 
             if (!user.Organisations.Contains(organisation))
@@ -198,14 +199,15 @@ namespace TechCertain.WebUI.Controllers
 
         public async Task<IActionResult> SetPrimary(Guid id)
         {
-            Organisation org = CurrentUser.Organisations.FirstOrDefault(o => o.Id == id);
+            var user = await CurrentUser();
+            Organisation org = user.Organisations.FirstOrDefault(o => o.Id == id);
             if (org != null)
             {
-                //CurrentUser.Organisations.Remove (org);
-                //CurrentUser.Organisations.Insert (0, org);
-                CurrentUser.SetPrimaryOrganisation(org);
+                //CurrentUser().Organisations.Remove (org);
+                //CurrentUser().Organisations.Insert (0, org);
+                user.SetPrimaryOrganisation(org);
 
-                _userService.Update(CurrentUser);
+                await _userService.Update(user);
             }
 
             return Redirect("~/Organisation/Index");
@@ -286,8 +288,9 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
         {
+            var user = await CurrentUser();
             _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
-                                                       new OrganisationType(CurrentUser, organisationViewModel.OrganisationTypeName),
+                                                       new OrganisationType(user, organisationViewModel.OrganisationTypeName),
                                                        organisationViewModel.FirstName,
                                                        organisationViewModel.LastName,
                                                        organisationViewModel.Email);
@@ -297,12 +300,13 @@ namespace TechCertain.WebUI.Controllers
 
         public async Task<IActionResult> CreateDefault()
         {
-            OrganisationType ot = new OrganisationType(CurrentUser, "financial");
+            var user = await CurrentUser();
+            OrganisationType ot = new OrganisationType(user, "financial");
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                _organisationService.UpdateOrganisation(new Organisation(CurrentUser, Guid.NewGuid(), "ANZ Bank", ot));
-                _organisationService.UpdateOrganisation(new Organisation(CurrentUser, Guid.NewGuid(), "ASB Bank", ot));
-                _organisationService.UpdateOrganisation(new Organisation(CurrentUser, Guid.NewGuid(), "BNZ Bank", ot));
+                await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ANZ Bank", ot));
+                await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ASB Bank", ot));
+                await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "BNZ Bank", ot));
 
                 await uow.Commit();
             }

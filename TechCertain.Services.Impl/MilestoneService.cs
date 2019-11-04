@@ -57,7 +57,7 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(emailContent))
                 throw new ArgumentNullException(nameof(emailContent));
 
-            SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType(template).Result;
+            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType(template);
             if (systemEmailTemplate != null)
             {
                 await _systemEmailRepository.AddNewSystemEmail(user, milestone.Activity.Name, null, subject, emailContent, template);

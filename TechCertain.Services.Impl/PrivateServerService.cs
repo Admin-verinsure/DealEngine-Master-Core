@@ -25,7 +25,8 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(serverName))
 				throw new ArgumentNullException(nameof(serverAddress));
 
-            if(!CheckExists(serverAddress).Result)
+            var serverExists = await CheckExists(serverAddress);
+            if (!serverExists)
                 await _privateServerRepository.AddAsync(new PrivateServer(createdBy, serverName, serverAddress));            
         }
 
@@ -46,11 +47,12 @@ namespace TechCertain.Services.Impl
 
         public async Task RemoveServer(User deletedBy, string serverAddress)
         {
-			// find private server that matches the specified address, and delete it
-			PrivateServer server = GetAllPrivateServers().Result.FirstOrDefault(ps => ps.ServerAddress == serverAddress);
+            // find private server that matches the specified address, and delete it
+            var serverList = await GetAllPrivateServers();
+            PrivateServer server = serverList.FirstOrDefault(ps => ps.ServerAddress == serverAddress);
 			if (server != null)
 			{
-                await _privateServerRepository.RemoveAsync(server);
+                await _privateServerRepository.UpdateAsync(server);
             }
 			// check that it has been removed, and return the inverse result
         }

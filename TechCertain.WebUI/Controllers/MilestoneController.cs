@@ -54,15 +54,16 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> MilestoneList()
         {
-            var templates = await _milestoneTemplateService.GetMilestoneTemplate(CurrentUser);
+            var user = await CurrentUser();
+            var templates = await _milestoneTemplateService.GetMilestoneTemplate(user);
             MilestoneListViewModel model = new MilestoneListViewModel
             {
                 MilestoneVM = new List<MilestoneConfigurationViewModel>(),                
             };
 
-            var avaliableProgrammes = await _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == CurrentUser.PrimaryOrganisation.Id).ToListAsync();
+            var avaliableProgrammes = await _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToListAsync();
 
-            if (CurrentUser.PrimaryOrganisation.IsTC)
+            if (user.PrimaryOrganisation.IsTC)
             {
                 avaliableProgrammes = await _programmeRepository.FindAll().Where(d => !d.DateDeleted.HasValue).ToListAsync();
             }
@@ -108,8 +109,9 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> MilestoneBuilder(string strProgrammeId, string strProgrammeProcessId)
         {
+            var user = await CurrentUser();
             Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
-            var templates = await _milestoneTemplateService.GetMilestoneTemplate(CurrentUser);
+            var templates = await _milestoneTemplateService.GetMilestoneTemplate(user);
 
             MilestoneTemplateVM milestoneTemplateVM = new MilestoneTemplateVM
             {
@@ -177,12 +179,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SubmitMilestone(MilestoneBuilderViewModel model)
         {
+            var user = await CurrentUser();
             Programme programme = await _programmeService.GetProgramme(model.ProgrammeId);
-            Milestone milestone = await _milestoneService.CreateMilestone(CurrentUser, Guid.Parse(model.ProgrammeProcessId), Guid.Parse(model.ActivityId), programme);
+            Milestone milestone = await _milestoneService.CreateMilestone(user, Guid.Parse(model.ProgrammeProcessId), Guid.Parse(model.ActivityId), programme);
 
             if (model.EmailTemplate.Body != null)
             {
-                await _milestoneService.CreateEmailTemplate(CurrentUser, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.ActivityId);
+                await _milestoneService.CreateEmailTemplate(user, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.ActivityId);
             }
 
             if (model.AdvisoryContent.Advisory != null)
@@ -192,7 +195,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.UserTask.Details != null)
             {
-                UserTask userTask = new UserTask(CurrentUser, CurrentUser.PrimaryOrganisation, "", model.UserTask.DueDate)
+                UserTask userTask = new UserTask(user, user.PrimaryOrganisation, "", model.UserTask.DueDate)
                 {
                     Priority = model.UserTask.Priority,
                     Description = model.UserTask.Description,

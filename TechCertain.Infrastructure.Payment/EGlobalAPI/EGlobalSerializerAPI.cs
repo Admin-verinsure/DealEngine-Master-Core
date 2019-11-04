@@ -28,7 +28,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
         /// </summary>
         /// <param name="objPolicy">Object policy.</param>
-        public string SerializePolicy(ClientProgramme programme, User currentUser, IUnitOfWork _unitOfWork)
+        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
         {
             string xml = "Failed to Serialize programme ";
             EGlobalAPI = new EGlobalAPI();
@@ -36,7 +36,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             {
                 foreach (Package package in programme.BaseProgramme.Packages)
                 {
-                    EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+                    EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
                     EGlobalPolicyAPI.CreatePolicyInvoice();
 
                     if (EGlobalPolicy != null)
@@ -49,7 +49,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         //Save the request transaction
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
-                            EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(currentUser);
+                            EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
                             eGlobalSubmission.SubmissionRequestXML = xml;
                             eGlobalSubmission.EGlobalSubmissionPackage = package;
                             programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
@@ -71,17 +71,17 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return xml;
         }
 
-        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User currentUser, IUnitOfWork _unitOfWork)
+        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
         {
             string xml = "Failed to Deserialize programme";            
             try
             {
-                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, currentUser, _unitOfWork);
+                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, CurrentUser, _unitOfWork);
 
                 ////Save the response transaction
                 //using (var uow = _unitOfWork.BeginUnitOfWork())
                 //{
-                //    EGlobalResponse eGlobalResponse = new EGlobalResponse(currentUser);
+                //    EGlobalResponse eGlobalResponse = new EGlobalResponse(CurrentUser());
                 //    eGlobalResponse.ResponseXML = xml;
                 //    programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
 
@@ -99,9 +99,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return xml;
         }
 
-        public void ReversePolicy(Package package, ClientProgramme programme, User currentUser)
+        public void ReversePolicy(Package package, ClientProgramme programme, User CurrentUser)
         {
-            EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+            EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
 
 
             Folder = EGlobalPolicy.FTPFolder;
@@ -123,9 +123,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             doc.LoadXml(gv_strXML);
         }
 
-        public void UpdatePolicy(Package package, ClientProgramme programme, User currentUser)
+        public void UpdatePolicy(Package package, ClientProgramme programme, User CurrentUser)
         {
-            EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+            EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
 
             Folder = EGlobalPolicy.FTPFolder;
 
@@ -146,9 +146,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         }
 
-        public void CancelPolicy(Package package, ClientProgramme programme, User currentUser)
+        public void CancelPolicy(Package package, ClientProgramme programme, User CurrentUser)
         {
-            EGlobalPolicy = GetEGlobalXML(package, programme, currentUser);
+            EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
 
             EGlobalPolicyAPI.CreateCancelPolicyInvoice();
             EGlobalPolicyAPI.SaveTransaction();
@@ -207,10 +207,10 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Gets the completed EGLobal XML object for the current policy
         /// </summary>
         /// <returns>The EGlobal XML.</returns>
-        public virtual EGlobalPolicy GetEGlobalXML(Package package, ClientProgramme programme, User currentUser)
+        public virtual EGlobalPolicy GetEGlobalXML(Package package, ClientProgramme programme, User CurrentUser)
         {
             EGlobalPolicy = new EGlobalPolicy(package, programme);
-            EGlobalPolicyAPI = new EGlobalPolicyAPI(EGlobalPolicy, currentUser);
+            EGlobalPolicyAPI = new EGlobalPolicyAPI(EGlobalPolicy, CurrentUser);
             EGlobalPolicyAPI.Setup();
             return EGlobalPolicy;
         }

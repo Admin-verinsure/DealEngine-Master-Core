@@ -47,7 +47,8 @@ namespace TechCertain.WebUI.Controllers
 
 			documents.Documents = new List<PolicyDocumentViewModel> ();
 
-			foreach (Old_PolicyDocumentTemplate doc in _policyDocumentService.GetDocumentTemplates().Result)
+            var documentTemplateList = await _policyDocumentService.GetDocumentTemplates();
+            foreach (Old_PolicyDocumentTemplate doc in documentTemplateList)
 			{
 				PolicyDocumentViewModel model = new PolicyDocumentViewModel ();
 				model.Creator = doc.Creator;
@@ -94,9 +95,10 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SubmitCompletedDocument(PolicyDocumentViewModel model)
 		{
-			Old_PolicyDocumentTemplate document = new Old_PolicyDocumentTemplate (CurrentUser, model.Title);
-			document.ChangeCreator(CurrentUser.FullName);
-			document.ChangeOwner(CurrentUser.FullName);
+            var user = await CurrentUser();
+			Old_PolicyDocumentTemplate document = new Old_PolicyDocumentTemplate (user, model.Title);
+			document.ChangeCreator(user.FullName);
+			document.ChangeOwner(user.FullName);
 			document.ChangeDescription (model.Description);
 			document.SetRevision(model.Revision);
 			document.ChangeText(model.Text);			
@@ -106,7 +108,7 @@ namespace TechCertain.WebUI.Controllers
 			document.SetCustomTerritory (model.CustomTerritory);
 			document.SetCustomJurisdiction (model.CustomJurisdiction);
 
-			_policyDocumentService.SaveDocumentTemplate (document);
+			await _policyDocumentService.SaveDocumentTemplate (document);
 
 			// TODO enable below when the Mono framework gets updated
 			//return RedirectToAction ("DocumentBuilder");
@@ -162,11 +164,12 @@ namespace TechCertain.WebUI.Controllers
 
 		public async Task<IActionResult> Risks (InsuranceRiskCategory category)
 		{
+            var user = await CurrentUser();
 			if (_riskRepository.FindAll().FirstOrDefault (r => r.Name == category.Name) != null)
 				return await Risks();
 
-			RiskCategory risk = new RiskCategory (CurrentUser, category.Name, category.Description);
-            _riskRepository.AddAsync(risk);
+			RiskCategory risk = new RiskCategory (user, category.Name, category.Description);
+            await _riskRepository.AddAsync(risk);
 
             return await Risks();
         }
@@ -188,7 +191,7 @@ namespace TechCertain.WebUI.Controllers
 			try 
 			{
 				// FIX - fields don't map nicely.
-				List<PolicyTermSection> sections = _termBuilderService.GetTerms(sidx, sord).Result;
+				List<PolicyTermSection> sections = await _termBuilderService.GetTerms(sidx, sord);
 				int perPage = Convert.ToInt32(rows);
 
 				JqGridViewModel model = new JqGridViewModel ();
@@ -196,14 +199,15 @@ namespace TechCertain.WebUI.Controllers
 				model.TotalRecords = sections.Count;
 				model.TotalPages = ((model.TotalRecords - 1) / perPage) + 1;
 
-				foreach (PolicyTermSection doc in sections)
+                foreach (PolicyTermSection doc in sections)
 				{
-					try
+                    var docCreator = await _userService.GetUser(doc.Creator);
+                    try
 					{
 						JqGridRow row = new JqGridRow(doc.Id);
 						row.AddValue(doc.Name);
-						row.AddValue(_userService.GetUser(doc.Creator).Result.FullName);
-						row.AddValue(_userService.GetUser(doc.Creator).Result.FullName);
+						row.AddValue(docCreator.FullName);
+						row.AddValue(docCreator.FullName);
 						row.AddValue(doc.Description);
 						row.AddValue("");
 						row.AddValue(doc.Version);
@@ -233,7 +237,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ViewDocumentTemplate(string id)
 		{
 			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId).Result;
+			Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate (documentId);
 
 			//Mapper.CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
 
@@ -246,7 +250,7 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> EditDocument(string id)
 		{
 			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId).Result;
+			Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate (documentId);
 			// increment revision
 			document.SetRevision(document.Revision + 1);
 
@@ -258,17 +262,17 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpPost]
-		public bool DeprecateDocument(string id)
+		public async Task<bool> DeprecateDocument(string id)
 		{
 			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = _policyDocumentService.GetDocumentTemplate (documentId).Result;
+			Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate (documentId);
 			document.SetDeprecated (true);
-			_policyDocumentService.SaveDocumentTemplate (document);
+			await _policyDocumentService.SaveDocumentTemplate (document);
 			return true;
 		}
 
 		[HttpGet]
-		public string RenderDocument()
+		public async Task<string> RenderDocument()
 		{
 			// TODO - just renders a pre selected document. Finish later when not pressed for time to finish the demo.
 
@@ -296,7 +300,7 @@ namespace TechCertain.WebUI.Controllers
 			mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", 		"18 Febuary 2016"));
 
 			// gets the most recent revision of the specified document and produces a complete version based off the merge fields
-			string document = _policyDocumentService.RenderDocument ("WAHAP Certificate", mergeFields).Result;
+			string document = await _policyDocumentService.RenderDocument ("WAHAP Certificate", mergeFields);
 
 			return document;
 		}
@@ -304,6 +308,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> SectionBuilder()
 		{
+            var user = await CurrentUser();
 			string[] locales = new string[] {
 				"Worldwide",
 				"Worldwide ex USA/Canada",
@@ -330,9 +335,9 @@ namespace TechCertain.WebUI.Controllers
 					//Content = "Insert some text here"
 				},
 				Description = new DescriptionSectionVM () {
-					Creator = CurrentUser.Id,
+					Creator = user.Id,
 					//Description = "A sample description",
-					Owner = CurrentUser.Id,
+					Owner = user.Id,
 					//Revision = 0,
 					//Name = "Sample Policy Section (Term)",
 					//Version = "1"
@@ -356,8 +361,9 @@ namespace TechCertain.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SubmitTermSection(PolicySectionVM model)
 		{
-			_termBuilderService.Create (
-				CurrentUser,
+            var user = await CurrentUser();
+			await _termBuilderService.Create (
+                user,
 				model.Description.Name,
 				model.Description.Description,
 				model.Description.Version,
@@ -395,16 +401,16 @@ namespace TechCertain.WebUI.Controllers
 			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
 
 			Guid termId = new Guid (id);
-			PolicyTermSection section = _termBuilderService.GetTerm(termId).Result;
-
-			PolicySectionVM model = new PolicySectionVM ();
+			PolicyTermSection section = await _termBuilderService.GetTerm(termId);
+            var sectionCreator = await _userService.GetUser(section.Creator);
+            PolicySectionVM model = new PolicySectionVM ();
 			model.Description = new DescriptionSectionVM () {
 				Creator = section.Creator,
-				CreatorName = _userService.GetUser(section.Creator).Result.FullName,
+				CreatorName = sectionCreator.FullName,
 				Description = section.Description,
 				Name = section.Name,
 				Owner = section.Owner,
-				OwnerName = _userService.GetUser(section.Creator).Result.FullName,
+				OwnerName = sectionCreator.FullName,
 				Revision = section.Revision,
 				Version = section.Version
 			};
@@ -448,16 +454,17 @@ namespace TechCertain.WebUI.Controllers
 			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
 
 			Guid termId = new Guid (id);
-            PolicyTermSection section = _termBuilderService.GetTerm(termId).Result;
+            PolicyTermSection section = await _termBuilderService.GetTerm(termId);
 
-			PolicySectionVM model = new PolicySectionVM ();
+            var sectionCreator = await _userService.GetUser(section.Creator);
+            PolicySectionVM model = new PolicySectionVM ();
 			model.Description = new DescriptionSectionVM () {
 				Creator = section.Creator,
-				CreatorName = _userService.GetUser(section.Creator).Result.FullName,
+				CreatorName = sectionCreator.FullName,
 				Description = section.Description,
 				Name = section.Name,
 				Owner = section.Owner,
-				OwnerName = _userService.GetUser(section.Creator).Result.FullName,
+				OwnerName = sectionCreator.FullName,
 				Revision = section.Revision + 1,
 				Version = section.Version
 			};
@@ -477,10 +484,11 @@ namespace TechCertain.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public bool DeprecateSection(string id)
+		public async Task<bool> DeprecateSection(string id)
 		{
+            var user = await CurrentUser();
 			Guid termId = new Guid (id);
-			_termBuilderService.Deprecate (CurrentUser, termId);
+			await _termBuilderService.Deprecate (user, termId);
 			return true;
 		}
     }

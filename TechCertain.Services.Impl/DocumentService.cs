@@ -37,7 +37,7 @@ namespace TechCertain.Services.Impl
 
 		public async Task<List<Old_PolicyDocumentTemplate>> GetDocumentTemplates()
 		{
-			List<Old_PolicyDocumentTemplate> documents = _old_policyDocumentRepository.FindAll().ToListAsync().Result;
+			List<Old_PolicyDocumentTemplate> documents = await _old_policyDocumentRepository.FindAll().ToListAsync();
 
 			return documents;
 		}
@@ -63,7 +63,8 @@ namespace TechCertain.Services.Impl
 
 		public async Task<string> RenderDocument(string documentTitle, List<KeyValuePair<string, string>> mergeFields)
 		{
-			Old_PolicyDocumentTemplate template = GetDocumentTemplates().Result.Where(t => t.Title == documentTitle).OrderByDescending(t => t.Revision).FirstOrDefault();
+            var templateList = await GetDocumentTemplates();
+            Old_PolicyDocumentTemplate template = templateList.Where(t => t.Title == documentTitle).OrderByDescending(t => t.Revision).FirstOrDefault();
 
 			if (template == null)
 				return "";
