@@ -763,8 +763,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EGlobalPolicy.DiscountRate = 1m;
 
             // Get Broker Info
-            EbixUser = CurrentUser.SalesPersonUserName;
-            EbixDepartment = CurrentUser.DefaultOU.EbixDepartmentCode;
+            EbixUser = EGlobalPolicy.ClientProgramme.BrokerContactUser.SalesPersonUserName;
+            EbixDepartment = EGlobalPolicy.ClientProgramme.BrokerContactUser.DefaultOU.EbixDepartmentCode;
 
             // Create the Queue
             EGlobalPolicy.Queue = new EBixQueue()
@@ -886,36 +886,20 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             {
                 throw new Exception("EGlobalPolicy is empty");
             }
-            
-            return EGlobalPolicy.ClientProgramme.InformationSheet.Product.OrderNumber; //placeholder
-            /*int version = 0;
-            using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
+
+            int version = 0;
+            if (EGlobalPolicy.ClientProgramme.ClientAgreementEGlobalResponses.Count > 0)
             {
-                //string strCmd = "SELECT COUNT(invoiceID) FROM tbleglobalinvoicesubmission WHERE quoteID = @QuoteID;";
-                string strCmd = "SELECT versionnumber FROM tbleglobalinvoiceresponse WHERE quoteid = @QuoteID AND " +
-                                "responsetype = 'update' ORDER BY datecreated DESC LIMIT 1";
-                using (NpgsqlCommand sqlCmd = new NpgsqlCommand(strCmd, conn))
+                foreach (EGlobalResponse eGlobalResponse in EGlobalPolicy.ClientProgramme.ClientAgreementEGlobalResponses)
                 {
-                    sqlCmd.Parameters.Add("@QuoteID", NpgsqlDbType.Uuid).Value = TCPolicy.ID;
-                    try
+                    if (eGlobalResponse.MasterAgreementReferenceID == gv_strMasterAgreementReference)
                     {
-                        conn.Open();
-                        version = TC_Shared.CNullInt(sqlCmd.ExecuteScalar(), -1) + 1;
-                    }
-                    catch (Exception ex)
-                    {
-                        TC_Shared.LogEvent(TC_Shared.EventType.Bug,
-                            "Error getting version # for EGlobal contract " + Policy.ExternalSystemContractID,
-                            ex.InnerException.ToString());
-                    }
-                    finally
-                    {
-                        if (conn.State != ConnectionState.Closed)
-                            conn.Close();
+                        version = eGlobalResponse.VersionNumber + 1;
                     }
                 }
             }
-            return version;*/
+            
+            return version;
         }
 
         public static void SetResponseID(Guid responseID, Guid invoiceID)
@@ -973,7 +957,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EBixPolicy.Branch = EGlobalPolicy.ClientProgramme.EGlobalBranchCode;
             EBixPolicy.IncomeClass = EGlobalPolicy.IncomeClass;
 
-            EBixPolicy.Department = EbixDepartment; //placeholder
+            EBixPolicy.Department = EbixDepartment;
             EBixPolicy.RiskCode = EGlobalPolicy.Package.RiskCode;
             EBixPolicy.UserIDServ = EbixUser;
             EBixPolicy.CreatedByUser = EbixUser;
@@ -992,7 +976,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EBixPolicy.DirectCredit = 0;
             EBixPolicy.BillingCurrencyRate = 1;
             EBixPolicy.ExternalSystem = -1;
-            EBixPolicy.ExternalSystemVersionNumber = 000;// GetVersionCount();
+            EBixPolicy.ExternalSystemVersionNumber = GetVersionCount();
             EBixPolicy.VersionNumber = EBixPolicy.BillingCurrencyRate.ToString();
             EBixPolicy.LastMajorTrans = "N";
             EBixPolicy.TermsofTradeCode = "NRML";

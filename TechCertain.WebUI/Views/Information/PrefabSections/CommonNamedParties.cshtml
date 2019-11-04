@@ -123,7 +123,7 @@
                         <div class="row" id="update">
                             <section class="col col-xs-12">
                                 <button onclick="ValidateNamedParty('#NamedPartyTabs2', '#NamedParties','NamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-                                <button onclick="ClearBoats('#NamedPartyTabs2','NamedPartyTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                                <button onclick="ClearBoats(event,'#NamedPartyTabs2','NamedPartyTabs1 ')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                                 @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateNamedParty('#NamedPartyTabs-2', '#NamedParties','NamedPartyTabs-1');" }).Class("btn-sm").Id("updateBoat")
 
@@ -334,7 +334,7 @@
                     <div class="row" id="update">
                         <section class="col col-xs-12">
                             <button onclick="ValidateAddNamedParty('#NamedPartyTabs3', '#NamedParties','NamedPartyTabs1')" class="btn-sm AddupdateBoat" id="AddupdateParty">Add</button>
-                            <button onclick="ClearBoats('#NamedPartyTabs3','NamedPartyTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
+                            <button onclick="ClearBoats(event,'#NamedPartyTabs3','NamedPartyTabs1')" class="btn-sm AddClearBoat" id="AddClearBoat">Clear and Cancel</button>
 
                             @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddNamedParty('#NamedPartyTabs-3', '#NamedParties','NamedPartyTabs-1');" }).Class("btn-sm").Id("AddupdateParty")
 

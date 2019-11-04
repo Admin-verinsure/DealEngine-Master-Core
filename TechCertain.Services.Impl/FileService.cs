@@ -144,6 +144,21 @@ namespace TechCertain.Services.Impl
 
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
             mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
+            //Eglobal merge fields
+            if (agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Count > 0)
+            {
+                EGlobalResponse eGlobalResponse = agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                if (eGlobalResponse != null)
+                {
+                    if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
+                    }
+                }
+            }
             //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
             //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
             mergeFields.Add (new KeyValuePair<string, string> ("[[InceptionDate]]", agreement.InceptionDate.ToString ("dd/MM/yyyy")));

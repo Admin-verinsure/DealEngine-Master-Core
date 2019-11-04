@@ -42,7 +42,6 @@ namespace TechCertain.Services.Impl
 		{
 			get {
                 return _configuration.GetValue<string>("EnableMail");
-                //return ConfigurationManager.AppSettings["EnableMail"];
             }
 		}
 
@@ -50,7 +49,6 @@ namespace TechCertain.Services.Impl
 		{
 			get {
                 return _configuration.GetValue<string>("SmtpServer");
-                //return ConfigurationManager.AppSettings["SmtpServer"];
             }
 		}
 
@@ -58,7 +56,6 @@ namespace TechCertain.Services.Impl
 		{
 			get {
                 return _configuration.GetValue<int>("SmtpPort");
-                //return Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
             }
 		}
 
@@ -66,7 +63,6 @@ namespace TechCertain.Services.Impl
 		{
 			get {
                 return _configuration.GetValue<string>("SenderEmail");
-                //return ConfigurationManager.AppSettings["SenderEmail"];
             }
 		}
 
@@ -81,11 +77,25 @@ namespace TechCertain.Services.Impl
 		{
 			get {
                 return _configuration.GetValue<string>("CatchAllEmail");
-                //return ConfigurationManager.AppSettings["CatchAllEmail"];
             }
-		}		
+		}
 
-		public async Task SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
+        public string BCCEmail
+        {
+            get
+            {
+                return _configuration.GetValue<string>("BCCEmail");
+            }
+        }
+        public string ReplyToEmail
+        {
+            get
+            {
+                return _configuration.GetValue<string>("ReplyToEmail");
+            }
+        }
+
+        public async Task SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
 		{
 			var user = _userService.GetUserByEmail(recipent).Result;
 
@@ -105,7 +115,7 @@ namespace TechCertain.Services.Impl
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
-			email.WithSubject ("Proposalonline Password Reset");
+            email.WithSubject ("Deal Engine Password Reset");
 			email.WithBody (body);
 			email.UseHtmlBody (true);
 			email.Send ();
@@ -118,7 +128,7 @@ namespace TechCertain.Services.Impl
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
-			email.WithSubject (emailTemplate.Subject);
+            email.WithSubject (emailTemplate.Subject);
 			email.WithBody (body);
 			email.UseHtmlBody (true);
             if(documents != null)
@@ -386,11 +396,9 @@ namespace TechCertain.Services.Impl
                     systememailbody = systememailbody.Replace(field.Key, field.Value);
                 }
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
-                systememail.From("postmaster@techcertain.com");
-                //systememail.From(DefaultSender);
-                //systememail.To(recipent.ToArray());
-                systememail.To("postmaster@techcertain.com");
-                if (programme.ProgrammeEmailCCToBroker)
+                systememail.From(DefaultSender);
+                systememail.To(recipent.ToArray());
+                if (programme.ProgrammeEmailCCToBroker && programme.BrokerContactUser != null)
                 {
                     //systememail.CC(sheet.Programme.BrokerContactUser.Email);
                 }
@@ -588,9 +596,9 @@ namespace TechCertain.Services.Impl
                 EmailBuilder systememail = await GetLocalizedEmailBuilder(DefaultSender, null);
                 systememail.From(DefaultSender);
                 systememail.To(recipent.ToArray());
-                if (programme.ProgrammeEmailCCToBroker)
+                if (programme.ProgrammeEmailCCToBroker && programme.BrokerContactUser != null)
                 {
-                    systememail.CC(sheet.Programme.BrokerContactUser.Email);
+                    //systememail.CC(sheet.Programme.BrokerContactUser.Email);
                 }
                 systememail.WithSubject(systememailsubject);
                 systememail.WithBody(systememailbody);
@@ -630,7 +638,12 @@ namespace TechCertain.Services.Impl
             {
                 if (recipient != null)
                 {
-                    email.To(recipient).BCC(SystemEmail);
+                    email.To(recipient).BCC(BCCEmail);
+                    //email.To(recipient).BCC(SystemEmail);
+                    if (ReplyToEmail != null)
+                    {
+                        email.ReplyTo();
+                    }
                 }
             }
             else

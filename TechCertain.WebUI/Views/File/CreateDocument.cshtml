@@ -1,6 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.DocumentViewModel
-<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
+<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
 <div id="content" style="background-color: #A6E2EF">
     <!-- widget grid -->
@@ -15,7 +15,7 @@
                          data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 
                         <header style="background-color:#EF4E45; color:white">
-                            <h2>Get Insurance</h2>
+                            <h2>Document</h2>
                         </header>
 
 
@@ -29,7 +29,7 @@
                                     <div id="CreateDocsmartwizard" class="sw-main sw-theme-circles">
                                         <ul class="nav nav-tabs step-anchor">
                                             <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Start</small></a></li>
-                                            <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Quote</small></a></li>
+                                            <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Review</small></a></li>
                                             <li class="nav-item"><a href="#tab3" class="nav-link">3<br><small>Agree</small></a></li>
 
                                         </ul>
@@ -39,7 +39,7 @@
                                                 <h3><strong>Details </strong> - Complete Information</h3>
                                                 @Html.HiddenFor(m => m.DocumentId)
                                                 <br />
-                                                <h3><strong>Setup </strong> - New Document</h3>
+                                                <h3><strong>Setup </strong></h3>
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <div class="form-group">
@@ -80,18 +80,10 @@
 
                                             </div>
                                             <div id="tab2" class="tab-pane step-content">
-                                                <h3><strong>Quote </strong></h3>
-                                                @Html.TextAreaFor(m => m.Content, new { id = "editor", name = "content", cols = "10", rows = "80" })
-                                                @*<textarea name="content" id="editor">
-                                                    &lt;p&gt;This is some sample content.&lt;/p&gt;
-                                                    </textarea>*@
-                                                <script>
-                                                    ClassicEditor
-                                                        .create(document.querySelector('#editor'))
-                                                        .catch(error => {
-                                                            console.error(error);
-                                                        });
-                                                </script>
+                                                <h3><strong>Review </strong></h3>
+                                                @Html.TextAreaFor(m => m.Content)
+
+
 
                                             </div>
                                             <div id="tab3" class="tab-pane step-content">
@@ -128,7 +120,15 @@
     <script type="text/javascript">
 
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
-
+                                                           let editor;
+                                                   ClassicEditor
+                                                               .create( document.querySelector( '#Content' ) )
+                                                               .then( newEditor => {
+                                                                editor = newEditor;
+                                                               } )
+                                                                 .catch( error => {
+                                                                 console.error( error );
+                                                                  } );
 $(document).ready(function () {
 
            $('#CreateDocsmartwizard').smartWizard({
@@ -172,11 +172,24 @@ $(document).ready(function () {
 
              if (confirm("Are you sure you want to submit this document?")) {
                  console.log("submitted!");
+                  
+
+                      const body = editor.getData();
+                 var bodyElement = $("#@Html.IdFor(m => m.Content)").val();
+			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
+			// using hack because escape(...) was deprecated
+                 bodyElement.text(bodyElement.text(body).html());
+
+
+
+
+                 var content = document.getElementById("editor");
+
 
                  $.ajax({
                      type: "POST",
                      url: '@Url.Action("CreateDocument", "File")',
-                     data: $("#wizard-1").serialize() // serializes the form's elements.
+                     data: $("#wizard-1").serialize() ,
                  })
                      .done(function (json) {
                          //var model = JSON.parse(json);
@@ -197,6 +210,9 @@ $(document).ready(function () {
 
 
 });
+
+
+
     </script>
 
 }

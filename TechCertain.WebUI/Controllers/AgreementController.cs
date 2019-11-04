@@ -1411,6 +1411,39 @@ namespace TechCertain.WebUI.Controllers
 
             eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
 
+            if (programme.ClientAgreementEGlobalResponses.Count > 0)
+            {
+                EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                if (eGlobalResponse != null)
+                {
+                    var documents = new List<SystemDocument>();
+                    foreach (ClientAgreement agreement in programme.Agreements)
+                    {
+                        if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+                        {
+                            var user = CurrentUser;
+                            foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
+                            {
+                                doc.Delete(user);
+                            }
+                            foreach (SystemDocument template in agreement.Product.Documents)
+                            {
+                                //render docs invoice
+                                if (template.DocumentType == 4)
+                                {
+                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    agreement.Documents.Add(renderedDoc);
+                                    documents.Add(renderedDoc);
+                                    await _fileService.UploadFile(renderedDoc);
+                                }
+                            }
+                        }
+                    }
+                }
+ 
+            }
+            
             return Redirect("~/Agreement/ViewAcceptedAgreement/" + programme.Id.ToString());
         }
 
@@ -1423,6 +1456,7 @@ namespace TechCertain.WebUI.Controllers
             //QueryString queryString = HttpContext.Request.QueryString;
             string queryString = HttpContext.Request.Query["result"].ToString();
             var status = "Bound";
+            var user = CurrentUser;
 
             ClientProgramme programme = await _programmeRepository.GetByIdAsync(Id);
             Payment payment = await _paymentService.GetPayment(programme.Id);
@@ -1490,15 +1524,39 @@ namespace TechCertain.WebUI.Controllers
                 //    }
                 //}
 
-
-                var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
-
-                if (hasEglobalNo)
+                //var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
+                status = "Bound and invoice pending";
+                bool hasEglobalNo = false;
+                if (programme.EGlobalClientNumber != "")
                 {
-                    status = "Bound and invoiced";
+                    hasEglobalNo = true;
                 }
-                else
-                    status = "Bound and invoice pending";
+
+                bool eglobalsuccess = false;
+
+                //if (hasEglobalNo)
+                //{
+                //    status = "Bound and invoiced";
+
+                //    var eGlobalSerializer = new EGlobalSerializerAPI();
+                                       
+                //    var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
+
+                //    var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
+
+                //    eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
+
+                //    if (programme.ClientAgreementEGlobalResponses.Count > 0)
+                //    {
+                //        EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                //        if (eGlobalResponse != null)
+                //        {
+                //            eglobalsuccess = true;
+                //        }
+
+                //    }
+
+                //}
 
                 var documents = new List<SystemDocument>();
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1512,8 +1570,6 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
 
-                    var user = CurrentUser;
-
                     agreement.Status = status;
 
                     foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
@@ -1522,8 +1578,18 @@ namespace TechCertain.WebUI.Controllers
                     }
                     foreach (SystemDocument template in agreement.Product.Documents)
                     {
-                        //render docs except invoice
-                        if (template.DocumentType != 4)
+                        if (!eglobalsuccess)
+                        {
+                            //render docs except invoice
+                            if (template.DocumentType != 4)
+                            {
+                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                agreement.Documents.Add(renderedDoc);
+                                documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
+                            }
+                        } else
                         {
                             SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
@@ -1531,7 +1597,7 @@ namespace TechCertain.WebUI.Controllers
                             documents.Add(renderedDoc);
                             await _fileService.UploadFile(renderedDoc);
                         }
-
+                        
                     }
                     //else
                     //{
@@ -1589,14 +1655,7 @@ namespace TechCertain.WebUI.Controllers
                     model.ClientAgreementId = agreement.Id;
                     foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
                     {
-                        if(doc.DocumentType == 4)
-                        {
-                            if(programme.EGlobalClientNumber != null)
-                            {
-                                model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
-                            }
-                        } else
-                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
+                        model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
                     }
                 }
             }

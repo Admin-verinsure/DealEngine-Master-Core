@@ -13,6 +13,7 @@ using TechCertain.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Product;
 using System.Threading.Tasks;
+using TechCertain.Infrastructure.Payment.EGlobalAPI;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -32,13 +33,14 @@ namespace TechCertain.WebUI.Controllers
         IFileService _fileService;
         IEmailService _emailService;
         IRuleService _RuleService;
-        IMapper _mapper;        
+        IMapper _mapper;
+        IHttpClientService _httpClientService;
 
         public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRuleService ruleService, IMapperSession<Document> documentRepository,
                                  IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
-                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper)
+                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IHttpClientService httpClientService)
             : base (userRepository)
         {            
             _informationService = informationService;
@@ -56,6 +58,7 @@ namespace TechCertain.WebUI.Controllers
             _fileService = fileService;
             _emailService = emailService;
             _mapper = mapper;
+            _httpClientService = httpClientService;
         }
 
         [HttpGet]
@@ -415,42 +418,114 @@ namespace TechCertain.WebUI.Controllers
                 throw new NullReferenceException("Client number is null");
             }
 
-            var status = "Bound and invoiced";
+            //var status = "Bound and invoiced";
 
-            EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-            if(emailTemplate == null)
+            //EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+            //if(emailTemplate == null)
+            //{
+            //    throw new NullReferenceException("send policy documents template email not set up");
+            //}
+
+            //foreach (ClientAgreement agreement in programme.Agreements)
+            //{
+            //    using (var uow = _unitOfWork.BeginUnitOfWork())
+            //    {
+            //        if (agreement.Status != status)
+            //        {
+            //            agreement.Status = status;
+            //            await uow.Commit().ConfigureAwait(false);
+            //        }
+            //    }
+
+            //    var documents = new List<SystemDocument>();
+
+            //    var invoiceDoc = agreement.Documents.FirstOrDefault(d => d.DateDeleted == null && d.DocumentType == 4);
+            //    if (invoiceDoc != null)
+            //    {
+
+            //        SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, invoiceDoc, agreement).Result;
+            //        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+            //        documents.Add(renderedDoc);
+            //        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents).ConfigureAwait(false);
+            //        await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner).ConfigureAwait(false);
+            //    }    
+            //    else
+            //        throw new NullReferenceException("No Invoice file");
+
+            //}
+
+            var eGlobalSerializer = new EGlobalSerializerAPI();
+
+            //check Eglobal parameters
+            if (string.IsNullOrEmpty(programme.EGlobalClientNumber))
             {
-                throw new NullReferenceException("send policy documents template email not set up");
+                throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
 
-            foreach (ClientAgreement agreement in programme.Agreements)
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, CurrentUser, _unitOfWork);
+
+            var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
+
+            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, CurrentUser, _unitOfWork);
+
+            if (programme.ClientAgreementEGlobalResponses.Count > 0)
             {
-                using (var uow = _unitOfWork.BeginUnitOfWork())
+                EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                if (eGlobalResponse != null)
                 {
-                    if (agreement.Status != status)
+                    var documents = new List<SystemDocument>();
+                    foreach (ClientAgreement agreement in programme.Agreements)
                     {
+                        if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+                        {
+                            var user = CurrentUser;
+                            foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
+                            {
+                                doc.Delete(user);
+                            }
+                            foreach (SystemDocument template in agreement.Product.Documents)
+                            {
+                                //render docs invoice
+                                if (template.DocumentType == 4)
+                                {
+                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                    agreement.Documents.Add(renderedDoc);
+                                    documents.Add(renderedDoc);
+                                    await _fileService.UploadFile(renderedDoc);
+                                }
+                            }
+                        }
+                    }
+
+                    var status = "Bound and invoiced";
+                    foreach (ClientAgreement agreement in programme.Agreements)
+                    {
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            if (agreement.Status != status)
+                            {
+                                agreement.Status = status;
+                                await uow.Commit().ConfigureAwait(false);
+                            }
+                        }
                         agreement.Status = status;
-                        await uow.Commit().ConfigureAwait(false);
+                    }
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (programme.InformationSheet.Status != status)
+                        {
+                            programme.InformationSheet.Status = status;
+                            await uow.Commit().ConfigureAwait(false);
+                        }
                     }
                 }
 
-                var documents = new List<SystemDocument>();
-
-                var invoiceDoc = agreement.Documents.FirstOrDefault(d => d.DateDeleted == null && d.DocumentType == 4);
-                if (invoiceDoc != null)
-                {
-                    
-                    SystemDocument renderedDoc = _fileService.RenderDocument(CurrentUser, invoiceDoc, agreement).Result;
-                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                    documents.Add(renderedDoc);
-                    await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents).ConfigureAwait(false);
-                    await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner).ConfigureAwait(false);
-                }    
-                else
-                    throw new NullReferenceException("No Invoice file");
-                
             }
-            return Redirect("/EditBillingConfiguration" + programmeId);
+
+            //return Redirect("/EditBillingConfiguration" + programmeId);
+            var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
+            return Json(new { url });
         }
 
         [HttpGet]
@@ -548,13 +623,13 @@ namespace TechCertain.WebUI.Controllers
             programme.EGlobalClientStatus = billingConfig[2];
             if (string.IsNullOrEmpty(billingConfig[3]))
             {
-                programme.HasEGlobalCustomDescription = true;
+                programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
                 programme.EGlobalCustomDescription = billingConfig[3];
             }
             else
             {
-                programme.HasEGlobalCustomDescription = false;
-                programme.EGlobalCustomDescription = null;
+                programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
+                programme.EGlobalCustomDescription = billingConfig[3]; 
             }
                     
             await _programmeService.Update(programme).ConfigureAwait(false);
@@ -713,7 +788,24 @@ namespace TechCertain.WebUI.Controllers
             return View(model);
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> TermSheetConfirguration(Guid Id)
+        {
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
+            try
+            {
+                model.Id = Id;
+                model.programmeName = programme.Name;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            ViewBag.Title = "Term Sheet Template ";
+            return View(model);
+        }
+
         [HttpGet]
         public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {

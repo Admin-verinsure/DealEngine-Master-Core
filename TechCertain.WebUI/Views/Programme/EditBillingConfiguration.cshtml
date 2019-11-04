@@ -28,7 +28,7 @@
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
                     <header>
                         <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2> Reference: @Model.Id</h2>
+                        <h2> </h2>
                     </header>
                     @*<div class="row">*@
 
@@ -38,20 +38,20 @@
 
                                 <tr>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <b>Client Number:</b>
                                     </td>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <select class="browser-default custom-select custom-select-lg mb-3 col-sm-3" id="branch">
                                             <option selected="selected" value="">-- Select here --</option>
-                                            <option>AKL</option>
-                                            <option>CHC</option>
-                                            <option>DUN</option>
-                                            <option>NAP</option>
-                                            <option>NPL</option>
-                                            <option>TGA</option>
-                                            <option>WEL</option>
+                                            <option value="AKL">AKL</option>
+                                            <option value="CHC">CHC</option>
+                                            <option value="DUN">DUN</option>
+                                            <option value="NAP">NAP</option>
+                                            <option value="NPL">NPL</option>
+                                            <option value="TGA">TGA</option>
+                                            <option value="WEL">WEL</option>
                                         </select>
                                         <div style="text-align:right" class="col-sm-5">
                                             <input id="clientId" class="form-control" type="text">
@@ -61,29 +61,29 @@
 
                                 <tr>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <b>Contact Broker</b>
                                     </td>
 
-                                    <td align="center">
+                                    <td align="left">
                                         @Model.BrokerContactUser.FullName
                                     </td>
 
                                 </tr>
                                 <tr>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <b>Broker Branch</b>
                                     </td>
 
-                                    <td align="center">
+                                    <td align="left">
                                         Implement later
                                     </td>
 
                                 </tr>
                                 <tr>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <b>Client Status</b>
                                     </td>
 
@@ -92,8 +92,8 @@
                                             <div class="col-sm-5" style="text-align: center">
                                                 <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
                                                     <option selected="selected" value="">-- Select here --</option>
-                                                    <option>New</option>
-                                                    <option>Renew</option>
+                                                    <option value="New">New</option>
+                                                    <option value="Renew">Renew</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -101,13 +101,19 @@
                                 </tr>
                                 <tr>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <b>Transaction Description</b>
                                     </td>
 
-                                    <td align="center">
+                                    <td align="left">
                                         <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" id="TransactionRadio" name="defaultExampleRadios">
+                                            <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="TransactionRadio">
+                                                <option selected="selected" value="">-- Select here --</option>
+                                                <option value="True">Yes</option>
+                                                <option value="False">No</option>
+                                            </select>
+
+                                            @*<input type="radio" class="custom-control-input" id="TransactionRadio" name="defaultExampleRadios">*@
                                             <label class="custom-control-label" for="defaultUnchecked">Use custom transaction description</label>
                                         </div>
                                         <div class="form-group">
@@ -143,6 +149,19 @@
 
     <script>
 
+        $(window).on("load", function () {
+            debugger;
+            $('#branch').val(@Model.EGlobalBranchCode);
+            $('#clientStatus').val(@Model.EGlobalClientStatus);
+            $('#clientId').val(@Model.EGlobalClientNumber);
+            $('#TransactionRadio').val(@Model.HasEGlobalCustomDescription);
+            $('TransactionComment').val(@Model.EGlobalCustomDescription);
+
+
+
+        });
+
+
         var bcdata = [];
         var programmeId;
 
@@ -153,7 +172,7 @@
             $.ajax({
             type: "POST",
             url: "@Url.Action("SendInvoice", "Programme")",
-            data: { programmeId : programmeId },                
+            data: { programmeId : programmeId },
             traditional: true,
             })
                 .done(function (data) {
@@ -163,6 +182,7 @@
                     //    iconSmall: "fa fa-check bounce animated",
                     //    timeout: 4000
                     //});
+                    window.location.href = data.url;
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     alert("There was an error while trying to send your invoice.");
@@ -188,7 +208,7 @@
                     alert("Saved.");
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                    alert("There was an error while trying to save billing configuration.");
+                    alert("You are going to save billing configuration.");
                 });
         }
 
@@ -205,9 +225,25 @@
             var clientId = document.getElementById("clientId").value;
             var clientStatus = document.getElementById("clientStatus").value;
             var TransactionComment = document.getElementById("TransactionComment").value;
-            bcdata = [branch, clientId, clientStatus, TransactionComment];
+            var TransactionRadio = document.getElementById("TransactionRadio").value;
+            bcdata = [branch, clientId, clientStatus, TransactionComment,TransactionRadio];
         }
 
     </script>
 
 }
+
+
+    <script>
+
+        $(window).on("load", function () {
+            debugger;
+            $('#branch').val("@Model.EGlobalBranchCode");
+            $('#clientStatus').val("@Model.EGlobalClientStatus");
+            $('#clientId').val("@Model.EGlobalClientNumber");
+            $('#TransactionRadio').val("@Model.HasEGlobalCustomDescription");
+            $('TransactionComment').val("@Model.EGlobalCustomDescription");
+
+        });
+
+    </script>

@@ -43,7 +43,9 @@
             <div class="tab-pane active" id="tab1">
                 <form id="quickQuote">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0;">
-                        <h1 style="font-family:Arial !important; color:#004280; font-weight: bold;" class="text-align-center" strong id="QuickQuoteText2">QUICK QUOTE</h1>
+
+                        <h1 class="text-align-center" style="font-size: 18px;font-weight: 600;font-family: Arial;text-align: center;color: black;padding-bottom: 15px; padding-top:10px" strong id="QuickQuoteText2">Tell us a little bit more about your vessel...</h1>
+
                         <select onchange="updateLabel()" id="CraftTypeDrop" class="form-control input-lg hidden" style="margin-top: 20px; margin-bottom: 25px;">
                             <option value="" selected="selected">Pick your highest value vessel.</option>
                             <option>Roadtrailer</option>
@@ -51,7 +53,7 @@
                             <option>Berthed</option>
                             <option>Moored</option>
                         </select>
-                        <div class="text-align-center text-uppercase"><label style="font-family:Arial !important; color:#00B0D3; font-weight: bold; font-size:24px;" id="CraftType">Type Placeholder</label></div>
+                        <div class="text-align-center"><label class="text-align-center" style="font-size: 18px;font-weight: 600;font-family: Arial;text-align: center;color: black;padding-bottom: 15px; padding-top:10px" id="CraftType">Type Placeholder</label></div>
                     </div>
                     <br>
                     <input class="hidden" type="number" id="rate" value=".05" />
@@ -62,7 +64,7 @@
                             </div>
                             <div class="form-group" id="mnumbfgroup">
                                 <div class="input-group w100">
-                                    <span class="input-group-addon" style="width:200px;height:28px"><label class="cgform-label" id="memNum">Membership #<p style="color:red; float:right;">&nbsp;*</p></label></span>
+                                    <span class="input-group-addon" style="width:200px;height:28px"><label class="cgform-label" id="memNum">Coastguard Membership #<p style="color:red; float:right;">&nbsp;*</p></label></span>
                                     <input class="form-control input-lg" placeholder="" type="text" name="mnumb" id="mnumb" maxlength="6">
                                 </div>
                             </div>
@@ -137,7 +139,7 @@
                             </div>
                             <div class="form-group" style="margin-bottom:0;" id="qquotfgroup">
                                 <div class="input-group w100">
-                                    <button style="background-color:#00B0D3 !important; color:white;" type="submit" onclick="validationCheck(); return false;" class="btn btn-secondary w100">GET QUICK QUOTE</button>
+                                    <button style="background-color:#00B0D3 !important; color:white;" type="submit" onclick="validationCheck(); return false;" class="btn btn-secondary w100">Get your Quote now</button>
                                 </div>
                             </div>
                         </div>
@@ -167,9 +169,9 @@
                                 <!--<a href="#tab2" data-toggle="tab"><button onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</button></a>-->
                                 <a href="#tab2" data-toggle="tab" onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</a>
                                 <!--<button type="button" class="btn btn-secondary margin-top-10 w100 hidden">Save for later</button>-->
-                                <button style="background-color:#004280 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">NOTIFY MARSH TO CALL ME</button>
+                                <button style="background-color:#004280 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</button>
                                 <!--<a style="background-color:#F04E45 !important;color:white;" href="Coastguardreg"><button type="button" class="btn btn-secondary margin-top-10 w100">NO THANKS</button>-->
-                                <a style="background-color:#F04E45 !important;color:white;" href="Coastguardreg" class="btn btn-secondary margin-top-10 w100">NO THANKS</a>
+                                <a style="background-color:#F04E45 !important;color:white;" href="Coastguardreg" class="btn btn-secondary margin-top-10 w100">No Thanks, I think I'll leave it</a>
 
                             </div>
                         </div>
@@ -183,9 +185,9 @@
             <div class="tab-pane" id="tab2">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <h1 style="font-family:Arial !important; color:#004280; font-weight: bold;" class="text-align-center" strong id="QuickQuoteText2">QUICK QUOTE</h1>
+                        <h1 style="font-size: 16px;font-weight: 600;font-family: Arial;text-align: center;color: black;padding-bottom: 15px;" id="QuickQuoteText2"> Please provide us with your contact details…</h1>
                         <br>
-                        <h3><strong>User Information</strong></h3>
+                        <h3 hidden><strong>User Information</strong></h3>
                         <div>
                             <label style="float:right; color:red;">* = Required</label>
                         </div>
@@ -209,11 +211,18 @@
                             </div>
                         </div>
 
+                        <div class="form-group required" id="mphonfgroup">
+                            <div class="input-group w100">
+                                <span class="input-group-addon" style="width:200px;height:28px"><label class="cgform-label" style="padding-top:0 !important;" id="">Mobile Phone<p style="color:red; float:right;">&nbsp;*</p></label></span>
+                                <input class="form-control input-lg" placeholder="Enter Mobile" type="text" name="mphon" id="mphon" aria-required="true" aria-invalid="false" maxlength="14">
+                            </div>
+                        </div>
+
                         <form class="form-horizontal" role="form">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group required" id="vownrfgroup">
                                     <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3" style="padding:0; margin:0; min-width:150px;">
-                                        <span class="input-group-addon cgvesselowner col-xs-12" style="border:1px solid #ccc"><label class="cgform-label" id="">Vessel Owner<p style="color:red; float:right;">&nbsp;*</p></label></span>
+                                        <span class="input-group-addon cgvesselowner col-xs-12" style="border:1px solid #ccc"><label class="cgform-label" id="">Vessel Ownership<p style="color:red; float:right;">&nbsp;*</p></label></span>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8" style="height: 45px; padding-top: 7.5px; padding-bottom: 7.5px;">
@@ -227,22 +236,17 @@
                             </div>
                         </form>
 
-                        <div>
+                        <div hidden>
                             <label style="font-weight:bold;font-size:1.3em;">Phone (one required)<label style="color:red; float:right;">&nbsp;*</label></label>
                         </div>
 
-                        <div class="form-group" id="hphonfgroup">
+                        <div class="form-group" id="hphonfgroup" hidden>
                             <div class="input-group w100">
                                 <span class="input-group-addon" style="width:200px;height:28px"><label class="cgform-label" style="padding-top:0 !important;" id="">Home Phone</label></span>
                                 <input class="form-control input-lg" placeholder="Enter Home" type="text" name="hphon" id="hphon" maxlength="12">
                             </div>
                         </div>
-                        <div class="form-group no-margin" id="mphonfgroup">
-                            <div class="input-group w100">
-                                <span class="input-group-addon" style="width:200px;height:28px"><label class="cgform-label" style="padding-top:0 !important;" id="">Mobile Phone</label></span>
-                                <input class="form-control input-lg" placeholder="Enter Mobile" type="text" name="mphon" id="mphon" aria-required="true" aria-invalid="false" maxlength="14">
-                            </div>
-                        </div>
+
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 no-padding margin-top-5">
                             <div class="btn-group w100" style="margin-bottom:50px;" role="group" aria-label="First group">
                                 <a href="#tab1" data-toggle="tab"><button style="width:47.5%; background-color:#F04E45 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">BACK</button></a>
@@ -455,6 +459,7 @@
         }
 
         function validationCheck() {
+            debugger;
             //get boxes
             var indiQuoteSpan = document.getElementById("indiQuoteSpan");
             var quoteInc = document.getElementById("quoteIncludes");
@@ -539,7 +544,7 @@
                 traditional: true,
             })
                 .done(function (data, textStatus, jQxhr) {
-                       debugger;
+                    debugger;
                     console.log(data);
                     debugger;
                     if (data) {
@@ -576,6 +581,7 @@
         }
 
         function updateLabel() {
+            debugger;
             var ct = document.getElementById("CraftTypeDrop");
             document.getElementById("mnumb").value = "";
             document.getElementById("vival").value = "";
