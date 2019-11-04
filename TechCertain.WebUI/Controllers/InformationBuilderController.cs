@@ -133,11 +133,12 @@ namespace TechCertain.WebUI.Controllers
             //}
             try
             {
+                var user = CurrentUser;
 
-                InformationTemplate informationTemplate = new InformationTemplate (CurrentUser, model.Title, null);
+                InformationTemplate informationTemplate = new InformationTemplate (user, model.Title, null);
     
 			foreach (var page in model.Pages) {
-				InformationSection section = new InformationSection (CurrentUser, page.Title, null);
+				InformationSection section = new InformationSection (user, page.Title, null);
 
 				for (int i = 0; i < page.Questions.Count(); i++) {
 					var question = page.Questions.ElementAt (i);
@@ -145,17 +146,17 @@ namespace TechCertain.WebUI.Controllers
 					string randomName = System.IO.Path.GetRandomFileName ().Replace (".", "");
 					switch (question.QuestionType) {
 					case "text":
-						item = new TextboxItem (CurrentUser, randomName, question.QuestionTitle, 10, "TEXTBOX");
+						item = new TextboxItem (user, randomName, question.QuestionTitle, 10, "TEXTBOX");
 						break;
 					case "radiobutton":
 
 						break;
 					case "dropdown":
 						List<DropdownListOption> ddOptions = new List<DropdownListOption> ();
-						ddOptions.Add (new DropdownListOption (CurrentUser, "-- Select --", ""));
+						ddOptions.Add (new DropdownListOption (user, "-- Select --", ""));
 						for (int j = 0; j < question.OptionsArray.Length; j++)
-							ddOptions.Add (new DropdownListOption (CurrentUser, question.OptionsArray [j], j.ToString()));
-						item = new DropdownListItem (CurrentUser, randomName, question.QuestionTitle, 10, "DROPDOWNLIST", ddOptions ,"" );
+							ddOptions.Add (new DropdownListOption (user, question.OptionsArray [j], j.ToString()));
+						item = new DropdownListItem (user, randomName, question.QuestionTitle, 10, "DROPDOWNLIST", ddOptions ,"" );
 						break;
 					case "mvRegPanelTemplate":
 						section.CustomView = "ICIBHianzMotor";
