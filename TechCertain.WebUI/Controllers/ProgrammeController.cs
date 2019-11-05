@@ -469,7 +469,7 @@ namespace TechCertain.WebUI.Controllers
 
             var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
 
-            var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload).ConfigureAwait(true);
+            var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
             eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
 
