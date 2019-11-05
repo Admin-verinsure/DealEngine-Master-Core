@@ -1740,10 +1740,10 @@ namespace TechCertain.WebUI.Controllers
                         else
                         {
                             sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
-                            await _clientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet).ConfigureAwait(false);
+                            await _clientInformationAnswer.CreateNewClaimHistory(item[0], item[1], item[2], sheet);
                         }
                     }
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
             }
             return Json(true);
@@ -1806,6 +1806,9 @@ namespace TechCertain.WebUI.Controllers
                     }                   
 
                 }
+                await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //send out information sheet submission notification email
+                await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
             }
 
             return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);

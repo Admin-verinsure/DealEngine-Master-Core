@@ -1858,47 +1858,6 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> AddAddNamedParty(OrganisationViewModel model)
-        //{
-        //    if (model == null)
-        //        throw new ArgumentNullException(nameof(model));
-
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId);
-        //    if (sheet == null)
-        //        throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-        //    try
-        //    {
-
-        //        Organisation organisation = null;
-
-        //        //organisation = _organisationService.GetOrganisation(model.ID);
-        //        organisation = _organisationService.GetOrganisationByEmail(model.OrganisationName);
-        //        if (organisation == null)
-        //        {
-        //            organisation = new Organisation(CurrentUser(), Guid.NewGuid(), model.OrganisationName, model.OrganisationType);
-        //            _organisationService.CreateNewOrganisation(organisation);
-        //        }
-
-        //        model.ID = organisation.Id;
-        //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //        {
-        //            sheet.Organisation.Add(organisation);
-        //            //NewMethod(uow);
-        //            uow.Commit();
-        //        }
-
-             
-        //        //model.PartyUseId = organisation.Id;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.Write(ex.Message);
-        //    }
-        //    return Json(model);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> GetNamedParty(Guid answerSheetId, Guid partyID)
         {
@@ -1997,26 +1956,6 @@ namespace TechCertain.WebUI.Controllers
             return Json(mooredtypes);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> GetOU(Guid OrgID)
-        //{
-        //    Organisation organisation = null;
-
-        //    organisation = _organisationService.GetOrganisation(OrgID);
-        //    var organisationalUnits = new List<OrganisationalUnitViewModel>();
-
-        //    foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
-        //    {
-        //        organisationalUnits.Add(new OrganisationalUnitViewModel
-        //        {
-        //            OrganisationalUnitId = ou.Id,
-        //            Name = ou.Name
-        //        });
-        //    }
-
-        //    return Json(organisationalUnits);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> OUSelected(Guid OUselect)
         {
@@ -2035,15 +1974,6 @@ namespace TechCertain.WebUI.Controllers
                     Street = ou.Street
                 });
             }
-            //foreach (var ou in orgunit.Locations)
-            //{
-            //   // Locations.Add(ou);
-            //    organisationalUnits.Add(new LocationViewModel
-            //    {
-            //        LocationId = ou.LocationId,
-            //        Street = ou.Street
-            //    });
-            //}
 
             return Json(locations);
         }
@@ -2097,14 +2027,6 @@ namespace TechCertain.WebUI.Controllers
                     organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
                 }
 
-
-                //OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
-                //if (organisationType == null)
-                //{
-                //    organisationType = new OrganisationType(CurrentUser(), model.OrganisationTypeName);
-                //    _organisationTypeService.CreateNewOrganisationType(organisationType);
-
-                //}
                 Organisation organisation = null;
                 User userDb = null;
                 //if (model.InsuranceAttribute.EqualsIgnoreCase("Financial"))
@@ -2147,59 +2069,25 @@ namespace TechCertain.WebUI.Controllers
 
                     }
 
-                    //    //if (user == null)
-                    //    //{
-                    //    //    user = new User(CurrentUser(), Guid.NewGuid(), model.FirstName);
-                    //    //    user.FirstName = model.FirstName;
-                    //    //    user.LastName = model.LastName;
-                    //    //    user.Email = model.Email;
-                    //    //    user.Phone = model.Phone;
-                    //    //    _userService.Create(user);
-                    //    //}
-                    //    //organisation = _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
-                    //    //if (organisation == null)
-                    //    //{
-                    //    //    organisation = new Organisation(CurrentUser(), Guid.NewGuid(), model.OrganisationName, organisationType, user);
-                    //    //    organisation.Phone = model.OrganisationPhone;
-                    //    //    organisation.Email = model.OrganisationEmail;
-                    //    //    _organisationService.CreateNewOrganisation(organisation);
-                    //    //    user.SetPrimaryOrganisation(organisation);
-                    //    //    user.Organisations.Add(organisation);
-
-                    //    //}
-
-                    }
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        user.Organisations.Add(organisation);
-                        sheet.Organisation.Add(organisation);
-                        model.ID = organisation.Id;
-
-                        await uow.Commit();
-                    }
-
-                    //model.PartyUseId = organisation.Id;
                 }
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    user.Organisations.Add(organisation);
+                    sheet.Organisation.Add(organisation);
+                    model.ID = organisation.Id;
+
+                    await uow.Commit();
+                }
+
+                //model.PartyUseId = organisation.Id;
+            }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
             }
             return Json(model);
         }
-
-        //private static void NewMethod(IUnitOfWork uow)
-        //{
-        //    try
-        //    {
-        //        uow.Commit();
-
-        //    }catch(Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-        //}
-
 
         [HttpPost]
         public async Task<IActionResult> GetBoatUse(Guid answerSheetId, Guid boatUseId)
@@ -2505,113 +2393,7 @@ namespace TechCertain.WebUI.Controllers
             }
             return Json(model);
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddOperator1(OperatorViewModel model)
-        //{
-        //    if (model == null)
-        //        throw new ArgumentNullException(nameof(model));
-
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId);
-        //    if (sheet == null)
-        //        throw new Exception("Unable to save Operator - No Client information for " + model.AnswerSheetId);
-
-        //    Operator operato = _operatorRepository.Repository.FindAll().FirstOrDefault(oper => oper.Id == model.OperatorId);
-        //    if (operato == null)
-        //        operato = model.ToEntity(CurrentUser());
-        //    model.UpdateEntity(operato);
-
-        //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        sheet.Operators.Add(operato);
-        //        uow.Commit();
-        //    }
-        //    model.OperatorId = operato.Id;
-
-
-        //    return Json(model);
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> GetOperator(Guid answerSheetId, Guid operatorId)
-        //{
-        //    OperatorViewModel model = new OperatorViewModel();
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId);
-        //    Operator operato = sheet.Operators.FirstOrDefault(oper => oper.Id == operatorId);
-        //    if (operato != null)
-        //    {
-        //        model = OperatorViewModel.FromEntity(operato);
-        //        model.AnswerSheetId = answerSheetId;
-        //    }
-        //    return Json(model);
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetOperators(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-        //                                  string searchField, string searchString, string searchOper, string filters)
-        //{
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId);
-        //    if (sheet == null)
-        //        throw new Exception("No valid information for id " + informationId);
-
-        //    var operators = new List<Operator>();
-
-        //    operators = sheet.Operators.Where(oper => oper.Removed == removed && oper.DateDeleted == null).ToList();
-
-        //    if (_search)
-        //    {
-        //        switch (searchOper)
-        //        {
-        //            case "eq":
-        //                operators = operators.Where(searchField + " = \"" + searchString + "\"").ToList();
-        //                break;
-        //            case "bw":
-        //                operators = operators.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-        //                break;
-        //            case "cn":
-        //                operators = operators.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-        //                break;
-        //        }
-        //    }
-        //    operators = operators.OrderBy(sidx + " " + sord).ToList();
-
-        //    XDocument document = null;
-        //    JqGridViewModel model = new JqGridViewModel();
-        //    model.Page = page;
-        //    model.TotalRecords = operators.Count;
-        //    model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-        //    int offset = rows * (page - 1);
-        //    for (int i = offset; i < offset + rows; i++)
-        //    {
-        //        if (i == model.TotalRecords)
-        //            break;
-
-        //        Operator operato = operators[i];
-        //        JqGridRow row = new JqGridRow(operato.Id);
-        //        row.AddValues(operato.Id, operato.OperatorFirstName, operato.OperatorLastName, operato.Id);
-        //        model.AddRow(row);
-        //    }
-
-        //    // convert model to XDocument for rendering.
-        //    document = model.ToXml();
-        //    return Xml(document);
-
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> SetOperatorRemovedStatus(Guid operatorId, bool status)
-        //{
-        //    Operator operato = _operatorRepository.GetById(operatorId);
-
-        //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        operato.Removed = status;
-        //        uow.Commit();
-        //    }
-
-        //    return new JsonResult { Data = true };
-        //}
+        
 
         #endregion
 
@@ -2780,7 +2562,15 @@ namespace TechCertain.WebUI.Controllers
                     }
 
                 }
-
+                //send out login email
+                await _emailService.SendSystemEmailLogin(email);
+                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                if (emailTemplate != null)
+                {
+                    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                }
+                //send out information sheet issue notification email
+                await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
 
             }
             else
