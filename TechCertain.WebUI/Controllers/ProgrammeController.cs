@@ -834,7 +834,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditRule(Guid Id , ClientAgreementRuleViewModel rule )
+        public async Task<IActionResult> EditRule(ClientAgreementRuleViewModel rule )
         {
             //Programme programme = _programmeRepository.GetById(programmeId);
 
@@ -864,7 +864,7 @@ namespace TechCertain.WebUI.Controllers
             model.Rules = rules;
 
             ViewBag.Title = "Manage Product Rules";
-            return Json(model);
+            return Json(true);
             //return RedirectToAction("EditTerms", new { id = Id , productId = ProductId });
         }
 

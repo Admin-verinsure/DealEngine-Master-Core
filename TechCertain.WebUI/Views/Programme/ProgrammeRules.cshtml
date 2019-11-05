@@ -38,7 +38,7 @@
                     <div>
                         <div class="widget-body no-padding smart-form">
                             <!-- content goes here -->
-                            <h2>CoastGuard </h2>
+                            <h2>First Mate Cover</h2>
                             <div> </div>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
                                 @if (Model.BrokerContactUser == null)
@@ -60,6 +60,7 @@
                                     <td align="left">
                                         @Html.ActionLink("Manage UIS Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id }, null)
                                     </td>
+                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
                                 </tr>
 
@@ -67,33 +68,44 @@
                                     <td align="left">
                                         @Html.ActionLink("Manage UIS Submission Notification Users", " SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
                                     </td>
+                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
                                 </tr>
 
                                 <tr>
                                     <td align="left">
                                         @Html.ActionLink("Manage Agreement Refer Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
                                     </td>
+                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
                                 </tr>
 
                                 <tr>
                                     <td align="left">
                                         @Html.ActionLink("Manage Agreement Issue Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
                                     </td>
+                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
                                 </tr>
 
                                 <tr>
                                     <td align="left">
                                         @Html.ActionLink("Manage Agreement Bound Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
                                     </td>
+                                    
+                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
                                 </tr>
 
                                 @foreach (var product in Model.Product)
                                 {
-                                    <tr>
-                                        <td align="left">
-                                            @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id ,productId = product.Id}, null)
-                                        </td>
-                                    </tr>
+                            <tr>
+                                <td align="left">
+                                    @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id, productId = product.Id }, null)
+                                </td>
+                                <td><a class="btn btn-success btn-xs " href="#"><i class="fa fa-search"></i>View</a></td>
+
+                            </tr>
                                 }
                                 <tr>
                                     <td align="left"></td>

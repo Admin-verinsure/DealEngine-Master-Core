@@ -37,27 +37,27 @@
                                 </tr>
                                 @foreach (var item in Model.Rules)
                                 {
-                                    <tr>
-                                        <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black">
-                                            @item.Name
+                            <tr>
+                                <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black">
+                                    @item.Name
 
-                                        </td>
-                                        <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
-                                            @item.Description
-                                        </td>
-                                        <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
-                                            @item.OrderNumber
-                                        </td>
-                                        <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
-                                            @item.Value
-                                        </td>
-                                        <td width="9%">
-                                            <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
-                                               data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>
-                                            <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-rule-id="@item.Id"><span class="glyphicon glyphicon-trash"></span></a>
-                                        </td>
-
-                                    </tr>
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
+                                    @item.Description
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
+                                    @item.OrderNumber
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
+                                    @item.Value
+                                </td>
+                                <td width="9%">
+                                    <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
+                                       data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>
+                                    @*<a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-rule-id="@item.Id"><span class="fa fa-trash" id="span"></span></a>*@
+                                </td>
+                                @*onclick='$("#myModal").modal("show");'*@
+                            </tr>
 
                                 }
                             </table>
@@ -79,35 +79,17 @@
 
 
 
-<div class="modal fade modal-megamenu modal-dialog " id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <p style="color:black;font-size:18px; ">Confirm To Delete This Term</p>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control hidden " id="BoatName" name="BoatName" />
-            </div>
-            <div class="modal-footer">
-                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnDelete">Confirm <i class="fa fa-send"></i></button>
-
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
 <!-- Edit Boat -->
-<div id="myModal" class="modal fade " role="dialog">
+<div id="myModal" class="modal" role="dialog">
 
     <!-- Modal content-->
 
     <div class="modal-content">
 
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" class="close" id="myModalId" data-dismiss="modal">&times;</button>
             <h4 class="modal-title" style="color:blue; font-size:22px">Edit Rule</h4>
         </div>
         <div class="modal-body">

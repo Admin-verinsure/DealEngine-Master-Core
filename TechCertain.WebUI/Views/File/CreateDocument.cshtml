@@ -1,7 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.DocumentViewModel
-
-<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
-
+<script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
+@*<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>*@
 <div id="content" style="background-color: #A6E2EF">
     <!-- widget grid -->
     <section id="widget-grid" class="">
@@ -172,7 +171,7 @@ $(document).ready(function () {
 
              if (confirm("Are you sure you want to submit this document?")) {
                  console.log("submitted!");
-                  
+
 
                       const body = editor.getData();
                  var bodyElement = $("#@Html.IdFor(m => m.Content)").val();
