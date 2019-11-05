@@ -674,18 +674,20 @@ namespace TechCertain.WebUI.Controllers
             model.SalesPersonUserName = user.SalesPersonUserName;
 
             var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnits();
-            OrgUnitList.GroupBy(o => o.Name);
-            foreach (OrganisationalUnit ou in OrgUnitList)
+            var groups = OrgUnitList.GroupBy(o => o.Name).ToList();
+            foreach(var groupOU in groups)
             {
-                organisationalUnits.Add(new OrganisationalUnitViewModel
+                foreach (OrganisationalUnit ou in groupOU)
                 {
-                    OrganisationalUnitId = ou.Id,
-                    Name = ou.Name
-                });
-                break;
-                //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                    organisationalUnits.Add(new OrganisationalUnitViewModel
+                    {
+                        OrganisationalUnitId = ou.Id,
+                        Name = ou.Name
+                    });
+                    break;
+                    //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                }
             }
-
 
             if (user.PrimaryOrganisation != null)
                 model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
