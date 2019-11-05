@@ -42,7 +42,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                  )
                 .CurrentSessionContext("web")
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
-                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())                    
+                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultAutomappingConfiguration())                    
                     .Conventions.Add<CascadeConvention>()
                     .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
                 .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())

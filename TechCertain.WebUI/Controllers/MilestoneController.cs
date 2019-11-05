@@ -17,7 +17,6 @@ namespace TechCertain.WebUI.Controllers
     public class MilestoneController : BaseController
     {
 
-        IUWMService _uWMService;
         ITaskingService _taskingService;
         IEmailService _emailService;
         IMilestoneService _milestoneService;
@@ -77,13 +76,7 @@ namespace TechCertain.WebUI.Controllers
             foreach (var programmeProcesses in templates.ProgrammeProcesses)
             {
                 MilestoneConfigurationViewModel milestoneViewModel = new MilestoneConfigurationViewModel();
-                milestoneViewModel.ProgrammeProcess = programmeProcesses;
-
-
-                //var priorityTypes = new List<SelectListItem> {
-                //    new SelectListItem { Text = "Important", Value = "1" },
-                //    new SelectListItem { Text = "Critical", Value = "2" },            
-
+                milestoneViewModel.ProgrammeProcess = programmeProcesses;        
                 milestoneViewModel.Programmes = programmes;
                 model.MilestoneVM.Add(milestoneViewModel);
             }
@@ -165,7 +158,7 @@ namespace TechCertain.WebUI.Controllers
             model.ProgrammeId = programme.Id;
             model.ProgrammeProcessId = programmeProcess.Id.ToString();
 
-            var milestone = await _milestoneService.GetMilestoneProcess(programme.Id, programmeProcess, milestoneActivity);
+            Milestone milestone = null;//await _milestoneService.GetMilestoneProcess(programme.Id, programmeProcess, milestoneActivity);
             if (milestone != null)
             {
                 model.AdvisoryContent.Advisory = milestone.Advisory.Description;

@@ -106,6 +106,7 @@
     <!-- PAGE RELATED PLUGIN(S) -->
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+    <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         
         $(document).ready(function () {
@@ -170,10 +171,6 @@
                 data:  mergedData  // serializes the form's elements.
             })
                 .done(function (url) {
-                    //window.location.href = url;
-                    //$("#agreementView").load(json, function () {
-                    //   });
-                    //$("#MilestoneType").show();
                     $("#MilestoneType").load(url, function () {
                     });
                 })
@@ -211,7 +208,7 @@
                 data:  mergedData  // serializes the form's elements.
             })
                 .done(function (json) {
-                    NextTab();
+                    
                 })
                 .fail(function (err) {
                     alert("Unable to save." + err.responseText);

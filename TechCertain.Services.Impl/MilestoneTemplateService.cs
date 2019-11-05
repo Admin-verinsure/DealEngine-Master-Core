@@ -32,7 +32,7 @@ namespace TechCertain.Services.Impl
         {
             MilestoneTemplate milestoneTemplate = new MilestoneTemplate(user);
             string[] programmeProcess = new[] { "Process New Agreement", "Change Agreement", "Process Renewal Agreement", "Process Cancel Agreement" };
-            string[] activity = new[] { "Agreement Status - Not Started", "Agreement Status - Started", "Agreement Status - Completed", "Agreement Status - Quoted", "Agreement Status - Declined", "Agreement Status - Bound and Waiting Payment", "Agreement Status - Bound and Waiting Invoice" };
+            string[] activity = new[] { "Agreement Status - Not Started", "Agreement Status - Started", "Agreement Status - Completed", "Agreement Status - Quoted", "Agreement Status – referred", "Agreement Status - Declined", "Agreement Status - Bound and Waiting Payment", "Agreement Status - Bound and Waiting Invoice" };
 
             var programmeProcessList = new List<ProgrammeProcess>();
             foreach(string pp in programmeProcess)
