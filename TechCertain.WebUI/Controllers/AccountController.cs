@@ -566,8 +566,10 @@ namespace TechCertain.WebUI.Controllers
 
             var milestone = await _milestoneService.GetMilestone(activity);
             AccountRegistrationModel model = new AccountRegistrationModel();
-            var htmlString = milestone.Advisory.Description;
-            model.Advisory = System.Net.WebUtility.HtmlDecode(htmlString);
+            if (milestone != null)
+            {
+                model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+            }
 
             return View(model);
         }

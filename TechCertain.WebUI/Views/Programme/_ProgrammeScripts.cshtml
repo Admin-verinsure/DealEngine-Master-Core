@@ -1,12 +1,13 @@
-﻿<script src="/Scripts/bootstrapmvc"></script>
-<!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-<script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js"></script>
-<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
-<script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
-<!--<script src="/Scripts/InformationWizard.js"></script>-->
+﻿<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<script src="~/jquery/jquery.min.js"></script>
+<script src="~/lib/popper.js/umd/popper.min.js"></script>
+<script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+
+   // $(document).ready(function(){
+   //$("#myModal").modal();
+   // });
 
     $("#checkedAll").click(function () {
         debugger;
@@ -21,6 +22,7 @@
         }
     });
 
+  
     $(".PartyOrg").click(function () {
         debugger;
 
@@ -79,7 +81,7 @@
         $.each($("input[name='PartyOrg']:checked"), function () {
             favorite.push($(this).val());
         });
-        
+
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("AddselectedParty", "Programme")',
@@ -95,14 +97,14 @@
                 iconSmall: "fa fa-check bounce animated",
                 timeout: 4000
             });
-            
+
 	});
     };
     @*function selectorgUser() {
         debugger;
         var SelectedParty = $('#selectParty').val();
         var InformationId = $('#Id').val();
-          
+
         //var z = $.grep([selectedParty,informationId], Boolean).join("&");
             //console.log(z);
             $.ajax({
@@ -131,7 +133,7 @@
                     debugger;
                     alert("There was an error while trying to save the Boat Use.");
                 });
-        
+
     }*@
 
 
@@ -139,6 +141,7 @@
     $('#myModal').on('show.bs.modal', function (e) {
         //var name = $('[data-id="name"]').val()
         debugger;
+
         $('.modal').css('width', '600px');
         var RuleName = $(e.relatedTarget).data('rule-name');
         //var BoatName = $(e.relatedTarget).data(name);
@@ -149,13 +152,13 @@
         var RuleVal = $(e.relatedTarget).data('rule-val');
 
         var RulId = $(e.relatedTarget).data('rule-id');
-        
+
         $(e.currentTarget).find('input[name="Name"]').val(RuleName);
         $(e.currentTarget).find('input[name="Description"]').val(RuleDesc);
         $(e.currentTarget).find('input[name="OrderNumber"]').val(RuleOrder);
         $(e.currentTarget).find('input[name="Value"]').val(RuleVal);
         $(e.currentTarget).find('input[name="Id"]').val(RulId);
-       
+
 
     });
 
@@ -163,7 +166,7 @@
     $("#rulebtnSubmit").click(function () {
         debugger;
             RuleSubmit();
-       
+
     });
 
      function addselectorgUser() {
@@ -174,7 +177,7 @@
         $.each($("input[name='PartyOrg']:checked"), function () {
             favorite.push($(this).val());
         });
-        
+
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("AddselectedParty", "Programme")',
@@ -190,7 +193,7 @@
                 iconSmall: "fa fa-check bounce animated",
                 timeout: 4000
             });
-            
+
 	});
     };
 
@@ -216,29 +219,31 @@
           $.ajax({
                 url: '@Url.Action("EditRule", "Programme")',
               type: "Post",
-             contentType: "application/json; charset=utf-8",
-              //data: JSON.stringify({ Id: ID, ProductId: productId, rule: prodData})
-              data: JSON.stringify({ Id: ID, rule: prodData})
+              data: prodData
 
             })
                 .done(function (data) {
                     debugger;
-                    $("#myModal").modal("hide");
+                    alert("success");
+                    //$("#myModal").modal("hide");
+                    $("#myModalId").click();
+                    
                     location.reload(true);
 
-                    $.smallBox({
-                        title: "Boat Use has been saved",
-                        color: "#5F895F",
-                        iconSmall: "fa fa-check bounce animated",
-                        timeout: 4000
-                    });
-                 
+                    //$.smallBox({
+                    //    title: "Boat Use has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
+
                 })
-                .fail(function (jqXHR, textStatus, errorThrown) {
+              .fail(function (jqXHR, textStatus, errorThrown) {
+                  debugger;
                     alert("There was an error while trying to save the Boat Use.");
             });
 
-         
+
     }
 
 </script>

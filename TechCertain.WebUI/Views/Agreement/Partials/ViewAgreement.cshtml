@@ -24,6 +24,26 @@
             </div>
         }
 
+        @if (Model.Advisory != null)
+        {
+            <div class="modal-lg" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Advisory</h5>
+                        </div>
+                        <div class="modal-body">
+                            @Html.Raw(Model.Advisory)
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="Close()">Close</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="Close()">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @Html.HiddenFor(m => m.ClientAgreementId)
         @Html.HiddenFor(m => m.InformationSheetStatus)
 
@@ -69,10 +89,10 @@
                 <section class="col col-9">
                     @Html.DisplayFor(m => m.StartDate) 4pm local time
                     @*@if (Model.InformationSheetStatus != "Submitted" && Model.InformationSheetStatus != "Bound")
-        {*@
+                    {*@
                     @*<a href="#getStartDate" style="color:green">
-            <i class="fa fa-edit" aria-hidden="true"></i>
-        </a>*@
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                    </a>*@
                     <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
 
                     @*}*@
@@ -364,7 +384,11 @@
        minDate: 0,
        dateFormat: "dd/mm/yy" 
 
-    });
+     });
+
+            function Close() {
+            $("#modal").hide();
+        }
 
 
 

@@ -17,7 +17,7 @@ namespace TechCertain.Domain.Entities
         public virtual ProgrammeProcess ProgrammeProcess { get; set; }
         public virtual Activity Activity { get; set; }
         public virtual Programme Programme { get; set; }
-        public virtual string testtesttest { get; set; }
+        public virtual string Method { get; set; }
     }
 
     public class Advisory : EntityBase, IAggregateRoot
@@ -28,7 +28,6 @@ namespace TechCertain.Domain.Entities
         }
         public Advisory() : base(null) { }
         public virtual string Description { get; set; }
-        public virtual string Method { get; set; }
     }
 }
 
