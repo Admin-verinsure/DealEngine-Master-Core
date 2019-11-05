@@ -566,8 +566,10 @@ namespace TechCertain.WebUI.Controllers
 
             var milestone = await _milestoneService.GetMilestone(activity);
             AccountRegistrationModel model = new AccountRegistrationModel();
-            var htmlString = milestone.Advisory.Description;
-            model.Advisory = System.Net.WebUtility.HtmlDecode(htmlString);
+            if (milestone != null)
+            {
+                model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+            }
 
             return View(model);
         }
@@ -673,19 +675,16 @@ namespace TechCertain.WebUI.Controllers
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
 
-            var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnits();
+            var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnitsByOrg(user.PrimaryOrganisation);
             OrgUnitList.GroupBy(o => o.Name);
             foreach (OrganisationalUnit ou in OrgUnitList)
             {
-                organisationalUnits.Add(new OrganisationalUnitViewModel
-                {
-                    OrganisationalUnitId = ou.Id,
-                    Name = ou.Name
-                });
-                break;
-                //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
+                    organisationalUnits.Add(new OrganisationalUnitViewModel
+                    {
+                        OrganisationalUnitId = ou.Id,
+                        Name = ou.Name
+                    });
             }
-
 
             if (user.PrimaryOrganisation != null)
                 model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;

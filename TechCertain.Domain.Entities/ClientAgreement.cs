@@ -154,6 +154,7 @@ namespace TechCertain.Domain.Entities
         public virtual DateTime CancelledDate { get; set; }
 
         public virtual bool MasterAgreement { get; set; }
+
     }
 }
 

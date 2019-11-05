@@ -17,6 +17,7 @@ using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading;
+using System.Net;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -29,6 +30,7 @@ namespace TechCertain.WebUI.Controllers
         IPaymentService _paymentService;
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
+        IMilestoneService _milestoneService;
         IHttpClientService _httpClientService;
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
@@ -47,7 +49,7 @@ namespace TechCertain.WebUI.Controllers
         IInsuranceAttributeService _insuranceAttributeService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
 
-        public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, IClientInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IMilestoneService milestoneService, IInformationTemplateService informationService, IClientInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
@@ -57,6 +59,7 @@ namespace TechCertain.WebUI.Controllers
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;
+            _milestoneService = milestoneService;
             _organisationService = organisationService;
             _httpClientService = httpClientService;
             _productRepository = productRepository;
@@ -595,26 +598,6 @@ namespace TechCertain.WebUI.Controllers
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
         }
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
-        //{
-        //    ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
-        //    ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
-
-        //    using (var uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-
-        //        if (term.BoatTerms != null)
-        //        {
-        //            term.BoatTerms.Add(clientAgreementBVTerm);
-        //        }
-
-        //        NewMethod(uow);
-        //    }
-        //    return RedirectToAction("EditTerms", new { id = clientAgreementId });
-        //}
-
         [HttpGet]
         public async Task<IActionResult> ViewAgreement(Guid id)
         {
@@ -737,6 +720,16 @@ namespace TechCertain.WebUI.Controllers
                 // Status
                 model.ProductName = agreement.Product.Name;
                 model.Status = agreement.Status;
+                if (agreement.Status == "Referred")
+                {
+                    var activity = "Agreement Status – Referred";
+                    var milestone = await _milestoneService.GetMilestone(activity);
+                    if (milestone != null)
+                    {
+                        model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+                    }
+                    _emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
+                }
                 model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
@@ -882,6 +875,14 @@ namespace TechCertain.WebUI.Controllers
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
+            var activity = "Agreement Status - Declined";
+            var advisory = "";
+            var milestone = await _milestoneService.GetMilestone(activity);
+            if (milestone != null)
+            {
+                advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+            }
+
             foreach (ClientAgreement agreement in clientProgramme.Agreements)
             {
                 ViewAgreementViewModel model = new ViewAgreementViewModel
@@ -891,6 +892,7 @@ namespace TechCertain.WebUI.Controllers
                     ClientProgrammeId = clientProgramme.Id
                 };
 
+                model.Advisory = advisory;
                 // Status
                 model.Status = agreement.Status;
                 model.InformationSheetId = answerSheet.Id;
@@ -1482,6 +1484,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 //Payment failed
                 status = "Bound and pending payment";
+                _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -1512,22 +1515,23 @@ namespace TechCertain.WebUI.Controllers
             }
             else
             {
+
                 //Payment successed
-                //_emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                
+                EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
 
-                //EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                if (emailTemplate == null)
+                {
+                    //default email or send them somewhere??
 
-                //if (emailTemplate == null)
-                //{
-                //    //default email or send them somewhere??
-
-                //    using (var uow = _unitOfWorkFactory.BeginUnitOfWork())
-                //    {
-                //        emailTemplate = new EmailTemplate(CurrentUser(), "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
-                //        programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
-                //        uow.Commit();
-                //    }
-                //}
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        emailTemplate = new EmailTemplate(user, "Agreement Documents Covering Text", "SendPolicyDocuments", "Policy Documents for ", WebUtility.HtmlDecode("Email Containing policy documents"), null, programme.BaseProgramme);
+                        programme.BaseProgramme.EmailTemplates.Add(emailTemplate);
+                        await uow.Commit();
+                    }
+                }
 
                 //var hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
                 status = "Bound and invoice pending";
@@ -1538,30 +1542,6 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 bool eglobalsuccess = false;
-
-                //if (hasEglobalNo)
-                //{
-                //    status = "Bound and invoiced";
-
-                //    var eGlobalSerializer = new EGlobalSerializerAPI();
-                                       
-                //    var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
-
-                //    var byteResponse = _httpClientService.CreateEGlobalInvoice(xmlPayload).Result;
-
-                //    eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
-
-                //    if (programme.ClientAgreementEGlobalResponses.Count > 0)
-                //    {
-                //        EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
-                //        if (eGlobalResponse != null)
-                //        {
-                //            eglobalsuccess = true;
-                //        }
-
-                //    }
-
-                //}
 
                 var documents = new List<SystemDocument>();
                 foreach (ClientAgreement agreement in programme.Agreements)
@@ -1604,29 +1584,23 @@ namespace TechCertain.WebUI.Controllers
                         }
                         
                     }
-                    //else
-                    //{
-                    //    agreement.Documents.Add(renderedDoc);
-                    //    documents.Add(renderedDoc);
-                    //    _fileService.UploadFile(renderedDoc);
-                    //}
 
                     //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                    //_emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                    await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
 
 
-                    //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                    //_emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                    await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                    await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
                 }
 
-                //if (hasEglobalNo)
-                //{
-                //    _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                //}
-                //else
-                //{
-                //    _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                //}
+                if (hasEglobalNo)
+                {
+                    await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                }
+                else
+                {
+                    _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                }
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -1638,7 +1612,6 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
            return RedirectToAction("ProcessedAgreements", new { id = Id });
-           // return Redirect("~/Agreement/ProcessedAgreements/" + Id);
         }
 
         [HttpGet]

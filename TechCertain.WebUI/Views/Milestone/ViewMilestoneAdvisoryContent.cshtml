@@ -1,5 +1,4 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
-<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
 <div class="row">
     <div class="col-sm-12">
@@ -11,18 +10,17 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
     ClassicEditor
         .create(document.querySelector('#advisory'))
         .then(newAdvisory => {
-           editorAdvisory = newAdvisory;        
+            editorAdvisory = newAdvisory;
         })
         .catch(error => {
             console.error(error);
         });
 
-    function GetAdvisoryContentJson() {  
+    function GetAdvisoryContentJson() {
 
         return {
             Advisory: editorAdvisory.getData()
