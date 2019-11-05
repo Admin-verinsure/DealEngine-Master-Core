@@ -103,62 +103,90 @@ namespace TechCertain.WebUI.Controllers
 
 
 
-
         [HttpPost]
-		public async Task<IActionResult> StagingBuilder (ExperimentalInfoBuilderViewModel model)
-		{
+        public async Task<IActionResult> StagingBuilder(ExperimentalInfoBuilderViewModel model)
+        {
+            //Console.WriteLine ("Title: " + model.Title);
+            //Console.WriteLine ("Description: " + model.Description);
+            //Console.WriteLine ("Pages: " + model.Pages.Count ());
+            //foreach (var page in model.Pages) {
+            //	Console.WriteLine ("  Questions: " + page.Questions.Count ());
+            //	foreach (var question in page.Questions) {
+            //		Console.WriteLine ("    QuestionType: " + question.QuestionType);
+            //		Console.WriteLine ("    EditorId: " + question.EditorId);
+            //		Console.WriteLine ("    Required: " + question.Required);
+            //		Console.WriteLine ("    ReferUnderWriting: " + question.ReferUnderWriting);
+            //		Console.WriteLine ("    NeedsReview: " + question.NeedsReview);
+            //		Console.WriteLine ("    Question: " + question.QuestionTitle);
+            //		Console.WriteLine ("    HorizontalLayout: " + question.HorizontalLayout);
+            //		Console.WriteLine ("    Options: " + question.OptionsArray);
+            //		Console.WriteLine ("    ----------");
+            //	}
+            //}
+            //Console.WriteLine ("Conditionals: " + model.Conditionals.Count ());
+            //foreach (var conditional in model.Conditionals) {
+            //	Console.WriteLine ("  Conditional for: " + conditional.QuestionId);
+            //	Console.WriteLine ("  Triggers on value: " + conditional.TriggerValue);
+            //	Console.WriteLine ("  Show/Hide: " + (conditional.Visibility == 1 ? "Show" : "Hide"));
+            //	Console.WriteLine ("  Targets: " + string.Join (", ", conditional.Controls));
+            //}
             try
             {
+
                 var user = await CurrentUser();
+                InformationTemplate informationTemplate = new InformationTemplate(user, model.Title, null);
 
-                InformationTemplate informationTemplate = new InformationTemplate (user, model.Title, null);
-    
-			    foreach (var page in model.Pages) {
-				    InformationSection section = new InformationSection (user, page.Title, null);
+                foreach (var page in model.Pages)
+                {
+                    InformationSection section = new InformationSection(user, page.Title, null);
 
-				    for (int i = 0; i < page.Questions.Count(); i++) {
-					    var question = page.Questions.ElementAt (i);
-					    InformationItem item = null;
-					    string randomName = System.IO.Path.GetRandomFileName ().Replace (".", "");
-					
-                        switch (question.QuestionType) {
+                    for (int i = 0; i < page.Questions.Count(); i++)
+                    {
+                        var question = page.Questions.ElementAt(i);
+                        InformationItem item = null;
+                        string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
+                        string randomId = informationTemplate.Name;
+                        randomId = randomId + question.QuestionTitle.Substring(question.QuestionTitle.Length - 5);
+                        //var ques = question.QuestionTitle.Substring(question.QuestionTitle.Length - 6);
+                        switch (question.QuestionType)
+                        {
                             case "text":
-                                item = new TextboxItem (user, randomName, question.QuestionTitle, 10, "TEXTBOX");
+                                item = new TextboxItem(user, randomName, question.QuestionTitle, randomId, 10, "TEXTBOX");
                                 break;
                             case "radiobutton":
+
                                 break;
                             case "dropdown":
-                                List<DropdownListOption> ddOptions = new List<DropdownListOption> ();
-						        ddOptions.Add (new DropdownListOption (user, "-- Select --", ""));
-						        for (int j = 0; j < question.OptionsArray.Length; j++)
-                                    ddOptions.Add (new DropdownListOption (user, question.OptionsArray [j], j.ToString()));
-						        item = new DropdownListItem (user, randomName, question.QuestionTitle, 10, "DROPDOWNLIST", ddOptions ,"" );
-						        break;
-					        case "mvRegPanelTemplate":
-						        section.CustomView = "ICIBHianzMotor";
-						        break;
-					        case "mvUnRegPanelTemplate":
-						        section.CustomView = "ICIBHianzPlant";
-						        break;
-					        default:
-						        throw new Exception ("Unable to map element (" + question.QuestionType + ")");
-					}
+                                List<DropdownListOption> ddOptions = new List<DropdownListOption>();
+                                ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
+                                for (int j = 0; j < question.OptionsArray.Length; j++)
+                                    ddOptions.Add(new DropdownListOption(user, question.OptionsArray[j], j.ToString()));
+                                item = new DropdownListItem(user, randomName, question.QuestionTitle, randomId, 10, "DROPDOWNLIST", ddOptions, "");
+                                break;
+                            case "mvRegPanelTemplate":
+                                section.CustomView = "ICIBHianzMotor";
+                                break;
+                            case "mvUnRegPanelTemplate":
+                                section.CustomView = "ICIBHianzPlant";
+                                break;
+                            default:
+                                throw new Exception("Unable to map element (" + question.QuestionType + ")");
+                        }
+                        item.EditorId = question.EditorId;
+                        item.ItemOrder = i;
+                        // set flags
+                        if (item != null)
+                        {
+                            item.NeedsReview = question.NeedsReview;
+                            item.ReferUnderwriting = question.ReferUnderWriting;
+                            item.Required = question.Required;
+                            item.NeedsMilestone = question.NeedsMilestone;
+                        }
 
-					item.EditorId = question.EditorId;
-					item.ItemOrder = i;
-					// set flags
-					if (item != null) {
-						item.NeedsReview = question.NeedsReview;
-						item.ReferUnderwriting = question.ReferUnderWriting;
-						item.Required = question.Required;
-                        item.NeedsMilestone = question.NeedsMilestone;
-					}
-
-					section.AddItem (item);
-				}
-
-				informationTemplate.AddSection (section);
-			}
+                        section.AddItem(item);
+                    }
+                    informationTemplate.AddSection(section);
+                }
 
                 //var items = informationTemplate.Sections.SelectMany (s => s.Items);
                 //foreach (var item in items) {
@@ -172,6 +200,7 @@ namespace TechCertain.WebUI.Controllers
                 //	}
                 //}
 
+
              await _templateRepository.AddAsync(informationTemplate);
 
             }
@@ -182,8 +211,8 @@ namespace TechCertain.WebUI.Controllers
             }
 
 
-			return Json (new { Result = true });
-		}
+            return Json(new { Result = true });
+        }
     }
 
     /// <summary>

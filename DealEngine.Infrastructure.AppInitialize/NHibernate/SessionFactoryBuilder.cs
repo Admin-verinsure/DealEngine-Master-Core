@@ -32,23 +32,41 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
 
             NpgsqlConnectionString = configuration.GetConnectionString("TechCertainConnection");
 
+            //var session = Fluently.Configure()
+            //    .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
+            //        .Dialect<PostgreSQL82Dialect>()
+            //        .AdoNetBatchSize(10)
+            //        .Driver<NpgSqlDriver>()
+            //        .FormatSql()
+            //        .ShowSql()
+            //     )
+            //    .CurrentSessionContext("web")
+            //    .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
+            //    .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())                    
+            //        .Conventions.Add<CascadeConvention>()
+            //        .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
+            //    .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
+            //    ).BuildConfiguration()
+            //    .AddIdentityMappingsForPostgres()
+            //    .BuildSessionFactory();
+
             var session = Fluently.Configure()
-                .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
-                    .Dialect<PostgreSQL82Dialect>()
-                    .AdoNetBatchSize(10)
-                    .Driver<NpgSqlDriver>()
-                    .FormatSql()
-                    .ShowSql()
-                 )
-                .CurrentSessionContext("web")
-                .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
-                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultMappingConfiguration())                    
-                    .Conventions.Add<CascadeConvention>()
-                    .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
-                .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
-                ).BuildConfiguration()
-                .AddIdentityMappingsForPostgres()
-                .BuildSessionFactory();
+     .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)
+         .Dialect<PostgreSQL82Dialect>()
+         .AdoNetBatchSize(10)
+         .Driver<NpgSqlDriver>()
+         .FormatSql()
+         .ShowSql()
+      )
+     .CurrentSessionContext("web")
+     .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
+     .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>().Where(c=> c.Namespace == "TechCertain.Domain.Entities")
+         .Conventions.Add<CascadeConvention>()
+         .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
+     .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
+     ).BuildConfiguration()
+     .AddIdentityMappingsForPostgres()
+     .BuildSessionFactory();
 
             return session;
 

@@ -26,9 +26,9 @@ namespace TechCertain.Services.Impl
             return section;
         }
 
-        public async Task<List<InformationSection>> GetAllSections()
+        public  IQueryable<InformationSection> GetAllSections()
         {
-            return await _informationSectionRepository.FindAll().ToListAsync();
+            return  _informationSectionRepository.FindAll();
         }
 
         public async Task<InformationSection> GetSection(Guid Id)

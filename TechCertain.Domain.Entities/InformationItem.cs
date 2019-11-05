@@ -5,25 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities.Abstracts;
 
+
 namespace TechCertain.Domain.Entities
 {
 	public class InformationItem : EntityBase, IAggregateRoot
 	{
 		protected InformationItem () : base (null) { }
 
-		public InformationItem (User createdBy, string name, string label, int width, string itemType)
+		public InformationItem (User createdBy, string name, string label,string id, int width, string itemType)
 			: base (createdBy)
 		{
 			Name = name;
 			Label = label;
 			Width = width;
 			Type = itemType;
-		}
+            ControlId = id;
+        }
 
       
         public virtual string Name { get; protected set; }
+        public virtual string ControlId { get; protected set; }
 
-		public virtual string Label { get; protected set; }
+        public virtual string Label { get; protected set; }
 
 		public virtual int Width { get; protected set; }
 
@@ -33,15 +36,20 @@ namespace TechCertain.Domain.Entities
 
 		public virtual bool NeedsReview { get; set; }
 
-		public virtual bool ReferUnderwriting { get; set; }
+        public virtual bool NeedsMilestone { get; set; }
+
+        public virtual bool ReferUnderwriting { get; set; }
 
 		public virtual bool Required { get; set; }
 
-		public virtual string EditorId { get; set; }
+        public virtual bool ProgrammeId { get; set; }
+        public virtual bool ProgrammeName { get; set; }
 
-        public virtual bool NeedsMilestone { get; set; }
+        public virtual string EditorId { get; set; }
 
-        //  public virtual IList<DropdownListItem> droplistItems { get; set; }
+		//public virtual InformationItemConditional Conditional { get; set; }
+
+        public virtual IList<DropdownListItem> droplistItems { get; set; }
 
         // Add locality later
 
@@ -49,22 +57,22 @@ namespace TechCertain.Domain.Entities
 
     public class DropdownListItem : InformationItem
 	{
-		protected DropdownListItem ()
+		public DropdownListItem ()
 		{
 			options = new List<DropdownListOption> ();
 		}
 
-        public DropdownListItem(User createdBy, string name, string label, int width, string itemType, IList<DropdownListOption> options, string defaultText = "")
-            : base(createdBy, name, label, width, itemType)
-        {
+		public DropdownListItem (User createdBy, string name, string label,string id, int width, string itemType, IList<DropdownListOption> options, string defaultText = "")
+			: base (createdBy, name, label,id, width, itemType)
+		{
 
-            if (options == null)
-                this.options = new List<DropdownListOption>();
-            else
-                this.options = options;
-        }
+			if (options == null)
+				this.options = new List<DropdownListOption> ();
+			else
+				this.options = options;
+		}
 
-        private IList<DropdownListOption> options;
+		private IList<DropdownListOption> options;
 
 		public virtual string DefaultText { get; set; }
 
@@ -104,8 +112,8 @@ namespace TechCertain.Domain.Entities
 
         }
 
-        public TextboxItem(User createdBy, string name, string label, int width, string itemType) :
-            base(createdBy, name, label, width, itemType)
+        public TextboxItem(User createdBy, string name, string label,string id, int width, string itemType) :
+            base(createdBy, name, label,id, width, itemType)
         {
 
         }
@@ -118,8 +126,8 @@ namespace TechCertain.Domain.Entities
 
         }
 
-        public LabelItem(User createdBy, string name, string label, int width, string itemType) : 
-            base(createdBy, name, label,width,  itemType)
+        public LabelItem(User createdBy, string name, string label, string id ,int width, string itemType) : 
+            base(createdBy, name, label, id, width,  itemType)
         {
 
         }
@@ -132,28 +140,28 @@ namespace TechCertain.Domain.Entities
 
 		}
 
-		public TextAreaItem (User createdBy, string name, string label, int width, string itemType) :
-            base(createdBy, name, label, width, itemType)
+		public TextAreaItem (User createdBy, string name, string label, string id, int width, string itemType) :
+            base(createdBy, name, label, id, width, itemType)
         {
 
 		}
 	}
 
-    public class MultiselectListItem : DropdownListItem
-    {
-        protected MultiselectListItem()
-        {
+	public class MultiselectListItem : DropdownListItem
+	{
+		protected MultiselectListItem ()
+		{
 
-        }
+		}
 
-        public MultiselectListItem(User createdBy, string name, string label, int width, string itemType, string defaultText = "", IList<DropdownListOption> options = null)
-            : base(createdBy, name, label, width, itemType, options, defaultText)
-        {
+		public MultiselectListItem (User createdBy, string name, string label, string id, int width, string itemType, string defaultText = "", IList<DropdownListOption> options = null)
+			: base(createdBy, name, label, id,  width, itemType, options, defaultText )
+		{
 
-        }
-    }
+		}
+	}
 
-    public class JSButtonItem : InformationItem
+	public class JSButtonItem : InformationItem
 	{
 		public virtual string Value { get; set; }
 
@@ -162,8 +170,8 @@ namespace TechCertain.Domain.Entities
 
 		}
 
-		public JSButtonItem (User createdBy, string name, string label, int width, string itemType, string onclickValue)
-			: base (createdBy, name, label, width, itemType)
+		public JSButtonItem (User createdBy, string name, string label,string id, int width, string itemType, string onclickValue)
+			: base (createdBy, name, label,id, width, itemType)
 		{
 			Value = onclickValue;
 		}
@@ -176,8 +184,8 @@ namespace TechCertain.Domain.Entities
 
 		}
 
-		public SubmitButtonItem (User createdBy, string name, string label, int width, string itemType)
-			: base (createdBy, name, label, width, itemType)
+		public SubmitButtonItem (User createdBy, string name, string label,string id, int width, string itemType)
+			: base (createdBy, name, label, id, width, itemType)
 		{
 
 		}
@@ -191,7 +199,7 @@ namespace TechCertain.Domain.Entities
 		}
 
 		public SectionBreakItem (User createdBy, string itemType)
-			: base (createdBy, "", "", 0, itemType)
+			: base (createdBy, "", "","",0, itemType)
 		{
 
 		}
@@ -209,8 +217,8 @@ namespace TechCertain.Domain.Entities
 			Vehicles = new List<Vehicle> ();
 		}
 
-		public MotorVehicleListItem (User createdBy, string name, string label, int width, string itemType)
-			: base(createdBy, name, label, width, itemType)
+		public MotorVehicleListItem (User createdBy, string name, string label, string id , int width, string itemType)
+			: base(createdBy, name, label, id, width, itemType)
 		{
 
 		}
@@ -225,5 +233,14 @@ namespace TechCertain.Domain.Entities
 			Vehicles.Remove (vehicle);
 		}
 	}
+
+	//public class InformationItemConditional : ValueObject
+	//{
+	//	public virtual string TriggerValue { get; set; }
+
+	//	public virtual int VisibilityOnTrigger { get; set; }
+
+	//	public virtual IList<InformationItem> Targets { get; set; }
+	//}
 
 }

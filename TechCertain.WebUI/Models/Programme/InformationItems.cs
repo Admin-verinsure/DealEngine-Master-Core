@@ -14,6 +14,7 @@ namespace TechCertain.WebUI.Models.Programme
 
         public string Label { get; set; }
         public string Type { get; set; }
+        public string ControlId { get; set; }
 
 
         public IList<DropdownList> option { get; set; }
