@@ -121,6 +121,7 @@ namespace TechCertain.WebUI.Controllers
             //model.Sections = _informationSectionService.GetAllSections();
             foreach (var temp in informationTemplate)
             {
+                if(temp.Name != "Coast Guard")
                 template.Add(temp);
             }
                 
@@ -151,17 +152,65 @@ namespace TechCertain.WebUI.Controllers
                 return View(model);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> SectionBuilder(Guid SectionId)
+        //{
+        //    //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
+
+        //    InformationSection section = await _informationSectionService.GetSection(SectionId);
+        //    InformationViewModel model = new InformationViewModel();
+          
+        //    model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
+        //    return View(section);
+        //}
+
+
         [HttpPost]
         public async Task<IActionResult> SectionBuilder(Guid SectionId)
         {
             //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
 
-            InformationSection section = await _informationSectionService.GetSection(SectionId);
-            InformationViewModel model = new InformationViewModel();
-          
-            model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
-            return View(model);
+            InformationSection section = _informationSectionService.GetAllSections().FirstOrDefault(t => t.Id == SectionId);
+            Information model = new Information();
+
+            var Litems = new List<InformationItems>();
+
+
+
+            foreach (var item in section.Items)
+            {
+                var list = new List<DropdownList>();
+
+                foreach (var dropdown in item.droplistItems)
+                {
+                    foreach (var option in dropdown.Options)
+                    {
+                        list.Add(new DropdownList(option.Text, option.Value));
+
+                    }
+                    //list.Add(dropdown.)
+                }
+                Litems.Add(new InformationItems()
+                {
+                    Id = SectionId,
+                    Type = item.Type,
+                    Label = item.Label,
+                    option = list,
+                    ControlId = item.ControlId
+                });
+            }
+
+
+            // InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("fd442ea1-353d-4f98-86cd-aab200d933f4"));
+            // InformationBuilderViewModel model = new InformationBuilderViewModel();
+            // var template = new List<InformationTemplate>();
+
+            //template.Add(informationTemplate);
+
+            // model.InformationTemplates = template;
+            return Json(Litems);
         }
+
 
 
         [HttpPost]
@@ -1876,10 +1925,11 @@ namespace TechCertain.WebUI.Controllers
                                     newItem = await _informationItemService.CreateSubmitButtonItem(user, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
                                     break;
 
-                                case ItemType.SECTIONBREAK:
-                                    var terminatorItem = await _informationItemService.CreateSectionBreakItem(user, itemTypeName);
-                                    items.Add(terminatorItem);
-                                    break;
+                                //case ItemType.SECTIONBREAK:
+                                //    var terminatorItem = await _informationItemService.CreateSectionBreakItem(CurrentUser, itemTypeName);
+                                //    items.Add(terminatorItem);
+                                //    break;
+
 
                                 case ItemType.STATICVEHICLEPLANTLIST:
                                 case ItemType.MOTORVEHICLELIST:

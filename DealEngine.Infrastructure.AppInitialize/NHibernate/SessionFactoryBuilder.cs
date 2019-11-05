@@ -42,7 +42,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                  )
                 .CurrentSessionContext("web")
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
-                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultAutomappingConfiguration())                    
+                .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultAutomappingConfiguration())
                     .Conventions.Add<CascadeConvention>()
                     .AddMappingsFromAssembly(Assembly.GetExecutingAssembly())
                 .UseOverridesFromAssemblyOf<OrganisationMappingOverride>())
@@ -51,13 +51,12 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                 .BuildSessionFactory();
 
             return session;
-
-            }
+        }
             /// <summary>  
             /// Build the schema of the database.  
             /// </summary>  
             /// <param name="config">Configuration.</param>  
-            private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
+        private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
         {
 
             using (var connection = new NpgsqlConnection(connectionStringName))
@@ -69,7 +68,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                 catch (NpgsqlException)
                 {
                     CreateDatabase(connectionStringName);
-                    CreateLoggingTable(connectionStringName);
+                    //CreateLoggingTable(connectionStringName);
                 }
                 finally
                 {

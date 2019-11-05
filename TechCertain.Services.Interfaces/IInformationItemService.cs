@@ -7,8 +7,8 @@ namespace TechCertain.Services.Interfaces
     public interface IInformationItemService
     {
         // General Itemsl
-        Task<InformationItem> CreateLabelItem (User createdBy, string name, string label, int width, string itemType);
-        Task<InformationItem> CreateSectionBreakItem (User createdBy, string itemType);
+        Task<InformationItem> CreateLabelItem(User createdBy, string name, string label, int width, string itemType);
+        //Task<InformationItem> CreateSectionBreakItem (User createdBy, string itemType);
         Task<InformationItem> CreateTextboxItem (User createdBy, string name, string label, int width, string itemType);
         Task<InformationItem> CreateTextAreaItem (User createdBy, string name, string label, int width, string itemType);
 

@@ -95,13 +95,13 @@
 
     function CreateSection(information) {
         debugger;
+         var postData = { SectionId: information};
 
          $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SectionBuilder", "Information")',
-        type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ SectionId: information})
+        type: "POST",
+        data: postData
     })
              .done(function (data) {
 

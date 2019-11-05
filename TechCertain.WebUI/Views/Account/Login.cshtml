@@ -4,10 +4,10 @@
     ViewBag.PageClass = "animated fadeInDown";
 }
 @*@section topright{
-    <span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="~/Account/Register" class="btn btn-danger">Create account</a> </span>
-    TODO Change back when mono 4.3 or later is installed
-    <span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="@Url.Action("register", "account")" class="btn btn-danger">Create account</a> </span>
-}*@
+        <span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="~/Account/Register" class="btn btn-danger">Create account</a> </span>
+        TODO Change back when mono 4.3 or later is installed
+        <span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="@Url.Action("register", "account")" class="btn btn-danger">Create account</a> </span>
+    }*@
 
 <style>
 </style>
@@ -34,42 +34,42 @@
                     </header>
                     @Html.HiddenFor(m => m.ReturnUrl)
                     @Html.AntiForgeryToken()
-                <fieldset>
-                    @* Dummy username/password fields since password managers don't respect 'autocomplete="off"' *@
-                    <input style="display:none" type="text" name="fakeusernameremembered" />
-                    <input style="display:none" type="password" name="fakepasswordremembered" autocomplete="off" />
+                    <fieldset>
+                        @* Dummy username/password fields since password managers don't respect 'autocomplete="off"' *@
+                        <input style="display:none" type="text" name="fakeusernameremembered" />
+                        <input style="display:none" type="password" name="fakepasswordremembered" autocomplete="off" />
 
-                    <input id="deviceprint" class="hidden" type="text" name="deviceprint" value="" />
+                        <input id="deviceprint" class="hidden" type="text" name="deviceprint" value="" />
 
-                    <section>
-                        @*<label class="label">Username</label>*@
-                        <label class="input">
-                            <i class="icon-append fa fa-user"></i>
-                            <input type="text" name="username" placeholder="Username" value="">
-                            <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter username</b>
-                        </label>
-                    </section>
-                    <section>
-                        @*<label class="label">Password</label>*@
-                        <label class="input">
-                            <i class="icon-append fa fa-lock"></i>
-                            <input type="password" name="password" placeholder="Password" value="" autocomplete="off">
-                            <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Enter your password</b>
-                        </label>
-                        <div class="note">
-                            <a href="~/Account/ResetPassword"><i class="fa fa-frown-o"></i> Reset your password</a>
-                            @*TODO Change back when mono 4.3 or later is installed*@
-                            @*<a href="@Url.Action("forgotpassword", "account")"><i class="fa fa-frown-o"></i> Forgot password?</a>*@
-                        </div>
-                    </section>
-                    @*<section>
-            <label class="checkbox">
-                <input type="checkbox" name="rememberMe" value="true" checked="checked">
-                <input type="hidden" name="rememberMe" value="false" />
-                <i></i>Stay signed in
-            </label>
-        </section>*@
-                </fieldset>
+                        <section>
+                            @*<label class="label">Username</label>*@
+                            <label class="input">
+                                <i class="icon-append fa fa-user"></i>
+                                <input type="text" name="username" placeholder="Username" value="">
+                                <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter username</b>
+                            </label>
+                        </section>
+                        <section>
+                            @*<label class="label">Password</label>*@
+                            <label class="input">
+                                <i class="icon-append fa fa-lock"></i>
+                                <input type="password" name="password" placeholder="Password" value="" autocomplete="off">
+                                <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Enter your password</b>
+                            </label>
+                            <div class="note">
+                                <a href="~/Account/ResetPassword"><i class="fa fa-frown-o"></i> Reset your password</a>
+                                @*TODO Change back when mono 4.3 or later is installed*@
+                                @*<a href="@Url.Action("forgotpassword", "account")"><i class="fa fa-frown-o"></i> Forgot password?</a>*@
+                            </div>
+                        </section>
+                        @*<section>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="rememberMe" value="true" checked="checked">
+                                    <input type="hidden" name="rememberMe" value="false" />
+                                    <i></i>Stay signed in
+                                </label>
+                            </section>*@
+                    </fieldset>
                     <footer>
                         <button type="submit" id="submitButton" class="btn btn-primary">
                             Sign in
@@ -92,6 +92,8 @@
     </div>
 </div>
 @section pagespecific {
+    <script src="~/jquery/jquery.min.js"></script>
+
     <script type="text/javascript">
         $(function () {
             // Validation

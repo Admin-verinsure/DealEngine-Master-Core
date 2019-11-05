@@ -37,6 +37,11 @@ namespace TechCertain.Services.Impl
         {
             return await _organisationUnitRepository.FindAll().FirstOrDefaultAsync(o => o.Name == organisationalUnitName);
         }
+
+        public async Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsByOrg(Organisation org)
+        {
+            return await _organisationUnitRepository.FindAll().Where(o => o.Company == org).ToListAsync();
+        }
     }
 }
 
