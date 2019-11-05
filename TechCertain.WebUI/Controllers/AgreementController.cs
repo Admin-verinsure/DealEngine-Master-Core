@@ -29,6 +29,7 @@ namespace TechCertain.WebUI.Controllers
         IPaymentService _paymentService;
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
+        IMilestoneService _milestoneService;
         IHttpClientService _httpClientService;
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
@@ -47,7 +48,7 @@ namespace TechCertain.WebUI.Controllers
         IInsuranceAttributeService _insuranceAttributeService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
 
-        public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IInformationTemplateService informationService, IClientInformationService customerInformationService,
+        public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IMilestoneService milestoneService, IInformationTemplateService informationService, IClientInformationService customerInformationService,
                                    IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
                                    IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
@@ -57,6 +58,7 @@ namespace TechCertain.WebUI.Controllers
         {
             _informationService = informationService;
             _customerInformationService = customerInformationService;
+            _milestoneService = milestoneService;
             _organisationService = organisationService;
             _httpClientService = httpClientService;
             _productRepository = productRepository;
@@ -595,26 +597,6 @@ namespace TechCertain.WebUI.Controllers
             return RedirectToAction("EditTerms", new { id = clientAgreementId });
         }
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
-        //{
-        //    ClientAgreement agreement = _clientAgreementService.GetAgreement(clientAgreementId);
-        //    ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
-
-        //    using (var uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-
-        //        if (term.BoatTerms != null)
-        //        {
-        //            term.BoatTerms.Add(clientAgreementBVTerm);
-        //        }
-
-        //        NewMethod(uow);
-        //    }
-        //    return RedirectToAction("EditTerms", new { id = clientAgreementId });
-        //}
-
         [HttpGet]
         public async Task<IActionResult> ViewAgreement(Guid id)
         {
@@ -737,6 +719,15 @@ namespace TechCertain.WebUI.Controllers
                 // Status
                 model.ProductName = agreement.Product.Name;
                 model.Status = agreement.Status;
+                if (agreement.Status == "Referred")
+                {
+                    var activity = "Agreement Status – Referred";
+                    var milestone = await _milestoneService.GetMilestone(activity);
+                    if (milestone != null)
+                    {
+                        model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+                    }                    
+                }
                 model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");

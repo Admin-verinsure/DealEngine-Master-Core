@@ -99,24 +99,13 @@
                        })
                            .done(function (data) {
 
-                               //alert("Success");
-                               //$.smallBox({
-                               //    title: "Success",
-                               //    content: "Claim Experience and Prior Insurance details have been updated",
-                               //    color: "#5F895F",
-                               //    iconSmall: "fa fa-check bounce animated",
-                               //    timeout: 4000
-                               //});
                            })
                            .fail(function (a, s, d) {
                                alert("Unable to save.");
                            });
                    }
                }
-               //console.log($('#MilestoneStatus').val());
-               //if ($('#MilestoneStatus').val() === 'Active'){
-               //    $('#getMilestoneModal').show();
-               //}
+
                $('#getAgreementModal').show();
 
                $.ajax({

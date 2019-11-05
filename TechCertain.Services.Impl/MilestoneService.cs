@@ -95,7 +95,7 @@ namespace TechCertain.Services.Impl
         public async Task CloseMileTask(Guid id, string method)
         {
             Milestone milestone = await _milestoneRepository.GetByIdAsync(id);
-            milestone.Advisory.Method = method;
+            milestone.Method = method;
             milestone.HasTriggered = true;
             milestone.Task.IsActive = true;
 

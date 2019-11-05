@@ -73,7 +73,7 @@ namespace TechCertain.WebUI.Models.Agreement
         public bool EGlobalIsActive { get; set; }
         public string CancellNotes { get; set; }
         public string DeclineNotes { get; set; }
-
+        public string Advisory { get; internal set; }
     }
 
     public class InsuranceInclusion

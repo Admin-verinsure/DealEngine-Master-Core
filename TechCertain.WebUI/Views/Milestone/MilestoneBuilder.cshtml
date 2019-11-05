@@ -149,10 +149,13 @@
             })
         });
 
+        function getActivityId() {
+            return $('input[name=customRadio]:checked').attr('id');
+        }
+
         function AdvisoryView() {
-            var elements = document.getElementsByName('customRadio');
-            var activityId = elements[0].getAttribute( 'id' );
-            //var activity = document.getElementById('milestoneType').i;
+            
+            var activityId = getActivityId();            
             var programmeId = $('#ProgrammeId').val();
             var programmeProcessId = $('#ProgrammeProcessId').val()
 
@@ -163,7 +166,6 @@
             };
 
             console.log(mergedData);
-            debugger;
 
             $.ajax({
                 url: "/Milestone/MilestoneSelect",
@@ -191,14 +193,11 @@
             location.href='@Url.Action("MilestoneList", "Milestone")'
         }
 
-        function Submit() {          
-            var elements = document.getElementsByName('customRadio');
-            var activityId = elements[0].getAttribute('id');
-            console.log(GetAdvisoryContentJson());
+        function Submit() {                       
 
             var mergedData = {
                 EmailTemplate: GetEmailContentJson(), AdvisoryContent: GetAdvisoryContentJson(),
-                ActivityId: activityId, UserTask: GetUserTaskContentJson(), UserTasks: GetUserTaskContentJson(),
+                ActivityId: getActivityId(), UserTask: GetUserTaskContentJson(), UserTasks: GetUserTaskContentJson(),
                 ProgrammeId: $('#ProgrammeId').val(), ProgrammeProcessId: $('#ProgrammeProcessId').val()
             };                                          
 
