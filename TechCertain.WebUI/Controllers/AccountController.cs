@@ -673,7 +673,7 @@ namespace TechCertain.WebUI.Controllers
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
 
-            var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnits();
+            var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnitsByOrg(user.PrimaryOrganisation);
             OrgUnitList.GroupBy(o => o.Name);
             foreach (OrganisationalUnit ou in OrgUnitList)
             {
@@ -682,7 +682,7 @@ namespace TechCertain.WebUI.Controllers
                     OrganisationalUnitId = ou.Id,
                     Name = ou.Name
                 });
-                break;
+                //break;
                 //model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
             }
 
