@@ -873,6 +873,14 @@ namespace TechCertain.WebUI.Controllers
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
+            var activity = "Agreement Status - Declined";
+            var advisory = "";
+            var milestone = await _milestoneService.GetMilestone(activity);
+            if (milestone != null)
+            {
+                advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+            }
+
             foreach (ClientAgreement agreement in clientProgramme.Agreements)
             {
                 ViewAgreementViewModel model = new ViewAgreementViewModel
@@ -882,6 +890,7 @@ namespace TechCertain.WebUI.Controllers
                     ClientProgrammeId = clientProgramme.Id
                 };
 
+                model.Advisory = advisory;
                 // Status
                 model.Status = agreement.Status;
                 model.InformationSheetId = answerSheet.Id;
