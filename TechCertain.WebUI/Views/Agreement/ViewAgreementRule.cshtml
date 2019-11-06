@@ -30,17 +30,29 @@
 
                 <div class="smart-form">
 
-                    @foreach (var item in Model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
+                    @*@for (var i = 0; i < Model.ClientAgreementRules.Count(); i++)
+                        {
+                            @Html.TextBoxFor(m => m.ClientAgreementRules[i])
+                        }*@
+
+                    @*@foreach (var item in Model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
+                        {*@
+                    @for (var i = 0; i < Model.ClientAgreementRules.Count()-45; i++)
                     {
                         <fieldset>
                             <div class="row">
-                                <section class="col col-3 font-md">
+                                <section class="col col-3 font-md hidden">
                                     <strong>
-                                        @item.Description:
+                                        @Html.TextBoxFor(m => m.ClientAgreementRules[i].ClientAgreementRuleID)
                                     </strong>
                                 </section>
                                 <section class="col col-3 font-md">
-                                    @*@Html.TextBoxFor( item.Value,item.Value)*@
+                                    <strong>
+                                        @Html.DisplayFor(m => m.ClientAgreementRules[i].Description)
+                                    </strong>
+                                </section>
+                                <section class="col col-3 font-md">
+                                    @Html.TextBoxFor(m => m.ClientAgreementRules[i].Value)
                                 </section>
 
                             </div>
@@ -50,8 +62,8 @@
                 </div>
 
                 @*<div class="col-md-10">
-            @Html.DisplayFor(m => m.ClientAgreementRules)
-        </div>*@
+                        @Html.DisplayFor(m => m.ClientAgreementRules)
+                    </div>*@
                 <div class="col-md-10">
                 </div>
                 <div class="col-md-10">
@@ -61,7 +73,7 @@
             </div>
             <!-- end widget div -->
 
-           
+
         </form>
     </div>
     <!-- end widget -->
