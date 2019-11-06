@@ -103,7 +103,7 @@
                                 <td align="left">
                                     @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id, productId = product.Id }, null)
                                 </td>
-                                <td><a class="btn btn-success btn-xs " href="#"><i class="fa fa-search"></i>View</a></td>
+                                <td><a class="btn btn-success btn-xs " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
 
                             </tr>
                                 }
