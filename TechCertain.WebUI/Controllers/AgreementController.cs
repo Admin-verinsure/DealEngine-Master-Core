@@ -479,6 +479,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         boats.Add(new EditTermsViewModel
                         {
+                            VesselId = boat.Id,
                             BoatName = boat.BoatName,
                             BoatMake = boat.BoatMake,
                             BoatModel = boat.BoatModel,
@@ -498,6 +499,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         motors.Add(new EditTermsViewModel
                         {
+                            VesselId = motor.Id,
                             Registration = motor.Registration,
                             Make = motor.Make,
                             Model = motor.Model,
@@ -516,9 +518,9 @@ namespace TechCertain.WebUI.Controllers
             return View("EditTerms", model);
         }
         [HttpPost]
-        public async Task<IActionResult> EditTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
+        public async Task<IActionResult> EditTerm(EditTermsViewModel clientAgreementBVTerm)
         {
-            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementBVTerm.clientAgreementId);
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
 
@@ -539,7 +541,7 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
 
-            return RedirectToAction("EditTerms", new { id = clientAgreementId });
+            return RedirectToAction("EditTerms", new { id = clientAgreementBVTerm.clientAgreementId });
         }
 
         [HttpPost]
@@ -572,30 +574,32 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> DeleteTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementBVTerm)
+        public async Task<IActionResult> DeleteTerm( EditTermsViewModel clientAgreementBVTerm)
         {
-            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementBVTerm.clientAgreementId);
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             ClientAgreementBVTerm bvTerm = null;
+            ClientAgreementMVTerm mvTerm = null;
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
 
                 if (term.BoatTerms != null)
                 {
-                    bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
+
+                    bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Id == clientAgreementBVTerm.VesselId);
                     term.BoatTerms.Remove(bvTerm);
                 }
                 if (term.MotorTerms != null)
                 {
-                    bvTerm = term.BoatTerms.FirstOrDefault(bvt => bvt.Boat.BoatName == clientAgreementBVTerm.BoatName);
-                    term.BoatTerms.Remove(bvTerm);
+                    mvTerm = term.MotorTerms.FirstOrDefault(bvt => bvt.Id == clientAgreementBVTerm.VesselId);
+                    term.MotorTerms.Remove(mvTerm);
                 }
-                await uow.Commit().ConfigureAwait(false);                
+                await uow.Commit();                
             }
 
-            return RedirectToAction("EditTerms", new { id = clientAgreementId });
+            return RedirectToAction("EditTerms", new { id = clientAgreementBVTerm.clientAgreementId });
         }
 
         [HttpGet]
