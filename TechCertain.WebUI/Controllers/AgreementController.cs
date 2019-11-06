@@ -1080,7 +1080,7 @@ namespace TechCertain.WebUI.Controllers
                     foreach (ClientAgreementRuleViewModel crv in model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
                     {
                         var clientAgreementRule = await _clientAgreementRuleService.GetClientAgreementRuleBy(crv.ClientAgreementRuleID);
-                        crv.Value = clientAgreementRule.Value;
+                        clientAgreementRule.Value = crv.Value;
                     }
                      await uow.Commit();
                 }
