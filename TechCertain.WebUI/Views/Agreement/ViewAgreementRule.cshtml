@@ -17,7 +17,7 @@
             <h2>@ViewBag.Title </h2>
         </header>
         <!-- widget div-->
-        <form action="~/Agreement/ViewAgreementRule/@Model.ClientAgreementID" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+        <form action="~/Agreement/ViewAgreementRule/@Model.ClientAgreementID" method="POST" id="update-form">
             <div>
                 @Html.HiddenFor(m => m.ClientAgreementID)
                 @Html.HiddenFor(m => m.ClientProgrammeID)
@@ -40,7 +40,7 @@
                                     </strong>
                                 </section>
                                 <section class="col col-3 font-md">
-                                    @Html.TextBox(item.Value, item.Value)
+                                    @*@Html.TextBoxFor( item.Value,item.Value)*@
                                 </section>
 
                             </div>
@@ -55,7 +55,7 @@
                 <div class="col-md-10">
                 </div>
                 <div class="col-md-10">
-                    <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Update Premium</button>
+                    <button type="submit" value="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Update Premium</button>
                 </div>
                 <!-- end widget content -->
             </div>
