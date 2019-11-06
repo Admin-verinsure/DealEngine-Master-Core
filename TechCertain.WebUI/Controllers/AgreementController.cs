@@ -225,18 +225,22 @@ namespace TechCertain.WebUI.Controllers
 
                             InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
 
-                            var orgList = await _organisationService.GetAllOrganisations();
-                            orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
-                            foreach (var org in orgList)
+                            if (insuranceAttribute != null)
                             {
-                                InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
-                                if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                                var orgList = await _organisationService.GetAllOrganisations();
+                                orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
+                                foreach (var org in orgList)
                                 {
+                                    InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
+                                    if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                                    {
 
-                                    org.IsApproved = true;
+                                        org.IsApproved = true;
+                                    }
                                 }
+                                //Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
                             }
-                            Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
+                            
                         }
 
                     }
