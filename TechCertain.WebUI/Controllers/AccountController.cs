@@ -806,13 +806,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<PartialViewResult> UserPermissions (Guid Id)
 		{
-			User user = await _userService.GetUser(Id);
-			if (user == null)
-				return null;
-
-            UserPermissionsViewModel permissions = new UserPermissionsViewModel (user);
-
-			return PartialView ("_UserPermissions", permissions);
+            throw new Exception("Method needs to be rewritten");			
 		}
 
 		[HttpGet]

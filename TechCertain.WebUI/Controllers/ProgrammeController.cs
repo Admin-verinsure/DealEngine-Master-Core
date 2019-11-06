@@ -67,11 +67,6 @@ namespace TechCertain.WebUI.Controllers
             try {
                 var user = await CurrentUser();
                 var programmes = _programmeRepository.FindAll().Where(p => p.Owner == user.PrimaryOrganisation);
-                var userRoles = user.GetRoles().ToArray();
-                var hasViewAllRole = userRoles.FirstOrDefault(r => r.Name == "CanViewAllInformation") != null;
-                if (hasViewAllRole) {
-                    programmes = _programmeRepository.FindAll();
-                }
                 BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
                 foreach (Programme programme in programmes) {
                     ProgrammeInfoViewModel model = new ProgrammeInfoViewModel

@@ -10,14 +10,14 @@ namespace TechCertain.Domain.Entities
         public Milestone(User createdBy)
             : base(createdBy) {
         }
-        public virtual UserTask Task { get; set; }
-        public virtual IList<SystemEmail> EmailTemplates { get; set; }
+        public virtual UserTask UserTask { get; set; }
         public virtual Advisory Advisory { get; set; }
         public virtual bool HasTriggered { get; set; }
         public virtual ProgrammeProcess ProgrammeProcess { get; set; }
         public virtual Activity Activity { get; set; }
         public virtual Programme Programme { get; set; }
         public virtual string Method { get; set; }
+        public virtual SystemEmail SystemEmailTemplate { get; set; }
     }
 
     public class Advisory : EntityBase, IAggregateRoot

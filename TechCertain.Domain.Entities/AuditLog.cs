@@ -31,9 +31,6 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-
-      
-
     }
 }
 

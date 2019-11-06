@@ -124,12 +124,6 @@ namespace TechCertain.WebUI.Controllers
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 foreach (Programme programme in _programmeRepository.FindAll())
                 {
-                    var userRoles = user.GetRoles().ToArray();
-                    var hasRole = false;
-                    var hasViewAllRole = userRoles.FirstOrDefault(r => r.Name == "CanViewAllInformation") != null;
-
-                    if (!hasViewAllRole)
-                        continue;
 
                     //if (!hasRole && !hasViewAllRole)
                         //continue;
