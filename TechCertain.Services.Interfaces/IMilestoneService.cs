@@ -13,7 +13,8 @@ namespace TechCertain.Services.Interfaces
         Task CreateUserTask(Milestone milestone, UserTask userTask);
         Task<Milestone> GetMilestoneProcess(Guid programmeId, ProgrammeProcess programmeProcess, Activity activity);
         Task CloseMileTask(Guid id, string method);
-        Task<Milestone> GetMilestone(string activity);
+        Task<Milestone> GetMilestoneActivity(string activity);
+        Task<List<Milestone>> GetMilestones(Guid programmeId);
     }
     
 }

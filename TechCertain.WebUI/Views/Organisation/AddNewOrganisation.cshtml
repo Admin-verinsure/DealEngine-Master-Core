@@ -128,103 +128,11 @@
 
                                     </tr>
 
-                                    <tr>
-                                        <td align="center">
-                                            <b>User</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <select class="browser-default custom-select custom-select-lg mb-3 col-lg-12" name="OrganisationUser" onchange="OrganisationUserOnChange()">
-                                                    <option selected>Please select:</option>
-                                                    @foreach (var user in Model.Users)
-                                                    {
-                                                        <option value=@user.UserName> @user.UserName</option>
-                                                    }
-                                                </select>
-                                            </label>
-                                        </td>
-                                    </tr>
 
                                 </tbody>
                             </table>
                         </section>
                         @*</div>*@
-
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section id="widget-grid-user" class="">
-            <div class="row">
-                <article class="col-sm-12 col-md-12 col-lg-6">
-                    <!-- new widget -->
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                        <section>
-                            <header>User</header>
-                            <table class="table table-bordered table-striped table-hover table-condensed">
-                                <tbody>
-                                    <tr>
-                                        <td align="center">
-                                            <b>First Name</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-user"></i>
-                                                <input type="text" name="UserFirstName" placeholder="First Name">
-                                                <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i>Name</b>
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Last Name</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-user"></i>
-                                                <input type="text" name="UserLastName" placeholder="Last name">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Email</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-envelope"></i>
-                                                <input type="text" name="UserEmail" placeholder="Email Address">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Phone Number</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-phone"></i>
-                                                <input type="text" name="UserPhone" placeholder="Phone Number">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </section>
-
 
                     </div>
                 </article>
@@ -338,47 +246,33 @@
 
 @section pagespecific {
     <!-- PAGE RELATED PLUGIN(S)-->
-    <script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
-    <script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>
-    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
-    <script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-    <script src="/Scripts/bootstrapmvc"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
-    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <script type="text/javascript">
-
-        $('select').selectpicker();
-
-
-
 
     function CreateOrganisation() {
     $.ajax({
     // change back once mono decides to fix
-    url: '@Url.Action("CreateOrganisation", "Organisation")',
-    type: "POST",
-    data: ""
+        url: '@Url.Action("CreateOrganisation", "Organisation")',
+        type: "POST",
+        data: ""
     })
-    .done(function (data) {
-    $.smallBox({
-    title: "Success",
-    content: "Organisation details have been added",
-    color: "#5F895F",
-    iconSmall: "fa fa-check bounce animated",
-    timeout: 4000
-    });
+        .done(function (data) {
+            $.smallBox({
+                title: "Success",
+                content: "Organisation details have been added",
+                color: "#5F895F",
+                iconSmall: "fa fa-check bounce animated",
+                timeout: 4000
+            });
 
-    })
-    .fail(function () {
-    alert("Unable to save.");
-    });
+        })
+        .fail(function () {
+            alert("Unable to save.");
+        });
+
     }
 
     function OrganisationUserOnChange() {
-    //if condition for tcadminuser
+        //if condition for tcadminuser
     document.getElementById("wid-id-2").hidden = hidden;
     hidden = !(hidden);
     }

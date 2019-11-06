@@ -31,7 +31,14 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-        
+
+        public virtual string testtestfield
+        {
+            get;
+            set;
+        }
+
+
     }
 }
 

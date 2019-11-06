@@ -108,9 +108,14 @@ namespace TechCertain.Services.Impl
                                                                                             && m.Activity == activity);
         }
 
-        public async Task<Milestone> GetMilestone(string activity)
+        public async Task<Milestone> GetMilestoneActivity(string activity)
         {
             return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Activity.Name == activity);
+        }
+
+        public async Task<List<Milestone>> GetMilestones(Guid programmeId)
+        {
+            return await _milestoneRepository.FindAll().Where(m => m.Programme.Id == programmeId).ToListAsync();
         }
     }
 }

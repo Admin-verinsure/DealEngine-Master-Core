@@ -186,7 +186,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AuthorisedReferral(AgreementViewModel clientAgreementModel)
         {
             ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
-
+            var user = await CurrentUser();
             var premium = 0.0m;
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -224,19 +224,22 @@ namespace TechCertain.WebUI.Controllers
                         {
 
                             InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Other Marina");
-
-                            var orgList = await _organisationService.GetAllOrganisations();
-                            orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
-                            foreach (var org in orgList)
+                            if (insuranceAttribute != null)
                             {
-                                InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
-                                if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                                var orgList = await _organisationService.GetAllOrganisations();
+                                orgList.Where(o => o.IsApproved == false && o.InsuranceAttributes.Contains(insuranceAttribute)).ToList();
+                                foreach (var org in orgList)
                                 {
+                                    InsuranceAttribute insuranceAttribute1 = await _insuranceAttributeService.GetInsuranceAttributeByName(org.Name);
+                                    if (insuranceAttribute.InsuranceAttributeName == "Other Marina")
+                                    {
 
-                                    org.IsApproved = true;
+                                        org.IsApproved = true;
+                                    }
                                 }
+                                //Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
                             }
-                            Organisation othermarine = await _OrganisationRepository.GetByIdAsync(bvterm.Boat.BoatWaterLocation.Id);
+                            
                         }
 
                     }
@@ -244,7 +247,7 @@ namespace TechCertain.WebUI.Controllers
 
                 if (agreement.Status != "Quoted")
                     agreement.Status = "Quoted";
-                var user = await CurrentUser();
+                
                 string auditLogDetail = "Agreement Referrals have been authorised by " + user.FullName;
                 AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                 agreement.ClientAgreementAuditLogs.Add(auditLog);
@@ -727,7 +730,7 @@ namespace TechCertain.WebUI.Controllers
                 if (agreement.Status == "Referred")
                 {
                     var activity = "Agreement Status – Referred";
-                    var milestone = await _milestoneService.GetMilestone(activity);
+                    var milestone = await _milestoneService.GetMilestoneActivity(activity);
                     if (milestone != null)
                     {
                         model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
@@ -881,7 +884,7 @@ namespace TechCertain.WebUI.Controllers
 
             var activity = "Agreement Status - Declined";
             var advisory = "";
-            var milestone = await _milestoneService.GetMilestone(activity);
+            var milestone = await _milestoneService.GetMilestoneActivity(activity);
             if (milestone != null)
             {
                 advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);

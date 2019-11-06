@@ -7,6 +7,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -73,7 +74,7 @@ namespace TechCertain.WebUI.Controllers
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    _organisationService.UpdateOrganisation(org);
+                    await _organisationService.UpdateOrganisation(org);
                     await uow.Commit();
                 }
                 return Content("success");
@@ -92,23 +93,15 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AddNewOrganisation()
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
-            throw new Exception("Method will need to be re-written");
-            //    if (WebConfigurationManager.AppSettings["DemoEnvironment"].ToString() == "true")
-            //    {
-            //        User user = _userService.GetUser("TCMarinaAdmin1");
-            //        List<User> TCMarinaAdmin = new List<User>();
-            //        TCMarinaAdmin.Add(user);
-            //        organisationViewModel.Users = TCMarinaAdmin;
-            //    }
 
-            //organisationViewModel.OrgMooredType = new List<SelectListItem>
-            //{
-            //    new SelectListItem {Text = "Berthed", Value = "Berthed"},
-            //    new SelectListItem {Text = "Pile", Value = "Pile"},
-            //    new SelectListItem {Text = "Swing", Value = "Swing"},
-            //};
+            organisationViewModel.OrgMooredType = new List<SelectListItem>
+            {
+                new SelectListItem {Text = "Berthed", Value = "Berthed"},
+                new SelectListItem {Text = "Pile", Value = "Pile"},
+                new SelectListItem {Text = "Swing", Value = "Swing"},
+            };
 
-            //return View("AddNewOrganisation", organisationViewModel);
+            return View("AddNewOrganisation", organisationViewModel);
         }
 
         [HttpPost]
@@ -150,29 +143,6 @@ namespace TechCertain.WebUI.Controllers
                 insuranceAttribute.IAOrganisations.Add(organisation);
                 await _organisationService.CreateNewOrganisation(organisation);
             }
-
-            Random random = new Random();
-            int rand = random.Next(10000);
-            var userName = "TCMarinaAdmin"+ rand;
-            try
-            {
-                user = await _userService.GetUser(Request.Form["OrganisationUser"]);
-            }
-            catch (Exception)
-            {
-                    user = new User(user, Guid.NewGuid(), userName);
-                    user.FirstName = Request.Form["UserFirstName"];
-                    user.LastName = Request.Form["UserLastName"];
-                    user.FullName = user.FirstName + " " + user.LastName;
-                    user.Email = Request.Form["UserEmail"];
-                    user.Phone = Request.Form["UserPhone"];
-                    await _userService.Create(user);
-            }
-
-            if (!user.Organisations.Contains(organisation))
-                user.Organisations.Add(organisation);
-
-            //_userService.Update(user);
 
             Location location = new Location(user)
             {
