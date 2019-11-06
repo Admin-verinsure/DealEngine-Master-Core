@@ -8,6 +8,8 @@ namespace TechCertain.WebUI.Models.Agreement
 {
     public class EditTermsViewModel : BaseViewModel
     {
+        public Guid clientAgreementId { get; set; }
+        public Guid VesselId { get; set; }
 
         public string BoatName { get; set; }
         public int TermLimit { get; set; }
