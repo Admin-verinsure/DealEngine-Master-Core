@@ -21,10 +21,6 @@ namespace TechCertain.WebUI.Models.Permission
 			Name = group.Name;
 		}
 
-		public ApplicationGroup ToEntity (User creatingUser)
-		{
-			return new ApplicationGroup (creatingUser, Name);
-		}
 	}
 }
 

@@ -67,7 +67,7 @@ namespace TechCertain.Services.Impl
                 //update function
             }
 
-            milestone.EmailTemplates.Add(systemEmailTemplate);
+            milestone.SystemEmailTemplate = systemEmailTemplate;
             await _milestoneRepository.UpdateAsync(milestone);
         }
 
@@ -97,7 +97,7 @@ namespace TechCertain.Services.Impl
             Milestone milestone = await _milestoneRepository.GetByIdAsync(id);
             milestone.Method = method;
             milestone.HasTriggered = true;
-            milestone.Task.IsActive = true;
+            milestone.UserTask.IsActive = true;
 
             await _milestoneRepository.UpdateAsync(milestone);
         }

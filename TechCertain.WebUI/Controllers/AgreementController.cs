@@ -738,12 +738,6 @@ namespace TechCertain.WebUI.Controllers
                 model.CurrencySymbol = "fa fa-dollar";
                 model.ClientNumber = agreement.ClientNumber;
                 model.PolicyNumber = agreement.PolicyNumber;
-                var userRoles = user.GetRoles().ToArray();
-                var hasViewAllRole = userRoles.FirstOrDefault(r => r.Name == "CanViewAllInformation") != null;
-                if (hasViewAllRole)
-                {
-                    model.UserRoles.Add("CanViewAllInformation");
-                }
                 // MV
                 model.HasVehicles = answerSheet.Vehicles.Count > 0;
                 if (model.HasVehicles)

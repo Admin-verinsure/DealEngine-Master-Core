@@ -100,8 +100,6 @@ namespace TechCertain.Domain.Entities
 
 		//public virtual UserTask LastActiveTask { get; set; }
 
-		public virtual ICollection<ApplicationGroup> Groups { get; set; }
-
         public virtual IList<Programme> UISIssueNotifyProgrammes { get; set; }
 
         public virtual IList<Programme> UISSubmissionNotifyProgrammes { get; set; }
@@ -164,11 +162,6 @@ namespace TechCertain.Domain.Entities
 			// we shouldn't get here since every user should have a personal organisation, but if we do, throw an exception since we're not supposed to get here
 			throw new Exception (string.Format ("User {0} doesn't have a personal organisation", UserName));
 		}
-
-        public virtual IEnumerable<ApplicationRole> GetRoles()
-        {
-            return Groups.SelectMany(g => g.Roles);
-        }
     }
 
     public class Location : EntityBase, IAggregateRoot
