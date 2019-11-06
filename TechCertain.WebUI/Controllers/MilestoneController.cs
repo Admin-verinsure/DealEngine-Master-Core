@@ -166,8 +166,8 @@ namespace TechCertain.WebUI.Controllers
                 if(milestone != null)
                 {
                     model.AdvisoryContent.Advisory = milestone.Advisory.Description;
-                    model.EmailTemplate.Body = milestone.SystemEmailTemplate.Body;
-                    model.UserTask.Description = milestone.UserTask.Description;
+                    //model.EmailTemplate.Body = milestone.SystemEmailTemplate.Body;
+                    //model.UserTask.Description = milestone.UserTask.Description;
                 }
 
             }
