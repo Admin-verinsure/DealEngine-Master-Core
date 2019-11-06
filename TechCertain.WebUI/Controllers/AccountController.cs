@@ -353,7 +353,7 @@ namespace TechCertain.WebUI.Controllers
 			catch (UserImportException ex)
 			{
 				ErrorSignal.FromCurrentContext().Raise(ex);
-				_emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2015 - User Import Error", ex.Message);
+				await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2015 - User Import Error", ex.Message);
 				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. Proposalonline has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}
@@ -564,7 +564,7 @@ namespace TechCertain.WebUI.Controllers
 
             var activity = "Agreement Status - Not Started";
 
-            var milestone = await _milestoneService.GetMilestone(activity);
+            var milestone = await _milestoneService.GetMilestoneActivity(activity);
             AccountRegistrationModel model = new AccountRegistrationModel();
             if (milestone != null)
             {

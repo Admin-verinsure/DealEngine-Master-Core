@@ -46,13 +46,6 @@
 
 
   <ItemGroup>
-    <Content Update="nav.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-
-  <ItemGroup>
     <ProjectReference Include="..\DealEngine.Infrastructure.AppInitialize\DealEngine.Infrastructure.AppInitialize.csproj" />
     <ProjectReference Include="..\DealEngine.Infrastructure.AuthorizationRSA\DealEngine.Infrastructure.AuthorizationRSA.csproj" />
     <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />

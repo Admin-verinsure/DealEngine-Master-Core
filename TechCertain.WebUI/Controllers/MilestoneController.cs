@@ -158,12 +158,18 @@ namespace TechCertain.WebUI.Controllers
             model.ProgrammeId = programme.Id;
             model.ProgrammeProcessId = programmeProcess.Id.ToString();
 
-            Milestone milestone = null;//await _milestoneService.GetMilestoneProcess(programme.Id, programmeProcess, milestoneActivity);
-            if (milestone != null)
+            
+            var milestoneList = await _milestoneService.GetMilestones(programme.Id);
+            if (milestoneList.Count != 0)
             {
-                model.AdvisoryContent.Advisory = milestone.Advisory.Description;
-                //TODO: add email to model
-                //TODO: add task to model
+                var milestone = milestoneList.FirstOrDefault(m => m.ProgrammeProcess.Id == Guid.Parse(strProgrammeProcessId) && m.Activity.Id == Guid.Parse(strMilestoneActivityId));
+                if(milestone != null)
+                {
+                    model.AdvisoryContent.Advisory = milestone.Advisory.Description;
+                    //TODO: add email to model
+                    //TODO: add task to model
+                }
+
             }
 
             return PartialView("_MilestoneTypeList", model);
@@ -173,8 +179,17 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SubmitMilestone(MilestoneBuilderViewModel model)
         {
             var user = await CurrentUser();
+            Milestone milestone;
             Programme programme = await _programmeService.GetProgramme(model.ProgrammeId);
-            Milestone milestone = await _milestoneService.CreateMilestone(user, Guid.Parse(model.ProgrammeProcessId), Guid.Parse(model.ActivityId), programme);
+            var milestoneList = await _milestoneService.GetMilestones(model.ProgrammeId);
+
+            if (milestoneList.Count == 0)
+            {
+                milestone = await _milestoneService.CreateMilestone(user, Guid.Parse(model.ProgrammeProcessId), Guid.Parse(model.ActivityId), programme);
+            }
+            else
+                milestone = milestoneList.FirstOrDefault(m => m.ProgrammeProcess.Id == Guid.Parse(model.ProgrammeProcessId));
+                    
 
             if (model.EmailTemplate.Body != null)
             {
