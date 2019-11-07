@@ -29,6 +29,7 @@ namespace TechCertain.WebUI.Models
 
         public IEnumerable<InformationItem> SectionItems { get; set; }
 
+        public List<InformationSection> Section { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
 
         // TODO - find a better way to pass these in
