@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using TechCertain.Domain.Entities;
@@ -51,6 +52,7 @@ namespace TechCertain.Services.Impl
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
+                client.Dispose();
             }
             catch (HttpRequestException e)
             {
@@ -60,6 +62,8 @@ namespace TechCertain.Services.Impl
             {
                 responseMessage = ex.Message;
             }
+            _socketsHttpHandler.Dispose();
+            _httpRequestMessage.Dispose();
 
             return responseMessage;
         }
@@ -91,8 +95,10 @@ namespace TechCertain.Services.Impl
             {
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = await client.SendAsync(_httpRequestMessage);
+                Thread.Sleep(1000);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
+                client.Dispose();
             }
             catch (HttpRequestException e)
             {
@@ -100,8 +106,10 @@ namespace TechCertain.Services.Impl
             }
             catch (Exception ex)
             {
-               responseMessage = ex.Message;
+               responseMessage = ex.Message + ex.InnerException + ex.StackTrace;
             }
+            _socketsHttpHandler.Dispose();
+            _httpRequestMessage.Dispose();
 
             return responseMessage;
         }
@@ -118,7 +126,7 @@ namespace TechCertain.Services.Impl
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
-                Credentials = new NetworkCredential("tcwebservices", "xfmdpnf2"),
+                Credentials = new NetworkCredential("tcwebservices", "xfmdpnf2"),                
             };
 
             _httpRequestMessage = new HttpRequestMessage
@@ -135,6 +143,7 @@ namespace TechCertain.Services.Impl
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
+                client.Dispose();
             }
             catch (HttpRequestException e)
             {
@@ -144,6 +153,9 @@ namespace TechCertain.Services.Impl
             {
                 responseMessage = ex.Message;
             }
+
+            _socketsHttpHandler.Dispose();
+            _httpRequestMessage.Dispose();
 
             return responseMessage;
         }

@@ -39,13 +39,14 @@
     border-bottom-color: #ddd !important;
 }
 
-.sw-theme-circles > ul.step-anchor {
-    position: relative;
-    background: #fff;
-    border: none;
-    list-style: none;
-    margin-bottom: 40px;
-}
+    .sw-theme-circles > ul.step-anchor {
+        position: relative;
+        align-content: flex-end
+        background: #fff;
+        border: none;
+        list-style: none;
+        margin-bottom: 40px;
+    }
 
 .sw-theme-circles > ul.step-anchor:before {
     content: " ";

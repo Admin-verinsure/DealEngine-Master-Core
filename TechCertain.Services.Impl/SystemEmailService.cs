@@ -27,7 +27,8 @@ namespace TechCertain.Services.Impl
             if (string.IsNullOrWhiteSpace(body))
                 throw new ArgumentNullException(nameof(body));
 
-            if(await CheckExists(systemEmailName))
+            var exists = await CheckExists(systemEmailName);
+            if (!exists)
                 await _systemEmailRepository.AddAsync(new SystemEmail(createdBy, systemEmailName, internalNotes, subject, body, systemEmailType));
             
         }
@@ -68,16 +69,13 @@ namespace TechCertain.Services.Impl
 
         public async Task<SystemEmail> GetSystemEmailByType(string systemEmailType)
         {
-            SystemEmail systemEmail = await _systemEmailRepository.FindAll().FirstOrDefaultAsync(se => se.SystemEmailType == systemEmailType && se.DateDeleted == null);
-            if (systemEmail != null)
-            {
-                return systemEmail;
-            }
-            else
-            {
-                throw new Exception("System Email with type '" + systemEmailType + "' does not exist in the system");
-            }
+            SystemEmail systemEmail = await _systemEmailRepository.FindAll().FirstOrDefaultAsync(se => se.SystemEmailType == systemEmailType && se.DateDeleted == null);            
+            return systemEmail;            
+        }
 
+        public async Task UpdateSystemEmailTemplate(SystemEmail systemEmailTemplate)
+        {
+            await _systemEmailRepository.UpdateAsync(systemEmailTemplate);
         }
     }
 }

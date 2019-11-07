@@ -13,7 +13,7 @@ namespace TechCertain.Services.Impl
     public class MilestoneService : IMilestoneService
     {
         IMapperSession<Milestone> _milestoneRepository;
-        ISystemEmailService _systemEmailRepository;
+        ISystemEmailService _systemEmailService;
         //ITaskingService _taskingService;
         IProgrammeProcessService _programmeProcessService;
         IActivityService _activityService;
@@ -28,7 +28,7 @@ namespace TechCertain.Services.Impl
             _activityService = activityService;
             _programmeProcessService = programmeProcessService;
             _milestoneRepository = milestoneRepository;
-            _systemEmailRepository = systemEmailService;
+            _systemEmailService = systemEmailService;
             //_taskingService = taskingService;
         }
 
@@ -47,24 +47,19 @@ namespace TechCertain.Services.Impl
             return milestone;
         }
 
-        public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, string template)
+        public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId)
         {
-
-            if (milestone == null)
-                throw new ArgumentNullException(nameof(milestone));
-            if (string.IsNullOrWhiteSpace(template))
-                throw new ArgumentNullException(nameof(template));
-            if (string.IsNullOrWhiteSpace(emailContent))
-                throw new ArgumentNullException(nameof(emailContent));
-
-            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType(template);
-            if (systemEmailTemplate != null)
+            var activity = await _activityService.GetActivityId(activityId);
+            var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
+            SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(activity.Name);
+            if (systemEmailTemplate == null)
             {
-                await _systemEmailRepository.AddNewSystemEmail(user, milestone.Activity.Name, null, subject, emailContent, template);
+                systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
+                await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
             }
             else
             {
-                //update function
+                await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
             }
 
             milestone.SystemEmailTemplate = systemEmailTemplate;
@@ -84,11 +79,7 @@ namespace TechCertain.Services.Impl
 
         public async Task CreateUserTask(Milestone milestone, UserTask userTask)
         {
-            if (milestone == null)
-                throw new ArgumentNullException(nameof(milestone));
-            if (userTask == null)
-                throw new ArgumentNullException(nameof(userTask));
-
+            milestone.UserTask = userTask;
             await _milestoneRepository.UpdateAsync(milestone);
         }
 
