@@ -40,7 +40,7 @@ namespace TechCertain.Services.Impl
 
         public async Task<InformationItem> CreateDropdownListItem(User createdBy, string name, string label, string defaultText, IList<DropdownListOption> options, int width, string itemType)
         {
-            DropdownListItem infoItem = new DropdownListItem(createdBy, name, label, width, itemType, options, defaultText); //InformationItem.CreateDropdownListItem(createdBy, name, label, width, itemType, defaultText, options ) as DropdownListItem;
+            DropdownListItem infoItem = new DropdownListItem(createdBy, name, label,"", width, itemType, options, defaultText); //InformationItem.CreateDropdownListItem(createdBy, name, label, width, itemType, defaultText, options ) as DropdownListItem;
             await _dropdownListItemRepository.AddAsync(infoItem);
 
             return infoItem;
@@ -48,56 +48,56 @@ namespace TechCertain.Services.Impl
 
         public async Task<InformationItem> CreateLabelItem(User createdBy, string name, string label, int width, string itemType)
         {
-            InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType); //InformationItem.CreateLabelItem(createdBy, name, label, width, itemType);
+            InformationItem infoItem = new InformationItem(createdBy, name, label, "", width, itemType); //InformationItem.CreateLabelItem(createdBy, name, label, width, itemType);
             await _labelItemRepository.AddAsync(infoItem as LabelItem);
             return infoItem;
         }
 
         public async Task<InformationItem> CreateTextboxItem(User createdBy, string name, string label, int width, string itemType)
         {
-            InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType); // InformationItem.CreateTextboxItem(createdBy, name, label, width, itemType);
+            InformationItem infoItem = new InformationItem(createdBy, name, label, "", width, itemType); // InformationItem.CreateTextboxItem(createdBy, name, label, width, itemType);
             await _textboxItemRepository.AddAsync(infoItem as TextboxItem);
             return infoItem;
         }
 
 		public async Task<InformationItem> CreateMultiselectListItem (User createdBy, string name, string label, string defaultText, IList<DropdownListOption> options, int width, string itemType)
 		{
-            MultiselectListItem infoItem = new MultiselectListItem(createdBy, name, label, width, itemType, defaultText, options); // InformationItem.CreateMultiselectListItem (createdBy, name, label, width, itemType, defaultText, options) as MultiselectListItem;
+            MultiselectListItem infoItem = new MultiselectListItem(createdBy, name, label, "", width, itemType, defaultText, options); // InformationItem.CreateMultiselectListItem (createdBy, name, label, width, itemType, defaultText, options) as MultiselectListItem;
             await _dropdownListItemRepository.AddAsync(infoItem);
 			return infoItem;
 		}
 
 		public async Task<InformationItem> CreateTextAreaItem (User createdBy, string name, string label, int width, string itemType)
 		{
-            InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType); // InformationItem.CreateTextAreaItem (createdBy, name, label, width, itemType);
+            InformationItem infoItem = new InformationItem(createdBy, name, label, "", width, itemType); // InformationItem.CreateTextAreaItem (createdBy, name, label, width, itemType);
             await _textareaItemRepository.AddAsync(infoItem as TextAreaItem);
 			return infoItem;
 		}
 
 		public async Task<InformationItem> CreateJSButtonItem (User createdBy, string name, string label, int width, string itemType, string onclickValue)
 		{
-			InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType);
+			InformationItem infoItem = new InformationItem(createdBy, name, label, "", width, itemType);
             await _jsButtonRepository.AddAsync(infoItem as JSButtonItem);
 			return infoItem;
 		}
 
 		public async Task<InformationItem> CreateSubmitButtonItem (User createdBy, string name, string label, int width, string itemType)
 		{
-			InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType);
+			InformationItem infoItem = new InformationItem(createdBy, name, label, "", width, itemType);
             await _submitButtonRepository.AddAsync(infoItem as SubmitButtonItem);
 			return infoItem;
 		}
 
-		public async Task<InformationItem> CreateSectionBreakItem (User createdBy, string itemType)
-		{
-			InformationItem infoItem = new InformationItem(createdBy, itemType, "", 0, "");
-            await _sectionBreakItemRepository.AddAsync(infoItem as SectionBreakItem);
-			return infoItem;
-		}
+        //public async Task<InformationItem> CreateSectionBreakItem(User createdBy, string itemType)
+        //{
+        //    //InformationItem infoItem = _informationItemFactory.CreateSectionBreakItem(createdBy, itemType);
+        //    //await _sectionBreakItemRepository.AddAsync(infoItem as SectionBreakItem);
+        //    return "";
+        //}
 
-		public async Task<InformationItem> CreateMotorVehicleListItem (User createdBy, string name, string label, int width, string itemType)
+        public async Task<InformationItem> CreateMotorVehicleListItem (User createdBy, string name, string label, int width, string itemType)
 		{
-			InformationItem infoItem = new InformationItem(createdBy, name, label, width, itemType);
+			InformationItem infoItem = new InformationItem(createdBy, name, label, "", width, itemType);
             await _motorVehicleListItemRepository.AddAsync(infoItem as MotorVehicleListItem);
 			return infoItem;
 		}

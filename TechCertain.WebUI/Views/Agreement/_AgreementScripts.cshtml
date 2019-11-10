@@ -1,10 +1,7 @@
-﻿@*<script src="/Scripts/bootstrapmvc"></script>*@
-<!--<script src="/Scripts/bootstrap/bootstrap.typeahead.min.js"><script>-->
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-<script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js"></script>
-<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
-<script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
-<script src="~/Scripts/libs/jquery-ui-1.10.3.js"></script>
+﻿<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<script src="~/jquery/jquery.min.js"></script>
+<script src="~/lib/popper.js/umd/popper.min.js"></script>
+<script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 
@@ -12,7 +9,7 @@
         $(this).addClass('active').siblings().removeClass('active');
     });
 
-   
+
     $('#hiddenInput').on('click', function () {
         debugger;
   var $input = $('.datepicker').pickadate();
@@ -26,25 +23,26 @@
 
 
 
-    $('#button').datepicker()
-	.on('changeDate', function(ev){
-        $('#button').datepicker('hide');
-        alert(ev.date.valueOf());
-    });
+ //   $('#button').datepicker()
+	//.on('changeDate', function(ev){
+ //       $('#button').datepicker('hide');
+ //       alert(ev.date.valueOf());
+ //   });
 
 
 
-   
+
     $('#myModal').on('show.bs.modal', function (e) {
+        debugger;
         $('.modal').css('width', '600px');
-        var BoatPremium = $(e.relatedTarget).data('boat-Premium');
+        var BoatPremium = $(e.relatedTarget).data('boat-premium');
         var BoatName = $(e.relatedTarget).data('boat-name');
 
         var BoatMake = $(e.relatedTarget).data('boat-make');
         var BoatModel = $(e.relatedTarget).data('boat-model');
 
-        var SumInsured = $(e.relatedTarget).data('boat-Sum');
-        var BoatExcess = $(e.relatedTarget).data('boat-Excess');
+        var SumInsured = $(e.relatedTarget).data('boat-sum');
+        var BoatExcess = $(e.relatedTarget).data('boat-excess');
         var BoatFSL = $(e.relatedTarget).data('boat-fsl');
         $(e.currentTarget).find('input[name="BoatMake"]').val(BoatMake);
         $(e.currentTarget).find('input[name="BoatModel"]').val(BoatModel);
@@ -56,15 +54,16 @@
 
     });
     $('#VesselModal').on('show.bs.modal', function (e) {
+                debugger;
+
         $('.modal').css('width', '600px');
         debugger;
         var MotorMake = $(e.relatedTarget).data('motor-make');
         var MotorRego = $(e.relatedTarget).data('motor-registration');
-        var SumInsured = $(e.relatedTarget).data('motor-Sum');
-        var BoatPremium = $(e.relatedTarget).data('motor-Premium');
-        var SumInsured = $(e.relatedTarget).data('motor-Sum');
+        var SumInsured = $(e.relatedTarget).data('motor-sum');
+        var BoatPremium = $(e.relatedTarget).data('motor-premium');
         var VesselModel = $(e.relatedTarget).data('motor-model');
-        var BoatExcess = $(e.relatedTarget).data('motor-Excess');
+        var BoatExcess = $(e.relatedTarget).data('motor-excess');
         var BoatFSL = $(e.relatedTarget).data('motor-motorfsl');
 
         $(e.currentTarget).find('input[name="MotorRego"]').val(MotorRego);
@@ -85,11 +84,31 @@
         $(e.currentTarget).find('input[name="AutoriseType"]').val(type);
 
     });
+    
+     $('#confirmMotorDelete').on('show.bs.modal', function (e) {
+        debugger;
+        $('.modal .modal-body').css('height', 'auto');
+        var MotorId = $(e.relatedTarget).data('motor-id');
+        $(e.currentTarget).find('input[name="MotorId"]').val(MotorId);
+    });
+
+        debugger;
+        $("#btnSubmit").click(function () {
+            debugger;
+            var valid = ValidateVesselTerm();
+            if (valid) {
+                vesselSubmit();
+            }
+
+        });
 
     $('#confirmDelete').on('show.bs.modal', function (e) {
+        debugger;
         $('.modal .modal-body').css('height', 'auto');
-        var delBoatName = $(e.relatedTarget).data('boat-delname');
-        $(e.currentTarget).find('input[name="BoatName"]').val(delBoatName);
+        var BoatId = $(e.relatedTarget).data('boat-id');
+        var BoatName = $(e.relatedTarget).data('boat-name');
+        $(e.currentTarget).find('input[name="BoatName"]').val(BoatName);
+        $(e.currentTarget).find('input[name="BoatId"]').val(BoatId);
     });
 
     $(document).ready(function () {
@@ -111,19 +130,39 @@
 
         });
 
-        $("#btnDelete").click(function () {
+        $("#btnMotorDelete").click(function () {
+            debugger;
             var agreement = $("#ClientAgreementId").val();
-            var boatName = $("#BoatName").val();
-            var boatFSL = $("#FSL").val();
+            var motorId = $("#Motor_Id").val();
             var prodData = {
-                "BoatName": boatName,
-                "FSL": boatFSL
+                "clientAgreementId":agreement,
+                "VesselId": motorId
             };
             $.ajax({
                 type: "Post",
-                data: JSON.stringify({ clientAgreementId: agreement, SelectedBoatUse: prodData }),
+                data: prodData,
                 url: "/Agreement/DeleteTerm",
-                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    $("#myModal").modal("hide");
+                    location.reload(true);
+                    alert("Deleted Successfully!");
+
+                }
+            });
+        });
+
+        $("#btnDelete").click(function () {
+            debugger;
+            var agreement = $("#ClientAgreementId").val();
+            var boatId = $("#Boat_Id").val();
+            var prodData = {
+                "clientAgreementId":agreement,
+                "VesselId": boatId
+            };
+            $.ajax({
+                type: "Post",
+                data: prodData,
+                url: "/Agreement/DeleteTerm",
                 success: function () {
                     $("#myModal").modal("hide");
                     location.reload(true);
@@ -134,7 +173,7 @@
         });
     });
 
-    
+
 
     function LoadSubmit() {
         debugger;
@@ -273,7 +312,7 @@
             return validation;
         }
 
-   
+
 
         function validate(value) {
             var r = /^\d+(\.\d+)?$/;
@@ -291,6 +330,7 @@
             var boatPremium = $("#Premium").val().replace("$", " ");
             var boatFSL = $("#FSL").val().replace("$", " ");
             var prodData = {
+                "clientAgreementId":agreement,
                 "BoatName": boatName,
                 "TermLimit": boatSumInsured.replace(/,/g, '').trim(),
                 "Excess": boatExcess.replace(/,/g, '').trim(),
@@ -299,9 +339,8 @@
             };
             $.ajax({
                 type: "Post",
-                data: JSON.stringify({ clientAgreementId: agreement, clientAgreementBVTerm: prodData }),
+                data: prodData,
                 url: "/Agreement/EditTerm",
-                contentType: "application/json; charset=utf-8",
                 success: function () {
                     $("#myModal").modal("hide");
                     alert("Saved Successfully!");
@@ -402,7 +441,7 @@
                window.location.href = data.url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
-            //debugger;
+            debugger;
         alert("There was an error while trying to authorise referrals.");
                });
     }

@@ -16,12 +16,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.MappingConventions
         {
             return type.Namespace == typeof(Organisation).Namespace
                 && !type.IsDefined(typeof(CompilerGeneratedAttribute), false) ; // see http://stackoverflow.com/a/11447966/84590
-        }
-        
-        public override bool IsComponent(Type type)
-        {
-            return typeof(ValueObject).IsAssignableFrom(type) || typeof(ValueObject<>).IsAssignableFrom(type);
-        }
+        }       
         
     }
 }

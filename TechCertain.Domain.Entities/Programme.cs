@@ -11,8 +11,7 @@ namespace TechCertain.Domain.Entities
 		public virtual Organisation Owner { get; protected set; }
         public virtual IList<Product> Products { get; protected set; }
         public virtual IList<EmailTemplate> EmailTemplates { get; protected set; }
-		public virtual IList<ClientProgramme> ClientProgrammes { get; protected set; }
-		public virtual ProgrammePermissions Permissions { get; set; }
+		public virtual IList<ClientProgramme> ClientProgrammes { get; protected set; }		
         public virtual IList<Merchant> Merchants { get; protected set; }
         public virtual User BrokerContactUser { get; set; }
         public virtual Boolean IsPublic { get; set; }

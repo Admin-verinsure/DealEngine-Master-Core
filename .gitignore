@@ -18,3 +18,5 @@ sqlite3
 *.dtbcache
 /.vs/techcertain2015rebuildcore/config
 /.vs/techcertain2019core/config
+/TechCertain.WebUI/Views/UI - contains examples
+/web.config

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,39 +18,39 @@ namespace TechCertain.Services.Impl
             _eGlobalResponseRepository = eGlobalResponseRepository;
         }
 
-        public EGlobalResponse CreateNewEGlobalResponse(EGlobalResponse eGlobalResponse)
+        public async Task<EGlobalResponse> CreateNewEGlobalResponse(EGlobalResponse eGlobalResponse)
         {
-            UpdateEGlobalResponse(eGlobalResponse);
+            await UpdateEGlobalResponse(eGlobalResponse);
             return eGlobalResponse;
         }
 
-        public bool DeleteEGlobalResponse(User deletedBy, EGlobalResponse eGlobalResponse)
+        public async Task<bool> DeleteEGlobalResponse(User deletedBy, EGlobalResponse eGlobalResponse)
         {
             eGlobalResponse.Delete(deletedBy);
-            return UpdateEGlobalResponse(eGlobalResponse);
+            return await UpdateEGlobalResponse(eGlobalResponse);
         }
 
-        public IQueryable<EGlobalResponse> GetAllEGlobalResponses()
+        public async Task<List<EGlobalResponse>> GetAllEGlobalResponses()
         {
-            return _eGlobalResponseRepository.FindAll().Where(egs => egs.DateDeleted != null);
+            return await _eGlobalResponseRepository.FindAll().Where(egs => egs.DateDeleted != null).ToListAsync();
         }
 
-        public EGlobalResponse GetEGlobalResponse(Guid eGlobalResponseId)
+        public async Task<EGlobalResponse> GetEGlobalResponse(Guid eGlobalResponseId)
         {
-            EGlobalResponse eGlobalResponse = _eGlobalResponseRepository.GetByIdAsync(eGlobalResponseId).Result;
+            EGlobalResponse eGlobalResponse = await _eGlobalResponseRepository.GetByIdAsync(eGlobalResponseId);
             if (eGlobalResponse != null)
                 return eGlobalResponse;
             if (eGlobalResponse != null)
             {
-                UpdateEGlobalResponse(eGlobalResponse);
+                await UpdateEGlobalResponse(eGlobalResponse);
                 return eGlobalResponse;
             }
             throw new Exception("EGlobalResponse with id [" + eGlobalResponseId + "] does not exist in the system");
         }
 
-        public bool UpdateEGlobalResponse(EGlobalResponse eGlobalResponse)
+        public async Task<bool> UpdateEGlobalResponse(EGlobalResponse eGlobalResponse)
         {
-            _eGlobalResponseRepository.UpdateAsync(eGlobalResponse);
+            await _eGlobalResponseRepository.UpdateAsync(eGlobalResponse);
             return true;
         }
 

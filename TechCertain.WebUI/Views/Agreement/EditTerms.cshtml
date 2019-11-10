@@ -27,40 +27,43 @@
                     <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
 
                         <tr>
-                            <th class="text-center" width="13%">Vessel Name</th>
-                            <th class="text-center" width="13%">Vessel Make</th>
-                            <th class="text-center" width="13%">Vessel Model</th>
-                            <th class="text-center" width="13%">Vessel Sum Insured</th>
-                            <th class="text-center" width="13%">Vessel Excess</th>
-                            <th class="text-center" width="13%">Vessel Total Premium</th>
-                            <th class="text-center" width="13%">Vessel FSL</th>
+                            <th class="text-center hidden" width="12%"> Id</th>
+                            <th class="text-center" width="11%">Vessel Name</th>
+                            <th class="text-center" width="11%">Vessel Make</th>
+                            <th class="text-center" width="11%">Vessel Model</th>
+                            <th class="text-center" width="11%">Vessel Sum Insured</th>
+                            <th class="text-center" width="11%">Vessel Excess</th>
+                            <th class="text-center" width="11%">Vessel Total Premium</th>
+                            <th class="text-center" width="11%">Vessel FSL</th>
                             <th class="text-center" width="9%"></th>
                         </tr>
                         @foreach (var item in Model.BVTerms)
                         {
                             <tr class="clickable-row">
-                                <td class="pt-3-half" width="13%" contenteditable="true" id="BoatName">
-                                    @item.BoatName
-
+                                <td class="pt-3-half hidden" width="12%" contenteditable="true" id="BoatId">
+                                    @item.VesselId
                                 </td>
-                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                <td class="pt-3-half" width="11%" contenteditable="true" id="BoatName">
+                                    @item.BoatName
+                                </td>
+                                <td class="pt-3-half" width="11%" contenteditable="true">
                                     @item.BoatMake
                                 </td>
-                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                <td class="pt-3-half" width="11%" contenteditable="true">
                                     @item.BoatModel
                                 </td>
-                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                <td class="pt-3-half" width="11%" contenteditable="true">
                                     @item.TermLimit.ToString("C0")
                                 </td>
-                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                <td class="pt-3-half" width="11%" contenteditable="true">
                                     @item.Excess.ToString("C0")
 
                                 </td>
-                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                <td class="pt-3-half" width="11%" contenteditable="true">
                                     @item.Premium.ToString("C")
 
                                 </td>
-                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                <td class="pt-3-half" width="11%" contenteditable="true">
                                     @item.FSL.ToString("C")
                                 </td>
                                 <td width="9%">
@@ -68,7 +71,7 @@
                                        data-boat-Sum="@item.TermLimit.ToString("C0")" data-boat-Premium="@item.Premium.ToString("C")" data-boat-Excess="@item.Excess.ToString("C0")"
                                        data-boat-make="@item.BoatMake" data-boat-model="@item.BoatModel"
                                        data-boat-name="@item.BoatName"><i class="fa fa-edit"> </i></a>
-                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-delname="@item.BoatName"><span class="glyphicon glyphicon-trash"></span></a>
+                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatName" data-boat-id="@item.VesselId"><span class="fa fa-trash" id="span"></span></a>
                                 </td>
 
                             </tr>
@@ -97,18 +100,22 @@
 
                     <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
                         <tr>
-                            <th class="text-center" width="13%">Vehicle Registration</th>
-                            <th class="text-center" width="13%">Vehicle Make</th>
-                            <th class="text-center" width="13%">Vehicle Model</th>
-                            <th class="text-center" width="13%">Vehicle Sum Insured</th>
-                            <th class="text-center" width="13%">Vehicle Excess</th>
-                            <th class="text-center" width="13%">Vehicle Total Premium</th>
-                            <th class="text-center" width="13%">Vehicle FSL</th>
+                            <th class="text-center hidden" width="12%"> Id</th>
+                            <th class="text-center" width="11%">Vehicle Registration</th>
+                            <th class="text-center" width="11%">Vehicle Make</th>
+                            <th class="text-center" width="11%">Vehicle Model</th>
+                            <th class="text-center" width="11%">Vehicle Sum Insured</th>
+                            <th class="text-center" width="11%">Vehicle Excess</th>
+                            <th class="text-center" width="11%">Vehicle Total Premium</th>
+                            <th class="text-center" width="11%">Vehicle FSL</th>
                             <th class="text-center" width="9%"></th>
                         </tr>
                         @foreach (var item in Model.MVTerms)
                         {
                             <tr class="clickable-row">
+                                <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                    @item.VesselId
+                                </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
                                     @item.Registration
                                 </td>
@@ -135,9 +142,9 @@
                                 <td width="9%">
                                     <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
                                        data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C")"
-                                       data-motor-Sum="@item.TermLimit.ToString("C0")" data-motor-Premium="@item.Premium.ToString("C")"
-                                       data-motor-Excess="@item.Excess.ToString("C0")" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
-                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-delmodal="@item.Model"><i class="glyphicon glyphicon-trash"></i></a>
+                                       data-motor-sum="@item.TermLimit.ToString("C0")" data-motor-premium="@item.Premium.ToString("C")"
+                                       data-motor-excess="@item.Excess.ToString("C0")" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
+                                    <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.Model"><span class="fa fa-trash" id="span"></span></a>
                                 </td>
                             </tr>
                         }
@@ -155,14 +162,37 @@
 
 
 
-<div class="modal fade modal-megamenu modal-dialog " id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+<div class="modal" id="confirmMotorDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
                 <p style="color:black;font-size:18px; ">Confirm To Delete This Term</p>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control hidden " id="BoatName" name="BoatName" />
+                <input type="text" class="form-control " id="Motor_Id" name="MotorId" hidden />
+            </div>
+            <div class="form-group">
+            </div>
+            <div class="modal-footer">
+                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnMotorDelete">Confirm <i class="fa fa-send"></i></button>
+
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="color:black;font-size:18px; ">Confirm To Delete This Term</p>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control " id="Boat_Id" name="BoatId" hidden />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control " id="BoatName" name="BoatName" readonly />
             </div>
             <div class="modal-footer">
                 <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnDelete">Confirm <i class="fa fa-send"></i></button>
@@ -176,7 +206,7 @@
 
 
 <!-- Edit Boat -->
-<div id="myModal" class="modal fade " role="dialog">
+<div id="myModal" class="modal" role="dialog">
 
     <!-- Modal content-->
 
@@ -240,7 +270,7 @@
 
 
 <!-- Edit Motor -->
-<div id="VesselModal" class="modal fade modal-megamenu " role="dialog">
+<div id="VesselModal" class="modal" role="dialog">
 
     <!-- Modal content-->
 

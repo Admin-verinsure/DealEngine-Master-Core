@@ -2,6 +2,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using TechCertain.Domain.Entities;
 
 #endregion
 
@@ -85,5 +86,7 @@ namespace TechCertain.WebUI.Models
 		[Required]
 		[DataType(DataType.Text)]
 		public string LastName { get; set; }
+        
+        public string Advisory { get; set; }
     }
 }

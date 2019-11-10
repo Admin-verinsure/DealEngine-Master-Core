@@ -262,7 +262,27 @@
 
             <div class="tab-pane" id="tab3">
                 <div class="form-group">
-                    @*<a data-toggle="tab" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100">Create Account Here</a>*@
+
+                    @if (Model.Advisory != null)
+                    {
+                    <div class="modal-lg" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Advisory</h5>
+                                </div>
+                                <div class="modal-body">
+                                    @Html.Raw(Model.Advisory)
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="Close()">Close</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="Close()">Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
                     <p class="lead" style="text-align:center">
                         <br />
                         Thank you.
@@ -356,6 +376,10 @@
             if (!((e.keyCode > 95 && e.keyCode < 106) || (e.keyCode > 47 && e.keyCode < 58) || (e.keyCode == 8) || (e.keyCode == 9))) {
                 return false;
             }
+        }
+
+        function Close() {
+            $("#modal").hide();
         }
 
         function vesselOwnUpdate() {

@@ -1,15 +1,11 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneListViewModel
+
 <!-- MAIN CONTENT -->
 <div id="content">
-    <div class="row">
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-            <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Dashboard <span>> My Dashboard</span></h1>
-        </div>
-    </div>
     <!-- widget grid -->
     <section id="widget-grid" class="">
         <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-6">
+            <article class="col-sm-8 col-md-8 col-lg-8">
                 <!-- new widget -->
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2"
                      data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -37,8 +33,9 @@
                                         <tr>
 
                                             <td>
-                                                @vm.Process
+                                                @vm.ProgrammeProcess.Name
                                             </td>
+
                                             <td>
                                                 @foreach (var Programme in vm.Programmes)
                                                 {
@@ -61,10 +58,8 @@
                                                 </div>
                                             </td>
 
-
                                             <td>
-                                                <a class="btn btn-primary btn-xs" onclick="CreateMilestone('@vm.Process')">Create Milestone</a>
-                                                @*<a class="btn btn-primary btn-xs" onclick="location.href='/Milestone/MilestoneBuilder(test)';">Edit Milestone</a>*@
+                                                <a class="btn btn-primary btn-xs" onclick="CreateMilestone('@vm.ProgrammeProcess.Id')">Create/Edit Milestone</a>                                                
                                             </td>
 
                                         </tr>
@@ -88,11 +83,9 @@
 
         function Validate(value) {
             if (value != '') {
-                console.log('true');
                 return true;
             }
             else {
-                console.log('true');
                 return false;
             }
         }
@@ -100,21 +93,16 @@
         function CreateMilestone(process) {
             event.preventDefault();
             if (Validate($("#milestoneprogramme").val())) {
-                var mergedData = { stringId: $("#milestoneprogramme").val(), milestoneActivity: process };
-
+                var mergedData = { strProgrammeId: $("#milestoneprogramme").val(), strProgrammeProcessId: process };
                 $.ajax({
                     url: "/Milestone/MilestoneTemplate",
                     type: "POST",
                     data: mergedData
                 })
-                    .done(function (url) {
-                        debugger;
-
-                        window.location.href = url;
-                        console.log("url" + url);
-                    })
+                   .done(function (url) {
+                window.location.href = url;
+	        })
                     .fail(function (err) {
-                        debugger;
                         console.log(err);
                         alert("Unable to save." + err.responseText);
                     });

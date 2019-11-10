@@ -1,18 +1,27 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
 
-    <div id="fuelux-wizard" class="smart-form" novalidate="novalidate">
-        @Html.TextAreaFor(m => m.AdvisoryContent.Advisory)
-        <script>CKEDITOR.replace('@(Html.IdFor(m => m.AdvisoryContent.Advisory))')</script>
-
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.TextAreaFor(m => m.AdvisoryContent.Advisory, new { id = "advisory", name = "content", cols = "100", rows = "10", @placeholder = "Enter Advisory" })
+            </div>
+        </div>
     </div>
 
-
-
 <script type="text/javascript">
-    function GetAdvisoryContentJson()
-    {
-    	return {
-            Advisory: CKEDITOR.instances["@(Html.IdFor(m => m.AdvisoryContent.Advisory))"].getData()
-    	};
+    ClassicEditor
+        .create(document.querySelector('#advisory'))
+        .then(newAdvisory => {
+            editorAdvisory = newAdvisory;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    function GetAdvisoryContentJson() {
+
+        return {
+            Advisory: editorAdvisory.getData()
+        };
     }
 </script>

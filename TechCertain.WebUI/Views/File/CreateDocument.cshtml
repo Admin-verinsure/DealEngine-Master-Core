@@ -1,5 +1,4 @@
 ﻿@model TechCertain.WebUI.Models.DocumentViewModel
-
 <script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
 <div id="content" style="background-color: #A6E2EF">
@@ -112,13 +111,6 @@
 </div>
 
 @section pagespecific {
-    @*<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-        <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
-        <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-        <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="~/lib/popper.js/umd/popper.js"></script>*@
-
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/lib/popper.js/umd/popper.js"></script>
@@ -171,17 +163,15 @@ $(document).ready(function () {
            });
 
      $("#CreateDocsmartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-           debugger;
            var informationsheetstatus = $('#Status').val();
            var clientInformationSheet = $('#AnswerSheetId').val();
 
 
         if (stepNumber === 1) {
-                          debugger;
 
              if (confirm("Are you sure you want to submit this document?")) {
                  console.log("submitted!");
-                  
+
 
                       const body = editor.getData();
                  var bodyElement = $("#@Html.IdFor(m => m.Content)").val();
@@ -202,12 +192,10 @@ $(document).ready(function () {
                  })
                      .done(function (json) {
                          //var model = JSON.parse(json);
-                         debugger;
                          $("#productAutoReview")
                          console.log(json);
                      })
                      .fail(function (err, ajaxOptions, thrownError) {
-                         debugger;
                          alert("Unable to save." + err.responseText);
                          console.log(err);
                          console.log(ajaxOptions);
@@ -219,32 +207,6 @@ $(document).ready(function () {
          }
      });
 
-        @*$('#Submit').on('click', function () {
-        debugger;
-    	if (confirm("Are you sure you want to submit this document?"))
-    	{
-	        console.log("submitted!");
-
-			$.ajax({
-				type: "POST",
-				url: '@Url.Action("CreateDocument", "File")',
-				data: $("#wizard-1").serialize() // serializes the form's elements.
-			})
-	        .done(function (json) {
-	        	//var model = JSON.parse(json);
-                debugger;
-				$("#productAutoReview")
-				console.log(json);
-	        })
-                .fail(function (err, ajaxOptions, thrownError) {
-                    debugger;
-				alert("Unable to save." + err.responseText );
-				console.log(err);
-				console.log(ajaxOptions);
-				console.log(thrownError);
-	        });
-        }
-    });*@
 
 });
 

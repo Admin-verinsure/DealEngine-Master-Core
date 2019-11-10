@@ -97,7 +97,7 @@ namespace TechCertain.Services.Impl
 
         public async Task SendPasswordResetEmail (string recipent, Guid resetToken, string originDomain)
 		{
-			var user = _userService.GetUserByEmail(recipent).Result;
+			var user = await _userService.GetUserByEmail(recipent);
 
 			// hard code the body for now, should be stored in the db
 			string body = "<p>Hi There,</p>";
@@ -133,7 +133,8 @@ namespace TechCertain.Services.Impl
 			email.UseHtmlBody (true);
             if(documents != null)
             {
-                email.Attachments(ToAttachments(documents).Result.ToArray());
+                var documentsList = await ToAttachments(documents);
+                email.Attachments(documentsList.ToArray());
             }
 			email.Send ();
         }
@@ -152,13 +153,13 @@ namespace TechCertain.Services.Impl
 
         public async Task SendSystemEmailLogin(string recipent)
         {
-            var user = _userService.GetUserByEmail(recipent).Result;
+            var user = await _userService.GetUserByEmail(recipent);
 
             List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
             mergeFields.Add(new KeyValuePair<string, string>("[[UserName]]", user.UserName));
             mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
             
-            SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("LoginEmail").Result;
+            SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("LoginEmail");
             string systememailsubject = systemEmailTemplate.Subject;
             string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)
@@ -192,7 +193,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("PaymentSuccessConfig").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("PaymentSuccessConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -231,7 +232,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("PaymentFailConfig").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("PaymentFailConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -271,7 +272,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("InvoiceFailConfig").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("InvoiceFailConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -311,7 +312,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("InvoiceSuccessConfig").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("InvoiceSuccessConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -351,7 +352,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISIssueNotificationEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISIssueNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -387,7 +388,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISSubmissionConfirmationEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionConfirmationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -428,7 +429,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -466,7 +467,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -506,7 +507,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementIssueNotificationEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementIssueNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -547,7 +548,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("AgreementBoundNotificationEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementBoundNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -585,7 +586,7 @@ namespace TechCertain.Services.Impl
                 mergeFields.Add(new KeyValuePair<string, string>("[[ReferenceID]]", sheet.ReferenceId));
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
-                SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType("OtherMarinaTCNotifyEmail").Result;
+                SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("OtherMarinaTCNotifyEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
                 string systememailbody = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
                 foreach (KeyValuePair<string, string> field in mergeFields)
@@ -678,7 +679,7 @@ namespace TechCertain.Services.Impl
 		{
 			List<Attachment> attachments = new List<Attachment> ();
 			foreach (SystemDocument document in documents)
-				attachments.Add(ToAttachment(document).Result);
+				attachments.Add(await ToAttachment(document));
 			return attachments;
 		}
 	}

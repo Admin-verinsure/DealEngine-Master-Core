@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,39 +18,39 @@ namespace TechCertain.Services.Impl
             _eGlobalSubmissionRepository = eGlobalSubmissionRepository;
         }
 
-        public EGlobalSubmission CreateNewEGlobalSubmission(EGlobalSubmission eGlobalSubmission)
+        public async Task<EGlobalSubmission> CreateNewEGlobalSubmission(EGlobalSubmission eGlobalSubmission)
         {
-            UpdateEGlobalSubmission(eGlobalSubmission);
+            await UpdateEGlobalSubmission(eGlobalSubmission);
             return eGlobalSubmission;
         }
 
-        public bool DeleteEGlobalSubmission(User deletedBy, EGlobalSubmission eGlobalSubmission)
+        public async Task<bool> DeleteEGlobalSubmission(User deletedBy, EGlobalSubmission eGlobalSubmission)
         {
             eGlobalSubmission.Delete(deletedBy);
-            return UpdateEGlobalSubmission(eGlobalSubmission);
+            return await UpdateEGlobalSubmission(eGlobalSubmission);
         }
 
-        public IQueryable<EGlobalSubmission> GetAllEGlobalSubmissions()
+        public async Task<List<EGlobalSubmission>> GetAllEGlobalSubmissions()
         {
-            return _eGlobalSubmissionRepository.FindAll().Where(egs => egs.DateDeleted != null);
+            return await _eGlobalSubmissionRepository.FindAll().Where(egs => egs.DateDeleted != null).ToListAsync();
         }
 
-        public EGlobalSubmission GetEGlobalSubmission(Guid eGlobalSubmissionId)
+        public async Task<EGlobalSubmission> GetEGlobalSubmission(Guid eGlobalSubmissionId)
         {
-            EGlobalSubmission eGlobalSubmission = _eGlobalSubmissionRepository.GetByIdAsync(eGlobalSubmissionId).Result;
+            EGlobalSubmission eGlobalSubmission = await _eGlobalSubmissionRepository.GetByIdAsync(eGlobalSubmissionId);
             if (eGlobalSubmission != null)
                 return eGlobalSubmission;
             if (eGlobalSubmission != null)
             {
-                UpdateEGlobalSubmission(eGlobalSubmission);
+                await UpdateEGlobalSubmission(eGlobalSubmission);
                 return eGlobalSubmission;
             }
             throw new Exception("EGlobalSubmission with id [" + eGlobalSubmissionId + "] does not exist in the system");
         }
 
-        public bool UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission)
+        public async Task<bool> UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission)
         {
-            _eGlobalSubmissionRepository.UpdateAsync(eGlobalSubmission);
+            await _eGlobalSubmissionRepository.UpdateAsync(eGlobalSubmission);
             return true;
         }
 

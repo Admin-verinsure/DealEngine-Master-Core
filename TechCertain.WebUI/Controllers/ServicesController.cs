@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
-using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
@@ -164,8 +163,8 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Vehicle - No Client information for " + model.AnswerSheetId);
 
@@ -173,10 +172,10 @@ namespace TechCertain.WebUI.Controllers
             Vehicle vehicle = _vehicleRepository.FindAll().FirstOrDefault(v => v.Id == model.VehicleId);
             // no vehicle, so create new
             if (vehicle == null)
-                vehicle = model.ToEntity(CurrentUser);
+                vehicle = model.ToEntity(user);
             model.UpdateEntity(vehicle);
 
-            //	vehicle = new Vehicle (CurrentUser, model.Registration, model.Make, model.VehicleModel);
+            //	vehicle = new Vehicle (CurrentUser(), model.Registration, model.Make, model.VehicleModel);
             //// update properties
             //vehicle.Make = model.Make;
             //vehicle.Model = model.VehicleModel;
@@ -196,16 +195,16 @@ namespace TechCertain.WebUI.Controllers
             //vehicle.Validated = model.Validated;
             //vehicle.Notes = model.Notes;
             if (model.VehicleLocation != Guid.Empty)
-                vehicle.GarageLocation = _locationRepository.GetByIdAsync(model.VehicleLocation).Result;
+                vehicle.GarageLocation = await _locationRepository.GetByIdAsync(model.VehicleLocation);
 
-            //var orgs = _organisationService.GetAllOrganisations ().ToList();
+            var allOrganisations = await _organisationService.GetAllOrganisations();
             if (model.InterestedParties != null)
-                vehicle.InterestedParties = _organisationService.GetAllOrganisations().Result.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
+                vehicle.InterestedParties = allOrganisations.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Vehicles.Add(vehicle);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             model.VehicleId = vehicle.Id;
@@ -219,7 +218,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetVehicle(Guid answerSheetId, Guid vehicleId)
         {
             VehicleViewModel model = new VehicleViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Vehicle vehicle = sheet.Vehicles.FirstOrDefault(v => v.Id == vehicleId);
             if (vehicle != null)
             {
@@ -255,7 +254,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed, bool ceased, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -337,7 +336,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetNamedParties(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             XDocument document = null;
             JqGridViewModel model = new JqGridViewModel();
 
@@ -420,11 +419,11 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetVehicleRemovedStatus(Guid vehicleId, bool status)
         {
-            Vehicle vehicle = _vehicleRepository.GetByIdAsync(vehicleId).Result;
+            Vehicle vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 vehicle.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
             throw new Exception("Method needs to be re-written");
             //return new JsonResult { Data = new { status = true, id = vehicleId } };
@@ -433,7 +432,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetVehicleCeasedStatus(Guid vehicleId, bool status)
         {
-            Vehicle vehicle = _vehicleRepository.GetByIdAsync(vehicleId).Result;
+            Vehicle vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -448,13 +447,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetVehicleTransferedStatus(Guid vehicleId, bool status)
         {
-            Vehicle vehicle = _vehicleRepository.GetByIdAsync(vehicleId).Result;
+            Vehicle vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 vehicle.VehicleCeaseDate = DateTime.MinValue;
                 vehicle.VehicleCeaseReason = '0';
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true);
@@ -463,7 +462,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> RevalidateVehicle(Guid vehicleId)
         {
-            Vehicle vehicle = _vehicleRepository.GetByIdAsync(vehicleId).Result;
+            Vehicle vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
             if (vehicle == null)
                 throw new Exception("Vehicle is null");
             if (vehicle.Validated == false)
@@ -485,7 +484,7 @@ namespace TechCertain.WebUI.Controllers
         {
             OrganisationalUnitViewModel model = new OrganisationalUnitViewModel();
             model.Name = name;
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             OrganisationalUnit unit = sheet.Owner.OrganisationalUnits.FirstOrDefault(ou => ou.Name == name);
             if (unit != null)
             {
@@ -501,20 +500,20 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Organisational Unit - No Client information for " + model.AnswerSheetId);
 
-            OrganisationalUnit ou = _organisationalUnitRepository.GetByIdAsync(model.OrganisationalUnitId).Result;
+            OrganisationalUnit ou = await _organisationalUnitRepository.GetByIdAsync(model.OrganisationalUnitId);
             if (ou == null)
-                ou = new OrganisationalUnit(CurrentUser, model.Name);
+                ou = new OrganisationalUnit(user, model.Name);
             ou.Name = model.Name;
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Owner.OrganisationalUnits.Add(ou);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
             model.OrganisationalUnitId = ou.Id;
 
@@ -526,7 +525,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetOrganisationalUnit(Guid answerSheetId, Guid unitId)
         {
             OrganisationalUnitViewModel model = new OrganisationalUnitViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             OrganisationalUnit unit = sheet.Owner.OrganisationalUnits.FirstOrDefault(ou => ou.Id == unitId);
             if (unit != null)
             {
@@ -541,7 +540,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetOrganisationalUnits(Guid informationId, bool _search, string nd, int rows, int page, string sidx, string sord,
                                                      string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -613,7 +612,7 @@ namespace TechCertain.WebUI.Controllers
         {
             LocationViewModel model = new LocationViewModel();
             model.Street = street;
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Location location = _locationRepository.FindAll().FirstOrDefault(l => l.Street == street);
             if (location != null)
             {
@@ -627,14 +626,14 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
 
             Location location = _locationRepository.FindAll().FirstOrDefault(loc => loc.Id == model.LocationId);
             if (location == null)
-                location = model.ToEntity(CurrentUser);
+                location = model.ToEntity(user);
             model.UpdateEntity(location);
             var OUList = new List<OrganisationalUnit>();
 
@@ -645,7 +644,7 @@ namespace TechCertain.WebUI.Controllers
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Locations.Add(location);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             model.LocationId = location.Id;
@@ -658,7 +657,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetLocation(Guid answerSheetId, Guid locationId)
         {
             LocationViewModel model = new LocationViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Location location = sheet.Locations.FirstOrDefault(loc => loc.Id == locationId);
             if (location != null)
             {
@@ -673,7 +672,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                           string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -728,7 +727,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetLocationss(Guid informationId, int rows, int page, string sidx, string sord,
                                           string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -775,7 +774,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetLocationList(Guid answerSheetId)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
 
             List<LocationViewModel> models = new List<LocationViewModel>();
             foreach (var location in sheet.Locations)
@@ -787,7 +786,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetLocationsByCountry(Guid answerSheetId)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
 
             List<Location> countries = sheet.Locations.GroupBy(loc => loc.Country)
                                           .Select(grp => grp.First())
@@ -803,12 +802,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetLocationRemovedStatus(Guid locationId, bool status)
         {
-            Location location = _locationRepository.GetByIdAsync(locationId).Result;
+            Location location = await _locationRepository.GetByIdAsync(locationId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 location.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true);
@@ -823,26 +822,29 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Building - No Client information for " + model.AnswerSheetId);
 
             Building building = _buildingRepository.FindAll().FirstOrDefault(bui => bui.Id == model.BuildingId);
             if (building == null)
-                building = model.ToEntity(CurrentUser);
+                building = model.ToEntity(user);
             model.UpdateEntity(building);
 
             if (model.BuildingLocation != null)
-                building.Location = _locationRepository.GetByIdAsync(model.BuildingLocation).Result;
+                building.Location = await _locationRepository.GetByIdAsync(model.BuildingLocation);
 
             if (model.InterestedParties != null)
-                building.InterestedParties = _organisationService.GetAllOrganisations().Result.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
+            {
+                var getAllOrganisations = await _organisationService.GetAllOrganisations();
+                building.InterestedParties = getAllOrganisations.Where(org => model.InterestedParties.Contains(org.Id)).ToList();
+            }
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Buildings.Add(building);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             model.LocationStreet = building.Location.Street;
@@ -856,7 +858,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBuilding(Guid answerSheetId, Guid buildingId)
         {
             BuildingViewModel model = new BuildingViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Building building = sheet.Buildings.FirstOrDefault(b => b.Id == buildingId);
             if (building != null)
             {
@@ -873,7 +875,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBuildings(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -924,12 +926,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBuildingRemovedStatus(Guid buildingId, bool status)
         {
-            Building building = _buildingRepository.GetByIdAsync(buildingId).Result;
+            Building building = await _buildingRepository.GetByIdAsync(buildingId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 building.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true);
@@ -944,7 +946,7 @@ namespace TechCertain.WebUI.Controllers
         {
             WaterLocationViewModel model = new WaterLocationViewModel();
             model.WaterLocationName = waterLocationName;
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             WaterLocation waterLocation = _waterLocationRepository.FindAll().FirstOrDefault(wl => wl.WaterLocationName == waterLocationName);
             if (waterLocation != null)
             {
@@ -960,26 +962,26 @@ namespace TechCertain.WebUI.Controllers
             {
                 if (model == null)
                     throw new ArgumentNullException(nameof(model));
-
-                ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+                var user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 if (sheet == null)
                     throw new Exception("Unable to save Water Location - No Client information for " + model.AnswerSheetId);
 
                 WaterLocation waterLocation = _waterLocationRepository.FindAll().FirstOrDefault(wloc => wloc.Id == model.WaterLocationId);
                 if (waterLocation == null)
-                    waterLocation = model.ToEntity(CurrentUser);
+                    waterLocation = model.ToEntity(user);
                 model.UpdateEntity(waterLocation);
 
                 if (model.WaterLocationLocation != Guid.Empty)
-                    waterLocation.WaterLocationLocation = _locationRepository.GetByIdAsync(model.WaterLocationLocation).Result;
+                    waterLocation.WaterLocationLocation = await _locationRepository.GetByIdAsync(model.WaterLocationLocation);
                 if (model.WaterLocationMarinaLocation != null)
                 {
-                    waterLocation.WaterLocationMarinaLocation = _OrganisationRepository.GetByIdAsync(model.WaterLocationMarinaLocation).Result;
+                    waterLocation.WaterLocationMarinaLocation = await _OrganisationRepository.GetByIdAsync(model.WaterLocationMarinaLocation);
 
                 }
                 if (model.OrganisationalUnit != null)
                 {
-                    waterLocation.OrganisationalUnit = _organisationalUnitRepository.GetByIdAsync(model.OrganisationalUnit).Result;
+                    waterLocation.OrganisationalUnit = await _organisationalUnitRepository.GetByIdAsync(model.OrganisationalUnit);
 
                 }
                 // waterLocation.OrganisationalUnit = OrganisationalUnit;
@@ -987,7 +989,7 @@ namespace TechCertain.WebUI.Controllers
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.WaterLocations.Add(waterLocation);
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 model.WaterLocationId = waterLocation.Id;
@@ -1004,7 +1006,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetWaterLocation(Guid answerSheetId, Guid waterLocationId)
         {
             WaterLocationViewModel model = new WaterLocationViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             WaterLocation waterLocation = sheet.WaterLocations.FirstOrDefault(wloc => wloc.Id == waterLocationId);
             if (waterLocation != null)
             {
@@ -1023,7 +1025,7 @@ namespace TechCertain.WebUI.Controllers
 
             Organisation organisation = null;
 
-            organisation = _organisationService.GetOrganisation(waterLocation.WaterLocationMarinaLocation.Id).Result;
+            organisation = await _organisationService.GetOrganisation(waterLocation.WaterLocationMarinaLocation.Id);
             var organisationalUnits = new List<OrganisationalUnitViewModel>();
 
             foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
@@ -1061,7 +1063,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetWaterLocations(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                           string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -1129,7 +1131,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetWaterLocationList(Guid answerSheetId)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
 
             List<WaterLocationViewModel> models = new List<WaterLocationViewModel>();
             foreach (var waterLocation in sheet.WaterLocations)
@@ -1141,12 +1143,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetWaterLocationRemovedStatus(Guid waterLocationId, bool status)
         {
-            WaterLocation waterLocation = _waterLocationRepository.GetByIdAsync(waterLocationId).Result;
+            WaterLocation waterLocation = await _waterLocationRepository.GetByIdAsync(waterLocationId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 waterLocation.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true); 
@@ -1161,23 +1163,23 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save BusinessInterruption - No Client information for " + model.AnswerSheetId);
 
             BusinessInterruption businessInterruption = _businessInterruptionRepository.FindAll().FirstOrDefault(bi => bi.Id == model.BusinessInterruptionId);
             if (businessInterruption == null)
-                businessInterruption = model.ToEntity(CurrentUser);
+                businessInterruption = model.ToEntity(user);
             model.UpdateEntity(businessInterruption);
 
             if (model.BusinessInterruptionLocation != null)
-                businessInterruption.Location = _locationRepository.GetByIdAsync(model.BusinessInterruptionLocation).Result;
+                businessInterruption.Location = await _locationRepository.GetByIdAsync(model.BusinessInterruptionLocation);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.BusinessInterruptions.Add(businessInterruption);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return Json(model);
@@ -1187,7 +1189,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBusinessInterruption(Guid answerSheetId, Guid businessInterruptionId)
         {
             BusinessInterruptionViewModel model = new BusinessInterruptionViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             BusinessInterruption businessInterruption = sheet.BusinessInterruptions.FirstOrDefault(bi => bi.Id == businessInterruptionId);
             if (businessInterruption != null)
             {
@@ -1204,7 +1206,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBusinessInterruptions(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -1256,12 +1258,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBusinessInterruptionRemovedStatus(Guid businessInterruptionId, bool status)
         {
-            BusinessInterruption businessInterruption = _businessInterruptionRepository.GetByIdAsync(businessInterruptionId).Result;
+            BusinessInterruption businessInterruption = await _businessInterruptionRepository.GetByIdAsync(businessInterruptionId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 businessInterruption.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
 
@@ -1277,23 +1279,23 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save BusinessInterruption - No Client information for " + model.AnswerSheetId);
 
             MaterialDamage materialDamage = _materialDamageRepository.FindAll().FirstOrDefault(md => md.Id == model.MaterialDamageId);
             if (materialDamage == null)
-                materialDamage = model.ToEntity(CurrentUser);
+                materialDamage = model.ToEntity(user);
             model.UpdateEntity(materialDamage);
 
             if (model.MaterialDamageLocation != null)
-                materialDamage.Location = _locationRepository.GetByIdAsync(model.MaterialDamageLocation).Result;
+                materialDamage.Location = await _locationRepository.GetByIdAsync(model.MaterialDamageLocation);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.MaterialDamages.Add(materialDamage);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return Json(model);
@@ -1303,7 +1305,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetMaterialDamage(Guid answerSheetId, Guid materialDamageId)
         {
             MaterialDamageViewModel model = new MaterialDamageViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             MaterialDamage materialDamage = sheet.MaterialDamages.FirstOrDefault(md => md.Id == materialDamageId);
             if (materialDamage != null)
             {
@@ -1320,7 +1322,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetMaterialDamages(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -1373,12 +1375,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetMaterialDamageRemovedStatus(Guid materialDamageId, bool status)
         {
-            MaterialDamage materialDamage = _materialDamageRepository.GetByIdAsync(materialDamageId).Result;
+            MaterialDamage materialDamage = await _materialDamageRepository.GetByIdAsync(materialDamageId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 materialDamage.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true);
@@ -1402,9 +1404,9 @@ namespace TechCertain.WebUI.Controllers
                 {
                     //ListBoatUse.Add(useid);
                     //ListBoatUse.Add(_boatUseService.GetBoatUse(Guid.Parse(useid)));
-                    boat.BoatUse.Add(_boatUseService.GetBoatUse(Guid.Parse(useid)).Result);
+                    boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
                 }
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
             return Json(boat);
 
@@ -1427,7 +1429,7 @@ namespace TechCertain.WebUI.Controllers
         //    try
         //    {
         //        if (boat == null)
-        //        boat = model.ToEntity(CurrentUser);
+        //        boat = model.ToEntity(CurrentUser());
         //    model.UpdateEntity(boat);
         //    if (model.BoatLandLocation != Guid.Empty)
         //        boat.BoatLandLocation = _buildingRepository.GetById(model.BoatLandLocation);
@@ -1492,28 +1494,28 @@ namespace TechCertain.WebUI.Controllers
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat - No Client information for " + model.AnswerSheetId);
-
+            var user = await CurrentUser();
             // get existing boat (if any)
             Boat boat = _boatRepository.FindAll().FirstOrDefault(b => b.Id == model.BoatId);
             // no boat, so create new
             if (boat == null)
-                boat = model.ToEntity(CurrentUser);
+                boat = model.ToEntity(user);
             model.UpdateEntity(boat);
             if (model.BoatLandLocation != Guid.Empty)
-                boat.BoatLandLocation = _buildingRepository.GetByIdAsync(model.BoatLandLocation).Result;
+                boat.BoatLandLocation = await _buildingRepository.GetByIdAsync(model.BoatLandLocation);
             //if (model.BoatWaterLocation != Guid.Empty)
             //    boat.BoatWaterLocation = _waterLocationRepository.GetById(model.BoatWaterLocation);
             //if (model.InterestedParties != null)
             //    boat.InterestedParties = _organisationService.GetAllOrganisations().Where(org => model.InterestedParties.Contains(org.Id)).ToList();
             if (model.BoatOperator != Guid.Empty)
-                boat.BoatOperator = _OrganisationRepository.GetByIdAsync(model.BoatOperator).Result;
+                boat.BoatOperator = await _OrganisationRepository.GetByIdAsync(model.BoatOperator);
             boat.BoatWaterLocation = null;
 
             if (model.BoatWaterLocation != Guid.Empty)
-                boat.BoatWaterLocation = _OrganisationRepository.GetByIdAsync(model.BoatWaterLocation).Result;
+                boat.BoatWaterLocation = await _OrganisationRepository.GetByIdAsync(model.BoatWaterLocation);
 
             if (model.OtherMarinaName != null)
             {
@@ -1540,7 +1542,7 @@ namespace TechCertain.WebUI.Controllers
 
                     foreach (var useid in BoatUse)
                     {
-                        boat.BoatUse.Add(_boatUseService.GetBoatUse(Guid.Parse(useid)).Result);
+                        boat.BoatUse.Add(await _boatUseService.GetBoatUse(Guid.Parse(useid)));
                     }
 
                 }
@@ -1565,7 +1567,7 @@ namespace TechCertain.WebUI.Controllers
 
                     foreach (var useid in interestedParty)
                     {
-                        boat.InterestedParties.Add(_organisationService.GetOrganisation(Guid.Parse(useid)).Result);
+                        boat.InterestedParties.Add(await _organisationService.GetOrganisation(Guid.Parse(useid)));
                     }
 
                 }
@@ -1575,7 +1577,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             if (model.BoatTrailer != Guid.Empty)
-                boat.BoatTrailer = _vehicleRepository.GetByIdAsync(model.BoatTrailer).Result;
+                boat.BoatTrailer = await _vehicleRepository.GetByIdAsync(model.BoatTrailer);
             //if (model.BoatOperator != Guid.Empty)
             //    boat.BoatOperator = _operatorRepository.GetById(model.BoatOperator);
             try
@@ -1586,7 +1588,7 @@ namespace TechCertain.WebUI.Controllers
                     //boat.BoatUse = model.BoatUse;
 
                     sheet.Boats.Add(boat);
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
             }
@@ -1606,7 +1608,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBoat(Guid answerSheetId, Guid boatId)
         {
             BoatViewModel model = new BoatViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Boat boat = sheet.Boats.FirstOrDefault(b => b.Id == boatId);
             if (boat != null)
             {
@@ -1668,7 +1670,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed, bool ceased, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
 
             if (sheet == null)
@@ -1736,12 +1738,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBoatRemovedStatus(Guid boatId, bool status)
         {
-            Boat boat = _boatRepository.GetByIdAsync(boatId).Result;
+            Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boat.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
             return new JsonResult(true);
         }
@@ -1749,7 +1751,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status)
         {
-            Boat boat = _boatRepository.GetByIdAsync(boatId).Result;
+            Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1764,7 +1766,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBoatTransferedStatus(Guid boatId, bool status)
         {
-            Boat boat = _boatRepository.GetByIdAsync(boatId).Result;
+            Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -1785,8 +1787,8 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
-
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
@@ -1795,7 +1797,7 @@ namespace TechCertain.WebUI.Controllers
             // no boatUse, so create new
 
             if (boatUse == null)
-                boatUse = model.ToEntity(CurrentUser);
+                boatUse = model.ToEntity(user);
             model.UpdateEntity(boatUse);
             //if (model.BoatUseBoat != Guid.Empty)
             //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
@@ -1825,7 +1827,7 @@ namespace TechCertain.WebUI.Controllers
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
@@ -1834,9 +1836,9 @@ namespace TechCertain.WebUI.Controllers
 
                 Organisation organisation = null;
 
-                organisation = _organisationService.GetOrganisation(model.ID).Result;
+                organisation = await _organisationService.GetOrganisation(model.ID);
                 //{
-                //    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName);
+                //    organisation = new Organisation(CurrentUser(), Guid.NewGuid(), model.OrganisationName);
                 //    _organisationService.CreateNewOrganisation(organisation);
                 //}
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -1844,7 +1846,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.ChangeOrganisationName(model.OrganisationName);
                     organisation.Phone = model.OrganisationPhone;
                     organisation.Email = model.OrganisationEmail;
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 //model.PartyUseId = organisation.Id;
@@ -1856,52 +1858,11 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> AddAddNamedParty(OrganisationViewModel model)
-        //{
-        //    if (model == null)
-        //        throw new ArgumentNullException(nameof(model));
-
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId);
-        //    if (sheet == null)
-        //        throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
-
-        //    try
-        //    {
-
-        //        Organisation organisation = null;
-
-        //        //organisation = _organisationService.GetOrganisation(model.ID);
-        //        organisation = _organisationService.GetOrganisationByEmail(model.OrganisationName);
-        //        if (organisation == null)
-        //        {
-        //            organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName, model.OrganisationType);
-        //            _organisationService.CreateNewOrganisation(organisation);
-        //        }
-
-        //        model.ID = organisation.Id;
-        //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //        {
-        //            sheet.Organisation.Add(organisation);
-        //            //NewMethod(uow);
-        //            uow.Commit();
-        //        }
-
-             
-        //        //model.PartyUseId = organisation.Id;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.Write(ex.Message);
-        //    }
-        //    return Json(model);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> GetNamedParty(Guid answerSheetId, Guid partyID)
         {
             OrganisationViewModel model = new OrganisationViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Organisation org = sheet.Organisation.FirstOrDefault(o => o.Id == partyID);
             if (org != null)
             {
@@ -1933,25 +1894,25 @@ namespace TechCertain.WebUI.Controllers
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
             try
             {
-                OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName("Other Marina").Result;
-
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Other Marina");
+                var user = await CurrentUser();
                 if (organisationType == null)
                 {                    
-                    organisationType =_organisationTypeService.CreateNewOrganisationType(CurrentUser, "Other Marina").Result;                    
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, "Other Marina");                    
                 }
                 Organisation organisation = null;
 
-                organisation = _organisationService.GetOrganisationByEmail(model.OrganisationName).Result;
+                organisation = await _organisationService.GetOrganisationByEmail(model.OrganisationName);
                 if (organisation == null)
                 {
-                    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName, organisationType);
-                    await _organisationService.CreateNewOrganisation(organisation).ConfigureAwait(false);
+                    organisation = new Organisation(user, Guid.NewGuid(), model.OrganisationName, organisationType);
+                    await _organisationService.CreateNewOrganisation(organisation);
                 }
 
                 model.ID = organisation.Id;
@@ -1959,7 +1920,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     sheet.Organisation.Add(organisation);
                     //NewMethod(uow);
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 //model.PartyUseId = organisation.Id;
@@ -1976,7 +1937,7 @@ namespace TechCertain.WebUI.Controllers
         {
             Organisation organisation = null;
 
-            organisation = _organisationService.GetOrganisation(OrgID).Result;
+            organisation = await _organisationService.GetOrganisation(OrgID);
             var organisationalUnits = new List<OrganisationalUnitViewModel>();
             List<SelectListItem> mooredtypes = new List<SelectListItem>();
 
@@ -1995,32 +1956,12 @@ namespace TechCertain.WebUI.Controllers
             return Json(mooredtypes);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> GetOU(Guid OrgID)
-        //{
-        //    Organisation organisation = null;
-
-        //    organisation = _organisationService.GetOrganisation(OrgID);
-        //    var organisationalUnits = new List<OrganisationalUnitViewModel>();
-
-        //    foreach (OrganisationalUnit ou in organisation.OrganisationalUnits)
-        //    {
-        //        organisationalUnits.Add(new OrganisationalUnitViewModel
-        //        {
-        //            OrganisationalUnitId = ou.Id,
-        //            Name = ou.Name
-        //        });
-        //    }
-
-        //    return Json(organisationalUnits);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> OUSelected(Guid OUselect)
         {
             OrganisationalUnit orgunit = null;
 
-            orgunit = _organisationalUnitRepository.GetByIdAsync(OUselect).Result;
+            orgunit = await _organisationalUnitRepository.GetByIdAsync(OUselect);
             var locations = new List<LocationViewModel>();
 
             //var Locations = new List<Location>();
@@ -2033,15 +1974,6 @@ namespace TechCertain.WebUI.Controllers
                     Street = ou.Street
                 });
             }
-            //foreach (var ou in orgunit.Locations)
-            //{
-            //   // Locations.Add(ou);
-            //    organisationalUnits.Add(new LocationViewModel
-            //    {
-            //        LocationId = ou.LocationId,
-            //        Street = ou.Street
-            //    });
-            //}
 
             return Json(locations);
         }
@@ -2054,7 +1986,7 @@ namespace TechCertain.WebUI.Controllers
 
                     try
                     {
-                       user = _userService.GetUserByEmail(Useremail).Result;
+                       user = await _userService.GetUserByEmail(Useremail);
                        userName = user.FirstName;
                       
                     }
@@ -2077,42 +2009,35 @@ namespace TechCertain.WebUI.Controllers
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
             try
             {
-                InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName(model.InsuranceAttribute).Result;
+                var user = await CurrentUser();
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.InsuranceAttribute);
                 if (insuranceAttribute == null)
                 {
-                    insuranceAttribute = _insuranceAttributeService.CreateNewInsuranceAttribute(CurrentUser, model.InsuranceAttribute).Result;
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, model.InsuranceAttribute);
                 }
 
-                OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName).Result;
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
                 if (organisationType == null)
                 {                    
-                    organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, model.OrganisationTypeName).Result;
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
                 }
 
-
-                //OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
-                //if (organisationType == null)
-                //{
-                //    organisationType = new OrganisationType(CurrentUser, model.OrganisationTypeName);
-                //    _organisationTypeService.CreateNewOrganisationType(organisationType);
-
-                //}
                 Organisation organisation = null;
-                User user = null;
+                User userDb = null;
                 //if (model.InsuranceAttribute.EqualsIgnoreCase("Financial"))
                 //{
-                organisation = _organisationService.GetOrganisationByEmail(model.OrganisationEmail).Result;
+                organisation = await _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
                 if (organisation == null)
                 {
-                    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName, organisationType);
+                    organisation = new Organisation(user, Guid.NewGuid(), model.OrganisationName, organisationType);
                     organisation.Phone = model.OrganisationPhone;
                     organisation.Email = model.OrganisationEmail;
-                    await _organisationService.CreateNewOrganisation(organisation).ConfigureAwait(false);
+                    await _organisationService.CreateNewOrganisation(organisation);
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                 }
@@ -2124,60 +2049,39 @@ namespace TechCertain.WebUI.Controllers
                     {
                         if (model.IsAdmin.EqualsIgnoreCase("Yes"))
                         {
-                            user = _userService.GetUserByEmail(CurrentUser.Email).Result;
+                            user = await _userService.GetUserByEmail(user.Email);
                         }
                         else
                         {
-                            user = _userService.GetUserByEmail(model.Email).Result;
+                            user = await _userService.GetUserByEmail(model.Email);
                         }
                     }
                     catch (Exception ex)
                     {
-                        user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
+                        user = new User(user, Guid.NewGuid(), model.FirstName);
                         user.FirstName = model.FirstName;
                         user.LastName = model.LastName;
                         user.FullName = model.FirstName + " " + model.LastName;
                         user.Email = model.Email;
                         user.Phone = model.Phone;
                         user.Password = "";
-                        _userService.Create(user);
+                        await _userService.Create(user);
 
                     }
 
-                    //    //if (user == null)
-                    //    //{
-                    //    //    user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
-                    //    //    user.FirstName = model.FirstName;
-                    //    //    user.LastName = model.LastName;
-                    //    //    user.Email = model.Email;
-                    //    //    user.Phone = model.Phone;
-                    //    //    _userService.Create(user);
-                    //    //}
-                    //    //organisation = _organisationService.GetOrganisationByEmail(model.OrganisationEmail);
-                    //    //if (organisation == null)
-                    //    //{
-                    //    //    organisation = new Organisation(CurrentUser, Guid.NewGuid(), model.OrganisationName, organisationType, user);
-                    //    //    organisation.Phone = model.OrganisationPhone;
-                    //    //    organisation.Email = model.OrganisationEmail;
-                    //    //    _organisationService.CreateNewOrganisation(organisation);
-                    //    //    user.SetPrimaryOrganisation(organisation);
-                    //    //    user.Organisations.Add(organisation);
-
-                    //    //}
-
-                    }
-
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        CurrentUser.Organisations.Add(organisation);
-                        sheet.Organisation.Add(organisation);
-                        model.ID = organisation.Id;
-
-                        await uow.Commit().ConfigureAwait(false);
-                    }
-
-                    //model.PartyUseId = organisation.Id;
                 }
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    user.Organisations.Add(organisation);
+                    sheet.Organisation.Add(organisation);
+                    model.ID = organisation.Id;
+
+                    await uow.Commit();
+                }
+
+                //model.PartyUseId = organisation.Id;
+            }
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
@@ -2185,24 +2089,11 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
-        //private static void NewMethod(IUnitOfWork uow)
-        //{
-        //    try
-        //    {
-        //        uow.Commit();
-
-        //    }catch(Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-        //}
-
-
         [HttpPost]
         public async Task<IActionResult> GetBoatUse(Guid answerSheetId, Guid boatUseId)
         {
             BoatUseViewModel model = new BoatUseViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             BoatUse boatUse = sheet.BoatUses.FirstOrDefault(bu => bu.Id == boatUseId);
             if (boatUse != null)
             {
@@ -2218,7 +2109,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetBoatUses(Guid informationId, bool removed, bool ceased, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -2277,12 +2168,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBoatUseRemovedStatus(Guid boatUseId, bool status)
         {
-            BoatUse boatUse = _boatUseRepository.GetByIdAsync(boatUseId).Result;
+            BoatUse boatUse = await _boatUseRepository.GetByIdAsync(boatUseId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boatUse.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
             return new JsonResult(true);
         }
@@ -2290,13 +2181,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetBoatUseCeasedStatus(Guid boatUseId, bool status)
         {
-            BoatUse boatUse = _boatUseRepository.GetByIdAsync(boatUseId).Result;
+            BoatUse boatUse = await _boatUseRepository.GetByIdAsync(boatUseId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 boatUse.BoatUseCeaseDate = DateTime.MinValue;
                 boatUse.BoatUseCeaseReason = '0';
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true);
@@ -2311,20 +2202,21 @@ namespace TechCertain.WebUI.Controllers
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
+            var user = await CurrentUser();
 
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Claim - No Client information for " + model.AnswerSheetId);
 
             Claim claim = _claimRepository.FindAll().FirstOrDefault(c => c.Id == model.ClaimId);
             // no claim, so create new
             if (claim == null)
-                claim = model.ToEntity(CurrentUser);
+                claim = model.ToEntity(user);
             model.UpdateEntity(claim);
 
             if (model.OrganisationId != Guid.Empty)
             {
-                Organisation org = _organisationService.GetOrganisation(model.OrganisationId).Result;
+                Organisation org = await _organisationService.GetOrganisation(model.OrganisationId);
                 claim.Organisation = org;
             }
 
@@ -2334,7 +2226,7 @@ namespace TechCertain.WebUI.Controllers
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.Claims.Add(claim);
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return Json(model);
@@ -2344,7 +2236,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetClaim(Guid answerSheetId, Guid claimId)
         {
             ClaimViewModel model = new ClaimViewModel();
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Claim claim = sheet.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
@@ -2358,7 +2250,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> GetClaims(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId).Result;
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
@@ -2410,12 +2302,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetClaimRemovedStatus(Guid claimId, bool status)
         {
-            Claim claim = _claimRepository.GetByIdAsync(claimId).Result;
+            Claim claim = await _claimRepository.GetByIdAsync(claimId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 claim.Removed = status;
-                await uow.Commit().ConfigureAwait(false);
+                await uow.Commit();
             }
 
             return new JsonResult(true);
@@ -2431,67 +2323,66 @@ namespace TechCertain.WebUI.Controllers
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId).Result;
+            var currentUser = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
             try
             {
-                InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Skipper").Result;
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
                 if (insuranceAttribute == null)
                 {
-                    insuranceAttribute = _insuranceAttributeService.CreateNewInsuranceAttribute(CurrentUser, "Skipper").Result;
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Skipper");
                 }
-                OrganisationType organisationType = _organisationTypeService.GetOrganisationTypeByName("Person - Individual").Result;
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
                 if (organisationType == null)
                 {
-                    organisationType = _organisationTypeService.CreateNewOrganisationType(CurrentUser, "Person - Individual").Result;
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
                 }
 
                 Organisation organisation = null;
-                User user = null;
-                User currentuser = null;
+                User userdb = null;
                 try
                 {
-                    user = _userService.GetUserByEmail(model.Email).Result;                            
+                    userdb = await _userService.GetUserByEmail(model.Email);                            
                 }
                 catch (Exception ex)
                 {
-                    user = new User(CurrentUser, Guid.NewGuid(), model.FirstName);
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.FullName = model.FirstName + " " + model.LastName;
-                    user.Email = model.Email;
-                    user.Phone = model.Phone;
-                    user.Password = "";
+                    userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
+                    userdb.FirstName = model.FirstName;
+                    userdb.LastName = model.LastName;
+                    userdb.FullName = model.FirstName + " " + model.LastName;
+                    userdb.Email = model.Email;
+                    userdb.Phone = model.Phone;
+                    userdb.Password = "";
 
-                    _userService.Create(user);
+                    await _userService.Create(userdb);
 
                 }
-                currentuser = _userService.GetUserByEmail(CurrentUser.Email).Result;
-
-                organisation = _organisationService.GetOrganisationByEmail(model.Email).Result;
+                
+                organisation = await _organisationService.GetOrganisationByEmail(model.Email);
                 if (organisation == null)
                 {
                     var organisationName = model.FirstName + " " + model.LastName;
-                    organisation = new Organisation(CurrentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
+                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
                             //organisation.OperatorYearsOfExp = model.OperatorYearsOfExp;
                             // organisation.OrganisationType = organisationType;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
-                    await _organisationService.CreateNewOrganisation(organisation).ConfigureAwait(false);
-                    user.SetPrimaryOrganisation(organisation);
+                    await _organisationService.CreateNewOrganisation(organisation);
+                    userdb.SetPrimaryOrganisation(organisation);
 
                 }
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    user.SetPrimaryOrganisation(organisation);
-                    currentuser.Organisations.Add(organisation);
-                    user.Organisations.Add(organisation);
+                    userdb.SetPrimaryOrganisation(organisation);
+                    currentUser.Organisations.Add(organisation);
+                    userdb.Organisations.Add(organisation);
                     sheet.Organisation.Add(organisation);
                     model.ID = organisation.Id;
                     //NewMethod(uow);
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                         //model.PartyUseId = organisationId;                                    
@@ -2502,113 +2393,7 @@ namespace TechCertain.WebUI.Controllers
             }
             return Json(model);
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddOperator1(OperatorViewModel model)
-        //{
-        //    if (model == null)
-        //        throw new ArgumentNullException(nameof(model));
-
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(model.AnswerSheetId);
-        //    if (sheet == null)
-        //        throw new Exception("Unable to save Operator - No Client information for " + model.AnswerSheetId);
-
-        //    Operator operato = _operatorRepository.Repository.FindAll().FirstOrDefault(oper => oper.Id == model.OperatorId);
-        //    if (operato == null)
-        //        operato = model.ToEntity(CurrentUser);
-        //    model.UpdateEntity(operato);
-
-        //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        sheet.Operators.Add(operato);
-        //        uow.Commit();
-        //    }
-        //    model.OperatorId = operato.Id;
-
-
-        //    return Json(model);
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> GetOperator(Guid answerSheetId, Guid operatorId)
-        //{
-        //    OperatorViewModel model = new OperatorViewModel();
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(answerSheetId);
-        //    Operator operato = sheet.Operators.FirstOrDefault(oper => oper.Id == operatorId);
-        //    if (operato != null)
-        //    {
-        //        model = OperatorViewModel.FromEntity(operato);
-        //        model.AnswerSheetId = answerSheetId;
-        //    }
-        //    return Json(model);
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetOperators(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-        //                                  string searchField, string searchString, string searchOper, string filters)
-        //{
-        //    ClientInformationSheet sheet = _clientInformationService.GetInformation(informationId);
-        //    if (sheet == null)
-        //        throw new Exception("No valid information for id " + informationId);
-
-        //    var operators = new List<Operator>();
-
-        //    operators = sheet.Operators.Where(oper => oper.Removed == removed && oper.DateDeleted == null).ToList();
-
-        //    if (_search)
-        //    {
-        //        switch (searchOper)
-        //        {
-        //            case "eq":
-        //                operators = operators.Where(searchField + " = \"" + searchString + "\"").ToList();
-        //                break;
-        //            case "bw":
-        //                operators = operators.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-        //                break;
-        //            case "cn":
-        //                operators = operators.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-        //                break;
-        //        }
-        //    }
-        //    operators = operators.OrderBy(sidx + " " + sord).ToList();
-
-        //    XDocument document = null;
-        //    JqGridViewModel model = new JqGridViewModel();
-        //    model.Page = page;
-        //    model.TotalRecords = operators.Count;
-        //    model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-
-        //    int offset = rows * (page - 1);
-        //    for (int i = offset; i < offset + rows; i++)
-        //    {
-        //        if (i == model.TotalRecords)
-        //            break;
-
-        //        Operator operato = operators[i];
-        //        JqGridRow row = new JqGridRow(operato.Id);
-        //        row.AddValues(operato.Id, operato.OperatorFirstName, operato.OperatorLastName, operato.Id);
-        //        model.AddRow(row);
-        //    }
-
-        //    // convert model to XDocument for rendering.
-        //    document = model.ToXml();
-        //    return Xml(document);
-
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> SetOperatorRemovedStatus(Guid operatorId, bool status)
-        //{
-        //    Operator operato = _operatorRepository.GetById(operatorId);
-
-        //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //    {
-        //        operato.Removed = status;
-        //        uow.Commit();
-        //    }
-
-        //    return new JsonResult { Data = true };
-        //}
+        
 
         #endregion
 
@@ -2619,7 +2404,7 @@ namespace TechCertain.WebUI.Controllers
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
 
-            bool hasAccount = true;            
+            bool hasAccount = true;
             //Add User, Organisation, Information Sheet, Quick Term saving process here
             string organisationName = null;
             string ouname = null;
@@ -2671,13 +2456,13 @@ namespace TechCertain.WebUI.Controllers
                 phonenumber = mobilePhone;
             }
             OrganisationType organisationType = null;
-            organisationType = _organisationTypeService.GetOrganisationTypeByName(orgTypeName).Result;
+            organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
             if (organisationType == null)
             {
-                organisationType = _organisationTypeService.CreateNewOrganisationType(null, orgTypeName).Result;               
+                organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
             }
             Organisation organisation = null;
-            organisation = _organisationService.GetOrganisationByEmail(email).Result;
+            organisation = await _organisationService.GetOrganisationByEmail(email);
 
             //condition for organisation exists
             if (organisation == null)
@@ -2685,14 +2470,14 @@ namespace TechCertain.WebUI.Controllers
                 organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
                 organisation.Phone = phonenumber;
                 organisation.Email = email;
-                await _organisationService.CreateNewOrganisation(organisation).ConfigureAwait(false);                
+                await _organisationService.CreateNewOrganisation(organisation);
 
                 User user = null;
                 User user2 = null;
 
                 try
                 {
-                    user = _userService.GetUserByEmail(email).Result;
+                    user = await _userService.GetUserByEmail(email);
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
                     var username = user.FirstName;
@@ -2703,7 +2488,7 @@ namespace TechCertain.WebUI.Controllers
 
                     try
                     {
-                        user2 = _userService.GetUser(username).Result;
+                        user2 = await _userService.GetUser(username);
 
                         if (user2 != null && user == user2)
                         {
@@ -2715,7 +2500,7 @@ namespace TechCertain.WebUI.Controllers
                     catch (Exception)
                     {
                         // create personal organisation
-                        //var personalOrganisation = new Organisation (CurrentUser, Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser, "personal"));
+                        //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
                         //_organisationService.CreateNewOrganisation (personalOrganisation);
                         // create user object
                         user = new User(null, Guid.NewGuid(), username);
@@ -2729,28 +2514,25 @@ namespace TechCertain.WebUI.Controllers
                         //user.Organisations.Add (personalOrganisation);
                         // save the new user
                         // creates a new user in the system along with a default organisation
-                        await _userService.Create(user).ConfigureAwait(false);
+                        await _userService.Create(user);
                         //Console.WriteLine ("Created User " + user.FullName);
                     }
                 }
                 finally
                 {
-                    Thread.Sleep(2000);
                     if (!user.Organisations.Contains(organisation))
                         user.Organisations.Add(organisation);
 
                     user.SetPrimaryOrganisation(organisation);
-                    await _userRepository.UpdateAsync(user).ConfigureAwait(false);
-                    
+                    await _userRepository.UpdateAsync(user);
+
                 }
 
-                var programme = _programmeService.GetCoastGuardProgramme().Result;
-                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation).ConfigureAwait(false);
-                var reference = _referenceService.GetLatestReferenceId().Result;
-                var sheet = _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference).Result;
-               
-
-                await _referenceService.CreateClientInformationReference(sheet).ConfigureAwait(false);
+                var programme = await _programmeService.GetCoastGuardProgramme();
+                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+                var reference = await _referenceService.GetLatestReferenceId();
+                var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                await _referenceService.CreateClientInformationReference(sheet);
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
@@ -2772,16 +2554,24 @@ namespace TechCertain.WebUI.Controllers
                     try
                     {
                         Thread.Sleep(1000);
-                        await uow.Commit().ConfigureAwait(false);
+                        await uow.Commit();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         throw new Exception(ex.Message);
                     }
-                   
-                }
 
-              
+                }
+                //send out login email
+                await _emailService.SendSystemEmailLogin(email);
+                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                if (emailTemplate != null)
+                {
+                    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                }
+                //send out information sheet issue notification email
+                await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+
             }
             else
             {

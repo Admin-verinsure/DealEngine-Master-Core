@@ -6,67 +6,63 @@ using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.Tasking;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using System.Collections.Generic;
 
 namespace TechCertain.Services.Impl
 {
     public class MilestoneService : IMilestoneService
     {
         IMapperSession<Milestone> _milestoneRepository;
-        ISystemEmailService _systemEmailRepository;
+        ISystemEmailService _systemEmailService;
         //ITaskingService _taskingService;
-        IMilestoneTemplateService _milestoneTemplateService;
-
+        IProgrammeProcessService _programmeProcessService;
+        IActivityService _activityService;
 
         public MilestoneService(IMapperSession<Milestone> milestoneRepository,
                                 ISystemEmailService systemEmailService,
+                                IProgrammeProcessService programmeProcessService,
+                                IActivityService activityService
                                 //ITaskingService taskingService,
-                                IMilestoneTemplateService milestoneTemplateService)
+                                )
         {
+            _activityService = activityService;
+            _programmeProcessService = programmeProcessService;
             _milestoneRepository = milestoneRepository;
-            _systemEmailRepository = systemEmailService;
+            _systemEmailService = systemEmailService;
             //_taskingService = taskingService;
-            _milestoneTemplateService = milestoneTemplateService;
         }
 
-        public async Task<Milestone> CreateMilestone(User createdBy, string programmeProcess, string activity, Programme programmeId)
+        public async Task<Milestone> CreateMilestone(User createdBy, Guid programmeProcessId, Guid activityId, Programme programme)
         {
+            var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
+            var activity = await _activityService.GetActivityId(activityId);
+
             Milestone milestone = new Milestone(createdBy);
             milestone.ProgrammeProcess = programmeProcess;
             milestone.Activity = activity;
             milestone.HasTriggered = false;
-            milestone.Programme = programmeId;
+            milestone.Programme = programme;
             await _milestoneRepository.AddAsync(milestone);
 
             return milestone;
         }
 
-
-        public async Task<Milestone> GetMilestone(string type)
+        public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, Guid activityId, Guid programmeProcessId)
         {
-            return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Type == type);
-        }
-
-        public async Task CreateEmailTemplate(User user, Milestone milestone, string subject, string emailContent, string template)
-        {
-
-            if (milestone == null)
-                throw new ArgumentNullException(nameof(milestone));
-            if (string.IsNullOrWhiteSpace(template))
-                throw new ArgumentNullException(nameof(template));
-            if (string.IsNullOrWhiteSpace(emailContent))
-                throw new ArgumentNullException(nameof(emailContent));
-
-            SystemEmail systemEmailTemplate = _systemEmailRepository.GetSystemEmailByType(template).Result;
-            if (systemEmailTemplate != null)
+            var activity = await _activityService.GetActivityId(activityId);
+            var programmeProcess = await _programmeProcessService.GetProcessId(programmeProcessId);
+            SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(activity.Name);
+            if (systemEmailTemplate == null)
             {
-                await _systemEmailRepository.AddNewSystemEmail(user, milestone.Type, null, subject, emailContent, template);
+                systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
+                await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
             }
             else
             {
-                //update function
+                await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
             }
 
-            milestone.EmailTemplates.Add(systemEmailTemplate);
+            milestone.SystemEmailTemplate = systemEmailTemplate;
             await _milestoneRepository.UpdateAsync(milestone);
         }
 
@@ -83,33 +79,34 @@ namespace TechCertain.Services.Impl
 
         public async Task CreateUserTask(Milestone milestone, UserTask userTask)
         {
-            if (milestone == null)
-                throw new ArgumentNullException(nameof(milestone));
-            if (userTask == null)
-                throw new ArgumentNullException(nameof(userTask));
-
+            milestone.UserTask = userTask;
             await _milestoneRepository.UpdateAsync(milestone);
-        }
-
-        public async Task<MilestoneTemplate> GetMilestoneTemplate(Guid ClientprogrammeID, string milestoneActivity)
-        {
-            return await _milestoneTemplateService.GetMilestoneTemplate(ClientprogrammeID, milestoneActivity);
         }
 
         public async Task CloseMileTask(Guid id, string method)
         {
-            Milestone milestone = _milestoneRepository.GetByIdAsync(id).Result;
-            milestone.Advisory.Method = method;
+            Milestone milestone = await _milestoneRepository.GetByIdAsync(id);
+            milestone.Method = method;
             milestone.HasTriggered = true;
-            milestone.Task.IsActive = true;
+            milestone.UserTask.IsActive = true;
+
             await _milestoneRepository.UpdateAsync(milestone);
         }
 
-        public async Task<Milestone> GetMilestoneProcess(Guid programmeId, string programmeProcess, string Activity)
+        public async Task<Milestone> GetMilestoneProcess(Guid programmeId, ProgrammeProcess programmeProcess, Activity activity)
         {
-            return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.ProgrammeProcess == programmeProcess
-                                                                                            && m.Activity == Activity
-                                                                                                && m.HasTriggered == false);
+            return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Programme.Id == programmeId && m.ProgrammeProcess == programmeProcess
+                                                                                            && m.Activity == activity);
+        }
+
+        public async Task<Milestone> GetMilestoneActivity(string activity)
+        {
+            return await _milestoneRepository.FindAll().FirstOrDefaultAsync(m => m.Activity.Name == activity);
+        }
+
+        public async Task<List<Milestone>> GetMilestones(Guid programmeId)
+        {
+            return await _milestoneRepository.FindAll().Where(m => m.Programme.Id == programmeId).ToListAsync();
         }
     }
 }

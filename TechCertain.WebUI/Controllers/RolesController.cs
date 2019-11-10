@@ -104,7 +104,7 @@
 //		public async Task<IActionResult> Delete (Guid Id)
 //		{
 //			try {
-//				if (!_roleService.DeleteRole (Id, CurrentUser))
+//				if (!_roleService.DeleteRole (Id, CurrentUser()))
 //					throw new Exception ("Unable to delete ApplicationRole with Id [" + Id + "]");
 
 //				return Json (true);
@@ -146,7 +146,7 @@
 //                    //if (!ModelState.IsValidField(nameof(roleViewModel.RoleName)))
 //                    //	return RedirectToAction ("Index");
 
-//                    AuthClaims authclaims = _ClaimService.CreateClaims(CurrentUser, claimViewModel.ClaimName, claimViewModel.Description);
+//                    AuthClaims authclaims = _ClaimService.CreateClaims(CurrentUser(), claimViewModel.ClaimName, claimViewModel.Description);
 //                    uow.Commit();
 
 //                    return RedirectToAction("Index");
@@ -183,7 +183,7 @@
 //        //public ActionResult Delete (Guid Id)
 //        //{
 //        //	try {
-//        //		if (!_roleService.DeleteRole (Id, CurrentUser))
+//        //		if (!_roleService.DeleteRole (Id, CurrentUser()))
 //        //			throw new Exception ("Unable to delete ApplicationRole with Id [" + Id + "]");
 
 //        //		return Json (true);

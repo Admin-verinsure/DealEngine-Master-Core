@@ -116,7 +116,6 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-
         
         public virtual BoatUse CloneForNewSheet(ClientInformationSheet newSheet)
         {

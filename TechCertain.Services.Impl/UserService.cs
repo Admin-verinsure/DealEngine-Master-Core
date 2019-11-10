@@ -7,6 +7,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
 using NHibernate.Linq;
+using System.Threading;
 
 namespace TechCertain.Services.Impl
 {
@@ -26,9 +27,9 @@ namespace TechCertain.Services.Impl
             _organisationTypeService = organisationTypeService;
         }
 
-        //public async Task<User> GetCurrentUserAsync()
+        //public async Task<User> GetCurrentUser()Async()
         //{
-        //    //return await _userRepository.GetByIdAsync(_currentUserGuid);
+        //    //return await _userRepository.GetByIdAsync(_CurrentUser()Guid);
         //}
 
         public async Task<User> GetUser (string username)
@@ -36,7 +37,7 @@ namespace TechCertain.Services.Impl
             User user = null;
             try
             {
-                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username).ConfigureAwait(false);
+                user = await _userRepository.FindAll().FirstOrDefaultAsync(u => u.UserName == username);
             }
             catch (Exception ex)
             {
@@ -126,7 +127,8 @@ namespace TechCertain.Services.Impl
             CreateDefaultUserOrganisation (user);
             await _userRepository.AddAsync(user);
             _ldapService.Create (user);
-			await Update (user);
+            Thread.Sleep(2000);
+            await Update (user);
 		}
 
 		public async Task Update (User user)
@@ -178,10 +180,10 @@ namespace TechCertain.Services.Impl
 			throw new NotImplementedException();
 		}
 
-        protected void CreateDefaultUserOrganisation (User user)
+        protected async Task CreateDefaultUserOrganisation (User user)
 		{
             OrganisationType personalOrganisationType = null;
-            personalOrganisationType = _organisationTypeService.GetOrganisationTypeByName("personal").Result;
+            personalOrganisationType = await _organisationTypeService.GetOrganisationTypeByName("personal");
             if (personalOrganisationType == null)
             {
                 personalOrganisationType = new OrganisationType(user, "personal");

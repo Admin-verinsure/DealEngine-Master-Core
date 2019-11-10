@@ -11,15 +11,6 @@ namespace TechCertain.WebUI.Models.Permission
 		public SelectRoleEditorViewModel () { }
 
 		// Update this to accept an argument of type ApplicationRole:
-		public SelectRoleEditorViewModel (ApplicationRole role)
-		{
-			RoleId = role.Id;
-			RoleName = role.Name;
-
-			// Assign the new Descrption property:
-			Description = role.Description;
-		}
-
 		public bool Selected { get; set; }
 
 		public Guid RoleId { get; set; }
@@ -44,52 +35,13 @@ namespace TechCertain.WebUI.Models.Permission
 		{
 			Groups = new List<SelectGroupEditorViewModel> ();
 		}
-
-		public SelectUserGroupsViewModel (User user, IEnumerable<ApplicationGroup> groups)
-			: this ()
-		{
-			UserId = user.Id;
-			UserName = user.UserName;
-			FirstName = user.FirstName;
-			LastName = user.LastName;
-
-			foreach (var group in groups)
-				Groups.Add (new SelectGroupEditorViewModel (group));
-
-			foreach (var group in user.Groups) {
-				var groupModel = Groups.Find (g => g.GroupId == group.Id);
-				if (groupModel != null)
-					groupModel.Selected = true;
-			}
-
-			//var Db = new ApplicationDbContext ();
-
-			//// Add all available groups to the public list:
-			//var allGroups = Db.Groups;
-			//foreach (var role in allGroups) {
-			//	// An EditorViewModel will be used by Editor Template:
-			//	var rvm = new SelectGroupEditorViewModel (role);
-			//	this.Groups.Add (rvm);
-			//}
-
-			//// Set the Selected property to true where user is already a member:
-			//foreach (var group in user.Groups) {
-			//	var checkUserRole =
-			//		this.Groups.Find (r => r.GroupName == group.Group.Name);
-			//	checkUserRole.Selected = true;
-			//}
-		}
+		
 	}
 
 	// Used to display a single role group with a checkbox, within a list structure:
 	public class SelectGroupEditorViewModel
 	{
-		public SelectGroupEditorViewModel () { }
-		public SelectGroupEditorViewModel (ApplicationGroup group)
-		{
-			GroupName = group.Name;
-			GroupId = group.Id;
-		}
+		public SelectGroupEditorViewModel () { }		
 
 		public bool Selected { get; set; }
 
@@ -118,18 +70,6 @@ namespace TechCertain.WebUI.Models.Permission
 		}
 
 		// Enable initialization with an instance of ApplicationUser:
-		public UserPermissionsViewModel (User user)
-			: this ()
-		{
-			UserName = user.UserName;
-			FirstName = user.FirstName;
-			LastName = user.LastName;
-			foreach (var role in user.GetRoles()) {
-				var appRole = role;
-				var pvm = new RoleViewModel (appRole);
-				Roles.Add (pvm);
-			}
-		}
 
 		public string UserName { get; set; }
 		public string FirstName { get; set; }

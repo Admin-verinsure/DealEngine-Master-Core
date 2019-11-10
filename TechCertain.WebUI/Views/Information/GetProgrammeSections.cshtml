@@ -7,7 +7,7 @@
             <div class="widget-body">
                 <div class="row">
 
-                    <div class="col col-12">
+                    <div  class="col-xs-12 col-sm-7 col-md-7 col-lg-9">
                         <div id="accordion">
                             <!-- NEW WIDGET START -->
                             <!-- Widget ID (each widget will need unique ID)-->
@@ -51,12 +51,12 @@
 
                                                     <div class="row ">
 
-                                                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                        @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">*@
                                                             <div id="@item.Id">
 
                                                             </div>
 
-                                                        </section>
+                                                        @*</section>*@
 
                                                     </div>
 
@@ -95,52 +95,52 @@
 
     function CreateSection(information) {
         debugger;
+         var postData = { SectionId: information};
 
          $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SectionBuilder", "Information")',
-        type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ SectionId: information})
+        type: "POST",
+        data: postData
     })
              .done(function (data) {
 
                  for (var i = 0; i < data.length; i++) {
                      debugger;
-                  var element1 = document.getElementById(data[i].Id);
-                  var childcount = document.getElementById(data[i].Id).childElementCount;
+                  var element1 = document.getElementById(data[i].id);
+                  var childcount = document.getElementById(data[i].id).childElementCount;
 
                 var section = document.createElement("Section");
                      section.setAttribute("class", "col col-xs-12 col-sm-6 col-md-6 col-lg-6");
-                     if (data[i].Type == "DROPDOWNLIST" && childcount < data.length) {
+                     if (data[i].type == "DROPDOWNLIST" && childcount < data.length) {
                     var label = document.createElement("label");
                     var br = document.createElement("br");
-                    var labelname = data[i].Label;
+                    var labelname = data[i].label;
                     label.setAttribute("value", labelname);
                     label.innerHTML = labelname;
                     var op = data[i].option;
                     var input = document.createElement("select");
                     input.setAttribute('type', 'DROPDOWN');
                     input.setAttribute('name', 'DROPDOWN');
-                    input.setAttribute('id', data[i].ControlId);
+                    input.setAttribute('id', data[i].controlId);
                     section.appendChild(label);
                     section.appendChild(br);
                     section.appendChild(input);
                     fncCreateSelectOption(input, op);
                     element1.appendChild(section);
 
-                }else if (data[i].Type == "TEXTBOX" && childcount < data.length) {
+                }else if (data[i].type == "TEXTBOX" && childcount < data.length) {
                     debugger;
 
                     var label1 = document.createElement("label");
                     var br = document.createElement("br");
-                    var labelname = data[i].Label;
+                    var labelname = data[i].label;
                     label1.setAttribute("value", labelname);
                     label1.innerHTML = labelname;
                     var input = document.createElement("input");
                     input.setAttribute('type', 'text');
                     input.setAttribute('name', 'TEXT');
-                    input.setAttribute('id', data[i].ControlId);
+                    input.setAttribute('id', data[i].controlId);
                     section.appendChild(label1);
                     section.appendChild(br);
                     section.appendChild(input);
@@ -168,14 +168,14 @@
 
     };
 
-        $(document).ready(function () {
-            $('#tableProgrammeItems').DataTable({
-                "sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
-                    "t" +
-                    "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
-                "autoWidth": true
-            })
-        });
+        //$(document).ready(function () {
+        //    $('#tableProgrammeItems').DataTable({
+        //        "sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+        //            "t" +
+        //            "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+        //        "autoWidth": true
+        //    })
+        //});
 
 
     var accordionIcons = {
@@ -183,15 +183,15 @@
     activeHeader: "fa fa-dot-circle-o"  // custom icon class
     };
 
-    $("#accordion").accordion({
-    autoHeight: false,
-    heightStyle: "content",
-    collapsible: false,
-    animate: 300,
-    icons: accordionIcons,
-    header: "h4",
-    activate: function (event, ui) { }
-    });
+    //$("#accordion").accordion({
+    //autoHeight: false,
+    //heightStyle: "content",
+    //collapsible: false,
+    //animate: 300,
+    //icons: accordionIcons,
+    //header: "h4",
+    //activate: function (event, ui) { }
+    //});
 
     </script>
 

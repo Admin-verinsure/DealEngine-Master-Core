@@ -12,13 +12,6 @@ namespace TechCertain.WebUI.Models.Permission
 		public bool IsSystemRole { get; set; }
 
 		public RoleViewModel () { }
-		public RoleViewModel (ApplicationRole role)
-		{
-			Id = role.Id;
-			RoleName = role.Name;
-			Description = role.Description;
-			IsSystemRole = role.IsSystemRole;
-		}
 	}
 
 	public class EditRoleViewModel
@@ -29,13 +22,6 @@ namespace TechCertain.WebUI.Models.Permission
 		public string Description { get; set; }
 
 		public EditRoleViewModel () { }
-		public EditRoleViewModel (ApplicationRole role)
-		{
-			Id = role.Id;
-			OriginalRoleName = role.Name;
-			RoleName = role.Name;
-			Description = role.Description;
-		}
 	}
 }
 

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -15,49 +18,49 @@ namespace TechCertain.Services.Impl
             _auditLogRepository = auditLogRepository;
         }
 
-        public AuditLog CreateNewAuditLog(AuditLog auditLog)
+        public async Task<AuditLog> CreateNewAuditLog(AuditLog auditLog)
         {
-            UpdateAuditLog(auditLog);
+            await UpdateAuditLog(auditLog);
             return auditLog;
         }
 
-        public void DeleteAuditLog(User deletedBy, AuditLog auditLog)
+        public async Task DeleteAuditLog(User deletedBy, AuditLog auditLog)
         {
             auditLog.Delete(deletedBy);
-            UpdateAuditLog(auditLog);
+            await UpdateAuditLog(auditLog);
         }
 
-        public IQueryable<AuditLog> GetAllAuditLogs()
+        public async Task<List<AuditLog>> GetAllAuditLogs()
         {
-            return _auditLogRepository.FindAll().Where(al => al.DateDeleted != null);
+            return await _auditLogRepository.FindAll().Where(al => al.DateDeleted != null).ToListAsync();
         }
 
-        public AuditLog GetAuditLog(Guid auditLogId)
+        public async Task<AuditLog> GetAuditLog(Guid auditLogId)
         {
-            AuditLog auditLog = _auditLogRepository.GetByIdAsync(auditLogId).Result;
+            AuditLog auditLog = await _auditLogRepository.GetByIdAsync(auditLogId);
             if (auditLog != null)
                 return auditLog;
             if (auditLog != null)
             {
-                UpdateAuditLog(auditLog);
+                await UpdateAuditLog(auditLog);
                 return auditLog;
             }
             throw new Exception("AuditLog with id [" + auditLogId + "] does not exist in the system");
         }
 
-        public void UpdateAuditLog(AuditLog auditLog)
+        public async Task UpdateAuditLog(AuditLog auditLog)
         {
-            _auditLogRepository.UpdateAsync(auditLog);
+            await _auditLogRepository.UpdateAsync(auditLog);
         }
 
-        public IQueryable<AuditLog> GetAuditLogForAuditLogClientInformationSheet(ClientInformationSheet clientInformationSheet)
+        public async Task<List<AuditLog>> GetAuditLogForAuditLogClientInformationSheet(ClientInformationSheet clientInformationSheet)
         {
-            return _auditLogRepository.FindAll().Where(al => al.AuditLogClientInformationSheet == clientInformationSheet && al.AuditLogClientAgreement == null && al.DateDeleted != null);
+            return await _auditLogRepository.FindAll().Where(al => al.AuditLogClientInformationSheet == clientInformationSheet && al.AuditLogClientAgreement == null && al.DateDeleted != null).ToListAsync();
         }
 
-        public IQueryable<AuditLog> GetAuditLogForAuditLogClientAgreement(ClientAgreement clientAgreement)
+        public async Task<List<AuditLog>> GetAuditLogForAuditLogClientAgreement(ClientAgreement clientAgreement)
         {
-            return _auditLogRepository.FindAll().Where(al => al.AuditLogClientAgreement == clientAgreement && al.DateDeleted != null);
+            return await _auditLogRepository.FindAll().Where(al => al.AuditLogClientAgreement == clientAgreement && al.DateDeleted != null).ToListAsync();
         }
     }
 }

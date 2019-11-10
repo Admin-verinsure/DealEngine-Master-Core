@@ -13,6 +13,7 @@ namespace TechCertain.Services.Interfaces
         Task<OrganisationalUnit> GetOrganisationalUnit(Guid organisationalUnitId);
 
         Task<OrganisationalUnit> GetOrganisationalUnitByName (string organisationalUnitName);
+        Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsByOrg(Organisation org);
 
     }
 }

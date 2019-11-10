@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
@@ -11,7 +12,7 @@ namespace TechCertain.Services.Interfaces
 
         Task DeleteBoatUse(User deletedBy, BoatUse boatUse);
 
-        IQueryable<BoatUse> GetAllBoatUses();
+        Task<List<BoatUse>> GetAllBoatUses();
 
         Task<BoatUse> GetBoatUse(Guid boatUseId);
 

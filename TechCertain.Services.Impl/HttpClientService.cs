@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using TechCertain.Domain.Entities;
@@ -18,7 +19,7 @@ namespace TechCertain.Services.Impl
             _logInfoMapperSession = logInfoMapperSession;
         }
 
-        public Task<string> Analyze(string request)
+        public async Task<string> Analyze(string request)
         {
             var responseMessage = "";
             string service = "https://ris.us1.qeadaptiveauth.com/AdaptiveAuthentication/services/AdaptiveAuthentication";
@@ -48,9 +49,10 @@ namespace TechCertain.Services.Impl
                 //_logInfoMapperSession.AddAsync(logInfo);
 
                 HttpClient client = new HttpClient(_socketsHttpHandler);
-                response = client.SendAsync(_httpRequestMessage).Result;
+                response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
-                responseMessage = response.Content.ReadAsStringAsync().Result;
+                responseMessage = await response.Content.ReadAsStringAsync();
+                client.Dispose();
             }
             catch (HttpRequestException e)
             {
@@ -60,11 +62,13 @@ namespace TechCertain.Services.Impl
             {
                 responseMessage = ex.Message;
             }
+            _socketsHttpHandler.Dispose();
+            _httpRequestMessage.Dispose();
 
-            return Task.FromResult(responseMessage);
+            return responseMessage;
         }
 
-        public Task<string> CreateEGlobalInvoice(string xmlPayload)
+        public async Task<string> CreateEGlobalInvoice(string xmlPayload)
         {
             var responseMessage ="";            
             var SOAPAction = @"http://www.example.org/invoice-service/createInvoice";
@@ -90,9 +94,11 @@ namespace TechCertain.Services.Impl
             try
             {
                 HttpClient client = new HttpClient(_socketsHttpHandler);
-                response = client.SendAsync(_httpRequestMessage).Result;
+                response = await client.SendAsync(_httpRequestMessage);
+                Thread.Sleep(1000);
                 response.EnsureSuccessStatusCode();
-                responseMessage = response.Content.ReadAsStringAsync().Result;
+                responseMessage = await response.Content.ReadAsStringAsync();
+                client.Dispose();
             }
             catch (HttpRequestException e)
             {
@@ -100,13 +106,15 @@ namespace TechCertain.Services.Impl
             }
             catch (Exception ex)
             {
-               responseMessage = ex.Message;
+               responseMessage = ex.Message + ex.InnerException + ex.StackTrace;
             }
+            _socketsHttpHandler.Dispose();
+            _httpRequestMessage.Dispose();
 
-            return Task.FromResult(responseMessage);
+            return responseMessage;
         }
 
-        public Task<string> GetEglobalStatus()
+        public async Task<string> GetEglobalStatus()
         {
             var responseMessage = "";
             var SOAPAction = "http://www.example.org/invoice-service/getEGlobalSiteStatus";
@@ -118,7 +126,7 @@ namespace TechCertain.Services.Impl
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
-                Credentials = new NetworkCredential("tcwebservices", "xfmdpnf2"),
+                Credentials = new NetworkCredential("tcwebservices", "xfmdpnf2"),                
             };
 
             _httpRequestMessage = new HttpRequestMessage
@@ -132,9 +140,10 @@ namespace TechCertain.Services.Impl
             try
             {
                 HttpClient client = new HttpClient(_socketsHttpHandler);
-                response = client.SendAsync(_httpRequestMessage).Result;
+                response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
-                responseMessage = response.Content.ReadAsStringAsync().Result;
+                responseMessage = await response.Content.ReadAsStringAsync();
+                client.Dispose();
             }
             catch (HttpRequestException e)
             {
@@ -145,7 +154,10 @@ namespace TechCertain.Services.Impl
                 responseMessage = ex.Message;
             }
 
-            return Task.FromResult(responseMessage);
+            _socketsHttpHandler.Dispose();
+            _httpRequestMessage.Dispose();
+
+            return responseMessage;
         }
 
         private string generateBody(string xmlPayload)

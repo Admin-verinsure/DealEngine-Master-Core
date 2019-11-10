@@ -1,4 +1,5 @@
 ﻿using NHibernate.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,9 +26,14 @@ namespace TechCertain.Services.Impl
             return section;
         }
 
-        public async Task<List<InformationSection>> GetAllSections()
+        public  IQueryable<InformationSection> GetAllSections()
         {
-            return await _informationSectionRepository.FindAll().ToListAsync();
+            return  _informationSectionRepository.FindAll();
+        }
+
+        public async Task<InformationSection> GetSection(Guid Id)
+        {
+            return await _informationSectionRepository.GetByIdAsync(Id);
         }
     }
 }
