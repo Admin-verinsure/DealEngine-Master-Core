@@ -94,17 +94,13 @@
             event.preventDefault();
             if (Validate($("#milestoneprogramme").val())) {
                 var mergedData = { strProgrammeId: $("#milestoneprogramme").val(), strProgrammeProcessId: process };
-                console.log(mergedData);
-                debugger;
                 $.ajax({
                     url: "/Milestone/MilestoneTemplate",
                     type: "POST",
                     data: mergedData
                 })
                    .done(function (url) {
-
                 window.location.href = url;
-                console.log("url"+url);
 	        })
                     .fail(function (err) {
                         console.log(err);

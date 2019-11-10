@@ -16,7 +16,7 @@ namespace TechCertain.WebUI.Models.Milestone
         public Guid ProgrammeId { get; set; }
         public string ProgrammeProcessId { get; set; }
         public MilestoneTemplateVM MilestoneTemplate { get; set; }
-        public IList<string> EmailAddresses { get; set; }
+        public IEnumerable<SelectListItem> EmailAddresses { get; set; }
         public IEnumerable<SelectListItem> Priorities { get; set; }
         public AdvisoryVM AdvisoryContent { get; set; }        
         public EmailTemplateVM EmailTemplate { get; set; }

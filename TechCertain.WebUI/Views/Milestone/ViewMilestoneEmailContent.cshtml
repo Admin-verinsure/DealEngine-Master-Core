@@ -1,20 +1,30 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="form-group">
-            <div class="input-group">
-                <select class="form-control b" id="emailaddress" required>
-                    <option selected="selected" value="">-- Select --</option>
-                    @foreach (var emailAdd in Model.EmailAddresses)
-                    {
-                        <option value="@emailAdd"> @emailAdd</option>
-                    }
-                </select>
-                <hr />
-                @Html.TextAreaFor(m => m.EmailTemplate.Subject)
-                <hr />
-                @Html.TextAreaFor(m => m.EmailTemplate.Body, new { id = "emailTemplate", name = "content", cols = "10", rows = "10" })
+<div class="container-fluid">
+    <div class="row">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <select class="form-control b" id="Emailaddress" required>
+                        <option selected="selected" value="">-- Select --</option>
+                        @foreach (var emailAdd in Model.EmailAddresses)
+                        {
+                            <option value="@emailAdd.Value"> @emailAdd.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.TextAreaFor(m => m.EmailTemplate.Subject, new { cols = "100", @placeholder = "Enter email subject" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.TextAreaFor(m => m.EmailTemplate.Body, new { id = "emailTemplate", name = "content", cols = "10", rows = "10", @placeholder = "Enter email body" })
+                </div>
             </div>
         </div>
     </div>
@@ -33,6 +43,7 @@
            function GetEmailContentJson()
            {
                return {
+                   EmailAdress: $("#Emailaddress").val(),
                    Subject: $("#@(Html.IdFor(m => m.EmailTemplate.Subject))").val(),
                    Body: editorEmail.getData()
                };
