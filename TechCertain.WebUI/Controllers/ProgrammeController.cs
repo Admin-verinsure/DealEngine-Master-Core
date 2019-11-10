@@ -420,39 +420,39 @@ namespace TechCertain.WebUI.Controllers
 
             var status = "Bound and invoiced";
 
-            EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-            if (emailTemplate == null)
-            {
-                throw new NullReferenceException("send policy documents template email not set up");
-            }
+            //EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+            //if (emailTemplate == null)
+            //{
+            //    throw new NullReferenceException("send policy documents template email not set up");
+            //}
 
-            foreach (ClientAgreement agreement in programme.Agreements)
-            {
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    if (agreement.Status != status)
-                    {
-                        agreement.Status = status;
-                        await uow.Commit();
-                    }
-                }
+            //foreach (ClientAgreement agreement in programme.Agreements)
+            //{
+            //    using (var uow = _unitOfWork.BeginUnitOfWork())
+            //    {
+            //        if (agreement.Status != status)
+            //        {
+            //            agreement.Status = status;
+            //            await uow.Commit();
+            //        }
+            //    }
 
-                var documents = new List<SystemDocument>();
+            //    var documents = new List<SystemDocument>();
 
-                var invoiceDoc = agreement.Documents.FirstOrDefault(d => d.DateDeleted == null && d.DocumentType == 4);
-                if (invoiceDoc != null)
-                {
+            //    var invoiceDoc = agreement.Documents.FirstOrDefault(d => d.DateDeleted == null && d.DocumentType == 4);
+            //    if (invoiceDoc != null)
+            //    {
 
-                    SystemDocument renderedDoc = _fileService.RenderDocument(user, invoiceDoc, agreement).Result;
-                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                    documents.Add(renderedDoc);
-                    await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
-                    await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-                }
-                else
-                    throw new NullReferenceException("No Invoice file");
+            //        SystemDocument renderedDoc = _fileService.RenderDocument(user, invoiceDoc, agreement).Result;
+            //        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+            //        documents.Add(renderedDoc);
+            //        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+            //        await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+            //    }
+            //    else
+            //        throw new NullReferenceException("No Invoice file");
 
-            }
+            //}
 
             var eGlobalSerializer = new EGlobalSerializerAPI();
 
@@ -504,7 +504,7 @@ namespace TechCertain.WebUI.Controllers
                             if (agreement.Status != status)
                             {
                                 agreement.Status = status;
-                                await uow.Commit().ConfigureAwait(false);
+                                await uow.Commit();
                             }
                         }
                         agreement.Status = status;
@@ -514,7 +514,7 @@ namespace TechCertain.WebUI.Controllers
                         if (programme.InformationSheet.Status != status)
                         {
                             programme.InformationSheet.Status = status;
-                            await uow.Commit().ConfigureAwait(false);
+                            await uow.Commit();
                         }
                     }
                 }
