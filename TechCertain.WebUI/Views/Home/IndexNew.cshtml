@@ -274,8 +274,7 @@
                                             </label>
                                         </span>
                                         <p>
-                                            <strong>@task.ClientName</strong> - @task.Description [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                            <span class="text-muted">@task.Details </span>
+                                            @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
                                             <span class="date">@task.DueDate</span>
                                         </p>
                                     </li>
@@ -293,8 +292,7 @@
                                             </label>
                                         </span>
                                         <p>
-                                            <strong>@task.ClientName</strong> - @task.Description [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                            <span class="text-muted">@task.Details </span>
+                                            @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
                                             <span class="date">@task.DueDate</span>
                                         </p>
                                     </li>
@@ -313,8 +311,7 @@
                                             </label>
                                         </span>
                                         <p>
-                                            <strong>@task.ClientName</strong> - @task.Description [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                            <span class="text-muted">@task.Details </span>
+                                            @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
                                             <span class="date">@task.DueDate</span>
                                         </p>
                                     </li>
@@ -323,74 +320,74 @@
 
 
                             @*<h5 class="todo-group-title"><i class="fa fa-warning"></i> Critical Tasks (<small class="num-of-tasks">1</small>)</h5>
-                    <ul id="sortable1" class="todo">
-                        <li>
-                            <span class="handle">
-                                <label class="checkbox">
-                                    <input type="checkbox" name="checkbox-inline">
-                                    <i></i>
-                                </label>
-                            </span>
-                            <p>
-                                <strong>Sarah Jane</strong> - Application submitted, clear referral [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">One of the questions in the application has raised a referral. </span>
-                                <span class="date">Sept 17, 2015</span>
-                            </p>
-                        </li>
-                    </ul>
-                    <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">3</small>)</h5>
-                    <ul id="sortable2" class="todo">
-                        <li>
-                            <span class="handle">
-                                <label class="checkbox">
-                                    <input type="checkbox" name="checkbox-inline">
-                                    <i></i>
-                                </label>
-                            </span>
-                            <p>
-                                <strong>Open Market Vehicle</strong> - Approve one of the contract changes [<a href="javascript:void(0);" class="font-xs">More Details</a>]
-                                <span class="date">Sept 11, 2015</span>
-                            </p>
-                        </li>
-                        <li>
-                            <span class="handle">
-                                <label class="checkbox">
-                                    <input type="checkbox" name="checkbox-inline">
-                                    <i></i>
-                                </label>
-                            </span>
-                            <p>
-                                <strong>ABC Broking</strong> - Approve user who requested to join your organisation
-                                <span class="date">Sept 10, 2015</span>
-                            </p>
-                        </li>
-                        <li>
-                            <span class="handle">
-                                <label class="checkbox">
-                                    <input type="checkbox" name="checkbox-inline">
-                                    <i></i>
-                                </label>
-                            </span>
-                            <p>
-                                <strong>Bob Parker</strong> - Review renewal application [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">Renewal application will be automatically sent out on Sept 20, 2015 </span>
-                                <span class="date">Sept 9, 2015</span>
-                            </p>
-                        </li>
-                    </ul>
-                    <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">1</small>)</h5>
-                    <ul id="sortable3" class="todo">
-                        <li class="complete">
-                            <span class="handle" style="display:none">
-                                <label class="checkbox state-disabled">
-                                    <input type="checkbox" name="checkbox-inline" checked="checked" disabled="disabled">
-                                    <i></i>
-                                </label>
-                            </span>
-                            <p>
-                                <strong>John Smith</strong> - Send policy documents <span class="text-muted">Client has accepted the quote. </span>
-                                <span class="date">Mar 15, 2015</span>
-                            </p>
-                        </li>
-                    </ul>*@
+        <ul id="sortable1" class="todo">
+            <li>
+                <span class="handle">
+                    <label class="checkbox">
+                        <input type="checkbox" name="checkbox-inline">
+                        <i></i>
+                    </label>
+                </span>
+                <p>
+                    <strong>Sarah Jane</strong> - Application submitted, clear referral [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">One of the questions in the application has raised a referral. </span>
+                    <span class="date">Sept 17, 2015</span>
+                </p>
+            </li>
+        </ul>
+        <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">3</small>)</h5>
+        <ul id="sortable2" class="todo">
+            <li>
+                <span class="handle">
+                    <label class="checkbox">
+                        <input type="checkbox" name="checkbox-inline">
+                        <i></i>
+                    </label>
+                </span>
+                <p>
+                    <strong>Open Market Vehicle</strong> - Approve one of the contract changes [<a href="javascript:void(0);" class="font-xs">More Details</a>]
+                    <span class="date">Sept 11, 2015</span>
+                </p>
+            </li>
+            <li>
+                <span class="handle">
+                    <label class="checkbox">
+                        <input type="checkbox" name="checkbox-inline">
+                        <i></i>
+                    </label>
+                </span>
+                <p>
+                    <strong>ABC Broking</strong> - Approve user who requested to join your organisation
+                    <span class="date">Sept 10, 2015</span>
+                </p>
+            </li>
+            <li>
+                <span class="handle">
+                    <label class="checkbox">
+                        <input type="checkbox" name="checkbox-inline">
+                        <i></i>
+                    </label>
+                </span>
+                <p>
+                    <strong>Bob Parker</strong> - Review renewal application [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">Renewal application will be automatically sent out on Sept 20, 2015 </span>
+                    <span class="date">Sept 9, 2015</span>
+                </p>
+            </li>
+        </ul>
+        <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">1</small>)</h5>
+        <ul id="sortable3" class="todo">
+            <li class="complete">
+                <span class="handle" style="display:none">
+                    <label class="checkbox state-disabled">
+                        <input type="checkbox" name="checkbox-inline" checked="checked" disabled="disabled">
+                        <i></i>
+                    </label>
+                </span>
+                <p>
+                    <strong>John Smith</strong> - Send policy documents <span class="text-muted">Client has accepted the quote. </span>
+                    <span class="date">Mar 15, 2015</span>
+                </p>
+            </li>
+        </ul>*@
                             <!-- end content -->
                         </div>
 
@@ -1381,10 +1378,11 @@
             data: { id }
         })
             .done(function (url) {
-               // $("#pxpaymentView").on('load',url, function () {
-              })
-            .fail(function () {
-
+              //  $("#ViewTask").on('load',url, function () {
+             })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                debugger;
+                alert("There was an error while trying to save Task." + jqXHR);
             });
     }
 

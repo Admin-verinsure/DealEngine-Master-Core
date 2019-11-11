@@ -42,7 +42,5 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetValue<string>("domainQueryString");
             }
         }
-
-
     }
 }

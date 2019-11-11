@@ -3,23 +3,26 @@
 <div class="container-fluid">
     <div class="row">
         <div id="AdvisoryPartial">
-            <div class="container-fluid">
+            @if (Model.IsAdvisory)
+            {
                 @await Html.PartialAsync("ViewMilestoneAdvisoryContent", Model)
-            </div>
+            }
         </div>
     </div>
-    <div id="EmailPartial">
-        <div class="container-fluid">
-            <div class="row">
+    <div class="row">
+        <div id="EmailPartial">
+            @if (Model.IsEmail)
+            {
                 @await Html.PartialAsync("ViewMilestoneEmailContent", Model)
-            </div>
+            }
         </div>
     </div>
-    <div id="TaskPartial">
-        <div class="container-fluid">
-            <div class="row">
+    <div class="row">
+        <div id="TaskPartial">
+            @if (Model.IsUserTask)
+            {
                 @await Html.PartialAsync("ViewMilestoneTaskContent", Model)
-            </div>
+            }
         </div>
     </div>
 </div>

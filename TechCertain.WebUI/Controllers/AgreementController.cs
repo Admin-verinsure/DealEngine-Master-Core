@@ -733,6 +733,8 @@ namespace TechCertain.WebUI.Controllers
                     var milestone = await _milestoneService.GetMilestoneActivity(activity);
                     if (milestone != null)
                     {
+                        milestone.UserTask.IsActive = true;
+                        await _milestoneService.UpdateMilestone(milestone);
                         model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
                     }
                     _emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);

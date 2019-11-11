@@ -21,7 +21,10 @@ namespace TechCertain.WebUI.Models.Milestone
         public AdvisoryVM AdvisoryContent { get; set; }        
         public EmailTemplateVM EmailTemplate { get; set; }
         public UserTaskVM UserTask { get; set; }
-        public string ActivityId { get; set; }        
+        public string ActivityId { get; set; }
+        public bool IsAdvisory { get; internal set; }
+        public bool IsEmail { get; internal set; }
+        public bool IsUserTask { get; internal set; }
     }
 
     public class EmailTemplateVM
@@ -47,7 +50,7 @@ namespace TechCertain.WebUI.Models.Milestone
         public int Priority { get; set; }
         public string Details { get; set; }
         public string Description { get; set; }
-        public DateTime DueDate {get; set;}
+        public int DueDate {get; set;}
     }
 
 }

@@ -37,17 +37,13 @@ namespace TechCertain.Domain.Entities
 
         public virtual UserTask SuccessorTask { get; set; }
 
-        public virtual string ClientName { get; set; }
-
         public virtual string Description { get; set; }
 
         public virtual string Details { get; set; }
 
-        public virtual string TaskUrl { get; set; }
-
         public virtual int Priority { get; set; }
 
-        public virtual DateTime DueDate { get; protected set; }
+        public virtual DateTime DueDate { get; set; }
 
         public virtual bool Completed { get; protected set; }
 
@@ -57,14 +53,14 @@ namespace TechCertain.Domain.Entities
 
         public virtual IList<Organisation> InterestedOrganisations { get; protected set; }
         public virtual bool IsActive { get; set; }
+        public virtual Milestone Milestone { get; set; }
 
         protected UserTask() : base(null) { }
 
-        public UserTask(User createdBy, Organisation createdFor, string clientName, DateTime dueDate)
+        public UserTask(User createdBy, Organisation createdFor, DateTime dueDate)
             : base(createdBy)
         {
             For = createdFor;
-            ClientName = clientName;
             DueDate = dueDate;
             InterestedOrganisations = new List<Organisation>();
             InterestedOrganisations.Add(createdFor);

@@ -1,50 +1,55 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div id="taskPriority">
-                <select class="form-control b" id="Priortylist" required>
-                    <option selected="selected" value="">-- Select --</option>
-                    @foreach (var taskPriorty in Model.Priorities)
-                    {
-                        <option value="@taskPriorty.Value"> @taskPriorty.Text</option>
-                    }
-                </select>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="taskPriority">
+                    <select class="form-control b" id="Priortylist" required>
+                        <option selected="selected" value="">-- Select Task Priority --</option>
+                        @foreach (var taskPriorty in Model.Priorities)
+                        {
+                            <option value="@taskPriorty.Value"> @taskPriorty.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-lg-12">
+                <div id="taskDueDate">
+                    <select class="form-control b" id="dueDateList" required>
+                        <option selected="selected" value="">-- Select Task Due Date (From Date Created) --</option>
+                        @for (int i = 0; i < 8; i++)
+                        {
+                            <option value="@i"> @i</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="taskDescription">
+                    @Html.TextAreaFor(m => m.UserTask.Description, new { name = "content", cols = "100", rows = "5", @placeholder = "Task Description" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="taskReference">
+                    @Html.TextAreaFor(m => m.UserTask.Details, new { id = "Milestoneeditor", @placeholder = "Task Reference", cols = "100", rows = "2" })
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <label class="input ">
-                <i class="icon-append fa fa-calendar"></i>
-                <input name="DueDate" placeholder="Due Date" class="datepicker" data-dateformat="dd/mm/yy" id="DueDate" type="text" required>
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div id="taskReference">
-                @Html.TextAreaFor(m => m.UserTask.Details, new { @placeholder = "Task Reference", cols = "100", rows = "4" })
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div id="taskDescription">
-                @Html.TextAreaFor(m => m.UserTask.Description, new { id = "Milestoneeditor", name = "content", cols = "100", rows = "80", @placeholder = "Task Description" })
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
 <script type="text/javascript">
     ClassicEditor
         .create(document.querySelector('#Milestoneeditor'))
-        .then(newDescription => {
-            editorDescription = newDescription;
+        .then(newDetail => {
+            editorDetail = newDetail;
         })
         .catch(error => {
             console.error(error);
@@ -52,11 +57,12 @@
 
     function GetUserTaskContentJson()
     {
+        console.log($("#DueDate").val());
         return {
             Priority: $("#Priortylist").val(),
-            DueDate: $("#DueDate").val(),
-            Details: $("#@(Html.IdFor(m => m.UserTask.Details))").val(),
-            Description: editorDescription.getData()
+            DueDate: $("#dueDateList").val(),
+            Description: $("#@(Html.IdFor(m => m.UserTask.Description))").val(),
+            Details: editorDetail.getData()
     	};
     }
 

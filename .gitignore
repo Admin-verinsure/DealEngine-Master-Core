@@ -20,3 +20,4 @@ sqlite3
 /.vs/techcertain2019core/config
 /TechCertain.WebUI/Views/UI - contains examples
 /web.config
+/packages
