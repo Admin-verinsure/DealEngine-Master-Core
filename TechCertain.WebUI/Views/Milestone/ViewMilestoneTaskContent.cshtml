@@ -1,33 +1,43 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="form-group">
-            <div class="input-group">
-
-                <div id="taskPriority">
-                    <label>Task Priority</label>
-                    @Html.DropDownList("Priortylist", Model.Priorities)
-                </div>
-
-                <div id="taskDueDate">
-                    <label>Due Date</label>
-                    <input placeholder="Due Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" type="text" id="DueDate">
-                </div>
-
-                <div id="taskReference">
-                    <label>Task Reference</label>
-                    @Html.TextAreaFor(m => m.UserTask.Details)
-                </div>
-
-                <div id="taskDescription">
-                    <label>Task Description</label>
-                    @Html.TextAreaFor(m => m.UserTask.Description, new { id = "Milestoneeditor", name = "content", cols = "10", rows = "80" })
-                </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="taskPriority">
+                <select class="form-control b" id="Priortylist" required>
+                    <option selected="selected" value="">-- Select --</option>
+                    @foreach (var taskPriorty in Model.Priorities)
+                    {
+                        <option value="@taskPriorty.Value"> @taskPriorty.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <label class="input ">
+                <i class="icon-append fa fa-calendar"></i>
+                <input name="DueDate" placeholder="Due Date" class="datepicker" data-dateformat="dd/mm/yy" id="DueDate" type="text" required>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="taskReference">
+                @Html.TextAreaFor(m => m.UserTask.Details, new { @placeholder = "Task Reference", cols = "100", rows = "4" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="taskDescription">
+                @Html.TextAreaFor(m => m.UserTask.Description, new { id = "Milestoneeditor", name = "content", cols = "100", rows = "80", @placeholder = "Task Description" })
             </div>
         </div>
     </div>
 </div>
+
 
 
 <script type="text/javascript">

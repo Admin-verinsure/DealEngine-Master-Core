@@ -1,14 +1,12 @@
 ﻿@model TechCertain.WebUI.Models.Milestone.MilestoneBuilderViewModel
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="form-group">
-            <div class="input-group">
-                @Html.TextAreaFor(m => m.AdvisoryContent.Advisory, new { id = "advisory", name = "content", cols = "10", rows = "10" })
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.TextAreaFor(m => m.AdvisoryContent.Advisory, new { id = "advisory", name = "content", cols = "100", rows = "10", @placeholder = "Enter Advisory" })
             </div>
         </div>
     </div>
-</div>
 
 <script type="text/javascript">
     ClassicEditor

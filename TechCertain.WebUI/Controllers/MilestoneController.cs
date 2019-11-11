@@ -139,7 +139,11 @@ namespace TechCertain.WebUI.Controllers
         {
             IList<string> emailTo = new List<string>();
             Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
-            emailTo.Add(programme.BrokerContactUser.Address);
+            
+            var emailUsers = new List<SelectListItem> {
+                    new SelectListItem { Text = "Email Broker User", Value = "Broker" },
+                    new SelectListItem { Text = "Email Insurer User", Value = "Insurer" },
+            };
 
             var priorityTypes = new List<SelectListItem> {
                     new SelectListItem { Text = "Important", Value = "1" },
@@ -152,7 +156,7 @@ namespace TechCertain.WebUI.Controllers
             MilestoneBuilderViewModel model = new MilestoneBuilderViewModel();
             model.UserTask = new UserTaskVM();
             model.EmailTemplate = new EmailTemplateVM();
-            model.EmailAddresses = emailTo;
+            model.EmailAddresses = emailUsers;
             model.AdvisoryContent = new AdvisoryVM();
             model.Priorities = priorityTypes;
             model.ProgrammeId = programme.Id;
@@ -165,9 +169,19 @@ namespace TechCertain.WebUI.Controllers
                 var milestone = milestoneList.FirstOrDefault(m => m.ProgrammeProcess.Id == Guid.Parse(strProgrammeProcessId) && m.Activity.Id == Guid.Parse(strMilestoneActivityId));
                 if(milestone != null)
                 {
-                    model.AdvisoryContent.Advisory = milestone.Advisory.Description;
-                    //model.EmailTemplate.Body = milestone.SystemEmailTemplate.Body;
-                    //model.UserTask.Description = milestone.UserTask.Description;
+                    if (milestone.Advisory != null)
+                    {
+                        model.AdvisoryContent.Advisory = milestone.Advisory.Description;
+                    }
+                    if (milestone.SystemEmailTemplate != null)
+                    {
+                        model.EmailTemplate.Subject = milestone.SystemEmailTemplate.Subject;
+                        model.EmailTemplate.Body = milestone.SystemEmailTemplate.Body;
+                    }
+                    if (milestone.UserTask != null)
+                    {
+                        model.UserTask.Description = milestone.UserTask.Description;
+                    }                   
                 }
 
             }
@@ -193,7 +207,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.EmailTemplate.Body != null)
             {
-                await _milestoneService.CreateEmailTemplate(user, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), model.ActivityId);
+                await _milestoneService.CreateEmailTemplate(user, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), Guid.Parse(model.ActivityId), Guid.Parse(model.ProgrammeProcessId));
             }
 
             if (model.AdvisoryContent.Advisory != null)
