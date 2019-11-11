@@ -17,18 +17,24 @@ namespace TechCertain.Infrastructure.Tasking
 			_taskRespository = taskRespository;
 		}
 
-        public async Task<UserTask> CreateTaskFor(User createdBy, Organisation createdFor, string name, DateTime dueDate)
+        public async Task<UserTask> CreateTaskFor(User createdBy, Organisation createdFor, DateTime dueDate)
         {
             if (createdBy == null)
                 throw new ArgumentNullException(nameof(createdBy));
             if (createdFor == null)
                 throw new ArgumentNullException(nameof(createdFor));
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name));
             if (dueDate == null)
                 throw new ArgumentNullException(nameof(dueDate));
 
-            UserTask task = new UserTask(createdBy, createdFor, name, dueDate);
+            UserTask task = new UserTask(createdBy, createdFor, dueDate);
+            await _taskRespository.AddAsync(task);
+            return task;
+        }
+
+        public async Task<UserTask> CreateTaskForMilestone(User createdBy, Organisation createdFor, DateTime dueDate, Milestone milestone)
+        {
+            UserTask task = new UserTask(createdBy, createdFor, dueDate);
+            task.Milestone = milestone;
             await _taskRespository.AddAsync(task);
             return task;
         }
@@ -68,6 +74,16 @@ namespace TechCertain.Infrastructure.Tasking
 				throw new ArgumentNullException (nameof (task));
             await _taskRespository.AddAsync(task);			
 		}
-	}
+
+        public async Task<UserTask> GetMilestoneTask(Guid milestoneId)
+        {
+            return await _taskRespository.FindAll().FirstOrDefaultAsync(t => t.Milestone.Id == milestoneId);
+        }
+
+        public async Task UpdateUserTask(UserTask userTask)
+        {
+           await _taskRespository.UpdateAsync(userTask);
+        }
+    }
 }
 

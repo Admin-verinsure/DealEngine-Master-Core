@@ -29,14 +29,15 @@ namespace TechCertain.WebUI.Controllers
     {
         IClientInformationService _customerInformationService;
         IPrivateServerService _privateServerService;
-        //ITaskingService _taskingService;
+        ITaskingService _taskingService;
         IMapperSession<Product> _productRepositoy;
         IMapperSession<Programme> _programmeRepository;
         IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
+        IMapper _mapper;
 
         public HomeController(IMapper mapper, IUserService userRepository,
-            IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientAgreementService clientAgreementService, IClientInformationService clientInformationService,
+            ITaskingService taskingService, IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientAgreementService clientAgreementService, IClientInformationService clientInformationService,
             IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
 
             : base (userRepository)
@@ -44,11 +45,11 @@ namespace TechCertain.WebUI.Controllers
 
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
-            //_taskingService = taskingService;
+            _taskingService = taskingService;
             _clientInformationService = clientInformationService;
             _productRepositoy = productRepository;
             _clientAgreementService = clientAgreementService;
-
+            _mapper = mapper;
             _programmeRepository = programmeRepository;
         }
 
@@ -132,42 +133,52 @@ namespace TechCertain.WebUI.Controllers
                     //foreach (ClientProgramme client in programme.ClientProgrammes.OrderBy(cp => cp.Owner.Name).OrderBy(cp => cp.DateCreated))
                     //{
 
-                        //string status = client.InformationSheet.Status;
+                    //string status = client.InformationSheet.Status;
 
-                        //deals.Add(new DealItem
-                        //{
-                        //    Id = client.InformationSheet.Id.ToString(),
-                        //    Name = programme.Name + " for " + client.Owner.Name,
-                        //    Status = (status == "Submitted") ? "Submitted on " + client.InformationSheet.SubmitDate.ToString("g") : status			// Move into ClientProgramme?
-                        //});
-
-                        //if (CurrentUser.Organisations.Contains(client.Owner))
-                        //{
-                        //    model.DealItems.Add(new ProductItem
-                        //    {
-                        //        Languages = languages,
-                        //        Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
-                        //        Description = proposal.Description,
-                        //        RedirectLink = proposal.URL,
-                        //        Status = status
-                        //    });
-                        //}
-                    //}
-
-                    //foreach (var task in _taskingService.GetAllTasksFor(CurrentUser))
+                    //deals.Add(new DealItem
                     //{
-                    //    var taskItem = _mapper.Map<TaskItem>(task);
-                    //    taskItem.DueDate = LocalizeTime(task.DueDate);
-                    //    if (task.Completed)
+                    //    Id = client.InformationSheet.Id.ToString(),
+                    //    Name = programme.Name + " for " + client.Owner.Name,
+                    //    Status = (status == "Submitted") ? "Submitted on " + client.InformationSheet.SubmitDate.ToString("g") : status			// Move into ClientProgramme?
+                    //});
+
+                    //if (CurrentUser.Organisations.Contains(client.Owner))
+                    //{
+                    //    model.DealItems.Add(new ProductItem
                     //    {
-                    //        model.CompletedTaskItems.Add(taskItem);
-                    //        continue;
-                    //    }
-                    //    if (task.Priority == 1)
-                    //        model.CriticalTaskItems.Add(taskItem);
-                    //    else
-                    //        model.ImportantTaskItems.Add(taskItem);
+                    //        Languages = languages,
+                    //        Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
+                    //        Description = proposal.Description,
+                    //        RedirectLink = proposal.URL,
+                    //        Status = status
+                    //    });
                     //}
+                    //}
+
+                    var taskList = await _taskingService.GetAllTasksFor(user);
+                    foreach (var task in taskList)
+                    {
+                        if (task.IsActive)
+                        {
+                            var taskItem = new TaskItem
+                            {
+                                Id = task.Id,
+                                Details = task.Details,
+                                Description = task.Description,
+                                DueDate = LocalizeTime(task.DueDate)
+                            };
+                            if (task.Completed)
+                            {
+                                model.CompletedTaskItems.Add(taskItem);
+                                continue;
+                            }
+                            if (task.Priority == 1)
+                                model.CriticalTaskItems.Add(taskItem);
+                            else
+                                model.ImportantTaskItems.Add(taskItem);
+                        }                         
+                        
+                    }
 
                     model.ProgrammeItems.Add(new ProgrammeItem
                     {
@@ -529,6 +540,12 @@ namespace TechCertain.WebUI.Controllers
 
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
+                    Boolean nextInfoSheet = false;
+                    if (null != client.InformationSheet.NextInformationSheet)
+                    {
+                        nextInfoSheet = true;
+                    }
+                   
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
 
@@ -541,6 +558,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         Id = client.Id.ToString(),
                         Name = programme.Name + " for " + client.Owner.Name,
+                        NextInfoSheet = nextInfoSheet,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
@@ -554,8 +572,14 @@ namespace TechCertain.WebUI.Controllers
 
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
+                    Boolean nextInfoSheet = false;
+
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
+                    if (null != client.InformationSheet.PreviousInformationSheet)
+                    {
+                        nextInfoSheet = true;
+                    }
 
                     if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
                     {
@@ -566,6 +590,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         Id = client.Id.ToString(),
                         Name = programme.Name + " for " + client.Owner.Name,
+                        NextInfoSheet = nextInfoSheet,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
@@ -573,7 +598,6 @@ namespace TechCertain.WebUI.Controllers
                     });
                 }
             }
-
             model.Deals = deals;
 
             if (user.PrimaryOrganisation.IsBroker)
@@ -657,24 +681,23 @@ namespace TechCertain.WebUI.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> ViewTask(Guid Id)
-        //{
-        //    UserTask task = _taskingService.GetTask(Id);
-        //    UserTaskViewModel model = new UserTaskViewModel
-        //    {
-        //        Details = task.Details,
-        //        Description = task.Description,
-        //        DueDate = task.DueDate,
-        //        Priority = task.Priority,
-        //        ClientName = task.ClientName,
-        //        Completed = task.Completed,
-        //        CompletedBy = task.CompletedBy,
-        //        For = task.For
-        //    };
+        [HttpGet]
+        public async Task<IActionResult> ViewTask(Guid Id)
+        {
+            UserTask task = await _taskingService.GetTask(Id);
+            UserTaskViewModel model = new UserTaskViewModel
+            {
+                Details = task.Details,
+                Description = task.Description,
+                DueDate = task.DueDate,
+                Priority = task.Priority,
+                Completed = task.Completed,
+                CompletedBy = task.CompletedBy,
+                For = task.For
+            };
 
-        //    return View("~/ViewTask/"+ task.Id.ToString(), model);
-        //}
+            return View(model);
+        }
 
         //[HttpPost]
         //public async Task<IActionResult> AddTask(string taskCategory, string taskDueDate, string taskDetail, string taskDescription )
@@ -688,10 +711,10 @@ namespace TechCertain.WebUI.Controllers
         //        Priority = Convert.ToInt32(taskCategory),
         //        TaskUrl = "Home/Task/ViewTask",
         //        IsActive = true,
-                
+
         //    };
         //    _taskingService.CreateTaskFor(task);
-            
+
         //    return Redirect("~/Home/Index");
         //}
     }

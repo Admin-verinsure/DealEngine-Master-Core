@@ -25,20 +25,19 @@ namespace TechCertain.WebUI
         public static void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddServices();
             services.AddControllersWithViews();
             services.AddRouting();
             services.AddMvc();
             services.AddRazorPages();
             services.AddNHibernate();
             services.AddIdentityExtentions();
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddBaseLdapPackage();
-            services.AddResponseCaching();
-            services.AddServices();
+            services.AddResponseCaching();            
             //services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));

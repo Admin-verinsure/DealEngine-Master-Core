@@ -14,22 +14,22 @@ namespace TechCertain.Services.Impl
     {
         IMapperSession<Milestone> _milestoneRepository;
         ISystemEmailService _systemEmailService;
-        //ITaskingService _taskingService;
+        ITaskingService _taskingService;
         IProgrammeProcessService _programmeProcessService;
         IActivityService _activityService;
 
         public MilestoneService(IMapperSession<Milestone> milestoneRepository,
                                 ISystemEmailService systemEmailService,
                                 IProgrammeProcessService programmeProcessService,
-                                IActivityService activityService
-                                //ITaskingService taskingService,
+                                IActivityService activityService,
+                                ITaskingService taskingService
                                 )
         {
             _activityService = activityService;
             _programmeProcessService = programmeProcessService;
             _milestoneRepository = milestoneRepository;
             _systemEmailService = systemEmailService;
-            //_taskingService = taskingService;
+            _taskingService = taskingService;
         }
 
         public async Task<Milestone> CreateMilestone(User createdBy, Guid programmeProcessId, Guid activityId, Programme programme)
@@ -68,17 +68,26 @@ namespace TechCertain.Services.Impl
 
         public async Task CreateAdvisory(Milestone milestone, string advisory)
         {
-            if (milestone == null)
-                throw new ArgumentNullException(nameof(milestone));
-            if (string.IsNullOrWhiteSpace(advisory))
-                throw new ArgumentNullException(nameof(advisory));
-
             milestone.Advisory = new Advisory(advisory);
             await _milestoneRepository.UpdateAsync(milestone);
         }
 
-        public async Task CreateUserTask(Milestone milestone, UserTask userTask)
+        public async Task CreateMilestoneUserTask(User createdBy, Organisation createdFor, DateTime dueDate, 
+            Milestone milestone, int priority, string description, string details)
         {
+            var userTask = await _taskingService.GetMilestoneTask(milestone.Id);
+            if(userTask == null)
+            {
+                userTask = await _taskingService.CreateTaskForMilestone(createdBy, createdFor, dueDate, milestone);
+            }
+
+            userTask.Priority = priority;
+            userTask.Description = description;
+            userTask.Details = details;
+            userTask.IsActive = false;
+            userTask.DueDate = dueDate;
+            await _taskingService.UpdateUserTask(userTask);
+
             milestone.UserTask = userTask;
             await _milestoneRepository.UpdateAsync(milestone);
         }
@@ -107,6 +116,11 @@ namespace TechCertain.Services.Impl
         public async Task<List<Milestone>> GetMilestones(Guid programmeId)
         {
             return await _milestoneRepository.FindAll().Where(m => m.Programme.Id == programmeId).ToListAsync();
+        }
+
+        public async Task UpdateMilestone(Milestone milestone)
+        {
+            await _milestoneRepository.UpdateAsync(milestone);
         }
     }
 }

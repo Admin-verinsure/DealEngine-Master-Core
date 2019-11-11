@@ -11,6 +11,7 @@ using TechCertain.WebUI.Models.Milestone;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -121,7 +122,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MilestoneSelect(string strProgrammeId, string strMilestoneActivityId, string strProgrammeProcessId)
+        public async Task<IActionResult> MilestoneSelect(string strProgrammeId, string strMilestoneActivityId, string strProgrammeProcessId, string type)
         {
             Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
 
@@ -131,11 +132,12 @@ namespace TechCertain.WebUI.Controllers
             model.ActivityId = strMilestoneActivityId;
 
 
-            return Content("/Milestone/MilestoneType/?strProgrammeId=" + strProgrammeId + "&strMilestoneActivityId=" + model.ActivityId + "&strProgrammeProcessId=" + model.ProgrammeProcessId);           
+            return Content("/Milestone/MilestoneType/?strProgrammeId=" + strProgrammeId + "&strMilestoneActivityId=" + model.ActivityId 
+                + "&strProgrammeProcessId=" + model.ProgrammeProcessId + "&type=" + type);           
         }
 
         [HttpGet]
-        public async Task<IActionResult> MilestoneType(string strProgrammeId, string strMilestoneActivityId, string strProgrammeProcessId)
+        public async Task<IActionResult> MilestoneType(string strProgrammeId, string strMilestoneActivityId, string strProgrammeProcessId, string type)
         {
             IList<string> emailTo = new List<string>();
             Programme programme = await _programmeService.GetProgramme(Guid.Parse(strProgrammeId));
@@ -162,6 +164,16 @@ namespace TechCertain.WebUI.Controllers
             model.ProgrammeId = programme.Id;
             model.ProgrammeProcessId = programmeProcess.Id.ToString();
 
+            if (type == "Advisory")
+            {
+                model.IsAdvisory = true;
+            }
+            else if (type == "Email")
+            {
+                model.IsEmail = true;
+            }
+            else
+                model.IsUserTask = true;
             
             var milestoneList = await _milestoneService.GetMilestones(programme.Id);
             if (milestoneList.Count != 0)
@@ -180,6 +192,7 @@ namespace TechCertain.WebUI.Controllers
                     }
                     if (milestone.UserTask != null)
                     {
+                        model.UserTask.Details = milestone.UserTask.Details;
                         model.UserTask.Description = milestone.UserTask.Description;
                     }                   
                 }
@@ -205,27 +218,23 @@ namespace TechCertain.WebUI.Controllers
                 milestone = milestoneList.FirstOrDefault(m => m.ProgrammeProcess.Id == Guid.Parse(model.ProgrammeProcessId));
                     
 
-            if (model.EmailTemplate.Body != null)
+            if (model.EmailTemplate != null)
             {
                 await _milestoneService.CreateEmailTemplate(user, milestone, model.EmailTemplate.Subject, System.Net.WebUtility.HtmlDecode(model.EmailTemplate.Body), Guid.Parse(model.ActivityId), Guid.Parse(model.ProgrammeProcessId));
             }
 
-            if (model.AdvisoryContent.Advisory != null)
+            if (model.AdvisoryContent != null)
             {
                 await _milestoneService.CreateAdvisory(milestone, System.Net.WebUtility.HtmlDecode(model.AdvisoryContent.Advisory));
             }
 
-            if (model.UserTask.Details != null)
+            if (model.UserTask != null)
             {
-                UserTask userTask = new UserTask(user, user.PrimaryOrganisation, "", model.UserTask.DueDate)
-                {
-                    Priority = model.UserTask.Priority,
-                    Description = model.UserTask.Description,
-                    Details = model.UserTask.Details,
-                    IsActive = false,
-                };
-
-                await _milestoneService.CreateUserTask(milestone, userTask);
+                var dateDue = model.UserTask.DueDate;
+                DateTime date = DateTime.Now;            
+                var milestoneDueDate = date.AddDays(dateDue);
+                await _milestoneService.CreateMilestoneUserTask(user, user.PrimaryOrganisation, milestoneDueDate, milestone, 
+                    model.UserTask.Priority, model.UserTask.Description, model.UserTask.Details);
             }
 
             return Ok();        
