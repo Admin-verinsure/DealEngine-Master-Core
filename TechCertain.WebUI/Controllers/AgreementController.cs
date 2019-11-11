@@ -862,8 +862,9 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
 
-           
-            return Json(date);
+            var url = "/Information/EditInformation/" + clientAgreement.ClientInformationSheet.Programme.Id;
+            return Json(new { url });
+            //return Json(date);
         }
 
 

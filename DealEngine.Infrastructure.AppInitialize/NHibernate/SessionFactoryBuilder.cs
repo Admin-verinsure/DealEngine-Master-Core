@@ -438,7 +438,8 @@ create index ix_aspnet_user_roles_role_id
 create index ix_aspnet_user_roles_user_id
     on public.aspnet_user_roles using btree
     (user_id collate pg_catalog.""default"")
-    tablespace pg_default
+    tablespace pg_default;
+
 -- table: public.app_users
 
 -- drop table public.app_users;

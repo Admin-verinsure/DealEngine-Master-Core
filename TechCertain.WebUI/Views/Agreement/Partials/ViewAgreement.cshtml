@@ -410,8 +410,7 @@
               .done(function (data) {
                   debugger;
                   $('#getStartDate').hide();
-
-                    
+                  window.location.href = data.url;
            })
               .fail(function (jqXHR, textStatus, errorThrown) {
                   debugger;

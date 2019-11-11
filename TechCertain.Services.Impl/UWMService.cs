@@ -910,6 +910,9 @@ namespace TechCertain.Services.Impl
             int totalBoatTermLimitPre = 0;
             int totalBoatTermLimitDiffer = 0;
 
+            bool bolNewBoatAdded = false;
+            bool bolNewVehicleAdded = false;
+
             agreement.QuoteDate = DateTime.UtcNow;
 
             //calculate boat premium and FSL (BV Term)
@@ -947,6 +950,9 @@ namespace TechCertain.Services.Impl
                         boatinceptiondate = (boat.BoatEffectiveDate > DateTime.MinValue) ? boat.BoatEffectiveDate : boat.OriginalBoat.BoatInceptionDate;
                         boatexpirydate = agreement.ExpiryDate;
                     }
+                } else
+                {
+                    bolNewBoatAdded = true;
                 }
 
                 boat.BoatInceptionDate = boatinceptiondate;
@@ -1367,7 +1373,7 @@ namespace TechCertain.Services.Impl
 
         }
 
-        ClientAgreement GetClientAgreement(User CurrentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
+        ClientAgreement GetClientAgreement(User currentUser, ClientInformationSheet informationSheet, ClientProgramme programme, Product product, string reference)
         {
             ClientAgreement clientAgreement = programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
             ClientAgreement previousClientAgreement = null;
