@@ -35,5 +35,18 @@ namespace TechCertain.Services.Impl
         {
             return await _informationSectionRepository.GetByIdAsync(Id);
         }
+
+        public async Task<List<InformationSection>> GetInformationSectionsbyTemplateId(Guid Id)
+        {
+            List<InformationSection> sections = new List<InformationSection>();
+
+            sections =  await _informationSectionRepository.FindAll().Where(i => i.InformationTemplate.Id == Id).ToListAsync();
+            //sections.AddRange (Products.SelectMany ((arg) => arg.SharedViews));
+            // TODO modify to include shared panels
+            //sections.AddRange(Products.SelectMany((arg) => arg.UniqueQuestions));
+
+            return sections;
+        }
+
     }
 }
