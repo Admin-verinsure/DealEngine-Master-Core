@@ -17,10 +17,11 @@ namespace DealEngine.Infrastructure.AppInitialize
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireLowercase = false;
-                options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = true;                
             })
                 .AddSignInManager<SignInManager<IdentityUser>>()
-                .AddUserManager<UserManager<IdentityUser>>()
+                .AddUserManager<UserManager<IdentityUser>>()  
+                .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddHibernateStores();
 
             return services;

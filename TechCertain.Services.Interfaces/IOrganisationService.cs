@@ -23,7 +23,6 @@ namespace TechCertain.Services.Interfaces
         Task<Organisation> GetOrganisationByEmail(string organisationEmail);
 
         Task UpdateOrganisation(Organisation organisation);
-        //Organisation Get(Guid organisationID);
     }
 }
 
