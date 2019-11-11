@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using TechCertain.Domain.Entities;
-using TechCertain.Domain.Services;
 using TechCertain.Infrastructure.BaseLdap.Converters;
 using TechCertain.Infrastructure.BaseLdap.Interfaces;
 
@@ -12,11 +11,11 @@ namespace TechCertain.Infrastructure.BaseLdap.Repositories
     {
         ILdapConfigService _ldapConfigService;
         ILdapRepository _ldapRepository;
-        IOrganisationRepository _organisationRepository;
+        ILdapOrganisationRepository _organisationRepository;
         IOpenLdapImportService _ldapImportService;
 
         public LdapUserRepository(ILdapConfigService ldapConfigService,
-            IOrganisationRepository organisationRepository,
+            ILdapOrganisationRepository organisationRepository,
             ILdapRepository ldapRepository,
 	        IOpenLdapImportService ldapImportService)
         {
