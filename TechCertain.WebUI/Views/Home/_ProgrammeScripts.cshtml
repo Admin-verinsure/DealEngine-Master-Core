@@ -1,0 +1,352 @@
+﻿<script type="text/javascript">
+
+   // $(document).ready(function(){
+   //$("#myModal").modal();
+   // });
+
+    $("#checkedAll").click(function () {
+        debugger;
+        if (this.checked) {
+            $(".PartyOrg").each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(".PartyOrg").each(function () {
+                this.checked = false;
+            });
+        }
+    });
+
+  
+    $(".PartyOrg").click(function () {
+        debugger;
+
+        if ($(this).is(":checked")) {
+            var isAllChecked = 0;
+
+            $(".PartyOrg").each(function () {
+                if (!this.checked)
+                    isAllChecked = 1;
+            });
+
+            if (isAllChecked == 0) {
+                $("#checkedAll").prop("checked", true);
+            }
+        }
+        else {
+            $("#checkedAll").prop("checked", false);
+        }
+    });
+
+
+    function selectorgUser() {
+        debugger;
+        var SelectedParty = $('#selectParty').val();
+        var InformationId = $('#Id').val();
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("selectedParty", "Programme")',
+	    type: "Post",
+		contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ selectedParty: SelectedParty, informationId: InformationId })
+	})
+        .done(function (data) {
+            debugger;
+            if (data.length > 0) {
+                $('#div1').empty();
+                $('#div1').append("<label class=\"label\" id=\"User\">Select User:</label><br>");
+                //$('#div1').append("<input type=\"checkbox\" id=\"checkedAll\" name=\"selectAll\" value=\"\">Select All<br>");
+
+            } else {
+                $('#div1').empty();
+                $('#div1').append("<label class=\"label\" id=\"User\">No User associated with party:</label><br>");
+            };
+
+              $.each(data, function (i, item) {
+                  $('#div1').append("<input type=\"checkbox\" class=\"PartyOrg\" name=\"PartyOrg\" value=" + item.Email + ">" + item.Name + "(" + item.Email + ")"+"<br>");
+                    });
+	});
+    };
+
+    function addselectorgUser() {
+        debugger;
+        var InformationId = $('#Id').val();
+
+        var favorite = [];
+        $.each($("input[name='PartyOrg']:checked"), function () {
+            favorite.push($(this).val());
+        });
+
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("AddselectedParty", "Programme")',
+	    type: "Post",
+		contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ selectedParty: favorite, informationId: InformationId })
+	})
+        .done(function (data) {
+            debugger;
+            $.smallBox({
+                title: "Selected Users has been added for notification",
+                color: "#5F895F",
+                iconSmall: "fa fa-check bounce animated",
+                timeout: 4000
+            });
+
+	});
+    };
+    @*function selectorgUser() {
+        debugger;
+        var SelectedParty = $('#selectParty').val();
+        var InformationId = $('#Id').val();
+
+        //var z = $.grep([selectedParty,informationId], Boolean).join("&");
+            //console.log(z);
+            $.ajax({
+                url: '@Url.FixedAction("AddselectedParty", "Programme")',
+                type: "Post",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ selectedParty: SelectedParty, informationId: InformationId })
+                //data: z
+            })
+                .done(function (data) {
+                    debugger;
+
+                    //$.smallBox({
+                    //    title: "Boat Use has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
+                    console.log(data);
+                    //$('#SelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory.substring(0, 4) + "</option>")
+                    //$('#SelectedBoatUse').trigger('chosen:updated');
+                    //$('#AddSelectedBoatUse').append("<option selected value=\"" + data.BoatUseId + "\">" + data.BoatUseCategory.substring(0, 4) + "</option>")
+                    //$('#AddSelectedBoatUse').trigger('chosen:updated');
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                    alert("There was an error while trying to save the Boat Use.");
+                });
+
+    }*@
+
+
+
+    $('#myModal').on('show.bs.modal', function (e) {
+        //var name = $('[data-id="name"]').val()
+        debugger;
+
+        $('.modal').css('width', '600px');
+        var RuleName = $(e.relatedTarget).data('rule-name');
+        //var BoatName = $(e.relatedTarget).data(name);
+        debugger;
+        var RuleDesc = $(e.relatedTarget).data('rule-desc');
+
+        var RuleOrder = $(e.relatedTarget).data('rule-order');
+        var RuleVal = $(e.relatedTarget).data('rule-val');
+
+        var RulId = $(e.relatedTarget).data('rule-id');
+
+        $(e.currentTarget).find('input[name="Name"]').val(RuleName);
+        $(e.currentTarget).find('input[name="Description"]').val(RuleDesc);
+        $(e.currentTarget).find('input[name="OrderNumber"]').val(RuleOrder);
+        $(e.currentTarget).find('input[name="Value"]').val(RuleVal);
+        $(e.currentTarget).find('input[name="Id"]').val(RulId);
+
+
+    });
+
+
+    $("#rulebtnSubmit").click(function () {
+        debugger;
+            RuleSubmit();
+
+    });
+
+     function addselectorgUser() {
+        debugger;
+        var InformationId = $('#Id').val();
+
+        var favorite = [];
+        $.each($("input[name='PartyOrg']:checked"), function () {
+            favorite.push($(this).val());
+        });
+
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("AddselectedParty", "Programme")',
+	    type: "Post",
+		contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ selectedParty: favorite, informationId: InformationId })
+	})
+        .done(function (data) {
+            debugger;
+            $.smallBox({
+                title: "Selected Users has been added for notification",
+                color: "#5F895F",
+                iconSmall: "fa fa-check bounce animated",
+                timeout: 4000
+            });
+
+	});
+    };
+
+    function RuleSubmit() {
+        debugger;
+        var productId = $("#ProductId").val();
+        var ID = $("#Id").val();
+
+        var RuleId = $("#RuleId").val();
+        var RuleName = $("#RuleName").val();
+        var RuleDesc = $("#RuleDesc").val();
+        var RuleOrder = parseInt($("#RuleOrder").val());
+        var RuleVal = $("#RuleVal").val();
+
+        var prodData = {
+            "Name": RuleName,
+            "Description": RuleDesc,
+            "OrderNumber": RuleOrder,
+            "Value": RuleVal,
+            "ClientAgreementRuleID": RuleId
+        };
+
+          $.ajax({
+                url: '@Url.Action("EditRule", "Programme")',
+              type: "Post",
+              data: prodData
+
+            })
+                .done(function (data) {
+                    debugger;
+                    alert("success");
+                    //$("#myModal").modal("hide");
+                    $("#myModalId").click();
+                    
+                    location.reload(true);
+
+                    //$.smallBox({
+                    //    title: "Boat Use has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
+
+                })
+              .fail(function (jqXHR, textStatus, errorThrown) {
+                  debugger;
+                    alert("There was an error while trying to save the Boat Use.");
+              });
+
+    }
+
+    
+       $('#ChangeEffectiveDate').datepicker({
+        maxDate: "+30d",
+        dateFormat: "dd/mm/yy" ,
+        minDate:0
+    });
+    
+    
+          $('#myChangeModal').on('show.bs.modal', function (e) {
+        debugger;
+        $('.modal').css('width', '600px');
+              var dealId = $(e.relatedTarget).data('dealitem-id');
+        $(e.currentTarget).find('input[name="DealId"]').val(dealId);
+     
+          });
+
+        function UpdateReason() {
+
+
+
+        };
+
+         $("#btnChangeSubmit").click(function () {
+            debugger;
+            var valid = ValidateReason();
+            if (valid) {
+                ReasonSubmit();
+            }
+
+        });
+
+ function ValidateReason() {
+            debugger;
+            var changeType = $("#ChangeType").val();
+            var changeReason = $("#ChangeReason").val();
+            var description = $("#Description").val();
+			var changeEffectiveDate = $("#ChangeEffectiveDate").val();
+
+            var validation = true;
+
+
+            if (changeType == "") {
+                $('#validateChangeType').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateChangeType').html("");
+            }
+
+            if (changeReason == "") {
+                $('#validateChangeReason').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateChangeReason').html("");
+            }
+            if (description == "") {
+                $('#validateDescription').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateDescription').html("");
+            }
+			 if (changeEffectiveDate == "") {
+                $('#validateEffectivedate').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateEffectivedate').html("");
+            }
+            return validation;
+        }
+		
+		 function ReasonSubmit() {
+            debugger;
+			var dealId = $("#DealId").val();
+            var changeType = $("#ChangeType").val();
+            var changeReason = $("#ChangeReason").val();
+            var description = $("#Description").val();
+            var changeEffectiveDate = $("#ChangeEffectiveDate").val();
+             var prodData = {
+                "DealId":dealId,
+                "ChangeType":changeType,
+                "Reason": changeReason,
+                "ReasonDesc": description,
+                "EffectiveDate": changeEffectiveDate,
+            };
+            $.ajax({
+                type: "Post",
+                data: prodData,
+                url: "/Information/UpdateInformationReason",
+                success: function () {
+                    $("#myModal").modal("hide");
+                    alert("Saved Successfully!");
+                    location.reload(true);
+
+                }
+            }).done(function (data) {
+                debugger;
+            }).fail(function (a, s, d) {
+                debugger;
+                 alert("Unable to save.");
+             });
+          }
+
+</script>

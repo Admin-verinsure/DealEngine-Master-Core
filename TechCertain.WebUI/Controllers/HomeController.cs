@@ -529,6 +529,12 @@ namespace TechCertain.WebUI.Controllers
 
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
+                    Boolean nextInfoSheet = false;
+                    if (null != client.InformationSheet.NextInformationSheet)
+                    {
+                        nextInfoSheet = true;
+                    }
+                   
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
 
@@ -541,6 +547,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         Id = client.Id.ToString(),
                         Name = programme.Name + " for " + client.Owner.Name,
+                        NextInfoSheet = nextInfoSheet,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
@@ -554,8 +561,14 @@ namespace TechCertain.WebUI.Controllers
 
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
+                    Boolean nextInfoSheet = false;
+
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
+                    if (null != client.InformationSheet.PreviousInformationSheet)
+                    {
+                        nextInfoSheet = true;
+                    }
 
                     if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
                     {
@@ -566,6 +579,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         Id = client.Id.ToString(),
                         Name = programme.Name + " for " + client.Owner.Name,
+                        NextInfoSheet = nextInfoSheet,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
@@ -573,7 +587,6 @@ namespace TechCertain.WebUI.Controllers
                     });
                 }
             }
-
             model.Deals = deals;
 
             if (user.PrimaryOrganisation.IsBroker)

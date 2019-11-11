@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.Infrastructure.Tasking;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -25,6 +26,7 @@ namespace TechCertain.WebUI.Controllers
         IInformationTemplateService _informationTemplateService;
         IFileService _fileService;
         IClientInformationService _clientInformationService;
+        IChangeProcessService _changeProcessService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
@@ -47,10 +49,12 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _clientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
+        IMapperSession<ChangeReason> _changeReasonRepository;
 
         public InformationController(
             IUserService userService,
             IInformationItemService informationItemService,
+            IChangeProcessService changeProcessService,
             IInformationSectionService informationSectionService,
             IFileService fileService,
             IEmailService emailService,
@@ -69,6 +73,7 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
             IMapperSession<Territory> territoryRepository,
+             IMapperSession<ChangeReason> changeReasonRepository,
             IUnitOfWork unitOfWork,
             IMapperSession<BusinessActivity> busActivityRespository,
             IMapperSession<InformationSection> informationSectionRepository,
@@ -80,6 +85,8 @@ namespace TechCertain.WebUI.Controllers
             : base (userService)
         {
             _userService = userService;
+            _changeProcessService = changeProcessService;
+            _changeReasonRepository = changeReasonRepository;
             _productService = productService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
@@ -1890,9 +1897,9 @@ namespace TechCertain.WebUI.Controllers
                     }                   
 
                 }
-                await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                 //send out information sheet submission notification email
-                await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
             }
 
             return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
@@ -1911,6 +1918,19 @@ namespace TechCertain.WebUI.Controllers
             }
 
             return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateInformationReason(ChangeReason changeReason)
+        {
+            var user = await CurrentUser();
+            ChangeReason change = _changeProcessService.CreateChangeReason(user,changeReason);
+
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
+            change.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
+            _changeReasonRepository.AddAsync(change);
+            //change.EffectiveDate = DateTime.Parse(changeReason.EffectiveDate., System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
+                       return Redirect("/Information/UpdateInformation/"+changeReason.DealId );
         }
 
         [HttpGet]

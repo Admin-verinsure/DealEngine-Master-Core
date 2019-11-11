@@ -93,8 +93,9 @@ namespace TechCertain.WebUI.Models
 		public string LocalDateCreated { get; set; }
 
 		public string LocalDateSubmitted { get; set; }
-
-		public string GetStatusDisplay ()
+        public Boolean NextInfoSheet { get; set; }
+        
+        public string GetStatusDisplay ()
 		{
 			List<string> statusDisplay = new List<string> ();
 
