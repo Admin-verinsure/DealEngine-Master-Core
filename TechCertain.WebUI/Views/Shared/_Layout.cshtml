@@ -118,10 +118,12 @@
 
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
     @*@{ Html.RenderPartialIf("_Aside", Request.IsAuthenticated); }*@
-    <div class="container-fluid">
-        @* If ribbon is required use on top of individual view or add come conditions*@
-        @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
-        @RenderBody()
+    <div class="container">
+        
+            @* If ribbon is required use on top of individual view or add come conditions*@
+            @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
+            @RenderBody()
+        
     </div>
     @if (User.Identity.IsAuthenticated)
     {
