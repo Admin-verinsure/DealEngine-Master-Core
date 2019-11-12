@@ -22,7 +22,7 @@ using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Identity;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
-
+using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 
 #endregion
 
@@ -37,6 +37,7 @@ namespace TechCertain.WebUI.Controllers
 		IFileService _fileService;
         SignInManager<IdentityUser> _signInManager;
         UserManager<IdentityUser> _userManager;
+        RoleManager<IdentityRole> _roleManager;
         ILdapService _ldapService;
         IProgrammeService _programmeService;
         IClientInformationService _clientInformationService;
@@ -51,6 +52,7 @@ namespace TechCertain.WebUI.Controllers
             IAuthenticationService authenticationService,
 			SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<AccountController> logger,
             IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
@@ -63,6 +65,7 @@ namespace TechCertain.WebUI.Controllers
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _userRepository = userRepository;
 			_httpClientService = httpClientService;
 			_logger = logger;
@@ -145,7 +148,7 @@ namespace TechCertain.WebUI.Controllers
 
                         //get local domain
                         string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
-                        _emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
+                        await _emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
 
                         ViewBag.EmailSent = true;
                     }
@@ -205,15 +208,6 @@ namespace TechCertain.WebUI.Controllers
 		{
 			try
 			{
-                //if (BrowserHelper.IsSafari(Request))
-                //{
-                //    Console.WriteLine("Safari Detected");
-                //    StringBuilder sb = new StringBuilder();
-                //    sb.AppendLine("Safari Detected");
-                //    sb.AppendLine("Recording token to check for Safari conversion bug");
-                //    sb.AppendLine("Token: " + id);
-                //    _logger.Info(sb.ToString());
-                //}
 
                 if (id == Guid.Empty)
 					// if we get here - either invalid guid or invalid token - 404
@@ -244,12 +238,10 @@ namespace TechCertain.WebUI.Controllers
                             var addPasswordResult = await _userManager.AddPasswordAsync(deUser, viewModel.Password);
                             if (addPasswordResult.Succeeded)
                             {
-
+                                _authenticationService.UseSingleUseToken(st.Id);
+                                return RedirectToAction("PasswordChanged", "Account");
                             }
                         }
-
-                        _authenticationService.UseSingleUseToken(st.Id);
-                        return RedirectToAction("PasswordChanged", "Account");
                     }
                     else
                     {
@@ -284,17 +276,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl)
         {
-            // We do not want to use any existing identity information
-            //EnsureLoggedOut();            
-
-            // Store the originating URL so we can attach it to a form field
             var viewModel = new AccountLoginModel { ReturnUrl = returnUrl };
 
             string nameExtension = "";// ConfigurationRoot["LoginPageExtension"];
 
 			return View("Login"+nameExtension, viewModel);
-
-			//return View(viewModel);
         }
 
         // POST: /account/login
@@ -326,10 +312,11 @@ namespace TechCertain.WebUI.Controllers
                     IdentityUser deUser = await _userManager.FindByNameAsync(userName);
                     if (deUser == null)
                     {
-
-                        deUser = new IdentityUser();// { UserName = userName, PasswordHash = password, Email = user.Email};
-                        deUser.Email = user.Email;
-                        deUser.UserName = userName;
+                        deUser = new IdentityUser
+                        {
+                            Email = user.Email,
+                            UserName = userName
+                        };
                         await _userManager.CreateAsync(deUser, password);
                     }
 
@@ -350,7 +337,7 @@ namespace TechCertain.WebUI.Controllers
 			catch (UserImportException ex)
 			{
 				ErrorSignal.FromCurrentContext().Raise(ex);
-				await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2015 - User Import Error", ex.Message);
+				await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2019 - User Import Error", ex.Message);
 				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. Proposalonline has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}

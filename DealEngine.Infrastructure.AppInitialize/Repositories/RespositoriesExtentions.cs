@@ -8,7 +8,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Repositories
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddTransient<IOrganisationService, LdapOrganisationRepository>();                      
+            services.AddTransient<ILdapOrganisationRepository, LdapOrganisationRepository>();                      
 
             return services;
         }
