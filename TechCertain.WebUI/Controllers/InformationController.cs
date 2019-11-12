@@ -1917,9 +1917,9 @@ namespace TechCertain.WebUI.Controllers
                     }                   
 
                 }
-                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                 //send out information sheet submission notification email
-                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
             }
 
             return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
