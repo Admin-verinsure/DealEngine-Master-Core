@@ -87,6 +87,5 @@ namespace TechCertain.WebUI.Models
 		[DataType(DataType.Text)]
 		public string LastName { get; set; }
         
-        public string Advisory { get; set; }
     }
 }

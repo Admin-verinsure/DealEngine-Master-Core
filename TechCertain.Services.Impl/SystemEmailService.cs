@@ -77,5 +77,10 @@ namespace TechCertain.Services.Impl
         {
             await _systemEmailRepository.UpdateAsync(systemEmailTemplate);
         }
+
+        public async Task<SystemEmail> GetEmailTemplateByMilestone(Milestone milestone, Activity activity)
+        {
+            return await _systemEmailRepository.FindAll().FirstOrDefaultAsync(e => e.Milestone == milestone && e.Activity == activity);                        
+        }
     }
 }

@@ -29,6 +29,7 @@ namespace TechCertain.WebUI.Models
 
         public IEnumerable<InformationItem> SectionItems { get; set; }
 
+        public List<InformationSection> Section { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
 
         // TODO - find a better way to pass these in
@@ -57,7 +58,6 @@ namespace TechCertain.WebUI.Models
         public Guid OrganisationId { get; set; }
 
         public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
-        public MilestoneAdvisoryVM MilestoneAdvisoryVM { get; set; }
 
         public IEnumerable<ProductItem> AvailableProducts { get; set; }
 
@@ -93,6 +93,7 @@ namespace TechCertain.WebUI.Models
         public IEnumerable<ClaimViewModel> Claims { get; set; }
 
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
+        public string Advisory { get; set; }
         //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
 
     }

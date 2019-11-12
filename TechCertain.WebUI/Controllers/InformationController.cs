@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.Infrastructure.Tasking;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -20,11 +21,13 @@ namespace TechCertain.WebUI.Controllers
     public class InformationController : BaseController
     {
 
+        IActivityService _activityService;
         IInformationItemService _informationItemService;
         IInformationSectionService _informationSectionService;
         IInformationTemplateService _informationTemplateService;
         IFileService _fileService;
         IClientInformationService _clientInformationService;
+        IChangeProcessService _changeProcessService;
         IClientAgreementService _clientAgreementService;
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
@@ -36,20 +39,26 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
         IMilestoneService _milestoneService;
+        IAdvisoryService _advisoryService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
         IMapperSession<Territory> _territoryRepository;
         IMapperSession<BusinessActivity> _busActivityRespository;
         IProgrammeService _programmeService;
         IBusinessActivityService _businessActivityService;
+        IProductService _productService;
         IMapper _mapper;
         IMapperSession<DropdownListItem> _IDropdownListItem;
         IClientInformationAnswerService _clientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
+        IMapperSession<ChangeReason> _changeReasonRepository;
 
         public InformationController(
+            IActivityService activityService,
+            IAdvisoryService advisoryService,
             IUserService userService,
             IInformationItemService informationItemService,
+            IChangeProcessService changeProcessService,
             IInformationSectionService informationSectionService,
             IFileService fileService,
             IEmailService emailService,
@@ -62,11 +71,13 @@ namespace TechCertain.WebUI.Controllers
             IClientAgreementRuleService clientAgreementRuleService,
             IUWMService uWMService,
             IReferenceService referenceService,
+            IProductService productService,
             ITaskingService taskingService,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
             IMapperSession<Territory> territoryRepository,
+             IMapperSession<ChangeReason> changeReasonRepository,
             IUnitOfWork unitOfWork,
             IMapperSession<BusinessActivity> busActivityRespository,
             IMapperSession<InformationSection> informationSectionRepository,
@@ -77,7 +88,12 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper)
             : base (userService)
         {
+            _advisoryService = advisoryService;
+            _activityService = activityService;
             _userService = userService;
+            _changeProcessService = changeProcessService;
+            _changeReasonRepository = changeReasonRepository;
+            _productService = productService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
             _clientInformationAnswer = clientInformationAnswer;
@@ -1033,6 +1049,7 @@ namespace TechCertain.WebUI.Controllers
             //////BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
+            var MarinaLocations = new List<OrganisationViewModel>();
 
             InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
             model.AnswerSheetId = sheet.Id;
@@ -1072,6 +1089,22 @@ namespace TechCertain.WebUI.Controllers
                 }
                 model.Operators = operators;
 
+                List<SelectListItem> skipperlist = new List<SelectListItem>();
+
+                for (var i = 0; i < model.Operators.Count(); i++)
+                {
+                    skipperlist.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Text = model.Operators.ElementAtOrDefault(i).OrganisationName,
+                        Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
+                    });
+
+                    // boats.Add(BoatViewModel.FromEntity(sheet.Boats.ElementAtOrDefault(i)));
+
+                }
+               
+                model.SkipperList = skipperlist;
 
                 //var operators = new List<OperatorViewModel>();
                 //foreach (Operator oper in sheet.Operators)
@@ -1087,6 +1120,46 @@ namespace TechCertain.WebUI.Controllers
                 }
                 model.Claims = claims;
 
+
+
+                var interestedParties = new List<OrganisationViewModel>();
+                try
+                {
+                    foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
+                    {
+
+                        foreach (var org in IA.IAOrganisations)
+                        {
+                            if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability")
+                            {
+                                OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                                ovm.OrganisationName = org.Name;
+                                interestedParties.Add(ovm);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+                model.InterestedParties = interestedParties;
+
+                List<SelectListItem> linterestedparty = new List<SelectListItem>();
+
+
+                for (var i = 0; i < model.InterestedParties.Count(); i++)
+                {
+                    linterestedparty.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Text = model.InterestedParties.ElementAtOrDefault(i).OrganisationName,
+                        Value = model.InterestedParties.ElementAtOrDefault(i).ID.ToString(),
+                    });
+                }
+
+                model.InterestedPartyList = linterestedparty;
 
 
                 var boatUses = new List<BoatUseViewModel>();
@@ -1155,49 +1228,73 @@ namespace TechCertain.WebUI.Controllers
                 {
                     buildings.Add(BuildingViewModel.FromEntity(bui));
                 }
+                try
+                {
+                  
+                    foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
+                    {
+                        foreach (var org in IA.IAOrganisations)
+                        {
+                            if (org.OrganisationType.Name == "Corporation – Limited liability")
+                            {
+                                OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                                ovm.OrganisationName = org.Name;
+                                MarinaLocations.Add(ovm);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+
+                model.MarinaLocations = MarinaLocations;
+
 
                 foreach (WaterLocation wl in sheet.WaterLocations)
                 {
                     waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
                 }
 
-                var interestedParties = new List<OrganisationViewModel>();
-                foreach (Organisation org in _organisationRepository.FindAll().Where(o => o.OrganisationType != null))
-                {
-                    //List<SelectListItem> partylist = new List<SelectListItem>();
+                //var interestedParties = new List<OrganisationViewModel>();
+                //foreach (Organisation org in _organisationRepository.FindAll().Where(o => o.OrganisationType != null))
+                //{
+                //    //List<SelectListItem> partylist = new List<SelectListItem>();
 
-                    //try
-                    //{
+                //    //try
+                //    //{
 
-                    //        var text = org.Name;
-                    //        var val = org.Id.ToString();
+                //    //        var text = org.Name;
+                //    //        var val = org.Id.ToString();
 
-                    //        list.Add(new SelectListItem
-                    //        {
-                    //            Selected = false,
-                    //            Value = val,
-                    //            Text = text
-                    //        });
+                //    //        list.Add(new SelectListItem
+                //    //        {
+                //    //            Selected = false,
+                //    //            Value = val,
+                //    //            Text = text
+                //    //        });
 
 
 
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    Console.WriteLine(ex.InnerException);
-                    //}
+                //    //}
+                //    //catch (Exception ex)
+                //    //{
+                //    //    Console.WriteLine(ex.InnerException);
+                //    //}
 
-                    //model.InterestedPartyList = partylist;
+                //    //model.InterestedPartyList = partylist;
 
-                    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                    ovm.OrganisationName = org.Name;
-                    interestedParties.Add(ovm);
-                }
+                //    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
+                //    ovm.OrganisationName = org.Name;
+                //    interestedParties.Add(ovm);
+                //}
 
                 var availableProducts = new List<ProductItem>();
 
 
-                var userDetails = _mapper.Map<UserDetailsVM>(CurrentUser());
+                var userDetails = _mapper.Map<UserDetailsVM>(await CurrentUser());
                 userDetails.PostalAddress = user.Address;
                 userDetails.StreetAddress = user.Address;
 
@@ -1253,15 +1350,29 @@ namespace TechCertain.WebUI.Controllers
             var user = await CurrentUser();
             //add milestone process here
 
-            using (var uow = _unitOfWork.BeginUnitOfWork())
+            string advisoryDesc = "";
+            if (sheet.Status == "Not Started")
             {
-                if (sheet.Status == "Not Started")
+                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                if (milestone != null)
+                {
+                    var activity = await _activityService.GetActivityByName("Agreement Status - Not Started");
+                    var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                    if (advisory != null)
+                    {
+                        advisoryDesc = advisory.Description;
+                    }
+
+                }
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.Status = "Started";
                     await uow.Commit();
                 }
-
             }
+
+            model.Advisory = advisoryDesc;
             model.OrganisationId = clientProgramme.Owner.Id;
 
             for (var i = 0; i < model.Sections.Count(); i++)
@@ -1565,7 +1676,7 @@ namespace TechCertain.WebUI.Controllers
             //{
             //    buildings.Add(BuildingViewModel.FromEntity(bui));
             //}
-  try
+         try
             {
                 //InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
                 //if (insuranceAttribute == null)
@@ -1829,6 +1940,19 @@ namespace TechCertain.WebUI.Controllers
             return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateInformationReason(ChangeReason changeReason)
+        {
+            var user = await CurrentUser();
+            ChangeReason change = _changeProcessService.CreateChangeReason(user,changeReason);
+
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
+            change.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
+            _changeReasonRepository.AddAsync(change);
+            //change.EffectiveDate = DateTime.Parse(changeReason.EffectiveDate., System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
+                       return Redirect("/Information/UpdateInformation/"+changeReason.DealId );
+        }
+
         [HttpGet]
         public async Task<IActionResult> UpdateInformation(Guid id)
         {
@@ -2035,19 +2159,28 @@ namespace TechCertain.WebUI.Controllers
                 Name = programme.Name,
                 Sections = new List<InformationSectionViewModel>()
             };
-
-            IEnumerable<InformationTemplate> templates = programme.GetInformationSections().Select(s => s.InformationTemplate).GroupBy(t => t.Id).Select(t => t.First());
-            foreach (InformationTemplate template in templates)
+            model.Name = programme.Name;
+            Product product = programme.Products.FirstOrDefault();
+            InformationTemplate informationTemplate = await _informationTemplateService.GetTemplatebyProduct(product.Id);
+            
+            List<InformationSection> sections = await _informationSectionService.GetInformationSectionsbyTemplateId(informationTemplate.Id);
+            foreach (var section in sections)
             {
-                Console.WriteLine(template.Id);
-                foreach (var section in template.Sections)
-                {
-                    section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
-                }
-                (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(template).Sections);
-
+                section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
             }
 
+            //foreach (InformationTemplate template in templates)
+            //{
+            //    Console.WriteLine(template.Id);
+            foreach (var section in informationTemplate.Sections)
+            {
+                section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
+            }
+               (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(informationTemplate).Sections);
+
+
+            //}
+            model.Section = sections;
             return model;
         }
 

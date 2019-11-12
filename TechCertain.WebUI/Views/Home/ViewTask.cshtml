@@ -1,7 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.UserTaskViewModel
 
 <div id="content">
-    <script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
     <!-- widget grid -->
     <section id="widget-grid" class="">
         <!-- row -->
@@ -34,7 +33,7 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                    @Html.TextBoxFor(m => m.Details, new { HtmlAttribute = new { @placeholder = @Model.Description } })
+                                    @Html.TextBoxFor(m => m.Description, new { HtmlAttribute = new { @placeholder = @Model.Description } })
                                 </div>
                             </div>
                         </div>

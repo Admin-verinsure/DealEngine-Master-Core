@@ -33,7 +33,6 @@
 
 
     $('#myModal').on('show.bs.modal', function (e) {
-        debugger;
         $('.modal').css('width', '600px');
         var BoatPremium = $(e.relatedTarget).data('boat-premium');
         var BoatName = $(e.relatedTarget).data('boat-name');
@@ -54,8 +53,6 @@
 
     });
     $('#VesselModal').on('show.bs.modal', function (e) {
-                debugger;
-
         $('.modal').css('width', '600px');
         debugger;
         var MotorMake = $(e.relatedTarget).data('motor-make');
@@ -86,13 +83,11 @@
     });
     
      $('#confirmMotorDelete').on('show.bs.modal', function (e) {
-        debugger;
         $('.modal .modal-body').css('height', 'auto');
         var MotorId = $(e.relatedTarget).data('motor-id');
         $(e.currentTarget).find('input[name="MotorId"]').val(MotorId);
     });
 
-        debugger;
         $("#btnSubmit").click(function () {
             debugger;
             var valid = ValidateVesselTerm();

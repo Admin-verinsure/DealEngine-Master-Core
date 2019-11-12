@@ -93,8 +93,9 @@ namespace TechCertain.WebUI.Models
 		public string LocalDateCreated { get; set; }
 
 		public string LocalDateSubmitted { get; set; }
-
-		public string GetStatusDisplay ()
+        public Boolean NextInfoSheet { get; set; }
+        
+        public string GetStatusDisplay ()
 		{
 			List<string> statusDisplay = new List<string> ();
 
@@ -128,22 +129,22 @@ namespace TechCertain.WebUI.Models
         public string CurrentUserIsTC { get; set; }
     }
 
-	public class TaskItem
-	{
-        public virtual Guid Id { get; set; }
-        public virtual string ClientName { get; set; }
+	public class TaskItem : BaseViewModel
+    {
+        public Guid Id { get; set; }
+        public string ClientName { get; set; }
 
-		public virtual string Description { get; set; }
+		public string Description { get; set; }
 
-		public virtual string Details { get; set; }
+		public string Details { get; set; }
 
-		public virtual string TaskUrl { get; set; }
+		public string TaskUrl { get; set; }
 
-		public virtual int Priority { get; set; }
+		public int Priority { get; set; }
 
-		public virtual string DueDate { get; set; }
+		public string DueDate { get; set; }
 
-		public virtual bool Completed { get; set; }
+		public bool Completed { get; set; }
 	}
 }
     

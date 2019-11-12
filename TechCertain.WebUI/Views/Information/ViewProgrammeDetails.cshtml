@@ -55,7 +55,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var Section in Model.Sections.OrderBy(s => s.Position))
+                            @foreach (var Section in Model.Section.OrderBy(s => s.Position))
                             {
 
                                 if (!string.IsNullOrWhiteSpace(Section.CustomView))

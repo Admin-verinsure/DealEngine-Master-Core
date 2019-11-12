@@ -14,6 +14,7 @@ namespace TechCertain.Services.Interfaces
 
         Task<InformationTemplate> GetTemplate(Guid templateId);
 
+        Task<InformationTemplate> GetTemplatebyProduct(Guid productId);
         Task<InformationTemplate> AddProductTo(Guid templateId, Product product);
 
         Task<InformationTemplate> AddProductTo(InformationTemplate template, Product product);        

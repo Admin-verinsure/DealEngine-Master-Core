@@ -128,14 +128,14 @@
                    });
            } else if (stepNumber === 1) {
                var status = $('#Status').val();
-
+               debugger;
                 if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                 }
                 else {
                     return false;
                }
                $('.sw-btn-prev').hide();
-
+               
 
                 $('#getAgreementDecModal').show();
                 $.ajax({
@@ -597,6 +597,10 @@
     $('.EditButton').click(function () {
         $('#fieldset' + " :input").val("");
     });
+
+        function Close() {
+            $("#modal").hide();
+        }
 
     $('#myPanelEditModal').on('show.bs.modal', function (e) {
         $('.modal').css('width', '600px');
@@ -6698,6 +6702,7 @@ async: true
 
     }
 
+
     function submitPayment() {
          event.preventDefault();
         if (!$('#paymentCreditCard').is(":checked") && !$('#paymentEGlobal').is(":checked"))
@@ -6732,5 +6737,6 @@ async: true
                            });
         }
     }
+
 </script>
 

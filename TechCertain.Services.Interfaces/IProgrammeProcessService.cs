@@ -7,5 +7,6 @@ namespace TechCertain.Services.Interfaces
     public interface IProgrammeProcessService
     {
         Task<ProgrammeProcess> GetProcessId(Guid processId);
+        Task UpdateProgrammeProcess(ProgrammeProcess programmeProcess);
     }
 }
