@@ -10,10 +10,8 @@
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
                 <i class="fa-fw fa fa-file-o"></i>  <span>
-                    <a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
-
-                    <a href="~/Programme/TermSheetTemplate/@Model.Id">> Package Term Sheet</a>
-                    > Programme Email Templates
+                    <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet</a>
+                    > Manage Rules
 
                 </span>
 
@@ -22,7 +20,7 @@
         <!-- end col -->
     </div>
     <span>
-        <a onclick="location.href='@Url.Action("TermSheetTemplate", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
+        <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
     </span>
     <!-- widget grid -->
     <section id="widget-grid" class="">
@@ -38,7 +36,7 @@
                     <div>
                         <div class="widget-body no-padding smart-form">
                             <!-- content goes here -->
-                            <h2>First Mate Cover</h2>
+                            
                             <div> </div>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
                                 @if (Model.BrokerContactUser == null)
