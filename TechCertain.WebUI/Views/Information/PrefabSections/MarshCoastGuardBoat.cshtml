@@ -52,7 +52,7 @@
 
                                     {
                                         name: "update", align: 'center', search: false,width:90, editable: true, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button id="trash" onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblBoat\', \'#tblRemovedBoat\');" type="button" class=" btn btn-danger btn-sm" ><span class="fa fa-trash" id="span"></span></button>');
+                                            return ('<button id="trash" onclick="RemoveBoat(\'' + cellvalue + '\', \'true\', \'#tblBoat\', \'#tblRemovedBoat\');" type="button" class=" btn btn-danger btn-sm" ><span class="fa fa-trash" id="span"></span></button>');
                                         }
                                     }
                                 ],
@@ -1718,7 +1718,7 @@
 
                                     {
                                         name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
-                                            return '<button onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                            return '<button onclick="UndoBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
                                         }
                                     },
                                     { name: "BoatName", align: 'center', key: 'true' },

@@ -1897,9 +1897,9 @@ namespace TechCertain.WebUI.Controllers
                     }                   
 
                 }
-                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                 //send out information sheet submission notification email
-                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
             }
 
             return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
@@ -1920,28 +1920,33 @@ namespace TechCertain.WebUI.Controllers
             return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> UpdateInformationReason(ChangeReason changeReason)
+        //{
+        //    var user = await CurrentUser();
+        //    ChangeReason change = _changeProcessService.CreateChangeReason(user,changeReason);
+
+        //    TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
+        //    change.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
+        //    //change.EffectiveDate = DateTime.Parse(changeReason.EffectiveDate., System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
+        //               return Redirect("/Information/UpdateInformation/"+new { id=changeReason.DealId,Change=change } );
+        //}
+
         [HttpPost]
-        public async Task<IActionResult> UpdateInformationReason(ChangeReason changeReason)
+        public async Task<IActionResult> UpdateInformation( ChangeReason changeReason)
         {
             var user = await CurrentUser();
-            ChangeReason change = _changeProcessService.CreateChangeReason(user,changeReason);
+            ChangeReason change = _changeProcessService.CreateChangeReason(user, changeReason);
 
-            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
             change.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
+
             _changeReasonRepository.AddAsync(change);
-            //change.EffectiveDate = DateTime.Parse(changeReason.EffectiveDate., System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
-                       return Redirect("/Information/UpdateInformation/"+changeReason.DealId );
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateInformation(Guid id)
-        {
-            var user = await CurrentUser();
-            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(changeReason.DealId);
             if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + user.UserName);
+                throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + user.UserName);
 
-            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user);
+            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user,change);
 
             await _programmeService.Update(newClientProgramme);
 

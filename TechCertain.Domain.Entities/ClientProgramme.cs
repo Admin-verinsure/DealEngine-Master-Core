@@ -19,6 +19,7 @@ namespace TechCertain.Domain.Entities
         protected ClientProgramme() : this(null, null, null) { }
         public virtual string EGlobalBranchCode { get; set; }
         public virtual string EGlobalClientNumber { get; set; }
+        public virtual ChangeReason changeReason { get; set; }
         public virtual string EGlobalClientStatus { get; set; }
         public virtual bool HasEGlobalCustomDescription { get; set; }
         public virtual string EGlobalCustomDescription { get; set; }

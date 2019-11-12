@@ -26,7 +26,7 @@ namespace TechCertain.Services.Interfaces
 
 		Task Update (params ClientProgramme[] clientProgrammes);
 
-        Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser);
+        Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
 
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
 	}
