@@ -21,6 +21,7 @@ namespace TechCertain.WebUI.Controllers
     public class InformationController : BaseController
     {
 
+        IActivityService _activityService;
         IInformationItemService _informationItemService;
         IInformationSectionService _informationSectionService;
         IInformationTemplateService _informationTemplateService;
@@ -38,6 +39,7 @@ namespace TechCertain.WebUI.Controllers
         IUnitOfWork _unitOfWork;
         IReferenceService _referenceService;
         IMilestoneService _milestoneService;
+        IAdvisoryService _advisoryService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
         IMapperSession<Territory> _territoryRepository;
@@ -52,6 +54,8 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<ChangeReason> _changeReasonRepository;
 
         public InformationController(
+            IActivityService activityService,
+            IAdvisoryService advisoryService,
             IUserService userService,
             IInformationItemService informationItemService,
             IChangeProcessService changeProcessService,
@@ -84,6 +88,8 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper)
             : base (userService)
         {
+            _advisoryService = advisoryService;
+            _activityService = activityService;
             _userService = userService;
             _changeProcessService = changeProcessService;
             _changeReasonRepository = changeReasonRepository;
@@ -1344,15 +1350,29 @@ namespace TechCertain.WebUI.Controllers
             var user = await CurrentUser();
             //add milestone process here
 
-            using (var uow = _unitOfWork.BeginUnitOfWork())
+            string advisoryDesc = "";
+            if (sheet.Status == "Not Started")
             {
-                if (sheet.Status == "Not Started")
+                var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
+                if (milestone != null)
+                {
+                    var activity = await _activityService.GetActivityByName("Agreement Status - Not Started");
+                    var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                    if (advisory != null)
+                    {
+                        advisoryDesc = advisory.Description;
+                    }
+
+                }
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     sheet.Status = "Started";
                     await uow.Commit();
                 }
-
             }
+
+            model.Advisory = advisoryDesc;
             model.OrganisationId = clientProgramme.Owner.Id;
 
             for (var i = 0; i < model.Sections.Count(); i++)

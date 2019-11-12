@@ -75,15 +75,16 @@ namespace TechCertain.Infrastructure.Tasking
             await _taskRespository.AddAsync(task);			
 		}
 
-        public async Task<UserTask> GetMilestoneTask(Guid milestoneId)
+        public async Task<UserTask> GetUserTaskByMilestone(Milestone milestone, Activity activity)
         {
-            return await _taskRespository.FindAll().FirstOrDefaultAsync(t => t.Milestone.Id == milestoneId);
+            return await _taskRespository.FindAll().FirstOrDefaultAsync(t => t.Milestone == milestone && t.Activity == activity);            
         }
 
         public async Task UpdateUserTask(UserTask userTask)
         {
            await _taskRespository.UpdateAsync(userTask);
         }
+
     }
 }
 

@@ -18,12 +18,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading;
 using System.Net;
+using TechCertain.Infrastructure.Tasking;
 
 namespace TechCertain.WebUI.Controllers
 {
     [Authorize]
     public class AgreementController : BaseController
     {
+        IActivityService _activityService;
         IInformationTemplateService _informationService;
         IClientInformationService _customerInformationService;
         IPaymentGatewayService _paymentGatewayService;
@@ -31,6 +33,8 @@ namespace TechCertain.WebUI.Controllers
         IMerchantService _merchantService;
         IClientAgreementTermService _clientAgreementTermService;
         IMilestoneService _milestoneService;
+        IAdvisoryService _advisoryService;
+        ITaskingService _taskingService;
         IHttpClientService _httpClientService;
         IMapperSession<Product> _productRepository;
         IMapperSession<Rule> _ruleRepository;
@@ -50,13 +54,16 @@ namespace TechCertain.WebUI.Controllers
         IEGlobalSubmissionService _eGlobalSubmissionService;
 
         public AgreementController(IUserService userRepository, IUnitOfWork unitOfWork, IMilestoneService milestoneService, IInformationTemplateService informationService, IClientInformationService customerInformationService,
-                                   IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService,
-                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService,
+                                   IMapperSession<Product> productRepository, IClientAgreementService clientAgreementService, IClientAgreementRuleService clientAgreementRuleService, IAdvisoryService advisoryService,
+                                   IClientAgreementEndorsementService clientAgreementEndorsementService, IFileService fileService, IHttpClientService httpClientService, ITaskingService taskingService, IActivityService activityService,
                                    IOrganisationService organisationService, IMapperSession<Organisation> OrganisationRepository, IMapperSession<Rule> ruleRepository, IEmailService emailService, IMapperSession<SystemDocument> documentRepository, IMapperSession<User> userRepository1,
                                    IMapperSession<ClientProgramme> programmeRepository, IPaymentGatewayService paymentGatewayService, IInsuranceAttributeService insuranceAttributeService, IPaymentService paymentService, IMerchantService merchantService, 
                                    IClientAgreementTermService clientAgreementTermService, IAppSettingService appSettingService, IEGlobalSubmissionService eGlobalSubmissionService)
             : base (userRepository)
         {
+            _activityService = activityService;
+            _advisoryService = advisoryService;
+            _taskingService = taskingService;
             _informationService = informationService;
             _customerInformationService = customerInformationService;
             _milestoneService = milestoneService;
@@ -729,13 +736,22 @@ namespace TechCertain.WebUI.Controllers
                 model.Status = agreement.Status;
                 if (agreement.Status == "Referred")
                 {
-                    var activity = "Agreement Status – Referred";
-                    var milestone = await _milestoneService.GetMilestoneActivity(activity);
+                    var milestone = await _milestoneService.GetMilestoneByBaseProgramme(answerSheet.Programme.BaseProgramme.Id);
                     if (milestone != null)
                     {
-                        milestone.UserTask.IsActive = true;
-                        await _milestoneService.UpdateMilestone(milestone);
-                        model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+                        var activity = await _activityService.GetActivityByName("Agreement Status – Referred");
+                        var userTask = await _taskingService.GetUserTaskByMilestone(milestone, activity);
+                        var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                        if (userTask != null)
+                        {
+                            userTask.IsActive = true;
+                            await _taskingService.UpdateUserTask(userTask);
+                        }
+                        if(advisory != null)
+                        {
+                            model.Advisory = System.Net.WebUtility.HtmlDecode(advisory.Description);
+                        }                       
+                        
                     }
                     _emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
                 }
@@ -878,12 +894,17 @@ namespace TechCertain.WebUI.Controllers
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
-            var activity = "Agreement Status - Declined";
-            var advisory = "";
-            var milestone = await _milestoneService.GetMilestoneActivity(activity);
+            var advisoryDesc = "";
+            var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
             if (milestone != null)
             {
-                advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
+                var activity = await _activityService.GetActivityByName("Agreement Status - Declined");
+                var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                if(advisory != null)
+                {
+                    advisoryDesc = WebUtility.HtmlDecode(advisory.Description);
+                }
+                
             }
 
             foreach (ClientAgreement agreement in clientProgramme.Agreements)
@@ -895,7 +916,7 @@ namespace TechCertain.WebUI.Controllers
                     ClientProgrammeId = clientProgramme.Id
                 };
 
-                model.Advisory = advisory;
+                model.Advisory = advisoryDesc;
                 // Status
                 model.Status = agreement.Status;
                 model.InformationSheetId = answerSheet.Id;

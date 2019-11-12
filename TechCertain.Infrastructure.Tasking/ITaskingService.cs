@@ -13,8 +13,8 @@ namespace TechCertain.Infrastructure.Tasking
         Task<List<UserTask>> GetAllTasksFor (Organisation organisation);
         Task<UserTask> GetTask(Guid Id);
         Task CreateTaskFor(UserTask task);
-        Task<UserTask> GetMilestoneTask(Guid milestoneId);
         Task UpdateUserTask(UserTask userTask);
+        Task<UserTask> GetUserTaskByMilestone(Milestone milestone, Activity activity);
     }
 }
 

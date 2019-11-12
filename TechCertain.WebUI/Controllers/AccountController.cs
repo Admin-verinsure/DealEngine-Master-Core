@@ -46,7 +46,6 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
         IAppSettingService _appSettingService;
-        IMilestoneService _milestoneService;
 
         public AccountController(
             IAuthenticationService authenticationService,
@@ -55,13 +54,11 @@ namespace TechCertain.WebUI.Controllers
             ILogger<AccountController> logger,
             IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
-            IMilestoneService milestoneService,
             ILdapService ldapService,
             IUserService userService,
 			IEmailService emailService, IFileService fileService, IProgrammeService programeService, IClientInformationService clientInformationService, 
             IOrganisationService organisationService, IOrganisationalUnitService organisationalUnitService, IAppSettingService appSettingService) : base (userService)
 		{
-            _milestoneService = milestoneService;
             _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
@@ -562,16 +559,7 @@ namespace TechCertain.WebUI.Controllers
             // We do not want to use any existing identity information
             EnsureLoggedOut();
 
-            var activity = "Agreement Status - Not Started";
-
-            var milestone = await _milestoneService.GetMilestoneActivity(activity);
-            AccountRegistrationModel model = new AccountRegistrationModel();
-            if (milestone != null)
-            {
-                model.Advisory = System.Net.WebUtility.HtmlDecode(milestone.Advisory.Description);
-            }
-
-            return View(model);
+            return View();
         }
 
         // POST: /account/coastguardreg
