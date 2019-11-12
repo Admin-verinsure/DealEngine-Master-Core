@@ -171,7 +171,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 model.IsAdvisory = true;
             }
-            else if (type == "Email1")
+            else if (type == "Email")
             {
                 model.IsEmail = true;
             }
