@@ -1365,6 +1365,15 @@ namespace TechCertain.Services.Impl
                 agreement.Status = "Quoted";
             }
 
+            //Set broker fee for change agreement
+            if (agreement.ClientInformationSheet.IsChange && (bolNewBoatAdded || bolNewVehicleAdded))
+            {
+                agreement.BrokerFee = 15;
+            } else if (agreement.ClientInformationSheet.IsChange && !bolNewBoatAdded && !bolNewVehicleAdded)
+            {
+                agreement.BrokerFee = 0;
+            }
+
             string auditLogDetail = "Marsh Coastguard UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);

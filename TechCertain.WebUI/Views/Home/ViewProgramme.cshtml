@@ -55,7 +55,6 @@
                                         <td>
                                             @if (item.Status.StartsWith("Bound"))
                                             {
-                                                @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
                                                 @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
                                                 <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
                                                 @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
@@ -65,8 +64,8 @@
                                                 }
                                                 if (item.NextInfoSheet == false)
                                                 {
-                                                    @*<a href="#myChangeModal" aria-hidden="true" style="color:green" data-toggle="modal"
-                                                       data-dealitem-id="@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+                                                    <a href="#myChangeModal" aria-hidden="true" style="color:green" data-toggle="modal"
+                                                       data-dealitem-id="@item.Id"><i class="fa fa-pencil"></i> Update</a>
                                                 }
 
                                                 @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
