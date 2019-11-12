@@ -23,7 +23,7 @@ namespace TechCertain.Domain.Entities
         public virtual bool HasEGlobalCustomDescription { get; set; }
         public virtual string EGlobalCustomDescription { get; set; }
         public virtual Payment Payment { get; set; }
-
+        public virtual string ClientProgrammeMembershipNumber { get; set; }
 
         public ClientProgramme (User createdBy, Organisation createdFor, Programme baseProgramme)
 			: base(createdBy)
