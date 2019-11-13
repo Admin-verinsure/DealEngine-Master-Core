@@ -3397,20 +3397,13 @@ async: true
     });
 };
 
-    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
+   function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
 
-        debugger;
-        event.preventDefault();
-        var ceasedate = $('#RemoveCeaseEffectiveDate').val();
-        var ceasereason = $('#RemoveCeaseReason').val();
-        var effectivedate = $('#removeEffectiveDate').val();
+                event.preventDefault();
 
         var postData = {
-        'BoatCeaseDate': ceasedate,
-        'BoatCeaseReason': ceasereason,
-        'BoatEffectiveDate': effectivedate,
-		'BoatId': boatId,
-		'Removed': status
+		'boatId': boatId,
+		'status': status
 	};
     $.ajax({
         // change back once mono decides to fix
@@ -3422,8 +3415,7 @@ async: true
 async: true
     })
         .done(function (data) {
-            debugger;
-            $('#BoatRemoveModal').hide();
+             $('#getDetailsModal').hide();
 
         if (data === true) {
             $(sourceTable).trigger( 'reloadGrid' );
@@ -3437,6 +3429,7 @@ async: true
         }
     });
 };
+
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
                 event.preventDefault();

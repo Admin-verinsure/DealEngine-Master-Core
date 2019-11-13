@@ -1749,30 +1749,19 @@ namespace TechCertain.WebUI.Controllers
             return Xml(document);
         }
 
-
-
         [HttpPost]
-        public async Task<IActionResult> SetBoatRemovedStatus(BoatViewModel removedboat)
+        public async Task<IActionResult> SetBoatRemovedStatus(Guid boatId, bool status)
         {
-            Boat boat = await _boatRepository.GetByIdAsync(removedboat.BoatId);
-            try
-            {
+            Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    boat.BoatCeaseDate =  DateTime.Parse(LocalizeTime(DateTime.Parse(removedboat.BoatCeaseDate), "d"));
-                    boat.BoatCeaseReason = removedboat.BoatCeaseReason;
-                    boat.BoatEffectiveDate = DateTime.Parse(LocalizeTime(DateTime.Parse(removedboat.BoatEffectiveDate), "d"));  
-                    boat.Removed = removedboat.Removed;
-                    await uow.Commit();
-                }
-            }catch(Exception ex)
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                Console.WriteLine(ex.Message);
+                boat.Removed = status;
+                await uow.Commit();
             }
             return new JsonResult(true);
         }
+
         [HttpPost]
         public async Task<IActionResult> UndoBoatRemovedStatus(BoatViewModel removedboat)
         {

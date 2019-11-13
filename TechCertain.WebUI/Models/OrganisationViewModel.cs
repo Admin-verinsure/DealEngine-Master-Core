@@ -23,6 +23,10 @@ namespace TechCertain.WebUI.Models
         public Guid PartyUseId { get; set; }
         public OrganisationType OrganisationType { get; set; }
         public IList<SelectListItem> OrgMooredType { get; set; }
+        //public IList<SelectListItem> InsuranceAttributes { get; set; }
+
+        //public IEnumerable<OrganisationViewModel> InsuranceAttributes { get; set; }
+
         public string OperatorYearsOfExp { get; set; }
 
         public User user { get; set; }

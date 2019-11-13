@@ -28,7 +28,7 @@
                                 <tbody>
                                     <tr>
                                         <td align="center">
-                                            <b>Type</b>
+                                            <b>Organisation Type</b>
                                         </td>
 
                                         <td align="center">
@@ -42,32 +42,46 @@
 
                                     <tr>
                                         <td align="center">
-                                            <b>Organisation Type</b>
+                                            <b>Insurance Attribute</b>
                                         </td>
 
                                         <td align="center">
                                             <label class="input">
-                                                <select class="browser-default custom-select custom-select-lg mb-3 col-lg-12" name="InsuranceAttributeName">
-                                                    <option selected>Marina</option>
+                                                <select onchange="IASelected()" id="InsuranceAttributeName" name="InsuranceAttributeName" class="form-control b">
+                                                    <option selected>--Select--</option>
+                                                    <option value="Marina"> Marina</option>
+                                                    <option value="Other Marina">Other Marina</option>
+                                                    <option value="Financial">Financial</option>
+
+                                                    @*<option selected>Marina</option>
                                                     <option>Other Marina</option>
+
+                                                    @foreach (var selectListItem in Model.InsuranceAttributes)
+                                                    {
+                                                        <option value=@selectListItem.Value> @selectListItem.Text</option>
+                                                    }*@
+
                                                 </select>
                                             </label>
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    <tr class="hidden" id="trOrganisationMarinaOrgMooredType">
                                         <td align="center">
                                             <b>Marina Moored Type</b>
                                         </td>
 
                                         <td align="center">
                                             <label class="input">
-                                                <select multiple="multiple" class="custom-select form-control" name="OrganisationMarinaOrgMooredType">
-                                                    @foreach (var selectListItem in Model.OrgMooredType)
-                                                    {
-                                                        <option value=@selectListItem.Value> @selectListItem.Text</option>
-                                                    }
-                                                </select>
+                                                        <select   name="OrganisationMarinaOrgMooredType" multiple class="chosen-select form-control b">
+
+                                                            @foreach (var selectListItem in Model.OrgMooredType)
+                                                            {
+                                                                <option value=@selectListItem.Value> @selectListItem.Text</option>
+                                                            }
+
+                                                        </select>
+                                              
                                             </label>
                                         </td>
                                     </tr>
@@ -247,6 +261,21 @@
 @section pagespecific {
     <!-- PAGE RELATED PLUGIN(S)-->
     <script type="text/javascript">
+     $(".chosen-select").chosen({ width: "95%" });
+
+        function IASelected() {
+            debugger;
+            var mooredtype =  document.getElementById("InsuranceAttributeName");
+
+            var Mooredtype = mooredtype.options[mooredtype.selectedIndex].value;
+            if (Mooredtype == 'Marina' || Mooredtype == 'Other Marina') {
+                $('#trOrganisationMarinaOrgMooredType').removeClass('hidden');
+            } else {
+                                $('#trOrganisationMarinaOrgMooredType').addClass('hidden');
+
+            }
+
+        };
 
     function CreateOrganisation() {
     $.ajax({
