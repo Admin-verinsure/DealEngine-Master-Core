@@ -35,28 +35,58 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="row">
-                                            <div class="col-sm-6">
-                                                <form action="~/Admin/SysExchange" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                                                <form action="~/Programme/ManageProgramme/@Model.Id" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
                                                     <fieldset>
-     
-                                                        <section>
-                                                            <label class="label required">Programme Name:</label>
+
+
+                                                        <section class="col col-3">
+                                                            <label class="label required"><strong>Programme Name: </strong></label>
+                                                        </section>
+                                                        <section class="col col-9">
                                                             <label class="input">
-                                                                <i class="icon-append fa fa-user"></i>
-                                                                <input type="text" name="progName" placeholder="Programme Name">
+                                                                <i class="icon-append fa fa-edit"></i>
+                                                                @Html.TextBoxFor(m => m.programmeName)
                                                             </label>
                                                         </section>
-                                                        
 
-                                                        <section>
-                                                            <div class="">
-                                                                <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Add</button>
-                                                                <a href="~/Admin" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
-                                                            </div>
+                                                        <section class="col col-3">
+                                                            <label class="label required"><strong>Tax Rate: </strong></label>
                                                         </section>
+                                                        <section class="col col-9">
+                                                            <label class="input">
+                                                                <i class="icon-append fa fa-edit"></i>
+                                                                @Html.TextBoxFor(m => m.TaxRate)
+                                                            </label>
+                                                        </section>
+
+                                                        <section class="col col-3">
+                                                        </section>
+                                                        <section class="col col-9">
+                                                            <label class="checkbox">
+                                                                @Html.CheckBoxFor(m => m.UsesEGlobal)
+                                                                <i></i>I want this product to use EGlobal API.
+                                                            </label>
+                                                        </section>
+
+                                                        <section class="col col-3">
+                                                        </section>
+                                                        <section class="col col-9">
+                                                            <label class="checkbox">
+                                                                @Html.CheckBoxFor(m => m.IsPublic)
+                                                                <i></i>I want this product to be publicly available.
+                                                            </label>
+                                                        </section>
+
+                                                        <section class="col col-3">
+                                                        </section>
+                                                        <section class="col col-9">
+                                                            <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <a href="~/Admin" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                                                        </section>
+
+
                                                     </fieldset>
                                                 </form>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

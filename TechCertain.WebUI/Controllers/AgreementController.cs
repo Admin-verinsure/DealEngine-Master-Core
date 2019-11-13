@@ -721,7 +721,7 @@ namespace TechCertain.WebUI.Controllers
                     }
                     else
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = string.Format(currencyFormat, "{0:c}", (term.PremiumDiffer - term.FSLDiffer)), FSL = string.Format(currencyFormat, "{0:c}", term.FSLDiffer), TotalPremium = string.Format(currencyFormat, "{0:c}", term.PremiumDiffer) });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture), FSL = term.FSLDiffer.ToString("C", UserCulture), TotalPremium = term.PremiumDiffer.ToString("C", UserCulture) });
                     }
                 }
 
@@ -1029,10 +1029,6 @@ namespace TechCertain.WebUI.Controllers
 
             ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
-            string auditLogDetail = "Agreement details have been modified by " + user.FullName;
-            AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
-            agreement.ClientAgreementAuditLogs.Add(auditLog);
-
             return View("EditAgreement", model);
         }
 
@@ -1041,7 +1037,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementId);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
-
+            var user = await CurrentUser();
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 // TODO - Convert to UTC
@@ -1052,6 +1048,10 @@ namespace TechCertain.WebUI.Controllers
                 agreement.BrokerFee = Convert.ToDecimal(model.AdministrationFee.Replace("$", ""));
                 agreement.ClientNumber = model.ClientNumber;
                 agreement.PolicyNumber = model.PolicyNumber;
+
+                string auditLogDetail = "Agreement details have been modified by " + user.FullName;
+                AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
+                agreement.ClientAgreementAuditLogs.Add(auditLog);
 
                 await uow.Commit();
             }

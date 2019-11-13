@@ -901,9 +901,30 @@ namespace TechCertain.WebUI.Controllers
 
             model.Id = Id;
             model.programmeName = programme.Name;
+            model.IsPublic = programme.IsPublic;
+            model.TaxRate = programme.TaxRate;
+            model.UsesEGlobal = programme.UsesEGlobal;
 
             return View("ManageProgramme", model);
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageProgramme(ProgrammeInfoViewModel model)
+        {
+            Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
+
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                programme.Name = model.programmeName;
+                programme.IsPublic = model.IsPublic;
+                programme.UsesEGlobal = model.UsesEGlobal;
+                programme.TaxRate = model.TaxRate;
+
+                await uow.Commit();
+            }
+
+            return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
         }
 
         //[HttpPost]

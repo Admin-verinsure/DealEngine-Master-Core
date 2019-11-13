@@ -307,17 +307,17 @@ namespace TechCertain.WebUI.Controllers
                 JqGridRow row = new JqGridRow(vehicle.Id);
                 if (vehicle.Validated)
                 {
-                    row.AddValues(vehicle.Id, vehicle.Year, vehicle.Registration, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                    row.AddValues(vehicle.Id, vehicle.Year, vehicle.Registration, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                 }
                 else
                 {
                     if (sheet.Programme.BaseProgramme.Products.First().Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a")) // Marsh Coastguard
                     {
-                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                     }
                     else
                     {
-                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.FleetNumber, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.FleetNumber, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                     }
 
                 }
@@ -1740,7 +1740,7 @@ namespace TechCertain.WebUI.Controllers
                 Boat boat = boats[i];
                 JqGridRow row = new JqGridRow(boat.Id);
                 //row.AddValue("");
-                row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, string.Format(currencyFormat, "{0:c}", boat.MaxSumInsured), boat.Id);
+                row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                 model.AddRow(row);
             }
 

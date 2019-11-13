@@ -32,7 +32,9 @@ namespace TechCertain.WebUI.Models.Programme
         public virtual string EGlobalClientStatus { get; set; }
         public virtual bool HasEGlobalCustomDescription { get; set; }
         public virtual string EGlobalCustomDescription { get; set; }
-
+        public virtual decimal TaxRate { get; set; }
+        public virtual Boolean IsPublic { get; set; }
+        public virtual Boolean UsesEGlobal { get; set; }
 
         //public IList<EmailTemplates> emailTemplate { get; set; }
 
