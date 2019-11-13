@@ -28,7 +28,6 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/font-awesome.min.css">
 
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production-plugins.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
@@ -37,15 +36,6 @@
 
     <!-- SmartAdmin RTL Support -->
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-rtl.min.css">
-
-    @*<link rel="stylesheet" type="text/css" media="screen" href="/Content/css/your_style.css">*@
-
-
-    @*<link rel="stylesheet" href="~/css/site.css" />
-        <link rel="stylesheet" href="~/js/site.min.js" />*@
-
-    @*<script src="~/css/smartad.min.css"></script>*@
-    @*@Styles.Render("~/css/smartad.min.css")*@
     <!-- FAVICONS -->
 
     <link rel="shortcut icon" href="~/Content/img/favicon/favicon.ico" type="image/x-icon">
@@ -114,7 +104,7 @@
 <body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">
     <!-- Google Tag Manager -->
     @*<noscript>
-            <iframe src="//www.googletagmanager.com/ns.html?id=GTM-PTGLDG"
+            <iframe src="e//www.googletagmanager.com/ns.html?id=GTM-PTGLDG"
                     height="0" width="0" style="display:none;visibility:hidden"></iframe>
         </noscript>
         <script>
@@ -128,9 +118,12 @@
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
     @*@{ Html.RenderPartialIf("_Aside", Request.IsAuthenticated); }*@
     <div id="main" role="main">
+
         @* If ribbon is required use on top of individual view or add come conditions*@
         @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
         @RenderBody()
+
+
     </div>
     @if (User.Identity.IsAuthenticated)
     {

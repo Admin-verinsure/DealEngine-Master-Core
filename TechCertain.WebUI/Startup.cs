@@ -10,8 +10,6 @@ using DealEngine.Infrastructure.AppInitialize.Repositories;
 using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
-using Microsoft.AspNetCore.Identity;
-//using DealEngine.Infrastructure.Identity.Data;
 
 namespace TechCertain.WebUI
 {
@@ -25,25 +23,19 @@ namespace TechCertain.WebUI
         public static void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddServices();
             services.AddControllersWithViews();
             services.AddRouting();
             services.AddMvc();
             services.AddRazorPages();
             services.AddNHibernate();
             services.AddIdentityExtentions();
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddBaseLdapPackage();
-            services.AddResponseCaching();
-            services.AddServices();
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));
-            //});
-            //services.AddTransient(IRolePermissionsService);
+            services.AddResponseCaching();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

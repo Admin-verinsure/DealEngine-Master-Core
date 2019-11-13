@@ -124,7 +124,7 @@ namespace TechCertain.Services.Impl
 
 		public async Task Create (User user)
 		{
-            CreateDefaultUserOrganisation (user);
+            await CreateDefaultUserOrganisation (user);
             await _userRepository.AddAsync(user);
             _ldapService.Create (user);
             Thread.Sleep(2000);

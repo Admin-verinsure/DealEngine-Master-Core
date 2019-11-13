@@ -682,6 +682,11 @@ namespace TechCertain.Services.Impl
 				attachments.Add(await ToAttachment(document));
 			return attachments;
 		}
-	}
+
+        public Task GetEmailTemplateByMilestone(Milestone milestone)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 

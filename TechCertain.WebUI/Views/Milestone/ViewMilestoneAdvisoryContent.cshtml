@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                @Html.TextAreaFor(m => m.AdvisoryContent.Advisory, new { id = "advisory", name = "content", cols = "100", rows = "10", @placeholder = "Enter Advisory" })
+                @Html.TextAreaFor(m => m.AdvisoryContent.Advisory, new { id = "advisory", name = "content", cols = "100", rows = "10", @placeholder = "Enter Advisory", onchange="SaveStatus();" })
             </div>
         </div>
     </div>

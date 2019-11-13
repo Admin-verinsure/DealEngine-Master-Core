@@ -30,16 +30,21 @@
                                     <div id="tab1" class="tab-pane step-content" style="display: block;">
                                         <h3><strong>Activity Selection </strong> - Select a Milestone</h3>
                                         <div class="row">
-                                            <div class="col-sm-12">
+                                            <div class="col-md-12">
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        @foreach (var activity in Model.MilestoneTemplate.Activities)
-                                                        {
-                                                            <div class="custom-control custom-radio">
-                                                                <input type="radio" id="@activity.Id" name="activityRadio" class="custom-control-input">
-                                                                <label class="custom-control-label" id="milestoneType" for="@activity.Id">@activity.Name</label>
+                                                        <div class="container-fluid">
+                                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                                @foreach (var activity in Model.MilestoneTemplate.Activities)
+                                                                {
+                                                                    <div class="row">
+                                                                        <label class="btn btn-outline-primary" id="milestoneType" for="@activity.Id">
+                                                                            <input type="radio" id="@activity.Id" name="activityRadio" /> @activity.Name
+                                                                        </label>
+                                                                    </div>
+                                                                }
                                                             </div>
-                                                        }
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -58,16 +63,16 @@
                                                                 <div class="col-sm-12">
                                                                     <div class="form-group">
                                                                         <div class="input-group">
-                                                                            <div class="container-fluid offset-xl-10">
+                                                                            <div class="container-fluid">
                                                                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                                                                     <label class="btn btn-primary">
-                                                                                        <input type="radio" name="options" id="option1" onchange="AdvisoryView()"> Advisory
+                                                                                        <input type="radio" name="milestoneOptions" id="Advisory" onchange="PartialView('Advisory')"> Advisory
                                                                                     </label>
                                                                                     <label class="btn btn-primary">
-                                                                                        <input type="radio" name="options" id="option2" onchange="EmailView()"> Email - In Dev
+                                                                                        <input type="radio" name="milestoneOptions" id="Email" onchange="PartialView('Email')"> Email
                                                                                     </label>
                                                                                     <label class="btn btn-primary">
-                                                                                        <input type="radio" name="options" id="option3" onchange="TaskView()"> Task - In Dev
+                                                                                        <input type="radio" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
                                                                                     </label>
                                                                                     <label class="btn btn-primary">
                                                                                         <input type="radio" name="options" id="option4" onchange="SaveStatus()"> Save Milestone
@@ -124,8 +129,13 @@
 
 @section pagespecific {
     <!-- PAGE RELATED PLUGIN(S) -->
-    <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
-    <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
+    <script src="~/jquery/jquery.js"></script>
+    <script src="~/jqueryui/jquery-ui.js"></script>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
@@ -164,8 +174,6 @@
                 transitionSpeed: '400'
             });
 
-            $("#DueDate").datepicker();
-
             $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
                 if (stepNumber === 0 && stepDirection != "backward") {
                     $('.sw-btn-next').hide();
@@ -182,44 +190,34 @@
             })
         });
 
+        $('.datepicker').datepicker();
+
         function getActivityId() {
             return $('input[name=activityRadio]:checked').attr('id');
+        }
+
+        function getMilestoneModel() {
+            return $('input[name=milestoneOptions]:checked').attr('id');
         }
 
         function SaveStatus() {
             $('.sw-btn-next').show();
         }
 
-        function AdvisoryView() {
-            $("#AdvisoryPartial").show();
-            $("#TaskPartial").hide();
-            $("#EmailPartial").hide();
-            LoadMilestoneActivity();
+        function PartialView(button) {
+            LoadMilestoneActivity(button);
         }
 
-        function TaskView() {
-            $("#EmailPartial").hide();
-            $("#AdvisoryPartial").hide();
-            $("#TaskPartial").show();
-            LoadMilestoneActivity();
-        }
-
-        function EmailView() {
-            $("#AdvisoryPartial").hide();
-            $("#TaskPartial").hide();
-            $("#EmailPartial").show();
-            LoadMilestoneActivity();
-        }
-
-        function LoadMilestoneActivity() {
+        function LoadMilestoneActivity(button) {
             var activityId = getActivityId();
             var programmeId = $('#ProgrammeId').val();
-            var programmeProcessId = $('#ProgrammeProcessId').val()
+            var programmeProcessId = $('#ProgrammeProcessId').val();
 
-            var mergedData = {
+            var mergedData = {                
                 strProgrammeProcessId: programmeProcessId,
                 strProgrammeId: programmeId,
-                strMilestoneActivityId: activityId
+                strMilestoneActivityId: activityId,
+                type: button
             };
 
             $.ajax({
@@ -243,10 +241,26 @@
 
         function Submit() {
 
+            var milestoneModel = getMilestoneModel();
+            var emailModel = null, advisoryModel = null, taskModel = null;
+
+            if (milestoneModel == 'Email') {
+                emailModel = GetEmailContentJson();
+            } else if (milestoneModel == 'Task') {
+                taskModel = GetUserTaskContentJson();
+            }
+            else
+                advisoryModel = GetAdvisoryContentJson();
+
+            console.log(taskModel);
+
             var mergedData = {
-                EmailTemplate: GetEmailContentJson(), AdvisoryContent: GetAdvisoryContentJson(),
-                ActivityId: getActivityId(), UserTask: GetUserTaskContentJson(), UserTasks: GetUserTaskContentJson(),
-                ProgrammeId: $('#ProgrammeId').val(), ProgrammeProcessId: $('#ProgrammeProcessId').val()
+                EmailTemplate: emailModel,
+                AdvisoryContent: advisoryModel,
+                ActivityId: getActivityId(),
+                UserTask: taskModel,
+                ProgrammeId: $('#ProgrammeId').val(),
+                ProgrammeProcessId: $('#ProgrammeProcessId').val()
             };
 
             $.ajax({

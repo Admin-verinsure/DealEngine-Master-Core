@@ -2578,6 +2578,7 @@ namespace TechCertain.WebUI.Controllers
                     sheet.Boats.Add(vessel);
                     organisation.OrganisationalUnits.Add(ou);
                     clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                    clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
                     sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
                     try
                     {

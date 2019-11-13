@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities.Abstracts;
 
 namespace TechCertain.Domain.Entities
@@ -26,7 +27,9 @@ namespace TechCertain.Domain.Entities
             : base(createdBy)
         {
         }
+
         public virtual string Name { get; set; }
+        public virtual Milestone Milestone { get; set; }
     }
 
     public class ProgrammeProcess : EntityBase, IAggregateRoot
@@ -38,6 +41,9 @@ namespace TechCertain.Domain.Entities
             : base(createdBy)
         {
         }
+
         public virtual string Name { get; set; }
+        public virtual Milestone Milestone { get; set; }
+
     }
 }

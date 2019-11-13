@@ -32,7 +32,6 @@ namespace TechCertain.Services.Interfaces
         Task SendSystemEmailAgreementBoundNotify(User binder, Programme programme, ClientAgreement agreement, Organisation insuredOrg);
         Task SendSystemEmailOtherMarinaTCNotify(User uISIssued, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);
         Task SendSystemEmailEGlobalTCNotify(string XMLBody);
-
     }
 }
 

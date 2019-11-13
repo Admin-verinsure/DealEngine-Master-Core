@@ -58,7 +58,6 @@ namespace TechCertain.WebUI.Models
         public Guid OrganisationId { get; set; }
 
         public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
-        public MilestoneAdvisoryVM MilestoneAdvisoryVM { get; set; }
 
         public IEnumerable<ProductItem> AvailableProducts { get; set; }
 
@@ -94,6 +93,7 @@ namespace TechCertain.WebUI.Models
         public IEnumerable<ClaimViewModel> Claims { get; set; }
 
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
+        public string Advisory { get; set; }
         //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
 
     }
@@ -123,7 +123,7 @@ namespace TechCertain.WebUI.Models
 
         public int Position { get; set; }
     }
-
+    
     public class MilestoneAdvisoryVM
     {
         public Guid Id { get; set; }

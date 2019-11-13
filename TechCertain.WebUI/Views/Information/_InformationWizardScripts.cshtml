@@ -606,6 +606,10 @@
         $('#fieldset' + " :input").val("");
     });
 
+        function Close() {
+            $("#modal").hide();
+        }
+
     $('#myPanelEditModal').on('show.bs.modal', function (e) {
         $('.modal').css('width', '600px');
         var PanelId = $(e.relatedTarget).data('panel-id');

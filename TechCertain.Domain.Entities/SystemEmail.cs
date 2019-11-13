@@ -45,5 +45,7 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
+        public virtual Milestone Milestone { get; set; }
+        public virtual Activity Activity { get; set; }
     }
 }

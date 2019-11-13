@@ -21,6 +21,10 @@ namespace TechCertain.Services.Impl
             return await _programmeProcessRepository.GetByIdAsync(processId);
         }
 
+        public async Task UpdateProgrammeProcess(ProgrammeProcess programmeProcess)
+        {
+            await _programmeProcessRepository.UpdateAsync(programmeProcess);
+        }
     }
 }
 
