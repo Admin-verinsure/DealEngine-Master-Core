@@ -123,7 +123,7 @@
 
 
                             @*
-                                </div>*@
+            </div>*@
 
 
 
@@ -295,7 +295,6 @@
                                                 data-html="true"
                                                 rel="popover"
                                                 data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>*@
-
                                         </section>
                                     </div>
                                 </section>
@@ -339,7 +338,6 @@
                                             data-container="body"
                                             rel="popover"
                                             data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>*@
-
                                     </section>
 
 
@@ -640,15 +638,13 @@
                         <!-- 5th group -->
 
                         <hr class="boatAccordianHairline" />
-
                         <div class="row">
-                            <div class="row">
-                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <label class="label">Where is the vessel kept?</label>
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <label class="label">Where is the vessel kept?</label>
 
-                                </section>
-                            </div>
-
+                            </section>
+                        </div>
+                        <div class="row">
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="BoatLandLocationSection">
                                 <label class="label required">Land Storage Location</label>
                                 <label class="input form-group">
@@ -709,7 +705,6 @@
                             </section>
 
 
-
                             @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
                                     <label class="label">Vessel Use</label>
                                     <div class="row">
@@ -760,6 +755,7 @@
                                 <p class="validationContainer" id="validateboatuse"></p>
 
                             </section>
+
 
 
                         </div>
@@ -896,7 +892,7 @@
 
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
-                                <label class="label">Additional Information about Vessel</label>
+                                <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">
                                     <textarea class="form-control b" data-type="TEXTAREA" data-name="BoatNotes" id="BoatNotes" name="BoatNotes" placeholder="Notes" value=""></textarea>
                                 </label>
@@ -951,7 +947,7 @@
 
 
                             @*
-                                </div>*@
+            </div>*@
 
 
 
@@ -1138,7 +1134,6 @@
                                             data-container="body"
                                             rel="popover"
                                             data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>*@
-
                                     </section>
 
 
@@ -1427,15 +1422,13 @@
                         <!-- 5th group -->
 
                         <hr class="boatAccordianHairline" />
-
                         <div class="row">
-                            <div class="row">
-                                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <label class="label">Where is the vessel kept?</label>
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <label class="label">Where is the vessel kept?</label>
 
-                                </section>
-                            </div>
-
+                            </section>
+                        </div>
+                        <div class="row">
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddBoatLandLocationSection">
                                 <label class="label required">Land Storage Location</label>
                                 <label class="input form-group">
@@ -1574,25 +1567,25 @@
                                 </section>
                             }
                             @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <div class="row">
-                                        <div class="form-group" id="InterestedParties3">
-                                            <label class="label required">Interested Parties </label>
-                                            <div class="row">
-                                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                <div class="row">
+                    <div class="form-group" id="InterestedParties3">
+                        <label class="label required">Interested Parties </label>
+                        <div class="row">
+                            <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
-                                                    <div class="input" style="width:400px">
+                                <div class="input" style="width:400px">
 
-                                                        @Html.Bootstrap().ListBoxFor(m => m.SelectedInterestedParty, Model.InterestedPartyList).Class("cselect").Data(new { placeholder = "Add Vessel Use" }).Id("interestedParty")
-                                                    </div>
-                                                </section>
-                                                <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                                    <i id="addinterestedparties" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
-                                                </section>
+                                    @Html.Bootstrap().ListBoxFor(m => m.SelectedInterestedParty, Model.InterestedPartyList).Class("cselect").Data(new { placeholder = "Add Vessel Use" }).Id("interestedParty")
+                                </div>
+                            </section>
+                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <i id="addinterestedparties" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
+                            </section>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>*@
+                        </div>
+                    </div>
+                </div>
+            </section>*@
 
                         </div>
                         <hr class="boatAccordianHairline" />
@@ -1669,7 +1662,7 @@
 
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
-                                <label class="label">Additional Information about Vessel</label>
+                                <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
                                 <label class="textarea">
                                     <textarea class="form-control b" data-type="TEXTAREA" data-name="BoatNotes" id="AddBoatNotes" name="BoatNotes" placeholder="Notes" value=""></textarea>
                                 </label>
