@@ -892,6 +892,20 @@ namespace TechCertain.WebUI.Controllers
             return View("ProgrammeRules", model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ManageProgramme(Guid Id)
+        {
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
+
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+
+            model.Id = Id;
+            model.programmeName = programme.Name;
+
+            return View("ManageProgramme", model);
+
+        }
+
         //[HttpPost]
         //public async Task<IActionResult> AddselectedParty(Guid Id)
         //{
