@@ -92,7 +92,7 @@
                                 <td>Rules</td>
                                 <td>Configure the Rules</td>
                                 <td><a class="btn btn-success btn-xs" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
-                                
+
                             </tr>
 
                             <tr>
@@ -101,18 +101,25 @@
                                 <td><a class="btn btn-success btn-xs" href="@Url.Action("EmailTemplate", "Programme",new { Id =@Model.Id })"><i class="fa fa-search"></i> View</a></td>
                             </tr>
 
-                            <tr>
+                            @*<tr>
                                 <td>Financial Institutions</td>
                                 <td>For selecting as Named Parties</td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
-                                @*<td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
-                            </tr>
+                            </tr>*@
 
                             <tr>
                                 <td>Milestones</td>
                                 <td>Milestones</td>
                                 <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+
+                                @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
+                            </tr>
+
+                            <tr>
+                                <td>Marinas/Financial Institutions</td>
+                                <td>Manage Marinas</td>
+                                <td><a class="btn btn-success btn-xs" href="/Organisation/AddNewOrganisation"><i class="fa fa-search"></i> View</a></td>
 
                                 @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
                             </tr>

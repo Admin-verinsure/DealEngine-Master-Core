@@ -135,7 +135,7 @@
                     return false;
                }
                $('.sw-btn-prev').hide();
-               
+
 
                 $('#getAgreementDecModal').show();
                 $.ajax({
@@ -285,6 +285,14 @@
      {
         $(this).removeData();
     }) ;
+
+        // $('#BoatRemoveModal').on('show.bs.modal', function (e) {
+        //debugger;
+        //$('.modal').css('width', '600px');
+        //      var dealId = $(e.relatedTarget).data('dealitem-id');
+        //$(e.currentTarget).find('input[name="DealId"]').val(dealId);
+
+        //  });
 
     $('body').on('hidden.bs.modal', '.modal', function () {
      $(this).removeData('bs.modal');
@@ -655,6 +663,20 @@
         if (!this.checkValidity()) {
             event.preventDefault();
         }
+    });
+
+    $("#btnRemoveSubmit").click(function () {
+            debugger;
+            var valid = Validateremove();
+        if (valid) {
+            debugger;
+            var boatId = $('#boatID').val();
+		   var status =  $('#status').val();
+		   var sourcetable = $('#sourceTable').val();
+		   var desttable = $('#destTable').val();
+                SetBoatRemovedStatus(boatId,status,sourcetable,desttable);
+        }
+
     });
 
     $("#btnPanelSubmit").click(function () {
@@ -3097,6 +3119,39 @@ function EditClaim(claimId, tableId) {
     });
     };
 
+     function RemoveBoat(boatId, status, sourceTable, destTable) {
+        debugger;
+           var _sheetId = $('#AnswerSheetId').val();
+             var postData = {
+		       'boatId': boatId,
+		       'answerSheetId': _sheetId
+	        };
+
+	 $.ajax({
+
+        url: '@Url.Action("GetOriginalBoat", "Services")',
+        type: "Post",
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+            data: postData
+         })
+            .done(function (data) {
+           debugger;
+        if(data.OriginalBoatId != "00000000-0000-0000-0000-000000000000"){
+			$('#BoatRemoveModal').show();
+                $('.modal').css('width', '600px');
+        $('#boatID').val(boatId);
+		$('#status').val(status);
+		$('#sourceTable').val(sourceTable);
+		$('#destTable').val(destTable);
+		}
+
+		 });
+     };
+
+
+
+
     function EditBoat(classId, boatId) {
 
                 //event.preventDefault();
@@ -3265,7 +3320,88 @@ function EditClaim(claimId, tableId) {
 
     }
 
-    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
+     function setCeasedata(boatId, status, sourceTable, destTable) {
+        debugger;
+        $('#BoatRemoveModal').show();
+                $('.modal').css('width', '600px');
+        $('#boatID').val(boatId);
+		$('#status').val(status);
+		$('#sourceTable').val(sourceTable);
+		$('#destTable').val(destTable);
+      }
+
+    function Validateremove() {
+            debugger;
+            var ceaseDate = $("#RemoveCeaseEffectiveDate").val();
+            var ceaseReason = $("#RemoveCeaseReason").val();
+            var removeEffectiveDate = $("#removeEffectiveDate").val();
+
+            var validation = true;
+
+
+            if (ceaseDate == "") {
+                $('#validateCeasedate').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateCeasedate').html("");
+            }
+
+            if (ceaseReason == "") {
+                $('#validateceaseReason').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateceaseReason').html("");
+            }
+
+			 if (removeEffectiveDate == "") {
+                $('#validateremoveEffectivedate').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateremoveEffectivedate').html("");
+            }
+            return validation;
+    }
+
+    function UndoBoatRemovedStatus(boatId, status, sourceTable, destTable) {
+
+                event.preventDefault();
+
+        var postData = {
+		'BoatId': boatId,
+		'Removed': status
+	};
+    $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.Action("UndoBoatRemovedStatus", "Services")',
+        type: "Post",
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, status : status })
+        data: postData,
+async: true
+    })
+        .done(function (data) {
+             $('#getDetailsModal').hide();
+
+        if (data === true) {
+            $(sourceTable).trigger( 'reloadGrid' );
+            $(destTable).trigger( 'reloadGrid' );
+            //$.smallBox({
+            //    title: "Boat status has been updated",
+            //    color: "#5F895F",
+            //    iconSmall: "fa fa-check bounce animated",
+            //    timeout: 4000
+            //});
+        }
+    });
+};
+
+   function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
 
                 event.preventDefault();
 
@@ -3297,6 +3433,7 @@ async: true
         }
     });
 };
+
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
                 event.preventDefault();

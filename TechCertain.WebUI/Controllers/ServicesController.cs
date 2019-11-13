@@ -1603,6 +1603,21 @@ namespace TechCertain.WebUI.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> GetOriginalBoat(Guid answerSheetId, Guid boatId)
+        {
+            BoatViewModel model = new BoatViewModel();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+            Boat boat = sheet.Boats.FirstOrDefault(b => b.Id == boatId);
+            if (boat != null)
+            {
+                model.AnswerSheetId = answerSheetId;
+                if (boat.OriginalBoat != null)
+                    model.OriginalBoatId = boat.OriginalBoat.Id;
+            }
+           return Json(model);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetBoat(Guid answerSheetId, Guid boatId)
@@ -1618,6 +1633,7 @@ namespace TechCertain.WebUI.Controllers
                     model.BoatLandLocation = boat.BoatLandLocation.Id;
                 if (boat.BoatWaterLocation != null)
                     model.BoatWaterLocation = boat.BoatWaterLocation.Id;
+                if (boat.BoatTrailer != null)
                 if (boat.BoatTrailer != null)
                     model.BoatTrailer = boat.BoatTrailer.Id;
 
@@ -1733,8 +1749,6 @@ namespace TechCertain.WebUI.Controllers
             return Xml(document);
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> SetBoatRemovedStatus(Guid boatId, bool status)
         {
@@ -1746,6 +1760,20 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
             return new JsonResult(true);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UndoBoatRemovedStatus(BoatViewModel removedboat)
+        {
+            Boat boat = await _boatRepository.GetByIdAsync(removedboat.BoatId);
+
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            {
+                boat.Removed = removedboat.Removed;
+                await uow.Commit();
+            }
+            return new JsonResult(true);
+        
         }
 
         [HttpPost]
