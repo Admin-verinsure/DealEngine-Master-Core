@@ -821,6 +821,41 @@
     }
 
 
+     function RemoveBoat(boatId, status, sourceTable, destTable) {
+        debugger;
+           var _sheetId = $('#AnswerSheetId').val();
+             var postData = {
+		       'boatId': boatId,
+		       'answerSheetId': _sheetId
+	        };
+
+	 $.ajax({
+
+        url: '@Url.Action("GetOriginalBoat", "Services")',
+        type: "Post",
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+            data: postData
+         })
+            .done(function (data) {
+           debugger;
+                if (data.OriginalBoatId != "00000000-0000-0000-0000-000000000000") {
+                    $('#BoatRemoveModal').show();
+                    $('.modal').css('width', '600px');
+                    $('#boatID').val(boatId);
+                    $('#status').val(status);
+                    $('#sourceTable').val(sourceTable);
+                    $('#destTable').val(destTable);
+                } else {
+                    debugger;
+                    SetBoatRemovedStatus(boatId, status, sourceTable, destTable);
+
+                }
+
+		 });
+    };
+
+
     function validateClaimDetails(Claim) {
 
           var claim = document.getElementById(Claim);
@@ -3402,7 +3437,7 @@ async: true
 };
 
    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
-
+       debugger;
                 event.preventDefault();
 
         var postData = {

@@ -98,12 +98,15 @@
                                                         <div class="page-body">
                                                             <div class="head">
                                                                 <h3 style="align-content:center">Activity Has Been Saved</h3>
+                                                                <a class="btn btn-success btn-xs" href="@Url.Action("ActivityBuilder", "Programme")"><i class="fa fa-arrow-circle-left"></i>Back </a>
+
                                                             </div>
                                                         </div>
 
                                                     </div>
 
                                                 </div>
+
 
                                                 @* Button controls *@
                                                 @*<div class="form-actions">
@@ -276,6 +279,7 @@
                                //var model = JSON.parse(json);
                                //$('#successModal').modal();
                                //$('#productAutoReview').text("");
+
                            })
                            .fail(function (err, ajaxOptions, thrownError) {
                                $('#failureModal').modal();
