@@ -3,81 +3,76 @@
 @using TechCertain.WebUI.Helpers.CustomHtml
 
 <!-- NEW WIDGET START -->
-<div class="col col-12">
-    <!-- Widget ID (each widget will need unique ID)-->
-    <div class="jarviswidget" id="wid-id-10"
-         data="false"
-         data-widget-editbutton="false"
-         data-widget-togglebutton="false"
-         data-widget-deletebutton="false"
-         data-widget-custombutton="false"
-         data-widget-sortable="false">
-        <header>
-            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-            <h2>@ViewBag.Title </h2>
-        </header>
-        <!-- widget div-->
-        <form action="~/Agreement/ViewAgreementRule/@Model.ClientAgreementID" method="POST" id="update-form">
-            <div>
-                @Html.HiddenFor(m => m.ClientAgreementID)
-                @Html.HiddenFor(m => m.ClientProgrammeID)
-                <!-- widget edit box -->
-                <div class="jarviswidget-editbox">
-                    <!-- This area used as drop downSS edit box -->
-                </div>
-                <!-- end widget edit box -->
-                <!-- widget content -->
-
-                <div class="smart-form">
-
-                    @*@for (var i = 0; i < Model.ClientAgreementRules.Count(); i++)
+    <div class="col col-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>
+                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeID"> Agreement</a>
+                > <span>Edit Agreement Rule</span>
+            </h1>
+        </div>
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeID })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-10"
+             data="false"
+             data-widget-editbutton="false"
+             data-widget-togglebutton="false"
+             data-widget-deletebutton="false"
+             data-widget-custombutton="false"
+             data-widget-sortable="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                <h2>@ViewBag.Title </h2>
+            </header>
+            <!-- widget div-->
+            <form action="~/Agreement/ViewAgreementRule/@Model.ClientAgreementID" method="POST" id="update-form">
+                <div>
+                    @Html.HiddenFor(m => m.ClientAgreementID)
+                    @Html.HiddenFor(m => m.ClientProgrammeID)
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as drop downSS edit box -->
+                    </div>
+                    <!-- end widget edit box -->
+                    <!-- widget content -->
+                    <div class="smart-form">
+                        @for (var i = 0; i < Model.ClientAgreementRulesTypeRate.Count(); i++)
                         {
-                            @Html.TextBoxFor(m => m.ClientAgreementRules[i])
-                        }*@
-
-                    @*@foreach (var item in Model.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
-                        {*@
-                    @for (var i = 0; i < Model.ClientAgreementRules.Count()-45; i++)
-                    {
-                        <fieldset>
-                            <div class="row">
-                                <section class="col col-3 font-md hidden">
-                                    <strong>
+                            <fieldset>
+                                <div class="row">
+                                    <section class="col col-4 font-md hidden">
                                         @Html.TextBoxFor(m => m.ClientAgreementRules[i].ClientAgreementRuleID)
-                                    </strong>
-                                </section>
-                                <section class="col col-3 font-md">
-                                    <strong>
+                                    </section>
+                                    <section class="col col-4 font-md">
                                         @Html.DisplayFor(m => m.ClientAgreementRules[i].Description)
-                                    </strong>
-                                </section>
-                                <section class="col col-3 font-md">
-                                    @Html.TextBoxFor(m => m.ClientAgreementRules[i].Value)
-                                </section>
+                                    </section>
+                                    <section class="col col-4 font-md">
+                                        @Html.TextBoxFor(m => m.ClientAgreementRules[i].Value)
+                                    </section>
 
-                            </div>
-                        </fieldset>
-                    }
+                                </div>
+                            </fieldset>
+                        }
+                    </div>
 
+                    <div class="col-md-10">
+                    </div>
+                    <div class="col-md-10">
+                        <button type="submit" value="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Update Premium</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeID" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                    </div>
+                    <!-- end widget content -->
                 </div>
-
-                @*<div class="col-md-10">
-                        @Html.DisplayFor(m => m.ClientAgreementRules)
-                    </div>*@
-                <div class="col-md-10">
-                </div>
-                <div class="col-md-10">
-                    <button type="submit" value="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Update Premium</button>
-                </div>
-                <!-- end widget content -->
-            </div>
-            <!-- end widget div -->
+                <!-- end widget div -->
 
 
-        </form>
+            </form>
+        </div>
+        <!-- end widget -->
     </div>
-    <!-- end widget -->
-</div>
 <!-- WIDGET END -->
 
 

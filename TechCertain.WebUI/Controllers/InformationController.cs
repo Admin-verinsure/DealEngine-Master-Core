@@ -1046,6 +1046,7 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 model.Id = Id;
+                model.ClientProgrammeID = clientProgramme.Id;
             }
             catch (Exception ex)
             {
@@ -1069,6 +1070,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsChange = sheet.IsChange;
             model.SectionView = name;
             model.Id = id;
+            model.ClientProgrammeID = clientProgramme.Id;
             var user = await CurrentUser();
             try
             {

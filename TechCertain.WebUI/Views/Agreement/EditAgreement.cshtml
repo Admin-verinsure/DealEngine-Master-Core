@@ -3,90 +3,122 @@
 @using TechCertain.WebUI.Helpers.CustomHtml
 
 <!-- NEW WIDGET START -->
-<div class="col col-12">
-    <!-- Widget ID (each widget will need unique ID)-->
-    <div class="jarviswidget" id="wid-id-10"
-         data="false"
-         data-widget-editbutton="false"
-         data-widget-togglebutton="false"
-         data-widget-deletebutton="false"
-         data-widget-custombutton="false"
-         data-widget-sortable="false">
-        <header>
-            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-            <h2>@ViewBag.Title </h2>
-        </header>
-        <!-- widget div-->
-        <form action="~/Agreement/EditAgreement/@Model.ClientAgreementId" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-            <div>
-                @Html.HiddenFor(m => m.ClientAgreementId)
-                @Html.HiddenFor(m => m.InformationSheetId)
+    <div class="col col-12">
 
-                <fieldset>
-                    <div class="row">
-                        <section class="col col-3">
-                            <strong>Policy Start Date: </strong>
-                        </section>
-                        <section class="col col-9">
-                            @Html.TextBoxFor(m => m.StartDate)@*.Placeholder("Start Date (dd/MM/yyyy)").Value(@Html.DisplayFor(m => m.StartDate))*@
-                        </section>
-                    </div>
-                    <div class="row">
-                        <section class="col col-3">
-                            <strong>Policy End Date: </strong>
-                        </section>
-                        <section class="col col-9">
-                            @Html.TextBoxFor(m => m.EndDate)@*.Placeholder("End Date (dd/MM/yyyy)").Value(@Html.DisplayFor(m => m.EndDate))*@
-                        </section>
-                    </div>
-                    <div class="row">
-                        <section class="col col-3">
-                            <strong>Client Number #: </strong>
-                        </section>
-                        <section class="col col-9">
-                            @Html.TextBoxFor(m => m.ClientNumber)@*.Placeholder("Client Number").Value(@Html.DisplayFor(m => m.ClientNumber))*@
-                        </section>
-                    </div>
-                    <div class="row">
-                        <section class="col col-3">
-                            <strong>Insurer Policy #: </strong>
-                        </section>
-                        <section class="col col-9">
-                            @Html.TextBoxFor(m => m.PolicyNumber)@*.Placeholder("Policy Number").Value(@Html.DisplayFor(m => m.PolicyNumber))*@
-                        </section>
-                    </div>
-                    <div class="row">
-                        <section class="col col-3">
-                            <strong>Brokerage Rate: </strong>
-                        </section>
-                        <section class="col col-9">
-                            @Html.TextBoxFor(m => m.BrokerageRate)@*.Placeholder("Brokerage Rate").Value(@Html.DisplayFor(m => m.BrokerageRate))*@
-                        </section>
-                    </div>
-                    <div class="row">
-                        <section class="col col-3">
-                            <strong>Administration Fee: </strong>
-                        </section>
-                        <section class="col col-9">
-                            @Html.TextBoxFor(m => m.AdministrationFee)@*.Placeholder("Administration Fee").Value(@Html.DisplayFor(m => m.AdministrationFee))*@
-                        </section>
-                    </div>
-                </fieldset>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>
+                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
+                > <span>Edit Agreement</span>
+            </h1>
+        </div>
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
 
-                <div class="col-md-10">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-10"
+             data="false"
+             data-widget-editbutton="false"
+             data-widget-togglebutton="false"
+             data-widget-deletebutton="false"
+             data-widget-custombutton="false"
+             data-widget-sortable="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                <h2>@ViewBag.Title </h2>
+            </header>
+            <!-- widget div-->
+            <form action="~/Agreement/EditAgreement/@Model.ClientAgreementId" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                <div>
+                    @Html.HiddenFor(m => m.ClientAgreementId)
+                    @Html.HiddenFor(m => m.InformationSheetId)
+
+                    <fieldset>
+                        <div class="row">
+                            <section class="col col-3">
+                                <label class="label required"><strong>Policy Start Date: </strong></label>
+                            </section>
+                            <section class="col col-9">
+                                <label class="input">
+                                    <i class="icon-append fa fa-edit"></i>
+                                    @Html.TextBoxFor(m => m.StartDate)
+                                </label>
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col col-3">
+                                <label class="label required"><strong>Policy End Date: </strong></label>
+                            </section>
+                            <section class="col col-9">
+                                <label class="input">
+                                    <i class="icon-append fa fa-edit"></i>
+                                    @Html.TextBoxFor(m => m.EndDate)
+                                </label>
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col col-3">
+                                <label class="label required"><strong>Client Number #: </strong></label>
+                            </section>
+                            <section class="col col-9">
+                                <label class="input">
+                                    <i class="icon-append fa fa-edit"></i>
+                                    @Html.TextBoxFor(m => m.ClientNumber)
+                                </label>
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col col-3">
+                                <label class="label required"><strong>Insurer Policy #: </strong></label>
+                            </section>
+                            <section class="col col-9">
+                                <label class="input">
+                                    <i class="icon-append fa fa-edit"></i>
+                                    @Html.TextBoxFor(m => m.PolicyNumber)
+                                </label>
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col col-3">
+                                <label class="label required"><strong>Brokerage Rate: </strong></label>
+                            </section>
+                            <section class="col col-9">
+                                <label class="input">
+                                    <i class="icon-append fa fa-edit"></i>
+                                    @Html.TextBoxFor(m => m.BrokerageRate)
+                                </label>
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col col-3">
+                                <label class="label required"><strong>Administration Fee: </strong></label>
+                            </section>
+                            <section class="col col-9">
+                                <label class="input">
+                                    <i class="icon-append fa fa-edit"></i>
+                                    @Html.TextBoxFor(m => m.AdministrationFee)
+                                </label>
+                            </section>
+                        </div>
+                    </fieldset>
+
+                    <div class="col-md-10">
+                    </div>
+                    <div class="col-md-10">
+                        <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                    </div>
+                    <!-- end widget content -->
                 </div>
-                <div class="col-md-10">
-                    <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>
-                </div>
-                <!-- end widget content -->
-            </div>
-            <!-- end widget div -->
+                <!-- end widget div -->
 
 
-        </form>
+            </form>
+        </div>
+        <!-- end widget -->
     </div>
-    <!-- end widget -->
-</div>
 <!-- WIDGET END -->
 
 
