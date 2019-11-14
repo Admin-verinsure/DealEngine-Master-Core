@@ -994,7 +994,20 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
 
-            model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+            //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+            var businessactivity = new List<BusinessActivityViewModel>();
+            foreach (var ba in _busActivityRespository.FindAll())
+            {
+                businessactivity.Add(new BusinessActivityViewModel
+                {
+                    Classification = ba.Classification,
+                    AnzsciCode = ba.AnzsciCode,
+                    Description = ba.Description
+
+                });
+            }
+
+            model.BusinessActivities = businessactivity;
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
 
             //_taskingService.CreateTaskFor (CurrentUser(), sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
@@ -1316,7 +1329,22 @@ namespace TechCertain.WebUI.Controllers
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
 
-                model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+                //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+
+                var businessactivity = new List<BusinessActivityViewModel>();
+                foreach (var ba in _busActivityRespository.FindAll())
+                {
+                    businessactivity.Add(new BusinessActivityViewModel
+                    {
+                        Classification = ba.Classification,
+                        AnzsciCode = ba.AnzsciCode,
+                        Description = ba.Description
+
+                    });
+                }
+               
+                model.BusinessActivities = businessactivity;
+
                 model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             }
             catch (Exception ex)
@@ -1749,7 +1777,21 @@ namespace TechCertain.WebUI.Controllers
             model.UserDetails = userDetails;
 
             var businessActivity = await _businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id);
-            model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(businessActivity);
+            //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(businessActivity);
+
+            var businessactivity = new List<BusinessActivityViewModel>();
+            foreach (var ba in _busActivityRespository.FindAll())
+            {
+                businessactivity.Add(new BusinessActivityViewModel
+                {
+                    Classification = ba.Classification,
+                    AnzsciCode = ba.AnzsciCode,
+                    Description = ba.Description
+
+                });
+            }
+
+            model.BusinessActivities = businessactivity;
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             model.Status = sheet.Status;
 
