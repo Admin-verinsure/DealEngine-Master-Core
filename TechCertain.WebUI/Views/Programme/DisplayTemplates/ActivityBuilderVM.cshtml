@@ -12,7 +12,7 @@
                 <label><strong>Public Activities</strong></label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                    <select class="cselect form-control" data-placeholder="Activities" id="Activities" multiple="multiple" name="@Html.NameFor(m => m.SelectedActivities)" style="display: none;" >
+                    <select class="cselect form-control" data-placeholder="Activities" id="Activities" multiple="multiple" name="@Html.NameFor(m => m.SelectedActivities)" style="display: none;">
                         @foreach (var Activity in Model.Activities)
                         {
                             <option value="@Activity.Value">@Activity.Text</option>
@@ -27,10 +27,12 @@
             <div class="form-group">
                 <div class="smart-form">
                     <div class="input-group">
-                        <label class="button">
-                            <button onclick="ShowActivityModel()" class="btn-md" id="ShowActivity">Add Custom Business Activity</button>
+                        <label>
+                            <a href="#myActivityModal" id="ShowActivity" aria-hidden="true" style="color:red" data-toggle="modal">Add Custom Business Activity</a>
+
+                            @*<button onclick="ShowActivityModel()" class="btn-md" id="ShowActivity">Add Custom Business Activity</button>*@
                             @*@Html.Bootstrap().Button().Text("").HtmlAttributes(new { onclick = "ShowActivityModel();" }).Class("btn-md")*@
-                            <i></i>Add Custom Business Activity
+                            @*<i></i>Add Custom Business Activity*@
                         </label>
                     </div>
                 </div>
@@ -52,7 +54,70 @@
 </div>
 
 
-<div id="myActivityModal" class="modal fade " role="dialog">
+<!-- Edit Boat -->
+<div id="myModal" class="modal" role="dialog">
+
+    <!-- Modal content-->
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" style="color:blue; font-size:22px">Edit Vessel</h4>
+        </div>
+        <div class="modal-body">
+            <form id="ProdForm">
+
+                <div class="form-group">
+                    <label for="MaxSumInsured">Vessel Name</label>
+
+                    <input type="text" class="form-control " id="Boat_Name" name="Boat_Name" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label for="MaxSumInsured">Vessel Make</label>
+
+                    <input type="text" class="form-control " id="BoatMake" name="BoatMake" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="MaxSumInsured">Vessel Model</label>
+
+                    <input type="text" class="form-control " id="BoatModel" name="BoatModel" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="MaxSumInsured">Vessel Sum Insured</label>
+                    <input type="text" class="form-control" id="SumInsured" name="SumInsured" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="Excess">Vessel Excess</label>
+                    <input type="text" class="form-control" id="Excess" name="Excess">
+                    <p class="validationContainer" id="validateBoatExcess"></p>
+
+                </div>
+                <div class="form-group">
+                    <label for="Premium">Vessel Total Premium</label>
+                    <input type="text" class="form-control" id="Premium" name="Premium">
+                    <p class="validationContainer" id="validateBoatPremium"></p>
+
+                </div>
+                <div class="form-group">
+                    <label for="Premium">Vessel FSL</label>
+                    <input type="text" class="form-control" id="FSL" name="FSL">
+                    <p class="validationContainer" id="validateBoatFSL"></p>
+
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <input type="Reset" value="Submit" class="btn btn-success" id="btnSubmit">
+
+            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+        </div>
+    </div>
+</div>
+
+
+<div id="myActivityModal" class="modal" role="dialog">
 
     <!-- Modal content-->
 
