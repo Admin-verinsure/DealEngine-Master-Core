@@ -35,6 +35,7 @@ namespace TechCertain.WebUI.Models.Programme
         public virtual decimal TaxRate { get; set; }
         public virtual Boolean IsPublic { get; set; }
         public virtual Boolean UsesEGlobal { get; set; }
+        public virtual string PolicyNumberPrefixString { get; set; }
 
         //public IList<EmailTemplates> emailTemplate { get; set; }
 

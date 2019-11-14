@@ -1591,6 +1591,10 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
+                            if (programme.BaseProgramme.PolicyNumberPrefixString != "")
+                            {
+                                agreement.PolicyNumber = programme.BaseProgramme.PolicyNumberPrefixString + "-" + agreement.ReferenceId;
+                            }
                             await uow.Commit();
                         }
                     }
