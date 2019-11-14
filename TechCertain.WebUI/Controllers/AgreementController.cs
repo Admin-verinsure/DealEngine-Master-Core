@@ -173,6 +173,7 @@ namespace TechCertain.WebUI.Controllers
             //  model.ClientAgreementId = id;
             model.InformationSheetId = sheetId;
             model.ClientAgreementId = agreementId;
+            model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
 
             model.Referrals = new List<ClientAgreementReferral>();
             foreach (var terms in agreement.ClientAgreementReferrals)
@@ -282,6 +283,7 @@ namespace TechCertain.WebUI.Controllers
 
             model.InformationSheetId = answerSheet.Id;
             model.ClientAgreementId = agreement.Id;
+            model.ClientProgrammeId = programme.Id;
 
             model.CancellNotes = agreement.CancelledNote;
             model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
@@ -333,6 +335,7 @@ namespace TechCertain.WebUI.Controllers
 
             model.InformationSheetId = answerSheet.Id;
             model.ClientAgreementId = agreement.Id;
+            model.ClientProgrammeId = programme.Id;
 
             model.DeclineNotes = agreement.InsurerDeclinedComment;
 
@@ -759,10 +762,17 @@ namespace TechCertain.WebUI.Controllers
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
-                model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2");
+                model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
                 model.CurrencySymbol = "fa fa-dollar";
-                model.ClientNumber = agreement.ClientNumber;
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal)
+                {
+                    model.ClientNumber = agreement.ClientInformationSheet.Programme.EGlobalBranchCode + "-" + agreement.ClientInformationSheet.Programme.EGlobalClientNumber;
+                } else
+                {
+                    model.ClientNumber = agreement.ClientNumber;
+                }
                 model.PolicyNumber = agreement.PolicyNumber;
+
                 // MV
                 model.HasVehicles = answerSheet.Vehicles.Count > 0;
                 if (model.HasVehicles)
@@ -1078,12 +1088,17 @@ namespace TechCertain.WebUI.Controllers
             if (model.HasRules)
             {
                 var clientAgreementRules = new AgreementRulesViewModel();
+                var clientAgreementRulesTypeRate = new AgreementRulesViewModel();
                 foreach (ClientAgreementRule cr in agreement.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
                 {
                     clientAgreementRules.Add(new ClientAgreementRuleViewModel { ClientAgreementRuleID = cr.Id, Description = cr.Description, Value = cr.Value });
+                    if(cr.RuleCategory == "uwrate")
+                    {
+                        clientAgreementRulesTypeRate.Add(new ClientAgreementRuleViewModel { ClientAgreementRuleID = cr.Id, Description = cr.Description, Value = cr.Value });
+                    }
                 }
                 model.ClientAgreementRules = clientAgreementRules;
-
+                model.ClientAgreementRulesTypeRate = clientAgreementRulesTypeRate;
             }
 
             ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;

@@ -186,10 +186,10 @@
                                 @item.BoatModel
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.TermLimit.ToString("C0")
+                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Excess.ToString("C0")
+                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                             </td>
                         </tr>
 
@@ -229,7 +229,7 @@
                                 @item.VehicleModel
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.SumInsured.ToString("C0")
+                                @item.SumInsured.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                             </td>
 
                         </tr>

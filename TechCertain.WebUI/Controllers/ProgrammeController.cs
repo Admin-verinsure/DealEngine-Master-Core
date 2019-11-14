@@ -609,6 +609,7 @@ namespace TechCertain.WebUI.Controllers
             model.EGlobalClientStatus = programme.EGlobalClientStatus;
             model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
             model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
+            model.clientprogramme = programme;
 
             return View(model);
         }
