@@ -1,13 +1,18 @@
 ﻿@model TechCertain.WebUI.Models.ProgrammeItem
 <!-- MAIN CONTENT -->
-<div id="content">
-    <div class="row">
-        <!-- NEW WIDGET START -->
-        <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div id="content">
+        <span>
+            <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+        </span>
 
-            <!-- Widget ID (each widget will need unique ID)-->
-            <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
-                <!-- widget options:
+
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
+                    <!-- widget options:
                 usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
                 data-widget-colorbutton="false"
@@ -20,91 +25,93 @@
                 data-widget-sortable="false"
 
                 -->
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-                    <h2>Information Sheets for Programme </h2>
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                        <h2>Information Sheets for Programme </h2>
 
-                </header>
+                    </header>
 
-                <!-- widget div-->
-                <div>
+                    <!-- widget div-->
+                    <div>
 
-                    <!-- widget edit box -->
-                    <div class="jarviswidget-editbox">
-                        <!-- This area used as dropdown edit box -->
+                        <!-- widget edit box -->
+                        <div class="jarviswidget-editbox">
+                            <!-- This area used as dropdown edit box -->
 
-                    </div>
-                    <!-- end widget edit box -->
-                    <!-- widget content -->
-                    <div class="widget-body no-padding">
+                        </div>
+                        <!-- end widget edit box -->
+                        <!-- widget content -->
+                        <div class="widget-body no-padding">
 
-                        <table id="tableProgrammeItems" class="table table-striped table-bordered table-hover" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Client Name</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Deals)
-                                {
+                            <table id="tableProgrammeItems" class="table table-striped table-bordered table-hover" width="100%">
+                                <thead>
                                     <tr>
-                                        <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
-                                        <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
-                                        <td>
-                                            @if (item.Status.StartsWith("Bound"))
-                                            {
-                                                @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
-                                                <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
-                                                @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
-                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                {
-                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                }
-                                                if (item.NextInfoSheet == false)
-                                                {
-                                                    <a href="#myChangeModal" aria-hidden="true" style="color:green" data-toggle="modal"
-                                                       data-dealitem-id="@item.Id"><i class="fa fa-pencil"></i> Update</a>
-                                                }
-
-                                                @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
-                                            }
-                                            else if (item.Status == "Started")
-                                            {
-                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                            }
-                                            else if (item.Status.StartsWith("Submitted"))
-                                            {
-                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                {
-                                                    <a class="btn btn-primary btn-xs" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
-                                                }
-                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                {
-                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                }
-                                            }
-                                            else if (item.Status == "Not Started")
-                                            {
-                                                //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                            }
-                                        </td>
+                                        <th>Client Name</th>
+                                        <th>Status</th>
+                                        <th></th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Deals)
+                                    {
+                                        <tr>
+                                            <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
+                                            <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
+                                            <td>
+                                                @if (item.Status.StartsWith("Bound"))
+                                                {
+                                                    @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+                                                    @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
+                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
+                                                    @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
+                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                    {
+                                                        <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                    }
+                                                    if (item.NextInfoSheet == false)
+                                                    {
+                                                        @*<a href="#myChangeModal" aria-hidden="true" style="color:green" data-toggle="modal"
+                                                        data-dealitem-id="@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+                                                    }
+
+                                                    @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+                                                }
+                                                else if (item.Status == "Started")
+                                                {
+                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                }
+                                                else if (item.Status.StartsWith("Submitted"))
+                                                {
+                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                    {
+                                                        <a class="btn btn-primary btn-xs" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
+                                                    }
+                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                    {
+                                                        <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                    }
+                                                }
+                                                else if (item.Status == "Not Started")
+                                                {
+                                                    //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </article>
+            </article>
+        </div>
     </div>
-</div>
 <!-- END MAIN CONTENT -->
 <!-- Edit Boat -->
 <!-- Edit Boat -->
+
 <div id="myChangeModal" class="modal" role="dialog">
 
     <!-- Modal content-->
@@ -119,13 +126,13 @@
             <form id="ProdForm">
 
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <input class="form-control b " type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
+                    <input class="form-control b hidden" type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
                 </section>
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="Excess">Change Type</label>
+                        <label for="changeType">Change Type</label>
                     </section>
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
 
@@ -147,7 +154,7 @@
                                 <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
                                 <option Value="TC_other">Other Amendment</option>
                                 <option Value="TC_amendOneTimeEvents">One Time Event</option>
-</select>
+                             </select>
                         </div>
                     </section>
                     <p class="validationContainer" id="validateChangeType"></p>
@@ -157,7 +164,7 @@
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="Excess">Reason</label>
+                        <label for="Reason">Reason</label>
                     </section>
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <div class="form-group">
@@ -183,7 +190,7 @@
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="Excess">Reason Description</label>
+                        <label for="ReasonDesc">Reason Description</label>
                     </section>
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <label class="textarea">
@@ -196,7 +203,7 @@
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="Excess">Effective Date</label>
+                        <label for="EffectiveDate">Effective Date</label>
                     </section>
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label for="Excess">Effective Date</label>

@@ -95,6 +95,7 @@ namespace TechCertain.WebUI.Models
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
         public string Advisory { get; set; }
         //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
+        public Guid ClientProgrammeID { get; set; }
 
     }
 
@@ -123,7 +124,7 @@ namespace TechCertain.WebUI.Models
 
         public int Position { get; set; }
     }
-
+    
     public class MilestoneAdvisoryVM
     {
         public Guid Id { get; set; }

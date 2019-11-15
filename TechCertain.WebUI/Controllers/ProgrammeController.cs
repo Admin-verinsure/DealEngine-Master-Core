@@ -609,6 +609,7 @@ namespace TechCertain.WebUI.Controllers
             model.EGlobalClientStatus = programme.EGlobalClientStatus;
             model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
             model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
+            model.clientprogramme = programme;
 
             return View(model);
         }
@@ -890,6 +891,43 @@ namespace TechCertain.WebUI.Controllers
             ViewBag.Title = "Add/Edit Programme Email Template";
 
             return View("ProgrammeRules", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageProgramme(Guid Id)
+        {
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
+
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+
+            model.Id = Id;
+            model.programmeName = programme.Name;
+            model.IsPublic = programme.IsPublic;
+            model.TaxRate = programme.TaxRate;
+            model.UsesEGlobal = programme.UsesEGlobal;
+            model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
+
+            return View("ManageProgramme", model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageProgramme(ProgrammeInfoViewModel model)
+        {
+            Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
+
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                programme.Name = model.programmeName;
+                programme.IsPublic = model.IsPublic;
+                programme.UsesEGlobal = model.UsesEGlobal;
+                programme.TaxRate = model.TaxRate;
+                programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
+
+                await uow.Commit();
+            }
+
+            return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
         }
 
         //[HttpPost]

@@ -994,7 +994,20 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
 
-            model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+            //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+            var businessactivity = new List<BusinessActivityViewModel>();
+            foreach (var ba in _busActivityRespository.FindAll())
+            {
+                businessactivity.Add(new BusinessActivityViewModel
+                {
+                    Classification = ba.Classification,
+                    AnzsciCode = ba.AnzsciCode,
+                    Description = ba.Description
+
+                });
+            }
+
+            model.BusinessActivities = businessactivity;
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
 
             //_taskingService.CreateTaskFor (CurrentUser(), sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
@@ -1033,6 +1046,7 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 model.Id = Id;
+                model.ClientProgrammeID = clientProgramme.Id;
             }
             catch (Exception ex)
             {
@@ -1056,6 +1070,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsChange = sheet.IsChange;
             model.SectionView = name;
             model.Id = id;
+            model.ClientProgrammeID = clientProgramme.Id;
             var user = await CurrentUser();
             try
             {
@@ -1314,7 +1329,22 @@ namespace TechCertain.WebUI.Controllers
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
 
-                model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+                //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
+
+                var businessactivity = new List<BusinessActivityViewModel>();
+                foreach (var ba in _busActivityRespository.FindAll())
+                {
+                    businessactivity.Add(new BusinessActivityViewModel
+                    {
+                        Classification = ba.Classification,
+                        AnzsciCode = ba.AnzsciCode,
+                        Description = ba.Description
+
+                    });
+                }
+               
+                model.BusinessActivities = businessactivity;
+
                 model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             }
             catch (Exception ex)
@@ -1747,7 +1777,21 @@ namespace TechCertain.WebUI.Controllers
             model.UserDetails = userDetails;
 
             var businessActivity = await _businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id);
-            model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(businessActivity);
+            //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(businessActivity);
+
+            var businessactivity = new List<BusinessActivityViewModel>();
+            foreach (var ba in _busActivityRespository.FindAll())
+            {
+                businessactivity.Add(new BusinessActivityViewModel
+                {
+                    Classification = ba.Classification,
+                    AnzsciCode = ba.AnzsciCode,
+                    Description = ba.Description
+
+                });
+            }
+
+            model.BusinessActivities = businessactivity;
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             model.Status = sheet.Status;
 
@@ -1940,28 +1984,33 @@ namespace TechCertain.WebUI.Controllers
             return Content("/Agreement/ViewPayment/" + sheet.Programme.Id);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> UpdateInformationReason(ChangeReason changeReason)
+        //{
+        //    var user = await CurrentUser();
+        //    ChangeReason change = _changeProcessService.CreateChangeReason(user,changeReason);
+
+        //    TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
+        //    change.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
+        //    //change.EffectiveDate = DateTime.Parse(changeReason.EffectiveDate., System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
+        //               return Redirect("/Information/UpdateInformation/"+new { id=changeReason.DealId,Change=change } );
+        //}
+
         [HttpPost]
-        public async Task<IActionResult> UpdateInformationReason(ChangeReason changeReason)
+        public async Task<IActionResult> UpdateInformation( ChangeReason changeReason)
         {
             var user = await CurrentUser();
-            ChangeReason change = _changeProcessService.CreateChangeReason(user,changeReason);
+            ChangeReason change = _changeProcessService.CreateChangeReason(user, changeReason);
 
-            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
             change.EffectiveDate = DateTime.Parse(LocalizeTime(changeReason.EffectiveDate, "d"));
+
             _changeReasonRepository.AddAsync(change);
-            //change.EffectiveDate = DateTime.Parse(changeReason.EffectiveDate., System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
-                       return Redirect("/Information/UpdateInformation/"+changeReason.DealId );
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateInformation(Guid id)
-        {
-            var user = await CurrentUser();
-            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(changeReason.DealId);
             if (clientProgramme == null)
-                throw new Exception("ClientProgramme (" + id + ") doesn't belong to User " + user.UserName);
+                throw new Exception("ClientProgramme (" + changeReason.DealId + ") doesn't belong to User " + user.UserName);
 
-            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user);
+            ClientProgramme newClientProgramme = await _programmeService.CloneForUpdate(clientProgramme, user,change);
 
             await _programmeService.Update(newClientProgramme);
 

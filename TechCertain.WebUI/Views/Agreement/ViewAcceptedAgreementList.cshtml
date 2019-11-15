@@ -1,116 +1,121 @@
 ﻿@model BaseListViewModel<TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel>
 <!-- MAIN CONTENT -->
-<div id="content">
-    <div class="row">
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-            <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Agreement <span>> @ViewBag.Title</span></h1>
-        </div>
-    </div>
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <!-- NEW WIDGET START -->
-        <div class="col col-12">
-            <!-- Widget ID (each widget will need unique ID)-->
-            <div class="jarviswidget" id="wid-id-10"
-                 data="false"
-                 data-widget-collapsed="false"
-                 data-widget-colorbutton="false"
-                 data-widget-custombutton="false"
-                 data-widget-deletebutton="false"
-                 data-widget-editbutton="false"
-                 data-widget-fullscreenbutton="false"
-                 data-widget-togglebutton="false"
-                 data-widget-sortable="false">
-
-                <header>
-                </header>
-                <!-- widget div-->
-                <div>
-                    <!-- widget content -->
-
-                    <div class="smart-form no-padding">
-                        @foreach (var item in Model)
-                        {
-                            if (item.CurrentUser.PrimaryOrganisation.IsBroker || item.CurrentUser.PrimaryOrganisation.IsTC)
-                            {
-                                <a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
-                                <a href="~/Agreement/EditAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement</a>
-                                <a href="~/Agreement/ViewAgreementRule/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Rules</a>
-                                <a href="~/Agreement/ViewAgreementEndorsement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Endorsements</a>
-                                <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
-                                <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
-                                if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
-                                    item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
-                                {
-                                    <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
-                                }
-                                if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
-                                {
-                                    <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Undecline Agreement</a>
-                                }
-                                if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                    (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
-                                {
-                                    <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Cancell Agreement</a>
-                                }
-                                <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
-
-                            }
-                            else if (item.CurrentUser.PrimaryOrganisation.IsInsurer)
-                            {
-                                <a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
-                                <a href="~/Agreement/ViewAgreementEndorsement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Endorsements</a>
-                                <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
-                                <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
-                                if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
-                                    item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
-                                {
-                                    <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
-                                }
-                                if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
-                                {
-                                    <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Undecline Agreement</a>
-                                }
-                                if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                    (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
-                                {
-                                    <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Cancell Agreement</a>
-                                }
-                            }
-
-                            @Html.Partial("Partials/ViewAgreement", item)
-
-                            if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                                    (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
-                            {
-                                <h3><strong>Documents </strong></h3>
-                                @Html.Partial("Partials/ViewAgreementDocs", item.Documents)
-                                <h3><strong>Options </strong></h3>
-
-                                <div class="widget-body widget-hide-overflow">
-                                    <fieldset>
-                                        <div class="row">
-                                            <section class="col col-12">
-                                                <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                                                <a class="btn txt-color-white bg-color-green btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
-                                            </section>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                            }
-
-
-                        }
-                    </div>
-                    <!-- end widget content -->
-                </div>
-                <!-- end widget div -->
+    <div id="content">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Agreement <span>> @ViewBag.Title</span></h1>
             </div>
-            <!-- end widget -->
         </div>
-        <!-- WIDGET END -->
-    </section>
-</div>
+
+        <span>
+            <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+        </span>
+
+        <!-- widget grid -->
+        <section id="widget-grid" class="">
+            <!-- NEW WIDGET START -->
+            <div class="col col-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-10"
+                     data="false"
+                     data-widget-collapsed="false"
+                     data-widget-colorbutton="false"
+                     data-widget-custombutton="false"
+                     data-widget-deletebutton="false"
+                     data-widget-editbutton="false"
+                     data-widget-fullscreenbutton="false"
+                     data-widget-togglebutton="false"
+                     data-widget-sortable="false">
+
+                    <header>
+                    </header>
+                    <!-- widget div-->
+                    <div>
+                        <!-- widget content -->
+
+                        <div class="smart-form no-padding">
+                            @foreach (var item in Model)
+                            {
+                                if (item.CurrentUser.PrimaryOrganisation.IsBroker || item.CurrentUser.PrimaryOrganisation.IsTC)
+                                {
+                                    <a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
+                                    <a href="~/Agreement/EditAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement</a>
+                                    <a href="~/Agreement/ViewAgreementRule/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Rules</a>
+                                    <a href="~/Agreement/ViewAgreementEndorsement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Endorsements</a>
+                                    <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
+                                    <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
+                                    if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
+                                        item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
+                                    {
+                                        <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
+                                    }
+                                    if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
+                                    {
+                                        <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Undecline Agreement</a>
+                                    }
+                                    if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                    {
+                                        <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Cancell Agreement</a>
+                                    }
+                                    <a href="@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = @item.ClientProgrammeId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Billing Information Configuration</a>
+
+                                }
+                                else if (item.CurrentUser.PrimaryOrganisation.IsInsurer)
+                                {
+                                    <a href="~/Information/ViewProgrammeDetails/@item.ClientProgrammeId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> View Information Sheet</a>
+                                    <a href="~/Agreement/ViewAgreementEndorsement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Endorsements</a>
+                                    <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
+                                    <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
+                                    if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
+                                        item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
+                                    {
+                                        <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
+                                    }
+                                    if (item.Status == "Declined by Insurer" || item.Status == "Declined by Insured")
+                                    {
+                                        <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Undecline Agreement</a>
+                                    }
+                                    if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                    {
+                                        <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Cancell Agreement</a>
+                                    }
+                                }
+
+                                @Html.Partial("Partials/ViewAgreement", item)
+
+                                if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+                                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                                {
+                                    <h3><strong>Documents </strong></h3>
+                                    @Html.Partial("Partials/ViewAgreementDocs", item.Documents)
+                                    <h3><strong>Options </strong></h3>
+
+                                    <div class="widget-body widget-hide-overflow">
+                                        <fieldset>
+                                            <div class="row">
+                                                <section class="col col-12">
+                                                    <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
+                                                    <a class="btn txt-color-white bg-color-green btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
+                                                </section>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                }
+
+
+                            }
+                        </div>
+                        <!-- end widget content -->
+                    </div>
+                    <!-- end widget div -->
+                </div>
+                <!-- end widget -->
+            </div>
+            <!-- WIDGET END -->
+        </section>
+    </div>
 
 
 @section pagespecific {

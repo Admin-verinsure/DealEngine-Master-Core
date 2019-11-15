@@ -39,7 +39,7 @@
                                                                 {
                                                                     <div class="row">
                                                                         <label class="btn btn-outline-primary" id="milestoneType" for="@activity.Id">
-                                                                            <input type="radio" id="@activity.Id" name="activityRadio" /> @activity.Name
+                                                                            <input type="checkbox" id="@activity.Id" name="activityRadio" /> @activity.Name
                                                                         </label>
                                                                     </div>
                                                                 }
@@ -209,6 +209,7 @@
         }
 
         function LoadMilestoneActivity(button) {
+            debugger;
             var activityId = getActivityId();
             var programmeId = $('#ProgrammeId').val();
             var programmeProcessId = $('#ProgrammeProcessId').val();
