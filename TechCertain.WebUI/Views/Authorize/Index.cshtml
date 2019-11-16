@@ -1,12 +1,18 @@
-﻿<div class="container-fluid">
+﻿@model TechCertain.WebUI.Models.Authorization.AuthorizeViewModel
+<div class="container-fluid">
     <div class="row">
         <div class="jumbotron">
-            <h1 class="display-4">Hello, world!</h1>
-            <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+            <p class="lead">Permissions</p>
             <hr class="my-4">
-            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+            <p>Set users permissions with Create/Edit/Delete.</p>
             <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
         </div>
+    </div>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" id="Success">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     <div class="row">
         <div class="accordion" id="accordionExample">
@@ -14,28 +20,31 @@
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
                         <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Collapsible Group Item #1
+                            Roles
                         </button>
                     </h2>
                 </div>
-
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        <h3>Example Text</h3>
+                        Role-based authorization checks are declarative—the developer embeds them within their code, against a controller or an action within a controller, specifying roles which the current user must be a member of to access the requested resource.
                     </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Collapsible Group Item #2
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                     <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        <div class="container" id="AddRoleForm" style="display:none">
+                            @await Html.PartialAsync("AddRoleForm", Model)
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="container" id="UpdateRoleForm" style="display:none">
+                            @await Html.PartialAsync("UpdateRoleForm", Model)
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-primary" onclick="AddRole()">Add</button>
+                            <button type="button" class="btn btn-primary" onclick="EditRole()">Update/Edit</button>
+                            <button type="button" class="btn btn-primary">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,13 +52,61 @@
                 <div class="card-header" id="headingThree">
                     <h2 class="mb-0">
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Collapsible Group Item #3
+                            Claim/Rules
                         </button>
                     </h2>
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                     <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        <div class="container">
+                            <div class="card">
+                                <div class="card-header">
+                                    Claims
+                                </div>
+                                <div class="card-body">
+                                    <div class="container" id="claimList">
+                                        @await Html.PartialAsync("GetClaimList", Model)
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-primary" href="~/Authorize/Index">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-primary" onclick="ShowClaim()">Create</button>
+                            <button type="button" class="btn btn-primary">Edit</button>
+                            <button type="button" class="btn btn-primary">Add </button>
+                            <button type="button" class="btn btn-primary">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingfour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
+                            Add User Role 
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapsefour" class="collapse" aria-labelledby="headingfour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <h3>Example Text</h3>
+                        Add, modify or Delete a user from the application
+                    </div>
+                    <div class="card-body">
+                        <div class="container" id="AddRoleToUserForm" style="display:none">
+                            @await Html.PartialAsync("AddRoleToUserForm", Model)
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-primary" onclick="AddRoleToUser()">Add User Permissions</button>                            
+                            <button type="button" class="btn btn-primary">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,8 +115,101 @@
 </div>
 
 @section pagespecific {
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link href="~/css/bootstrap-chosen.min.css" rel="stylesheet" />
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#AddClaims').chosen({ width: '100%' });
+        });
+
+        $(document).ready(function () {
+            $('#UpdateClaims').chosen({ width: '100%' });
+        });
+
+        $(document).ready(function () {
+            $('#AddUserRoleSelect').chosen({ width: '100%' });
+        });
+
+        function ShowClaim() {
+            $("#claimList").hide();
+        }
+
+        function SaveRole() {
+            var roleName = $('#InputRoleName').val();
+            var claim = $('#AddClaims').val();
+
+            var postData = { RoleName: roleName, Claims: claim }
+            debugger;
+
+            $.ajax({
+                url: '@Url.Action("AddRole", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
+        function UpdateRole() {
+            var roleName = $('#UpdateRoleSelect').val();
+            var claim = $('#UpdateClaims').val();
+
+            var postData = { RoleName: roleName, Claims: claim }
+            debugger;
+
+            $.ajax({
+                url: '@Url.Action("UpdateRole", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
+        function SaveRoleToUser() {
+            var userId = $('#AddUser').val();
+            var roleIds = $('#AddUserRoleSelect').val();
+
+            var postData = { UserId: userId, RoleIds: roleIds }
+            debugger;
+
+            $.ajax({
+                url: '@Url.Action("SaveRoleToUser", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
+        function AddRole() {
+            $('#AddRoleForm').show();
+        }
+
+        function AddRoleToUser() {
+            $('#AddRoleToUserForm').show();
+        }        
+
+        function EditRole() {
+            $('#AddRoleForm').hide();
+            $('#UpdateRoleForm').show();
+        }
+
+    </script>
 }

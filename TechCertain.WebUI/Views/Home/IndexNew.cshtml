@@ -1,4 +1,5 @@
 ﻿@model DashboardViewModel
+
 <!-- MAIN CONTENT -->
 <div id="content">
     <div class="modal fade" id="agreementsListModal" tabindex="-1" role="dialog">
@@ -121,23 +122,7 @@
                 <!-- new widget -->
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
                      data-widget-editbutton="false" data-widget-colorbutton="false">
-                    <!-- widget options:
-        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
-
-        data-widget-collapsed="true"
-        data-widget-fullscreenbutton="false"
-        data-widget-editbutton="false"
-        data-widget-editbutton="false"
-        data-widget-fullscreenbutton="false"
-        data-widget-colorbutton="false"
-        data-widget-togglebutton="false"
-        data-widget-deletebutton="false"
-        data-widget-custombutton="false"
-        data-widget-sortable="false"
-
-
-        -->
                     <header style="background-color:#3276b1">
                         <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                         <h2> Coming Up </h2>
@@ -161,6 +146,7 @@
                             </div>
                         </div>
                         <!-- end widget edit box -->
+
                         <div class="widget-body widget-hide-overflow no-padding">
                             <!-- content goes here -->
                             <form class="smart-form">
@@ -199,336 +185,208 @@
                             </form>
                             <!-- end content -->
                         </div>
-                    </div>
-                    <!-- end widget div -->
-                </div>
-
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-tasks"
-                     data-widget-editbutton="false" data-widget-colorbutton="false">
-                    <!-- widget options:
-        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
-
-
-        data-widget-collapsed="true"
-        data-widget-fullscreenbutton="false"
-        data-widget-editbutton="false"
-        data-widget-editbutton="false"
-        data-widget-fullscreenbutton="false"
-        data-widget-colorbutton="false"
-        data-widget-togglebutton="false"
-        data-widget-deletebutton="false"
-        data-widget-custombutton="false"
-        data-widget-sortable="false"
-
-
-        -->
-                    <header style="background-color:#3276b1">
-                        <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                        <h2> Tasks </h2>
-                        <!--<div class="widget-toolbar">
-                  add: non-hidden - to disable auto hide
-
-            </div>-->
-                    </header>
-                    <!-- widget div-->
-                    <div>
-                        <hr />
-                        @if (Model.CriticalTaskItems.Count == 0 || Model.ImportantTaskItems.Count == 0)
-                        {
-                            <div class="hidden">
-                                <div class="alert alert-info alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    There are currently no pending tasks.
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="hidden">
-                                <div class="alert alert-info alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    There are currently no pending tasks.
-                                </div>
-                            </div>
-
-                        }
-                        <!-- widget edit box -->
-                        <div class="jarviswidget-editbox">
-                            <div>
-                                <label>Title:</label>
-                                <input type="text" />
-                            </div>
-                        </div>
-                        <!-- end widget edit box -->
-                        <div class="widget-body widget-hide-overflow no-padding smart-form">
-                            <!-- content goes here -->
-                            <h5 class="todo-group-title"><i class="fa fa-warning"></i> Critical Tasks (<small class="num-of-tasks">@Model.CriticalTaskItems.Count</small>)</h5>
-                            <ul id="sortable1" class="todo">
-                                @foreach (var task in Model.CriticalTaskItems)
-                                {
-                                    <li>
-                                        <span class="handle">
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="checkbox-inline">
-                                                <i></i>
-                                            </label>
-                                        </span>
-                                        <p>
-                                            @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                            <span class="date">@task.DueDate</span>
-                                        </p>
-                                    </li>
-                                }
-                            </ul>
-                            <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">@Model.ImportantTaskItems.Count</small>)</h5>
-                            <ul id="sortable2" class="todo">
-                                @foreach (var task in Model.ImportantTaskItems)
-                                {
-                                    <li>
-                                        <span class="handle">
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="checkbox-inline">
-                                                <i></i>
-                                            </label>
-                                        </span>
-                                        <p>
-                                            @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                            <span class="date">@task.DueDate</span>
-                                        </p>
-                                    </li>
-                                }
-                            </ul>
-
-                            <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">@Model.CompletedTaskItems.Count</small>)</h5>
-                            <ul id="sortable3" class="todo">
-                                @foreach (var task in Model.CompletedTaskItems)
-                                {
-                                    <li>
-                                        <span class="handle">
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="checkbox-inline">
-                                                <i></i>
-                                            </label>
-                                        </span>
-                                        <p>
-                                            @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                            <span class="date">@task.DueDate</span>
-                                        </p>
-                                    </li>
-                                }
-                            </ul>
-
-
-                            @*<h5 class="todo-group-title"><i class="fa fa-warning"></i> Critical Tasks (<small class="num-of-tasks">1</small>)</h5>
-        <ul id="sortable1" class="todo">
-            <li>
-                <span class="handle">
-                    <label class="checkbox">
-                        <input type="checkbox" name="checkbox-inline">
-                        <i></i>
-                    </label>
-                </span>
-                <p>
-                    <strong>Sarah Jane</strong> - Application submitted, clear referral [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">One of the questions in the application has raised a referral. </span>
-                    <span class="date">Sept 17, 2015</span>
-                </p>
-            </li>
-        </ul>
-        <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">3</small>)</h5>
-        <ul id="sortable2" class="todo">
-            <li>
-                <span class="handle">
-                    <label class="checkbox">
-                        <input type="checkbox" name="checkbox-inline">
-                        <i></i>
-                    </label>
-                </span>
-                <p>
-                    <strong>Open Market Vehicle</strong> - Approve one of the contract changes [<a href="javascript:void(0);" class="font-xs">More Details</a>]
-                    <span class="date">Sept 11, 2015</span>
-                </p>
-            </li>
-            <li>
-                <span class="handle">
-                    <label class="checkbox">
-                        <input type="checkbox" name="checkbox-inline">
-                        <i></i>
-                    </label>
-                </span>
-                <p>
-                    <strong>ABC Broking</strong> - Approve user who requested to join your organisation
-                    <span class="date">Sept 10, 2015</span>
-                </p>
-            </li>
-            <li>
-                <span class="handle">
-                    <label class="checkbox">
-                        <input type="checkbox" name="checkbox-inline">
-                        <i></i>
-                    </label>
-                </span>
-                <p>
-                    <strong>Bob Parker</strong> - Review renewal application [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">Renewal application will be automatically sent out on Sept 20, 2015 </span>
-                    <span class="date">Sept 9, 2015</span>
-                </p>
-            </li>
-        </ul>
-        <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">1</small>)</h5>
-        <ul id="sortable3" class="todo">
-            <li class="complete">
-                <span class="handle" style="display:none">
-                    <label class="checkbox state-disabled">
-                        <input type="checkbox" name="checkbox-inline" checked="checked" disabled="disabled">
-                        <i></i>
-                    </label>
-                </span>
-                <p>
-                    <strong>John Smith</strong> - Send policy documents <span class="text-muted">Client has accepted the quote. </span>
-                    <span class="date">Mar 15, 2015</span>
-                </p>
-            </li>
-        </ul>*@
-                            <!-- end content -->
-                        </div>
-
-                        <button type="button" class="btn-sm pull-right btn btn-success" data-dismiss="alert" aria-label="Close" onclick="showUserTaskModal()">Add Task</button>
 
                     </div>
                     <!-- end widget div -->
                 </div>
-
-
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
-                     data-widget-editbutton="false" data-widget-colorbutton="false">
-                    <!-- widget options:
-        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
-
-
-        data-widget-collapsed="true"
-        data-widget-fullscreenbutton="false"
-        data-widget-editbutton="false"
-        data-widget-editbutton="false"
-        data-widget-fullscreenbutton="false"
-        data-widget-colorbutton="false"
-        data-widget-togglebutton="false"
-        data-widget-deletebutton="false"
-        data-widget-custombutton="false"
-        data-widget-sortable="false"
-
-
-        -->
-                    <header style="background-color:#3276b1">
-                        <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                        <h2> Client Agreements</h2>
-                        <!--<div class="widget-toolbar">
-                 add: non-hidden - to disable auto hide
-
-            </div>-->
-                    </header>
-                    <!-- widget div-->
-                    <div>
-                        <!-- widget edit box -->
-                        <div class="jarviswidget-editbox">
-                            <div>
-                                <label>Title:</label>
-                                <input type="text" />
-                            </div>
-                        </div>
-                        <!-- end widget edit box -->
-                        <div class="widget-body no-padding smart-form">
-                            <!-- content goes here -->
-                            <form class="smart-form">
-                                <section class="padding-bottom-10 hidden">
-                                    <div class="col-xs-1">
-                                        <img class="img-responsive ri ri-accident">
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <img class="img-responsive ri ri-building ">
-                                    </div>
-                                    <div class="col-xs-1 ">
-                                        <img class="img-responsive ri ri-contents">
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <img class="img-responsive ri ri-death">
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <img class="img-responsive ri ri-freight">
-                                    </div>
-                                    <div class="col-xs-1 ">
-                                        <img class="img-responsive ri ri-incomeprotection">
-                                    </div>
-                                    <div class="col-xs-1 ">
-                                        <img class="img-responsive ri ri-liability">
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <img class="img-responsive ri ri-life">
-                                    </div>
-                                    <div class="col-xs-1 ">
-                                        <img class="img-responsive ri ri-medical">
-                                    </div>
-                                    <div class="col-xs-1 ">
-                                        <img class="img-responsive ri ri-motor">
-                                    </div>
-                                    <div class="col-xs-1 ">
-                                        <img class="img-responsive ri ri-motorcycle">
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <img class="img-responsive ri ri-travel">
-                                    </div>
-                                </section>
-                                <table class="table table-striped table-hover table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>Product Name</th>
-                                            <th>Languages</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in Model.ProgrammeItems)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    @item.Name
-                                                </td>
-                                                <td>
-                                                    @foreach (var lang in item.Languages)
-                                                    {
-                                                        <img src="~/Content/img/blank.gif" class="flag flag-@lang" />
-                                                    }
-                                                </td>
-                                                <td>
-                                                    @*
-                                            @foreach (var button in item.Buttons) {*@
-                                                    @*@switch (Model.DisplayRole)
-                                            {
-                                                case "Broker":
-                                                    <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
-                                                   break;
-                                                case "Client":*@
-                                                    <a class="btn btn-success btn-xs" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
-                                                    @*break;
-                                            }*@
-                                                </td>
-                                                @*<td>
-                                            @foreach (var button in item.Buttons) {
-                                            <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
-                                            }
-                                        </td>*@
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </form>
-                            <!-- end content -->
-                        </div>
-                    </div>
-                    <!-- end widget div -->
-                </div>
-
-
-                @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                @if (User.HasClaim("MembersContactDetails1", "MembersContactDetails"))
                 {
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-tasks"
+                         data-widget-editbutton="false" data-widget-colorbutton="false">
+                        <!-- widget options:
+            usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+
+            data-widget-collapsed="true"
+            data-widget-fullscreenbutton="false"
+            data-widget-editbutton="false"
+            data-widget-editbutton="false"
+            data-widget-fullscreenbutton="false"
+            data-widget-colorbutton="false"
+            data-widget-togglebutton="false"
+            data-widget-deletebutton="false"
+            data-widget-custombutton="false"
+            data-widget-sortable="false"
+
+
+            -->
+                        <header style="background-color:#3276b1">
+                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                            <h2> Tasks </h2>
+                            <!--<div class="widget-toolbar">
+                      add: non-hidden - to disable auto hide
+
+                </div>-->
+                        </header>
+                        <!-- widget div-->
+                        <div>
+                            <hr />
+                            @if (Model.CriticalTaskItems.Count == 0 || Model.ImportantTaskItems.Count == 0)
+                            {
+                                <div class="hidden">
+                                    <div class="alert alert-info alert-dismissible" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        There are currently no pending tasks.
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="hidden">
+                                    <div class="alert alert-info alert-dismissible" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        There are currently no pending tasks.
+                                    </div>
+                                </div>
+
+                            }
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <div>
+                                    <label>Title:</label>
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <!-- end widget edit box -->
+                            <div class="widget-body widget-hide-overflow no-padding smart-form">
+                                <!-- content goes here -->
+                                <h5 class="todo-group-title"><i class="fa fa-warning"></i> Critical Tasks (<small class="num-of-tasks">@Model.CriticalTaskItems.Count</small>)</h5>
+                                <ul id="sortable1" class="todo">
+                                    @foreach (var task in Model.CriticalTaskItems)
+                                    {
+                                        <li>
+                                            <span class="handle">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="checkbox-inline">
+                                                    <i></i>
+                                                </label>
+                                            </span>
+                                            <p>
+                                                @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
+                                                <span class="date">@task.DueDate</span>
+                                            </p>
+                                        </li>
+                                    }
+                                </ul>
+                                <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">@Model.ImportantTaskItems.Count</small>)</h5>
+                                <ul id="sortable2" class="todo">
+                                    @foreach (var task in Model.ImportantTaskItems)
+                                    {
+                                        <li>
+                                            <span class="handle">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="checkbox-inline">
+                                                    <i></i>
+                                                </label>
+                                            </span>
+                                            <p>
+                                                @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
+                                                <span class="date">@task.DueDate</span>
+                                            </p>
+                                        </li>
+                                    }
+                                </ul>
+
+                                <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">@Model.CompletedTaskItems.Count</small>)</h5>
+                                <ul id="sortable3" class="todo">
+                                    @foreach (var task in Model.CompletedTaskItems)
+                                    {
+                                        <li>
+                                            <span class="handle">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="checkbox-inline">
+                                                    <i></i>
+                                                </label>
+                                            </span>
+                                            <p>
+                                                @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
+                                                <span class="date">@task.DueDate</span>
+                                            </p>
+                                        </li>
+                                    }
+                                </ul>
+
+
+                                @*<h5 class="todo-group-title"><i class="fa fa-warning"></i> Critical Tasks (<small class="num-of-tasks">1</small>)</h5>
+                        <ul id="sortable1" class="todo">
+                            <li>
+                                <span class="handle">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="checkbox-inline">
+                                        <i></i>
+                                    </label>
+                                </span>
+                                <p>
+                                    <strong>Sarah Jane</strong> - Application submitted, clear referral [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">One of the questions in the application has raised a referral. </span>
+                                    <span class="date">Sept 17, 2015</span>
+                                </p>
+                            </li>
+                        </ul>
+                        <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">3</small>)</h5>
+                        <ul id="sortable2" class="todo">
+                            <li>
+                                <span class="handle">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="checkbox-inline">
+                                        <i></i>
+                                    </label>
+                                </span>
+                                <p>
+                                    <strong>Open Market Vehicle</strong> - Approve one of the contract changes [<a href="javascript:void(0);" class="font-xs">More Details</a>]
+                                    <span class="date">Sept 11, 2015</span>
+                                </p>
+                            </li>
+                            <li>
+                                <span class="handle">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="checkbox-inline">
+                                        <i></i>
+                                    </label>
+                                </span>
+                                <p>
+                                    <strong>ABC Broking</strong> - Approve user who requested to join your organisation
+                                    <span class="date">Sept 10, 2015</span>
+                                </p>
+                            </li>
+                            <li>
+                                <span class="handle">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="checkbox-inline">
+                                        <i></i>
+                                    </label>
+                                </span>
+                                <p>
+                                    <strong>Bob Parker</strong> - Review renewal application [<a href="javascript:void(0);" class="font-xs">More Details</a>] <span class="text-muted">Renewal application will be automatically sent out on Sept 20, 2015 </span>
+                                    <span class="date">Sept 9, 2015</span>
+                                </p>
+                            </li>
+                        </ul>
+                        <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">1</small>)</h5>
+                        <ul id="sortable3" class="todo">
+                            <li class="complete">
+                                <span class="handle" style="display:none">
+                                    <label class="checkbox state-disabled">
+                                        <input type="checkbox" name="checkbox-inline" checked="checked" disabled="disabled">
+                                        <i></i>
+                                    </label>
+                                </span>
+                                <p>
+                                    <strong>John Smith</strong> - Send policy documents <span class="text-muted">Client has accepted the quote. </span>
+                                    <span class="date">Mar 15, 2015</span>
+                                </p>
+                            </li>
+                        </ul>*@
+                                <!-- end content -->
+                            </div>
+
+                            <button type="button" class="btn-sm pull-right btn btn-success" data-dismiss="alert" aria-label="Close" onclick="showUserTaskModal()">Add Task</button>
+
+                        </div>
+                        <!-- end widget div -->
+                    </div>
+                }
+
+
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
                         <!-- widget options:
@@ -550,7 +408,7 @@
             -->
                         <header style="background-color:#3276b1">
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                            <h2> Broker/Underwriter Term Sheets </h2>
+                            <h2> Client Agreements</h2>
                             <!--<div class="widget-toolbar">
                      add: non-hidden - to disable auto hide
 
@@ -618,7 +476,6 @@
                                         <tbody>
                                             @foreach (var item in Model.ProgrammeItems)
                                             {
-
                                                 <tr>
                                                     <td>
                                                         @item.Name
@@ -630,8 +487,23 @@
                                                         }
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success btn-xs" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        @*
+                                                @foreach (var button in item.Buttons) {*@
+                                                        @*@switch (Model.DisplayRole)
+                                                {
+                                                    case "Broker":
+                                                        <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
+                                                       break;
+                                                    case "Client":*@
+                                                        <a class="btn btn-success btn-xs" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        @*break;
+                                                }*@
                                                     </td>
+                                                    @*<td>
+                                                @foreach (var button in item.Buttons) {
+                                                <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
+                                                }
+                                            </td>*@
                                                 </tr>
                                             }
                                         </tbody>
@@ -642,170 +514,126 @@
                         </div>
                         <!-- end widget div -->
                     </div>
-                }
-
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-toolbox"
-                     data-widget-editbutton="false" data-widget-colorbutton="false">
-                    <!-- widget options:
-        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
 
-        data-widget-collapsed="true"
-        data-widget-fullscreenbutton="false"
-        data-widget-editbutton="false"
-        data-widget-editbutton="false"
-        data-widget-fullscreenbutton="false"
-        data-widget-colorbutton="false"
-        data-widget-togglebutton="false"
-        data-widget-deletebutton="false"
-        data-widget-custombutton="false"
-        data-widget-sortable="false"
+                    @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                    {
+                        <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
+                             data-widget-editbutton="false" data-widget-colorbutton="false">
+                            <!-- widget options:
+                usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
 
-        -->
-                    <header style="background-color:#3276b1">
-                        <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                        <h2> Libraries </h2>
-                        <!--<div class="widget-toolbar">
-                 add: non-hidden - to disable auto hide
+                data-widget-collapsed="true"
+                data-widget-fullscreenbutton="false"
+                data-widget-editbutton="false"
+                data-widget-editbutton="false"
+                data-widget-fullscreenbutton="false"
+                data-widget-colorbutton="false"
+                data-widget-togglebutton="false"
+                data-widget-deletebutton="false"
+                data-widget-custombutton="false"
+                data-widget-sortable="false"
 
 
-            </div>-->
-                    </header>
-                    <!-- widget div-->
-                    <div>
-                        <!-- widget edit box -->
-                        <div class="jarviswidget-editbox">
+                -->
+                            <header style="background-color:#3276b1">
+                                <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                                <h2> Broker/Underwriter Term Sheets </h2>
+                                <!--<div class="widget-toolbar">
+                         add: non-hidden - to disable auto hide
+
+                    </div>-->
+                            </header>
+                            <!-- widget div-->
                             <div>
-                                <label>Title:</label>
-                                <input type="text" />
+                                <!-- widget edit box -->
+                                <div class="jarviswidget-editbox">
+                                    <div>
+                                        <label>Title:</label>
+                                        <input type="text" />
+                                    </div>
+                                </div>
+                                <!-- end widget edit box -->
+                                <div class="widget-body no-padding smart-form">
+                                    <!-- content goes here -->
+                                    <form class="smart-form">
+                                        <section class="padding-bottom-10 hidden">
+                                            <div class="col-xs-1">
+                                                <img class="img-responsive ri ri-accident">
+                                            </div>
+                                            <div class="col-xs-1">
+                                                <img class="img-responsive ri ri-building ">
+                                            </div>
+                                            <div class="col-xs-1 ">
+                                                <img class="img-responsive ri ri-contents">
+                                            </div>
+                                            <div class="col-xs-1">
+                                                <img class="img-responsive ri ri-death">
+                                            </div>
+                                            <div class="col-xs-1">
+                                                <img class="img-responsive ri ri-freight">
+                                            </div>
+                                            <div class="col-xs-1 ">
+                                                <img class="img-responsive ri ri-incomeprotection">
+                                            </div>
+                                            <div class="col-xs-1 ">
+                                                <img class="img-responsive ri ri-liability">
+                                            </div>
+                                            <div class="col-xs-1">
+                                                <img class="img-responsive ri ri-life">
+                                            </div>
+                                            <div class="col-xs-1 ">
+                                                <img class="img-responsive ri ri-medical">
+                                            </div>
+                                            <div class="col-xs-1 ">
+                                                <img class="img-responsive ri ri-motor">
+                                            </div>
+                                            <div class="col-xs-1 ">
+                                                <img class="img-responsive ri ri-motorcycle">
+                                            </div>
+                                            <div class="col-xs-1">
+                                                <img class="img-responsive ri ri-travel">
+                                            </div>
+                                        </section>
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product Name</th>
+                                                    <th>Languages</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.ProgrammeItems)
+                                                {
+
+                                                    <tr>
+                                                        <td>
+                                                            @item.Name
+                                                        </td>
+                                                        <td>
+                                                            @foreach (var lang in item.Languages)
+                                                            {
+                                                                <img src="~/Content/img/blank.gif" class="flag flag-@lang" />
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-success btn-xs" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                    <!-- end content -->
+                                </div>
                             </div>
+                            <!-- end widget div -->
                         </div>
-                        <!-- end widget edit box -->
-                        <div class="widget-body widget-hide-overflow no-padding">
-                            <!-- content goes here ?ch=" + ch-->
-                            <div class="smart-form">
-                                <fieldset>
-                                    <table class="table table-striped table-hover table-condensed">
-                                        <tbody>
-                                            @* @if (Model.HasRole("CanEditProduct"))*@
-                                            @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                            {
+                    }
 
-
-
-                                                @*<tr onclick="location.href='/Programme/ActivityBuilder';" style="cursor:pointer">*@
-                                                <tr>
-                                                    <td>Activities</td>
-                                                    <td>ANZSIC Codes</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-
-                                                </tr>
-                                                <tr>
-                                                    <td>Addresses</td>
-                                                    <td>Address API used </td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                                </tr>
-
-                                                <tr onclick="location.href='/File/ManageDocuments';" style="cursor:pointer">
-                                                    <td>Manage Documents</td>
-                                                    <td>Certs,Schedules,Wording,Invoices</td>
-                                                    <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td>Emails</td>
-                                                    <td>System and proggramme specific</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Financial Institutions</td>
-                                                    <td>For selecting as Named Parties</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                    @*<td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Milestones</td>
-                                                    <td>Milestones</td>
-                                                    <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
-
-                                                    @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Motor</td>
-                                                    <td>Motor API used   </td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                                </tr>
-
-
-                                                <tr>
-                                                    <td>Products</td>
-                                                    <td>Insurance Policies for adding to a programme   </td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                    @*<td><a class="btn btn-success btn-xs disabled" href="/Product/CreateNew"><i class="fa fa-search"></i> In Dev</a></td>*@
-                                                </tr>
-
-
-                                                <tr>
-                                                    <td>Sections</td>
-                                                    <td>Sections for the Client Information Sheet   </td>
-                                                    <td><a class="btn btn-success btn-xs" href="/Information/GetProgrammes"><i class="fa fa-search"></i>view</a></td>
-                                                </tr>
-
-
-                                                <tr>
-                                                    <td>Special Terms</td>
-                                                    <td>Endorsements</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                    @*<td><a class="btn btn-success btn-xs disabled" href="/Policy/SectionBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
-                                                </tr>
-                                                <tr>
-                                                    <td>Rules</td>
-                                                    <td>Configure the Rules</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#" ><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td>Underwriting Rules</td>
-                                                    <td>Underwriting Rules</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Users</td>
-                                                    <td>User Management</td>
-                                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Water</td>
-                                                    <td>Water Location API used</td>
-                                                    <td><a class="btn btn-succes btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                                </tr>
-
-                                            }
-                                        </tbody>
-                                    </table>
-
-
-                                </fieldset>
-                            </div>
-                            <!-- end content -->
-                        </div>
-                    </div>
-                    <!-- end widget div -->
-                </div>
-
-                @if (Model.CurrentUserIsTC == "True")
-                {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-toolbox"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
                         <!-- widget options:
             usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
@@ -826,16 +654,15 @@
             -->
                         <header style="background-color:#3276b1">
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                            <h2> Admin </h2>
+                            <h2> Libraries </h2>
                             <!--<div class="widget-toolbar">
                      add: non-hidden - to disable auto hide
+
 
                 </div>-->
                         </header>
                         <!-- widget div-->
                         <div>
-
-                            @*@Html.Bootstrap().Alert("There are currently no upcoming tasks").Style(AlertColor.Info)*@
                             <!-- widget edit box -->
                             <div class="jarviswidget-editbox">
                                 <div>
@@ -845,41 +672,203 @@
                             </div>
                             <!-- end widget edit box -->
                             <div class="widget-body widget-hide-overflow no-padding">
-                                <!-- content goes here -->
-                                <form class="smart-form">
-                                    <table class="table table-striped table-hover table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Manage Admin funtion</td>
-                                                <td><a href="~/Admin/Index"></a></td>
-                                                <td><a class="btn btn-success btn-xs" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Manage Organisations</td>
-                                                <td><a href="~/Organisation/ManageOrganisations"></a></td>
-                                                <td><a class="btn btn-success btn-xs" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Manage Permissions</td>
-                                                <td><a href="~/Authorize/Index"></a></td>
-                                                <td><a class="btn btn-success btn-xs" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </form>
+                                <!-- content goes here ?ch=" + ch-->
+                                <div class="smart-form">
+                                    <fieldset>
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <tbody>
+                                                @* @if (Model.HasRole("CanEditProduct"))*@
+                                                @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+
+
+
+                                                    @*<tr onclick="location.href='/Programme/ActivityBuilder';" style="cursor:pointer">*@
+                                                    <tr>
+                                                        <td>Activities</td>
+                                                        <td>ANZSIC Codes</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Addresses</td>
+                                                        <td>Address API used </td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                    </tr>
+
+                                                    <tr onclick="location.href='/File/ManageDocuments';" style="cursor:pointer">
+                                                        <td>Manage Documents</td>
+                                                        <td>Certs,Schedules,Wording,Invoices</td>
+                                                        <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Emails</td>
+                                                        <td>System and proggramme specific</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Financial Institutions</td>
+                                                        <td>For selecting as Named Parties</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
+                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Milestones</td>
+                                                        <td>Milestones</td>
+                                                        <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+
+                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Motor</td>
+                                                        <td>Motor API used   </td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td>Products</td>
+                                                        <td>Insurance Policies for adding to a programme   </td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
+                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Product/CreateNew"><i class="fa fa-search"></i> In Dev</a></td>*@
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td>Sections</td>
+                                                        <td>Sections for the Client Information Sheet   </td>
+                                                        <td><a class="btn btn-success btn-xs" href="/Information/GetProgrammes"><i class="fa fa-search"></i>view</a></td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td>Special Terms</td>
+                                                        <td>Endorsements</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
+                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Policy/SectionBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Rules</td>
+                                                        <td>Configure the Rules</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Underwriting Rules</td>
+                                                        <td>Underwriting Rules</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Users</td>
+                                                        <td>User Management</td>
+                                                        <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Water</td>
+                                                        <td>Water Location API used</td>
+                                                        <td><a class="btn btn-succes btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                                    </tr>
+
+                                                }
+                                            </tbody>
+                                        </table>
+
+
+                                    </fieldset>
+                                </div>
                                 <!-- end content -->
                             </div>
                         </div>
                         <!-- end widget div -->
                     </div>
-                }
+
+                    @if (Model.CurrentUserIsTC == "True")
+                    {
+                        <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
+                             data-widget-editbutton="false" data-widget-colorbutton="false">
+                            <!-- widget options:
+                usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+
+                data-widget-collapsed="true"
+                data-widget-fullscreenbutton="false"
+                data-widget-editbutton="false"
+                data-widget-editbutton="false"
+                data-widget-fullscreenbutton="false"
+                data-widget-colorbutton="false"
+                data-widget-togglebutton="false"
+                data-widget-deletebutton="false"
+                data-widget-custombutton="false"
+                data-widget-sortable="false"
+
+
+                -->
+                            <header style="background-color:#3276b1">
+                                <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                                <h2> Admin </h2>
+                                <!--<div class="widget-toolbar">
+                         add: non-hidden - to disable auto hide
+
+                    </div>-->
+                            </header>
+                            <!-- widget div-->
+                            <div>
+
+                                @*@Html.Bootstrap().Alert("There are currently no upcoming tasks").Style(AlertColor.Info)*@
+                                <!-- widget edit box -->
+                                <div class="jarviswidget-editbox">
+                                    <div>
+                                        <label>Title:</label>
+                                        <input type="text" />
+                                    </div>
+                                </div>
+                                <!-- end widget edit box -->
+                                <div class="widget-body widget-hide-overflow no-padding">
+                                    <!-- content goes here -->
+                                    <form class="smart-form">
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Manage Admin funtion</td>
+                                                    <td><a href="~/Admin/Index"></a></td>
+                                                    <td><a class="btn btn-success btn-xs" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Manage Organisations</td>
+                                                    <td><a href="~/Organisation/ManageOrganisations"></a></td>
+                                                    <td><a class="btn btn-success btn-xs" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Manage Permissions</td>
+                                                    <td><a href="~/Authorize/Index"></a></td>
+                                                    <td><a class="btn btn-success btn-xs" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                    <!-- end content -->
+                                </div>
+                            </div>
+                            <!-- end widget div -->
+                        </div>
+                    }
 
                     <!-- end widget -->
                     <!-- new widget -->

@@ -990,7 +990,7 @@ namespace TechCertain.Domain.Services.UnderwritingModules
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclaimover5koflosses" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Claims.Any(clm => clm.ClaimEstimateInsuredLiability > 5000))
+                    if (agreement.ClientInformationSheet.ClaimNotifications.Any(clm => clm.ClaimEstimateInsuredLiability > 5000))
                     {
                         agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfclaimover5koflosses" && cref.DateDeleted == null).Status = "Pending";
                     }

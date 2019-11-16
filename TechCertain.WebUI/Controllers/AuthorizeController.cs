@@ -1,32 +1,139 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NHibernate.AspNetCore.Identity;
+using NHibernate.Linq;
 using TechCertain.Services.Interfaces;
+using TechCertain.WebUI.Models.Authorization;
+using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
+using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class AuthorizeController : BaseController
     {
-        public AuthorizeController(IUserService userService)
+        IClaimService _claimService;
+        IClaimTemplateService _claimTemplateService;
+        RoleManager<IdentityRole> _roleManager;
+        UserManager<IdentityUser> _userManager;
+
+        public AuthorizeController(IUserService userService, IClaimService claimService, IClaimTemplateService claimTemplateService, 
+            RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
             : base(userService)
         {
-
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _claimService = claimService;
+            _claimTemplateService = claimTemplateService;
         }
 
         // GET: Authorize
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var roleList = await _roleManager.Roles.ToListAsync();
+            var userList = await _userManager.Users.ToListAsync();
+            var user = await CurrentUser();
+            AuthorizeViewModel model = new AuthorizeViewModel();
+
+            var claimList = await _claimService.GetClaimsByOrganisation(user.PrimaryOrganisation);
+            if (claimList.Count == 0)
+            {
+                await _claimTemplateService.CreateClaimsForOrganisation(user.PrimaryOrganisation);
+                claimList = await _claimService.GetClaimsByOrganisation(user.PrimaryOrganisation);
+            }
+            model.RoleList = new List<IdentityRole>();
+            model.UserList = new List<IdentityUser>();
+            model.ClaimList = claimList;
+
+            if (roleList.Count != 0)
+            {
+                model.RoleList = roleList;
+            }
+
+            if (userList.Count != 0)
+            {
+                model.UserList = userList;
+            }
+
+            return View(model);            
         }
 
-        // GET: Authorize/Details/5
-        public ActionResult Details(int id)
+        [HttpPost]
+        public async Task<IActionResult> AddRole(string RoleName, string[] Claims)
         {
-            return View();
+            var isRole = await _roleManager.RoleExistsAsync(RoleName);
+            if (!isRole)
+            {
+                var role = new IdentityRole
+                {
+                    Name = RoleName
+                };
+
+                var identityreult = await _roleManager.CreateAsync(role);
+                if (identityreult.Succeeded)
+                {
+                    foreach(var cl in Claims)
+                    {
+                        var claim = new Claim(cl, cl);
+                        await _roleManager.AddClaimAsync(role, claim);
+                    }
+                    return Ok();
+                }
+            }
+
+            return Ok();            
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateRole(string RoleName, string[] Claims)
+        {
+            var isRole = await _roleManager.RoleExistsAsync(RoleName);
+            if (isRole)
+            {
+                var role = await _roleManager.FindByNameAsync(RoleName);
+                var claimList = await _roleManager.GetClaimsAsync(role);
+
+                foreach (var claim in claimList)
+                {
+                    await _roleManager.RemoveClaimAsync(role, claim);
+                }
+
+                foreach (var cl in Claims)
+                {
+                    var claim = new Claim(cl, cl);
+                    await _roleManager.AddClaimAsync(role, claim);
+                }
+
+                return Ok();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveRoleToUser(string UserId, string[] RoleIds)
+        {
+            var user = await _userManager.FindByIdAsync(UserId);
+            if(user != null)
+            {
+                foreach(var id in RoleIds)
+                {
+                    var role = await _roleManager.FindByIdAsync(id);
+                    if(role != null)
+                    {
+                        await _userManager.AddToRoleAsync(user, role.Name);
+                    }
+                }
+            }
+
+            return Ok();
+        }
+
 
         // GET: Authorize/Create
         public ActionResult Create()

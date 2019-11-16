@@ -35,7 +35,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Building> _buildingRepository;
         IMapperSession<BusinessInterruption> _businessInterruptionRepository;
         IMapperSession<MaterialDamage> _materialDamageRepository;
-        IMapperSession<Claim> _claimRepository;
+        IMapperSession<ClaimNotification> _claimRepository;
         IMapperSession<Product> _productRepository;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
@@ -49,7 +49,7 @@ namespace TechCertain.WebUI.Controllers
 
         public ServicesController(IUserService userService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
-            IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
+            IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
@@ -2208,24 +2208,24 @@ namespace TechCertain.WebUI.Controllers
             if (sheet == null)
                 throw new Exception("Unable to save Claim - No Client information for " + model.AnswerSheetId);
 
-            Claim claim = _claimRepository.FindAll().FirstOrDefault(c => c.Id == model.ClaimId);
+            ClaimNotification claimNotification = _claimRepository.FindAll().FirstOrDefault(c => c.Id == model.ClaimId);
             // no claim, so create new
-            if (claim == null)
-                claim = model.ToEntity(user);
-            model.UpdateEntity(claim);
+            if (claimNotification == null)
+                claimNotification = model.ToEntity(user);
+            model.UpdateEntity(claimNotification);
 
             if (model.OrganisationId != Guid.Empty)
             {
                 Organisation org = await _organisationService.GetOrganisation(model.OrganisationId);
-                claim.Organisation = org;
+                claimNotification.Organisation = org;
             }
 
             if (model.ClaimProducts != null)
-                claim.ClaimProducts = _productRepository.FindAll().Where(pro => model.ClaimProducts.Contains(pro.Id)).ToList();
+                claimNotification.ClaimProducts = _productRepository.FindAll().Where(pro => model.ClaimProducts.Contains(pro.Id)).ToList();
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                sheet.Claims.Add(claim);
+                sheet.ClaimNotifications.Add(claimNotification);
                 await uow.Commit();
             }
 
@@ -2237,7 +2237,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClaimViewModel model = new ClaimViewModel();
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-            Claim claim = sheet.Claims.FirstOrDefault(c => c.Id == claimId);
+            ClaimNotification claim = sheet.ClaimNotifications.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
                 model = ClaimViewModel.FromEntity(claim);
@@ -2254,9 +2254,9 @@ namespace TechCertain.WebUI.Controllers
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
-            var claims = new List<Claim>();
+            var claims = new List<ClaimNotification>();
 
-            claims = sheet.Claims.Where(c => c.Removed == removed && c.DateDeleted == null).ToList();
+            claims = sheet.ClaimNotifications.Where(c => c.Removed == removed && c.DateDeleted == null).ToList();
 
             if (_search)
             {
@@ -2288,7 +2288,7 @@ namespace TechCertain.WebUI.Controllers
                 if (i == model.TotalRecords)
                     break;
 
-                Claim claim = claims[i];
+                ClaimNotification claim = claims[i];
                 JqGridRow row = new JqGridRow(claim.Id);
                 row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant, claim.Id);
                 model.AddRow(row);
@@ -2302,7 +2302,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetClaimRemovedStatus(Guid claimId, bool status)
         {
-            Claim claim = await _claimRepository.GetByIdAsync(claimId);
+            ClaimNotification claim = await _claimRepository.GetByIdAsync(claimId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {

@@ -57,10 +57,10 @@
     <link rel="apple-touch-startup-image" href="~/Content/img/splash/ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
     <link rel="apple-touch-startup-image" href="~/Content/img/splash/iphone.png" media="screen and (max-device-width: 320px)">
 
-    <link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
+    @*<link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
 
 
-    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" />
+    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" />*@
 
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
 
@@ -118,7 +118,7 @@
 
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
     @*@{ Html.RenderPartialIf("_Aside", Request.IsAuthenticated); }*@
-    <div class="container-fluid">
+    <div class="container">
         @* If ribbon is required use on top of individual view or add come conditions*@
         @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
         @RenderBody()

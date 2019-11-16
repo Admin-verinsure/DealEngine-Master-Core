@@ -4,9 +4,9 @@ using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
-	public interface IClaimService 
+    public interface IClaimTemplateService
     {
-        Task<List<Claim>> GetClaimsByOrganisation(Organisation organisation);
+        Task CreateClaimsForOrganisation(Organisation primaryOrganisation);
     }
 }
 
