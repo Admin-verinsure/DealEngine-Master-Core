@@ -173,6 +173,7 @@ namespace TechCertain.WebUI.Controllers
             //  model.ClientAgreementId = id;
             model.InformationSheetId = sheetId;
             model.ClientAgreementId = agreementId;
+            model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
 
             model.Referrals = new List<ClientAgreementReferral>();
             foreach (var terms in agreement.ClientAgreementReferrals)
@@ -282,6 +283,7 @@ namespace TechCertain.WebUI.Controllers
 
             model.InformationSheetId = answerSheet.Id;
             model.ClientAgreementId = agreement.Id;
+            model.ClientProgrammeId = programme.Id;
 
             model.CancellNotes = agreement.CancelledNote;
             model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
@@ -333,6 +335,7 @@ namespace TechCertain.WebUI.Controllers
 
             model.InformationSheetId = answerSheet.Id;
             model.ClientAgreementId = agreement.Id;
+            model.ClientProgrammeId = programme.Id;
 
             model.DeclineNotes = agreement.InsurerDeclinedComment;
 
@@ -721,7 +724,7 @@ namespace TechCertain.WebUI.Controllers
                     }
                     else
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = string.Format(currencyFormat, "{0:c}", (term.PremiumDiffer - term.FSLDiffer)), FSL = string.Format(currencyFormat, "{0:c}", term.FSLDiffer), TotalPremium = string.Format(currencyFormat, "{0:c}", term.PremiumDiffer) });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture), FSL = term.FSLDiffer.ToString("C", UserCulture), TotalPremium = term.PremiumDiffer.ToString("C", UserCulture) });
                     }
                 }
 
@@ -759,10 +762,18 @@ namespace TechCertain.WebUI.Controllers
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
-                model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2");
+                model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
                 model.CurrencySymbol = "fa fa-dollar";
-                model.ClientNumber = agreement.ClientNumber;
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal && 
+                    agreement.ClientInformationSheet.Programme.EGlobalBranchCode != null && agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null)
+                {
+                    model.ClientNumber = agreement.ClientInformationSheet.Programme.EGlobalBranchCode + "-" + agreement.ClientInformationSheet.Programme.EGlobalClientNumber;
+                } else
+                {
+                    model.ClientNumber = agreement.ClientNumber;
+                }
                 model.PolicyNumber = agreement.PolicyNumber;
+
                 // MV
                 model.HasVehicles = answerSheet.Vehicles.Count > 0;
                 if (model.HasVehicles)
@@ -1029,10 +1040,6 @@ namespace TechCertain.WebUI.Controllers
 
             ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
-            string auditLogDetail = "Agreement details have been modified by " + user.FullName;
-            AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
-            agreement.ClientAgreementAuditLogs.Add(auditLog);
-
             return View("EditAgreement", model);
         }
 
@@ -1041,7 +1048,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClientAgreement agreement = await _clientAgreementService.GetAgreement(model.ClientAgreementId);
             ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
-
+            var user = await CurrentUser();
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 // TODO - Convert to UTC
@@ -1052,6 +1059,10 @@ namespace TechCertain.WebUI.Controllers
                 agreement.BrokerFee = Convert.ToDecimal(model.AdministrationFee.Replace("$", ""));
                 agreement.ClientNumber = model.ClientNumber;
                 agreement.PolicyNumber = model.PolicyNumber;
+
+                string auditLogDetail = "Agreement details have been modified by " + user.FullName;
+                AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
+                agreement.ClientAgreementAuditLogs.Add(auditLog);
 
                 await uow.Commit();
             }
@@ -1078,12 +1089,17 @@ namespace TechCertain.WebUI.Controllers
             if (model.HasRules)
             {
                 var clientAgreementRules = new AgreementRulesViewModel();
+                var clientAgreementRulesTypeRate = new AgreementRulesViewModel();
                 foreach (ClientAgreementRule cr in agreement.ClientAgreementRules.OrderBy(cr => cr.OrderNumber))
                 {
                     clientAgreementRules.Add(new ClientAgreementRuleViewModel { ClientAgreementRuleID = cr.Id, Description = cr.Description, Value = cr.Value });
+                    if(cr.RuleCategory == "uwrate")
+                    {
+                        clientAgreementRulesTypeRate.Add(new ClientAgreementRuleViewModel { ClientAgreementRuleID = cr.Id, Description = cr.Description, Value = cr.Value });
+                    }
                 }
                 model.ClientAgreementRules = clientAgreementRules;
-
+                model.ClientAgreementRulesTypeRate = clientAgreementRulesTypeRate;
             }
 
             ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Agreement Rule for " + insured.Name;
@@ -1576,6 +1592,10 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
+                            if (programme.BaseProgramme.PolicyNumberPrefixString != null)
+                            {
+                                agreement.PolicyNumber = programme.BaseProgramme.PolicyNumberPrefixString + "-0" + agreement.ReferenceId;
+                            }
                             await uow.Commit();
                         }
                     }

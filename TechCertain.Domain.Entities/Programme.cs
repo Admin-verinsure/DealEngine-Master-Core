@@ -58,6 +58,8 @@ namespace TechCertain.Domain.Entities
 
         public virtual Boolean UsesEGlobal { get; set; }
 
+        public virtual string PolicyNumberPrefixString { get; set; }
+
         protected Programme () : this (null) {}
 
 		public Programme (User createdBy) : base(createdBy)

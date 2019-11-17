@@ -307,17 +307,17 @@ namespace TechCertain.WebUI.Controllers
                 JqGridRow row = new JqGridRow(vehicle.Id);
                 if (vehicle.Validated)
                 {
-                    row.AddValues(vehicle.Id, vehicle.Year, vehicle.Registration, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                    row.AddValues(vehicle.Id, vehicle.Year, vehicle.Registration, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                 }
                 else
                 {
                     if (sheet.Programme.BaseProgramme.Products.First().Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a")) // Marsh Coastguard
                     {
-                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                     }
                     else
                     {
-                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.FleetNumber, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.FleetNumber, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                     }
 
                 }
@@ -1603,6 +1603,21 @@ namespace TechCertain.WebUI.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> GetOriginalBoat(Guid answerSheetId, Guid boatId)
+        {
+            BoatViewModel model = new BoatViewModel();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+            Boat boat = sheet.Boats.FirstOrDefault(b => b.Id == boatId);
+            if (boat != null)
+            {
+                model.AnswerSheetId = answerSheetId;
+                if (boat.OriginalBoat != null)
+                    model.OriginalBoatId = boat.OriginalBoat.Id;
+            }
+           return Json(model);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetBoat(Guid answerSheetId, Guid boatId)
@@ -1618,6 +1633,7 @@ namespace TechCertain.WebUI.Controllers
                     model.BoatLandLocation = boat.BoatLandLocation.Id;
                 if (boat.BoatWaterLocation != null)
                     model.BoatWaterLocation = boat.BoatWaterLocation.Id;
+                if (boat.BoatTrailer != null)
                 if (boat.BoatTrailer != null)
                     model.BoatTrailer = boat.BoatTrailer.Id;
 
@@ -1724,7 +1740,7 @@ namespace TechCertain.WebUI.Controllers
                 Boat boat = boats[i];
                 JqGridRow row = new JqGridRow(boat.Id);
                 //row.AddValue("");
-                row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, string.Format(currencyFormat, "{0:c}", boat.MaxSumInsured), boat.Id);
+                row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                 model.AddRow(row);
             }
 
@@ -1732,8 +1748,6 @@ namespace TechCertain.WebUI.Controllers
             document = model.ToXml();
             return Xml(document);
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> SetBoatRemovedStatus(Guid boatId, bool status)
@@ -1746,6 +1760,20 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
             return new JsonResult(true);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UndoBoatRemovedStatus(BoatViewModel removedboat)
+        {
+            Boat boat = await _boatRepository.GetByIdAsync(removedboat.BoatId);
+
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            {
+                boat.Removed = removedboat.Removed;
+                await uow.Commit();
+            }
+            return new JsonResult(true);
+        
         }
 
         [HttpPost]
