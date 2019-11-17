@@ -28,7 +28,7 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    @*<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">*@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production-plugins.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
@@ -118,7 +118,7 @@
 
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
     @*@{ Html.RenderPartialIf("_Aside", Request.IsAuthenticated); }*@
-    <div class="container">
+    <div id="main" role="main">
         @* If ribbon is required use on top of individual view or add come conditions*@
         @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
         @RenderBody()
