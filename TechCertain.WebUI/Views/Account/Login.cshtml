@@ -12,77 +12,81 @@
 <style>
 </style>
 <div id="content" class="container">
-    <div class="row">
-        @{ await Html.RenderPartialAsync("_LoginText"); }
-        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
-            <div class="well no-padding smart-form client-form">
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="txt-color-red login-header-big">MyDealsLive.com</h1>
+        </div>
+    </div>
+    
+    @{ await Html.RenderPartialAsync("_LoginText"); }
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                Notice
+            </div>
+            <div class="card-body">
+                <label>If you can't remember your password, please <b>Reset your password</b> below</label>
+            </div>
+        </div>
+
+        <div class="well no-padding">
+            <form action="~/Account/Login" method="POST" id="login-form" class="smart-form client-form">
+                @*TODO Change back when mono 4.3 or later is installed*@
+                @*<form action="@Url.Action("login", "account")" method="POST" id="login-form" class="smart-form client-form">*@
                 <header>
-                    Notice
+                    Sign In
                 </header>
+                @Html.HiddenFor(m => m.ReturnUrl)
+                @Html.AntiForgeryToken()
                 <fieldset>
+                    @* Dummy username/password fields since password managers don't respect 'autocomplete="off"' *@
+                    <input style="display:none" type="text" name="fakeusernameremembered" />
+                    <input style="display:none" type="password" name="fakepasswordremembered" autocomplete="off" />
+
+                    <input id="deviceprint" class="hidden" type="text" name="deviceprint" value="" />
+
                     <section>
-                        <label>If you can't remember your password, please <b>Reset your password</b> below</label>
+                        @*<label class="label">Username</label>*@
+                        <label class="input">
+                            <i class="icon-append fa fa-user"></i>
+                            <input type="text" name="username" placeholder="Username" value="">
+                            <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter username</b>
+                        </label>
+                    </section>
+                    <section>
+                        @*<label class="label">Password</label>*@
+                        <label class="input">
+                            <i class="icon-append fa fa-lock"></i>
+                            <input type="password" name="password" placeholder="Password" value="" autocomplete="off">
+                            <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Enter your password</b>
+                        </label>
+                        <div class="note">
+                            <a href="~/Account/ResetPassword"><i class="fa fa-frown-o"></i> Reset your password</a>
+                            @*TODO Change back when mono 4.3 or later is installed*@
+                            @*<a href="@Url.Action("forgotpassword", "account")"><i class="fa fa-frown-o"></i> Forgot password?</a>*@
+                        </div>
                     </section>
                 </fieldset>
-            </div>
-            <div class="well no-padding">
-                <form action="~/Account/Login" method="POST" id="login-form" class="smart-form client-form">
-                    @*TODO Change back when mono 4.3 or later is installed*@
-                    @*<form action="@Url.Action("login", "account")" method="POST" id="login-form" class="smart-form client-form">*@
-                    <header>
-                        Sign In
-                    </header>
-                    @Html.HiddenFor(m => m.ReturnUrl)
-                    @Html.AntiForgeryToken()
-                    <fieldset>
-                        @* Dummy username/password fields since password managers don't respect 'autocomplete="off"' *@
-                        <input style="display:none" type="text" name="fakeusernameremembered" />
-                        <input style="display:none" type="password" name="fakepasswordremembered" autocomplete="off" />
-
-                        <input id="deviceprint" class="hidden" type="text" name="deviceprint" value="" />
-
-                        <section>
-                            @*<label class="label">Username</label>*@
-                            <label class="input">
-                                <i class="icon-append fa fa-user"></i>
-                                <input type="text" name="username" placeholder="Username" value="">
-                                <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter username</b>
-                            </label>
-                        </section>
-                        <section>
-                            @*<label class="label">Password</label>*@
-                            <label class="input">
-                                <i class="icon-append fa fa-lock"></i>
-                                <input type="password" name="password" placeholder="Password" value="" autocomplete="off">
-                                <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Enter your password</b>
-                            </label>
-                            <div class="note">
-                                <a href="~/Account/ResetPassword"><i class="fa fa-frown-o"></i> Reset your password</a>
-                                @*TODO Change back when mono 4.3 or later is installed*@
-                                @*<a href="@Url.Action("forgotpassword", "account")"><i class="fa fa-frown-o"></i> Forgot password?</a>*@
-                            </div>
-                        </section>
-                    </fieldset>
-                    <footer>
-                        <button type="submit" id="submitButton" class="btn btn-primary">
-                            Sign in
-                        </button>
-                    </footer>
-                </form>
-                <div class="modal" id="loginModal" tabindex="-1" role="dialog" data-backdrop="static">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body">
-                                <p><img src="/Content/img/loading.gif" /> Logging you in. Please wait...</p>
-                            </div>
+                <footer>
+                    <button type="submit" id="submitButton" class="btn btn-primary">
+                        Sign in
+                    </button>
+                </footer>
+            </form>
+            <div class="modal" id="loginModal" tabindex="-1" role="dialog" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p><img src="/Content/img/loading.gif" /> Logging you in. Please wait...</p>
                         </div>
                     </div>
                 </div>
             </div>
-            @*@{if (Html.DemoEnvironment()) { Html.RenderPartial("_SocialMedia"); }
-                }*@
         </div>
+        @*@{if (Html.DemoEnvironment()) { Html.RenderPartial("_SocialMedia"); }
+            }*@
     </div>
+</div>
 </div>
 @section pagespecific {
     <script src="~/jquery/jquery.min.js"></script>
