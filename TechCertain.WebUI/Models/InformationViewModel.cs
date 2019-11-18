@@ -306,7 +306,6 @@ namespace TechCertain.WebUI.Models
     public class RevenueByCountryViewModel
     {
         public string Country { get; set; }
-
         public decimal DeclaredRevenue { get; set; }
     }
 
@@ -314,7 +313,6 @@ namespace TechCertain.WebUI.Models
     {
         public int Classification { get; set; }
         public string AnzsciCode { get; set; }
-
         public string Description { get; set; }
     }
 }
