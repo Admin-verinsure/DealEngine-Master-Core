@@ -58,15 +58,6 @@
                                                     <option value="Marina"> Marina</option>
                                                     <option value="Other Marina">Other Marina</option>
                                                     <option value="Financial">Financial</option>
-
-                                                    @*<option selected>Marina</option>
-                                                    <option>Other Marina</option>
-
-                                                    @foreach (var selectListItem in Model.InsuranceAttributes)
-                                                    {
-                                                        <option value=@selectListItem.Value> @selectListItem.Text</option>
-                                                    }*@
-
                                                 </select>
                                             </label>
                                         </td>
@@ -79,15 +70,15 @@
 
                                         <td align="center">
                                             <label class="input">
-                                                        <select   name="OrganisationMarinaOrgMooredType" multiple class="chosen-select form-control b">
+                                                <select name="OrganisationMarinaOrgMooredType" multiple class="chosen-select form-control b">
 
-                                                            @foreach (var selectListItem in Model.OrgMooredType)
-                                                            {
-                                                                <option value=@selectListItem.Value> @selectListItem.Text</option>
-                                                            }
+                                                    @foreach (var selectListItem in Model.OrgMooredType)
+                                                    {
+                                                        <option value=@selectListItem.Value> @selectListItem.Text</option>
+                                                    }
 
-                                                        </select>
-                                              
+                                                </select>
+
                                             </label>
                                         </td>
                                     </tr>
@@ -259,9 +250,13 @@
                 </article>
             </div>
         </section>
-        <div class="">
-            <button type="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Add</button>
-        </div>
+        @if (User.HasClaim("Edit", "EditMarinas/FinancialInstitutions"))
+        {
+            <div class="">
+                <button type="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Add</button>
+            </div>
+        }
+
     </form>
 </div>
 

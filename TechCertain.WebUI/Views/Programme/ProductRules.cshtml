@@ -51,11 +51,14 @@
                                 <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
                                     @item.Value
                                 </td>
-                                <td width="9%">
-                                    <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
-                                       data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>
-                                    @*<a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-rule-id="@item.Id"><span class="fa fa-trash" id="span"></span></a>*@
-                                </td>
+                                @if (User.HasClaim("Edit", "EditRules"))
+                                {
+                                    <td width="9%">
+                                        <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
+                                           data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>                                        
+                                    </td>
+                                }
+
                                 @*onclick='$("#myModal").modal("show");'*@
                             </tr>
 

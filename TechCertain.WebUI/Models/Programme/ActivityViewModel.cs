@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using TechCertain.Domain.Entities;
 
 namespace TechCertain.WebUI.Models.Programme
 {
@@ -10,15 +12,16 @@ namespace TechCertain.WebUI.Models.Programme
         public ActivityBuilderVM Builder { get; set; }
         public ActivityAttachVM ActivityAttach { get; set; }
         public ActivityModal ActivityCreate { get; set; }
+        public ActivityListViewModel ActivityListViewModel { get; set; }
 
     };
 
     public class ActivityBuilderVM
     {
-        public IEnumerable<BusinessActivityViewModel> Level1Classifications { get; set; }
-        public IEnumerable<BusinessActivityViewModel> Level2Classifications { get; set; }
-        public IEnumerable<BusinessActivityViewModel> Level3Classifications { get; set; }
-        public IEnumerable<BusinessActivityViewModel> Level4Classifications { get; set; }
+        public IList<BusinessActivity> Level1Classifications { get; set; }
+        public IList<BusinessActivity> Level2Classifications { get; set; }
+        public IList<BusinessActivity> Level3Classifications { get; set; }
+        public IList<BusinessActivity> Level4Classifications { get; set; }
         public IList<SelectListItem> Activities { get; set; }
         public string[] SelectedActivities { get; set; }
         public bool Ispublic { get; set; }

@@ -48,7 +48,10 @@
                                         <td>
                                             <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)">Get Html</a>
                                             <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx">Get Docx</a>
-                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument/@(doc.Id)">Update</a>
+                                            @if (User.HasClaim("Edit", "EditManageDocuments"))
+                                            {
+                                                <a class="btn btn-primary btn-xs" href="/File/CreateDocument/@(doc.Id)">Update</a>
+                                            }
                                         </td>
                                     </tr>
                                 }

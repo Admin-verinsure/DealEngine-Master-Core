@@ -89,11 +89,13 @@
 
                                                         <section class="col col-3">
                                                         </section>
-                                                        <section class="col col-9">
-                                                            <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            <a href="~/Programme/TermSheetConfirguration/@Model.Id" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
-                                                        </section>
-
+                                                        @if (User.HasClaim("Edit", "EditProgramme"))
+                                                        {
+                                                            <section class="col col-9">
+                                                                <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <a href="~/Programme/TermSheetConfirguration/@Model.Id" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                                                            </section>
+                                                        }
 
                                                     </fieldset>
                                                 </form>
