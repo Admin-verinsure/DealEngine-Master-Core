@@ -37,74 +37,77 @@
         <div class="row">
             <article class="col-sm-12 col-md-12 col-lg-7">
                 <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
-                     data-widget-editbutton="false" data-widget-colorbutton="false">
+                @if (User.HasClaim("View", "ViewComingUpTask"))
+                {
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
+                         data-widget-editbutton="false" data-widget-colorbutton="false">
 
-                    <header style="background-color:#3276b1">
-                        <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                        <h2> Coming Up </h2>
-                        <!--<div class="widget-toolbar">
-                 add: non-hidden - to disable auto hide
+                        <header style="background-color:#3276b1">
+                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                            <h2> Coming Up </h2>
+                            <!--<div class="widget-toolbar">
+                     add: non-hidden - to disable auto hide
 
-            </div>-->
-                    </header>
-                    <!-- widget div-->
-                    <div>
-                        <div class="alert alert-info alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            There are currently no upcoming tasks.
-                        </div>
-                        @*@Html.Bootstrap().Alert("There are currently no upcoming tasks").Style(AlertColor.Info)*@
-                        <!-- widget edit box -->
-                        <div class="jarviswidget-editbox">
-                            <div>
-                                <label>Title:</label>
-                                <input type="text" />
+                </div>-->
+                        </header>
+                        <!-- widget div-->
+                        <div>
+                            <div class="alert alert-info alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                There are currently no upcoming tasks.
                             </div>
+                            @*@Html.Bootstrap().Alert("There are currently no upcoming tasks").Style(AlertColor.Info)*@
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <div>
+                                    <label>Title:</label>
+                                    <input type="text" />
+                                </div>
+                            </div>
+                            <!-- end widget edit box -->
+
+                            <div class="widget-body widget-hide-overflow no-padding">
+                                <!-- content goes here -->
+                                <form class="smart-form">
+                                    <table class="table table-striped table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Task</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><a href="~/Information/ViewInformation/3">Wellness & Health Associated Professionals Contract Renewal</a></td>
+                                                <td>15/11/2015</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><a href="javascript:void(0);">Peter Smith WAHAP Renewal</a></td>
+                                                <td>17/11/2015</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><a href="javascript:void(0);">John Doe - Motorcycle Renewal</a></td>
+                                                <td>22/11/2015</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><a href="javascript:void(0);">Billy Josh - Contents Policy Lapsing</a></td>
+                                                <td>25/11/2015</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </form>
+                                <!-- end content -->
+                            </div>
+
                         </div>
-                        <!-- end widget edit box -->
-
-                        <div class="widget-body widget-hide-overflow no-padding">
-                            <!-- content goes here -->
-                            <form class="smart-form">
-                                <table class="table table-striped table-hover table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>Task</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td><a href="~/Information/ViewInformation/3">Wellness & Health Associated Professionals Contract Renewal</a></td>
-                                        <td>15/11/2015</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);">Peter Smith WAHAP Renewal</a></td>
-                                        <td>17/11/2015</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);">John Doe - Motorcycle Renewal</a></td>
-                                        <td>22/11/2015</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);">Billy Josh - Contents Policy Lapsing</a></td>
-                                        <td>25/11/2015</td>
-                                    </tr>
-                                
-                                    </tbody>
-                                </table>
-                            </form>
-                            <!-- end content -->
-                        </div>
-
+                        <!-- end widget div -->
                     </div>
-                    <!-- end widget div -->
-                </div>
-                @if (User.HasClaim("MembersContactDetails1", "MembersContactDetails"))
+                }
+                @if (User.HasClaim("View", "ViewMilestoneTasks"))
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-tasks"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -205,7 +208,7 @@
                                     }
                                 </ul>
 
-                               
+
                                 <!-- end content -->
                             </div>
 
@@ -215,8 +218,8 @@
                         <!-- end widget div -->
                     </div>
                 }
-
-
+                @if (User.HasClaim("View", "ViewClientAgreements"))
+                {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
 
@@ -328,109 +331,109 @@
                         </div>
                         <!-- end widget div -->
                     </div>
+                }
+                @if (User.HasClaim("View", "ViewTermSheets"))
+                {
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
+                         data-widget-editbutton="false" data-widget-colorbutton="false">
 
+                        <header style="background-color:#3276b1">
+                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                            <h2> Broker/Underwriter Term Sheets </h2>
+                            <!--<div class="widget-toolbar">
+                     add: non-hidden - to disable auto hide
 
-                    @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                    {
-                        <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
-                             data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                            <header style="background-color:#3276b1">
-                                <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                                <h2> Broker/Underwriter Term Sheets </h2>
-                                <!--<div class="widget-toolbar">
-                         add: non-hidden - to disable auto hide
-
-                    </div>-->
-                            </header>
-                            <!-- widget div-->
-                            <div>
-                                <!-- widget edit box -->
-                                <div class="jarviswidget-editbox">
-                                    <div>
-                                        <label>Title:</label>
-                                        <input type="text" />
-                                    </div>
-                                </div>
-                                <!-- end widget edit box -->
-                                <div class="widget-body no-padding smart-form">
-                                    <!-- content goes here -->
-                                    <form class="smart-form">
-                                        <section class="padding-bottom-10 hidden">
-                                            <div class="col-xs-1">
-                                                <img class="img-responsive ri ri-accident">
-                                            </div>
-                                            <div class="col-xs-1">
-                                                <img class="img-responsive ri ri-building ">
-                                            </div>
-                                            <div class="col-xs-1 ">
-                                                <img class="img-responsive ri ri-contents">
-                                            </div>
-                                            <div class="col-xs-1">
-                                                <img class="img-responsive ri ri-death">
-                                            </div>
-                                            <div class="col-xs-1">
-                                                <img class="img-responsive ri ri-freight">
-                                            </div>
-                                            <div class="col-xs-1 ">
-                                                <img class="img-responsive ri ri-incomeprotection">
-                                            </div>
-                                            <div class="col-xs-1 ">
-                                                <img class="img-responsive ri ri-liability">
-                                            </div>
-                                            <div class="col-xs-1">
-                                                <img class="img-responsive ri ri-life">
-                                            </div>
-                                            <div class="col-xs-1 ">
-                                                <img class="img-responsive ri ri-medical">
-                                            </div>
-                                            <div class="col-xs-1 ">
-                                                <img class="img-responsive ri ri-motor">
-                                            </div>
-                                            <div class="col-xs-1 ">
-                                                <img class="img-responsive ri ri-motorcycle">
-                                            </div>
-                                            <div class="col-xs-1">
-                                                <img class="img-responsive ri ri-travel">
-                                            </div>
-                                        </section>
-                                        <table class="table table-striped table-hover table-condensed">
-                                            <thead>
-                                                <tr>
-                                                    <th>Product Name</th>
-                                                    <th>Languages</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var item in Model.ProgrammeItems)
-                                                {
-
-                                                    <tr>
-                                                        <td>
-                                                            @item.Name
-                                                        </td>
-                                                        <td>
-                                                            @foreach (var lang in item.Languages)
-                                                            {
-                                                                <img src="~/Content/img/blank.gif" class="flag flag-@lang" />
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            <a class="btn btn-success btn-xs" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </form>
-                                    <!-- end content -->
+                </div>-->
+                        </header>
+                        <!-- widget div-->
+                        <div>
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <div>
+                                    <label>Title:</label>
+                                    <input type="text" />
                                 </div>
                             </div>
-                            <!-- end widget div -->
-                        </div>
-                    }
+                            <!-- end widget edit box -->
+                            <div class="widget-body no-padding smart-form">
+                                <!-- content goes here -->
+                                <form class="smart-form">
+                                    <section class="padding-bottom-10 hidden">
+                                        <div class="col-xs-1">
+                                            <img class="img-responsive ri ri-accident">
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <img class="img-responsive ri ri-building ">
+                                        </div>
+                                        <div class="col-xs-1 ">
+                                            <img class="img-responsive ri ri-contents">
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <img class="img-responsive ri ri-death">
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <img class="img-responsive ri ri-freight">
+                                        </div>
+                                        <div class="col-xs-1 ">
+                                            <img class="img-responsive ri ri-incomeprotection">
+                                        </div>
+                                        <div class="col-xs-1 ">
+                                            <img class="img-responsive ri ri-liability">
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <img class="img-responsive ri ri-life">
+                                        </div>
+                                        <div class="col-xs-1 ">
+                                            <img class="img-responsive ri ri-medical">
+                                        </div>
+                                        <div class="col-xs-1 ">
+                                            <img class="img-responsive ri ri-motor">
+                                        </div>
+                                        <div class="col-xs-1 ">
+                                            <img class="img-responsive ri ri-motorcycle">
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <img class="img-responsive ri ri-travel">
+                                        </div>
+                                    </section>
+                                    <table class="table table-striped table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Product Name</th>
+                                                <th>Languages</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.ProgrammeItems)
+                                            {
 
+                                                <tr>
+                                                    <td>
+                                                        @item.Name
+                                                    </td>
+                                                    <td>
+                                                        @foreach (var lang in item.Languages)
+                                                        {
+                                                            <img src="~/Content/img/blank.gif" class="flag flag-@lang" />
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-success btn-xs" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </form>
+                                <!-- end content -->
+                            </div>
+                        </div>
+                        <!-- end widget div -->
+                    </div>
+                }
+                @if (User.HasClaim("View", "ViewLibraries"))
+                {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-toolbox"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
 
@@ -462,14 +465,11 @@
                                                 @* @if (Model.HasRole("CanEditProduct"))*@
                                                 @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                 {
-
-
-
-                                                <tr>
-                                                    <td>Activities</td>
-                                                    <td>ANZSIC Codes</td>
-                                                    <td><a class="btn btn-success btn-xs" href="/Programme/ActivityBuilder"><i class="fa fa-search"></i> View</a></td>                                                    
-                                                </tr>
+                                                    <tr>
+                                                        <td>Activities</td>
+                                                        <td>ANZSIC Codes</td>
+                                                        <td><a class="btn btn-success btn-xs" href="/Programme/ActivityBuilder"><i class="fa fa-search"></i> View</a></td>
+                                                    </tr>
                                                     <tr>
                                                         <td>Addresses</td>
                                                         <td>Address API used </td>
@@ -570,70 +570,70 @@
                         </div>
                         <!-- end widget div -->
                     </div>
+                }
+                @if (User.IsInRole("TestRole"))
+                {
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
+                         data-widget-editbutton="false" data-widget-colorbutton="false">
 
-                    @if (Model.CurrentUserIsTC == "True")
-                    {
-                        <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
-                             data-widget-editbutton="false" data-widget-colorbutton="false">
+                        <header style="background-color:#3276b1">
+                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                            <h2> Admin </h2>
+                            <!--<div class="widget-toolbar">
+                     add: non-hidden - to disable auto hide
 
-                            <header style="background-color:#3276b1">
-                                <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                                <h2> Admin </h2>
-                                <!--<div class="widget-toolbar">
-                         add: non-hidden - to disable auto hide
+                </div>-->
+                        </header>
+                        <!-- widget div-->
+                        <div>
 
-                    </div>-->
-                            </header>
-                            <!-- widget div-->
-                            <div>
-
-                                <!-- widget edit box -->
-                                <div class="jarviswidget-editbox">
-                                    <div>
-                                        <label>Title:</label>
-                                        <input type="text" />
-                                    </div>
-                                </div>
-                                <!-- end widget edit box -->
-                                <div class="widget-body widget-hide-overflow no-padding">
-                                    <!-- content goes here -->
-                                    <form class="smart-form">
-                                        <table class="table table-striped table-hover table-condensed">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Manage Admin funtion</td>
-                                                    <td><a href="~/Admin/Index"></a></td>
-                                                    <td><a class="btn btn-success btn-xs" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Manage Organisations</td>
-                                                    <td><a href="~/Organisation/ManageOrganisations"></a></td>
-                                                    <td><a class="btn btn-success btn-xs" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Manage Permissions</td>
-                                                    <td><a href="~/Authorize/Index"></a></td>
-                                                    <td><a class="btn btn-success btn-xs" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </form>
-                                    <!-- end content -->
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <div>
+                                    <label>Title:</label>
+                                    <input type="text" />
                                 </div>
                             </div>
-                            <!-- end widget div -->
+                            <!-- end widget edit box -->
+                            <div class="widget-body widget-hide-overflow no-padding">
+                                <!-- content goes here -->
+                                <form class="smart-form">
+                                    <table class="table table-striped table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Manage Admin funtion</td>
+                                                <td><a href="~/Admin/Index"></a></td>
+                                                <td><a class="btn btn-success btn-xs" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Manage Organisations</td>
+                                                <td><a href="~/Organisation/ManageOrganisations"></a></td>
+                                                <td><a class="btn btn-success btn-xs" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Manage Permissions</td>
+                                                <td><a href="~/Authorize/Index"></a></td>
+                                                <td><a class="btn btn-success btn-xs" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                                <!-- end content -->
+                            </div>
                         </div>
-                    }
-                  
-                    <!-- end widget -->
-                </article>
+                        <!-- end widget div -->
+                    </div>
+                }
+
+                <!-- end widget -->
+            </article>
 
         </div>
 

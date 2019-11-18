@@ -22,12 +22,12 @@ namespace TechCertain.Services.Impl
             //claim(type, value) in this case the type is type of rule and value is the rule
 
             //view dashboard rules
-            Claim v1 = new Claim("View", "ComingUpTask", primaryOrganisation);
-            Claim v2 = new Claim("View", "MilestoneTasks", primaryOrganisation);
-            Claim v3 = new Claim("View", "ClientAgreements", primaryOrganisation);
-            Claim v4 = new Claim("View", "TermSheets", primaryOrganisation);
-            Claim v5 = new Claim("View", "Libraries", primaryOrganisation);
-            Claim v6 = new Claim("View", "Admin", primaryOrganisation);
+            Claim v1 = new Claim("View", "ViewComingUpTask", primaryOrganisation);
+            Claim v2 = new Claim("View", "ViewMilestoneTasks", primaryOrganisation);
+            Claim v3 = new Claim("View", "ViewClientAgreements", primaryOrganisation);
+            Claim v4 = new Claim("View", "ViewTermSheets", primaryOrganisation);
+            Claim v5 = new Claim("View", "ViewLibraries", primaryOrganisation);
+            Claim v6 = new Claim("View", "ViewAdmin", primaryOrganisation);
             await _claimsRepository.AddAsync(v1);
             await _claimsRepository.AddAsync(v2);
             await _claimsRepository.AddAsync(v3);
@@ -36,20 +36,20 @@ namespace TechCertain.Services.Impl
             await _claimsRepository.AddAsync(v6);
 
             //view term sheet rules
-            Claim s1 = new Claim("View", "Programme", primaryOrganisation);
-            Claim s2 = new Claim("View", "Activities", primaryOrganisation);
-            Claim s3 = new Claim("View", "ManageDocuments", primaryOrganisation);
-            Claim s4 = new Claim("View", "Rules", primaryOrganisation);
-            Claim s5 = new Claim("View", "Emails", primaryOrganisation);
-            Claim s6 = new Claim("View", "Milestones", primaryOrganisation);
-            Claim s7 = new Claim("View", "Marinas/FinancialInstitutions", primaryOrganisation);
-            Claim s8 = new Claim("View", "Motor", primaryOrganisation);
-            Claim s9 = new Claim("View", "Products", primaryOrganisation);
-            Claim s10 = new Claim("View", "Sections", primaryOrganisation);
-            Claim s11 = new Claim("View", "SpecialTerms", primaryOrganisation);
-            Claim s12 = new Claim("View", "UnderwritingRules", primaryOrganisation);
-            Claim s13 = new Claim("View", "Users", primaryOrganisation);
-            Claim s14 = new Claim("View", "Water", primaryOrganisation);
+            Claim s1 = new Claim("View", "ViewProgramme", primaryOrganisation);
+            Claim s2 = new Claim("View", "ViewActivities", primaryOrganisation);
+            Claim s3 = new Claim("View", "ViewManageDocuments", primaryOrganisation);
+            Claim s4 = new Claim("View", "ViewRules", primaryOrganisation);
+            Claim s5 = new Claim("View", "ViewEmails", primaryOrganisation);
+            Claim s6 = new Claim("View", "ViewMilestones", primaryOrganisation);
+            Claim s7 = new Claim("View", "ViewMarinas/FinancialInstitutions", primaryOrganisation);
+            Claim s8 = new Claim("View", "ViewMotor", primaryOrganisation);
+            Claim s9 = new Claim("View", "ViewProducts", primaryOrganisation);
+            Claim s10 = new Claim("View", "ViewSections", primaryOrganisation);
+            Claim s11 = new Claim("View", "ViewSpecialTerms", primaryOrganisation);
+            Claim s12 = new Claim("View", "ViewUnderwritingRules", primaryOrganisation);
+            Claim s13 = new Claim("View", "ViewUsers", primaryOrganisation);
+            Claim s14 = new Claim("View", "ViewWater", primaryOrganisation);
             await _claimsRepository.AddAsync(s1);
             await _claimsRepository.AddAsync(s2);
             await _claimsRepository.AddAsync(s3);
@@ -66,20 +66,20 @@ namespace TechCertain.Services.Impl
             await _claimsRepository.AddAsync(s14);
 
             //edit term sheet rules
-            Claim e1 = new Claim("Edit", "Programme", primaryOrganisation);
-            Claim e2 = new Claim("Edit", "Activities", primaryOrganisation);
-            Claim e3 = new Claim("Edit", "ManageDocuments", primaryOrganisation);
-            Claim e4 = new Claim("Edit", "Rules", primaryOrganisation);
-            Claim e5 = new Claim("Edit", "Emails", primaryOrganisation);
-            Claim e6 = new Claim("Edit", "Milestones", primaryOrganisation);
-            Claim e7 = new Claim("Edit", "Marinas/FinancialInstitutions", primaryOrganisation);
-            Claim e8 = new Claim("Edit", "Motor", primaryOrganisation);
-            Claim e9 = new Claim("Edit", "Products", primaryOrganisation);
-            Claim e10 = new Claim("Edit", "Sections", primaryOrganisation);
-            Claim e11 = new Claim("Edit", "SpecialTerms", primaryOrganisation);
-            Claim e12 = new Claim("Edit", "UnderwritingRules", primaryOrganisation);
-            Claim e13 = new Claim("Edit", "Users", primaryOrganisation);
-            Claim e14 = new Claim("Edit", "Water", primaryOrganisation);
+            Claim e1 = new Claim("Edit", "EditProgramme", primaryOrganisation);
+            Claim e2 = new Claim("Edit", "EditActivities", primaryOrganisation);
+            Claim e3 = new Claim("Edit", "EditManageDocuments", primaryOrganisation);
+            Claim e4 = new Claim("Edit", "EditRules", primaryOrganisation);
+            Claim e5 = new Claim("Edit", "EditEmails", primaryOrganisation);
+            Claim e6 = new Claim("Edit", "EditMilestones", primaryOrganisation);
+            Claim e7 = new Claim("Edit", "EditMarinas/FinancialInstitutions", primaryOrganisation);
+            Claim e8 = new Claim("Edit", "EditMotor", primaryOrganisation);
+            Claim e9 = new Claim("Edit", "EditProducts", primaryOrganisation);
+            Claim e10 = new Claim("Edit", "EditSections", primaryOrganisation);
+            Claim e11 = new Claim("Edit", "EditSpecialTerms", primaryOrganisation);
+            Claim e12 = new Claim("Edit", "EditUnderwritingRules", primaryOrganisation);
+            Claim e13 = new Claim("Edit", "EditUsers", primaryOrganisation);
+            Claim e14 = new Claim("Edit", "EditWater", primaryOrganisation);
             await _claimsRepository.AddAsync(e1);
             await _claimsRepository.AddAsync(e2);
             await _claimsRepository.AddAsync(e3);

@@ -21,5 +21,10 @@ namespace TechCertain.Services.Impl
         {
             return _claimsRepository.FindAll().Where(c => c.Organisation == organisation).ToListAsync();
         }
+
+        public async Task<Claim> GetTemplateByName(string claimName)
+        {
+            return await _claimsRepository.FindAll().FirstOrDefaultAsync(c => c.Value == claimName);
+        }
     }
 }

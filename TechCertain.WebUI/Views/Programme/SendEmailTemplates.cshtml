@@ -78,10 +78,12 @@
                         <div class="widget-body widget-hide-overflow">
                             <fieldset>
                                 <div class="row">
-                                    <section class="col col-12">
-                                        @*@Html.Bootstrap().Button().Text("Save Email Template").HtmlAttributes(new { onclick = "javascript:SaveEmailTemplate()" }).Class("btn txt-color-white bg-color-green btn-sm")*@
-                                        <button onclick="SaveEmailTemplate()" class="btn txt-color-white bg-color-green btn-sm" id="SaveEmailTemplate">Save Email Template</button>
-                                    </section>
+                                    @if (User.HasClaim("Edit", "EditEmails"))
+                                    {
+                                        <section class="col col-12">
+                                            <button onclick="SaveEmailTemplate()" class="btn txt-color-white bg-color-green btn-sm" id="SaveEmailTemplate">Save Email Template</button>
+                                        </section>
+                                    }
                                 </div>
                             </fieldset>
                         </div>
