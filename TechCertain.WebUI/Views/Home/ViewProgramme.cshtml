@@ -124,112 +124,115 @@
 
         </div>
         <div class="modal-body">
-            <form id="ProdForm">
+            <div class="row">
 
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <input class="form-control b hidden" type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
-                </section>
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <form id="ProdForm">
 
-                    <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                        <label for="changeType" class="required">Change Type</label>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <input class="form-control b hidden" type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
                     </section>
-                    <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-                        <div class="form-group">
-                            <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
-                                <option selected="selected" value="">-- Select here --</option>
-                                <option Value="TC_addAmendRiskInfo">Add Amend Risk Information</option>
-                                <option Value="TC_newCoverable">Add New Coverable</option>
-                                <option Value="TC_amendExcess">Amend Excess</option>
-                                <option Value="TC_amendLocation">Amend Location</option>
-                                <option Value="TC_amendSumInsured">Amend Sum Insured</option>
-                                <option Value="TC_amendTermsCoverage">Amend Terms/Coverage</option>
-                                <option Value="TC_amendAddReinsurance">Amend or Add Reinsurance</option>
-                                <option Value="TC_amendAddInsured">Amend or Add Insured</option>
-                                <option Value="TC_amendAddCI">Amend or Add Co-insurance</option>
-                                <option Value="TC_changeOfExpiryDate">Change of Expiry Date</option>
-                                <option Value="TC_changeOfBroker">Change of Broker</option>
-                                <option Value="TC_changeOfBizOrOcc">Change of Business or Occupation</option>
-                                <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
-                                <option Value="TC_other">Other Amendment</option>
-                                <option Value="TC_amendOneTimeEvents">One Time Event</option>
-                            </select>
-                        </div>
-                        <p class="validationContainer" id="validateChangeType"></p>
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                    </section>
+                            <label for="changeType" class="required">Change Type</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
 
-                </section>
+                            <div class="form-group">
+                                <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
+                                    <option selected="selected" value="">-- Select here --</option>
+                                    <option Value="TC_addAmendRiskInfo">Add Amend Risk Information</option>
+                                    <option Value="TC_newCoverable">Add New Coverable</option>
+                                    <option Value="TC_amendExcess">Amend Excess</option>
+                                    <option Value="TC_amendLocation">Amend Location</option>
+                                    <option Value="TC_amendSumInsured">Amend Sum Insured</option>
+                                    <option Value="TC_amendTermsCoverage">Amend Terms/Coverage</option>
+                                    <option Value="TC_amendAddReinsurance">Amend or Add Reinsurance</option>
+                                    <option Value="TC_amendAddInsured">Amend or Add Insured</option>
+                                    <option Value="TC_amendAddCI">Amend or Add Co-insurance</option>
+                                    <option Value="TC_changeOfExpiryDate">Change of Expiry Date</option>
+                                    <option Value="TC_changeOfBroker">Change of Broker</option>
+                                    <option Value="TC_changeOfBizOrOcc">Change of Business or Occupation</option>
+                                    <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
+                                    <option Value="TC_other">Other Amendment</option>
+                                    <option Value="TC_amendOneTimeEvents">One Time Event</option>
+                                </select>
+                            </div>
+                            <p class="validationContainer" id="validateChangeType"></p>
 
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                        <label for="Reason" class="required">Reason</label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                        <div class="form-group">
-                            <select class="form-control b" id="ChangeReason" name="Reason" title="" required>
-                                <option selected="selected" value="">-- Select here --</option>
-                                <option Value="TC_businessSoldOrClosed_lgi">Business Sold or Closed</option>
-                                <option Value="TC_changeInCoverReq_lgi">Change in cover requirements</option>
-                                <option Value="TC_changeOfBroker_lgi">Change of Broker</option>
-                                <option Value="TC_dissatisfiedWithClaims_lgi">Dissatisfied with claims</option>
-                                <option Value="TC_dissatisfiedWithSvc_lgi">Dissatisfied with service</option>
-                                <option Value="TC_goneIntoGlobalAcct_lgi">Gone into Global Account</option>
-                                <option Value="TC_nonpayment">Non payment</option>
-                                <option Value="TC_policyReplaced_lgi">Policy replaced</option>
-                                <option Value="TC_tooDear_lgi">Too dear</option>
-
-                            </select>
-                        </div>
-                        <p class="validationContainer" id="validateChangeReason"></p>
+                        </section>
 
                     </section>
 
-                </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                            <label for="Reason" class="required">Reason</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <div class="form-group">
+                                <select class="form-control b" id="ChangeReason" name="Reason" title="" required>
+                                    <option selected="selected" value="">-- Select here --</option>
+                                    <option Value="TC_businessSoldOrClosed_lgi">Business Sold or Closed</option>
+                                    <option Value="TC_changeInCoverReq_lgi">Change in cover requirements</option>
+                                    <option Value="TC_changeOfBroker_lgi">Change of Broker</option>
+                                    <option Value="TC_dissatisfiedWithClaims_lgi">Dissatisfied with claims</option>
+                                    <option Value="TC_dissatisfiedWithSvc_lgi">Dissatisfied with service</option>
+                                    <option Value="TC_goneIntoGlobalAcct_lgi">Gone into Global Account</option>
+                                    <option Value="TC_nonpayment">Non payment</option>
+                                    <option Value="TC_policyReplaced_lgi">Policy replaced</option>
+                                    <option Value="TC_tooDear_lgi">Too dear</option>
 
-                        <label for="ReasonDesc" class="required">Reason Description</label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                        <div class="form-group">
-                            <textarea class="form-control b" data-type="TEXTAREA" id="Description" name="ReasonDesc" placeholder="Notes" value=""></textarea>
-                        </div>
-                        <p class="validationContainer" id="validateDescription"></p>
-                    </section>
-                </section>
+                                </select>
+                            </div>
+                            <p class="validationContainer" id="validateChangeReason"></p>
 
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                        </section>
 
-                        <label for="EffectiveDate" class="required">Effective Date</label>
                     </section>
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <div class="form-group">
-                            <input name="BoatEffectiveDate" placeholder="Effective Date" class=" form-control b" data-dateformat="dd/mm/yy" id="ChangeEffectiveDate" type="text">
-                        </div>
-                    </section>
-                    <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
-                        <i class="icon-append fa fa-calendar"></i>
-                    </section>
-                    <p class="validationContainer" id="validateEffectivedate"></p>
-                </section>
 
-            </form>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label for="ReasonDesc" class="required">Reason Description</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <div class="form-group">
+                                <textarea class="form-control b" data-type="TEXTAREA" id="Description" name="ReasonDesc" placeholder="Notes" value=""></textarea>
+                            </div>
+                            <p class="validationContainer" id="validateDescription"></p>
+                        </section>
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label for="EffectiveDate" class="required">Effective Date</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <div class="form-group">
+                                <input name="BoatEffectiveDate" placeholder="Effective Date" class=" form-control b" data-dateformat="dd/mm/yy" id="ChangeEffectiveDate" type="text">
+                            </div>
+                        </section>
+                        <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                            <i class="icon-append fa fa-calendar"></i>
+                        </section>
+                        <p class="validationContainer" id="validateEffectivedate"></p>
+                    </section>
+
+                </form>
+            </div>
         </div>
-        <div class="modal-footer">
+            <div class="modal-footer">
 
-            <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
+                <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
 
-            @*<input type="Reset" value="Submit"  class="btn btn-primary btn-xs" id="btnChangeSubmit">*@
+                @*<input type="Reset" value="Submit"  class="btn btn-primary btn-xs" id="btnChangeSubmit">*@
 
-            @*<a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>*@
+                @*<a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>*@
+            </div>
         </div>
-    </div>
 </div>
 
 
