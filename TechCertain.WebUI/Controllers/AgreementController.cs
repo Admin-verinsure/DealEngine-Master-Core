@@ -759,6 +759,15 @@ namespace TechCertain.WebUI.Controllers
                     _emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
                 }
                 model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
+                Boolean nextInfoSheet = false;
+                if (null != agreement.ClientInformationSheet.NextInformationSheet)
+                {
+                    model.NextInfoSheet = true;
+                }
+                else
+                {
+                    model.NextInfoSheet = false;
+                }
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);

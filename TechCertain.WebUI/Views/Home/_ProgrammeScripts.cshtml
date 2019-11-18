@@ -329,10 +329,11 @@
                 type: "Post",
                 data: prodData,
                 url: "/Information/UpdateInformation",
-                success: function () {
+                success: function (data) {
+                    debugger;
                     $("#myModal").modal("hide");
                     alert("Saved Successfully!");
-                    location.reload(true);
+                    window.location.href = data.url;
 
                 }
             }).done(function (data) {

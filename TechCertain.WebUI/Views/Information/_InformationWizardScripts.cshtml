@@ -3,6 +3,7 @@
 <script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
 <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
+
 <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
 <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js" defer></script>
@@ -666,18 +667,38 @@
     });
 
     $("#btnRemoveSubmit").click(function () {
-            debugger;
+        debugger;
             var valid = Validateremove();
         if (valid) {
             debugger;
             var boatId = $('#boatID').val();
 		   var status =  $('#status').val();
 		   var sourcetable = $('#sourceTable').val();
-		   var desttable = $('#destTable').val();
+            var desttable = $('#destTable').val();
+            
+            SetBoatCeasedStatus(boatId, status,sourcetable,desttable);
+            debugger;
                 SetBoatRemovedStatus(boatId,status,sourcetable,desttable);
         }
 
     });
+
+        $("#btnVehicleRemoveSubmit").click(function () {
+        debugger;
+            var valid = ValidateVehicleremove();
+        if (valid) {
+            debugger;
+            var vehicleId = $('#vehicleId').val();
+		   var status =  $('#vehiclestatus').val();
+		   var sourcetable = $('#vehiclesourceTable').val();
+            var desttable = $('#vehicledestTable').val();
+            SetVehicleCeasedStatus(vehicleId, status, sourcetable, desttable);
+                SetVehicleRemovedStatus(vehicleId,status,sourcetable,desttable);
+        }
+
+    });
+
+    
 
     $("#btnPanelSubmit").click(function () {
         var PanelId = $("#PanelId").val();
@@ -820,8 +841,49 @@
         return validity;
     }
 
+    
+     function RemoveVehicle(vehicleId, status, sourceTable, destTable,Modelstatus) {
+        debugger;
+           var _sheetId = $('#AnswerSheetId').val();
+             var postData = {
+		       'vehicleId': vehicleId,
+		       'answerSheetId': _sheetId
+	        };
 
-     function RemoveBoat(boatId, status, sourceTable, destTable) {
+	 $.ajax({
+
+        url: '@Url.Action("GetOriginalVehicle", "Services")',
+        type: "Post",
+        //contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+            data: postData
+         })
+            .done(function (data) {
+           debugger;
+                if (data.OriginalVehicleId != "00000000-0000-0000-0000-000000000000") {
+
+                    if (Modelstatus != "Submitted") {
+                        $('#VehicleRemoveModal').show();
+                        $('.modal').css({ "width": "600px", "margin-left": "600px"  });
+                        $('#vehicleId').val(vehicleId);
+                        $('#vehiclestatus').val(status);
+                        $('#vehiclesourceTable').val(sourceTable);
+                        $('#vehicledestTable').val(destTable);
+                   } else {
+                            alert("Information Sheet has already been submitted, and cannot be updated.");
+                    }
+                    
+                } else {
+                    debugger;
+                    SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable);
+
+                }
+
+		 });
+    };
+
+
+     function RemoveBoat(boatId, status, sourceTable, destTable, Modelstatus) {
         debugger;
            var _sheetId = $('#AnswerSheetId').val();
              var postData = {
@@ -840,12 +902,16 @@
             .done(function (data) {
            debugger;
                 if (data.OriginalBoatId != "00000000-0000-0000-0000-000000000000") {
-                    $('#BoatRemoveModal').show();
-                    $('.modal').css('width', '600px');
-                    $('#boatID').val(boatId);
-                    $('#status').val(status);
-                    $('#sourceTable').val(sourceTable);
-                    $('#destTable').val(destTable);
+                    if (Modelstatus != "Submitted") {
+                        $('#BoatRemoveModal').show();
+                        $('.modal').css({ "width": "600px", "margin-left": "600px" });
+                        $('#boatID').val(boatId);
+                        $('#status').val(status);
+                        $('#sourceTable').val(sourceTable);
+                        $('#destTable').val(destTable);
+                    } else {
+                            alert("Information Sheet has already been submitted, and cannot be updated.");
+                    }
                 } else {
                     debugger;
                     SetBoatRemovedStatus(boatId, status, sourceTable, destTable);
@@ -1753,13 +1819,23 @@ function UpdateChosen() {
             });
     };
 
-function SetVehicleCeasedStatus(vehicleId, status, sourceTable, destTable) {
+    function SetVehicleCeasedStatus(vehicleId, status, sourceTable, destTable) {
+
+        var CeaseDate =  $('#RemoveVehicleCeaseEffectiveDate').val();
+        var ceaseReason = $('#VehicleCeaseReason').val();
+
+         var postData = {
+		'vehicleId': vehicleId,
+        'status': status,
+        'ceaseDate': CeaseDate,
+        'ceaseReason':ceaseReason
+        };
+
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("SetVehicleCeasedStatus", "Services")',
         type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ vehicleId: vehicleId, status: status })
+        data: postData,
     })
         .done(function (data) {
             if (data === true) {
@@ -3154,7 +3230,7 @@ function EditClaim(claimId, tableId) {
     });
     };
 
-     function RemoveBoat(boatId, status, sourceTable, destTable) {
+     @*function RemoveBoat(boatId, status, sourceTable, destTable) {
         debugger;
            var _sheetId = $('#AnswerSheetId').val();
              var postData = {
@@ -3182,7 +3258,7 @@ function EditClaim(claimId, tableId) {
 		}
 
 		 });
-     };
+     };*@
 
 
 
@@ -3358,7 +3434,7 @@ function EditClaim(claimId, tableId) {
      function setCeasedata(boatId, status, sourceTable, destTable) {
         debugger;
         $('#BoatRemoveModal').show();
-                $('.modal').css('width', '600px');
+        $('.modal').css('width', '600px');
         $('#boatID').val(boatId);
 		$('#status').val(status);
 		$('#sourceTable').val(sourceTable);
@@ -3369,39 +3445,62 @@ function EditClaim(claimId, tableId) {
             debugger;
             var ceaseDate = $("#RemoveCeaseEffectiveDate").val();
             var ceaseReason = $("#RemoveCeaseReason").val();
-            var removeEffectiveDate = $("#removeEffectiveDate").val();
 
             var validation = true;
 
 
             if (ceaseDate == "") {
-                $('#validateCeasedate').html("<font color='red'>Field is required</font>");
+                $('#validateBoatCeasedate').html("<font color='red'>Field is required</font>");
                 if (validation) {
                     validation = false;
                 }
             } else {
-                $('#validateCeasedate').html("");
+                $('#validateBoatCeasedate').html("");
             }
 
             if (ceaseReason == "") {
-                $('#validateceaseReason').html("<font color='red'>Field is required</font>");
+                $('#validateBoatDescription').html("<font color='red'>Field is required</font>");
                 if (validation) {
                     validation = false;
                 }
             } else {
-                $('#validateceaseReason').html("");
+                $('#validateBoatDescription').html("");
             }
 
-			 if (removeEffectiveDate == "") {
-                $('#validateremoveEffectivedate').html("<font color='red'>Field is required</font>");
+			
+            return validation;
+    }
+        function ValidateVehicleremove() {
+            debugger;
+            var ceaseDate = $("#RemoveVehicleCeaseEffectiveDate").val();
+            var ceaseReason = $("#VehicleCeaseReason").val();
+
+            var validation = true;
+
+
+            if (ceaseDate == "") {
+                $('#validateVehicleCeasedate').html("<font color='red'>Field is required</font>");
                 if (validation) {
                     validation = false;
                 }
-            }else {
-                $('#validateremoveEffectivedate').html("");
+            } else {
+                $('#validateVehicleCeasedate').html("");
             }
+
+            if (ceaseReason == "") {
+                $('#validateVehicleDescription').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateVehicleDescription').html("");
+            }
+
+			
             return validation;
-    }
+        }
+
+
 
     function UndoBoatRemovedStatus(boatId, status, sourceTable, destTable) {
 
@@ -3454,6 +3553,7 @@ async: true
 async: true
     })
         .done(function (data) {
+              $('#BoatRemoveModal').hide();
              $('#getDetailsModal').hide();
 
         if (data === true) {
@@ -3472,10 +3572,14 @@ async: true
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
                 event.preventDefault();
+        var CeaseDate =  $('#RemoveCeaseEffectiveDate').val();
+        var ceaseReason = $('#RemoveCeaseReason').val();
 
         var postData = {
-		'boatIdboatId': locationId,
-		'status': status
+		'boatId': boatId,
+        'status': status,
+        'ceaseDate': CeaseDate,
+        'ceaseReason':ceaseReason
 	};
 
         $.ajax({
@@ -4499,7 +4603,7 @@ async: true
 
     function SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable) {
                             event.preventDefault();
-
+        debugger;
         var postData = {
 		'vehicleId': vehicleId,
 		'status': status
@@ -4513,7 +4617,9 @@ async: true
         data: postData,
         async: true
     })
-    .done(function (data) {
+        .done(function (data) {
+            debugger;
+             $('#VehicleRemoveModal').hide();
         if (data.status === true) {
             $(sourceTable).trigger( 'reloadGrid' );
             $(destTable).trigger( 'reloadGrid' );
@@ -4524,7 +4630,7 @@ async: true
             //    timeout: 4000
            // });
         }
-
+            debugger;
         var selectElement = document.getElementById("AddBoatTrailer");
                     //location.reload(true);
 

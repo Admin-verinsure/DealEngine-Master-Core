@@ -1,18 +1,18 @@
 ﻿@model TechCertain.WebUI.Models.ProgrammeItem
 <!-- MAIN CONTENT -->
-    <div id="content">
-        <span>
-            <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
-        </span>
+<div id="content">
+    <span>
+        <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+    </span>
 
 
-        <div class="row">
-            <!-- NEW WIDGET START -->
-            <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="row">
+        <!-- NEW WIDGET START -->
+        <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-                <!-- Widget ID (each widget will need unique ID)-->
-                <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
-                    <!-- widget options:
+            <!-- Widget ID (each widget will need unique ID)-->
+            <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
+                <!-- widget options:
                 usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
                 data-widget-colorbutton="false"
@@ -25,102 +25,103 @@
                 data-widget-sortable="false"
 
                 -->
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-                        <h2>Information Sheets for Programme </h2>
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                    <h2>Information Sheets for Programme </h2>
 
-                    </header>
+                </header>
 
-                    <!-- widget div-->
-                    <div>
+                <!-- widget div-->
+                <div>
 
-                        <!-- widget edit box -->
-                        <div class="jarviswidget-editbox">
-                            <!-- This area used as dropdown edit box -->
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
 
-                        </div>
-                        <!-- end widget edit box -->
-                        <!-- widget content -->
-                        <div class="widget-body no-padding">
+                    </div>
+                    <!-- end widget edit box -->
+                    <!-- widget content -->
+                    <div class="widget-body no-padding">
 
-                            <table id="tableProgrammeItems" class="table table-striped table-bordered table-hover" width="100%">
-                                <thead>
+                        <table id="tableProgrammeItems" class="table table-striped table-bordered table-hover" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Client Name</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Deals)
+                                {
                                     <tr>
-                                        <th>Client Name</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Deals)
-                                    {
-                                        <tr>
-                                            <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
-                                            <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
-                                            <td>
-                                                @if (item.Status.StartsWith("Bound"))
+                                        <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
+                                        <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
+                                        <td>
+                                            @if (item.Status.StartsWith("Bound"))
+                                            {
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
+                                                <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                 {
-                                                    @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
-                                                    @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
-                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
-                                                    @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                    }
-                                                    if (item.NextInfoSheet == false)
-                                                    {
-                                                        @*<a href="#myChangeModal" aria-hidden="true" style="color:green" data-toggle="modal"
-                                                        data-dealitem-id="@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
-                                                    }
+                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                }
+                                                if (item.NextInfoSheet == false)
+                                                {
+                                                    <a class="btn btn-primary btn-xs" href="#myChangeModal" aria-hidden="true" style="color:white" data-toggle="modal"
+                                                       data-dealitem-id="@item.Id"><i class="fa fa-pencil"></i> Update</a>
+                                                }
 
-                                                    @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
-                                                }
-                                                else if (item.Status == "Started")
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+                                            }
+                                            else if (item.Status == "Started")
+                                            {
+                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                            }
+                                            else if (item.Status.StartsWith("Submitted"))
+                                            {
+                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                 {
-                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                    <a class="btn btn-primary btn-xs" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
                                                 }
-                                                else if (item.Status.StartsWith("Submitted"))
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                 {
-                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-xs" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
-                                                    }
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                    }
+                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
                                                 }
-                                                else if (item.Status == "Not Started")
-                                                {
-                                                    //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                            }
+                                            else if (item.Status == "Not Started")
+                                            {
+                                                //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </article>
-        </div>
+            </div>
+        </article>
     </div>
+</div>
 <!-- END MAIN CONTENT -->
 <!-- Edit Boat -->
 <!-- Edit Boat -->
 
-<div id="myChangeModal" class="modal" role="dialog">
+<div id="myChangeModal" class="modal" role="dialog" style="margin-left:600px">
 
     <!-- Modal content-->
 
     <div class="modal-content">
 
         <div class="modal-header">
+            <h3 class="modal-title" style="color:blue; font-size:22px">Change Details</h3>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title" style="color:blue; font-size:22px">Change Details</h4>
+
         </div>
         <div class="modal-body">
             <form id="ProdForm">
@@ -132,7 +133,7 @@
 
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="changeType">Change Type</label>
+                        <label for="changeType" class="required">Change Type</label>
                     </section>
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
 
@@ -154,17 +155,18 @@
                                 <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
                                 <option Value="TC_other">Other Amendment</option>
                                 <option Value="TC_amendOneTimeEvents">One Time Event</option>
-                             </select>
+                            </select>
                         </div>
+                        <p class="validationContainer" id="validateChangeType"></p>
+
                     </section>
-                    <p class="validationContainer" id="validateChangeType"></p>
 
                 </section>
 
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="Reason">Reason</label>
+                        <label for="Reason" class="required">Reason</label>
                     </section>
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                         <div class="form-group">
@@ -182,20 +184,21 @@
 
                             </select>
                         </div>
+                        <p class="validationContainer" id="validateChangeReason"></p>
+
                     </section>
-                    <p class="validationContainer" id="validateChangeReason"></p>
 
                 </section>
 
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="ReasonDesc">Reason Description</label>
+                        <label for="ReasonDesc" class="required">Reason Description</label>
                     </section>
                     <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                        <label class="textarea">
+                        <div class="form-group">
                             <textarea class="form-control b" data-type="TEXTAREA" id="Description" name="ReasonDesc" placeholder="Notes" value=""></textarea>
-                        </label>
+                        </div>
                         <p class="validationContainer" id="validateDescription"></p>
                     </section>
                 </section>
@@ -203,31 +206,42 @@
                 <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-                        <label for="EffectiveDate">Effective Date</label>
+                        <label for="EffectiveDate" class="required">Effective Date</label>
                     </section>
                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <label for="Excess">Effective Date</label>
-                        <label class="input ">
+                        <div class="form-group">
                             <input name="BoatEffectiveDate" placeholder="Effective Date" class=" form-control b" data-dateformat="dd/mm/yy" id="ChangeEffectiveDate" type="text">
-                        </label>
-                        <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
-                            <i class="icon-append fa fa-calendar"></i>
-                        </section>
-                        <p class="validationContainer" id="validateEffectivedate"></p>
-
+                        </div>
                     </section>
+                    <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                        <i class="icon-append fa fa-calendar"></i>
+                    </section>
+                    <p class="validationContainer" id="validateEffectivedate"></p>
                 </section>
 
             </form>
         </div>
         <div class="modal-footer">
 
-            <input type="Reset" value="Submit" class="btn btn-success" id="btnChangeSubmit">
+            <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
 
-            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+            @*<input type="Reset" value="Submit"  class="btn btn-primary btn-xs" id="btnChangeSubmit">*@
+
+            @*<a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>*@
         </div>
     </div>
 </div>
+
+
+<style>
+
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+
+</style>
 
 
 @section pagespecific {

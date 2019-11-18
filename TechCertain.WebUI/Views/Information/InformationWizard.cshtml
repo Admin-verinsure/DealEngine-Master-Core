@@ -689,12 +689,163 @@
                                                                 </div>
                                                             </div>
 
+                                                            <div id="VehicleRemoveModal" class="modal" role="dialog">
+
+                                                                <!-- Modal content-->
+
+                                                                <div class="modal-content">
+
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" onclick="$('#VehicleRemoveModal').hide()">&times;</button>
+
+                                                                        <h4 class="modal-title" style="color:blue; font-size:22px">Change Details</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden ">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="vehicleId" name="vehicleId" value="" required>
+                                                                        </section>
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden ">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="vehiclestatus" name="status" value="" required>
+                                                                        </section>
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="vehiclesourceTable" name="sourceTable" value="" required>
+                                                                        </section>
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden ">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="vehicledestTable" name="destTable" value="" required>
+                                                                        </section>
+
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                                                                <label for="CeaseDate">Cease Date</label>
+                                                                            </section>
+                                                                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                                                                <label class="input ">
+                                                                                    <input name="BoatEffectiveDate" placeholder="Cease Date" class=" Effectivedate form-control b" data-dateformat="dd/mm/yy" id="RemoveVehicleCeaseEffectiveDate" type="text">
+                                                                                </label>
+                                                                                <p class="validationContainer" id="validateVehicleCeasedate"></p>
+
+                                                                            </section>
+                                                                            <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
+                                                                                <i class="icon-append fa fa-calendar"></i>
+                                                                            </section>
+
+                                                                        </section>
+
+
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                                                                <label for="CeaseReason">Cease Reason</label>
+                                                                            </section>
+                                                                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                <label class="input">
+                                                                                    <select class="form-control b" id="VehicleCeaseReason" name="VehicleCeaseReason">
+                                                                                        <option selected="selected" value="">-- Select --</option>
+                                                                                        <option value="1">Sold</option>
+                                                                                        <option value="2">Decommision</option>
+                                                                                        <option value="3">Writen off</option>
+                                                                                        <option value="4">Transfered</option>
+                                                                                        <option value="9">Other</option>
+                                                                                    </select>
+                                                                                </label>
+                                                                                <p class="validationContainer" id="validateVehicleDescription"></p>
+
+
+                                                                            </section>
+
+                                                                        </section>
+
+                                                                    </div>
+
+                                                                    <div class="modal-footer">
+
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div id="BoatRemoveModal" class="modal" role="dialog">
+
+                                                                <!-- Modal content-->
+
+                                                                <div class="modal-content">
+
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" onclick="$('#BoatRemoveModal').hide()">&times;</button>
+                                                                        <h4 class="modal-title" style="color:blue; font-size:22px">Change Details</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="boatID" name="boatID" value="" required>
+                                                                        </section>
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="status" name="status" value="" required>
+                                                                        </section>
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="sourceTable" name="sourceTable" value="" required>
+                                                                        </section>
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
+                                                                            <input class="form-control b " type="text" data-type="TEXTBOX" id="destTable" name="destTable" value="" required>
+                                                                        </section>
+
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                                                                <label for="CeaseDate" class="required">Cease Date</label>
+                                                                            </section>
+                                                                            <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                                                                <label class="input ">
+                                                                                    <input name="BoatEffectiveDate" placeholder="Cease Date" class=" Effectivedate form-control b" data-dateformat="dd/mm/yy" id="RemoveCeaseEffectiveDate" type="text">
+                                                                                </label>
+                                                                                <p class="validationContainer" id="validateBoatCeasedate"></p>
+
+                                                                            </section>
+                                                                            <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
+                                                                                <i class="icon-append fa fa-calendar"></i>
+                                                                            </section>
+
+                                                                        </section>
+
+
+                                                                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                                                                <label for="CeaseReason" class="required">Cease Reason</label>
+                                                                            </section>
+                                                                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                                <label class="input">
+                                                                                    <select class="form-control b" id="RemoveCeaseReason" name="BoatCeaseReason">
+                                                                                        <option selected="selected" value="">-- Select --</option>
+                                                                                        <option value="1">Sold</option>
+                                                                                        <option value="2">Decommision</option>
+                                                                                        <option value="3">Writen off</option>
+                                                                                        <option value="4">Transfered</option>
+                                                                                        <option value="9">Other</option>
+                                                                                    </select>
+                                                                                </label>
+                                                                                <p class="validationContainer" id="validateBoatDescription"></p>
+
+
+                                                                            </section>
+
+                                                                        </section>
+
+                                                                    </div>
+
+                                                                    <div class="modal-footer">
+
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
 
                                                             <div class="modal" id="addLocModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                                 <div class="modal-dialog">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
-                                                                            <button onclick="closeLocModal()" type="button" class="close">&times;</button>
+                                                                            <button onclick="$('#addLocModal').hide()" type="button" class="close">&times;</button>
                                                                             <h4 class="modal-title">Add Location</h4>
                                                                         </div>
                                                                         <div class="modal-body">
@@ -947,8 +1098,9 @@
 @section pagespecific {
     <script>
         $(window).on("load", function () {
+            debugger;
             if ("@Model.Status" == "Submitted") {
-
+                debugger;
                 if (document.getElementById('fieldset') != null) {
                     //document.getElementById("fieldset").disabled = true;
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
@@ -956,34 +1108,33 @@
                 document.getElementById('btn1').removeAttribute("disabled");
                  }
 
-                //$('#boatForm :input').prop('disabled', 'disabled');
-                var updatebutton = document.getElementById("update");
-                $(updatebutton).addClass("hidden");
-                $(updatebutton).hide();
+              
+                $('.btn-sm').addClass("hidden");
+                 $('.btn').addClass("hidden");
 
-                var trashbutton = document.getElementsByClassName("glyphicon glyphicon-trash");
-                $(trashbutton).addClass("hidden");
-                $(trashbutton).hide();
+                //var trashbutton = document.getElementsByClassName("fa fa-trash");
+                //$(trashbutton).addClass("hidden");
+                //$(trashbutton).hide();
 
-                var tbutton = document.getElementsByClassName(" btn-danger");
-                $(tbutton).addClass("hidden");
-                $(tbutton).hide();
+                //var tbutton = document.getElementsByClassName("btn-danger");
+                //$(tbutton).addClass("hidden");
+                //$(tbutton).hide();
 
-                var trash = document.getElementById("trash");
-                $(trash).addClass("hidden");
-                $(trash).hide();
+                //var trash = document.getElementById("trash");
+                //$(trash).addClass("hidden");
+                //$(trash).hide();
 
-                var t = document.getElementById("span");
-                $(t).addClass("hidden");
-                $(t).hide();
+                //var t = document.getElementById("span");
+                //$(t).addClass("hidden");
+                //$(t).hide();
 
-                var t = document.getElementById("ClearBoat");
-                $(t).addClass("hidden");
-                $(t).hide();
+                //var t = document.getElementById("ClearBoat");
+                //$(t).addClass("hidden");
+                //$(t).hide();
 
-                var tr = document.getElementsByClassName("btn-default  btn btn-sm");
-                $(tr).addClass("hidden");
-                $(tr).hide();
+                //var tr = document.getElementsByClassName("btn-default  btn btn-sm");
+                //$(tr).addClass("hidden");
+                //$(tr).hide();
             }
 
            var clientInformationSheet = $('#AnswerSheetId').val();

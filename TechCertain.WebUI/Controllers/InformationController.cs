@@ -1961,9 +1961,9 @@ namespace TechCertain.WebUI.Controllers
                     }                   
 
                 }
-                await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                 //send out information sheet submission notification email
-                await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
             }
 
             return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
@@ -2014,7 +2014,10 @@ namespace TechCertain.WebUI.Controllers
 
             await _programmeService.Update(newClientProgramme);
 
-            return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
+            var url = "/Information/EditInformation/" + newClientProgramme.Id;
+            return Json(new { url });
+
+            //return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
         }
 
         [HttpGet]

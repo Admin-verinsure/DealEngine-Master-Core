@@ -251,7 +251,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed, bool ceased, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
+        public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed,  bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
@@ -260,17 +260,13 @@ namespace TechCertain.WebUI.Controllers
 
             var vehicles = new List<Vehicle>();
 
-            if (ceased)
-            {
-                vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate > DateTime.MinValue && v.VehicleCeaseReason != 4).ToList();
-            }
-            else if (transfered)
+            if (transfered)
             {
                 vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate > DateTime.MinValue && v.VehicleCeaseReason == 4).ToList();
             }
             else
             {
-                vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate == DateTime.MinValue).ToList();
+                vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null).ToList();
             }
 
             if (_search)
@@ -425,19 +421,19 @@ namespace TechCertain.WebUI.Controllers
                 vehicle.Removed = status;
                 await uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = new { status = true, id = vehicleId } };
+            //return new JsonResult(true);
+            return new JsonResult(new { status = true, id = vehicleId } );
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetVehicleCeasedStatus(Guid vehicleId, bool status)
+        public async Task<IActionResult> SetVehicleCeasedStatus(Guid vehicleId, bool status, DateTime ceaseDate, int ceaseReason)
         {
             Vehicle vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                vehicle.VehicleCeaseDate = DateTime.MinValue;
-                vehicle.VehicleCeaseReason = '0';
+                vehicle.VehicleCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+                vehicle.VehicleCeaseReason = ceaseReason;
                 await uow.Commit().ConfigureAwait(false);
             }
 
@@ -1602,6 +1598,20 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetOriginalVehicle(Guid answerSheetId, Guid vehicleId)
+        {
+            VehicleViewModel model = new VehicleViewModel();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+            Vehicle vehicle = sheet.Vehicles.FirstOrDefault(b => b.Id == vehicleId);
+            if (vehicle != null)
+            {
+                model.AnswerSheetId = answerSheetId;
+                if (vehicle.OriginalVehicle != null)
+                    model.OriginalVehicleId = vehicle.OriginalVehicle.Id;
+            }
+            return Json(model);
+        }
 
         [HttpPost]
         public async Task<IActionResult> GetOriginalBoat(Guid answerSheetId, Guid boatId)
@@ -1683,7 +1693,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed, bool ceased, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
+        public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed,  bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
@@ -1694,17 +1704,13 @@ namespace TechCertain.WebUI.Controllers
 
             var boats = new List<Boat>();
 
-            if (ceased)
-            {
-                boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate > DateTime.MinValue && b.BoatCeaseReason != 4).ToList();
-            }
-            else if (transfered)
+           if (transfered)
             {
                 boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate > DateTime.MinValue && b.BoatCeaseReason == 4).ToList();
             }
             else
             {
-                boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate == DateTime.MinValue).ToList();
+                boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null).ToList();
             }
 
             if (_search)
@@ -1777,14 +1783,16 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status)
+        public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate,int ceaseReason)
         {
             Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                boat.BoatCeaseDate = DateTime.MinValue;
-                boat.BoatCeaseReason = '0';
+
+                boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+
+                boat.BoatCeaseReason = ceaseReason;
                 await uow.Commit().ConfigureAwait(false);
             }
 

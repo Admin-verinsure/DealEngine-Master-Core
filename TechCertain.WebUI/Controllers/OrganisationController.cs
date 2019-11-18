@@ -149,7 +149,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrganisation()
         {
-            var user = await CurrentUser();
+            var user = await _userService.GetUser("TCMarinaAdmin1");
             var orgType = Request.Form["OrganisationType"];
             var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');          
 
