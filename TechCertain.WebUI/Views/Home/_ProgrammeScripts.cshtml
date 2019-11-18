@@ -245,7 +245,7 @@
         maxDate: "+30d",
         dateFormat: "dd/mm/yy" ,
         minDate:0
-    });
+       });
     
     
           $('#myChangeModal').on('show.bs.modal', function (e) {
@@ -255,12 +255,6 @@
         $(e.currentTarget).find('input[name="DealId"]').val(dealId);
      
           });
-
-        function UpdateReason() {
-
-
-
-        };
 
          $("#btnChangeSubmit").click(function () {
             debugger;
@@ -334,11 +328,12 @@
             $.ajax({
                 type: "Post",
                 data: prodData,
-                url: "/Information/UpdateInformationReason",
-                success: function () {
+                url: "/Information/UpdateInformation",
+                success: function (data) {
+                    debugger;
                     $("#myModal").modal("hide");
                     alert("Saved Successfully!");
-                    location.reload(true);
+                    window.location.href = data.url;
 
                 }
             }).done(function (data) {

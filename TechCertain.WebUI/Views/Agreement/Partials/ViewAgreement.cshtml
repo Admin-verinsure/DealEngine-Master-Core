@@ -89,11 +89,15 @@
                 <section class="col col-9">
                     @Html.DisplayFor(m => m.StartDate) 4pm local time
                     @*@if (Model.InformationSheetStatus != "Submitted" && Model.InformationSheetStatus != "Bound")
-                    {*@
+        {*@
                     @*<a href="#getStartDate" style="color:green">
-                        <i class="fa fa-edit" aria-hidden="true"></i>
-                    </a>*@
-                    <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
+            <i class="fa fa-edit" aria-hidden="true"></i>
+        </a>*@
+                    @if (Model.NextInfoSheet == false)
+                    {
+                        <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
+
+                    }
 
                     @*}*@
 
@@ -186,10 +190,10 @@
                                 @item.BoatModel
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.TermLimit.ToString("C0")
+                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Excess.ToString("C0")
+                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                             </td>
                         </tr>
 
@@ -229,7 +233,7 @@
                                 @item.VehicleModel
                             </td>
                             <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.SumInsured.ToString("C0")
+                                @item.SumInsured.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                             </td>
 
                         </tr>
