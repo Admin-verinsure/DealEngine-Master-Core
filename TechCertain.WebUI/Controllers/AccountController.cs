@@ -241,7 +241,12 @@ namespace TechCertain.WebUI.Controllers
                                 _authenticationService.UseSingleUseToken(st.Id);
                                 return RedirectToAction("PasswordChanged", "Account");
                             }
+                        } else
+                        {
+                            _authenticationService.UseSingleUseToken(st.Id);
+                            return RedirectToAction("PasswordChanged", "Account");
                         }
+
                     }
                     else
                     {

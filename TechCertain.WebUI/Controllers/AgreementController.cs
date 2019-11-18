@@ -773,7 +773,8 @@ namespace TechCertain.WebUI.Controllers
                 model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                 model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
                 model.CurrencySymbol = "fa fa-dollar";
-                if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal)
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal && 
+                    agreement.ClientInformationSheet.Programme.EGlobalBranchCode != null && agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null)
                 {
                     model.ClientNumber = agreement.ClientInformationSheet.Programme.EGlobalBranchCode + "-" + agreement.ClientInformationSheet.Programme.EGlobalClientNumber;
                 } else
@@ -1600,6 +1601,10 @@ namespace TechCertain.WebUI.Controllers
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
+                            if (programme.BaseProgramme.PolicyNumberPrefixString != null)
+                            {
+                                agreement.PolicyNumber = programme.BaseProgramme.PolicyNumberPrefixString + "-0" + agreement.ReferenceId;
+                            }
                             await uow.Commit();
                         }
                     }
