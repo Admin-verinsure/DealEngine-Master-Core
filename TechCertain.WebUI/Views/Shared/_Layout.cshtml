@@ -73,8 +73,8 @@
     <script src="~/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
 
 </head>
-
-<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">
+<body>
+@*<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">*@
     <!-- Google Tag Manager -->
 
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }

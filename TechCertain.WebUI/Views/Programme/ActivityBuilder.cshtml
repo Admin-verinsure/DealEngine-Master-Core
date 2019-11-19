@@ -18,7 +18,12 @@
             {
                 <div class="card-footer">
                     <input class="btn btn-primary" type="button" value="Add Custom Business Activity" href="#myActivityModal">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="UploadFileId" aria-describedby="inputGroupFileAddon01" onchange="UploadFile()">
+                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                    </div>
                 </div>
+
             }
 
         </div>
@@ -238,45 +243,62 @@
 
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
 
-    function ShowActivityModel() {
-         $("#myActivityModal").modal("show");
-    }
+        function UploadFile() {
+            debugger;
+            var file = $('#UploadFileId').val();
+            var postData = { FileName: file };
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UploadDataFiles", "Programme")',
+                data: postData
+            })
+                .done(function (json) {
+                })
+                .fail(function (err, ajaxOptions, thrownError) {
+                    debugger;
+                });
+
+        }
+
+        function ShowActivityModel() {
+            $("#myActivityModal").modal("show");
+        }
 
         function GetBusinessActivityClassOneContentJson()
-    {
-        return {
-            AnzsciCode: $('#class1Anzi').val(),
-            Description: $('#class1Desc').val(),
-            Classification: parseInt(1),
-    	};
-    }
+        {
+            return {
+                AnzsciCode: $('#class1Anzi').val(),
+                Description: $('#class1Desc').val(),
+                Classification: parseInt(1),
+            };
+        }
 
-    function GetBusinessActivityClassTwoContentJson()
-    {
-        return {
-            AnzsciCode: $('#class2Anzi').val(),
-            Description: $('#class2Desc').val(),
-            Classification: parseInt(2),
-    	};
-    }
+        function GetBusinessActivityClassTwoContentJson()
+        {
+            return {
+                AnzsciCode: $('#class2Anzi').val(),
+                Description: $('#class2Desc').val(),
+                Classification: parseInt(2),
+            };
+        }
 
-    function GetBusinessActivityClassThreeContentJson()
-    {
-        return {
-            AnzsciCode: $('#class3Anzi').val(),
-            Description: $('#class3Desc').val(),
-            Classification: parseInt(3),
-    	};
-    }
+        function GetBusinessActivityClassThreeContentJson()
+        {
+            return {
+                AnzsciCode: $('#class3Anzi').val(),
+                Description: $('#class3Desc').val(),
+                Classification: parseInt(3),
+            };
+        }
 
-    function GetBusinessActivityClassFourContentJson()
-    {
-        return {
-            AnzsciCode: $('#class4Anzi').val(),
-            Description: $('#class4Desc').val(),
-            Classification: parseInt(4),
-
-    	};
+        function GetBusinessActivityClassFourContentJson()
+        {
+            return {
+                AnzsciCode: $('#class4Anzi').val(),
+                Description: $('#class4Desc').val(),
+                Classification: parseInt(4),
+            };
         }
 
         function GetActivityCreateContent() {
@@ -288,23 +310,22 @@
             };
         }
 
-    function SubmitActivity() {
-        debugger;
-        var postData = { model: GetActivityCreateContent() };
-
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("CreateBusinessActivity", "Programme")',
-            data:  postData,
-	    })
-		.done(function (json) {
-            //var model = JSON.parse(json);
-            $('#submitActivityModal').modal().show();
-            $('#myActivityModal').modal().hide();
-					})
-					.fail(function (err, ajaxOptions, thrownError) {
-	                    $('#failureModal').modal().show();
-                    });
+        function SubmitActivity() {
+            debugger;
+            var postData = { model: GetActivityCreateContent() };
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateBusinessActivity", "Programme")',
+                data: postData
+            })
+                .done(function (json) {
+                    //var model = JSON.parse(json);
+                    $('#submitActivityModal').modal().show();
+                    $('#myActivityModal').modal().hide();
+                })
+                .fail(function (err, ajaxOptions, thrownError) {
+                    $('#failureModal').modal().show();
+                });
         }
 
     $(document).ready(function () {

@@ -163,14 +163,12 @@ namespace TechCertain.WebUI.Controllers
 
         }
 
-        public async Task<List<BusinessActivity>> UploadDataFiles()
+        public async Task<List<BusinessActivity>> UploadDataFiles(string FileName)
         {
-            byte[] buffer;
             var user = await CurrentUser();
             List<BusinessActivity> BAList = new List<BusinessActivity>();
-            var path = @"C:\tmp\anzsic06completeclassification.csv";
 
-            using (StreamReader reader = new StreamReader(path))
+            using (StreamReader reader = new StreamReader(FileName))
             {
                 while (!reader.EndOfStream)
                 {
@@ -268,7 +266,7 @@ namespace TechCertain.WebUI.Controllers
             var busActivityList = await _busActivityService.GetBusinessActivities();
             if(busActivityList.Count == 0)
             {
-                busActivityList = await UploadDataFiles();
+                //busActivityList = await UploadDataFiles();
             }
 
             var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
