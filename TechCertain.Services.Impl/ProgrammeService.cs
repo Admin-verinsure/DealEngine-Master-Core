@@ -85,6 +85,9 @@ namespace TechCertain.Services.Impl
             newClientProgramme.changeReason = changeReason;
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
             newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
+            newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
+            newClientProgramme.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
+            newClientProgramme.ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
             var reference = await _referenceService.GetLatestReferenceId();
             newClientProgramme.InformationSheet.ReferenceId = reference;
             newClientProgramme.InformationSheet.IsChange = true;

@@ -1349,6 +1349,13 @@ namespace TechCertain.Services.Impl
             term.BrokerageRate = agreement.Brokerage;
             term.Brokerage = totalTermBrokerage;
 
+            term.TermLimitPre = totalBoatTermLimitPre;
+            term.TermLimitDiffer = totalBoatTermLimitDiffer;
+            term.PremiumPre = totalBoatPremiumPre;
+            term.PremiumDiffer = totalBoatPremiumDiffer;
+            term.FSLPre = totalBoatFslPre;
+            term.FSLDiffer = totalBoatFslDiffer;
+
             //Referral points per agreement
             //Claim over $5k of losses
             uwrfclaimover5koflosses(underwritingUser, agreement);
