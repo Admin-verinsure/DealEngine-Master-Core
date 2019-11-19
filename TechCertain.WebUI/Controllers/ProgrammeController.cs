@@ -168,7 +168,7 @@ namespace TechCertain.WebUI.Controllers
             byte[] buffer;
             var user = await CurrentUser();
             List<BusinessActivity> BAList = new List<BusinessActivity>();
-            var path = @"C:\tmp\anzsic06completeclassification.xls";
+            var path = @"C:\tmp\anzsic06completeclassification.csv";
 
             using (StreamReader reader = new StreamReader(path))
             {
@@ -217,7 +217,10 @@ namespace TechCertain.WebUI.Controllers
                         Debug.WriteLine(parts[4]);
                     }
 
-                    BAList.Add(ba);
+                    if(ba.AnzsciCode != null)
+                    {
+                        BAList.Add(ba);
+                    }                    
                 }
             }
 
@@ -265,7 +268,7 @@ namespace TechCertain.WebUI.Controllers
             var busActivityList = await _busActivityService.GetBusinessActivities();
             if(busActivityList.Count == 0)
             {
-                //busActivityList = await UploadDataFiles();
+                busActivityList = await UploadDataFiles();
             }
 
             var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
