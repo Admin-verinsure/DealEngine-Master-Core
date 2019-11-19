@@ -305,7 +305,7 @@
                             <label class="required">Last Name</label>
                         </section>
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="sname" id="UISlname">
+                            <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="lname" id="UISlname">
                         </section>
                         <p class="validationContainer" id="validateLastName"></p>
 
@@ -317,19 +317,20 @@
                             <label class="required">Email</label>
                         </section>
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <input class="form-control input-lg" placeholder="Enter Email" type="text" name="sname" id="UISEmail">
+                            <input class="form-control input-lg" placeholder="Enter Email" type="text" name="email" id="UISEmail">
                         </section>
                         <p class="validationContainer" id="validateEmail"></p>
 
 
                     </section>
+                   
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
                             <label>Membership Number</label>
                         </section>
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="sname" id="UISMembershipno">
+                            <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="memno" id="UISMembershipno">
                         </section>
                         <p class="validationContainer" id="validateMembershyipNo"></p>
 
@@ -390,24 +391,37 @@
     <script src="~/jqueryui/jquery-ui.js"></script>
     <script src="~/lib/popper.js/umd/popper.min.js"></script>
     <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
-
+   
+   
     <script type="text/javascript">
 
-            function vesselOwnUpdate() {
-                debugger;
+
+        function vesselOwnUpdate() {
+            debugger;
             var OrgType = $('input[name=cgradioselect]:checked').val();
 
-                if (OrgType != "Private") {
-                    $('#UISorgnamesection').addClass('hidden');
-                } else {
-                    $('#UISorgnamesection').removeClass('hidden');
-                }
-
+            if (OrgType != "Private") {
+                $('#UISorgnamesection').addClass('hidden');
+            } else {
+                $('#UISorgnamesection').removeClass('hidden');
             }
 
-         function validationCheck() {
+        }
+
+        function ValidateEmail() 
+        {
+            var Email = $('#UISEmail').val();
             debugger;
-             var OrgName = $('#UISorgname').val();
+             if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(Email))
+             {
+             return (true)
+            }else
+           return (false)
+        }
+
+        function validationCheck() {
+            debugger;
+            var OrgName = $('#UISorgname').val();
             var Fname = $('#UISfname').val();
             var LastName = $('#UISlname').val();
             var MobilePhone = $('#UISmphon').val();
@@ -440,7 +454,7 @@
                 if (validation) {
                     validation = false;
                 }
-            }else {
+            } else {
                 $(validateLastName).html("");
             } if (MobilePhone == "") {
                 $('#validateMobileNo').html("<font color='red'>Field is required</font>");
@@ -455,35 +469,45 @@
                 if (validation) {
                     validation = false;
                 }
-            }else {
+            } else {
                 $('#validatePhoneNo').html("");
             }
-			 if (Email == "") {
+            if (Email == "") {
                 $('#validateEmail').html("<font color='red'>Field is required</font>");
                 if (validation) {
                     validation = false;
                 }
-            }else {
-                $('#validateEmail').html("");
-				
-            }	 if (OrgType == "") {
+            } else {
+                if (ValidateEmail()) {
+                    $('#validateEmail').html("");
+
+                } else {
+                    if (validation) {
+                    validation = false;
+                }
+                    $('#validateEmail').html("<font color='red'>Email Entered is Invalid</font>");
+
+                }
+                
+
+            } if (OrgType == "") {
                 $('#validateOrgType').html("<font color='red'>Field is required</font>");
                 if (validation) {
                     validation = false;
                 }
-            }else {
+            } else {
                 $('#validateOrgType').html("");
             }
-			
-             if (validation) {
-                 postCGData();
-             } else 
-            return validation;
-         };
 
-       
+            if (validation) {
+                postCGData();
+            } else
+                return validation;
+        };
 
-           function postCGData() {
+
+
+        function postCGData() {
             debugger;
             var OrgName = $('#UISorgname').val();
             var Fname = $('#UISfname').val();
@@ -528,8 +552,8 @@
                     debugger;
                     console.log(errorThrown);
                 });
-           }
- 
+        }
+
     </script>
     @Html.Partial("_ProgrammeScripts")
 
