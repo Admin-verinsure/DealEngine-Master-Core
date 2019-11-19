@@ -2600,14 +2600,14 @@ namespace TechCertain.WebUI.Controllers
 
                 }
                 //send out login email
-                await _emailService.SendSystemEmailLogin(email);
-                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                if (emailTemplate != null)
-                {
-                    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
-                }
-                //send out information sheet issue notification email
-                await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                //await _emailService.SendSystemEmailLogin(email);
+                //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                //if (emailTemplate != null)
+                //{
+                //    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                //}
+                ////send out information sheet issue notification email
+                //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
 
             }
             else
@@ -2627,5 +2627,198 @@ namespace TechCertain.WebUI.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        public async Task<IActionResult> IssueUIS(string orgName, string firstName, string membershipNumber,string lastName, string email, string orgType, string homePhone, string mobilePhone)
+        {
+
+            bool hasAccount = true;
+            //Add User, Organisation, Information Sheet, Quick Term saving process here
+            string organisationName = null;
+            string ouname = null;
+            string orgTypeName = null;
+            if (orgType == "Private") //orgType = "Private", "Company", "Trust", "Partnership"
+            {
+                organisationName = firstName + " " + lastName;
+                ouname = "Home";
+            }
+            else
+            {
+                organisationName = "To be completed";
+                ouname = "Head Office";
+            }
+            switch (orgType)
+            {
+                case "Private":
+                    {
+                        orgTypeName = "Person - Individual";
+                        break;
+                    }
+                case "Company":
+                    {
+                        orgTypeName = "Corporation – Limited liability";
+                        break;
+                    }
+                case "Trust":
+                    {
+                        orgTypeName = "Trust";
+                        break;
+                    }
+                case "Partnership":
+                    {
+                        orgTypeName = "Partnership";
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception(string.Format("Invalid Organisation Type: ", orgType));
+                    }
+            }
+            string phonenumber = null;
+            if (homePhone == null)
+            {
+                phonenumber = homePhone;
+            }
+            else
+            {
+                phonenumber = mobilePhone;
+            }
+            OrganisationType organisationType = null;
+            organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+            if (organisationType == null)
+            {
+                organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
+            }
+            Organisation organisation = null;
+            organisation = await _organisationService.GetOrganisationByEmail(email);
+
+            //condition for organisation exists
+            if (organisation == null)
+            {
+                organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
+                organisation.Phone = phonenumber;
+                organisation.Email = email;
+                await _organisationService.CreateNewOrganisation(organisation);
+
+                User user = null;
+                User user2 = null;
+
+                try
+                {
+                    user = await _userService.GetUserByEmail(email);
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
+                    var username = user.FirstName;
+                }
+                catch (Exception ex)
+                {
+                    string username = firstName + "_" + lastName;
+
+                    try
+                    {
+                        user2 = await _userService.GetUser(username);
+
+                        if (user2 != null && user == user2)
+                        {
+                            Random random = new Random();
+                            int randomNumber = random.Next(10, 99);
+                            username = username + randomNumber.ToString();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // create personal organisation
+                        //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
+                        //_organisationService.CreateNewOrganisation (personalOrganisation);
+                        // create user object
+                        user = new User(null, Guid.NewGuid(), username);
+                        user.FirstName = firstName;
+                        user.LastName = lastName;
+                        user.FullName = firstName + " " + lastName;
+                        user.Email = email;
+                        user.Phone = homePhone;
+                        user.MobilePhone = mobilePhone;
+                        user.Password = "";
+                        //user.Organisations.Add (personalOrganisation);
+                        // save the new user
+                        // creates a new user in the system along with a default organisation
+                        await _userService.Create(user);
+                        //Console.WriteLine ("Created User " + user.FullName);
+                    }
+                }
+                finally
+                {
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
+
+                    user.SetPrimaryOrganisation(organisation);
+                    await _userRepository.UpdateAsync(user);
+
+                }
+
+                var programme = await _programmeService.GetClientProgrammebyName("NZACS Programme");
+                var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+                try
+                {
+                    var reference = await _referenceService.GetLatestReferenceId();
+
+                    var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+
+                    await _referenceService.CreateClientInformationReference(sheet);
+
+               
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
+                  
+                    organisation.OrganisationalUnits.Add(ou);
+                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                    clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
+                    try
+                    {
+                        Thread.Sleep(1000);
+                        await uow.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+
+                }
+                    //send out login email
+                    //await _emailService.SendSystemEmailLogin(email);
+                    //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                    //if (emailTemplate != null)
+                    //{
+                    //    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                    //}
+                    ////send out information sheet issue notification email
+                    //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                hasAccount = false;
+            }
+
+            if (hasAccount)
+            {
+
+                return new JsonResult(true);
+            }
+            else
+            {
+                return new JsonResult(false);
+            }
+            
+            
+        }
+
     }
 }

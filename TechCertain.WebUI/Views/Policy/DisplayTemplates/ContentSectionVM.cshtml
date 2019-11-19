@@ -1,8 +1,19 @@
-﻿@model TechCertain.WebUI.Models.Policy.ContentSectionVM
+﻿@*@model TechCertain.WebUI.Models.Policy.ContentSectionVM
 
 <div id="policydocstart-form" class="smart-form" novalidate="novalidate">
     @Html.TextAreaFor(m => m.Content)
-    <script>CKEDITOR.replace('@(Html.IdFor(m => m.Content))');</script>
+    <script type="text/javascript">
+
+        let editor;
+        ClassicEditor
+            .create(document.querySelector('#Content'))
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
     <footer>
         <button type="button" class="btn btn-next hidden" onclick="NextTab();">
             Continue
@@ -14,12 +25,22 @@
         </button>
     </footer>
 </div>
+@section pagespecific {
+    <script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+    <script type="text/javascript">
 
-<script type="text/javascript">
     function GetContentJson()
     {
-    	return {
-    		Content: CKEDITOR.instances["@(Html.IdFor(m => m.Content))"].getData()
-    	};
+    const body = editor.getData();
+    var bodyElement = $("#@Html.IdFor(m => m.Content)");
+    // hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
+    // using hack because escape(...) was deprecated
+
+    bodyElement.text(bodyElement.text(body).html());
+    var content = document.getElementById("editor");
+    return {
+    Content: document.getElementById("editor");
+    };
     }
-</script>
+    </script>
+}*@

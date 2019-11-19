@@ -2213,9 +2213,15 @@ namespace TechCertain.WebUI.Controllers
             };
             model.Name = programme.Name;
             Product product = programme.Products.FirstOrDefault();
-            InformationTemplate informationTemplate = await _informationTemplateService.GetTemplatebyProduct(product.Id);
-            
-            List<InformationSection> sections = await _informationSectionService.GetInformationSectionsbyTemplateId(informationTemplate.Id);
+            List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(product.Id);
+            List<InformationSection> sections = new List<InformationSection>();
+            foreach (var template in informationTemplate)
+            {
+                 sections = await _informationSectionService.GetInformationSectionsbyTemplateId(template.Id);
+
+           
+
+
             foreach (var section in sections)
             {
                 section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
@@ -2224,13 +2230,13 @@ namespace TechCertain.WebUI.Controllers
             //foreach (InformationTemplate template in templates)
             //{
             //    Console.WriteLine(template.Id);
-            foreach (var section in informationTemplate.Sections)
+            foreach (var section in template.Sections)
             {
                 section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
             }
-               (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(informationTemplate).Sections);
+               (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(template).Sections);
 
-
+            }
             //}
             model.Section = sections;
             return model;

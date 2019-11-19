@@ -102,6 +102,8 @@
                                 }
                             </tbody>
                         </table>
+
+                        <a class="btn btn-primary btn-xs" href="#IssueUISModal" aria-hidden="true" style="color:white" data-toggle="modal"><i class="fa fa-pencil"></i> Issue UIS</a>
                     </div>
                 </div>
             </div>
@@ -111,6 +113,8 @@
 <!-- END MAIN CONTENT -->
 <!-- Edit Boat -->
 <!-- Edit Boat -->
+
+
 
 <div id="myChangeModal" class="modal" role="dialog" style="margin-left:600px">
 
@@ -224,15 +228,148 @@
                 </form>
             </div>
         </div>
-            <div class="modal-footer">
+        <div class="modal-footer">
 
-                <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
+            <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
 
-                @*<input type="Reset" value="Submit"  class="btn btn-primary btn-xs" id="btnChangeSubmit">*@
+            @*<input type="Reset" value="Submit"  class="btn btn-primary btn-xs" id="btnChangeSubmit">*@
 
-                @*<a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>*@
+            @*<a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>*@
+        </div>
+    </div>
+</div>
+
+
+
+<div id="IssueUISModal" class="modal" role="dialog" style="margin-left:600px;width:600px">
+
+    <!-- Modal content-->
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h3 class="modal-title" style="color:blue; font-size:22px">Change Details</h3>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+            <div class="row">
+
+                <form id="ProdForm">
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">Organisation Type</label>
+                        </section>
+                        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8" style="height: 45px; padding-top: 7.5px; padding-bottom: 7.5px;">
+                            <label class="radio-inline cgradio" style="width:19%;"> <input type="radio" name="cgradioselect" id="vown1" value="Private" checked="checked" onclick="vesselOwnUpdate()">Private</label>
+                            <label class="radio-inline cgradio" style="width:24%;"> <input type="radio" name="cgradioselect" id="vown2" value="Company" onclick="vesselOwnUpdate()">Company</label>
+                            <label class="radio-inline cgradio" style="width:15%;"> <input type="radio" name="cgradioselect" id="vown3" value="Trust" onclick="vesselOwnUpdate()">Trust</label>
+                            <label class="radio-inline cgradio" style="width:20%;"> <input type="radio" name="cgradioselect" id="vown4" value="Partnership" onclick="vesselOwnUpdate()">Partnership</label>
+                        </div>
+                        <p class="validationContainer" id="validateOrgType"></p>
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="UISorgnamesection">
+
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">Organisation Name</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter Organisation Name" type="text" name="fname" id="UISorgname">
+                        </section>
+                        <p class="validationContainer" id="validateOrgName"></p>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">First Name</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter First Name" type="text" name="fname" id="UISfname">
+                        </section>
+                        <p class="validationContainer" id="validateFirstName"></p>
+
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">Last Name</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="sname" id="UISlname">
+                        </section>
+                        <p class="validationContainer" id="validateLastName"></p>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">Email</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter Email" type="text" name="sname" id="UISEmail">
+                        </section>
+                        <p class="validationContainer" id="validateEmail"></p>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label>Membership Number</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="sname" id="UISMembershipno">
+                        </section>
+                        <p class="validationContainer" id="validateMembershyipNo"></p>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">Mobile Phone</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter Mobile Number" type="text" name="mphon" id="UISmphon" aria-required="true" aria-invalid="false" maxlength="14">
+
+                        </section>
+                        <p class="validationContainer" id="validateMobileNo"></p>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            <label class="required">Home Phone</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg" placeholder="Enter Home Number" type="text" name="mphon" id="UIShphon" aria-required="true" aria-invalid="false" maxlength="14">
+
+                        </section>
+                        <p class="validationContainer" id="validatePhoneNo"></p>
+
+                    </section>
+
+
+
+                </form>
             </div>
         </div>
+        <div class="modal-footer">
+            <a onclick="validationCheck();" data-toggle="tab"><button style="float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">Submit</button></a>
+
+        </div>
+    </div>
 </div>
 
 
@@ -243,7 +380,6 @@
         color: red;
         font-size: 20px;
     }
-
 </style>
 
 
@@ -256,15 +392,144 @@
     <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            //$('#tableProgrammeItems').DataTable({
-            //    "sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
-            //        "t" +
-            //        "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
-            //    "autoWidth": true
-            //})
-        });
 
+            function vesselOwnUpdate() {
+                debugger;
+            var OrgType = $('input[name=cgradioselect]:checked').val();
+
+                if (OrgType != "Private") {
+                    $('#UISorgnamesection').addClass('hidden');
+                } else {
+                    $('#UISorgnamesection').removeClass('hidden');
+                }
+
+            }
+
+         function validationCheck() {
+            debugger;
+             var OrgName = $('#UISorgname').val();
+            var Fname = $('#UISfname').val();
+            var LastName = $('#UISlname').val();
+            var MobilePhone = $('#UISmphon').val();
+            var HomePhone = $('#UIShphon').val();
+            var Email = $('#UISEmail').val();
+            var OrgType = $('input[name=cgradioselect]:checked').val();
+
+            var validation = true;
+
+
+            if (OrgName == "" && OrgType != "Private") {
+                $('#validateOrgName').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateOrgName').html("");
+            }
+
+            if (Fname == "") {
+                $('#validateFirstName').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $(validateFirstName).html("");
+            }
+            if (LastName == "") {
+                $('#validateLastName').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $(validateLastName).html("");
+            } if (MobilePhone == "") {
+                $('#validateMobileNo').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateMobileNo').html("");
+            }
+            if (HomePhone == "") {
+                $('#validatePhoneNo').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validatePhoneNo').html("");
+            }
+			 if (Email == "") {
+                $('#validateEmail').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateEmail').html("");
+				
+            }	 if (OrgType == "") {
+                $('#validateOrgType').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateOrgType').html("");
+            }
+			
+             if (validation) {
+                 postCGData();
+             } else 
+            return validation;
+         };
+
+       
+
+           function postCGData() {
+            debugger;
+            var OrgName = $('#UISorgname').val();
+            var Fname = $('#UISfname').val();
+            var LastName = $('#UISlname').val();
+            var MobilePhone = $('#UISmphon').val();
+            var HomePhone = $('#UIShphon').val();
+            var Email = $('#UISEmail').val();
+            var MembershipNumber = $('#UISMembershipno').val();
+            var OrgType = $('input[name=cgradioselect]:checked').val();
+
+
+            var postData = {
+                orgName: OrgName,
+                firstName: Fname,
+                lastName: LastName,
+                email: Email,
+                mobilePhone: MobilePhone,
+                homePhone: HomePhone,
+                orgType: OrgType,
+                membershipNumber: MembershipNumber
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Services/IssueUIS",
+                data: postData,
+                traditional: true,
+            })
+                .done(function (data, textStatus, jQxhr) {
+                    debugger;
+                    console.log(data);
+                    debugger;
+                    if (data) {
+                        t3.classList.add("active");
+                        $('#response pre').html(data);
+                    }
+                    else {
+                        t4.classList.add("active");
+                    }
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+           }
+ 
     </script>
     @Html.Partial("_ProgrammeScripts")
 
