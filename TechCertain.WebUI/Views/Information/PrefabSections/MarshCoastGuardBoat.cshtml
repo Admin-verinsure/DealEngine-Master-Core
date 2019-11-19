@@ -31,7 +31,7 @@
                                  //$("#Vessel").click(function () {
                                 $(window).on('load',function () {
                               $("#tblBoat").jqGrid({
-                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false&transfered=false",
+                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
                                 datatype: "xml",
                                   mytpe: "GET",
                                 async: true,
@@ -52,7 +52,7 @@
 
                                     {
                                         name: "update", align: 'center', search: false,width:90, editable: true, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button id="trash" onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblBoat\', \'#tblRemovedBoat\');" type="button" class=" btn btn-danger btn-sm" ><span class="fa fa-trash" id="span"></span></button>');
+                                            return ('<button id="trash" onclick="RemoveBoat(\'' + cellvalue + '\', \'true\', \'#tblBoat\', \'#tblRemovedBoat\',\'@Model.Status\');" type="button" class=" btn btn-danger btn-sm" ><span class="fa fa-trash" id="span"></span></button>');
                                         }
                                     }
                                 ],
@@ -791,7 +791,7 @@
                                 <p class="validationContainer" id="validateboateffectivedate"></p>
                             </section>
 
-                            @if (Model.IsChange)
+                            @*@if (Model.IsChange)
                             {
                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
                                     <label class="label">Cease Date</label>
@@ -813,7 +813,7 @@
                                         </select>
                                     </label>
                                 </section>
-                            }
+                            }*@
 
 
 
@@ -866,7 +866,7 @@
                                 </div>
                             </section>
 
-                            @if (Model.IsChange)
+                            @*@if (Model.IsChange)
                             {
                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
                                     <label class="label">Cease Date</label>
@@ -888,7 +888,7 @@
                                         </select>
                                     </label>
                                 </section>
-                            }
+                            }*@
 
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
@@ -1702,7 +1702,7 @@
                             <script type="text/javascript">
                                 $(".BoatRemoved").click(function () {
                                $("#tblRemovedBoat").jqGrid({
-                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false&transfered=false",
+                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
                                 datatype: "xml",
                                    mtype: "GET",
                                 async: true,

@@ -35,6 +35,12 @@
                                             <label class="input">
                                                 <select class="browser-default custom-select custom-select-lg mb-3 col-lg-12" name="OrganisationType">
                                                     <option selected>Corporation – Limited liability</option>
+                                                    <option selected>Corporation – Unlimited liability</option>
+                                                    <option selected>Corporation – Public-Listed</option>
+                                                    <option selected>Corporation – Public Unlisted</option>
+                                                    <option selected>Corporation – Overseas</option>
+                                                    <option selected>Incorporated Society</option>
+
                                                 </select>
                                             </label>
                                         </td>
@@ -141,6 +147,7 @@
                                         </td>
 
                                     </tr>
+
 
 
                                 </tbody>
@@ -285,13 +292,13 @@
         data: ""
     })
         .done(function (data) {
-            $.smallBox({
-                title: "Success",
-                content: "Organisation details have been added",
-                color: "#5F895F",
-                iconSmall: "fa fa-check bounce animated",
-                timeout: 4000
-            });
+            //$.smallBox({
+            //    title: "Success",
+            //    content: "Organisation details have been added",
+            //    color: "#5F895F",
+            //    iconSmall: "fa fa-check bounce animated",
+            //    timeout: 4000
+            //});
 
         })
         .fail(function () {

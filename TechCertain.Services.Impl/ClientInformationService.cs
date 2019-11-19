@@ -34,7 +34,7 @@ namespace TechCertain.Services.Impl
             if (clientProgramme.InformationSheet != null)
                 throw new Exception("ClientProgramme [" + clientProgramme.Id + "] already has an InformationSheet assigned");
 
-            ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, clientProgramme.BaseProgramme.Products.First().InformationTemplate, reference);
+            ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, clientProgramme.BaseProgramme.Products.FirstOrDefault().InformationTemplate, reference);
 
             clientProgramme.InformationSheet = sheet;
             sheet.Programme = clientProgramme;

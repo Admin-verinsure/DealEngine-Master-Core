@@ -1961,9 +1961,9 @@ namespace TechCertain.WebUI.Controllers
                     }                   
 
                 }
-                await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                 //send out information sheet submission notification email
-                await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
             }
 
             return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
@@ -2014,7 +2014,10 @@ namespace TechCertain.WebUI.Controllers
 
             await _programmeService.Update(newClientProgramme);
 
-            return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
+            var url = "/Information/EditInformation/" + newClientProgramme.Id;
+            return Json(new { url });
+
+            //return Redirect("/Information/EditInformation/" + newClientProgramme.Id);
         }
 
         [HttpGet]
@@ -2210,9 +2213,15 @@ namespace TechCertain.WebUI.Controllers
             };
             model.Name = programme.Name;
             Product product = programme.Products.FirstOrDefault();
-            InformationTemplate informationTemplate = await _informationTemplateService.GetTemplatebyProduct(product.Id);
-            
-            List<InformationSection> sections = await _informationSectionService.GetInformationSectionsbyTemplateId(informationTemplate.Id);
+            List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(product.Id);
+            List<InformationSection> sections = new List<InformationSection>();
+            foreach (var template in informationTemplate)
+            {
+                 sections = await _informationSectionService.GetInformationSectionsbyTemplateId(template.Id);
+
+           
+
+
             foreach (var section in sections)
             {
                 section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
@@ -2221,13 +2230,13 @@ namespace TechCertain.WebUI.Controllers
             //foreach (InformationTemplate template in templates)
             //{
             //    Console.WriteLine(template.Id);
-            foreach (var section in informationTemplate.Sections)
+            foreach (var section in template.Sections)
             {
                 section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
             }
-               (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(informationTemplate).Sections);
+               (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(template).Sections);
 
-
+            }
             //}
             model.Section = sections;
             return model;

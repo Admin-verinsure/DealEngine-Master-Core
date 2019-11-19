@@ -21,19 +21,22 @@ namespace TechCertain.WebUI.Controllers
 		IDocumentService _policyDocumentService;
 		ITermBuilderService _termBuilderService;
 		IMapperSession<RiskCategory> _riskRepository;
-		IUnitOfWork _unitOfWork;
+        IMapperSession<Product> _productRepository;
+        IUnitOfWork _unitOfWork;
 		IMapper _mapper;
 
 		public PolicyController(IUserService userRepository,
                                 IDocumentService policyDocumentService,
 								ITermBuilderService termBuilderService,
-								IMapperSession<RiskCategory> riskRepository,
+                                IMapperSession<Product> productRepository,
+                                IMapperSession<RiskCategory> riskRepository,
 								IUnitOfWork unitOfWork,
 								IMapper mapper)
 			: base (userRepository)
 		{
 			_policyDocumentService = policyDocumentService;
-			_termBuilderService = termBuilderService;
+            _productRepository = productRepository;
+            _termBuilderService = termBuilderService;
 			_riskRepository = riskRepository;
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
@@ -330,7 +333,19 @@ namespace TechCertain.WebUI.Controllers
 			};
 			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
 
-			PolicySectionVM model = new PolicySectionVM () {
+            List<SelectListItem> productlist = new List<SelectListItem>();
+            foreach (Product product in _productRepository.FindAll().Where(p => p.Public == true || user.PrimaryOrganisation.Name == "TC" || p.OwnerCompany == user.PrimaryOrganisation.Id))
+            {
+                productlist.Add(new SelectListItem
+                {
+                    Selected = false,
+                    Text = product.Name,
+                    Value = product.Id.ToString(),
+                });
+
+            }
+
+            PolicySectionVM model = new PolicySectionVM () {
 				Content = new ContentSectionVM () {
 					//Content = "Insert some text here"
 				},
@@ -351,9 +366,9 @@ namespace TechCertain.WebUI.Controllers
 					//Jurisdiction = "3",
 					Jurisdictions = localeList,
 					Territories = localeList,
-					Territory = "0"
-				}
-			};
+                    Products = productlist
+                }
+            };
 
 			return View (model);
 		}

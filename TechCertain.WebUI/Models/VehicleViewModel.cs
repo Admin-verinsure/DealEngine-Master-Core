@@ -12,6 +12,8 @@ namespace TechCertain.WebUI.Models
 
         public Guid VehicleId { get; set; }
 
+        public Guid OriginalVehicleId { get; set; }
+
         public bool Validated { get; set; }
 
         public string Registration { get; set; }
@@ -87,42 +89,50 @@ namespace TechCertain.WebUI.Models
         public Vehicle UpdateEntity(Vehicle vehicle)
         {
             // update basic feilds that don't require repository access
-            vehicle.Make = Make;
-            vehicle.Model = VehicleModel;
-            vehicle.Year = Year;
-            vehicle.GroupSumInsured = Convert.ToInt32(SumInsured) ;
-            vehicle.FleetNumber = FleetNumber;
-            vehicle.SerialNumber = SerialNumber;
-            vehicle.AreaOfOperation = AreaOfOperation;
-            vehicle.VehicleType = VehicleType;
-            vehicle.UseType = Use;
-            vehicle.SubUseType = SubUse;
-            vehicle.VIN = VIN;
-            vehicle.ChassisNumber = ChassisNumber;
-            vehicle.EngineNumber = EngineNumber;
-            vehicle.GrossVehicleMass = Convert.ToInt32(GrossVehicleMass);
-            vehicle.Validated = Validated;
-            vehicle.Notes = Notes;
-            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
-            if (!string.IsNullOrEmpty(EffectiveDate))
+            try
             {
-                vehicle.VehicleEffectiveDate = DateTime.Parse(EffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
-            }
-            else
-            {
-                vehicle.VehicleEffectiveDate = DateTime.MinValue;
-            }
-            if (!string.IsNullOrEmpty(CeaseDate))
-            {
-                vehicle.VehicleCeaseDate = DateTime.Parse(CeaseDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
-            }
-            else
-            {
-                vehicle.VehicleCeaseDate = DateTime.MinValue;
-            }
-            vehicle.VehicleCeaseReason = CeaseReason;
+                vehicle.Make = Make;
+                vehicle.Model = VehicleModel;
+                vehicle.Year = Year;
+                vehicle.GroupSumInsured = Convert.ToInt32(SumInsured);
+                vehicle.FleetNumber = FleetNumber;
+                vehicle.SerialNumber = SerialNumber;
+                vehicle.AreaOfOperation = AreaOfOperation;
+                vehicle.VehicleType = VehicleType;
+                vehicle.UseType = Use;
+                vehicle.SubUseType = SubUse;
+                vehicle.VIN = VIN;
+                vehicle.ChassisNumber = ChassisNumber;
+                vehicle.EngineNumber = EngineNumber;
+                vehicle.GrossVehicleMass = Convert.ToInt32(GrossVehicleMass);
+                vehicle.Validated = Validated;
+                vehicle.Notes = Notes;
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
+                if (!string.IsNullOrEmpty(EffectiveDate))
+                {
+                    vehicle.VehicleEffectiveDate = DateTime.Parse(EffectiveDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
+                }
+                else
+                {
+                    vehicle.VehicleEffectiveDate = DateTime.MinValue;
+                }
+                if (!string.IsNullOrEmpty(CeaseDate))
+                {
+                    vehicle.VehicleCeaseDate = DateTime.Parse(CeaseDate, System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")).ToUniversalTime(tzi);
+                }
+                else
+                {
+                    vehicle.VehicleCeaseDate = DateTime.MinValue;
+                }
+                vehicle.VehicleCeaseReason = CeaseReason;
 
-            return vehicle;
+                return vehicle;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return vehicle;
+            }
         }
 
         public static VehicleViewModel FromEntity(Vehicle vehicle)
