@@ -718,13 +718,13 @@ namespace TechCertain.WebUI.Controllers
                 // List Agreement Premiums
                 foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
                 {
-                    if (answerSheet.PreviousInformationSheet == null)
+                    if (answerSheet.IsChange && answerSheet.PreviousInformationSheet != null)
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture), FSL = term.FSLDiffer.ToString("C", UserCulture), TotalPremium = term.PremiumDiffer.ToString("C", UserCulture) });
                     }
                     else
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture), FSL = term.FSLDiffer.ToString("C", UserCulture), TotalPremium = term.PremiumDiffer.ToString("C", UserCulture) });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                     }
                 }
 
@@ -900,8 +900,9 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
 
-           
-            return Json(date);
+            var url = "/Information/EditInformation/" + clientAgreement.ClientInformationSheet.Programme.Id;
+            return Json(new { url });
+            //return Json(date);
         }
 
 
@@ -1417,7 +1418,14 @@ namespace TechCertain.WebUI.Controllers
                 var terms = await _clientAgreementTermService.GetAllAgreementTermFor(clientAgreement);
                 foreach (ClientAgreementTerm clientAgreementTerm in terms)
                 {
-                    totalPremium += clientAgreementTerm.Premium;
+                    if (programme.InformationSheet.IsChange && programme.InformationSheet.PreviousInformationSheet != null)
+                    {
+                        totalPremium += clientAgreementTerm.PremiumDiffer;
+                    } else
+                    {
+                        totalPremium += clientAgreementTerm.Premium;
+                    }
+                    
                 }
             }
             totalPayment = Math.Round(((totalPremium + brokerFee) * (GST) * (creditCharge)), 2);
