@@ -13,7 +13,7 @@ namespace TechCertain.WebUI.Models.Programme
         public ActivityAttachVM ActivityAttach { get; set; }
         public ActivityModal ActivityCreate { get; set; }
         public ActivityListViewModel ActivityListViewModel { get; set; }
-
+        public Guid Id { get; set; }
     };
 
     public class ActivityBuilderVM

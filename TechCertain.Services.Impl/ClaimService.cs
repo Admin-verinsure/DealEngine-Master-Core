@@ -17,9 +17,9 @@ namespace TechCertain.Services.Impl
             _claimsRepository = claimsRepository;
         }
 
-        public Task<List<Claim>> GetClaimsByOrganisation(Organisation organisation)
+        public async Task<List<Claim>> GetClaimsAllClaimsList()
         {
-            return _claimsRepository.FindAll().Where(c => c.Organisation == organisation).ToListAsync();
+            return await _claimsRepository.FindAll().ToListAsync();
         }
 
         public async Task<Claim> GetTemplateByName(string claimName)

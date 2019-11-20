@@ -260,9 +260,9 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ActivityBuilder()
+        public async Task<IActionResult> ActivityBuilder(Guid Id)
         {
-            var user = await CurrentUser();
+            var user = await CurrentUser();            
             var busActivityList = await _busActivityService.GetBusinessActivities();
             if(busActivityList.Count == 0)
             {
@@ -287,9 +287,9 @@ namespace TechCertain.WebUI.Controllers
                 },
                 ActivityCreate = new ActivityModal()
             };
-           
-            var classification = busActivityList.GroupBy(ba => ba.Classification);
-            
+
+            model.Id = Id;
+            var classification = busActivityList.GroupBy(ba => ba.Classification);           
             foreach (var group in classification)
             {
                 var optionGroup = new SelectListGroup() { Name = group.Key.ToString() };
@@ -306,13 +306,13 @@ namespace TechCertain.WebUI.Controllers
             }
 
             List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
+            foreach (Programme prog in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
             {
                 proglist.Add(new SelectListItem
                 {
                     Selected = false,
-                    Text = programme.Name,
-                    Value = programme.Id.ToString(),
+                    Text = prog.Name,
+                    Value = prog.Id.ToString(),
                 });
 
             }

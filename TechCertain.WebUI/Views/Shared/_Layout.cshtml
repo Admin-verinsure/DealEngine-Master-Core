@@ -31,10 +31,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production-plugins.min.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     @*<link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-skins.min.css">*@
     <link href="../dist/css/smart_wizard_theme_circles.css" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     <!-- SmartAdmin RTL Support -->
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-rtl.min.css">
     <!-- FAVICONS -->
@@ -73,15 +72,17 @@
     <script src="~/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
 
 </head>
-<body>
-@*<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">*@
+<body class="container-fluid">
+    @*<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">*@
     <!-- Google Tag Manager -->
 
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
 
-    <div id="container" class="container-fluid">
+    <div id="container" class="container-fluid" style="background-color: #A6E2EF">
         @RenderBody()
-
+        <footer>
+            <p>&copy; 2019 - DealEngine</p>
+        </footer>
     </div>
     @if (User.Identity.IsAuthenticated)
     {
@@ -91,4 +92,5 @@
 
     @{ await Html.RenderPartialAsync("_Scripts", RenderSection("pagespecific", false)); }
 </body>
+
 </html>

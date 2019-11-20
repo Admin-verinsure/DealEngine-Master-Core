@@ -281,7 +281,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl)
         {
-            var viewModel = new AccountLoginModel { ReturnUrl = returnUrl };
+            var viewModel = new AccountLoginModel
+            {
+                ReturnUrl = returnUrl,
+                DomainString = _appSettingService.domainQueryString,
+            };
 
             string nameExtension = "";// ConfigurationRoot["LoginPageExtension"];
 
@@ -309,6 +313,7 @@ namespace TechCertain.WebUI.Controllers
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                 int resultCode = -1;
                 string resultMessage = "";
+                bool isUser = true;
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
@@ -317,6 +322,7 @@ namespace TechCertain.WebUI.Controllers
                     IdentityUser deUser = await _userManager.FindByNameAsync(userName);
                     if (deUser == null)
                     {
+                        isUser = false;
                         deUser = new IdentityUser
                         {
                             Email = user.Email,
@@ -328,7 +334,11 @@ namespace TechCertain.WebUI.Controllers
                     var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false);
                     if (identityResult.Succeeded)
                     {
-                        //add claims, roles etc here
+                        var hasRole = await _roleManager.RoleExistsAsync("Client");
+                        if (hasRole && !isUser)
+                        {
+                            await _userManager.AddToRoleAsync(deUser, "Client");
+                        }
                     }
                     
                     var result = await LoginMarsh(user, viewModel.DevicePrint);

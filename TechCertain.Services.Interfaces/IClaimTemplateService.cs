@@ -6,7 +6,7 @@ namespace TechCertain.Services.Interfaces
 {
     public interface IClaimTemplateService
     {
-        Task CreateClaimsForOrganisation(Organisation primaryOrganisation);
+        Task CreateAllClaims();
     }
 }
 

@@ -1,13 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.Authorization.AuthorizeViewModel
 <div class="container-fluid">
-    <div class="row">
-        <div class="jumbotron">
-            <p class="lead">Permissions</p>
-            <hr class="my-4">
-            <p>Set users permissions with Create/Edit/Delete.</p>
-            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-        </div>
-    </div>
+
     <div class="alert alert-warning alert-dismissible fade show" role="alert" id="Success">
         <strong>Holy guacamole!</strong> You should check in on some of those fields below.
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -15,7 +8,7 @@
         </button>
     </div>
     <div class="row">
-        <div class="accordion" id="accordionExample">
+        <div class="accordion container" id="accordionExample">
             <div class="card">
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
@@ -31,8 +24,19 @@
                     </div>
                     <div class="card-body">
                         <div class="container" id="AddRoleForm" style="display:none">
-                            @await Html.PartialAsync("AddRoleForm", Model)
-                        </div>
+                            <form>
+                                <div class="form-group container">
+                                    <select class="custom-select col-6 custom-select-lg" id="organisationId">
+                                        @foreach (var org in Model.Organisations)
+                                        {
+                                            <option value="@org.Id">@org.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    @await Html.PartialAsync("AddRoleForm", Model)
+                                </div>
+                        </form>
                     </div>
                     <div class="card-body">
                         <div class="container" id="UpdateRoleForm" style="display:none">
@@ -68,20 +72,9 @@
                                         @await Html.PartialAsync("GetClaimList", Model)
                                     </div>
                                 </div>
-                                <div class="card-footer">
-                                    <button type="button" class="btn btn-primary" href="~/Authorize/Index">Edit</button>
-                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-primary" onclick="ShowClaim()">Create</button>
-                            <button type="button" class="btn btn-primary">Edit</button>
-                            <button type="button" class="btn btn-primary">Add </button>
-                            <button type="button" class="btn btn-primary">Delete</button>
-                        </div>
-                    </div>
+                    </div>                    
                 </div>
             </div>
             <div class="card">
@@ -138,9 +131,9 @@
         function SaveRole() {
             var roleName = $('#InputRoleName').val();
             var claim = $('#AddClaims').val();
-
-            var postData = { RoleName: roleName, Claims: claim }
+            var organisationId = $('#organisationId').val();
             debugger;
+            var postData = { RoleName: roleName, Claims: claim, OrganisationId: organisationId }
 
             $.ajax({
                 url: '@Url.Action("AddRole", "Authorize")',
@@ -148,6 +141,7 @@
                 data: postData
             })
                 .done(function (data) {
+                    location.reload();
                     $('#Success').alert();
                 })
                 .fail(function (a, s, d) {
@@ -159,9 +153,7 @@
         function UpdateRole() {
             var roleName = $('#UpdateRoleSelect').val();
             var claim = $('#UpdateClaims').val();
-
             var postData = { RoleName: roleName, Claims: claim }
-            debugger;
 
             $.ajax({
                 url: '@Url.Action("UpdateRole", "Authorize")',
@@ -169,6 +161,7 @@
                 data: postData
             })
                 .done(function (data) {
+                    location.reload();
                     $('#Success').alert();
                 })
                 .fail(function (a, s, d) {
@@ -180,9 +173,7 @@
         function SaveRoleToUser() {
             var userId = $('#AddUser').val();
             var roleIds = $('#AddUserRoleSelect').val();
-
             var postData = { UserId: userId, RoleIds: roleIds }
-            debugger;
 
             $.ajax({
                 url: '@Url.Action("SaveRoleToUser", "Authorize")',
@@ -190,6 +181,7 @@
                 data: postData
             })
                 .done(function (data) {
+                    location.reload();
                     $('#Success').alert();
                 })
                 .fail(function (a, s, d) {
@@ -200,6 +192,7 @@
 
         function AddRole() {
             $('#AddRoleForm').show();
+            $('#UpdateRoleForm').hide();
         }
 
         function AddRoleToUser() {

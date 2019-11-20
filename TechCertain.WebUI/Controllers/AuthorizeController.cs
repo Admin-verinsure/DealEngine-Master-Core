@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate.AspNetCore.Identity;
 using NHibernate.Linq;
+using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.WebUI.Models.Authorization;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
+using Claim = System.Security.Claims.Claim;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -19,39 +21,55 @@ namespace TechCertain.WebUI.Controllers
     {
         IClaimService _claimService;
         IClaimTemplateService _claimTemplateService;
+        IUserRoleService _userRoleService;
         RoleManager<IdentityRole> _roleManager;
         UserManager<IdentityUser> _userManager;
+        IOrganisationService _organisationService;
 
         public AuthorizeController(IUserService userService, IClaimService claimService, IClaimTemplateService claimTemplateService, 
-            RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+            RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager, IUserRoleService userRoleService, 
+            IOrganisationService organisationService)
             : base(userService)
         {
+            _organisationService = organisationService;
+            _userRoleService = userRoleService;
             _userManager = userManager;
             _roleManager = roleManager;
             _claimService = claimService;
             _claimTemplateService = claimTemplateService;
+            _userService = userService;
         }
 
         // GET: Authorize
         public async Task<IActionResult> Index()
         {
-            var roleList = await _roleManager.Roles.ToListAsync();
-            var userList = await _userManager.Users.ToListAsync();
             var user = await CurrentUser();
-            AuthorizeViewModel model = new AuthorizeViewModel();
+            var userRoleList = await _userRoleService.GetRolesByOrganisation(user.PrimaryOrganisation);
+            var userList = await _userService.GetAllUsers();
+            var roleList = new List<IdentityRole>();
+            var organisationList = await _organisationService.GetAllOrganisations();
 
-            var claimList = await _claimService.GetClaimsByOrganisation(user.PrimaryOrganisation);
+            var claimList = await _claimService.GetClaimsAllClaimsList();
             if (claimList.Count == 0)
             {
-                await _claimTemplateService.CreateClaimsForOrganisation(user.PrimaryOrganisation);
-                claimList = await _claimService.GetClaimsByOrganisation(user.PrimaryOrganisation);
+                await _claimTemplateService.CreateAllClaims();
+                claimList = await _claimService.GetClaimsAllClaimsList();
             }
-            model.RoleList = new List<IdentityRole>();
-            model.UserList = new List<IdentityUser>();
-            model.ClaimList = claimList;
 
-            if (roleList.Count != 0)
+            AuthorizeViewModel model = new AuthorizeViewModel();
+
+            model.RoleList = new List<IdentityRole>();
+            model.UserList = new List<User>();
+            model.ClaimList = claimList;
+            model.Organisations = organisationList;
+
+            if (userRoleList.Count != 0)
             {
+                foreach(var userRole in userRoleList)
+                {
+                    roleList.Add(userRole.IdentityRole);
+                }
+
                 model.RoleList = roleList;
             }
 
@@ -64,9 +82,17 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRole(string RoleName, string[] Claims)
+        public async Task<IActionResult> AddRole(string RoleName, string[] Claims, Guid OrganisationId)
         {
+            var user = await CurrentUser();
             var isRole = await _roleManager.RoleExistsAsync(RoleName);
+            var organisation = user.PrimaryOrganisation;
+
+            if(OrganisationId != null)
+            {
+                organisation = await _organisationService.GetOrganisation(OrganisationId);
+            }
+
             if (!isRole)
             {
                 var role = new IdentityRole
@@ -77,7 +103,9 @@ namespace TechCertain.WebUI.Controllers
                 var identityreult = await _roleManager.CreateAsync(role);
                 if (identityreult.Succeeded)
                 {
-                    foreach(var cl in Claims)
+                    await _userRoleService.AddUserRole(user, role, organisation);
+
+                    foreach (var cl in Claims)
                     {
                         var claim = new Claim(cl, cl);
                         await _roleManager.AddClaimAsync(role, claim);
@@ -86,7 +114,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
 
-            return Ok();            
+            return Ok();           
         }
 
         [HttpPost]
@@ -117,92 +145,29 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRoleToUser(string UserId, string[] RoleIds)
+        public async Task<IActionResult> SaveRoleToUser(Guid UserId, string[] RoleIds)
         {
-            var user = await _userManager.FindByIdAsync(UserId);
-            if(user != null)
+            var user = await _userService.GetUser(UserId);
+            var identityUser = await _userManager.FindByNameAsync(user.UserName);
+            if(identityUser == null)
             {
-                foreach(var id in RoleIds)
+                identityUser = new IdentityUser();
+                identityUser.UserName = user.UserName;
+                await _userManager.CreateAsync(identityUser);
+            }
+
+            foreach (var id in RoleIds)
+            {
+                var role = await _roleManager.FindByIdAsync(id);
+                if (role != null)
                 {
-                    var role = await _roleManager.FindByIdAsync(id);
-                    if(role != null)
-                    {
-                        await _userManager.AddToRoleAsync(user, role.Name);
-                    }
+                    await _userManager.AddToRoleAsync(identityUser, role.Name);
                 }
             }
 
+
             return Ok();
         }
-
-
-        // GET: Authorize/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Authorize/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Authorize/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Authorize/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Authorize/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Authorize/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+       
     }
 }

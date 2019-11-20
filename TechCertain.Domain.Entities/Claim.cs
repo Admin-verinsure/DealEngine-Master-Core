@@ -10,11 +10,10 @@ namespace TechCertain.Domain.Entities
         }
 
         protected Claim() : base(null) { }
-        public Claim(string type, string value, Organisation primaryOrganisation) : base(null)
+        public Claim(string type, string value) : base(null)
         {
             Type = type;
             Value = value;
-            Organisation = primaryOrganisation;
         }
 
         public virtual string Type { get; set; }
@@ -24,6 +23,5 @@ namespace TechCertain.Domain.Entities
         public virtual string Issuer { get; set; }
         public virtual string ValueType { get; set; }
         public virtual string Value { get; set; }
-        public virtual Organisation Organisation { get; set; }
     }
 }

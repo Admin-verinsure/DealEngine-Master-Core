@@ -75,7 +75,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                 {
                     try
                     {
-                        new SchemaUpdate(config).Execute(false, true);
+                        new SchemaUpdate(config).ExecuteAsync(false, true);
                     }
                     catch (Exception ex)
                     {

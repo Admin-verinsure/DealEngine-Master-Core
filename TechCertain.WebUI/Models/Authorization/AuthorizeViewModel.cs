@@ -10,7 +10,8 @@ namespace TechCertain.WebUI.Models.Authorization
 	{
         public IList<Claim> ClaimList { get; set; }
         public IList<IdentityRole> RoleList { get; set; }
-        public IList<IdentityUser> UserList { get; set; }
+        public IList<User> UserList { get; set; }
+        public IList<Organisation> Organisations { get; set; }
     }
 }
 

@@ -1,39 +1,46 @@
 ﻿@model TechCertain.WebUI.Models.OrganisationViewModel
 @using TechCertain.WebUI.Helpers.CustomHtml
 
-<!-- MAIN CONTENT -->
-<div id="content">
-    <!-- Bread crumb is created dynamically -->
-    <!-- row -->
+<div class="container">
     <div class="row">
         <!-- col -->
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="container">
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i> Add New Organisation
+                <i class="fa-fw fa fa-home"></i>  <span>
+                    <a href="~/Programme/TermSheetConfirguration/@Model.ProgrammeId"> Package Term Sheet</a>
+                    > Add New Organisation
+                </span>
             </h1>
+            <span>
+                <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme", new { Id = @Model.ProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            </span>
         </div>
         <!-- end col -->
     </div>
-    <form action="~/Organisation/CreateOrganisation" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-        <section id="widget-grid-organisation" class="">
-            <div class="row">
-                <article class="container">
-                    <!-- new widget -->
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-1" data-widget-editbutton="true" data-widget-colorbutton="false">
 
-                        <section>
-                            <header>Organisation</header>
+    <div class="row">
+        <form action="~/Organisation/CreateOrganisation" method="POST" id="update-form" class="container"
+              enctype="multipart/form-data">
+            <div class="form-group">
+                <section>
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
+                         data-widget-editbutton="false" data-widget-colorbutton="false">
+
+                        <header style="background-color:#3276b1">
+                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                            <h2>Organisation</h2>
+                        </header>
                             <table class="table table-bordered table-striped table-hover table-condensed">
                                 <tbody>
-                                    <tr>
+                                    <tr class="table-light">
                                         <td align="center">
                                             <b>Organisation Type</b>
                                         </td>
 
                                         <td align="center">
                                             <label class="input">
-                                                <select class="browser-default custom-select custom-select-lg mb-3 col-lg-12" name="OrganisationType">
+                                                <select class="custom-select" name="OrganisationType">
                                                     <option selected>Corporation – Limited liability</option>
                                                     <option selected>Corporation – Unlimited liability</option>
                                                     <option selected>Corporation – Public-Listed</option>
@@ -46,14 +53,14 @@
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    <tr class="table-light">
                                         <td align="center">
                                             <b>Insurance Attribute</b>
                                         </td>
 
                                         <td align="center">
                                             <label class="input">
-                                                <select onchange="IASelected()" id="InsuranceAttributeName" name="InsuranceAttributeName" class="form-control b">
+                                                <select onchange="IASelected()" id="InsuranceAttributeName" name="InsuranceAttributeName" class="custom-select">
                                                     <option selected>--Select--</option>
                                                     <option value="Marina"> Marina</option>
                                                     <option value="Other Marina">Other Marina</option>
@@ -63,7 +70,7 @@
                                         </td>
                                     </tr>
 
-                                    <tr class="hidden" id="trOrganisationMarinaOrgMooredType">
+                                    <tr class="hidden table-light" id="trOrganisationMarinaOrgMooredType">
                                         <td align="center">
                                             <b>Marina Moored Type</b>
                                         </td>
@@ -83,20 +90,19 @@
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    <tr class="table-light">
                                         <td align="center">
                                             <b>Name</b>
                                         </td>
 
                                         <td align="center">
                                             <label class="input">
-                                                <i class="icon-append fa fa-user"></i>
                                                 <input type="text" name="OrganisationName" placeholder="Organisation name">
                                             </label>
                                         </td>
 
                                     </tr>
-                                    <tr>
+                                    <tr class="table-light">
 
                                         <td align="center">
                                             <b>Email</b>
@@ -104,13 +110,12 @@
 
                                         <td align="center">
                                             <label class="input">
-                                                <i class="icon-append fa fa-envelope"></i>
-                                                <input type="text" name="OrganisationEmail" placeholder="Email Address">
+                                                <input type="email" name="OrganisationEmail" placeholder="Email Address">
                                             </label>
                                         </td>
 
                                     </tr>
-                                    <tr>
+                                    <tr class="table-light">
 
                                         <td align="center">
                                             <b>Phone Number</b>
@@ -118,13 +123,12 @@
 
                                         <td align="center">
                                             <label class="input">
-                                                <i class="icon-append fa fa-phone"></i>
-                                                <input type="text" name="OrganisationPhone" placeholder="Phone Number">
+                                                <input type="number" name="OrganisationPhone" placeholder="Phone Number">
                                             </label>
                                         </td>
 
                                     </tr>
-                                    <tr>
+                                    <tr class="table-light">
 
                                         <td align="center">
                                             <b>Website</b>
@@ -132,132 +136,119 @@
 
                                         <td align="center">
                                             <label class="input">
-                                                <i class="icon-append fa fa-wechat"></i>
-                                                <input type="text" name="OrganisationWebsite" placeholder="Website">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-
-
-
-                                </tbody>
-                            </table>
-                        </section>
-                        @*</div>*@
-
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section id="widget-grid-Location" class="">
-            <div class="row">
-                <article class="container">
-                    <!-- new widget -->
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-3" data-widget-editbutton="true" data-widget-colorbutton="false">
-                        <section>
-                            <header>Location</header>
-                            <table class="table table-bordered table-striped table-hover table-condensed">
-                                <tbody>
-                                    <tr>
-                                        <td align="center">
-                                            <b>Street Address</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-location-arrow"></i>
-                                                <input type="text" name="LocationStreetAddress" placeholder="Street Address">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Suburb</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-home"></i>
-                                                <input type="text" name="LocationSuburb" placeholder="Suburb">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Post Code</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-envelope"></i>
-                                                <input type="text" name="LocationPostCode" placeholder="Postcode">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>City</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-joomla"></i>
-                                                <input type="text" name="LocationCity" placeholder="City">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Country</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-group"></i>
-                                                <input type="text" name="LocationCountry" placeholder="Country">
-                                            </label>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-
-                                        <td align="center">
-                                            <b>Common Name</b>
-                                        </td>
-
-                                        <td align="center">
-                                            <label class="input">
-                                                <i class="icon-append fa fa-joomla"></i>
-                                                <input type="text" name="LocationCommonName" placeholder="Common Name">
+                                                <input type="url" name="OrganisationWebsite" placeholder="Website">
                                             </label>
                                         </td>
 
                                     </tr>
                                 </tbody>
                             </table>
-                        </section>
-                    </div>
-                </article>
+                        </div>
+                </section>
             </div>
-        </section>
-        @if (User.HasClaim("Edit", "EditMarinas/FinancialInstitutions"))
-        {
-            <div class="">
-                <button type="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Add</button>
-            </div>
-        }
 
-    </form>
+            <div class="form-group">
+                <section>
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
+                         data-widget-editbutton="false" data-widget-colorbutton="false">
+
+                        <header style="background-color:#3276b1">
+                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                            <h2>Location</h2>
+                        </header>
+                        <table class="table table-bordered table-striped table-hover table-condensed">
+                            <tbody>
+                                <tr class="table-light">
+                                    <td align="center">
+                                        <b>Street Address</b>
+                                    </td>
+
+                                    <td align="center">
+                                        <label class="input">
+                                            <input type="text" name="LocationStreetAddress" placeholder="Street Address">
+                                        </label>
+                                    </td>
+
+                                </tr>
+                                <tr class="table-light">
+
+                                    <td align="center">
+                                        <b>Suburb</b>
+                                    </td>
+
+                                    <td align="center">
+                                        <label class="input">
+                                            <input type="text" name="LocationSuburb" placeholder="Suburb">
+                                        </label>
+                                    </td>
+
+                                </tr>
+                                <tr class="table-light">
+
+                                    <td align="center">
+                                        <b>Post Code</b>
+                                    </td>
+
+                                    <td align="center">
+                                        <label class="input">
+                                            <input type="number" name="LocationPostCode" placeholder="Postcode">
+                                        </label>
+                                    </td>
+
+                                </tr>
+                                <tr class="table-light">
+
+                                    <td align="center">
+                                        <b>City</b>
+                                    </td>
+
+                                    <td align="center">
+                                        <label class="input">
+                                            <input type="text" name="LocationCity" placeholder="City">
+                                        </label>
+                                    </td>
+
+                                </tr>
+                                <tr class="table-light">
+
+                                    <td align="center">
+                                        <b>Country</b>
+                                    </td>
+
+                                    <td align="center">
+                                        <label class="input">
+                                            <input type="text" name="LocationCountry" placeholder="Country">
+                                        </label>
+                                    </td>
+
+                                </tr>
+                                <tr class="table-light">
+
+                                    <td align="center">
+                                        <b>Common Name</b>
+                                    </td>
+
+                                    <td align="center">
+                                        <label class="input">
+                                            <input type="text" name="LocationCommonName" placeholder="Common Name">
+                                        </label>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+            @if (User.HasClaim("Edit", "EditMarinas/FinancialInstitutions"))
+            {
+                <div class="form-group">
+                    <button type="Submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Submit</button>
+                </div>
+            }
+
+        </form>
+    </div>
 </div>
 
 @section pagespecific {

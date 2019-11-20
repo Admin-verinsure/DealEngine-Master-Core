@@ -45,134 +45,98 @@
                         </thead>
                         <tbody>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Programme</td>
                                 <td> @Model.programmeName  </td>
                                 <td><a class="btn btn-success btn-xs" href="@Url.Action("ManageProgramme", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                             </tr>
-                            @*<tr onclick="location.href='/Programme/ActivityBuilder';" style="cursor:pointer">
-            <td>Activity Builder</td>
-            <td>   </td>
-            <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
 
-        </tr>
-        <tr>
-            <td>Addresses</td>
-            <td>   </td>
-            <td><a class="btn btn-success btn-xs" href="#"><i class="fa fa-search"></i> View</a></td>
-        </tr>
-
-        <tr onclick="location.href='/File/ManageDocuments';" style="cursor:pointer">
-            <td>Manage Documents</td>
-            <td>   </td>
-            <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
-
-        </tr>*@
-
-
-                        <tr>
+                        <tr class="table-light">
                             <td>Activities</td>
                             <td>ANZSIC Codes</td>
-                            <td><a class="btn btn-success btn-xs" href="@Url.Action("ActivityBuilder", "Programme")"><i class="fa fa-search"></i> View</a></td>
+                            <td><a class="btn btn-success btn-xs" href="@Url.Action("ActivityBuilder", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
 
 
 
                         </tr>
-                        <tr>
+                        <tr class="table-light">
                             <td>Addresses</td>
                             <td>Address API used </td>
                             <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
                         </tr>
 
-                            <tr onclick="location.href='/File/ManageDocuments';" style="cursor:pointer">
+                            <tr class="table-light">
                                 <td>Manage Documents</td>
                                 <td>Certificates, Schedules, Wordings, Invoices</td>
-                                <td><a class="btn btn-success btn-xs"><i class="fa fa-search"></i> View</a></td>
+                                <td><a class="btn btn-success btn-xs" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
                             </tr>
-                            <tr>
+                            <tr class="table-light">
                                 <td>Rules</td>
                                 <td>Configure the Rules</td>
                                 <td><a class="btn btn-success btn-xs" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
 
                             </tr>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Emails</td>
                                 <td>System and proggramme specific</td>
-                                <td><a class="btn btn-success btn-xs" href="@Url.Action("EmailTemplate", "Programme",new { Id =@Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                <td><a class="btn btn-success btn-xs" href="@Url.Action("EmailTemplate", "Programme", new { Id =@Model.Id })"><i class="fa fa-search"></i> View</a></td>
                             </tr>
 
-                            @*<tr>
-                                <td>Financial Institutions</td>
-                                <td>For selecting as Named Parties</td>
-                                <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                            </tr>*@
-
-                            <tr>
+                            <tr class="table-light">
                                 <td>Milestones</td>
                                 <td>Milestones</td>
                                 <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
-
-                                @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
                             </tr>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Marinas/Financial Institutions</td>
                                 <td>Manage Marinas and Financial Institutions</td>
-                                <td><a class="btn btn-success btn-xs" href="/Organisation/AddNewOrganisation"><i class="fa fa-search"></i> View</a></td>
-
-                                @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
+                                <td><a class="btn btn-success btn-xs" href="@Url.Action("AddNewOrganisation", "Organisation", new { Id =@Model.Id })"><i class="fa fa-search"></i> View</a></td>
                             </tr>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Motor</td>
                                 <td>Motor API used   </td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                             </tr>
 
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Products</td>
                                 <td>Insurance Policies for adding to a programme   </td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                @*<td><a class="btn btn-success btn-xs disabled" href="/Product/CreateNew"><i class="fa fa-search"></i> In Dev</a></td>*@
                             </tr>
 
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Sections</td>
                                 <td>Sections for the Client Information Sheet   </td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                @*<td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
                             </tr>
 
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Special Terms</td>
                                 <td>Endorsements</td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                @*<td><a class="btn btn-success btn-xs disabled" href="/Policy/SectionBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
                             </tr>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Underwriting Rules</td>
                                 <td>Underwriting Rules</td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
                             </tr>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Users</td>
                                 <td>User Management</td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                             </tr>
 
-                            <tr>
+                            <tr class="table-light">
                                 <td>Water</td>
                                 <td>Water Location API used</td>
                                 <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
@@ -180,8 +144,6 @@
 
                         </tbody>
                     </table>
-                    @*</div>
-                        </div>*@
                 </div>
             </article>
         </div>
