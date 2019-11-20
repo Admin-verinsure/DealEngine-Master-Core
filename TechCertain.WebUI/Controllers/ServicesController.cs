@@ -2535,23 +2535,27 @@ namespace TechCertain.WebUI.Controllers
                     }
                     catch (Exception)
                     {
-                        // create personal organisation
-                        //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
-                        //_organisationService.CreateNewOrganisation (personalOrganisation);
-                        // create user object
-                        user = new User(null, Guid.NewGuid(), username);
-                        user.FirstName = firstName;
-                        user.LastName = lastName;
-                        user.FullName = firstName + " " + lastName;
-                        user.Email = email;
-                        user.Phone = homePhone;
-                        user.MobilePhone = mobilePhone;
-                        user.Password = "";
-                        //user.Organisations.Add (personalOrganisation);
-                        // save the new user
-                        // creates a new user in the system along with a default organisation
-                        await _userService.Create(user);
-                        //Console.WriteLine ("Created User " + user.FullName);
+
+                        try
+                        {
+                            user = new User(null, Guid.NewGuid(), username);
+                            user.FirstName = firstName;
+                            user.LastName = lastName;
+                            user.FullName = firstName + " " + lastName;
+                            user.Email = email;
+                            user.Phone = homePhone;
+                            user.MobilePhone = mobilePhone;
+                            user.Password = "";
+                            //user.Organisations.Add (personalOrganisation);
+                            // save the new user
+                            // creates a new user in the system along with a default organisation
+                            await _userService.Create(user);
+                        }
+                        catch (Exception ex1)
+                        {
+                            Console.WriteLine(ex1.Message);
+                        }
+
                     }
                 }
                 finally
@@ -2587,7 +2591,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.OrganisationalUnits.Add(ou);
                     clientProgramme.BrokerContactUser = programme.BrokerContactUser;
                     clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
+                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "First Mate Cover Quick Quote Consuming Process Completed"));
                     try
                     {
                         Thread.Sleep(1000);
