@@ -248,7 +248,7 @@
     <div class="modal-content">
 
         <div class="modal-header">
-            <h3 class="modal-title" style="color:blue; font-size:22px">Change Details</h3>
+            <h3 class="modal-title" style="color:blue; font-size:22px">Client Details</h3>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
 
         </div>
@@ -348,20 +348,7 @@
                         <p class="validationContainer" id="validateMobileNo"></p>
 
                     </section>
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                            <label class="required">Home Phone</label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <input class="form-control input-lg" placeholder="Enter Home Number" type="text" name="mphon" id="UIShphon" aria-required="true" aria-invalid="false" maxlength="14">
-
-                        </section>
-                        <p class="validationContainer" id="validatePhoneNo"></p>
-
-                    </section>
-
-
+                  
 
                 </form>
             </div>
@@ -400,7 +387,7 @@
             debugger;
             var OrgType = $('input[name=cgradioselect]:checked').val();
 
-            if (OrgType != "Private") {
+            if (OrgType == "Private") {
                 $('#UISorgnamesection').addClass('hidden');
             } else {
                 $('#UISorgnamesection').removeClass('hidden');
@@ -425,7 +412,6 @@
             var Fname = $('#UISfname').val();
             var LastName = $('#UISlname').val();
             var MobilePhone = $('#UISmphon').val();
-            var HomePhone = $('#UIShphon').val();
             var Email = $('#UISEmail').val();
             var OrgType = $('input[name=cgradioselect]:checked').val();
 
@@ -464,14 +450,7 @@
             } else {
                 $('#validateMobileNo').html("");
             }
-            if (HomePhone == "") {
-                $('#validatePhoneNo').html("<font color='red'>Field is required</font>");
-                if (validation) {
-                    validation = false;
-                }
-            } else {
-                $('#validatePhoneNo').html("");
-            }
+            
             if (Email == "") {
                 $('#validateEmail').html("<font color='red'>Field is required</font>");
                 if (validation) {
@@ -513,7 +492,6 @@
             var Fname = $('#UISfname').val();
             var LastName = $('#UISlname').val();
             var MobilePhone = $('#UISmphon').val();
-            var HomePhone = $('#UIShphon').val();
             var Email = $('#UISEmail').val();
             var MembershipNumber = $('#UISMembershipno').val();
             var OrgType = $('input[name=cgradioselect]:checked').val();
@@ -525,7 +503,6 @@
                 lastName: LastName,
                 email: Email,
                 mobilePhone: MobilePhone,
-                homePhone: HomePhone,
                 orgType: OrgType,
                 membershipNumber: MembershipNumber
             };
@@ -538,15 +515,8 @@
             })
                 .done(function (data, textStatus, jQxhr) {
                     debugger;
-                    console.log(data);
-                    debugger;
-                    if (data) {
-                        t3.classList.add("active");
-                        $('#response pre').html(data);
-                    }
-                    else {
-                        t4.classList.add("active");
-                    }
+                    $('#IssueUISModal' + " :input").val("");
+	                  $('#IssueUISModal').hide();
                 })
                 .fail(function (jqXhr, textStatus, errorThrown) {
                     debugger;
