@@ -1623,7 +1623,13 @@ namespace TechCertain.WebUI.Controllers
             {
                 model.AnswerSheetId = answerSheetId;
                 if (boat.OriginalBoat != null)
+                {
                     model.OriginalBoatId = boat.OriginalBoat.Id;
+                }
+                else
+                {
+                    model.OriginalBoatId = Guid.Parse("00000000-0000-0000-0000-000000000000");
+                }
             }
            return Json(model);
         }
@@ -2633,7 +2639,7 @@ namespace TechCertain.WebUI.Controllers
         #endregion
 
         [HttpPost]
-        public async Task<IActionResult> IssueUIS(string orgName, string firstName, string membershipNumber,string lastName, string email, string orgType, string mobilePhone)
+        public async Task<IActionResult> IssueUIS(string orgName, Guid programmeID, string firstName, string membershipNumber,string lastName, string email, string orgType, string mobilePhone)
         {
 
             bool hasAccount = true;
@@ -2648,7 +2654,7 @@ namespace TechCertain.WebUI.Controllers
             }
             else
             {
-                organisationName = "To be completed";
+                organisationName = orgName;
                 ouname = "Head Office";
             }
             switch (orgType)
@@ -2754,7 +2760,7 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                var programme = await _programmeService.GetClientProgrammebyName("NZACS Programme");
+                var programme = await _programmeService.GetProgramme(programmeID);
                 var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
                 try
                 {
