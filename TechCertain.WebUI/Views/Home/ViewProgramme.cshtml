@@ -29,6 +29,7 @@
                     <span class="widget-icon"> <i class="fa fa-table"></i> </span>
                     <h2>Information Sheets for Programme </h2>
 
+
                 </header>
 
                 <!-- widget div-->
@@ -103,7 +104,7 @@
                             </tbody>
                         </table>
 
-                        <a class="btn btn-primary btn-xs" href="#IssueUISModal" aria-hidden="true" style="color:white" data-toggle="modal"><i class="fa fa-pencil"></i> Issue UIS</a>
+                        <a class="btn btn-primary btn-xs" href="#IssueUISModal" aria-hidden="true" style="color:white"  data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Issue UIS</a>
                     </div>
                 </div>
             </div>
@@ -249,7 +250,7 @@
 
         <div class="modal-header">
             <h3 class="modal-title" style="color:blue; font-size:22px">Client Details</h3>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" class="close" id="IssueUISModalClose" data-dismiss="modal">&times;</button>
 
         </div>
         <div class="modal-body">
@@ -271,6 +272,7 @@
                         <p class="validationContainer" id="validateOrgType"></p>
 
                     </section>
+
 
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="UISorgnamesection">
 
@@ -323,7 +325,7 @@
 
 
                     </section>
-                   
+
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
@@ -333,6 +335,15 @@
                             <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="memno" id="UISMembershipno">
                         </section>
                         <p class="validationContainer" id="validateMembershyipNo"></p>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <input class="form-control input-lg"  type="text" name="ProgId" id="ProgId">
+                        </section>
 
 
                     </section>
@@ -348,7 +359,7 @@
                         <p class="validationContainer" id="validateMobileNo"></p>
 
                     </section>
-                  
+
 
                 </form>
             </div>
@@ -382,6 +393,13 @@
    
     <script type="text/javascript">
 
+        $('#IssueUISModal').on('show.bs.modal', function (e) {
+            debugger;
+            $('.modal').css({ "width": "600px", "margin-left": "600px" });
+            var PanelPositon =  $(e.relatedTarget).data('progname-id');
+
+          $(e.currentTarget).find('input[name="ProgId"]').val(PanelPositon);
+         });
 
         function vesselOwnUpdate() {
             debugger;
@@ -495,12 +513,14 @@
             var Email = $('#UISEmail').val();
             var MembershipNumber = $('#UISMembershipno').val();
             var OrgType = $('input[name=cgradioselect]:checked').val();
+            var programmeID = $('#ProgId').val();
 
 
             var postData = {
                 orgName: OrgName,
                 firstName: Fname,
                 lastName: LastName,
+                programmeID: programmeID,
                 email: Email,
                 mobilePhone: MobilePhone,
                 orgType: OrgType,
@@ -516,7 +536,6 @@
                 .done(function (data, textStatus, jQxhr) {
                     debugger;
                     $('#IssueUISModal' + " :input").val("");
-	                  $('#IssueUISModal').hide();
                 })
                 .fail(function (jqXhr, textStatus, errorThrown) {
                     debugger;

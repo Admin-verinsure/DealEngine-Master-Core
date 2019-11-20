@@ -78,13 +78,13 @@
                                                 </div>
 
                                             </div>
-                                            @*<div id="tab2" class="tab-pane step-content">
-                                                    <h3><strong>Review </strong></h3>
-                                                    @Html.TextAreaFor(m => m.Content)
+                                            <div id="tab2" class="tab-pane step-content">
+                                                <h3><strong>Review </strong></h3>
+                                                @Html.TextAreaFor(m => m.Content)
 
 
 
-                                                </div>*@
+                                            </div>
                                             <div id="tab3" class="tab-pane step-content">
                                                 <div>
                                                     <div class="page-body">
@@ -133,33 +133,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-    <script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
-    @*<script src="~/ckeditor/ckeditor5-alignment/src/alignment"></script>*@
-
-
-
-    <script type="module">
-        import Alignment from 'node_modules/ckeditor/ckeditor5-alignment/src/alignment';
-        let editor;
-        ClassicEditor
-            .create(document.querySelector('#Content'), {
-                plugins: [ Alignment ],
-        toolbar: [ 'alignment' ]
-            }).then(newEditor => {
-                editor = newEditor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-    </script>
-
-
-
+    @*<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>*@
+    <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
 
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
-
+                                                            let editor;
+                                                   ClassicEditor
+                                                               .create( document.querySelector( '#Content' ) )
+                                                               .then( newEditor => {
+                                                                editor = newEditor;
+                                                               } )
+                                                                 .catch( error => {
+                                                                 console.error( error );
+                                                                  } );
 $(document).ready(function () {
 
            $('#CreateDocsmartwizard').smartWizard({
