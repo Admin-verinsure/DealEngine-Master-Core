@@ -2629,7 +2629,7 @@ namespace TechCertain.WebUI.Controllers
         #endregion
 
         [HttpPost]
-        public async Task<IActionResult> IssueUIS(string orgName, string firstName, string membershipNumber,string lastName, string email, string orgType, string homePhone, string mobilePhone)
+        public async Task<IActionResult> IssueUIS(string orgName, string firstName, string membershipNumber,string lastName, string email, string orgType, string mobilePhone)
         {
 
             bool hasAccount = true;
@@ -2675,14 +2675,9 @@ namespace TechCertain.WebUI.Controllers
                     }
             }
             string phonenumber = null;
-            if (homePhone == null)
-            {
-                phonenumber = homePhone;
-            }
-            else
-            {
+            
                 phonenumber = mobilePhone;
-            }
+            
             OrganisationType organisationType = null;
             organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
             if (organisationType == null)
@@ -2736,7 +2731,6 @@ namespace TechCertain.WebUI.Controllers
                         user.LastName = lastName;
                         user.FullName = firstName + " " + lastName;
                         user.Email = email;
-                        user.Phone = homePhone;
                         user.MobilePhone = mobilePhone;
                         user.Password = "";
                         //user.Organisations.Add (personalOrganisation);
