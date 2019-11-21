@@ -2,6 +2,8 @@
 using System.Linq;
 using TechCertain.Infrastructure.Tasking;
 using TechCertain.Services.Impl;
+using TechCertain.Services.Impl.UnderwritingModuleServices;
+using TechCertain.Services.Interfaces;
 
 namespace DealEngine.Infrastructure.AppInitialize.Services
 {
@@ -23,6 +25,10 @@ namespace DealEngine.Infrastructure.AppInitialize.Services
             }
 
             services.AddTransient<ITaskingService, TaskingService>();
+            services.AddTransient<IUnderwritingModule, EmptyUWModule>();
+            services.AddTransient<IUnderwritingModule, ICIBARCCOUWModule>();
+            services.AddTransient<IUnderwritingModule, ICIBHIANZUWModule>();
+            services.AddTransient<IUnderwritingModule, MarshCoastGuardUWModule>();
 
             return services;
         }
