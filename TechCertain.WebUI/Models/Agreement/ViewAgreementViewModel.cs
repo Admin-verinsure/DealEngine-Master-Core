@@ -21,7 +21,9 @@ namespace TechCertain.WebUI.Models.Agreement
 
         public DateTime? AcceptedDate { get; set; }
 
-		public string StartDate { get; set; }
+        public Boolean NextInfoSheet { get; set; }
+
+        public string StartDate { get; set; }
 
 		public string EndDate { get; set; }
 

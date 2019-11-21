@@ -1,0 +1,26 @@
+﻿@model TechCertain.WebUI.Models.Authorization.AuthorizeViewModel
+
+<form>
+    <div class="form-group col-6">
+        <select class="custom-select form-control" id="UpdateRoleSelect">
+            @foreach (var role in Model.RoleList)
+            {
+                <option value="@role.Name">@role.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group col-6">
+        <select class="cselect form-control" data-placeholder="UpdateClaims" id="UpdateClaims" multiple="multiple" name="@Html.NameFor(m => m.ClaimList)" style="display: none;">
+            @foreach (var claim in Model.ClaimList)
+            {
+                <option value="@claim.Value">@claim.Value</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-6">
+        <button type="button" class="btn btn-primary btn-lg" onclick="UpdateRole()">Update</button>
+    </div>
+</form>
+
+

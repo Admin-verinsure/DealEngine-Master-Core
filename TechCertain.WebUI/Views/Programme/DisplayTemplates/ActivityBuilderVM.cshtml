@@ -12,7 +12,7 @@
                 <label><strong>Public Activities</strong></label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                    <select class="cselect form-control" data-placeholder="Activities" id="Activities" multiple="multiple" name="@Html.NameFor(m => m.SelectedActivities)" style="display: none;" >
+                    <select class="cselect form-control" data-placeholder="Activities" id="Activities" multiple="multiple" name="@Html.NameFor(m => m.SelectedActivities)" style="display: none;">
                         @foreach (var Activity in Model.Activities)
                         {
                             <option value="@Activity.Value">@Activity.Text</option>
@@ -22,21 +22,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="form-group">
-                <div class="smart-form">
-                    <div class="input-group">
-                        <label class="button">
-                            <button onclick="ShowActivityModel()" class="btn-md" id="ShowActivity">Add Custom Business Activity</button>
-                            @*@Html.Bootstrap().Button().Text("").HtmlAttributes(new { onclick = "ShowActivityModel();" }).Class("btn-md")*@
-                            <i></i>Add Custom Business Activity
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col-sm-12">
             <div class="form-group">
@@ -52,134 +38,5 @@
 </div>
 
 
-<div id="myActivityModal" class="modal fade " role="dialog">
 
-    <!-- Modal content-->
 
-    <div class="modal-content">
-
-        <div class="modal-header">
-            <h4 class="modal-title" style="color:blue; font-size:22px">Add Custom Activity</h4>
-        </div>
-        <div class="modal-body col-10">
-            <form id="ProdForm">
-
-                @*<div class="row">
-                        <div class="col-sm-3 form-group">
-                            <label for="searchList">Level 1 Classification Anzsci Code</label>
-                            <select class="cselect form-control" data-placeholder="Enter keyword to seach Business Activities" id="searchList" multiple="multiple" name="searchList" style="display: none;">
-                                @foreach (var Activity in Model.Activities)
-                                {
-                                    <option value="@Activity.AnzsciCode">@Activity.AnzsciCode -- @Activity.Description</option>
-                                }
-                            </select>
-                        </div>
-
-                    </div>*@
-
-                <div class="row">
-                    <div class="col-sm-3 form-group">
-                        <label for="Level1List">Level 1 Classification Anzsci Code</label>w
-                        <input list="Level1Anzi" class="form-control " id="class1Anzi" name="class1Anzi">
-                        <datalist id="Level1Anzi">
-                            @foreach (var classification in Model.Level1Classifications)
-                            {
-                                <option>@classification.AnzsciCode</option>
-                            }
-                        </datalist>
-                    </div>
-                    <div class="col-sm-3 form-group">
-                        <label for="Level1">Level 1 Classification Description</label>
-                        <input list="Level1Desc" class="form-control " id="class1Desc" name="class1Desc">
-                        <datalist id="Level1Desc">
-                            @foreach (var classification in Model.Level1Classifications)
-                            {
-                                <option>@classification.Description</option>
-                            }
-                        </datalist>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-3 form-group">
-                        <label for="Level2">Level 2 Classification</label>
-                        <input list="Level2Anzi" class="form-control " id="class2Anzi" name="class2Anzi" />
-                        <datalist id="Level2Anzi">
-
-                            @foreach (var classification in Model.Level2Classifications)
-                            {
-                                <option>@classification.AnzsciCode</option>
-                            }
-                        </datalist>
-                    </div>
-
-                    <div class="col-sm-3 form-group">
-                        <label for="Level2">Level 2 Classification Description</label>
-                        <input list="Level2Desc" class="form-control " id="class2Desc" name="class2Desc">
-                        <datalist id="Level2Desc">
-                            @foreach (var classification in Model.Level2Classifications)
-                            {
-                                <option>@classification.Description</option>
-                            }
-                        </datalist>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-3 form-group">
-                        <label for="Level3">Level 3 Classification</label>
-                        <input list="Level3Anzi" class="form-control " id="class3Anzi" name="class3Anzi" />
-                        <datalist id="Level3Anzi">
-
-                            @foreach (var classification in Model.Level3Classifications)
-                            {
-                                <option>@classification.AnzsciCode</option>
-                            }
-                        </datalist>
-                    </div>
-
-                    <div class="col-sm-3 form-group">
-                        <label for="Level3">Level 3 Classification Description</label>
-                        <input list="Level3Desc" class="form-control " id="class3Desc" name="class3Desc" />
-                        <datalist id="Level3Desc">
-                            @foreach (var classification in Model.Level3Classifications)
-                            {
-                                <option>@classification.Description</option>
-                            }
-                        </datalist>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-3 form-group">
-                        <label for="Level4">Level 4 Classification</label>
-                        <input list="Level4Anzi" class="form-control " id="class4Anzi" name="class4Anzi" />
-                        <datalist id="Level4Anzi">
-
-                            @foreach (var classification in Model.Level4Classifications)
-                            {
-                                <option>@classification.AnzsciCode</option>
-                            }
-                        </datalist>
-                    </div>
-
-                    <div class="col-sm-3 form-group">
-                        <label for="Level4">Level 4 Classification Description</label>
-                        <input list="Level4Desc" class="form-control " id="class4Desc" name="class4Desc" />
-                        <datalist id="Level4Desc">
-                            @foreach (var classification in Model.Level1Classifications)
-                            {
-                                <option>@classification.Description</option>
-                            }
-                        </datalist>
-                    </div>
-                </div>
-
-            </form>
-        </div>
-        <div class="modal-footer">
-            <input type="Reset" value="Submit" class="btn btn-success" id="btnActivitySubmit" onclick="SubmitActivity()">
-            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
-        </div>
-    </div>
-</div>

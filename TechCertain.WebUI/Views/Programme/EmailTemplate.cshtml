@@ -7,29 +7,26 @@
     <!-- row -->
     <div class="row">
         <!-- col -->
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+        <div class="container">
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-file-o"></i>  <span>
-                    <a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
-
-                    <a href="~/Programme/TermSheetTemplate/@Model.Id">> Package Term Sheet</a>
+                <i class="fa-fw fa fa-home"></i>  <span>
+                    <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet</a>
                     > Programme Email Templates
 
                 </span>
-
-
             </h1>
+            <span>
+                <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            </span>
         </div>
         <!-- end col -->
     </div>
-    <span>
-        <a onclick="location.href='@Url.Action("TermSheetTemplate", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
-    </span>
+
     <!-- widget grid -->
     <section id="widget-grid" class="">
         <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-6">
+            <article class="container">
                 <!-- new widget -->
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
                     <header>

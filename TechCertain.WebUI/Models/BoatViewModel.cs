@@ -11,6 +11,8 @@ namespace TechCertain.WebUI.Models
 
         public Guid BoatId { get; set; }
 
+        public Guid OriginalBoatId { get; set; }
+
         public string BoatName { get; set; }
 
         public string BoatType1 { get; set; }
@@ -113,6 +115,8 @@ namespace TechCertain.WebUI.Models
 
         public Guid BoatOperator { get; set; }
 
+        public  bool Removed { get; set; }
+       
         public string BoatIsTrailered { get; set; }
 
         public decimal BoatQuickQuotePremium { get; set; }

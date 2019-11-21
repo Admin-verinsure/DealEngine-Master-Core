@@ -2,53 +2,44 @@
 
 
 <!-- MAIN CONTENT -->
-<div id="content">
-    <!-- Bread crumb is created dynamically -->
-    <!-- row -->
-    <div class="row">
-        <!-- col -->
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+    <div id="content">
+        <!-- Bread crumb is created dynamically -->
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-file-o"></i><a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
-                <span>
-                    <a href="~/Programme/TermSheetTemplate/@Model.Id"> > Package Term Sheet</a>
-                    <a href="~/Programme/ManageClient/@Model.Id"> > Programme Owner</a>
-                    > Client Programmes
-                </span>
+                <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeID"> Agreement</a>
+                > <span><a href="~/Information/ViewProgrammeDetails/@Model.ClientProgrammeID"> View Client Information Sheet</a>
+                > View Client Information Sheet Section</span>
             </h1>
         </div>
-        <!-- end col -->
+        <span>
+            <a onclick="location.href='@Url.Action("ViewProgrammeDetails", "Information",new { Id =@Model.ClientProgrammeID })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+
+
+        <!-- widget grid -->
+        <section id="widget-grid" class="">
+            <div class="row">
+                <article class="col-sm-12 col-md-12 col-lg-8">
+                    <!-- new widget -->
+                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                        @Html.HiddenFor(m => m.AnswerSheetId)
+                        @Html.HiddenFor(m => m.OrganisationId)
+
+                        <header>
+                            <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                            <h2>Client Information Sheet Section</h2>
+                        </header>
+                        <!-- widget div-->
+                        @Html.Partial("PrefabSections/" + Model.SectionView, Model)
+
+
+                    </div>
+                </article>
+            </div>
+        </section>
     </div>
-    <div>
-        <a onclick="location.href='@Url.Action("ManageClient", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>
-
-    </div>
-
-
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-8">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    @Html.HiddenFor(m => m.AnswerSheetId)
-                    @Html.HiddenFor(m => m.OrganisationId)
-
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2> Client Programmes  </h2>
-                    </header>
-                    <!-- widget div-->
-                    @Html.Partial("PrefabSections/" + Model.SectionView, Model)
-
-                    
-                </div>
-            </article>
-        </div>
-    </section>
-</div>
 
 
 @section pagespecific {

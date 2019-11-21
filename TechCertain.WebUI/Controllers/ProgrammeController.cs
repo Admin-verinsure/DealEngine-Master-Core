@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Product;
 using System.Threading.Tasks;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
+using NHibernate.Linq;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Diagnostics;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -159,76 +163,72 @@ namespace TechCertain.WebUI.Controllers
 
         }
 
-        //throw new Exception("Method will need to be re-written");
-        //[HttpPost]
-        //public async Task<IActionResult> UploadDataFiles(HttpPostedFileWrapper uploadedBusinessActivityData)
-        //{
-        //    byte[] buffer;
-        //    IList<BusinessActivity> BAList = new List<BusinessActivity>();
-        //    if (uploadedBusinessActivityData != null)
-        //    {
-        //        buffer = new byte[uploadedBusinessActivityData.ContentLength];
-        //        uploadedBusinessActivityData.InputStream.Read(buffer, 0, buffer.Length);
-        //        string lines = _fileService.FromBytes(buffer);
-        //        using (System.IO.StringReader reader = new System.IO.StringReader(lines))
-        //        {
-        //            string line = string.Empty;
-        //            while ((line = reader.ReadLine()) != null)
-        //            {
-        //                string[] parts = line.Split(',');
-        //                BusinessActivity ba = new BusinessActivity(CurrentUser());
+        public async Task<List<BusinessActivity>> UploadDataFiles(string FileName)
+        {
+            var user = await CurrentUser();
+            List<BusinessActivity> BAList = new List<BusinessActivity>();
 
-        //                if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
-        //                {
-        //                    //classification 1
-        //                    ba.Classification = 1;
-        //                    ba.AnzsciCode = parts[0];
-        //                    ba.Description = parts[1];
-        //                    Debug.WriteLine(parts[0]);
-        //                    Debug.WriteLine(parts[1]);
+            using (StreamReader reader = new StreamReader(FileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    BusinessActivity ba = new BusinessActivity(user);
 
-        //                }
-        //                if (!string.IsNullOrEmpty(parts[1]) && !string.IsNullOrEmpty(parts[2]))
-        //                {
-        //                    //classification 2
-        //                    ba.Classification = 2;
-        //                    ba.AnzsciCode = parts[1];
-        //                    ba.Description = parts[2];
-        //                    Debug.WriteLine(parts[1]);
-        //                    Debug.WriteLine(parts[2]);
-        //                }
-        //                if (!string.IsNullOrEmpty(parts[2]) && !string.IsNullOrEmpty(parts[3]))
-        //                {
-        //                    //classification 3
-        //                    ba.Classification = 3;
-        //                    ba.AnzsciCode = parts[2];
-        //                    ba.Description = parts[3];
-        //                    Debug.WriteLine(parts[2]);
-        //                    Debug.WriteLine(parts[3]);
+                    if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        //classification 1
+                        ba.Classification = 1;
+                        ba.AnzsciCode = parts[0];
+                        ba.Description = parts[1];
+                        Debug.WriteLine(parts[0]);
+                        Debug.WriteLine(parts[1]);
 
-        //                }
-        //                if (!string.IsNullOrEmpty(parts[3]) && !string.IsNullOrEmpty(parts[4]))
-        //                {
-        //                    //classification 4
-        //                    ba.Classification = 4;
-        //                    ba.AnzsciCode = parts[3];
-        //                    ba.Description = parts[4];
-        //                    Debug.WriteLine(parts[3]);
-        //                    Debug.WriteLine(parts[4]);
-        //                }
+                    }
+                    if (!string.IsNullOrEmpty(parts[1]) && !string.IsNullOrEmpty(parts[2]))
+                    {
+                        //classification 2
+                        ba.Classification = 2;
+                        ba.AnzsciCode = parts[1];
+                        ba.Description = parts[2];
+                        Debug.WriteLine(parts[1]);
+                        Debug.WriteLine(parts[2]);
+                    }
+                    if (!string.IsNullOrEmpty(parts[2]) && !string.IsNullOrEmpty(parts[3]))
+                    {
+                        //classification 3
+                        ba.Classification = 3;
+                        ba.AnzsciCode = parts[2];
+                        ba.Description = parts[3];
+                        Debug.WriteLine(parts[2]);
+                        Debug.WriteLine(parts[3]);
 
-        //                BAList.Add(ba);
-        //            }
-        //        }
+                    }
+                    if (!string.IsNullOrEmpty(parts[3]) && !string.IsNullOrEmpty(parts[4]))
+                    {
+                        //classification 4
+                        ba.Classification = 4;
+                        ba.AnzsciCode = parts[3];
+                        ba.Description = parts[4];
+                        Debug.WriteLine(parts[3]);
+                        Debug.WriteLine(parts[4]);
+                    }
 
-        //        foreach (BusinessActivity businessActivity in BAList)
-        //        {
-        //            _busActivityService.CreateBusinessActivity(businessActivity);
-        //        }
-        //    }
+                    if(ba.AnzsciCode != null)
+                    {
+                        BAList.Add(ba);
+                    }                    
+                }
+            }
 
-        //    return Redirect("/Programme/ActivityBuilder");
-        //}
+            foreach (BusinessActivity businessActivity in BAList)
+            {
+                await _busActivityService.CreateBusinessActivity(businessActivity);
+            }
+
+            return BAList;
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateProgrammeActivities(ActivityViewModel model)
@@ -260,25 +260,36 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ActivityBuilder()
+        public async Task<IActionResult> ActivityBuilder(Guid Id)
         {
+            var user = await CurrentUser();            
+            var busActivityList = await _busActivityService.GetBusinessActivities();
+            if(busActivityList.Count == 0)
+            {
+                //busActivityList = await UploadDataFiles();
+            }
+
+            var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
+            var actClassTwo = await _busActivityService.GetBusinessActivitiesByClassification(2);
+            var actClassThree= await _busActivityService.GetBusinessActivitiesByClassification(3);
+            var actClassFour = await _busActivityService.GetBusinessActivitiesByClassification(4);
+
             ActivityViewModel model = new ActivityViewModel
             {
                 Builder = new ActivityBuilderVM
                 {
-                    Ispublic = false,
-                    //Activities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityService.GetBusinessActivities()),
+                    Ispublic = false,            
                     Activities = new List <SelectListItem>(),
-                    Level1Classifications = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityService.GetBusinessActivitiesByClassification(1)),
-                    Level2Classifications = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityService.GetBusinessActivitiesByClassification(2)),
-                    Level3Classifications = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityService.GetBusinessActivitiesByClassification(3)),
-                    Level4Classifications = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityService.GetBusinessActivitiesByClassification(4)),
+                    Level1Classifications = actClassOne,
+                    Level2Classifications = actClassTwo,
+                    Level3Classifications = actClassThree,
+                    Level4Classifications = actClassFour,
                 },
                 ActivityCreate = new ActivityModal()
             };
 
-            var classification = _busActivityService.GetBusinessActivities().GroupBy(ba => ba.Classification);
-            var user = await CurrentUser();
+            model.Id = Id;
+            var classification = busActivityList.GroupBy(ba => ba.Classification);           
             foreach (var group in classification)
             {
                 var optionGroup = new SelectListGroup() { Name = group.Key.ToString() };
@@ -295,13 +306,13 @@ namespace TechCertain.WebUI.Controllers
             }
 
             List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
+            foreach (Programme prog in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
             {
                 proglist.Add(new SelectListItem
                 {
                     Selected = false,
-                    Text = programme.Name,
-                    Value = programme.Id.ToString(),
+                    Text = prog.Name,
+                    Value = prog.Id.ToString(),
                 });
 
             }
@@ -310,8 +321,31 @@ namespace TechCertain.WebUI.Controllers
             {
                 BaseProgList = proglist
             };
-        
-            return View("ActivityBuilder", model);
+
+            ActivityListViewModel almodel = new ActivityListViewModel();
+            almodel.ProgrammeList = new List<Programme>();
+            almodel.BusinessActivityList = new List<BusinessActivity>();
+
+            var progList = await _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToListAsync();
+            if (user.PrimaryOrganisation.IsTC)
+            {
+                progList = await _programmeRepository.FindAll().Where(d => !d.DateDeleted.HasValue).ToListAsync();
+            }
+
+            var busActList = await _busActivityService.GetBusinessActivities();
+            if (progList.Count != 0)
+            {
+                almodel.ProgrammeList = progList;
+            }
+
+            if (busActList.Count != 0)
+            {
+                almodel.BusinessActivityList = busActList;
+            }
+
+            model.ActivityListViewModel = almodel;
+
+            return View(model);
         }
 
         [HttpPost]
@@ -609,6 +643,7 @@ namespace TechCertain.WebUI.Controllers
             model.EGlobalClientStatus = programme.EGlobalClientStatus;
             model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
             model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
+            model.clientprogramme = programme;
 
             return View(model);
         }
@@ -890,6 +925,43 @@ namespace TechCertain.WebUI.Controllers
             ViewBag.Title = "Add/Edit Programme Email Template";
 
             return View("ProgrammeRules", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageProgramme(Guid Id)
+        {
+            Programme programme = await _programmeRepository.GetByIdAsync(Id);
+
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+
+            model.Id = Id;
+            model.programmeName = programme.Name;
+            model.IsPublic = programme.IsPublic;
+            model.TaxRate = programme.TaxRate;
+            model.UsesEGlobal = programme.UsesEGlobal;
+            model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
+
+            return View("ManageProgramme", model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageProgramme(ProgrammeInfoViewModel model)
+        {
+            Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
+
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                programme.Name = model.programmeName;
+                programme.IsPublic = model.IsPublic;
+                programme.UsesEGlobal = model.UsesEGlobal;
+                programme.TaxRate = model.TaxRate;
+                programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
+
+                await uow.Commit();
+            }
+
+            return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
         }
 
         //[HttpPost]

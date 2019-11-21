@@ -1,5 +1,6 @@
 ﻿using NHibernate.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
@@ -36,14 +37,15 @@ namespace TechCertain.Services.Impl
             }
         }
 
-        public IQueryable<BusinessActivity> GetBusinessActivities()
+        public async Task<List<BusinessActivity>> GetBusinessActivities()
         {
-            return _businessActivityRepository.FindAll().OrderBy(ba => ba.AnzsciCode);
+            return await _businessActivityRepository.FindAll().OrderBy(ba => ba.AnzsciCode).ToListAsync();            
         }
 
-        public IQueryable<BusinessActivity> GetBusinessActivitiesByClassification(int classification)
+        public async Task<List<BusinessActivity>> GetBusinessActivitiesByClassification(int classification)
         {
-            return GetBusinessActivities().Where(ba => ba.Classification == classification);
+            var list = await GetBusinessActivities();
+            return list.Where(ba => ba.Classification == classification).ToList();
         }
 
         public async Task<BusinessActivity> GetBusinessActivity(Guid Id)

@@ -35,7 +35,7 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Building> _buildingRepository;
         IMapperSession<BusinessInterruption> _businessInterruptionRepository;
         IMapperSession<MaterialDamage> _materialDamageRepository;
-        IMapperSession<Claim> _claimRepository;
+        IMapperSession<ClaimNotification> _claimRepository;
         IMapperSession<Product> _productRepository;
         IProgrammeService _programmeService;
         IOrganisationTypeService _organisationTypeService;
@@ -49,7 +49,7 @@ namespace TechCertain.WebUI.Controllers
 
         public ServicesController(IUserService userService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
-            IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<Claim> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
+            IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
@@ -251,7 +251,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed, bool ceased, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
+        public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed,  bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
@@ -260,17 +260,13 @@ namespace TechCertain.WebUI.Controllers
 
             var vehicles = new List<Vehicle>();
 
-            if (ceased)
-            {
-                vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate > DateTime.MinValue && v.VehicleCeaseReason != 4).ToList();
-            }
-            else if (transfered)
+            if (transfered)
             {
                 vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate > DateTime.MinValue && v.VehicleCeaseReason == 4).ToList();
             }
             else
             {
-                vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null && v.VehicleCeaseDate == DateTime.MinValue).ToList();
+                vehicles = sheet.Vehicles.Where(v => v.Validated == validated && v.Removed == removed && v.DateDeleted == null).ToList();
             }
 
             if (_search)
@@ -307,17 +303,17 @@ namespace TechCertain.WebUI.Controllers
                 JqGridRow row = new JqGridRow(vehicle.Id);
                 if (vehicle.Validated)
                 {
-                    row.AddValues(vehicle.Id, vehicle.Year, vehicle.Registration, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                    row.AddValues(vehicle.Id, vehicle.Year, vehicle.Registration, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                 }
                 else
                 {
                     if (sheet.Programme.BaseProgramme.Products.First().Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a")) // Marsh Coastguard
                     {
-                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                     }
                     else
                     {
-                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.FleetNumber, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured, vehicle.Id);
+                        row.AddValues(vehicle.Id, vehicle.Year, vehicle.FleetNumber, vehicle.Make, vehicle.Model, vehicle.GroupSumInsured.ToString("C", UserCulture), vehicle.Id);
                     }
 
                 }
@@ -425,19 +421,19 @@ namespace TechCertain.WebUI.Controllers
                 vehicle.Removed = status;
                 await uow.Commit();
             }
-            throw new Exception("Method needs to be re-written");
-            //return new JsonResult { Data = new { status = true, id = vehicleId } };
+            //return new JsonResult(true);
+            return new JsonResult(new { status = true, id = vehicleId } );
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetVehicleCeasedStatus(Guid vehicleId, bool status)
+        public async Task<IActionResult> SetVehicleCeasedStatus(Guid vehicleId, bool status, DateTime ceaseDate, int ceaseReason)
         {
             Vehicle vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                vehicle.VehicleCeaseDate = DateTime.MinValue;
-                vehicle.VehicleCeaseReason = '0';
+                vehicle.VehicleCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+                vehicle.VehicleCeaseReason = ceaseReason;
                 await uow.Commit().ConfigureAwait(false);
             }
 
@@ -1602,6 +1598,35 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetOriginalVehicle(Guid answerSheetId, Guid vehicleId)
+        {
+            VehicleViewModel model = new VehicleViewModel();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+            Vehicle vehicle = sheet.Vehicles.FirstOrDefault(b => b.Id == vehicleId);
+            if (vehicle != null)
+            {
+                model.AnswerSheetId = answerSheetId;
+                if (vehicle.OriginalVehicle != null)
+                    model.OriginalVehicleId = vehicle.OriginalVehicle.Id;
+            }
+            return Json(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetOriginalBoat(Guid answerSheetId, Guid boatId)
+        {
+            BoatViewModel model = new BoatViewModel();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+            Boat boat = sheet.Boats.FirstOrDefault(b => b.Id == boatId);
+            if (boat != null)
+            {
+                model.AnswerSheetId = answerSheetId;
+                if (boat.OriginalBoat != null)
+                    model.OriginalBoatId = boat.OriginalBoat.Id;
+            }
+           return Json(model);
+        }
 
 
         [HttpPost]
@@ -1618,6 +1643,7 @@ namespace TechCertain.WebUI.Controllers
                     model.BoatLandLocation = boat.BoatLandLocation.Id;
                 if (boat.BoatWaterLocation != null)
                     model.BoatWaterLocation = boat.BoatWaterLocation.Id;
+                if (boat.BoatTrailer != null)
                 if (boat.BoatTrailer != null)
                     model.BoatTrailer = boat.BoatTrailer.Id;
 
@@ -1667,7 +1693,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed, bool ceased, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
+        public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed,  bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
@@ -1678,17 +1704,13 @@ namespace TechCertain.WebUI.Controllers
 
             var boats = new List<Boat>();
 
-            if (ceased)
-            {
-                boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate > DateTime.MinValue && b.BoatCeaseReason != 4).ToList();
-            }
-            else if (transfered)
+           if (transfered)
             {
                 boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate > DateTime.MinValue && b.BoatCeaseReason == 4).ToList();
             }
             else
             {
-                boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate == DateTime.MinValue).ToList();
+                boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null).ToList();
             }
 
             if (_search)
@@ -1724,7 +1746,7 @@ namespace TechCertain.WebUI.Controllers
                 Boat boat = boats[i];
                 JqGridRow row = new JqGridRow(boat.Id);
                 //row.AddValue("");
-                row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, string.Format(currencyFormat, "{0:c}", boat.MaxSumInsured), boat.Id);
+                row.AddValues(boat.Id, boat.BoatName, boat.YearOfManufacture, boat.MaxSumInsured.ToString("C", UserCulture), boat.Id);
                 model.AddRow(row);
             }
 
@@ -1732,8 +1754,6 @@ namespace TechCertain.WebUI.Controllers
             document = model.ToXml();
             return Xml(document);
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> SetBoatRemovedStatus(Guid boatId, bool status)
@@ -1749,14 +1769,30 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status)
+        public async Task<IActionResult> UndoBoatRemovedStatus(BoatViewModel removedboat)
+        {
+            Boat boat = await _boatRepository.GetByIdAsync(removedboat.BoatId);
+
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            {
+                boat.Removed = removedboat.Removed;
+                await uow.Commit();
+            }
+            return new JsonResult(true);
+        
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate,int ceaseReason)
         {
             Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                boat.BoatCeaseDate = DateTime.MinValue;
-                boat.BoatCeaseReason = '0';
+
+                boat.BoatCeaseDate = DateTime.Parse(LocalizeTime(ceaseDate, "d"));
+
+                boat.BoatCeaseReason = ceaseReason;
                 await uow.Commit().ConfigureAwait(false);
             }
 
@@ -2208,24 +2244,24 @@ namespace TechCertain.WebUI.Controllers
             if (sheet == null)
                 throw new Exception("Unable to save Claim - No Client information for " + model.AnswerSheetId);
 
-            Claim claim = _claimRepository.FindAll().FirstOrDefault(c => c.Id == model.ClaimId);
+            ClaimNotification claimNotification = _claimRepository.FindAll().FirstOrDefault(c => c.Id == model.ClaimId);
             // no claim, so create new
-            if (claim == null)
-                claim = model.ToEntity(user);
-            model.UpdateEntity(claim);
+            if (claimNotification == null)
+                claimNotification = model.ToEntity(user);
+            model.UpdateEntity(claimNotification);
 
             if (model.OrganisationId != Guid.Empty)
             {
                 Organisation org = await _organisationService.GetOrganisation(model.OrganisationId);
-                claim.Organisation = org;
+                claimNotification.Organisation = org;
             }
 
             if (model.ClaimProducts != null)
-                claim.ClaimProducts = _productRepository.FindAll().Where(pro => model.ClaimProducts.Contains(pro.Id)).ToList();
+                claimNotification.ClaimProducts = _productRepository.FindAll().Where(pro => model.ClaimProducts.Contains(pro.Id)).ToList();
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                sheet.Claims.Add(claim);
+                sheet.ClaimNotifications.Add(claimNotification);
                 await uow.Commit();
             }
 
@@ -2237,7 +2273,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClaimViewModel model = new ClaimViewModel();
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-            Claim claim = sheet.Claims.FirstOrDefault(c => c.Id == claimId);
+            ClaimNotification claim = sheet.ClaimNotifications.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
                 model = ClaimViewModel.FromEntity(claim);
@@ -2254,9 +2290,9 @@ namespace TechCertain.WebUI.Controllers
             if (sheet == null)
                 throw new Exception("No valid information for id " + informationId);
 
-            var claims = new List<Claim>();
+            var claims = new List<ClaimNotification>();
 
-            claims = sheet.Claims.Where(c => c.Removed == removed && c.DateDeleted == null).ToList();
+            claims = sheet.ClaimNotifications.Where(c => c.Removed == removed && c.DateDeleted == null).ToList();
 
             if (_search)
             {
@@ -2288,7 +2324,7 @@ namespace TechCertain.WebUI.Controllers
                 if (i == model.TotalRecords)
                     break;
 
-                Claim claim = claims[i];
+                ClaimNotification claim = claims[i];
                 JqGridRow row = new JqGridRow(claim.Id);
                 row.AddValues(claim.Id, claim.ClaimTitle, claim.ClaimDescription, claim.ClaimReference, claim.Claimant, claim.Id);
                 model.AddRow(row);
@@ -2302,7 +2338,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SetClaimRemovedStatus(Guid claimId, bool status)
         {
-            Claim claim = await _claimRepository.GetByIdAsync(claimId);
+            ClaimNotification claim = await _claimRepository.GetByIdAsync(claimId);
 
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -2564,14 +2600,14 @@ namespace TechCertain.WebUI.Controllers
 
                 }
                 //send out login email
-                await _emailService.SendSystemEmailLogin(email);
-                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                if (emailTemplate != null)
-                {
-                    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
-                }
-                //send out information sheet issue notification email
-                await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                //await _emailService.SendSystemEmailLogin(email);
+                //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                //if (emailTemplate != null)
+                //{
+                //    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null);
+                //}
+                ////send out information sheet issue notification email
+                //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
 
             }
             else

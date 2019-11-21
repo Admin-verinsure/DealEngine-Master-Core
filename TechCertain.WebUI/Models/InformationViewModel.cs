@@ -95,6 +95,7 @@ namespace TechCertain.WebUI.Models
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
         public string Advisory { get; set; }
         //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
+        public Guid ClientProgrammeID { get; set; }
 
     }
 
@@ -123,7 +124,7 @@ namespace TechCertain.WebUI.Models
 
         public int Position { get; set; }
     }
-
+    
     public class MilestoneAdvisoryVM
     {
         public Guid Id { get; set; }
@@ -305,7 +306,6 @@ namespace TechCertain.WebUI.Models
     public class RevenueByCountryViewModel
     {
         public string Country { get; set; }
-
         public decimal DeclaredRevenue { get; set; }
     }
 
@@ -313,7 +313,6 @@ namespace TechCertain.WebUI.Models
     {
         public int Classification { get; set; }
         public string AnzsciCode { get; set; }
-
         public string Description { get; set; }
     }
 }

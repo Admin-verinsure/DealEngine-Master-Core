@@ -28,17 +28,12 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/font-awesome.min.css">
 
-<<<<<<< HEAD
-    
-=======
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
->>>>>>> 0c141a0d92272262eaa98215f490ed896312bf32
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production-plugins.min.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     @*<link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-skins.min.css">*@
     <link href="../dist/css/smart_wizard_theme_circles.css" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     <!-- SmartAdmin RTL Support -->
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-rtl.min.css">
     <!-- FAVICONS -->
@@ -61,82 +56,33 @@
     <link rel="apple-touch-startup-image" href="~/Content/img/splash/ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
     <link rel="apple-touch-startup-image" href="~/Content/img/splash/iphone.png" media="screen and (max-device-width: 320px)">
 
-    <link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
+    @*<link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
 
 
-    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" />
+        <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" />*@
 
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
-
-
-    @*<script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>*@
-    @*<link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" />*@
-    @*<script src="~/jquery/jquery.min.js"></script>*@
-    @*<script src="~/jquery/jquery.min.js"></script>
-        <link href="~/css/bootstrap.min.css" rel="stylesheet" />*@
     <script src="~/jquery/jquery.min.js"></script>
-
     <script src="~/lib/popper.js/umd/popper.js"></script>
-
     <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
-
-
     <script src="~/lib/popper.js/umd/popper.js"></script>
-
     <link href="~/css/bootstrap-chosen.min.css" rel="stylesheet" />
     <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
-
-    @*<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
-
-    @*<link href="~/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
-        <script src="~/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>*@
-
-
-    @*<script src="/Scripts/plugin/chosen/chosen.jquery.js"></script>*@
     <script src="~/Scripts/plugin/chosen/chosen.jquery.js"></script>
-    @*<script src="~/Scripts/app.min.js"></script>*@
-
-    @*<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <script src="~/Scripts/plugin/jquery-validate/jquery.validate.min.js" defer></script>
-        <script src="~/jquery/jquery.min.js"></script>
-        <script src="~/lib/popper.js/popper.min.js"></script>
-        <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>*@
-
     <script src="~/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
 
 </head>
-
-<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">
+<body class="container-fluid">
+    @*<body class="@ViewBag.PageClass @currentTheme @fixedHeader @fixedFooter">*@
     <!-- Google Tag Manager -->
-    @*<noscript>
-            <iframe src="e//www.googletagmanager.com/ns.html?id=GTM-PTGLDG"
-                    height="0" width="0" style="display:none;visibility:hidden"></iframe>
-        </noscript>
-        <script>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-PTGLDG');</script>*@
-    <!-- End Google Tag Manager -->
 
     @{ await Html.RenderPartialAsync("_Header", RenderSection("topright", false)); }
-    @*@{ Html.RenderPartialIf("_Aside", Request.IsAuthenticated); }*@
-<<<<<<< HEAD
-    <div id="main" role="main">
 
-        @* If ribbon is required use on top of individual view or add come conditions*@
-        @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
+    <div id="container" class="container-fluid" style="background-color: #f3f0f0">
         @RenderBody()
-
-=======
-    <div class="container">
-        
-            @* If ribbon is required use on top of individual view or add come conditions*@
-            @*@{ Html.RenderPartialIf("_Ribbon", Request.IsAuthenticated); }*@
-            @RenderBody()
-        
->>>>>>> 0c141a0d92272262eaa98215f490ed896312bf32
+        <footer>
+            <p>&copy; 2019 - DealEngine</p>
+        </footer>
     </div>
     @if (User.Identity.IsAuthenticated)
     {
@@ -146,4 +92,5 @@
 
     @{ await Html.RenderPartialAsync("_Scripts", RenderSection("pagespecific", false)); }
 </body>
+
 </html>

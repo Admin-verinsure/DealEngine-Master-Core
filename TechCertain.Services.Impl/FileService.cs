@@ -171,8 +171,8 @@ namespace TechCertain.Services.Impl
 			mergeFields.Add (new KeyValuePair<string, string> ("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[QuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
 			mergeFields.Add (new KeyValuePair<string, string> ("[[PolicyNumber]]", agreement.PolicyNumber));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[Brokerage]]", (agreement.Brokerage / 100).ToString ("P2")));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[AdministrationFee]]", agreement.BrokerFee.ToString ("C")));
+			mergeFields.Add (new KeyValuePair<string, string> ("[[Brokerage]]", (agreement.Brokerage / 100).ToString ("P2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+			mergeFields.Add (new KeyValuePair<string, string> ("[[AdministrationFee]]", agreement.BrokerFee.ToString ("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
             if (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced")
             {
                 mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardType));
@@ -185,31 +185,31 @@ namespace TechCertain.Services.Impl
 			foreach (var term in agreement.ClientAgreementTerms) {
 
 				mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[RetroactiveDate_{0}]]", term.SubTermType), ""));
-				mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString ("C0")));
-				mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString ("C0")));
+				mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString ("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+				mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString ("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
 
 				if (agreement.ClientInformationSheet.PreviousInformationSheet == null) {
-					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumAdjustment_{0}]]", term.SubTermType), (term.Premium - term.FSL).ToString ("C")));
-					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremium_{0}]]", term.SubTermType), term.Premium.ToString ("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFee_{0}]]", term.SubTermType), (term.Premium + agreement.BrokerFee).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundGST_{0}]]", term.SubTermType), ((term.Premium) * agreement.Product.TaxRate).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundFSL_{0}]]", term.SubTermType), term.FSL.ToString ("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFeeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * agreement.Product.TaxRate).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFeeInclGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate)).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[CreditCardSurcharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * 0.02m).ToString("C")));
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C")));
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C")));
+					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumAdjustment_{0}]]", term.SubTermType), (term.Premium - term.FSL).ToString ("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremium_{0}]]", term.SubTermType), term.Premium.ToString ("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFee_{0}]]", term.SubTermType), (term.Premium + agreement.BrokerFee).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundGST_{0}]]", term.SubTermType), ((term.Premium) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundFSL_{0}]]", term.SubTermType), term.FSL.ToString ("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFeeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFeeInclGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate)).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[CreditCardSurcharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * 0.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                 } else {
-					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumAdjustment_{0}]]", term.SubTermType), (String.Format (currencyFormat, "{0:c}", (term.PremiumDiffer - term.FSLDiffer)))));
-					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremium_{0}]]", term.SubTermType), (String.Format (currencyFormat, "{0:c}", term.PremiumDiffer))));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFee_{0}]]", term.SubTermType), (term.PremiumDiffer + agreement.BrokerFee).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundGST_{0}]]", term.SubTermType), ((term.PremiumDiffer) * agreement.Product.TaxRate).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundFSL_{0}]]", term.SubTermType), (String.Format (currencyFormat, "{0:c}", term.FSLDiffer))));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * agreement.Product.TaxRate).ToString("C")));
-                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate)).ToString("C")));
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[CreditCardSurcharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (0.02m)).ToString("C")));
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C")));
-                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C")));
+					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumAdjustment_{0}]]", term.SubTermType), (term.PremiumDiffer - term.FSLDiffer).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+					mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremium_{0}]]", term.SubTermType), term.PremiumDiffer.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclFee_{0}]]", term.SubTermType), (term.PremiumDiffer + agreement.BrokerFee).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundGST_{0}]]", term.SubTermType), ((term.PremiumDiffer) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundFSL_{0}]]", term.SubTermType), term.FSLDiffer.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add (new KeyValuePair<string, string> (string.Format ("[[BoundPremiumInclGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate)).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[CreditCardSurcharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (0.02m)).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
                 }
 
 			}
@@ -267,7 +267,7 @@ namespace TechCertain.Services.Impl
 					}
 					dr ["Interest Parties"] = strInterestPartiesNamesList;
 
-					dr ["Sum Insured"] = mVTerm.TermLimit.ToString ("C0");
+					dr ["Sum Insured"] = mVTerm.TermLimit.ToString ("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
 
 					dt.Rows.Add (dr);
 
@@ -294,7 +294,7 @@ namespace TechCertain.Services.Impl
 					dr2 ["Make"] = mVTerm2.Make;
 					dr2 ["Model"] = mVTerm2.Model;
 					dr2 ["Registration"] = mVTerm2.Registration;
-					dr2 ["Sum Insured"] = mVTerm2.TermLimit.ToString ("C0");
+					dr2 ["Sum Insured"] = mVTerm2.TermLimit.ToString ("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
 					//dr2 ["End Date"] = "01/09/2018";
 
 					dt2.Rows.Add (dr2);
@@ -415,7 +415,7 @@ namespace TechCertain.Services.Impl
                     drbv2["Year"] = bVTerm.YearOfManufacture;
                     drbv2["Make"] = bVTerm.BoatMake;
                     drbv2["Model"] = bVTerm.BoatModel;
-                    drbv2["Sum Insured"] = bVTerm.TermLimit.ToString("C0");
+                    drbv2["Sum Insured"] = bVTerm.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
 
                     dtbv2.Rows.Add(drbv2);
 
@@ -423,7 +423,7 @@ namespace TechCertain.Services.Impl
                     //drbv3["Year"] = bVTerm.YearOfManufacture;
                     //drbv3["Make"] = bVTerm.BoatMake;
                     //drbv3["Model"] = bVTerm.BoatModel;
-                    drbv3["Excess"] = bVTerm.Excess.ToString("C0") + " any one Accident or Occurrence";
+                    drbv3["Excess"] = bVTerm.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ")) + " any one Accident or Occurrence";
 
                     dtbv3.Rows.Add(drbv3);
 
@@ -511,7 +511,7 @@ namespace TechCertain.Services.Impl
                             drmv1["Make"] = bVMVTerm.Make;
                             drmv1["Model"] = bVMVTerm.Model;
                             drmv1["Registration"] = bVMVTerm.Registration;
-                            drmv1["Sum Insured"] = bVMVTerm.TermLimit.ToString("C0");
+                            drmv1["Sum Insured"] = bVMVTerm.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"));
 
                             dtmv1.Rows.Add(drmv1);
 

@@ -25,7 +25,7 @@
                                 <script type="text/javascript">
                                 $(window).on('load',function () {
 						    $("#tblRegisteredMV").jqGrid({
-						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false&transfered=false",
+						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
@@ -44,7 +44,7 @@
 						            { name: "SumInsured", align: 'center' },
 						            { name: "update", align: 'center', width:60, search: false, formatter: function(cellvalue, options, rowobject)
                                     {
-                                        return ('<button onclick="SetVehicleRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblRegisteredMV\', \'#tblRemovedRegisteredMV\');" type="button"class=" btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>');
+                                        return ('<button onclick="RemoveVehicle(\'' + cellvalue + '\', \'true\', \'#tblRegisteredMV\', \'#tblRemovedRegisteredMV\',\'@Model.Status\');" type="button"class=" btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>');
 										}
 										//{ return '<button onclick="alert(&quot;'+cellvalue+'&quot;);" type="button">Edit</button>'; }
 									}
@@ -229,7 +229,7 @@
                                 <p class="validationContainer" id="validateEffectiveDate"></p>
                             </section>
 
-                            @if (Model.IsChange)
+                            @*@if (Model.IsChange)
                             {
                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                     <label class="label">Cease Date</label>
@@ -251,7 +251,7 @@
                                         </select>
                                     </label>
                                 </section>
-                            }
+                            }*@
 
                             <!-- 4th row -->
                             @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -379,7 +379,7 @@
                                     <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control rmv" data-dateformat="dd/mm/yy" id="AddEffectiveDate" type="text" required>
                                 </label> <p class="validationContainer" id="validateAddEffectiveDate"></p>
                             </section>
-                            @if (Model.IsChange)
+                            @*@if (Model.IsChange)
                             {
                                 <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                     <label class="label">Cease Date</label>
@@ -401,7 +401,7 @@
                                         </select>
                                     </label>
                                 </section>
-                            }
+                            }*@
 
                            
 
@@ -436,7 +436,7 @@
                                 <script type="text/javascript">
                                 $(".MotorRemoved").click(function () {
 						    $("#tblRemovedRegisteredMV").jqGrid({
-						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false&transfered=false",
+						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

@@ -78,10 +78,11 @@ namespace TechCertain.Services.Impl
 
 		}
 
-		public async Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser)
+		public async Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser,ChangeReason changeReason)
 		{
 			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
+            newClientProgramme.changeReason = changeReason;
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
             newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
             var reference = await _referenceService.GetLatestReferenceId();

@@ -27,7 +27,7 @@ namespace TechCertain.Domain.Entities
 
         public virtual IList<MaterialDamage> MaterialDamages { get; protected set; }
 
-        public virtual IList<Claim> Claims { get; protected set; }
+        public virtual IList<ClaimNotification> ClaimNotifications { get; protected set; }
 
         public virtual IList<Location> Locations { get; protected set; }
 
@@ -82,7 +82,7 @@ namespace TechCertain.Domain.Entities
             Buildings = new List<Building>();
             Boats = new List<Boat>();
             BoatUses = new List<BoatUse>();
-            Claims = new List<Claim>();
+            ClaimNotifications = new List<ClaimNotification>();
             RevenueData = new List<RevenueByActivity> ();
             ClientInformationSheetAuditLogs = new List<AuditLog>();
             Status = "Not Started";
@@ -137,9 +137,9 @@ namespace TechCertain.Domain.Entities
             Boats.Add(boat);
         }
 
-        public virtual void AddClaim(Claim claim)
+        public virtual void AddClaim(ClaimNotification claim)
         {
-            Claims.Add(claim);
+            ClaimNotifications.Add(claim);
         }
 
         public virtual void AddBuilding(Building building)
@@ -200,7 +200,7 @@ namespace TechCertain.Domain.Entities
             //foreach (WaterLocation waterLocation in WaterLocations.Where(wl => !wl.Removed && wl.DateDeleted == null))
             //    newSheet.AddWaterLocation(waterLocation.CloneForNewSheet(newSheet));
 
-            foreach (Claim claim in Claims.Where(cl => !cl.Removed && cl.DateDeleted == null))
+            foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
                 newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
 
             //foreach (Operator operato in Operators.Where(oper => !oper.Removed && oper.DateDeleted == null))

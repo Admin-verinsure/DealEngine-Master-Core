@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
@@ -16,6 +17,8 @@ namespace TechCertain.WebUI.Controllers
         private readonly IOrganisationService _organisationService;
         private readonly IOrganisationTypeService _organisationTypeService;
         IInsuranceAttributeService _insuranceAttributeService;
+        IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
+        IMapper _mapper;
         IUnitOfWork _unitOfWork;
 
         //private readonly ICompanyService _companyService;
@@ -24,10 +27,13 @@ namespace TechCertain.WebUI.Controllers
             IOrganisationTypeService organisationTypeService, 
             IUnitOfWork unitOfWork, 
             IInsuranceAttributeService insuranceAttributeService,
+            IMapper mapper,
+            IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IUserService userRepository)
             : base (userRepository)
         {
             _organisationService = organisationService;
+            _InsuranceAttributesRepository = insuranceAttributesRepository;
             _organisationTypeService = organisationTypeService;
             _insuranceAttributeService = insuranceAttributeService;
             _unitOfWork = unitOfWork;
@@ -90,10 +96,46 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddNewOrganisation()
+        public async Task<IActionResult> AddNewOrganisation(Guid programmeId)
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
+            organisationViewModel.ProgrammeId = programmeId;
+            //var insuranceAttributes = new List<InsuranceAttribute>();
+            //try
+            //{
+            //    foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
+            //    {
 
+            //        foreach (var org in IA.IAOrganisations)
+            //        {
+            //            if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Limited liability")
+            //            {
+            //                foreach(var ia in org.InsuranceAttributes)
+            //                {
+            //                    insuranceAttributes.Add(ia);
+
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+
+            //organisationViewModel.InsuranceAttributes = new List<SelectListItem>
+            //   {
+            //    new SelectListItem {Text = "Select", Value = "Select"},
+            //    new SelectListItem {Text = "Marina", Value = "Marina"},
+            //   new SelectListItem {Text = "Other Marina", Value = "Other Marina"},
+            //   new SelectListItem {Text = "Financial", Value = "Financial"},
+            //   };
+
+
+
+
+            //InsuranceAttribute insuranceAttribute = new InsuranceAttribute();
             organisationViewModel.OrgMooredType = new List<SelectListItem>
             {
                 new SelectListItem {Text = "Berthed", Value = "Berthed"},
@@ -107,7 +149,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrganisation()
         {
-            var user = await CurrentUser();
+            var user = await _userService.GetUser("TCMarinaAdmin1");
             var orgType = Request.Form["OrganisationType"];
             var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');          
 

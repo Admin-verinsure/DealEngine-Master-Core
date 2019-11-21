@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
 {
 	public interface IClaimService 
     {
-
-        AuthClaims CreateClaims(User createdBy, string name, string description);
-
-        AuthClaims[] GetAllClaims();
-
+        Task<Claim> GetTemplateByName(string claimName);
+        Task<List<Claim>> GetClaimsAllClaimsList();
     }
 }
 
