@@ -48,7 +48,7 @@
                                         <td>
                                             <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)">Get Html</a>
                                             <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx">Get Docx</a>
-                                            @if (User.HasClaim("Edit", "EditManageDocuments"))
+                                            @if (User.HasClaim("EditManageDocuments", "EditManageDocuments"))
                                             {
                                                 <a class="btn btn-primary btn-xs" href="/File/CreateDocument/@(doc.Id)">Update</a>
                                             }
