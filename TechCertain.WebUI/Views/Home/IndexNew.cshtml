@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="container" style="background-color: #FFFAFA">
+        <div class="container">
             <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Dashboard <span>> My Dashboard</span></h1>
         </div>
     </div>
@@ -37,7 +37,7 @@
         <div class="row">
             <article class="container">
                 <!-- new widget -->
-                @if (User.HasClaim("View", "ViewComingUpTask"))
+                @if (User.HasClaim("ViewComingUpTask", "ViewComingUpTask"))
                 {
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
                      data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -107,7 +107,7 @@
                     <!-- end widget div -->
                 </div>
                 }
-                @if (User.HasClaim("View", "ViewMilestoneTasks"))
+                @if (User.HasClaim("ViewMilestoneTasks", "ViewMilestoneTasks"))
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-tasks"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -218,7 +218,7 @@
                         <!-- end widget div -->
                     </div>
                 }
-                @if (User.HasClaim("View", "ViewClientAgreements"))
+                @if (User.HasClaim("ViewClientAgreements", "ViewClientAgreements"))
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -332,7 +332,7 @@
                         <!-- end widget div -->
                     </div>
                 }
-                @if (User.HasClaim("View", "ViewTermSheets"))
+                @if (User.HasClaim("ViewTermSheets", "ViewTermSheets"))
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -432,7 +432,7 @@
                         <!-- end widget div -->
                     </div>
                 }
-                @if (User.HasClaim("View", "ViewLibraries"))
+                @if (User.HasClaim("ViewLibraries", "ViewLibraries"))
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-toolbox"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -571,7 +571,7 @@
                         <!-- end widget div -->
                     </div>
                 }
-                @if (User.IsInRole("TestRole"))
+                @if (User.IsInRole("TCUser"))
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
                          data-widget-editbutton="false" data-widget-colorbutton="false">

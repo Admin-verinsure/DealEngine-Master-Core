@@ -17,11 +17,6 @@ namespace TechCertain.Domain.Entities
         }
 
         public virtual string Type { get; set; }
-        public virtual ClaimsIdentity Subject { get; set; }
-        public virtual IDictionary<string, string> Properties { get; set; }
-        public virtual string OriginalIssuer { get; set; }
-        public virtual string Issuer { get; set; }
-        public virtual string ValueType { get; set; }
         public virtual string Value { get; set; }
     }
 }

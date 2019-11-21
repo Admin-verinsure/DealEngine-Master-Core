@@ -78,7 +78,7 @@
                         <div class="widget-body widget-hide-overflow">
                             <fieldset>
                                 <div class="row">
-                                    @if (User.HasClaim("Edit", "EditEmails"))
+                                    @if (User.HasClaim("EditEmails", "EditEmails"))
                                     {
                                         <section class="col col-12">
                                             <button onclick="SaveEmailTemplate()" class="btn txt-color-white bg-color-green btn-sm" id="SaveEmailTemplate">Save Email Template</button>

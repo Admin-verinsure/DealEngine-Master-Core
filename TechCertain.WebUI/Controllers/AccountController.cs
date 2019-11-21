@@ -313,7 +313,6 @@ namespace TechCertain.WebUI.Controllers
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                 int resultCode = -1;
                 string resultMessage = "";
-                bool isUser = true;
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
@@ -322,22 +321,29 @@ namespace TechCertain.WebUI.Controllers
                     IdentityUser deUser = await _userManager.FindByNameAsync(userName);
                     if (deUser == null)
                     {
-                        isUser = false;
                         deUser = new IdentityUser
                         {
                             Email = user.Email,
                             UserName = userName
                         };
                         await _userManager.CreateAsync(deUser, password);
+                        var hasRole = await _roleManager.RoleExistsAsync("Client");
+                        if (hasRole)
+                        {
+                            await _userManager.AddToRoleAsync(deUser, "Client");
+                        }
                     }
 
                     var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false);
                     if (identityResult.Succeeded)
                     {
-                        var hasRole = await _roleManager.RoleExistsAsync("Client");
-                        if (hasRole && !isUser)
+                        if(!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
                         {
-                            await _userManager.AddToRoleAsync(deUser, "Client");
+                            var hasRole = await _roleManager.RoleExistsAsync("Client");
+                            if (hasRole)
+                            {
+                                await _userManager.AddToRoleAsync(deUser, "Client");
+                            }
                         }
                     }
                     

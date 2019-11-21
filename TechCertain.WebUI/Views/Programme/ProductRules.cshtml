@@ -51,7 +51,7 @@
                                 <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
                                     @item.Value
                                 </td>
-                                @if (User.HasClaim("Edit", "EditRules"))
+                                @if (User.HasClaim("EditRules", "EditRules"))
                                 {
                                     <td width="9%">
                                         <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"

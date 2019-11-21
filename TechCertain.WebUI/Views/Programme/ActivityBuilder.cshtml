@@ -31,7 +31,7 @@
                     <div class="card-body">
                         @await Html.PartialAsync("BusinessActivityList", Model.ActivityListViewModel)
                     </div>
-                    @if (User.HasClaim("Edit", "EditActivities"))
+                    @if (User.HasClaim("EditActivities", "EditActivities"))
                     {
                         <div class="card-footer">
                             <input class="btn btn-primary" type="button" value="Add Custom Business Activity" href="#myActivityModal">
@@ -44,7 +44,7 @@
                     }
 
                 </div>
-                @if (User.HasClaim("Edit", "EditActivities"))
+                @if (User.HasClaim("EditActivities", "EditActivities"))
                 {
                     <div class="card">
                         <div class="card-header" id="headingTwo">
