@@ -18,8 +18,4 @@
     <ProjectReference Include="..\TechCertain.Services.Interfaces\TechCertain.Services.Interfaces.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UnderwritingService\" />
-  </ItemGroup>
-
 </Project>
