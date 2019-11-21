@@ -533,7 +533,7 @@ namespace TechCertain.WebUI.Controllers
             Programme programme = await _programmeRepository.GetByIdAsync(id);
             List<DealItem> deals = new List<DealItem>();
 
-            model.ProgrammeId = id.ToString();
+              model.ProgrammeId = id.ToString();
             if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsInsurer || user.PrimaryOrganisation.IsTC)
             {
                 foreach (ClientProgramme client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))

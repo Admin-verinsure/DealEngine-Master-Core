@@ -237,6 +237,7 @@
     $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
+    $('#SharedRevenue').tabs();
     $('#registeredtrailertabs').tabs();
     $('#Landtabs').tabs();
     $('#Claimtabs').tabs();
@@ -1572,7 +1573,7 @@
     }
 
     function SetCurrentTab(tabPaneId) {
-
+        debugger;
         //event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         //$('#tblLocation').trigger('reloadGrid
@@ -2096,6 +2097,7 @@ function GetActivitiesForRevenue() {
     }
 
     function SharedRevenueCalculation() {
+        debugger;
         //hardcored tables
         var table = document.getElementById("sharedRevenueActivityTable");
         validateTable(table);
@@ -2105,7 +2107,7 @@ function GetActivitiesForRevenue() {
     }
 
     function validateTable(table) {
-
+        debugger;
         var totalSharedRevenue = 0;
         var countries = GetTableTerritories(table);
         var activities = GetTableActivities(table);
@@ -3538,7 +3540,6 @@ async: true
 
    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
        debugger;
-                //event.preventDefault();
 
         var postData = {
 		'boatId': boatId,
