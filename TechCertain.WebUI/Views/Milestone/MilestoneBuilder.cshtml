@@ -10,7 +10,7 @@
         <!-- row -->
         <div class="row">
             <!-- NEW WIDGET START -->
-            <article class="col-sm-8 col-md-8 col-lg-8">
+            <article class="container">
                 <div class="card">
                     <div class="card-header">
                         <h2>Create Milestones</h2>
@@ -39,7 +39,7 @@
                                                                 {
                                                                     <div class="row">
                                                                         <label class="btn btn-outline-primary" id="milestoneType" for="@activity.Id">
-                                                                            <input type="checkbox" id="@activity.Id" name="activityRadio" /> @activity.Name
+                                                                            <input type="radio" id="@activity.Id" name="activityRadio" /> @activity.Name
                                                                         </label>
                                                                     </div>
                                                                 }
@@ -74,9 +74,12 @@
                                                                                     <label class="btn btn-primary">
                                                                                         <input type="radio" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
                                                                                     </label>
-                                                                                    <label class="btn btn-primary">
-                                                                                        <input type="radio" name="options" id="option4" onchange="SaveStatus()"> Save Milestone
-                                                                                    </label>
+                                                                                    @if (User.HasClaim("Edit", "EditMilestones"))
+                                                                                    {
+                                                                                        <label class="btn btn-primary">
+                                                                                            <input type="radio" name="options" id="option4" onchange="SaveStatus()"> Save Milestone
+                                                                                        </label>
+                                                                                    }
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -208,8 +211,7 @@
             LoadMilestoneActivity(button);
         }
 
-        function LoadMilestoneActivity(button) {
-            debugger;
+        function LoadMilestoneActivity(button) {            
             var activityId = getActivityId();
             var programmeId = $('#ProgrammeId').val();
             var programmeProcessId = $('#ProgrammeProcessId').val();

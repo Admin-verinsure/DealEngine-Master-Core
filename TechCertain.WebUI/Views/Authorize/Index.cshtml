@@ -1,14 +1,14 @@
-﻿<div class="container">
-    <div class="row">
-        <div class="jumbotron">            
-            <p class="lead"><h1>Permissions</h1></p>
-            <hr class="my-4">
-            <p>Add/Edit/Delete Permissions for uses</p>
-            <a class="btn btn-primary btn-sm" href="#" role="button">Learn more</a>
-        </div>
+﻿@model TechCertain.WebUI.Models.Authorization.AuthorizeViewModel
+<div class="container-fluid">
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" id="Success">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     <div class="row">
-        <div class="accordion" id="accordionExample">
+        <div class="accordion container" id="accordionExample">
             <div class="card">
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
@@ -17,34 +17,38 @@
                         </button>
                     </h2>
                 </div>
-
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                        <h3>Example text</h3>
+                        <h3>Example Text</h3>
                         Role-based authorization checks are declarative—the developer embeds them within their code, against a controller or an action within a controller, specifying roles which the current user must be a member of to access the requested resource.
-                        For example, the following code limits access to any actions on the AdministrationController to users who are a member of the Administrator role:
+                    </div>
+                    <div class="card-body">
+                        <div class="container" id="AddRoleForm" style="display:none">
+                            <form>
+                                <div class="form-group container">
+                                    <select class="custom-select col-6 custom-select-lg" id="organisationId">
+                                        @foreach (var org in Model.Organisations)
+                                        {
+                                            <option value="@org.Id">@org.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    @await Html.PartialAsync("AddRoleForm", Model)
+                                </div>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <div class="container" id="UpdateRoleForm" style="display:none">
+                            @await Html.PartialAsync("UpdateRoleForm", Model)
+                        </div>
                     </div>
                     <div class="card-footer">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-primary">Add</button>
-                            <button type="button" class="btn btn-primary">Edit</button>
+                            <button type="button" class="btn btn-primary" onclick="AddRole()">Add</button>
+                            <button type="button" class="btn btn-primary" onclick="EditRole()">Update/Edit</button>
                             <button type="button" class="btn btn-primary">Delete</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Groups
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <h3>Example text</h3>
-                        A number of Roles can belong to a group.. 
                     </div>
                 </div>
             </div>
@@ -52,14 +56,50 @@
                 <div class="card-header" id="headingThree">
                     <h2 class="mb-0">
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Claims/Rules
+                            Claim/Rules
                         </button>
                     </h2>
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                     <div class="card-body">
-                        <h3>Example text</h3>
-                        A number of Roles can belong to a group..
+                        <div class="container">
+                            <div class="card">
+                                <div class="card-header">
+                                    Claims
+                                </div>
+                                <div class="card-body">
+                                    <div class="container" id="claimList">
+                                        @await Html.PartialAsync("GetClaimList", Model)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingfour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
+                            Add User Role 
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapsefour" class="collapse" aria-labelledby="headingfour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <h3>Example Text</h3>
+                        Add, modify or Delete a user from the application
+                    </div>
+                    <div class="card-body">
+                        <div class="container" id="AddRoleToUserForm" style="display:none">
+                            @await Html.PartialAsync("AddRoleToUserForm", Model)
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-primary" onclick="AddRoleToUser()">Add User Permissions</button>                            
+                            <button type="button" class="btn btn-primary">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,8 +108,101 @@
 </div>
 
 @section pagespecific {
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link href="~/css/bootstrap-chosen.min.css" rel="stylesheet" />
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#AddClaims').chosen({ width: '100%' });
+        });
+
+        $(document).ready(function () {
+            $('#UpdateClaims').chosen({ width: '100%' });
+        });
+
+        $(document).ready(function () {
+            $('#AddUserRoleSelect').chosen({ width: '100%' });
+        });
+
+        function ShowClaim() {
+            $("#claimList").hide();
+        }
+
+        function SaveRole() {
+            var roleName = $('#InputRoleName').val();
+            var claim = $('#AddClaims').val();
+            var organisationId = $('#organisationId').val();
+            debugger;
+            var postData = { RoleName: roleName, Claims: claim, OrganisationId: organisationId }
+
+            $.ajax({
+                url: '@Url.Action("AddRole", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    location.reload();
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
+        function UpdateRole() {
+            var roleName = $('#UpdateRoleSelect').val();
+            var claim = $('#UpdateClaims').val();
+            var postData = { RoleName: roleName, Claims: claim }
+
+            $.ajax({
+                url: '@Url.Action("UpdateRole", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    location.reload();
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
+        function SaveRoleToUser() {
+            var userId = $('#AddUser').val();
+            var roleIds = $('#AddUserRoleSelect').val();
+            var postData = { UserId: userId, RoleIds: roleIds }
+
+            $.ajax({
+                url: '@Url.Action("SaveRoleToUser", "Authorize")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    location.reload();
+                    $('#Success').alert();
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                    alert("Unable to save.");
+                });
+        }
+
+        function AddRole() {
+            $('#AddRoleForm').show();
+            $('#UpdateRoleForm').hide();
+        }
+
+        function AddRoleToUser() {
+            $('#AddRoleToUserForm').show();
+        }        
+
+        function EditRole() {
+            $('#AddRoleForm').hide();
+            $('#UpdateRoleForm').show();
+        }
+
+    </script>
 }

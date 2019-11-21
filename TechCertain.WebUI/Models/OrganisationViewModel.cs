@@ -7,9 +7,8 @@ namespace TechCertain.WebUI.Models
 {
     public class OrganisationViewModel : BaseViewModel
     {
-        //IOrganisationTypeService _organisationTypeService;
-
         public Guid ID { get; set; }
+        public Guid ProgrammeId { get; set; }
 
         // Organisation Details
         public string OrganisationName { get; set; }
@@ -23,9 +22,6 @@ namespace TechCertain.WebUI.Models
         public Guid PartyUseId { get; set; }
         public OrganisationType OrganisationType { get; set; }
         public IList<SelectListItem> OrgMooredType { get; set; }
-        //public IList<SelectListItem> InsuranceAttributes { get; set; }
-
-        //public IEnumerable<OrganisationViewModel> InsuranceAttributes { get; set; }
 
         public string OperatorYearsOfExp { get; set; }
 

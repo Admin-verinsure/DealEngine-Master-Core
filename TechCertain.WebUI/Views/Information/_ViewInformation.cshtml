@@ -1,7 +1,7 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
 
-<div>
+<div class="container">
     @*<div id="accordion" style="background-color:lightgray">*@
     <div id="accordion">
 
@@ -131,33 +131,6 @@
                                                                 @*@Html.Bootstrap().SubmitButton().Text(@item.Label).Class("btn-sm")*@
                                                                 break;
 
-                                                            @*case ItemType.MOTORVEHICLELIST:
-                                                                @(Html.TableFor<TechCertain.Web.UI.ViewModels.VehicleViewModel>()
-                                                                                                                                                                                                                            .Hover().Striped().SetId(@item.Name)
-                                                                                                                                                                                                                            .Columns(column =>
-                                                                                                                                                                                                                            {
-                                                                                                                                                                                                                                column.Expression(p => p.Registration);
-                                                                                                                                                                                                                                column.Expression(p => p.Make);
-                                                                                                                                                                                                                                column.Expression(p => p.VehicleModel).Title("Model");
-                                                                                                                                                                                                                                column.Expression(p => p.SumInsured).Title("Sum Insured");
-                                                                                                                                                                                                                                column.Commands(p => p.VehicleId).Event("onclick=alert(\"$id$\")", "Update").Class("btn btn-xs btn-default");
-                                                                                                                                                                                                                            })
-                                                                                                                                                                                                                            .DataSource(this.Model.RegisteredVehicles))
-                                                                break;
-
-                                                            case ItemType.STATICVEHICLEPLANTLIST:
-                                                                @(Html.TableFor<TechCertain.Web.UI.ViewModels.VehicleViewModel>()
-                                                                                                                                                                                                                            .Hover().Striped().SetId(@item.Name)
-                                                                                                                                                                                                                            .Columns(column =>
-                                                                                                                                                                                                                            {
-                                                                                                                                                                                                                                column.Expression(p => p.FleetNumber);
-                                                                                                                                                                                                                                column.Expression(p => p.Make);
-                                                                                                                                                                                                                                column.Expression(p => p.VehicleModel).Title("Model");
-                                                                                                                                                                                                                                column.Expression(p => p.SumInsured).Title("Sum Insured");
-                                                                                                                                                                                                                                column.Commands(p => p.VehicleId).Event("onclick=alert(\"$id$\")", "Update").Class("btn btn-xs btn-default");
-                                                                                                                                                                                                                            })
-                                                                                                                                                                                                                            .DataSource(this.Model.UnregisteredVehicles))
-                                                                break;*@
                                                         }
                                                     </section>
                                                 }

@@ -47,14 +47,14 @@ namespace TechCertain.WebUI.Models
 
         public Guid[] ClaimProducts { get; set; }
 
-        public Claim ToEntity(User creatingUser)
+        public ClaimNotification ToEntity(User creatingUser)
         {
-            Claim claim = new Claim(creatingUser);
+            ClaimNotification claim = new ClaimNotification(creatingUser);
             UpdateEntity(claim);
             return claim;
         }
 
-        public Claim UpdateEntity(Claim claim)
+        public ClaimNotification UpdateEntity(ClaimNotification claim)
         {
             claim.ClaimTitle = ClaimTitle;
             claim.ClaimDescription = ClaimDescription;
@@ -90,7 +90,7 @@ namespace TechCertain.WebUI.Models
             return claim;
         }
 
-        public static ClaimViewModel FromEntity(Claim claim)
+        public static ClaimViewModel FromEntity(ClaimNotification claim)
         {
             ClaimViewModel model = new ClaimViewModel
             {

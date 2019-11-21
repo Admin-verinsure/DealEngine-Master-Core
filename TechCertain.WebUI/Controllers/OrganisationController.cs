@@ -96,10 +96,10 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddNewOrganisation()
+        public async Task<IActionResult> AddNewOrganisation(Guid programmeId)
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
-
+            organisationViewModel.ProgrammeId = programmeId;
             //var insuranceAttributes = new List<InsuranceAttribute>();
             //try
             //{
@@ -124,14 +124,14 @@ namespace TechCertain.WebUI.Controllers
             //    Console.WriteLine(ex.Message);
             //}
 
-             //organisationViewModel.InsuranceAttributes = new List<SelectListItem>
-             //   {
-             //    new SelectListItem {Text = "Select", Value = "Select"},
-             //    new SelectListItem {Text = "Marina", Value = "Marina"},
-             //   new SelectListItem {Text = "Other Marina", Value = "Other Marina"},
-             //   new SelectListItem {Text = "Financial", Value = "Financial"},
-             //   };
-            
+            //organisationViewModel.InsuranceAttributes = new List<SelectListItem>
+            //   {
+            //    new SelectListItem {Text = "Select", Value = "Select"},
+            //    new SelectListItem {Text = "Marina", Value = "Marina"},
+            //   new SelectListItem {Text = "Other Marina", Value = "Other Marina"},
+            //   new SelectListItem {Text = "Financial", Value = "Financial"},
+            //   };
+
 
 
 
