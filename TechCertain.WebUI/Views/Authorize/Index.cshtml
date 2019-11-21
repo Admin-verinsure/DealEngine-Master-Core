@@ -19,24 +19,24 @@
                 </div>
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                        <h3>Example Text</h3>
-                        Role-based authorization checks are declarative—the developer embeds them within their code, against a controller or an action within a controller, specifying roles which the current user must be a member of to access the requested resource.
-                    </div>
-                    <div class="card-body">
                         <div class="container" id="AddRoleForm" style="display:none">
                             <form>
-                                <div class="form-group container">
-                                    <select class="custom-select col-6 custom-select-lg" id="organisationId">
-                                        @foreach (var org in Model.Organisations)
-                                        {
-                                            <option value="@org.Id">@org.Name</option>
-                                        }
-                                    </select>
-                                </div>
+                                @if (User.IsInRole("TCUser"))
+                                {
+                                    <div class="form-group container">
+                                        <select class="custom-select col-6 custom-select-lg" id="organisationId">
+                                            <option value="" selected>empty</option>
+                                            @foreach (var org in Model.Organisations)
+                                            {
+                                                <option value="@org.Id">@org.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
                                 <div class="form-group">
                                     @await Html.PartialAsync("AddRoleForm", Model)
                                 </div>
-                        </form>
+                            </form>
                     </div>
                     <div class="card-body">
                         <div class="container" id="UpdateRoleForm" style="display:none">
@@ -86,10 +86,6 @@
                     </h2>
                 </div>
                 <div id="collapsefour" class="collapse" aria-labelledby="headingfour" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <h3>Example Text</h3>
-                        Add, modify or Delete a user from the application
-                    </div>
                     <div class="card-body">
                         <div class="container" id="AddRoleToUserForm" style="display:none">
                             @await Html.PartialAsync("AddRoleToUserForm", Model)
