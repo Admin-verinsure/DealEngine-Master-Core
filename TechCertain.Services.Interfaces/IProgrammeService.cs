@@ -14,8 +14,9 @@ namespace TechCertain.Services.Interfaces
         Task<Programme> GetProgrammesByOwner (Guid ownerOrganisationId);
 
 		Task<ClientProgramme> GetClientProgramme (Guid id);
+        Task<Programme> GetClientProgrammebyName(string programmeName);
 
-		Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId);
+        Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId);
 
 
 		Task<IList<ClientProgramme>> GetClientProgrammesForProgramme (Guid programmeId);

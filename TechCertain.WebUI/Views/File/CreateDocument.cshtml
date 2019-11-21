@@ -1,5 +1,4 @@
 ﻿@model TechCertain.WebUI.Models.DocumentViewModel
-
 @*<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>*@
 
 <div id="content" style="background-color: #A6E2EF">
@@ -121,8 +120,8 @@
         <script src="~/lib/popper.js/umd/popper.js"></script>*@
 
     @*<script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-    <script src="~/lib/popper.js/umd/popper.js"></script>*@
+        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+        <script src="~/lib/popper.js/umd/popper.js"></script>*@
 
 
     <script src="~/jquery/jquery.js"></script>
@@ -134,8 +133,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-    <script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
-
+    @*<script src="~/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>*@
+    <script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
 
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -199,7 +198,7 @@ $(document).ready(function () {
                  var bodyElement = $("#@Html.IdFor(m => m.Content)");
 			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
 			// using hack because escape(...) was deprecated
-                 
+
                  bodyElement.text(bodyElement.text(body).html());
 
 

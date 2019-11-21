@@ -11,6 +11,8 @@ namespace TechCertain.Services.Interfaces
         Task<InformationTemplate> CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections);
 
         Task<List<InformationTemplate>> GetAllTemplates();
+        
+        Task<List<InformationTemplate>> GetAllTemplatesbyproduct(Guid productId);
 
         Task<InformationTemplate> GetTemplate(Guid templateId);
 

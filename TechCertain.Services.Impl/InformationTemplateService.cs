@@ -32,6 +32,11 @@ namespace TechCertain.Services.Impl
             return await _informationTemplateRepository.FindAll().SingleOrDefaultAsync(I => I.Product.Id== productId );
         }
 
+        public async Task<List<InformationTemplate>> GetAllTemplatesbyproduct(Guid productId)
+        {
+            return await _informationTemplateRepository.FindAll().Where(I => I.Product.Id == productId).ToListAsync();
+        }
+
         public async Task<List<InformationTemplate>> GetAllTemplates()
         {
             return await _informationTemplateRepository.FindAll().ToListAsync();
