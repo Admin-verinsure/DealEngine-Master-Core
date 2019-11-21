@@ -2778,7 +2778,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.OrganisationalUnits.Add(ou);
                     clientProgramme.BrokerContactUser = programme.BrokerContactUser;
                     clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "Quick Quote Consuming Process Completed"));
+                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                     try
                     {
                         Thread.Sleep(1000);
@@ -2819,8 +2819,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 return new JsonResult(false);
             }
-            
-            
+
         }
 
     }
