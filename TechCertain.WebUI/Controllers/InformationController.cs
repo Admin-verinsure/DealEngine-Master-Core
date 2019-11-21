@@ -890,7 +890,7 @@ namespace TechCertain.WebUI.Controllers
             model.Operators = operators;
 
             var claims = new List<ClaimViewModel>();
-            foreach (Claim cl in sheet.Claims)
+            foreach (ClaimNotification cl in sheet.ClaimNotifications)
             {
                 claims.Add(ClaimViewModel.FromEntity(cl));
             }
@@ -1129,7 +1129,7 @@ namespace TechCertain.WebUI.Controllers
                 //model.Operators = operators;
 
                 var claims = new List<ClaimViewModel>();
-                foreach (Claim cl in sheet.Claims)
+                foreach (ClaimNotification cl in sheet.ClaimNotifications)
                 {
                     claims.Add(ClaimViewModel.FromEntity(cl));
                 }
@@ -1561,9 +1561,9 @@ namespace TechCertain.WebUI.Controllers
             //model.Operators = operators;
 
             var claims = new List<ClaimViewModel>();
-            for (var i = 0; i < sheet.Claims.Count; i++)
+            for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
             {
-                claims.Add(ClaimViewModel.FromEntity(sheet.Claims.ElementAtOrDefault(i)));
+                claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
             }
 
             //foreach (Claim cl in sheet.Claims)

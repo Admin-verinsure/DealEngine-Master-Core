@@ -281,7 +281,11 @@ namespace TechCertain.WebUI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl)
         {
-            var viewModel = new AccountLoginModel { ReturnUrl = returnUrl };
+            var viewModel = new AccountLoginModel
+            {
+                ReturnUrl = returnUrl,
+                DomainString = _appSettingService.domainQueryString,
+            };
 
             string nameExtension = "";// ConfigurationRoot["LoginPageExtension"];
 
@@ -323,12 +327,24 @@ namespace TechCertain.WebUI.Controllers
                             UserName = userName
                         };
                         await _userManager.CreateAsync(deUser, password);
+                        var hasRole = await _roleManager.RoleExistsAsync("Client");
+                        if (hasRole)
+                        {
+                            await _userManager.AddToRoleAsync(deUser, "Client");
+                        }
                     }
 
                     var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false);
                     if (identityResult.Succeeded)
                     {
-                        //add claims, roles etc here
+                        if(!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
+                        {
+                            var hasRole = await _roleManager.RoleExistsAsync("Client");
+                            if (hasRole)
+                            {
+                                await _userManager.AddToRoleAsync(deUser, "Client");
+                            }
+                        }
                     }
                     
                     var result = await LoginMarsh(user, viewModel.DevicePrint);

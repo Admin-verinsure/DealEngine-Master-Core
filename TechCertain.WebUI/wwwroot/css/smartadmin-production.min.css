@@ -12245,7 +12245,7 @@ aside {
         }
 
 .fixed-header #header {
-    position: fixed;
+    position: relative;
     width: 100%;
     z-index: 905;
     top: 0;

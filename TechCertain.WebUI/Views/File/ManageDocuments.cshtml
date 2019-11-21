@@ -5,7 +5,7 @@
     <!-- widget grid -->
     <section id="widget-grid" class="">
         <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-6">
+            <article class="container">
                 <!-- new widget -->
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2"
                      data-widget-editbutton="false" data-widget-colorbutton="false">
@@ -48,7 +48,10 @@
                                         <td>
                                             <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)">Get Html</a>
                                             <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx">Get Docx</a>
-                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument/@(doc.Id)">Update</a>
+                                            @if (User.HasClaim("Edit", "EditManageDocuments"))
+                                            {
+                                                <a class="btn btn-primary btn-xs" href="/File/CreateDocument/@(doc.Id)">Update</a>
+                                            }
                                         </td>
                                     </tr>
                                 }
