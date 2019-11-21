@@ -916,7 +916,7 @@ namespace TechCertain.Services.Impl
             agreement.QuoteDate = DateTime.UtcNow;
 
             //calculate boat premium and FSL (BV Term)
-            foreach (var boat in informationSheet.Boats.Where(v => !v.Removed && v.DateDeleted == null))
+            foreach (var boat in informationSheet.Boats.Where(v => (!v.Removed || (v.Removed && v.BoatCeaseDate > DateTime.MinValue && v.BoatCeaseReason > 0)) && v.DateDeleted == null))
             {
 
                 //Pre-rate premiums based on the vehicle effectiove date and cease date
