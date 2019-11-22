@@ -36,7 +36,8 @@ namespace TechCertain.Domain.Entities
 		public Territory (User createdBy, string location)
 			: base (createdBy)
 		{
-			Location = location;
+            Programmes = new List<Programme>();
+            Location = location;
 		}
 	}
 }

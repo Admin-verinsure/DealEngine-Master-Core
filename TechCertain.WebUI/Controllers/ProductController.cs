@@ -220,7 +220,8 @@ namespace TechCertain.WebUI.Controllers
             };
 
             List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme programme in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
+            var progList = _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id);
+            foreach (Programme programme in progList)
             {
                  proglist.Add(new SelectListItem
                  {
@@ -230,20 +231,6 @@ namespace TechCertain.WebUI.Controllers
                  });
                 
             }
-
-            //foreach (var org in CurrentUser().Organisations)
-            //{
-            //    foreach (var prog in org.Programmes)
-            //    {
-            //        proglist.Add(new SelectListItem
-            //        {
-            //            Selected = false,
-            //            Text = org.Name,
-            //            Value = org.Id.ToString(),
-            //        });
-            //    }
-                   
-            //}
          
             model.TerritoryAttach = new TerritoryAttachVM
             {
@@ -255,8 +242,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTerritory(TerritoryViewModel model)
+        public async Task<IActionResult> CreateTerritoryForProgramme(string Location, string IncluExclu, int ZoneNo, bool IsPublic, string ProgrammeId)
         {
             if (!ModelState.IsValid)
             {
@@ -267,42 +253,22 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 var user = await CurrentUser();
-                Territory territory = new Territory(user, model.Builder.Location);
-                territory.Ispublic = model.Builder.Ispublic;
-                territory.Zoneorder = model.Builder.Zoneorder;
-                territory.ExclorIncl = model.Builder.SelectedInclorExcl[0];
-                var organisations = new List<Organisation>();
-                //for (var i = 0; i < model.TerritoryAttach.SelectedProgramme.Length; i++)
-                //{
-                //    organisations.Add(_organisationRepository.GetById(Guid.Parse(model.TerritoryAttach.SelectedProgramme[i])));
+                var programme = await _programmeRepository.GetByIdAsync(Guid.Parse(ProgrammeId));
 
-                //}
-                //foreach (Organisation org in organisations)
-                //{
-                //    org.territory.Add(territory);
-                //}
-                //territory.Organisation = organisations;
+                Territory territory = new Territory(user, Location);
+                territory.Ispublic = IsPublic;
+                territory.Zoneorder = ZoneNo;
+                territory.ExclorIncl = IncluExclu;
 
-
-                var programm = new List<Programme>();
-                for (var i = 0; i < model.TerritoryAttach.SelectedProgramme.Length; i++)
-                {
-                    programm.Add(await _programmeRepository.GetByIdAsync(Guid.Parse(model.TerritoryAttach.SelectedProgramme[i])));
-
-                }
-                foreach (Programme prog in programm)
-                {
-                    prog.territory.Add(territory);
-                }
-                territory.Programmes = programm;
+                programme.territory.Add(territory);
+                territory.Programmes.Add(programme);
                 await _TerritoryRepository.AddAsync(territory);
+                await _programmeRepository.UpdateAsync(programme);
 
                 return Redirect("~/Product/MyProducts");
-                //return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
                 Response.StatusCode = 500;
                 return Content(ex.Message);
             }

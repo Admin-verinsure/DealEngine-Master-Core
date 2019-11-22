@@ -1573,7 +1573,6 @@
     }
 
     function SetCurrentTab(tabPaneId) {
-        debugger;
         //event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
         //$('#tblLocation').trigger('reloadGrid
@@ -2031,11 +2030,11 @@ function GetActivitiesForRevenue() {
         };
     };
 
-    function BuildRevenuesTable(hasTerritories) {
+    function BuildRevenuesTable(TableType) {
         var revenueTable;
         var listc;
-        if (hasTerritories == 'true') {
-            listc = GetTerritoriesForRevenue();
+        if (TableType == 'true') {
+            listc = [ 'Territory Breakdown' ]; //GetTerritoriesForRevenue();
             revenueTable = $('#sharedRevenueTerritoriesTable');
         } else {
              listc = [ 'Revenue Breakdown' ];
@@ -2049,7 +2048,12 @@ function GetActivitiesForRevenue() {
         var thead = $('<thead>');
         var tbody = $('<tbody>');
         revenueTable.append(thead, tbody);
+
         var lista = GetActivitiesForRevenue();
+        if (TableType == 'true') {
+            lista = GetTerritoriesForRevenue();
+        }
+
         var header = $('<tr>');
         header.append($('<th>'));
         listc.forEach( function(countryName) {
@@ -2106,8 +2110,7 @@ function GetActivitiesForRevenue() {
 
     }
 
-    function validateTable(table) {
-        debugger;
+    function validateTable(table) {        
         var totalSharedRevenue = 0;
         var countries = GetTableTerritories(table);
         var activities = GetTableActivities(table);
@@ -2131,7 +2134,7 @@ function GetActivitiesForRevenue() {
                 alert("Percentage calulates to more than 100%");
             }
         }
-
+        debugger;
     }
 
     function percentage_check(n) {
@@ -6970,11 +6973,13 @@ async: true
     }
 
         function toggleTerritoriesVisible(value) {
-        if (value == 'active') {
+            if (value == 'active') {
+                debugger;
             $('#sharedRevenueTerritories').show();
             $('#sharedRevenueTerritoriesBreakdownTab').show();
             $('#sharedRevenueActivity').hide();
-        } else {
+            } else {
+                debugger;
             $('#sharedRevenueTerritories').hide();
             $('#sharedRevenueTerritoriesBreakdownTab').hide();
             $('#sharedRevenueActivity').show();

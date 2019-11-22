@@ -1,237 +1,124 @@
 ﻿@model TechCertain.WebUI.Models.Product.TerritoryViewModel
 
-@using TechCertain.WebUI.Helpers.CustomHtml
-
 <div id="content">
+    <article class="container">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="card">
+            <div class="card-header">
+                <header>
+                    <h2>Create a new Territory</h2>
+                </header>
+            </div>
 
-	<script src="~/Scripts/plugin/ckeditor/ckeditor.js"></script>
+            <div class="card-body">
+                <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
+                    <!-- SmartWizard html -->
+                    <div id="smartwizard" class="sw-main sw-theme-dots">
+                        <ul class="nav nav-tabs step-anchor">
+                            <li class="nav-item active">
+                                <a href="#step-1"> <span class="nav-link">1</span> <span class="title">Start</span> </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#step-2"> <span class="nav-link">2</span> <span class="title">Attach to Programme</span> </a>
+                            </li>
+                        </ul>
 
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <!-- row -->
-        <div class="row">
-            <!-- NEW WIDGET START -->
-            <article class="col-sm-12 col-md-12 col-lg-12">
-                <!-- Widget ID (each widget will need unique ID)-->
-                <div class="jarviswidget" id="wid-id-1" 
-                     data-widget-colorbutton="false" 
-                     data-widget-editbutton="false" 
-                     data-widget-togglebutton="false" 
-                     data-widget-deletebutton="false" 
-                     data-widget-custombutton="false" 
-                     data-widget-sortable="false">
-                    <!-- widget options:
-                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+                        <div class="sw-container tab-content" style="min-height: 152px;">
+                            <div id="step-1" class="tab-pane step-content" style="display: block;">
+                                <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
+                                    <div class="form-group">
+                                        @await Html.PartialAsync("DisplayTemplates/TerritoryBuilderVM", Model.Builder)                                        
+                                    </div>
+                                </div>
 
-                    data-widget-colorbutton="false"
-                    data-widget-editbutton="false"
-                    data-widget-togglebutton="false"
-                    data-widget-deletebutton="false"
-                    data-widget-fullscreenbutton="false"
-                    data-widget-custombutton="false"
-                    data-widget-collapsed="true"
-                    data-widget-sortable="false"
+                            </div>
+                            <div id="step-2" class="tab-pane step-content" style="display: none;">
+                                @await Html.PartialAsync("DisplayTemplates/TerritoryBuilderAttach", Model.TerritoryAttach)                                       
+                            </div>
 
-                    -->
-                    <header>
-                        <h2>Create a new Territory</h2>
-                    </header>
-
-                    <div role="content">
-                        <!-- widget edit box -->
-                        <div class="jarviswidget-editbox">
-                            <!-- This area used as dropdown edit box -->
                         </div>
-                        <!-- end widget edit box -->
-                        <!-- widget content -->
-                        <div class="widget-body">
-                        	<div class="row">
-                            	<form id="wizard-1" class="" method="post">
-                            		<div id="bootstrap-wizard-1" class="col-sm-12">
-                            			<div class="form-bootstrapWizard">
-                                            <ul class="bootstrapWizard form-wizard">
-                                                <li class="active" data-target="#step1">
-                                                    <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
-                                                </li>
-                                                <li data-target="#step2">
-                                                    <a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">Attach to Programme</span> </a>
-                                                </li>
-                                                @*<li data-target="#step3">
-                                                    <a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Settings</span> </a>
-                                                </li>*@
-                                                @*<li data-target="#step4">
-                                                    <a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Review</span> </a>
-                                                </li>*@
-                                                @*<li class="active" data-target="#step1">
-            <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Start</span> </a>
-        </li>
-        <li data-target="#step2">
-            <a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">attach to Programme</span> </a>
-        </li>
-        <li data-target="#step3">
-            <a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Review</span> </a>
-        </li>*@
-                                                @*<li data-target="#step4">
-            <a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Review</span> </a>
-        </li>*@
-                                            </ul>
-											<div class="clearfix"></div>
-										</div>
-                                        <div class="tab-content">
-                                            @* Tab 1 *@
-                                            @Html.DisplayFor(m => m.Builder)
-                                            @* Tab 2 *@
-                                            @Html.DisplayFor(m => m.TerritoryAttach)
-                                            @*Tab 3*@
-                                            @* Tab 4 *@
 
-                                            <div class="tab-pane" id="tab2">
-                                                <br />
-                                                <h3><strong>Setup </strong> - New Territory</h3>
-                                               
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <div class="form-group">
-                                                            <label><strong>InclorExcl</strong></label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.DropDownListFor(m => m.TerritoryAttach.SelectedProgramme, Model.TerritoryAttach.BaseProgList)
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-      
-                                            @* Button controls *@
-                                            <div class="form-actions">
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <ul class="pager wizard no-margin">
-                                                            <!--<li class="previous first disabled">
-                    <a href="javascript:void(0);" class="btn btn-lg btn-default"> First </a>
-                    </li>-->
-                                                            <li class="previous disabled">
-                                                                <a href="javascript:void(0);" class="btn btn-lg btn-default"> Previous </a>
-                                                            </li>
-                                                            <!--<li class="next last">
-                    <a href="javascript:void(0);" class="btn btn-lg btn-primary"> Last </a>
-                    </li>-->
-                                                            <li class="next">
-                                                                <a href="javascript:void(0);" class="btn btn-lg txt-color-darken"> Next </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-									</div>
-                            	</form>
-								@*@using (var modal = Html.Bootstrap().Begin(new Modal().Id("successModal")))
-								{
-								    @modal.Header("Success!")
-								    using (modal.BeginBody())
-								    {
-								        <p>Your product has been successfully created. You can either start a new product, or view your current products</p>
-								    }
-								    using (modal.BeginFooter())
-								    {
-                                         <a class="btn btn-primary" href="~/Product/CreateTerritory">Create New</a>
-                                         <a class="btn btn-primary" href="~/Product/MyProducts">My Products <i class="fa fa-arrow-right"></i></a>
-								    }
-								}
-								@using (var modal = Html.Bootstrap().Begin(new Modal().Id("failureModal")))
-								{
-								    @modal.Header("Oops!")
-								    using (modal.BeginBody())
-								    {
-								        <p>It looks like something has gone wrong. A more detailed explaination is available on the page, and the error has been logged.</p>
-								    }
-								    using (modal.BeginFooter())
-								    {
-                                        @Html.Bootstrap().Button().Text("OK").Data(new { dismiss = "modal" })
-								    }
-								}*@
-							</div>
-						</div>
                     </div>
-                </div>
-            </article>
+
+                </form>
+            </div>
         </div>
-    </section>
+    </article>
 </div>
 
-
 @section pagespecific {
-<script src="/Scripts/plugin/multiselect/bootstrap-multiselect.min.js"></script>
-@*<script src="/Scripts/plugin/chosen/chosen.jquery.min.js"></script>*@
-<link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
-<!-- PAGE RELATED PLUGIN(S) -->
-<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-<script src="/Scripts/plugin/fuelux/wizard/wizard.min.js"></script>
-<script type="text/javascript">
+    <link href="/Content/css/bootstrap-chosen.css" rel="stylesheet" type="text/css" />
+    <link href="~/smartwizard/cc/smart_wizard_theme_dots.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+    <script type="text/javascript">
 
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
-    
-    $(document).ready(function () {
-		
-	    // find all multiselect items and apply Chosen
-		$('.cselect').each(function() {
-			$('#'+this.id).chosen( { width: '100%' } ).change(checkerrors);
-		});
+        $(document).ready(function () {
 
-		$('#bootstrap-wizard-1').bootstrapWizard({
-			'tabClass' : 'form-wizard',
-            'onNext': function (tab, navigation, index) {
-                debugger;
-				var $valid = $("#wizard-1").valid();
-            	var numTabs = $('#wizard-1').find('.tab-pane').length;
-				if (!$valid) {
-					$validator.focusInvalid();
-					return false;
-				}
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index - 1).find('.step').html('<i class="fa fa-check"></i>');
+            $('#smartwizard').smartWizard({
+                selected: 0,  // Initial selected step, 0 = first step
+                keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                autoAdjustHeight: true, // Automatically adjust content height
+                cycleSteps: false, // Allows to cycle the navigation of steps
+                backButtonSupport: true, // Enable the back button support
+                useURLhash: true, // Enable selection of the step based on url hash
+                lang: {  // Language variables
+                    next: 'Next',
+                    previous: 'Previous'
+                },
+                toolbarSettings: {
+                    toolbarPosition: 'bottom', // none, top, bottom, both
+                    toolbarButtonPosition: 'right', // left, right
+                    showNextButton: true, // show/hide a Next button
+                    showPreviousButton: true, // show/hide a Previous button
 
-				if (index === numTabs) {
-                    // We are at the last tab
-					$.ajax({
-						type: "POST",
-						url: '@Url.Action("CreateTerritory", "Product")',
-						data: $("#wizard-1").serialize() // serializes the form's elements.
-					}) 	
-					.done(function (json) {
-						//var model = JSON.parse(json);
-	                    $('#successModal').modal();
-						$('#productAutoReview').text("");
-					})
-					.fail(function (err, ajaxOptions, thrownError) {
-	                    $('#failureModal').modal();
-						$('#productAutoReview').text(err.responseText);
-					});
-                }
-			},
-			onTabClick : function(tab, navigation, index) {
-				var $valid = $("#wizard-1").valid();
-				if (!$valid) {
-					validator.focusInvalid();
-					return false;
-				}
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).addClass('complete');
-				$('#bootstrap-wizard-1').find('.form-wizard').children('li').eq(index).find('.step').html('<i class="fa fa-check"></i>');
-				return true;
-			},
-			onTabShow: function(tab, navigation, index) {
-				// Update the label of Next button when we are at the last tab
-				var numTabs = $('#wizard-1').find('.tab-pane').length;
-				$('#wizard-1')
-				    .find('.next')
-				        .removeClass('disabled')    // Enable the Next button
-				        .find('a')
-				        .html(index === numTabs-1 ? 'Submit' : 'Next');
+                },
+                anchorSettings: {
+                    anchorClickable: true, // Enable/Disable anchor navigation
+                    enableAllAnchors: false, // Activates all anchors clickable all times
+                    markDoneStep: true, // add done css
+                    enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+                },
+                contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+                disabledSteps: [],    // Array Steps disabled
+                errorSteps: [],    // Highlight step with errors
+                theme: 'dots',
+                transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+                transitionSpeed: '400'
+            });
+
+        });
+
+        function SubmitTerritory() {
+            event.preventDefault();
+            var location = $('#Builder_Location').val();
+            var incluExclu = $('#Builder_SelectedInclorExcl').val();
+            var zoneNo = $('#Builder_Zoneorder').val();
+            var isOn = $('#Builder_Ispublic').val();
+            var isPublic = true;
+            if (isOn != "On") {
+                isPublic = false
             }
-		});
-    });
-</script>
+            var programmeId = $('#TerritoryAttach_SelectedProgramme').val();
+            var postData = {
+                'Location': location, 'IncluExclu': incluExclu,
+                'ZoneNo': zoneNo, 'IsPublic': isPublic, 'ProgrammeId': programmeId
+            };
+
+
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateTerritoryForProgramme", "Product")',
+                data: postData
+            })
+                .done(function (json) {
+                    debugger;
+                })
+                .fail(function (err, ajaxOptions, thrownError) {
+                    debugger;
+                });
+        }        
+    </script>
 }
