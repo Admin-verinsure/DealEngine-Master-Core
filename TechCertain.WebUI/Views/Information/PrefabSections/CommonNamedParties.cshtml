@@ -31,7 +31,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return ('<button onclick="EditNamedParties(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'NamedPartyTabs-2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
+                                            return ('<button onclick="EditNamedParties(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'NamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
                                         }
                                     },
                                     { name: "OrganisationName", align: 'center' },
@@ -71,7 +71,7 @@
             </div>
             <div id="NamedPartyTabs2" class="tab-content">
                 <fieldset id="fieldset">
-                    <input id="OrganisationId" class="b" name="ID" type="hidden">
+                    <input id="NamedPartyOrganisationId" class="b" name="ID" type="hidden">
                     <!-- 1st row -->
                     <div class="row">
 
@@ -136,7 +136,7 @@
             </div>
             <div id="NamedPartyTabs3" class="tab-content">
                 <fieldset id="fieldset">
-                    <input id="AddOrganisationId" class="b" name="ID" type="hidden">
+                    <input id="AddNamedPartyOrganisationId" class="b" name="ID" type="hidden">
                     <!-- 1st row -->
                     <div class="row">
 

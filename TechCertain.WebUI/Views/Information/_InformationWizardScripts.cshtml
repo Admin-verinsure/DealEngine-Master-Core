@@ -3800,7 +3800,7 @@ async: true
         var partyName = $('#AddNPOrgName').val();
         var partyPhone = $('#AddNPOrgPhone').val();
         var PartyEmail = $('#AddNPOrgEmail').val();
-        var partyid = $('#AddOrganisationId').val();
+        var partyid = $('#AddNamedPartyOrganisationId').val();
         var firstName = $('#SkiFirstName').val();
         var lastName = $('#SkiLastName').val();
         var partyOrgType = $('#AddOrganisationType').val();
@@ -3829,9 +3829,8 @@ async: true
 
             $.ajax({
                 type: "Post",
-                data: JSON.stringify({ model: proddata }),
-                url: '@Url.Action("AddInterestedParty", "Services")',
-                contentType: "application/json; charset=utf-8"
+                data: proddata,
+                url: '@Url.Action("AddInterestedParty", "Services")'
 
             })
                 .done(function (data) {
@@ -3881,9 +3880,8 @@ async: true
 
             $.ajax({
                 type: "Post",
-                data: JSON.stringify({ model: proddata }),
-                url: '@Url.Action("AddOperator", "Services")',
-                contentType: "application/json; charset=utf-8"
+                data: proddata,
+                url: '@Url.Action("AddOperator", "Services")'
 
             })
                 .done(function (data) {
@@ -3974,7 +3972,7 @@ async: true
         var name = $('#NPOrgName').val();
         var phone = $('#NPOrgPhone').val();
         var email = $('#NPOrgEmail').val();
-         var partyid = $('#OrganisationId').val();
+         var partyid = $('#NamedPartyOrganisationId').val();
 
         var proddata = {
             "OrganisationName": name,
@@ -3985,9 +3983,8 @@ async: true
         };
             $.ajax({
                 type: "Post",
-                data: JSON.stringify({ model: proddata}),
+                data: proddata,
                 url: '@Url.Action("AddNamedParty", "Services")',
-                contentType: "application/json; charset=utf-8",
                 success: function () {
                 //$.smallBox({
                 //        title: "Named Party has been saved",
@@ -3999,7 +3996,13 @@ async: true
                    $(tabId + " :input").val("");
 
                 }
-            });
+            }) .done(function (data) {
+                debugger;
+    })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+        alert("There was an error while trying to save the Boat Use.");
+    });
         }
 
 
@@ -4442,6 +4445,7 @@ async: true
 
 
     function EditNamedParties(classId, boatUseId) {
+        debugger;
                             event.preventDefault();
 
         var _sheetId = $('#AnswerSheetId').val();
@@ -4463,7 +4467,7 @@ async: true
 async: true
     })
         .done(function (data) {
-
+            debugger;
             //if (data.OperatorYearsOfExp != "" && data.OperatorYearsOfExp != null ) {
             //    $('#SkprExpSec').show('2000');
             //    $('#SkprExpSec').removeClass("hidden");
@@ -4473,7 +4477,7 @@ async: true
             //    $('#SkprExpSec').addClass("hidden");
             //    $('#OperatorYearsOfExpModal').val("");
             //}
-        $('#OrganisationId').val(data.iD);
+        $('#NamedPartyOrganisationId').val(data.id);
         $('#NPOrgName').val(data.organisationName);
         $('#NPOrgPhone').val(data.organisationPhone);
         $('#NPOrgWebsite').val(data.website);
@@ -6891,7 +6895,7 @@ async: true
     }
 
     function hasTrailer() {
-
+        debugger;
         var hasT = $('#BoatIsTrailered').val();
         console.log(hasT);
 
