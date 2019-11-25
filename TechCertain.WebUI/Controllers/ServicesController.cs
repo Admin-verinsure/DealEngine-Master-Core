@@ -44,13 +44,14 @@ namespace TechCertain.WebUI.Controllers
         IReferenceService _referenceService;
         IEmailService _emailService;
         IInsuranceAttributeService _insuranceAttributeService;
+        IMapperSession<BusinessContract> _businessContractRepository;
         IMapper _mapper;
 
 
         public ServicesController(IUserService userService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
-            IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService,
+            IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService, IMapperSession<BusinessContract> businessContractRepository,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
             : base (userService)
@@ -82,6 +83,7 @@ namespace TechCertain.WebUI.Controllers
             _mapper = mapper;
 
             _insuranceAttributeService = insuranceAttributeService;
+            _businessContractRepository = businessContractRepository;
 
         }
 
@@ -2435,7 +2437,151 @@ namespace TechCertain.WebUI.Controllers
             }
             return Json(model);
         }
-        
+
+
+        #endregion
+
+        #region BusinessContracts
+
+        [HttpPost]
+        public async Task<IActionResult> AddBusinessContract(BusinessContractViewModel model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+            var user = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+            if (sheet == null)
+                throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+
+            BusinessContract businessContract = _businessContractRepository.FindAll().FirstOrDefault(bc => bc.Id == model.BusinessContractId);
+            if (businessContract == null)
+                businessContract = model.ToEntity(user);
+            model.UpdateEntity(businessContract);
+            
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            {
+                sheet.BusinessContracts.Add(businessContract);
+                await uow.Commit();
+            }
+
+            model.BusinessContractId = businessContract.Id;
+
+            return Json(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetBusinessContract(Guid answerSheetId, Guid businessContractId)
+        {
+            BusinessContractViewModel model = new BusinessContractViewModel();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+            BusinessContract businessContract = sheet.BusinessContracts.FirstOrDefault(bc => bc.Id == businessContractId);
+            if (businessContract != null)
+            {
+                model = BusinessContractViewModel.FromEntity(businessContract);
+                model.AnswerSheetId = answerSheetId;
+            }
+            return Json(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBusinessContracts(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                          string searchField, string searchString, string searchOper, string filters)
+        {
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+            if (sheet == null)
+                throw new Exception("No valid information for id " + informationId);
+
+            var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == removed && bc.DateDeleted == null).ToList();
+
+            if (_search)
+            {
+                switch (searchOper)
+                {
+                    case "eq":
+                        businessContracts = businessContracts.Where(searchField + " = \"" + searchString + "\"").ToList();
+                        break;
+                    case "bw":
+                        businessContracts = businessContracts.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                        break;
+                    case "cn":
+                        businessContracts = businessContracts.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                        break;
+                }
+            }
+            businessContracts = businessContracts.ToList();
+
+            XDocument document = null;
+            JqGridViewModel model = new JqGridViewModel();
+            model.Page = 1;
+            model.TotalRecords = businessContracts.Count;
+            model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+
+            int offset = rows * (page - 1);
+            for (int i = offset; i < offset + rows; i++)
+            {
+                if (i == model.TotalRecords)
+                    break;
+
+                BusinessContract businessContract = businessContracts[i];
+                JqGridRow row = new JqGridRow(businessContract.Id);
+                row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
+                model.AddRow(row);
+            }
+
+            // convert model to XDocument for rendering
+            document = model.ToXml();
+            return Xml(document);
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetBusinessContractss(Guid informationId, int rows, int page, string sidx, string sord,
+                                          string searchField, string searchString, string searchOper, string filters)
+        {
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+            if (sheet == null)
+                throw new Exception("No valid information for id " + informationId);
+
+            var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == false && bc.DateDeleted == null).ToList();
+
+            XDocument document = null;
+            JqGridViewModel model = new JqGridViewModel();
+            model.Page = 1;
+            model.TotalRecords = businessContracts.Count;
+            model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+
+            int offset = rows * (page - 1);
+            for (int i = offset; i < offset + rows; i++)
+            {
+                if (i == model.TotalRecords)
+                    break;
+
+                BusinessContract businessContract = businessContracts[i];
+                JqGridRow row = new JqGridRow(businessContract.Id);
+                row.AddValues(businessContract.Id, businessContract.Year, businessContract.ContractTitle, businessContract.ConstructionValue, businessContract.Fees, businessContract.ContractType, businessContract.Id);
+                model.AddRow(row);
+            }
+
+            // convert model to XDocument for rendering
+            document = model.ToXml();
+            return Xml(document);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetBusinessContractRemovedStatus(Guid businessContractId, bool status)
+        {
+            BusinessContract businessContract = await _businessContractRepository.GetByIdAsync(businessContractId);
+
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            {
+                businessContract.Removed = status;
+                await uow.Commit();
+            }
+
+            return new JsonResult(true);
+        }
 
         #endregion
 

@@ -10,8 +10,9 @@ namespace TechCertain.Domain.Entities
         public virtual string Description { get; set; }
         public virtual int Classification {get; set; }
         public virtual bool Required { get; set; }
+        public virtual decimal Pecentage { get; set; }
 
-		protected BusinessActivity () : this (null) { }
+        protected BusinessActivity () : this (null) { }
 
 		public BusinessActivity (User createdBy)
 			: base (createdBy)

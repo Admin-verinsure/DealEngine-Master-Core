@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NHibernate.AspNetCore.Identity;
-using NHibernate.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.WebUI.Models.Authorization;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using Claim = System.Security.Claims.Claim;
+using NHibernate.Linq;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -45,6 +41,7 @@ namespace TechCertain.WebUI.Controllers
         {
             var user = await CurrentUser();
             var userRoleList = await _userRoleService.GetRolesByOrganisation(user.PrimaryOrganisation);
+
             var userList = await _userService.GetAllUsers();
             var roleList = new List<IdentityRole>();
             var organisationList = await _organisationService.GetAllOrganisations();
@@ -63,26 +60,34 @@ namespace TechCertain.WebUI.Controllers
             model.ClaimList = claimList;
             model.Organisations = organisationList;
 
-            if (userRoleList.Count != 0)
+            if (user.PrimaryOrganisation.IsTC)
             {
-                foreach(var userRole in userRoleList)
-                {
-                    roleList.Add(userRole.IdentityRole);
-                }
-
-                model.RoleList = roleList;
+                roleList = await _roleManager.Roles.ToListAsync();
             }
+            else
+            {
+                if (userRoleList.Count != 0)
+                {
+                    foreach (var userRole in userRoleList)
+                    {
+                        roleList.Add(userRole.IdentityRole);
+                    }
+
+                }
+            }
+
+            model.RoleList = roleList;
 
             if (userList.Count != 0)
             {
                 model.UserList = userList;
             }
 
-            return View(model);            
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRole(string RoleName, string[] Claims, Guid OrganisationId)
+        public async Task<IActionResult> AddRole(string RoleName, string[] Claims, string OrganisationId)
         {
             var user = await CurrentUser();
             var isRole = await _roleManager.RoleExistsAsync(RoleName);
@@ -90,7 +95,7 @@ namespace TechCertain.WebUI.Controllers
 
             if(OrganisationId != null)
             {
-                organisation = await _organisationService.GetOrganisation(OrganisationId);
+                organisation = await _organisationService.GetOrganisation(Guid.Parse(OrganisationId));
             }
 
             if (!isRole)

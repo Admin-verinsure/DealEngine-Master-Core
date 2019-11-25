@@ -87,7 +87,7 @@ namespace TechCertain.Services.Impl
             NameValueCollection activityRevenueData = new NameValueCollection();
             foreach (string key in activityRevenue)
                 activityRevenueData.Add(key, collection[key].FirstOrDefault());
-            await SaveRevenueData(sheet, activityRevenueData, null);
+            //await SaveRevenueData(sheet, activityRevenueData, null);
 
             // get shared data
             var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
@@ -130,34 +130,35 @@ namespace TechCertain.Services.Impl
         //    }
         //}
 
-        async Task SaveRevenueData(ClientInformationSheet sheet, NameValueCollection revenueData, User creatingUser)
-        {
-            foreach (string key in revenueData.Keys)
-            {
-                string[] parts = key.Split('_');
+        //change to method
+        //async Task SaveRevenueData(ClientInformationSheet sheet, NameValueCollection revenueData, User creatingUser)
+        //{
+        //    foreach (string key in revenueData.Keys)
+        //    {
+        //        string[] parts = key.Split('_');
 
-                RevenueByActivity activityRevenue = sheet.RevenueData.FirstOrDefault(rd => rd.Activity == parts[1]);
-                if (activityRevenue == null)
-                {
-                    activityRevenue = new RevenueByActivity(creatingUser)
-                    {
-                        Activity = parts[1],
-                        RevenueByCountry = new List<RevenueByCountry>()
-                    };
-                    sheet.RevenueData.Add(activityRevenue);
-                }
-                RevenueByCountry countryRevenue = activityRevenue.RevenueByCountry.FirstOrDefault(rc => rc.Country == parts[2]);
-                if (countryRevenue == null)
-                {
-                    countryRevenue = new RevenueByCountry(creatingUser)
-                    {
-                        Country = parts[2]
-                    };
-                    activityRevenue.RevenueByCountry.Add(countryRevenue);
-                }
-                countryRevenue.DeclaredRevenue = Convert.ToDecimal(revenueData.Get(key));
-            }
-        }
+        //        RevenueByActivity activityRevenue = sheet.RevenueData.FirstOrDefault(rd => rd.Territory == parts[1]);
+        //        if (activityRevenue == null)
+        //        {
+        //            activityRevenue = new RevenueByActivity(creatingUser)
+        //            {
+        //                Activity = parts[1],
+        //                RevenueByCountry = new List<RevenueByCountry>()
+        //            };
+        //            sheet.RevenueData.Add(activityRevenue);
+        //        }
+        //        RevenueByCountry countryRevenue = activityRevenue.RevenueByCountry.FirstOrDefault(rc => rc.Country == parts[2]);
+        //        if (countryRevenue == null)
+        //        {
+        //            countryRevenue = new RevenueByCountry(creatingUser)
+        //            {
+        //                Country = parts[2]
+        //            };
+        //            activityRevenue.RevenueByCountry.Add(countryRevenue);
+        //        }
+        //        countryRevenue.DeclaredRevenue = Convert.ToDecimal(revenueData.Get(key));
+        //    }
+        //}
     }
 }
 
