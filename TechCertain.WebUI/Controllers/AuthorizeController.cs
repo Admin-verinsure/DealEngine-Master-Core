@@ -9,6 +9,7 @@ using TechCertain.WebUI.Models.Authorization;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using Claim = System.Security.Claims.Claim;
+using NHibernate.Linq;
 
 namespace TechCertain.WebUI.Controllers
 {
