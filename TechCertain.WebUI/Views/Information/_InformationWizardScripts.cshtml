@@ -1961,7 +1961,7 @@ function ListNonNZCountries() {
 };
 
     function GetTerritoriesForRevenue() {
-    var territoriesArray = [ 'NZ' ];
+    var territoriesArray = [];
     $('#SharedTerritories option:selected').each (function(index) {
         territoriesArray.push($(this).text());
     })
@@ -2101,13 +2101,29 @@ function GetActivitiesForRevenue() {
     }
 
     function SharedRevenueCalculation() {
-        debugger;
+        event.preventDefault();
         //hardcored tables
         var table = document.getElementById("sharedRevenueActivityTable");
-        validateTable(table);
+        //validateTable(table);
         table = document.getElementById("sharedRevenueTerritoriesTable");
-        validateTable(table);
+        //validateTable(table);
 
+
+        var revenueDataForm = $('#sharedRevenueId').serialize();
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+        var postData = { Form: revenueDataForm, ClientInformationSheetId: clientInformationSheetId };
+
+        $.ajax({
+            url: '@Url.Action("SaveRevenueData", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                debugger;
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
     }
 
     function validateTable(table) {        

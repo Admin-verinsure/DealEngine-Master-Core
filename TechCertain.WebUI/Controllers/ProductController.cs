@@ -19,23 +19,25 @@ namespace TechCertain.WebUI.Controllers
 		IInformationTemplateService _informationService;
         IUnitOfWork _unitOfWork;
 		IMapperSession<Product> _productRepository;
-        IMapperSession<Territory> _TerritoryRepository;
+        ITerritoryService _territoryService;
+        IMapperSession<RevenueByActivity> _revenueByActivityRepository;
         IMapperSession<RiskCategory> _riskRepository;
 		IMapperSession<RiskCover> _riskCoverRepository;
 		IMapperSession<Organisation> _organisationRepository;
 		IMapperSession<Document> _documentRepository;
 		IMapperSession<Programme> _programmeRepository;
 
-		public ProductController(IUserService userRepository, IInformationTemplateService informationService, 
-		                         IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<Territory> territoryRepository, IMapperSession<RiskCategory> riskRepository,
+		public ProductController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<RevenueByActivity> revenueByActivityRepository,
+                                 IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, ITerritoryService territoryService, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
 								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
 			: base (userRepository)
-		{			
-			_informationService = informationService;
+		{
+            _revenueByActivityRepository = revenueByActivityRepository;
+            _informationService = informationService;
 			_unitOfWork = unitOfWork;
 			_productRepository = productRepository;
-            _TerritoryRepository = territoryRepository;
+            _territoryService = territoryService;
             _riskRepository = riskRepository;
 			_riskCoverRepository = riskCoverRepository;
 			_organisationRepository = organisationRepository;
@@ -255,15 +257,22 @@ namespace TechCertain.WebUI.Controllers
                 var user = await CurrentUser();
                 var programme = await _programmeRepository.GetByIdAsync(Guid.Parse(ProgrammeId));
 
-                Territory territory = new Territory(user, Location);
-                territory.Ispublic = IsPublic;
-                territory.Zoneorder = ZoneNo;
-                territory.ExclorIncl = IncluExclu;
+                Territory territory = new Territory(user, Location)
+                {
+                    Ispublic = IsPublic,
+                    Zoneorder = ZoneNo,
+                    ExclorIncl = IncluExclu,
+                    Programme = programme
+                };
 
-                programme.territory.Add(territory);
-                territory.Programmes.Add(programme);
-                await _TerritoryRepository.AddAsync(territory);
-                await _programmeRepository.UpdateAsync(programme);
+                var territoryNZ = await _territoryService.GetTerritoryByName("NZ");
+                await _territoryService.AddTerritory(territory);
+
+                //RevenueByActivity sharedRevenue = new RevenueByActivity(user);
+                //sharedRevenue.Territory = territory;                
+                //await _revenueByActivityRepository.AddAsync(sharedRevenue);
+                //programme.RevenueByActivity = sharedRevenue;
+                //await _programmeRepository.UpdateAsync(programme);
 
                 return Redirect("~/Product/MyProducts");
             }

@@ -14,6 +14,9 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.Infrastructure.Tasking;
 using TechCertain.WebUI.Helpers;
+using Microsoft.Extensions.Primitives;
+using System.Web;
+using System.Collections.Specialized;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -25,6 +28,7 @@ namespace TechCertain.WebUI.Controllers
         IInformationItemService _informationItemService;
         IInformationSectionService _informationSectionService;
         IInformationTemplateService _informationTemplateService;
+        ITerritoryService _territoryService;
         IFileService _fileService;
         IClientInformationService _clientInformationService;
         IChangeProcessService _changeProcessService;
@@ -57,6 +61,7 @@ namespace TechCertain.WebUI.Controllers
             IActivityService activityService,
             IAdvisoryService advisoryService,
             IUserService userService,
+            ITerritoryService territoryService,
             IInformationItemService informationItemService,
             IChangeProcessService changeProcessService,
             IInformationSectionService informationSectionService,
@@ -88,6 +93,7 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper)
             : base (userService)
         {
+            _territoryService = territoryService;
             _advisoryService = advisoryService;
             _activityService = activityService;
             _userService = userService;
@@ -2200,6 +2206,62 @@ namespace TechCertain.WebUI.Controllers
             }
 
             return Redirect("/Information/StartInformation/" + cis.Id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveRevenueData(IFormCollection Form, string ClientInformationSheetId)
+        {
+            var user = await CurrentUser();
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            StringValues stringValues;
+            List<Territory> territories = new List<Territory>();
+            List<BusinessActivity> businessActivities = new List<BusinessActivity>();
+            Form.TryGetValue("Form", out stringValues);
+            var arrayValues = HttpUtility.UrlDecode(stringValues.ToString());
+            var formValues = arrayValues.Split('&');
+            NameValueCollection pairs = new NameValueCollection();
+            var count = 3;
+            foreach (var str in formValues)
+            {
+                var line = str.Split('=');
+                pairs.Add(line[0], line[1]);
+            }
+
+            var territoryValues = pairs.GetValues("Territories");
+            foreach(var territoryName in territoryValues)
+            {
+                var territory = await _territoryService.GetTerritoryByName(territoryName);
+                var territoryPercentage = pairs.Get(count);
+                territory.Pecentage = decimal.Parse(territoryPercentage);
+                await _territoryService.UpdateTerritory(territory);
+                territories.Add(territory);
+                count++;
+            }
+            
+            var activityValues = pairs.GetValues("sharedRevenueActivities");
+            foreach (var activityCode in activityValues)
+            {
+                var businessActivity = await _businessActivityService.GetBusinessActivityByCode(activityCode);
+                var businessActivityPercentage = pairs.Get(count);
+                businessActivity.Pecentage = decimal.Parse(businessActivityPercentage);
+                await _businessActivityService.UpdateBusinessActivity(businessActivity);
+                businessActivities.Add(businessActivity);
+                count++;
+            }
+
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                RevenueByActivity revenueByActivity = new RevenueByActivity(user)
+                {
+                    TotalRevenue = 10000,
+                    Activities = businessActivities,
+                    Territories = territories,
+                };
+                sheet.RevenueData = revenueByActivity;
+                await uow.Commit();
+            }
+
+            return Ok();
         }
 
         public async Task<InformationViewModel> GetInformationViewModel(Guid programmeId)

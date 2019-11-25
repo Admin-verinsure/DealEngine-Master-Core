@@ -69,7 +69,6 @@ namespace TechCertain.WebUI.Models
             CreateMap<User, UserDetailsVM>();
 
             CreateMap<RevenueByActivity, RevenueByActivityViewModel>();
-            CreateMap<RevenueByCountry, RevenueByCountryViewModel>();
             CreateMap<BusinessActivity, BusinessActivityViewModel>();
 
             // Policy

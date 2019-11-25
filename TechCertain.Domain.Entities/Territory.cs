@@ -9,7 +9,7 @@ namespace TechCertain.Domain.Entities
 		public virtual string Location
 		{
 			get;
-			protected set;
+			set;
 		}
 
         public virtual string[] SelectedInclorExcl { get; set; }
@@ -26,17 +26,15 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
-        public virtual IList<Programme> Programmes
-        {
-            get;
-            set;
-        }
+        
+        public virtual decimal Pecentage { get; set; }
+        public virtual Programme Programme { get; set; }
+
         protected Territory() : base (null) { }
 
 		public Territory (User createdBy, string location)
 			: base (createdBy)
 		{
-            Programmes = new List<Programme>();
             Location = location;
 		}
 	}

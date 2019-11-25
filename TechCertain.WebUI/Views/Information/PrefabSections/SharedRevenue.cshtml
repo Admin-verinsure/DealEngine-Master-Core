@@ -1,6 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
-    @using(Html.BeginForm()){ 
+    <form class="smart-form" id="sharedRevenueId" formaction="#">
 
         <div id="SharedRevenue">
 
@@ -18,8 +18,8 @@
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
                                 <div class="row">
-                                    <label class="btn btn-primary">
-                                        <input name="radio-outsideTradeNZ" type="radio" value="yes" onchange="toggleTerritoriesVisible('active')"><i></i> Yes, I trade outside of New Zealand
+                                    <label class="btn btn-primary col-12">
+                                        <input name="radio-outsideTradeNZ" type="radio" value="yes" onchange="toggleTerritoriesVisible('active')"><i></i> Yes, I do trade outside of New Zealand
                                     </label>
                                 </div>
                                 <div class="row">
@@ -107,7 +107,7 @@
                             <div id="sharedRevenueActivity" class="input-group">
                                 <button class="btn-primary btn" onclick="BuildRevenuesTable('false');SetCurrentTab('RevenueTabs4');event.preventDefault()">Go To Activity Breakdown</button>
                             </div>
-                            </div>
+                        </div>
                     </div>
                 </fieldset>
             </div>
@@ -154,7 +154,7 @@
                 </fieldset>
             </div>
         </div>
-}
+    </form>
 
 
 <style>

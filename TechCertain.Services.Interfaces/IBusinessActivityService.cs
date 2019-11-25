@@ -14,6 +14,8 @@ namespace TechCertain.Services.Interfaces
         Task<BusinessActivity> GetBusinessActivity(Guid Id);
         Task AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity);
         Task<BusinessActivity> GetBusinessActivitiesByClientProgramme(Guid programmeId);
+        Task<BusinessActivity> GetBusinessActivityByCode(string AnzsciCode);
+        Task UpdateBusinessActivity(BusinessActivity businessActivity);
     }
     
 }
