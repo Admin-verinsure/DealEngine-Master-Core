@@ -4,7 +4,7 @@ namespace TechCertain.Services.Interfaces
 {
     public interface IUWMService
     {
-        bool UWM_ICIBNZIMV(User createdBy, ClientInformationSheet sheet, string reference);
+        bool UWM(User createdBy, ClientInformationSheet sheet, string reference);
 
     }
 }

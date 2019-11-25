@@ -1572,6 +1572,13 @@ namespace TechCertain.WebUI.Controllers
             //}
             model.Claims = claims;
 
+            var businessContracts = new List<BusinessContractViewModel>();
+            for (var i = 0; i < sheet.BusinessContracts.Count; i++)
+            {
+                businessContracts.Add(BusinessContractViewModel.FromEntity(sheet.BusinessContracts.ElementAtOrDefault(i)));
+            }
+            model.BusinessContracts = businessContracts;
+
             var interestedParties = new List<OrganisationViewModel>();
             try
             {
@@ -1922,8 +1929,8 @@ namespace TechCertain.WebUI.Controllers
                 {
                     if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                     {
-                        //UWM ICIB
-                        _uWMService.UWM_ICIBNZIMV(user, sheet, reference);
+                        //UWM
+                        _uWMService.UWM(user, sheet, reference);
 
                         //sheet.Status = "Submitted";
                         await uow.Commit();

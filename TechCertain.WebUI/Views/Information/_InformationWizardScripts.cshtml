@@ -243,6 +243,7 @@
     $('#Claimtabs').tabs();
     $('#BoatUsetabs').tabs();
     $('#NamedPartiestabs').tabs();
+    $('#BusinessContracttabs').tabs();
 
     $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
     $('#ClearBoat').css({ "background-color": "red", "color": "White" });
@@ -400,6 +401,7 @@
                $('#boatTabs-3').trigger('chosen:updated');
                $('#ui-accordion-accordion-header-3').trigger('chosen:updated');
                $('#BoatLandLocation').trigger('chosen:updated');
+               $('#tblBusinessContract').trigger('reloadGrid');
            })
            .fail(function () {
                alert("Unable to save.");

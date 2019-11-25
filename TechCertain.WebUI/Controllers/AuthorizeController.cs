@@ -45,6 +45,7 @@ namespace TechCertain.WebUI.Controllers
         {
             var user = await CurrentUser();
             var userRoleList = await _userRoleService.GetRolesByOrganisation(user.PrimaryOrganisation);
+
             var userList = await _userService.GetAllUsers();
             var roleList = new List<IdentityRole>();
             var organisationList = await _organisationService.GetAllOrganisations();
@@ -63,22 +64,29 @@ namespace TechCertain.WebUI.Controllers
             model.ClaimList = claimList;
             model.Organisations = organisationList;
 
-            if (userRoleList.Count != 0)
+            if (user.PrimaryOrganisation.IsTC)
             {
-                foreach(var userRole in userRoleList)
-                {
-                    roleList.Add(userRole.IdentityRole);
-                }
-
-                model.RoleList = roleList;
+                roleList = await _roleManager.Roles.ToListAsync();
             }
+            else
+            {
+                if (userRoleList.Count != 0)
+                {
+                    foreach (var userRole in userRoleList)
+                    {
+                        roleList.Add(userRole.IdentityRole);
+                    }
+                }
+            }
+
+            model.RoleList = roleList;
 
             if (userList.Count != 0)
             {
                 model.UserList = userList;
             }
 
-            return View(model);            
+            return View(model);
         }
 
         [HttpPost]
