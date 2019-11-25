@@ -1,0 +1,181 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+<div class="padding-10">
+    <div id="DNOForm" class="smart-form" novalidate="novalidate">
+        <fieldset id="StatutoryLiabilityInsurance">
+            <div class="row">
+
+
+                <div class="panel-body" id="@Model.Id body">
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Would you like Employment Practices Liability Insurance?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="EmployerPracticesLiability1" onchange="EmployerPracticesLiabilityInsurance1Selected('EmployerPracticesLiability1')" class="form-control rmv editable" name="EmployerPracticesLiability1">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEmployerPractices1"></p>
+
+                        </section>
+
+                    </section>
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="EmployerPracticesLiability2Sec">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Is this a renewal of an existing policy placed with NZACS?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="EmployerPracticesLiability2" class="form-control rmv editable" name="EmployerPracticesLiability2">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEmployerPractices2"></p>
+
+                        </section>
+
+                    </section>
+
+
+
+                </div>
+            </div>
+
+            <button onclick="ValidatePractice(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="SaveEmployerLiability(event,'#DNOForm')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
+
+        </fieldset>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+         $(window).on("load", function () {
+            debugger;
+
+           var clientInformationSheet = $('#AnswerSheetId').val();
+           var postData = {ClientInformationSheet : clientInformationSheet};
+
+
+            $.ajax({
+     	// change back once mono decides to fix
+             url: '@Url.Action("GetEmployerPracticesLiability", "Information")',
+             type: "POST",
+             data: postData
+             })
+                .done(function (data) {
+                    debugger;
+             if (data != "") {
+                for (var item = 0; item < data.length; item++){
+
+                  var arr = data[item];
+                  var count = 0;
+                    $('#' + arr[count]).val(arr[count + 1]);
+                    if ($('#EmployerPracticesLiability1').val() == 'true') {
+                        $('#EmployerPracticesLiability2Sec').removeClass('hidden');
+
+                    } else {
+                        $('#EmployerPracticesLiability2Sec').addClass('hidden');
+                    }
+                }
+             };
+
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                  alert("Unable to save.");
+                });
+         });
+
+    function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {
+        debugger;
+
+        var employerPracticesLiability = document.getElementById(EmployerPracticesLiability);
+
+        if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "true") {
+            $('#EmployerPracticesLiability2Sec').removeClass('hidden');
+        } else {
+            $('#EmployerPracticesLiability2Sec').addClass('hidden');
+        }
+    };
+
+     function ValidatePractice() {
+        event.preventDefault();
+
+        var GLI1 = $('#EmployerPracticesLiability1').val();
+        var GLI2 = $('#EmployerPracticesLiability2').val();
+        var validity = true;
+        if (GLI1 == "") {
+            $('#ValidateEmployerPractices1').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateEmployerPractices1').html("<i></i>");
+        }
+        if (GLI2 == "" && GLI1 == 'true') {
+            $('#ValidateEmployerPractices2').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateEmployerPractices2').html("<i></i>");
+        }
+
+        if (validity) {
+            SaveEmployerPracticesLiability(); 
+        }
+    };
+
+
+
+       function SaveEmployerPracticesLiability() {
+            debugger;
+                   var EmployerPracticesLiability = new Array(2);
+
+                   for (var i = 0; i < EmployerPracticesLiability.length; i++) {
+                       EmployerPracticesLiability[i] = new Array(2);
+                   }
+
+            for (var i = 1; i <= 2; i++) {
+                for (var j = 0; j < 2; j++) {
+                    EmployerPracticesLiability[i-1][0] = "EmployerLiabilityInsurance" + i;
+                var employerPracticesLiability = "#EmployerLiabilityInsurance" + i;
+                EmployerPracticesLiability[i-1][1] = $(employerPracticesLiability).val();
+                }
+
+            }
+
+                   var postData = { Answers: EmployerPracticesLiability, ClientInformationSheet: clientInformationSheet };
+
+             $.ajax({
+                           url: '@Url.Action("UpdateAnswer", "Information")',
+                           type: "POST",
+                           data: postData
+                       })
+                           .done(function (data) {
+
+                           })
+                           .fail(function (a, s, d) {
+                               alert("Unable to save.");
+                           });
+
+
+        }
+</script>
+

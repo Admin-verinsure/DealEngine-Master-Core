@@ -25,6 +25,14 @@ namespace TechCertain.Domain.Entities
             ClientInformationSheet = InformationSheetId;
 
         }
+        public ClientInformationAnswer(User createdBy, string itemName, string value,  ClientInformationSheet InformationSheetId)
+           : base(createdBy)
+        {
+            ItemName = itemName;
+            Value = value;
+            ClientInformationSheet = InformationSheetId;
+
+        }
         public ClientInformationAnswer (User createdBy, string itemName, string value)
 			: base (createdBy)
 		{
