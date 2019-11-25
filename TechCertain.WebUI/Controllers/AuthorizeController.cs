@@ -62,7 +62,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (user.PrimaryOrganisation.IsTC)
             {
-                roleList = await _roleManager.Roles.TokListAsync();
+                roleList = await _roleManager.Roles.ToListAsync();
             }
             else
             {
