@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NHibernate.AspNetCore.Identity;
-using NHibernate.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.WebUI.Models.Authorization;
@@ -67,7 +62,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 foreach(var userRole in userRoleList)
                 {
-                    roleList.Add(userRole.IdentityRole);
+                    roleList.Add(userRole.IdentityRole);                    
                 }
 
                 model.RoleList = roleList;
@@ -82,7 +77,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRole(string RoleName, string[] Claims, Guid OrganisationId)
+        public async Task<IActionResult> AddRole(string RoleName, string[] Claims, string OrganisationId)
         {
             var user = await CurrentUser();
             var isRole = await _roleManager.RoleExistsAsync(RoleName);
@@ -90,7 +85,7 @@ namespace TechCertain.WebUI.Controllers
 
             if(OrganisationId != null)
             {
-                organisation = await _organisationService.GetOrganisation(OrganisationId);
+                organisation = await _organisationService.GetOrganisation(Guid.Parse(OrganisationId));
             }
 
             if (!isRole)

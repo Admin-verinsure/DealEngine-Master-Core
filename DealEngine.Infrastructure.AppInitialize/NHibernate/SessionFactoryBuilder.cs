@@ -76,12 +76,12 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                     try
                     {
                         var schemaUpdate = new SchemaUpdate(config);
-                        schemaUpdate.Execute(false, true);
+                        schemaUpdate.ExecuteAsync(false, true);
                         if (schemaUpdate.Exceptions.Count != 0)
                         {
                             foreach(var ex in schemaUpdate.Exceptions)
                             {
-                                throw new Exception(ex.Message);
+                                throw ex;
                             }
                         }
                             
