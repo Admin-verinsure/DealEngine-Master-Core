@@ -1421,27 +1421,9 @@ namespace TechCertain.WebUI.Controllers
                 }
 
             }
-            //foreach (var section in model.Sections)
-            //    foreach (var item in section.Items)
-            //    {
-            //        var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-            //        if (answer != null)
-            //            item.Value = answer.Value;
-            //    }
-           
+
             model.SharedData = new SharedDataViewModel();
             model.RevenueByTerritories = new List<RevenueByTerritoryViewModel>();
-            //model.RolesByLocation = new List<RoleDetailViewModel>();
-            var roleList = new List<RoleDetailViewModel>();
-            //foreach(Role role in _roleService.GetRolesByProgramme(clientProgramme.BaseProgramme.Id))
-            //{
-            //    RoleDetailViewModel roleDetail = new RoleDetailViewModel()
-            //    {
-            //        Role = role,
-            //    };
-            //    roleList.Add(roleDetail);                
-            //}
-            //model.RolesByLocation = roleList;
 
             List<RevenueByTerritoryViewModel> Lterritories = new List<RevenueByTerritoryViewModel>();
             var territories = _territoryRepository.FindAll().ToList(); 
@@ -1454,20 +1436,13 @@ namespace TechCertain.WebUI.Controllers
             
             model.RevenueByTerritories = Lterritories;
 
-            //IMapperSession<Territory> _TerritoryRepository;  sdsdsadsadsa
-            //foreach (var answer in sheet.SharedData.SharedAnswers)
-            //	model.SharedData.Add (answer.ItemName, answer.Value);
-
             var boats = new List<BoatViewModel>();
             for (var i = 0; i < sheet.Boats.Count(); i++)
             {
                 boats.Add(BoatViewModel.FromEntity(sheet.Boats.ElementAtOrDefault(i)));
 
             }
-            //foreach (Boat b in sheet.Boats)
-            //{
-            //    boats.Add(BoatViewModel.FromEntity(b));
-            //}
+
             model.Boats = boats;
 
             var operators = new List<OrganisationViewModel>();
@@ -1485,42 +1460,12 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
 
-            //foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Result.Where(ia => ia.InsuranceAttributeName == "Skipper"))
-            //{
-            //    foreach(var org in IA.IAOrganisations)
-            //    {
-            //        if(org.OrganisationType.Name== "Person - Individual")
-            //        {
-            //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-            //            ovm.OrganisationName = org.Name;
-            //            ovm.OrganisationEmail = org.Email;
-            //            ovm.ID = org.Id;
-            //            operators.Add(ovm);
-            //        }
-            //    }
-            //}
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
-
-
-            //foreach (Organisation org in _organisationRepository.FindAll().Result.Where(o => o.OrganisationType.Name == "Person - Individual"))
-            //{
-            //    foreach (var str in org.InsuranceAttributes)
-            //    {
-            //        if (str.InsuranceAttributeName == "Skipper")
-            //        {
-            //            OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-            //            ovm.OrganisationName = org.Name;
-            //            ovm.OrganisationEmail = org.Email;
-            //            ovm.ID = org.Id;
-            //            operators.Add(ovm);
-            //        }
-            //    }
-            //}
             if (sheet.Owner.OrganisationType.Name == "Person - Individual")
             {
                 OrganisationViewModel ovmowner = _mapper.Map<OrganisationViewModel>(sheet.Owner);
@@ -1543,28 +1488,9 @@ namespace TechCertain.WebUI.Controllers
                     Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
                 });
 
-                // boats.Add(BoatViewModel.FromEntity(sheet.Boats.ElementAtOrDefault(i)));
-
             }
-            //foreach (var ip in model.Operators)
-            //{
-            //    skipperlist.Add(new SelectListItem
-            //    {
-            //        Selected = false,
-            //        Text = ip.OrganisationName,
-            //        Value = ip.ID.ToString(),
-            //    });
-            //}
+
             model.SkipperList = skipperlist;
-
-
-
-            //var operators = new List<OperatorViewModel>();
-            //foreach (Operator oper in sheet.Operators)
-            //{
-            //    operators.Add(OperatorViewModel.FromEntity(oper));
-            //}
-            //model.Operators = operators;
 
             var claims = new List<ClaimViewModel>();
             for (var i = 0; i < sheet.ClaimNotifications.Count; i++)
@@ -1572,10 +1498,6 @@ namespace TechCertain.WebUI.Controllers
                 claims.Add(ClaimViewModel.FromEntity(sheet.ClaimNotifications.ElementAtOrDefault(i)));
             }
 
-            //foreach (Claim cl in sheet.Claims)
-            //{
-            //    claims.Add(ClaimViewModel.FromEntity(cl));
-            //}
             model.Claims = claims;
 
             var interestedParties = new List<OrganisationViewModel>();
