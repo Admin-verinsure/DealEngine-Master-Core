@@ -75,15 +75,15 @@
                 <fieldset>
                     <div class="container-fluid">
                         <div class="input-group mb-3">
-                            <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)">
-                        </div>
+                            <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" aria-label="Amount (to the nearest dollar)">
+                        @*</div>
 
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-3">*@
                             <table id="sharedRevenueTerritoriesTable" class="table">
                                 <thead>
                                 </thead>
                                 <tbody>
-                                    @foreach (var activity in Model.RevenueByActivity)
+                                    @*foreach (var activity in Model.RevenueByActivity)
                                     {
                                         <tr>
                                             <td>@activity.Activity</td>
@@ -98,7 +98,7 @@
                                                 </td>
                                             }
                                         </tr>
-                                    }
+                                    }*@
                                 </tbody>
                             </table>
                         </div>
@@ -117,14 +117,11 @@
                 <fieldset>
                     <div class="container-fluid">
                         <div class="input-group mb-3">
-                            <input type="number" class="form-control">
-                        </div>
-                        <div class="input-group mb-3">
                             <table id="sharedRevenueActivityTable" class="table">
                                 <thead>
                                 </thead>
                                 <tbody>
-                                    @foreach (var activity in Model.RevenueByActivity)
+                                    @*foreach (var activity in Model.RevenueByActivity)
                                     {
                                         <tr>
                                             <td>@activity.Activity</td>
@@ -139,7 +136,7 @@
                                                 </td>
                                             }
                                         </tr>
-                                    }
+                                    }*@
                                 </tbody>
                             </table>
                         </div>

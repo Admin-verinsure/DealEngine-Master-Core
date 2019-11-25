@@ -1014,6 +1014,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             model.BusinessActivities = businessactivity;
+
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
 
             //_taskingService.CreateTaskFor (CurrentUser(), sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
@@ -1720,7 +1721,6 @@ namespace TechCertain.WebUI.Controllers
             }
 
             model.BusinessActivities = businessactivity;
-            model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             model.Status = sheet.Status;
 
             List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
@@ -2143,21 +2143,40 @@ namespace TechCertain.WebUI.Controllers
             var formValues = arrayValues.Split('&');
             NameValueCollection pairs = new NameValueCollection();
             var count = 3;
+            var totalRevenue = 0;
             foreach (var str in formValues)
             {
                 var line = str.Split('=');
                 pairs.Add(line[0], line[1]);
             }
 
-            var territoryValues = pairs.GetValues("Territories");
-            foreach(var territoryName in territoryValues)
+            var totalRevenueValues = pairs.GetValues("totalRevenue");
+            foreach(var values in totalRevenueValues)
             {
-                var territory = await _territoryService.GetTerritoryByName(territoryName);
+                totalRevenue = int.Parse(values);
+            }
+
+            var territoryValues = pairs.GetValues("Territories");
+            if(territoryValues == null)
+            {
+                var territory = await _territoryService.GetTerritoryByName("NZ");
                 var territoryPercentage = pairs.Get(count);
                 territory.Pecentage = decimal.Parse(territoryPercentage);
                 await _territoryService.UpdateTerritory(territory);
                 territories.Add(territory);
                 count++;
+            }
+            else
+            {
+                foreach (var territoryName in territoryValues)
+                {
+                    var territory = await _territoryService.GetTerritoryByName(territoryName);
+                    var territoryPercentage = pairs.Get(count);
+                    territory.Pecentage = decimal.Parse(territoryPercentage);
+                    await _territoryService.UpdateTerritory(territory);
+                    territories.Add(territory);
+                    count++;
+                }
             }
             
             var activityValues = pairs.GetValues("sharedRevenueActivities");
@@ -2175,7 +2194,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 RevenueByActivity revenueByActivity = new RevenueByActivity(user)
                 {
-                    TotalRevenue = 10000,
+                    TotalRevenue = totalRevenue,
                     Activities = businessActivities,
                     Territories = territories,
                 };
