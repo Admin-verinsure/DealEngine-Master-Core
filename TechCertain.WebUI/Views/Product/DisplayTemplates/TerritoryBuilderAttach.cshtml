@@ -1,39 +1,19 @@
 ﻿@model TechCertain.WebUI.Models.Product.TerritoryAttachVM
 
-
-<div class="tab-pane" id="tab2">
-    <br />
-    <h3><strong>Setup </strong> - New Territory</h3>
-    <div class="row">
-        @*@Html.HiddenFor(m => m.OriginalProductId)
-            @Html.HiddenFor(m => m.CreatorOrganisation)
-            @Html.HiddenFor(m => m.OwnerOrganisation)*@
+<div class="container">
+    <h3><strong>Setup </strong> - Attach Programme</h3>
+    <div class="input-group">
+        <select id="TerritoryAttach_SelectedProgramme" name="TerritoryAttach.SelectedProgramme" class="col-4">
+            <option selected>-- Select a Programme</option>
+            @foreach (var prog in Model.BaseProgList)
+            {
+                <option value="@prog.Value">@prog.Text</option>
+            }
+        </select>
     </div>
-
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="form-group">
-                <label><strong>InclorExcl</strong></label>
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                    @Html.DropDownListFor(m => m.SelectedProgramme, Model.BaseProgList)
-
-                </div>
-            </div>
-        </div>
+    </br>
+    <div class="input-group">
+        <button type="submit" class="btn-primary btn" onclick="SubmitTerritory()">Submit</button>
     </div>
-
-
-    @*<div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    <div class="smart-form">
-                        <label class="checkbox">
-                            @Html.Bootstrap().CheckBoxFor(m => m.Ispublic).Class("form-control input-lg")
-                            <i></i>I want this territory to be publicly available.
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>*@
 </div>
+
