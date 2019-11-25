@@ -12,7 +12,12 @@ namespace TechCertain.Services.Interfaces
 
         Task<ClientInformationAnswer> CreateNewClaimHistory(string ClaimName, string value, string details, ClientInformationSheet InformationSheetID);
 
+        Task<ClientInformationAnswer> CreateNewSheetAns(string ClaimName, string value, ClientInformationSheet InformationSheetID);
+
         Task<ClientInformationAnswer> GetClaimHistoryByName(string ClaimName, Guid InformationSheetID);
+
+        Task<ClientInformationAnswer> GetSheetAnsByName(string ClaimName, Guid InformationSheetID);
+        Task<List<ClientInformationAnswer>> GetAllSheetAns();
 
         Task<List<ClientInformationAnswer>> GetAllClaimHistory();
     }

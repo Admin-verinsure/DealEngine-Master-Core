@@ -69,7 +69,7 @@ namespace TechCertain.Domain.Entities
         //public virtual IList<Operator> Operators { get; protected set; }
 
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
-
+        public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
         protected ClientInformationSheet () : this (null) { }
 
 		protected ClientInformationSheet (User createdBy)
@@ -84,6 +84,7 @@ namespace TechCertain.Domain.Entities
             BoatUses = new List<BoatUse>();
             ClaimNotifications = new List<ClaimNotification>();
             ClientInformationSheetAuditLogs = new List<AuditLog>();
+            BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
 		}
 
@@ -170,7 +171,10 @@ namespace TechCertain.Domain.Entities
         {
             ClientInformationSheetAuditLogs.Add(clientInformationSheetAuditLog);
         }
-
+        public virtual void AddBusinessContract(BusinessContract businessContract)
+        {
+            BusinessContracts.Add(businessContract);
+        }
         public virtual ClientInformationSheet CloneForUpdate (User cloningUser)
 		{
 			//if (PreviousInformationSheet != null)

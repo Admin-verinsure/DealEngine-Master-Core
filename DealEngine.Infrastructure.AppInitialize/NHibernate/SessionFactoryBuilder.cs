@@ -84,7 +84,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                                 throw ex;
                             }
                         }
-                            
+
                     }
                     catch (Exception ex)
                     {

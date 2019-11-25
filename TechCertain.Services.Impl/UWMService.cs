@@ -35,7 +35,7 @@ namespace TechCertain.Services.Impl
         }
 
         
-        public bool UWM_ICIBNZIMV(User createdBy, ClientInformationSheet sheet, string reference)
+        public bool UWM(User createdBy, ClientInformationSheet sheet, string reference)
         {
             var _modules = new Dictionary<string, IUnderwritingModule>();
             var modules = RegisterModules();

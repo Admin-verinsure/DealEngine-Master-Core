@@ -23,7 +23,15 @@ namespace TechCertain.Services.Impl
             await _clientInfomationsheetAnswer.AddAsync(clientInformationAnswer);
             return clientInformationAnswer;
 		}
+        
+        public async Task<ClientInformationAnswer> CreateNewSheetAns(string ClaimName, string value, ClientInformationSheet InformationSheetID)
+        {
+            ClientInformationAnswer answer = new ClientInformationAnswer(null, ClaimName, value, InformationSheetID);
+            // TODO - finish this later since I need to figure out what calls the controller function that calls this service function
+            await _clientInfomationsheetAnswer.AddAsync(answer);
 
+            return answer;
+        }
         public async Task<ClientInformationAnswer> CreateNewClaimHistory(string ClaimName, string value, string details, ClientInformationSheet InformationSheetID)
         {
             ClientInformationAnswer answer = new ClientInformationAnswer(null, ClaimName, value, details, InformationSheetID);
@@ -33,9 +41,20 @@ namespace TechCertain.Services.Impl
             return answer;
         }
 
+        public async Task<ClientInformationAnswer> GetSheetAnsByName(string ClaimName, Guid InformationSheetID)
+        {
+            return await _clientInfomationsheetAnswer.FindAll().FirstOrDefaultAsync(o => o.ItemName == ClaimName && o.ClientInformationSheet.Id == InformationSheetID);
+        }
+
         public async Task<ClientInformationAnswer> GetClaimHistoryByName(string ClaimName, Guid InformationSheetID)
         {
             return await _clientInfomationsheetAnswer.FindAll().FirstOrDefaultAsync(o => o.ItemName == ClaimName && o.ClientInformationSheet.Id== InformationSheetID);
+        }
+        
+        public async Task<List<ClientInformationAnswer>> GetAllSheetAns()
+        {
+            // we don't want to query ldap. That way lies timeouts. Or Dragons.
+            return await _clientInfomationsheetAnswer.FindAll().ToListAsync();
         }
 
         public async Task<List<ClientInformationAnswer>> GetAllClaimHistory()

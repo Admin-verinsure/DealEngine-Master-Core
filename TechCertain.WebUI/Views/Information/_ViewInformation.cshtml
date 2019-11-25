@@ -46,7 +46,7 @@
                     {
                         <div class="padding-10">
                             <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
-                                <fieldset>
+                                <fieldset id="@informationSection.Id">
                                     <div class="row">
                                         @if (informationSection.Items != null)
                                         {
@@ -88,7 +88,7 @@
                                                                 <label class="input">
                                                                     @*@Html.DropDownListFor(item => item.Student.StudentId, new SelectList(Model.StudentList, "StudentId", "FirstName"), "--Select--", new { @id = "myid", @class = "myclass" })*@
 
-                                                                    @Html.DropDownList(@item.Name, @item.Options,@item.Value, new { @id = @item.Name }).
+                                                                    @Html.DropDownList(@item.Name, @item.Options, @item.Value, new { @id = @item.Name }).
 
 
                                                                     @*@Html.DropDownList(@item.Name, @item.Options,@item.Value, new { @id = @item.Name }).SelectedValue(@item.Value).OptionLabel(@item.DefaultText).Id(@item.Name)*@
@@ -139,6 +139,9 @@
                                                     @Html.Raw("</div><div class=\"row\">")
                                                 }
                                             }
+
+                                            <button onclick="AddSection(informationSection.Id)" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                                            @*<button onclick="ClearBoats(event,'#boatTabs3','boatTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
                                         }
                                     </div>
                                 </fieldset>
