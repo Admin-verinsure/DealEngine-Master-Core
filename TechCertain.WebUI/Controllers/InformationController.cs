@@ -1014,6 +1014,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             model.BusinessActivities = businessactivity;
+
             model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
 
             //_taskingService.CreateTaskFor (CurrentUser(), sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
@@ -1727,7 +1728,6 @@ namespace TechCertain.WebUI.Controllers
             }
 
             model.BusinessActivities = businessactivity;
-            model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             model.Status = sheet.Status;
 
             List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
@@ -1809,6 +1809,183 @@ namespace TechCertain.WebUI.Controllers
 
             return Json(ClaimAnswers);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetDNO(Guid ClientInformationSheet)
+        {
+            String[][] DNOAnwers = new String[11][];
+            var count = 0;
+            String[] DNOItem;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DNO1" || c.ItemName == "DNO2" || c.ItemName == "DNO3"
+                                                                                                                                                          || c.ItemName == "DNO4" || c.ItemName == "DNO5" || c.ItemName == "DNO6" || c.ItemName == "DNO7"
+                                                                                                                                                          || c.ItemName == "DNO8" || c.ItemName == "DNO9" || c.ItemName == "DNO10" || c.ItemName == "DNO11")))
+            {
+                DNOItem = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    DNOItem[i] = answer.ItemName;
+                    DNOItem[i + 1] = answer.Value;
+                }
+
+                DNOAnwers[count] = DNOItem;
+                count++;
+            }
+
+            return Json(DNOAnwers);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetStatutoryLiability(Guid ClientInformationSheet)
+        {
+            String[][] GeneralLiabilityAnwers = new String[2][];
+            var count = 0;
+            String[] GeneralLiability;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "StatutoryLiability1" || c.ItemName == "StatutoryLiability2")))
+            {
+                GeneralLiability = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    GeneralLiability[i] = answer.ItemName;
+                    GeneralLiability[i + 1] = answer.Value;
+                }
+
+                GeneralLiabilityAnwers[count] = GeneralLiability;
+                count++;
+            }
+
+            return Json(GeneralLiabilityAnwers);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetEmployerLiability(Guid ClientInformationSheet)
+        {
+            String[][] GeneralLiabilityAnwers = new String[2][];
+            var count = 0;
+            String[] GeneralLiability;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerLiabilityInsurance1" || c.ItemName == "EmployerLiabilityInsurance2")))
+            {
+                GeneralLiability = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    GeneralLiability[i] = answer.ItemName;
+                    GeneralLiability[i + 1] = answer.Value;
+                }
+
+                GeneralLiabilityAnwers[count] = GeneralLiability;
+                count++;
+            }
+
+            return Json(GeneralLiabilityAnwers);
+        }
+
+        
+             [HttpPost]
+        public async Task<IActionResult> GetEmployerPracticesLiability(Guid ClientInformationSheet)
+        {
+            String[][] GeneralLiabilityAnwers = new String[2][];
+            var count = 0;
+            String[] GeneralLiability;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerPracticesLiability1" || c.ItemName == "EmployerPracticesLiability2")))
+            {
+                GeneralLiability = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    GeneralLiability[i] = answer.ItemName;
+                    GeneralLiability[i + 1] = answer.Value;
+                }
+
+                GeneralLiabilityAnwers[count] = GeneralLiability;
+                count++;
+            }
+
+            return Json(GeneralLiabilityAnwers);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetGeneralLiability(Guid ClientInformationSheet)
+        {
+            String[][] GeneralLiabilityAnwers = new String[3][];
+            var count = 0;
+            String[] GeneralLiability;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "GeneralLiabilityInsurance1" || c.ItemName == "GeneralLiabilityInsurance2" || c.ItemName == "GeneralLiabilityInsurance3")))
+
+            {
+                GeneralLiability = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    GeneralLiability[i] = answer.ItemName;
+                    GeneralLiability[i + 1] = answer.Value;
+                }
+
+                GeneralLiabilityAnwers[count] = GeneralLiability;
+                count++;
+            }
+
+            return Json(GeneralLiabilityAnwers);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetDirectorsandOfficersLiability(Guid ClientInformationSheet)
+        {
+            String[][] GeneralLiabilityAnwers = new String[3][];
+            var count = 0;
+            String[] GeneralLiability;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DirectorsandOfficers1" || c.ItemName == "DirectorsandOfficers2" || c.ItemName == "DirectorsandOfficers3")))
+
+            {
+                GeneralLiability = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    GeneralLiability[i] = answer.ItemName;
+                    GeneralLiability[i + 1] = answer.Value;
+                }
+
+                GeneralLiabilityAnwers[count] = GeneralLiability;
+                count++;
+            }
+
+            return Json(GeneralLiabilityAnwers);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateAnswer(List<string[]> Answers, Guid ClientInformationSheet)
+        {
+            ClientInformationSheet sheet = null;
+
+            foreach (var item in Answers)
+            {
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    for (var x = 0; x < item.Length - 1; x++)
+                    {
+                        ClientInformationAnswer answer = _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet).Result;
+                        if (answer != null)
+                        {
+                            answer.Value = item[1];
+                            //answer.ClaimDetails = item[2];
+                        }
+                        else
+                        {
+                            sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
+                            await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                        }
+                    }
+                    await uow.Commit();
+                }
+            }
+            return Json(true);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
@@ -2150,21 +2327,40 @@ namespace TechCertain.WebUI.Controllers
             var formValues = arrayValues.Split('&');
             NameValueCollection pairs = new NameValueCollection();
             var count = 3;
+            var totalRevenue = 0;
             foreach (var str in formValues)
             {
                 var line = str.Split('=');
                 pairs.Add(line[0], line[1]);
             }
 
-            var territoryValues = pairs.GetValues("Territories");
-            foreach(var territoryName in territoryValues)
+            var totalRevenueValues = pairs.GetValues("totalRevenue");
+            foreach(var values in totalRevenueValues)
             {
-                var territory = await _territoryService.GetTerritoryByName(territoryName);
+                totalRevenue = int.Parse(values);
+            }
+
+            var territoryValues = pairs.GetValues("Territories");
+            if(territoryValues == null)
+            {
+                var territory = await _territoryService.GetTerritoryByName("NZ");
                 var territoryPercentage = pairs.Get(count);
                 territory.Pecentage = decimal.Parse(territoryPercentage);
                 await _territoryService.UpdateTerritory(territory);
                 territories.Add(territory);
                 count++;
+            }
+            else
+            {
+                foreach (var territoryName in territoryValues)
+                {
+                    var territory = await _territoryService.GetTerritoryByName(territoryName);
+                    var territoryPercentage = pairs.Get(count);
+                    territory.Pecentage = decimal.Parse(territoryPercentage);
+                    await _territoryService.UpdateTerritory(territory);
+                    territories.Add(territory);
+                    count++;
+                }
             }
             
             var activityValues = pairs.GetValues("sharedRevenueActivities");
@@ -2182,7 +2378,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 RevenueByActivity revenueByActivity = new RevenueByActivity(user)
                 {
-                    TotalRevenue = 10000,
+                    TotalRevenue = totalRevenue,
                     Activities = businessActivities,
                     Territories = territories,
                 };
