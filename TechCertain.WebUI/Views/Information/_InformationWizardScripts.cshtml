@@ -234,6 +234,7 @@
     //    $('[data-toggle="tooltip"]').tooltip();
             $(".chosen-select").chosen({ width: "95%" });
 
+    $('#Principaltabs').tabs();
     $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
@@ -243,6 +244,7 @@
     $('#Claimtabs').tabs();
     $('#BoatUsetabs').tabs();
     $('#NamedPartiestabs').tabs();
+    $('#BusinessContracttabs').tabs();
 
     $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
     $('#ClearBoat').css({ "background-color": "red", "color": "White" });
@@ -400,6 +402,7 @@
                $('#boatTabs-3').trigger('chosen:updated');
                $('#ui-accordion-accordion-header-3').trigger('chosen:updated');
                $('#BoatLandLocation').trigger('chosen:updated');
+               $('#tblBusinessContract').trigger('reloadGrid');
            })
            .fail(function () {
                alert("Unable to save.");
@@ -1961,7 +1964,7 @@ function ListNonNZCountries() {
 };
 
     function GetTerritoriesForRevenue() {
-    var territoriesArray = [ 'NZ' ];
+    var territoriesArray = [];
     $('#SharedTerritories option:selected').each (function(index) {
         territoriesArray.push($(this).text());
     })
@@ -2101,13 +2104,29 @@ function GetActivitiesForRevenue() {
     }
 
     function SharedRevenueCalculation() {
-        debugger;
+        event.preventDefault();
         //hardcored tables
         var table = document.getElementById("sharedRevenueActivityTable");
-        validateTable(table);
+        //validateTable(table);
         table = document.getElementById("sharedRevenueTerritoriesTable");
-        validateTable(table);
+        //validateTable(table);
 
+
+        var revenueDataForm = $('#sharedRevenueId').serialize();
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+        var postData = { Form: revenueDataForm, ClientInformationSheetId: clientInformationSheetId };
+
+        $.ajax({
+            url: '@Url.Action("SaveRevenueData", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                debugger;
+            })
+            .fail(function (a, s, d) {
+                debugger;
+            });
     }
 
     function validateTable(table) {        
@@ -4443,6 +4462,15 @@ async: true
     });
     }
 
+    function AddSection(SectionId) {
+        debugger;
+        var elements = document.getElementById(formId).elements;
+
+        var elemenhjts = document.getElementsByClassName("input");
+
+        var element11s = document.querySelectorAll("#my-form input[type=text][value='']");
+
+    }
 
     function EditNamedParties(classId, boatUseId) {
         debugger;

@@ -96,7 +96,7 @@ namespace TechCertain.WebUI.Models
         public string Advisory { get; set; }
         //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
         public Guid ClientProgrammeID { get; set; }
-
+        public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
     }
 
     public class InformationSectionViewModel
@@ -287,9 +287,9 @@ namespace TechCertain.WebUI.Models
 
     public class RevenueByActivityViewModel
     {
-        public string Activity { get; set; }
-
-        public IList<RevenueByCountryViewModel> RevenueByCountry { get; set; }
+        public IList<Territory> Territories { get; set; }
+        public IList<BusinessActivity> Activities { get; set; }
+        public decimal TotalRevenue { get; set; }
     }
 
     public class RevenueByTerritoryViewModel

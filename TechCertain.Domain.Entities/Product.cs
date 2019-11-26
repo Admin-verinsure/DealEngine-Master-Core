@@ -87,6 +87,8 @@ namespace TechCertain.Domain.Entities
 
         public virtual bool UnderwritingEnabled { get; set; }
 
+        public virtual bool IsMasterProduct { get; set; }
+
         protected Product() : base(null) { }
 
         protected Product(User createdBy)

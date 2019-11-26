@@ -94,50 +94,5 @@ namespace TechCertain.Domain.Entities
         }
 
         public virtual string Label { get; protected set; }
-    }
-
-    public class Person : EntityBase, IAggregateRoot
-    {
-        protected Person() : base (null) { }
-
-        public Person (User createdBy, string firstName, string lastName)
-			: base (createdBy)
-        {
-        }
-
-        IList<ProposalTemplate> proposaltemplates = new List<ProposalTemplate>();
-
-        IList<Organisation> organisations = new List<Organisation>();
-
-        public virtual string FirstName { get;  protected set;}
-
-        public virtual string LastName { get; protected set; }
-
-        public virtual IEnumerable<ProposalTemplate> ProposalTemplates { get { return proposaltemplates; } }
-
-        public virtual IEnumerable<Organisation> Organisations { get { return organisations; } }
-
-        public virtual Organisation CreateOrganisation(string organisationName)
-        {
-            Organisation organisation = new Organisation(CreatedBy, organisationName);
-
-            organisations.Add(organisation);
-
-            return organisation;
-        }
-
-        public virtual void JoinOrganisation(Organisation organisation)
-        {
-            organisations.Add(organisation);
-        }
-
-        //public virtual ProposalTemplate CreateProposal(string proposalName)
-        //{
-        //    ProposalTemplate proposal = new ProposalTemplate(proposalName);
-
-        //    proposaltemplates.Add(proposal);
-
-        //    return proposal;
-        //}
-    }   
+    } 
 }

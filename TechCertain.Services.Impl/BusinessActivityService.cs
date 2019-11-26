@@ -57,5 +57,15 @@ namespace TechCertain.Services.Impl
         {
             return await _businessActivityRepository.FindAll().FirstOrDefaultAsync(t => t.Programme.Id == programmeId);
         }
+
+        public async Task<BusinessActivity> GetBusinessActivityByCode(string AnzsciCode)
+        {
+            return await _businessActivityRepository.FindAll().FirstOrDefaultAsync(a => a.AnzsciCode == AnzsciCode);
+        }
+
+        public async Task UpdateBusinessActivity(BusinessActivity businessActivity)
+        {
+            await _businessActivityRepository.UpdateAsync(businessActivity);
+        }
     }
 }

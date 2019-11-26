@@ -42,7 +42,7 @@ namespace TechCertain.Domain.Entities
         [Obsolete("No longer required with the new Programme implementation")]
 		public virtual ClientSharedData SharedData { get; set; }
 
-		public virtual IList<RevenueByActivity> RevenueData { get; set; }
+		public virtual RevenueByActivity RevenueData { get; set; }
 
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound
         public virtual string Status { get; set; }
@@ -69,7 +69,7 @@ namespace TechCertain.Domain.Entities
         //public virtual IList<Operator> Operators { get; protected set; }
 
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
-
+        public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
         protected ClientInformationSheet () : this (null) { }
 
 		protected ClientInformationSheet (User createdBy)
@@ -83,8 +83,8 @@ namespace TechCertain.Domain.Entities
             Boats = new List<Boat>();
             BoatUses = new List<BoatUse>();
             ClaimNotifications = new List<ClaimNotification>();
-            RevenueData = new List<RevenueByActivity> ();
             ClientInformationSheetAuditLogs = new List<AuditLog>();
+            BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
 		}
 
@@ -171,7 +171,10 @@ namespace TechCertain.Domain.Entities
         {
             ClientInformationSheetAuditLogs.Add(clientInformationSheetAuditLog);
         }
-
+        public virtual void AddBusinessContract(BusinessContract businessContract)
+        {
+            BusinessContracts.Add(businessContract);
+        }
         public virtual ClientInformationSheet CloneForUpdate (User cloningUser)
 		{
 			//if (PreviousInformationSheet != null)

@@ -157,6 +157,17 @@ namespace TechCertain.Domain.Entities
         public virtual bool IsTC { get; set; }
         public virtual bool IsApproved { get; set; }
 
+        public virtual string Qualifications { get; set; }
+        public virtual bool IsNZIAmember { get; set; }
+        public virtual string NZIAmembership { get; set; }
+        public virtual bool IsADNZmember { get; set; }
+        public virtual string YearofPractice { get; set; }
+        public virtual string prevPractice { get; set; }
+        public virtual bool IsLPBCategory3 { get; set; }
+        public virtual bool IsOtherdirectorship { get; set; }
+        public virtual string Othercompanyname { get; set; }
+
+
         public virtual IList<Programme> Programmes
         {
             get;

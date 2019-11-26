@@ -1,0 +1,228 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+<div class="padding-10">
+    <div id="DNOForm" class="smart-form" novalidate="novalidate">
+        <fieldset id="StatutoryLiabilityInsurance">
+            <div class="row">
+
+
+                <div class="panel-body" id="@Model.Id body">
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Would you like General Liability Insurance?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="GeneralLiabilityInsurance1" onchange="GeneralLiabilityInsurance1Selected('GeneralLiabilityInsurance1')" class="form-control rmv editable" name="GeneralLiabilityInsurance1">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateGeneralLiabilityInsurance1"></p>
+
+                        </section>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="GeneralLiabilityInsurance2Sec">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Do you have contracts that require a higher GL limit?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="GeneralLiabilityInsurance2" class="form-control rmv editable" name="GeneralLiabilityInsurance2">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateGeneralLiabilityInsurance2"></p>
+
+                        </section>
+
+                    </section>
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="GeneralLiabilityInsurance3Sec">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Is this a renewal of an existing policy placed with NZACS?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="GeneralLiabilityInsurance3" class="form-control rmv editable" name="GeneralLiabilityInsurance3">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateGeneralLiabilityInsurance3"></p>
+
+                        </section>
+
+                    </section>
+
+
+
+                </div>
+            </div>
+            <button onclick="ValidateGeneral(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+
+
+        </fieldset>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+         $(window).on("load", function () {
+
+           var clientInformationSheet = $('#AnswerSheetId').val();
+           var postData = {ClientInformationSheet : clientInformationSheet};
+            $.ajax({
+     	// change back once mono decides to fix
+             url: '@Url.Action("GetGeneralLiability", "Information")',
+             type: "POST",
+             data: postData
+             })
+                .done(function (data) {
+             if (data != "") {
+                for (var item = 0; item < data.length; item++){
+
+                  var arr = data[item];
+                  var count = 0;
+                    $('#' + arr[count]).val(arr[count + 1]);
+                    if ($('#GeneralLiabilityInsurance1').val() == 'true') {
+                        $('#GeneralLiabilityInsurance2Sec').removeClass('hidden');
+                        $('#GeneralLiabilityInsurance3Sec').removeClass('hidden');
+
+                    } else {
+                        $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
+                        $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
+
+                    }
+                }
+             };
+
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                  alert("Unable to save.");
+                });
+         });
+
+
+    function GeneralLiabilityInsurance1Selected(GeneralLiability) {
+        debugger;
+
+        var generalLiability = document.getElementById(GeneralLiability);
+
+        if (generalLiability.options[generalLiability.selectedIndex].value == "true") {
+            $('#GeneralLiabilityInsurance2Sec').removeClass('hidden');
+            $('#GeneralLiabilityInsurance3Sec').removeClass('hidden');
+
+        } else {
+            $('#GeneralLiabilityInsurance2').val('');
+            $('#GeneralLiabilityInsurance3').val('');
+            $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
+            $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
+
+        }
+    }
+
+     function ValidateGeneral() {
+        debugger;
+        var GLI1 = $('#GeneralLiabilityInsurance1').val();
+        var GLI2 = $('#GeneralLiabilityInsurance2').val();
+        var GLI3 = $('#GeneralLiabilityInsurance3').val();
+
+        var validity = true;
+        if (GLI1 == "") {
+            $('#ValidateGeneralLiabilityInsurance1').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateGeneralLiabilityInsurance1').html("<i></i>");
+        }
+        if (GLI2 == "" && GLI1 == 'true') {
+            $('#ValidateGeneralLiabilityInsurance2').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateGeneralLiabilityInsurance2').html("<i></i>");
+        }
+          if (GLI3 == "" && GLI1 == 'true') {
+            $('#ValidateGeneralLiabilityInsurance3').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateGeneralLiabilityInsurance3').html("<i></i>");
+        }
+
+        if (validity) {
+            SaveGeneralLiability(); 
+        }
+    };
+
+        function SaveGeneralLiability() {
+            debugger;
+                   var GeneralLiability = new Array(3);
+
+                   for (var i = 0; i < GeneralLiability.length; i++) {
+                       GeneralLiability[i] = new Array(2);
+                   }
+
+            for (var i = 1; i <= 3; i++) {
+                for (var j = 0; j < 2; j++) {
+                    GeneralLiability[i-1][0] = "GeneralLiabilityInsurance" + i;
+                var generalLiability = "#GeneralLiabilityInsurance" + i;
+                GeneralLiability[i-1][1] = $(generalLiability).val();
+                }
+
+            }
+
+                   var postData = { Answers: GeneralLiability, ClientInformationSheet: clientInformationSheet };
+
+             $.ajax({
+                           url: '@Url.Action("UpdateAnswer", "Information")',
+                           type: "POST",
+                           data: postData
+                       })
+                 .done(function (data) {
+                           })
+                           .fail(function (a, s, d) {
+                               alert("Unable to save.");
+                           });
+
+
+    };
+
+   
+
+    //function init() {
+    //    debugger;
+    //var count=5;
+    //var counter=setInterval(timer,1000);
+    //    function timer(){
+    //        count=count-1;
+    //        if(count==0){
+    //            alert("Data has beed saved.")
+    //            return;
+    //        } 
+    //    }
+    //};
+</script>
+
