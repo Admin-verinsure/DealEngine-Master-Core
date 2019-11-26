@@ -915,6 +915,7 @@ namespace TechCertain.WebUI.Controllers
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
+            models.BaseProgramme = clientProgramme.BaseProgramme;
             var advisoryDesc = "";
             var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
             if (milestone != null)
@@ -934,11 +935,11 @@ namespace TechCertain.WebUI.Controllers
                 {
                     EditEnabled = true,
                     ClientAgreementId = agreement.Id,
-                    ClientProgrammeId = clientProgramme.Id
+                    ClientProgrammeId = clientProgramme.Id,
+                    Declaration = clientProgramme.BaseProgramme.Declaration
                 };
 
                 model.Advisory = advisoryDesc;
-                // Status
                 model.Status = agreement.Status;
                 model.InformationSheetId = answerSheet.Id;
                 models.Add(model);
@@ -1021,6 +1022,7 @@ namespace TechCertain.WebUI.Controllers
                 models.Add(model);
             }
 
+            ViewBag.Title = clientProgramme.BaseProgramme.Name + " Payment for " + clientProgramme.Owner.Name;
 
             return PartialView("_ViewPaymentList", models);
         }

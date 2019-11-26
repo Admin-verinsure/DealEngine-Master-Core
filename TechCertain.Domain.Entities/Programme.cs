@@ -10,6 +10,7 @@ namespace TechCertain.Domain.Entities
         public virtual string Name { get; set; }
         public virtual Organisation Owner { get; protected set; }
         public virtual IList<Product> Products { get; protected set; }
+        public virtual string Declaration { get; set; }
         public virtual IList<EmailTemplate> EmailTemplates { get; protected set; }
         public virtual IList<ClientProgramme> ClientProgrammes { get; protected set; }
         public virtual IList<Merchant> Merchants { get; protected set; }

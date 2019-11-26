@@ -22,15 +22,9 @@ namespace TechCertain.Services.Impl
         {
             UserRole userRole = new UserRole(user)
             {
-                IdentityRole = role,
+                IdentityRoleName = role.Name,
                 Organisation = organisation
             };
-
-            //UserRole userRole = new UserRole()
-            //{
-            //    //IdentityRole = role,
-            //    Organisation = organisation
-            //};
 
             await _userRoleRepository.AddAsync(userRole);
         }
