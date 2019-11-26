@@ -22,7 +22,7 @@ namespace TechCertain.Services.Impl
         {
             UserRole userRole = new UserRole(user)
             {
-                IdentityRole = role,
+                IdentityRoleName = role.Name,
                 Organisation = organisation
             };
 
