@@ -46,8 +46,18 @@ namespace TechCertain.WebUI.Models
 
         public string YearsOfExp { get; set; }
 
-        public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
+        public string Qualifications { get; set; }
+        public bool IsNZIAmember { get; set; }
+        public string NZIAmembership { get; set; }
+        public string YearofPractice { get; set; }
+        public string prevPractice { get; set; }
 
+        public bool IsADNZmember { get; set; }
+        public bool IsLPBCategory3 { get; set; }
+        public bool IsOtherdirectorship { get; set; }
+        public string Othercompanyname { get; set; }
+
+        public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
 
 
         public static OrganisationViewModel FromEntity(OrganisationViewModel organisationViewModel)
