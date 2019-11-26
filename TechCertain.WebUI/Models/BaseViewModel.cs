@@ -56,7 +56,9 @@ namespace TechCertain.WebUI.Models
 			set { mylist.Insert (index, value); }
 		}
 
-		public int Count {
+        public Domain.Entities.Programme BaseProgramme { get; set; }
+
+        public int Count {
 			get { return mylist.Count;}
 		}
 

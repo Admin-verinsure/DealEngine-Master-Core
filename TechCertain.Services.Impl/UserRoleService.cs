@@ -26,12 +26,6 @@ namespace TechCertain.Services.Impl
                 Organisation = organisation
             };
 
-            //UserRole userRole = new UserRole()
-            //{
-            //    //IdentityRole = role,
-            //    Organisation = organisation
-            //};
-
             await _userRoleRepository.AddAsync(userRole);
         }
 

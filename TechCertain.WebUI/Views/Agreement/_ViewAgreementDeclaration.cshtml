@@ -1,7 +1,7 @@
 ﻿@model BaseListViewModel<TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel>
 
 <!-- NEW WIDGET START -->
-<div class="col col-12">
+<div class="container">
     <!-- Widget ID (each widget will need unique ID)-->
     <div class="jarviswidget" id="wid-id-10"
          data="false"
@@ -22,13 +22,14 @@
             </div>
             <!-- end widget edit box -->
             <!-- widget content -->
-
+            
             <div class="smart-form no-padding">
                 @foreach (var item in Model)
                 {
-                    @Html.Partial("Partials/ViewAgreementDeclaration", item);
+                    @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
                 }
             </div>
+
             <!-- end widget content -->
         </div>
         <!-- end widget div -->
