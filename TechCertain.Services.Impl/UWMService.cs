@@ -76,6 +76,7 @@ namespace TechCertain.Services.Impl
                 new ICIBHIANZUWModule(),
                 new ICIBARCCOUWModule(),
                 new MarshCoastGuardUWModule(),
+                new NZACSPIUWModule(),
                 new EmptyUWModule(),
             };
             return modules;

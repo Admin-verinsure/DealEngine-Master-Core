@@ -35,7 +35,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -60,7 +60,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             decimal totalTermBrokerage = 0m;
 
             //Calculation
-
+            totalTermLimit = 1000000;
 
             term.TermLimit = totalTermLimit;
             term.Premium = totalTermPremium;
