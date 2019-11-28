@@ -1,0 +1,829 @@
+﻿@model TechCertain.WebUI.Models.InformationViewModel
+
+@using System.Linq
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+        @*@tabs.Tab("List All")
+            @tabs.Tab("Edit")
+            @tabs.Tab("Add")*@
+        <div id="Principaltabs">
+            <ul id="tab" class="nav nav-tabs">
+                <li class="nav nav-tabs active"> <a href="#Principaltabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#Principaltabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#Principaltabs3"> Add </a> </li>
+                <li class="nav nav-tabs"> <a href="#Principaltabs4"> Removed </a> </li>
+
+            </ul>
+
+            <div id="Principaltabs1" class="tab-content">
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            @*<script src="~/jquery/jquery.min.js"></script>*@
+                            <script type="text/javascript">
+                                $(window).on('load',function () {
+                            $("#PrincipalDirectors").jqGrid({
+                                url: "/Services/GetPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
+						        datatype: "xml",
+                                mtype: "GET",
+                                async: true,
+                                colNames: ["","Organisation Name","Organisation Type", "Delete Vessel"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
+                                            return ('<button onclick="EditPrincipalPartners(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'Principaltabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
+                                        }
+                                    },
+                                    { name: "OrganisationName", align: 'center' },
+                                    { name: "OrganisationType", align: 'center' },
+                                     {
+                                         name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
+
+                                                        return ('<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'true\', \'#PrincipalDirectors\', \'#tblPrincipalRemovedBoat\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                         }
+                                     }
+								],
+						        autowidth: true,
+                                pager: "#pagerNamedParty",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+                                sortname: "Name",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#PrincipalDirectors").jqGrid('navGrid',
+						    	'#pagerNamedParty',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                            </script>
+                            <table id="PrincipalDirectors"><tr><td></td></tr></table>
+                            <div id="pagerNamedParty"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="Principaltabs2" class="tab-content">
+                <fieldset id="fieldset">
+                    <input id="NamedPartyOrganisationId" class="b" name="ID" type="hidden">
+                    <!-- 1st row -->
+                    <div class="row">
+
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">First Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="EditPrincial1" name="FirstName" placeholder="FirstName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial1"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Last Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="EditPrincial2" name="LastName" placeholder="LastName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial2"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Email</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="EditPrincial3" name="Email" placeholder="Email" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial3"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Qualifications/Year attained:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="EditPrincial4" name="Qualifications" placeholder="Qualifications" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial4"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Are you a member of NZIA?</label>
+                            <label class="input">
+                                <select id="EditPrincial5" onchange="Principal1EditSelected('EditPrincial5')" class="form-control b rmv editable" name="IsNZIAmember">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial5"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Princial5Sec">
+                            <label class="label required">If 'Yes'-State the type of NZIA membership held</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="EditPrincial6" name="NZIAmembership" placeholder="NZIA Membership Type" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial6"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Are you a member of ADNZ?</label>
+                            <label class="input">
+                                <select id="EditPrincial7" onchange="Principal2EditSelected('EditPrincial7')" class="form-control rmv editable" name="IsADNZmember">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial7"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Princial11Sec">
+                            <label class="label required">Do you hold LPB Category 3 classification?</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="EditPrincial8" name="IsLPBCategory3" placeholder="LBP Category" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial8"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">How long have you been at this practice?</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="EditPrincial9" name="YearofPractice" placeholder="Years of Practice" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial9"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Name of previous practice:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgEmail" id="EditPrincial10" name="prevPractice" placeholder="Practice Name" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial10"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label  required">Do you require coverage for other directorship appointments held by you on behalf of your practice?</label>
+                            <label class="input">
+                                <select id="EditPrincial11" onchange="Principal3EditSelected('AddPrincial11')" class="form-control rmv editable" name="IsOtherdirectorship">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial11"></p>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditPrincial12Sec">
+                            <label class="label required">Please list all Name of company(s)</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgEmail" id="EditPrincial12" name="Othercompanyname" placeholder="Company(s) Names seperated by (,)" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial12"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <button onclick="ValidateEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats(event,'#NamedPartyTabs2','NamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                        </section>
+
+                    </div>
+                </fieldset>
+
+            </div>
+            <div id="Principaltabs3" class="tab-content">
+                <fieldset id="fieldset">
+                    <input id="NamedPartyOrganisationId" class="b" name="ID" type="hidden">
+                    <!-- 1st row -->
+                    <div class="row">
+                        
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Are you a member of NZIA?</label>
+                            <label class="input">
+                                <select id="AddPrincial5" onchange="Principal1Selected('AddPrincial5')" class="form-control rmv editable" name="IsNZIAmember">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Principals">Principals</option>
+                                    <option value="PrincipalsRunoff">Principals Run off</option>
+                                    <option value="Contractors">Contractors</option>
+                                    <option value="JointVentureParties">Joint Venture Parties</option>
+                                    <option value="PreviousConsultingBusinesses">Previous Consulting Businesses</option>
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial5"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">First Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial1" name="FirstName" placeholder="FirstName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial1"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Last Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial2" name="LastName" placeholder="LastName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial2"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Email</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial3" name="Email" placeholder="Email" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial3"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Qualifications/Year attained:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="AddPrincial4" name="Qualifications" placeholder="Qualifications" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial4"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Are you a member of NZIA?</label>
+                            <label class="input">
+                                <select id="AddPrincial5" onchange="Principal1Selected('AddPrincial5')" class="form-control rmv editable" name="IsNZIAmember">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial5"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Princial6Sec">
+                            <label class="label required">If 'Yes'-State the type of NZIA membership held</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="AddPrincial6" name="NZIAmembership" placeholder="NZIA Membership Type" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial6"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Are you a member of ADNZ?</label>
+                            <label class="input">
+                                <select id="AddPrincial7" onchange="Principal2Selected('AddPrincial7')" class="form-control rmv editable" name="IsADNZmember">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial7"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Princial8Sec">
+                            <label class="label required">Do you hold LPB Category 3 classification?</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="AddPrincial8" name="IsLPBCategory3" placeholder="LBP Category" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial8"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">How long have you been at this practice?</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="AddPrincial9" name="YearofPractice" placeholder="Years of Practice" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial9"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Name of previous practice:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgEmail" id="AddPrincial10" name="prevPractice" placeholder="Practice Name" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial10"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label  required">Do you require coverage for other directorship appointments held by you on behalf of your practice?</label>
+                            <label class="input">
+                                <select id="AddPrincial11" onchange="Principal3Selected('AddPrincial11')" class="form-control rmv editable" name="IsOtherdirectorship">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial11"></p>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Princial12Sec">
+                            <label class="label required">Please list all Name of company(s)</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgEmail" id="AddPrincial12" name="Othercompanyname" placeholder="Company(s) Names seperated by (,)" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial12"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <button onclick="ValidatePrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ClearBoats(event,'#NamedPartyTabs2','NamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                        </section>
+
+                    </div>
+                </fieldset>
+            </div>
+
+            <div id="Principaltabs4" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            @*<script src="~/jquery/jquery.js"></script>*@
+                            @*<script src="~/jquery/jquery.min.js"></script>*@
+
+                            <script type="text/javascript">
+                                $(".BoatRemoved").click(function () {
+                               $("#tblPrincipalRemovedBoat").jqGrid({
+                                url: "/Services/GetPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
+                                datatype: "xml",
+                                   mtype: "GET",
+                                async: true,
+                                colNames: ["", "Boat Name", "Year", "Sum Insured"],
+                                colModel: [
+
+                                    {
+                                        name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
+                                            return '<button onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                        }
+                                    },
+                                    { name: "BoatName", align: 'center', key: 'true' },
+                                    { name: "YearOfManufacture", align: 'center' },
+                                    { name: "MaxSumInsured", align: 'center' },
+
+                                ],
+                                autowidth: true,
+                                pager: "#pagerRemovedBoat",
+                                rowNum: 10,
+                                rowList: [10, 20, 30],
+                                sortname: "BoatName",
+                                sortorder: "desc",
+                                viewrecords: true,
+                                gridview: true,
+                                autoencode: true
+                            });
+                            $("#tblRemovedBoat").jqGrid('navGrid',
+                                '#pagerRemovedBoat',
+                                { edit: false, add: false, del: false },
+                                //options
+                                { height: 280, reloadAfterSubmit: false },
+                                // edit options
+                                { height: 280, reloadAfterSubmit: false },
+                                // add options
+                                { reloadAfterSubmit: false },
+                                // del options
+                                { sopt: ['eq', 'bw', 'cn'] }
+                                // search options
+                            );
+                        });
+                            </script>
+                            <table id="tblRemovedBoat"><tr><td></td></tr></table>
+                            <div id="pagerRemovedBoat"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    function Principal1Selected(PrincipalSelected) {
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value == "true") {
+            $('#Princial6Sec').removeClass('hidden');
+        } else {
+            $('#AddPrincial6').val('');
+            $('#Princial6Sec').addClass('hidden');
+
+        }
+    }
+    function Principal2Selected(PrincipalSelected) {
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value == "true") {
+            $('#Princial8Sec').removeClass('hidden');
+        } else {
+            $('#AddPrincial8').val('');
+            $('#Princial8Sec').addClass('hidden');
+
+        }
+    }
+    function Principal3Selected(PrincipalSelected) {
+        debugger;
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value == "true") {
+            $('#Princial12Sec').removeClass('hidden');
+        } else {
+            $('#AddPrincial12').val('');
+            $('#Princial12Sec').addClass('hidden');
+
+        }
+    }
+
+      function Principal1EditSelected(PrincipalSelected) {
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value == "true") {
+            $('#Princial6EditSec').removeClass('hidden');
+        } else {
+            $('#EditPrincial6').val('');
+            $('#Princial6EditSec').addClass('hidden');
+
+        }
+    }
+    function Principal2EditSelected(PrincipalSelected) {
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value == "true") {
+            $('#Princial8EditSec').removeClass('hidden');
+        } else {
+            $('#EditPrincial8').val('');
+            $('#Princial8EditSec').addClass('hidden');
+
+        }
+    }
+    function Principal3EditSelected(PrincipalSelected) {
+        debugger;
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value == "true") {
+            $('#Princial12EditSec').removeClass('hidden');
+        } else {
+            $('#EditPrincial12').val('');
+            $('#Princial12EditSec').addClass('hidden');
+
+        }
+    }
+
+     function EditPrincipalPartners(classId, boatUseId) {
+        debugger;
+        event.preventDefault();
+        var _sheetId = $('#AnswerSheetId').val();
+        var postData = {
+		'partyID': boatUseId,
+		'answerSheetId': _sheetId
+	};
+
+    $.ajax({
+        // change back once mono decides to fix
+        url: '@Url.Action("GetPrincipalPartners", "Services")',
+        type: "Post",
+        data: postData,
+        async: true
+    })
+        .done(function (data) {
+            debugger;
+        $('#EditPrincial1').val(data.firstName);
+        $('#EditPrincial2').val(data.lastName);
+        $('#EditPrincial3').val(data.email);
+        $('#EditPrincial4').val(data.qualifications);
+        $('#EditPrincial5').val(data.isNZIAmember);
+        //$('#EditPrincial5').val(data.isNZIAmember);
+        $('#EditPrincial6').val(data.nziAmembership);
+        $('#EditPrincial7').val(data.isADNZmember).trigger("chosen:updated");
+        $('#EditPrincial8').val(data.isLPBCategory3);
+        $('#EditPrincial9').val(data.yearofPractice);
+        $('#EditPrincial10').val(data.prevPractice);
+        $('#EditPrincial11').val(data.isOtherdirectorship);
+        $('#EditPrincial12').val(data.othercompanyname);
+         $('#EditPrincial5').trigger("chosen:updated");
+
+
+	});
+    };
+
+     function ValidateEditPrincipalDirectors(event) {
+         debugger;
+         event.preventDefault();
+             var validity = true;
+        
+         if ($('#EditPrincial6').val() == '' && $('#EditPrincial5').val() == 'true') {
+             $('#ValidateEditPrincial6').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidateEditPrincial6').html("<i></i>");
+             }
+         }
+        if ($('#EditPrincial7').val() == '') {
+            $('#ValidateEditPrincial7').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        }
+        else {
+            $('#ValidateEditPrincial7').html("<font></font>");
+         }
+          if ($('#EditPrincial8').val() == '' && $('#EditPrincial7').val() == 'true') {
+             $('#ValidateEditPrincial8').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidateEditPrincial8').html("<i></i>");
+             }
+         }
+          if ($('#EditPrincial12').val() == '' && $('#EditPrincial11').val() == 'true') {
+             $('#ValidateEditPrincial12').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidateEditPrincia12').html("<i></i>");
+             }
+         };
+
+
+             for (var index = 1; index <= 5; index++) {
+                     var addPrincial = "#EditPrincial" + index;
+                 var value = $(addPrincial).val();
+                 var validator = "#ValidateEditPrincial" + index;
+
+                  if (value == "") {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+
+         };
+            
+
+         for (var index = 9; index <= 11; index++) {
+                     var addPrincial = "#EditPrincial" + index;
+                 var value = $(addPrincial).val();
+                 var validator = "#ValidateEditPrincial" + index;
+
+                  if (value == "") {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+
+         };
+
+             if (validity) {
+                 AddPrincipalDirectors(event, '#Principaltabs2', '#PrincipalDirectors', '#Principaltabs1','Principaltabs1');
+             };
+
+
+
+    };
+
+     function ValidatePrincipalDirectors(event) {
+         debugger;
+         event.preventDefault();
+             var validity = true;
+        
+         if ($('#AddPrincial6').val() == '' && $('#AddPrincial5').val() == 'true') {
+             $('#ValidatePrincial6').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidatePrincial6').html("<i></i>");
+             }
+         }
+        if ($('#AddPrincial7').val() == '') {
+            $('#ValidatePrincial7').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        }
+        else {
+            $('#ValidatePrincial7').html("<font></font>");
+         }
+          if ($('#AddPrincial8').val() == '' && $('#AddPrincial7').val() == 'true') {
+             $('#ValidatePrincial8').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidatePrincial8').html("<i></i>");
+             }
+         }
+          if ($('#AddPrincial12').val() == '' && $('#AddPrincial11').val() == 'true') {
+             $('#ValidatePrincial12').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidatePrincia12').html("<i></i>");
+             }
+         };
+
+
+             for (var index = 1; index <= 5; index++) {
+                     var addPrincial = "#AddPrincial" + index;
+                 var value = $(addPrincial).val();
+                 var validator = "#ValidatePrincial" + index;
+
+                  if (value == "") {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+
+         };
+            
+
+         for (var index = 9; index <= 11; index++) {
+                     var addPrincial = "#AddPrincial" + index;
+                 var value = $(addPrincial).val();
+                 var validator = "#ValidatePrincial" + index;
+
+                  if (value == "") {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+
+         };
+
+         if (validity) {
+               AddPrincipalDirectors(event, '#Principaltabs3', '#PrincipalDirectors', '#Principaltabs1','Principaltabs1');
+             };
+
+
+
+    };
+
+    function AddPrincipalDirectors(event,tabId, tableId,currenttab) {
+        debugger;
+        event.preventDefault();
+        var informationId = $('#AnswerSheetId').serialize();
+        var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        $.ajax({
+            url: '@Url.Action("AddPrincipalDirectors", "Services")',
+            type: "POST",
+            data: proddata
+        })
+            .done(function (data) {
+                debugger;
+                SetCurrentTab(currenttab);
+                $(tableId).trigger('reloadGrid');
+                   $(tabId + " :input").val("");
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                $('#AddTrailer').hide();
+                alert("There was an error while trying to save the Vehicle.");
+            });
+    };
+
+     function ValidateDNOGeneral() {
+        debugger;
+        var GLI1 = $('#DirectorsandOfficers1').val();
+        var GLI2 = $('#DirectorsandOfficers2').val();
+        var GLI3 = $('#DirectorsandOfficers3').val();
+
+        var validity = true;
+        if (GLI1 == "") {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<i></i>");
+        }
+        if (GLI2 == "" && GLI1 == 'true') {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<i></i>");
+        }
+          if (GLI3 == "" && GLI1 == 'true') {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<i></i>");
+        }
+
+        if (validity) {
+            SaveDirectorsandOfficersLiability();
+        }
+    };
+
+     function SetPrincipalRemovedStatus(PrincipalId, status, sourceTable, destTable) {
+         var AnswersheetId = $('#AnswerSheetId').serialize();
+         var postData = {
+                 'answersheetId' : AnswersheetId,
+		         'principalId': PrincipalId,
+		         'status': status
+	           };
+
+            $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("SetPrincipalRemovedStatus", "Services")',
+            type: "Post",
+            //contentType: "application/json; charset=utf-8",
+            //data: JSON.stringify({ locationId: locationId, status: status })
+            data: postData,
+            async: true
+        })
+        .done(function (data) {
+            if (data === true) {
+                $(sourceTable).trigger('reloadGrid');
+                $(destTable).trigger('reloadGrid');
+                
+            }
+        });
+    };
+
+   
+      function AddNamedParty(event,tabId, tableId) {
+
+         event.preventDefault();
+        var informationId = $('#AnswerSheetId').val();
+        var name = $('#NPOrgName').val();
+        var phone = $('#NPOrgPhone').val();
+        var email = $('#NPOrgEmail').val();
+         var partyid = $('#NamedPartyOrganisationId').val();
+
+        var proddata = {
+            "OrganisationName": name,
+            "OrganisationPhone": phone,
+            "OrganisationEmail": email,
+            "AnswerSheetId": informationId,
+            "ID":partyid
+        };
+            $.ajax({
+                type: "Post",
+                data: proddata,
+                url: '@Url.Action("AddNamedParty", "Services")',
+                success: function () {
+                //$.smallBox({
+                //        title: "Named Party has been saved",
+                //        color: "#5F895F",
+                //        iconSmall: "fa fa-check bounce animated",
+                //        timeout: 4000
+                // });
+                    $(tableId).trigger('reloadGrid');
+                   $(tabId + " :input").val("");
+
+                }
+            }) .done(function (data) {
+                debugger;
+         })
+         .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+          alert("There was an error while trying to save the Boat Use.");
+          });
+      }
+     
+</script>

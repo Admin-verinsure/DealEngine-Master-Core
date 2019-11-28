@@ -185,7 +185,7 @@
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateLocation(event,'#locTabs2', '#tblBoat','locTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+                            <button onclick="ValidateLocation(event,'#locTabs2', '#tblLocation','locTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats(event,'#locTabs2','locTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                             @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "validateLocation('#locTabs-2', '#tblLocation' ,'locTabs-1' );" }).Class("btn-sm updateBoat").Id("updateBoat")*@
@@ -487,7 +487,7 @@
             var postData = {
 		'locationId': locationId,
 		'status': status
-	};
+	     };
 
             $.ajax({
             // change back once mono decides to fix
@@ -502,12 +502,7 @@
             if (data === true) {
                 $(sourceTable).trigger('reloadGrid');
                 $(destTable).trigger('reloadGrid');
-                //$.smallBox({
-                //    title: "Location status has been updated",
-                //    color: "#5F895F",
-                //    iconSmall: "fa fa-check bounce animated",
-                //    timeout: 4000
-                //});
+                
             }
         });
     };
