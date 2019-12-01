@@ -19,7 +19,7 @@
                 </div>
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                        <div class="container" id="AddRoleForm" style="display:none">
+                        <div class="container" id="AddRoleForm">
                             <form>
                                 @if (User.IsInRole("TCUser"))
                                 {
@@ -87,7 +87,7 @@
                 </div>
                 <div id="collapsefour" class="collapse" aria-labelledby="headingfour" data-parent="#accordionExample">
                     <div class="card-body">
-                        <div class="container" id="AddRoleToUserForm" style="display:none">
+                        <div class="container" id="AddRoleToUserForm">
                             @await Html.PartialAsync("AddRoleToUserForm", Model)
                         </div>
                     </div>
@@ -137,6 +137,7 @@
                 data: postData
             })
                 .done(function (data) {
+                    $('#AddRoleForm').hide();
                     location.reload();
                     $('#Success').alert();
                 })

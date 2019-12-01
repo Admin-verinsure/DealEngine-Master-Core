@@ -12,7 +12,7 @@ namespace TechCertain.Domain.Entities
         {
         }        
 
-        public virtual IdentityRole IdentityRole { get; set; }
+        public virtual string IdentityRoleName { get; set; }
         public virtual Organisation Organisation { get; set; }
 
     }

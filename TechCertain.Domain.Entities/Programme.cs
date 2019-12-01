@@ -10,6 +10,9 @@ namespace TechCertain.Domain.Entities
         public virtual string Name { get; set; }
         public virtual Organisation Owner { get; protected set; }
         public virtual IList<Product> Products { get; protected set; }
+        public virtual IList<TerritoryTemplate> TerritoryTemplates { get; set; }
+        public virtual IList<BusinessActivityTemplate> BusinessActivityTemplates { get; set; }
+        public virtual string Declaration { get; set; }
         public virtual IList<EmailTemplate> EmailTemplates { get; protected set; }
         public virtual IList<ClientProgramme> ClientProgrammes { get; protected set; }
         public virtual IList<Merchant> Merchants { get; protected set; }
@@ -56,6 +59,8 @@ namespace TechCertain.Domain.Entities
 
         public Programme(User createdBy) : base(createdBy)
         {
+            BusinessActivityTemplates = new List<BusinessActivityTemplate>();
+            TerritoryTemplates = new List<TerritoryTemplate>();
             Products = new List<Product>();
             EmailTemplates = new List<EmailTemplate>();
             ClientProgrammes = new List<ClientProgramme>();

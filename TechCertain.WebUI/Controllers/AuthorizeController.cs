@@ -70,7 +70,8 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (var userRole in userRoleList)
                     {
-                        roleList.Add(userRole.IdentityRole);
+                        var identityRole = await _roleManager.FindByNameAsync(userRole.IdentityRoleName);
+                        roleList.Add(identityRole);
                     }
 
                 }
@@ -169,7 +170,6 @@ namespace TechCertain.WebUI.Controllers
                     await _userManager.AddToRoleAsync(identityUser, role.Name);
                 }
             }
-
 
             return Ok();
         }

@@ -483,6 +483,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             model.ClientAgreementId = id;
+            model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
             foreach (var terms in agreement.ClientAgreementTerms)
             {
                 if (terms.BoatTerms.Where(bvt => bvt.DateDeleted == null).Count() > 0)
@@ -669,6 +670,9 @@ namespace TechCertain.WebUI.Controllers
                     else if (term.SubTermType == "BV")
                     {
                         riskname = "Vessel";
+                    } else
+                    {
+                        riskname = agreement.Product.Name;
                     }
                     insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
                 }
@@ -711,6 +715,16 @@ namespace TechCertain.WebUI.Controllers
                         {
                             RiskName = "Vessel",
                             Exclusion = "Excess: refer to vessel excess "
+                        });
+                    }
+                } else
+                {
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        insuranceExclusion.Add(new InsuranceExclusion
+                        {
+                            RiskName = agreement.Product.Name,
+                            Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture)
                         });
                     }
                 }
@@ -915,6 +929,7 @@ namespace TechCertain.WebUI.Controllers
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
+            models.BaseProgramme = clientProgramme.BaseProgramme;
             var advisoryDesc = "";
             var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
             if (milestone != null)
@@ -934,11 +949,11 @@ namespace TechCertain.WebUI.Controllers
                 {
                     EditEnabled = true,
                     ClientAgreementId = agreement.Id,
-                    ClientProgrammeId = clientProgramme.Id
+                    ClientProgrammeId = clientProgramme.Id,
+                    Declaration = clientProgramme.BaseProgramme.Declaration
                 };
 
                 model.Advisory = advisoryDesc;
-                // Status
                 model.Status = agreement.Status;
                 model.InformationSheetId = answerSheet.Id;
                 models.Add(model);
@@ -984,6 +999,9 @@ namespace TechCertain.WebUI.Controllers
                     else if (term.SubTermType == "BV")
                     {
                         riskname = "Vessel";
+                    } else
+                    {
+                        riskname = agreement.Product.Name;
                     }
                 }
 
@@ -1021,6 +1039,7 @@ namespace TechCertain.WebUI.Controllers
                 models.Add(model);
             }
 
+            ViewBag.Title = clientProgramme.BaseProgramme.Name + " Payment for " + clientProgramme.Owner.Name;
 
             return PartialView("_ViewPaymentList", models);
         }

@@ -163,18 +163,18 @@ namespace TechCertain.WebUI.Controllers
 
         }
 
-        public async Task<List<BusinessActivity>> UploadDataFiles(string FileName)
+        public async Task<List<BusinessActivityTemplate>> UploadDataFiles(string FileName)
         {
             var user = await CurrentUser();
-            List<BusinessActivity> BAList = new List<BusinessActivity>();
+            List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
 
             using (StreamReader reader = new StreamReader(FileName))
             {
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    string[] parts = line.Split(',');
-                    BusinessActivity ba = new BusinessActivity(user);
+                    string[] parts = line.Split(';');
+                    BusinessActivityTemplate ba = new BusinessActivityTemplate(user);
 
                     if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
                     {
@@ -222,16 +222,16 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
 
-            foreach (BusinessActivity businessActivity in BAList)
+            foreach (BusinessActivityTemplate businessActivity in BAList)
             {
-                await _busActivityService.CreateBusinessActivity(businessActivity);
+                await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
             }
 
             return BAList;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProgrammeActivities(ActivityViewModel model)
+        public async Task<IActionResult> CreateProgrammeActivities(string ProgrammeId, bool IsPublic, string[] Activities)
         {
             //if (!ModelState.IsValid)
             //{
@@ -241,15 +241,15 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                Programme programme = await _programmeService.GetProgramme(Guid.Parse(model.ActivityAttach.SelectedProgramme[0]));
-                foreach (string str in model.Builder.SelectedActivities)
+                Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProgrammeId));
+                foreach (string str in Activities)
                 {
-                    BusinessActivity businessActivity = await _busActivityService.GetBusinessActivity(Guid.Parse(str));                    
-                    await _busActivityService.AttachClientProgrammeToActivities(programme, businessActivity);
+                    BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(str));                    
+                    await _programmeService.AttachClientProgrammeToActivities(programme, businessActivityTemplate);
                 }
           
-                return Redirect("~/Programme/ActivityBuilder");
-
+                //return Redirect("~/Programme/ActivityBuilder");
+                return Ok(); 
             }
             catch (Exception ex)
             {
@@ -263,10 +263,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> ActivityBuilder(Guid Id)
         {
             var user = await CurrentUser();            
-            var busActivityList = await _busActivityService.GetBusinessActivities();
-            if(busActivityList.Count == 0)
+            var busActivityList = await _busActivityService.GetBusinessActivitiesTemplate();
+            if (busActivityList.Count == 0)
             {
-                //busActivityList = await UploadDataFiles();
+                busActivityList = await UploadDataFiles("C:\\tmp\\anzsic06completeclassification.csv");
             }
 
             var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
@@ -289,20 +289,14 @@ namespace TechCertain.WebUI.Controllers
             };
 
             model.Id = Id;
-            var classification = busActivityList.GroupBy(ba => ba.Classification);           
-            foreach (var group in classification)
+          
+            foreach (var item in busActivityList)
             {
-                var optionGroup = new SelectListGroup() { Name = group.Key.ToString() };
-                foreach (var item in group)
+                model.Builder.Activities.Add(new SelectListItem
                 {
-                    model.Builder.Activities.Add(new SelectListItem()
-                    {
-                        Value = item.Id.ToString(),
-                        Text = item.AnzsciCode + " --- " + item.Description,
-                        Group = optionGroup,
-
-                    });
-                }
+                    Value = item.Id.ToString(),
+                    Text = item.AnzsciCode + " --- " + item.Description,
+                });
             }
 
             List<SelectListItem> proglist = new List<SelectListItem>();
@@ -324,7 +318,7 @@ namespace TechCertain.WebUI.Controllers
 
             ActivityListViewModel almodel = new ActivityListViewModel();
             almodel.ProgrammeList = new List<Programme>();
-            almodel.BusinessActivityList = new List<BusinessActivity>();
+            almodel.BusinessActivityList = new List<BusinessActivityTemplate>();
 
             var progList = await _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToListAsync();
             if (user.PrimaryOrganisation.IsTC)
@@ -332,7 +326,7 @@ namespace TechCertain.WebUI.Controllers
                 progList = await _programmeRepository.FindAll().Where(d => !d.DateDeleted.HasValue).ToListAsync();
             }
 
-            var busActList = await _busActivityService.GetBusinessActivities();
+            var busActList = await _busActivityService.GetBusinessActivitiesTemplate();
             if (progList.Count != 0)
             {
                 almodel.ProgrammeList = progList;
@@ -353,10 +347,10 @@ namespace TechCertain.WebUI.Controllers
         {
             //TODO: tidy up code use a list to loop through model 
             var user = await CurrentUser();
-            IList<BusinessActivity> BAList = new List<BusinessActivity>();
+            IList<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
             if (model.ClassOne != null)
             {
-                BusinessActivity ba1 = new BusinessActivity(user)
+                BusinessActivityTemplate ba1 = new BusinessActivityTemplate(user)
                 {
                     AnzsciCode = model.ClassOne.AnzsciCode,
                     Description = model.ClassOne.Description,
@@ -367,7 +361,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClassTwo != null)
             {
-                BusinessActivity ba2 = new BusinessActivity(user)
+                BusinessActivityTemplate ba2 = new BusinessActivityTemplate(user)
                 {
                     AnzsciCode = model.ClassTwo.AnzsciCode,
                     Description = model.ClassTwo.Description,
@@ -378,7 +372,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClassThree != null)
             {
-                BusinessActivity ba3 = new BusinessActivity(user)
+                BusinessActivityTemplate ba3 = new BusinessActivityTemplate(user)
                 {
                     AnzsciCode = model.ClassThree.AnzsciCode,
                     Description = model.ClassThree.Description,
@@ -389,7 +383,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.ClassFour != null)
             {
-                BusinessActivity ba4 = new BusinessActivity(user)
+                BusinessActivityTemplate ba4 = new BusinessActivityTemplate(user)
                 {
                     AnzsciCode = model.ClassFour.AnzsciCode,
                     Description = model.ClassFour.Description,
@@ -398,9 +392,9 @@ namespace TechCertain.WebUI.Controllers
                 BAList.Add(ba4);
             }
 
-            foreach (BusinessActivity businessActivity in BAList)
+            foreach (BusinessActivityTemplate businessActivity in BAList)
             {
-               await _busActivityService.CreateBusinessActivity(businessActivity);
+               await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
             }
 
             return Redirect("/Programme/ActivityBuilder");

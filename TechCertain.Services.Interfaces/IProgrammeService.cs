@@ -11,7 +11,7 @@ namespace TechCertain.Services.Interfaces
 
         Task<Programme> GetCoastGuardProgramme();
 
-        Task<Programme> GetProgrammesByOwner (Guid ownerOrganisationId);
+        Task<List<Programme>> GetProgrammesByOwner (Guid ownerOrganisationId);
 
 		Task<ClientProgramme> GetClientProgramme (Guid id);
         Task<Programme> GetClientProgrammebyName(string programmeName);
@@ -30,6 +30,10 @@ namespace TechCertain.Services.Interfaces
         Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
 
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
-	}
+        Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);
+        Task<List<Programme>> GetAllProgrammes();
+        Task<Programme> GetProgrammeById(Guid ProgrammeId);
+        Task AttachClientProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate);
+    }
 }
 

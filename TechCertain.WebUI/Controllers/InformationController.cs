@@ -13,10 +13,6 @@ using Microsoft.AspNetCore.Http;
 using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.Infrastructure.Tasking;
-using TechCertain.WebUI.Helpers;
-using Microsoft.Extensions.Primitives;
-using System.Web;
-using System.Collections.Specialized;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -46,8 +42,8 @@ namespace TechCertain.WebUI.Controllers
         IAdvisoryService _advisoryService;
         IMapperSession<Organisation> _organisationRepository;
         IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
-        IMapperSession<Territory> _territoryRepository;
         IMapperSession<BusinessActivity> _busActivityRespository;
+        IMapperSession<RevenueByActivity> _revenueByActivityRespository;
         IProgrammeService _programmeService;
         IBusinessActivityService _businessActivityService;
         IProductService _productService;
@@ -78,6 +74,7 @@ namespace TechCertain.WebUI.Controllers
             IReferenceService referenceService,
             IProductService productService,
             ITaskingService taskingService,
+            IMapperSession<RevenueByActivity> revenueByActivityRespository,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
@@ -93,6 +90,7 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper)
             : base (userService)
         {
+            _revenueByActivityRespository = revenueByActivityRespository;
             _territoryService = territoryService;
             _advisoryService = advisoryService;
             _activityService = activityService;
@@ -119,7 +117,6 @@ namespace TechCertain.WebUI.Controllers
             _organisationRepository = organisationRepository;
             _InsuranceAttributesRepository = insuranceAttributesRepository;
             _busActivityRespository = busActivityRespository;
-            _territoryRepository = territoryRepository;
             _documentRepository = documentRepository;
             _programmeService = programmeService;
             _unitOfWork = unitOfWork;
@@ -1001,23 +998,19 @@ namespace TechCertain.WebUI.Controllers
             model.UserDetails = userDetails;
 
             //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
-            var businessactivity = new List<BusinessActivityViewModel>();
-            foreach (var ba in _busActivityRespository.FindAll())
-            {
-                businessactivity.Add(new BusinessActivityViewModel
-                {
-                    Classification = ba.Classification,
-                    AnzsciCode = ba.AnzsciCode,
-                    Description = ba.Description
+            //var businessactivity = new List<BusinessActivityViewModel>();
+            //foreach (var ba in _busActivityRespository.FindAll())
+            //{
+            //    businessactivity.Add(new BusinessActivityViewModel
+            //    {
+            //        Classification = ba.Classification,
+            //        AnzsciCode = ba.AnzsciCode,
+            //        Description = ba.Description
 
-                });
-            }
+            //    });
+            //}
 
-            model.BusinessActivities = businessactivity;
-
-            model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
-
-            //_taskingService.CreateTaskFor (CurrentUser(), sheet.Owner, "Complete Insurance Information", DateTime.UtcNow.AddDays (7));
+            //model.BusinessActivities = businessactivity;
 
             return View("InformationWizard", model);
         }
@@ -1121,19 +1114,9 @@ namespace TechCertain.WebUI.Controllers
                         Text = model.Operators.ElementAtOrDefault(i).OrganisationName,
                         Value = model.Operators.ElementAtOrDefault(i).ID.ToString(),
                     });
-
-                    // boats.Add(BoatViewModel.FromEntity(sheet.Boats.ElementAtOrDefault(i)));
-
                 }
                
                 model.SkipperList = skipperlist;
-
-                //var operators = new List<OperatorViewModel>();
-                //foreach (Operator oper in sheet.Operators)
-                //{
-                //    operators.Add(OperatorViewModel.FromEntity(oper));
-                //}
-                //model.Operators = operators;
 
                 var claims = new List<ClaimViewModel>();
                 foreach (ClaimNotification cl in sheet.ClaimNotifications)
@@ -1141,8 +1124,6 @@ namespace TechCertain.WebUI.Controllers
                     claims.Add(ClaimViewModel.FromEntity(cl));
                 }
                 model.Claims = claims;
-
-
 
                 var interestedParties = new List<OrganisationViewModel>();
                 try
@@ -1280,39 +1261,6 @@ namespace TechCertain.WebUI.Controllers
                     waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
                 }
 
-                //var interestedParties = new List<OrganisationViewModel>();
-                //foreach (Organisation org in _organisationRepository.FindAll().Where(o => o.OrganisationType != null))
-                //{
-                //    //List<SelectListItem> partylist = new List<SelectListItem>();
-
-                //    //try
-                //    //{
-
-                //    //        var text = org.Name;
-                //    //        var val = org.Id.ToString();
-
-                //    //        list.Add(new SelectListItem
-                //    //        {
-                //    //            Selected = false,
-                //    //            Value = val,
-                //    //            Text = text
-                //    //        });
-
-
-
-                //    //}
-                //    //catch (Exception ex)
-                //    //{
-                //    //    Console.WriteLine(ex.InnerException);
-                //    //}
-
-                //    //model.InterestedPartyList = partylist;
-
-                //    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-                //    ovm.OrganisationName = org.Name;
-                //    interestedParties.Add(ovm);
-                //}
-
                 var availableProducts = new List<ProductItem>();
 
 
@@ -1336,23 +1284,6 @@ namespace TechCertain.WebUI.Controllers
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
 
-                //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
-
-                var businessactivity = new List<BusinessActivityViewModel>();
-                foreach (var ba in _busActivityRespository.FindAll())
-                {
-                    businessactivity.Add(new BusinessActivityViewModel
-                    {
-                        Classification = ba.Classification,
-                        AnzsciCode = ba.AnzsciCode,
-                        Description = ba.Description
-
-                    });
-                }
-               
-                model.BusinessActivities = businessactivity;
-
-                model.RevenueByActivity = _mapper.Map<IEnumerable<RevenueByActivityViewModel>>(sheet.RevenueData);
             }
             catch (Exception ex)
             {
@@ -1424,18 +1355,65 @@ namespace TechCertain.WebUI.Controllers
             }
 
             model.SharedData = new SharedDataViewModel();
-            model.RevenueByTerritories = new List<RevenueByTerritoryViewModel>();
 
-            List<RevenueByTerritoryViewModel> Lterritories = new List<RevenueByTerritoryViewModel>();
-            var territories = _territoryRepository.FindAll().ToList(); 
-            foreach(Territory territory in territories)
+            RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
+            List<SelectListItem> territoryTemplates = new List<SelectListItem>();
+            List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
+            if (sheet.RevenueData != null) 
             {
-                RevenueByTerritoryViewModel revenueByTerritoryViewModel = new RevenueByTerritoryViewModel();
-                revenueByTerritoryViewModel.Territory = territory.Location;
-                Lterritories.Add(revenueByTerritoryViewModel);
+                if(sheet.RevenueData.Territories.Count > 0)
+                {
+                    foreach (Territory territory in sheet.RevenueData.Territories)
+                    {
+                        var territoryTemplate = await _territoryService.GetTerritoryTemplateByName(territory.Location);
+                        territoryTemplates.Add(new SelectListItem
+                        {
+                            Value = territoryTemplate.Id.ToString(),
+                            Text = territoryTemplate.Location,
+                            Selected = true
+                        });
+                    }
+                }
+
+                if (sheet.RevenueData.Activities.Count > 0)
+                {
+                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
+                    {
+                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplateByCode(businessActivity.AnzsciCode);
+                        businessActivityTemplates.Add(new SelectListItem
+                        {
+                            Value = businessActivity.Id.ToString(),
+                            Text = businessActivity.Description,
+                            Selected = true
+                        });
+                    }
+                }
+                revenueByActivityViewModel.TotalRevenue = sheet.RevenueData.TotalRevenue;
+                revenueByActivityViewModel.RevenueData = sheet.RevenueData;
+            }
+
+            foreach(TerritoryTemplate territoryTemplate in clientProgramme.BaseProgramme.TerritoryTemplates)
+            {
+                territoryTemplates.Add(new SelectListItem
+                {
+                    Value = territoryTemplate.Id.ToString(),
+                    Text = territoryTemplate.Location,
+                    Selected = false
+                });
             }
             
-            model.RevenueByTerritories = Lterritories;
+            foreach (BusinessActivityTemplate businessActivity in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+            {
+                businessActivityTemplates.Add(new SelectListItem
+                {
+                    Value = businessActivity.Id.ToString(),
+                    Text = businessActivity.Description,
+                    Selected = false
+                });
+            }
+            revenueByActivityViewModel.Territories = territoryTemplates;
+            revenueByActivityViewModel.Activities = businessActivityTemplates;
+            model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
             var boats = new List<BoatViewModel>();
             for (var i = 0; i < sheet.Boats.Count(); i++)
@@ -1612,25 +1590,10 @@ namespace TechCertain.WebUI.Controllers
             }
 
 
-            //foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
-            //{
-            //    organisationalUnits.Add(new OrganisationalUnitViewModel
-            //    {
-            //        OrganisationalUnitId = ou.Id,
-            //        Name = ou.Name
-            //    });
-            //    model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
-            //}
-
             for (var i = 0; i < sheet.Locations.Count(); i++)
             {
                 locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
             }
-
-            //foreach (Location loc in sheet.Locations)
-            //{
-            //    locations.Add(LocationViewModel.FromEntity(loc));
-            //}
 
             for (var i = 0; i < sheet.Buildings.Count(); i++)
             {
@@ -1638,20 +1601,8 @@ namespace TechCertain.WebUI.Controllers
 
             }
 
-            //foreach (Building bui in sheet.Buildings)
-            //{
-            //    buildings.Add(BuildingViewModel.FromEntity(bui));
-            //}
          try
             {
-                //InsuranceAttribute insuranceAttribute = _insuranceAttributeService.GetInsuranceAttributeByName("Skipper");
-                //if (insuranceAttribute == null)
-                //{
-                //    insuranceAttribute = new InsuranceAttribute(CurrentUser(), "Skipper");
-
-                //    _insuranceAttributeService.CreateNewInsuranceAttribute(insuranceAttribute);
-                //}
-
                 foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
                 {
                     foreach (var org in IA.IAOrganisations)
@@ -1711,23 +1662,6 @@ namespace TechCertain.WebUI.Controllers
             model.AvailableProducts = availableProducts;
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
-
-            var businessActivity = await _businessActivityService.GetBusinessActivitiesByClientProgramme(clientProgramme.BaseProgramme.Id);
-            //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(businessActivity);
-
-            var businessactivity = new List<BusinessActivityViewModel>();
-            foreach (var ba in _busActivityRespository.FindAll())
-            {
-                businessactivity.Add(new BusinessActivityViewModel
-                {
-                    Classification = ba.Classification,
-                    AnzsciCode = ba.AnzsciCode,
-                    Description = ba.Description
-
-                });
-            }
-
-            model.BusinessActivities = businessactivity;
             model.Status = sheet.Status;
 
             List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
@@ -2044,7 +1978,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 foreach (ClientAgreement agreement in sheet.Programme.Agreements)
                 {
-                    await _referenceService.CreateClientAgreementReference(reference, agreement.Id);
+                    await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
                 }
             }
 
@@ -2315,79 +2249,112 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRevenueData(IFormCollection Form, string ClientInformationSheetId)
+        public async Task<IActionResult> SaveRevenueDataTabOne(string[] Territories, bool IsTradingOutsideNZ, string ClientInformationSheetId)
         {
             var user = await CurrentUser();
-            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-            StringValues stringValues;
-            List<Territory> territories = new List<Territory>();
-            List<BusinessActivity> businessActivities = new List<BusinessActivity>();
-            Form.TryGetValue("Form", out stringValues);
-            var arrayValues = HttpUtility.UrlDecode(stringValues.ToString());
-            var formValues = arrayValues.Split('&');
-            NameValueCollection pairs = new NameValueCollection();
-            var count = 3;
-            var totalRevenue = 0;
-            foreach (var str in formValues)
-            {
-                var line = str.Split('=');
-                pairs.Add(line[0], line[1]);
-            }
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));           
+            List<TerritoryTemplate> territoryTemplates = new List<TerritoryTemplate>();
+            var revenueByActivity = new RevenueByActivity(user);
 
-            var totalRevenueValues = pairs.GetValues("totalRevenue");
-            foreach(var values in totalRevenueValues)
+            if (IsTradingOutsideNZ)
             {
-                totalRevenue = int.Parse(values);
-            }
-
-            var territoryValues = pairs.GetValues("Territories");
-            if(territoryValues == null)
-            {
-                var territory = await _territoryService.GetTerritoryByName("NZ");
-                var territoryPercentage = pairs.Get(count);
-                territory.Pecentage = decimal.Parse(territoryPercentage);
-                await _territoryService.UpdateTerritory(territory);
-                territories.Add(territory);
-                count++;
+                foreach (var territoryId in Territories)
+                {
+                    var territory = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
+                    territoryTemplates.Add(territory);
+                }
             }
             else
             {
-                foreach (var territoryName in territoryValues)
-                {
-                    var territory = await _territoryService.GetTerritoryByName(territoryName);
-                    var territoryPercentage = pairs.Get(count);
-                    territory.Pecentage = decimal.Parse(territoryPercentage);
-                    await _territoryService.UpdateTerritory(territory);
-                    territories.Add(territory);
-                    count++;
-                }
-            }
-            
-            var activityValues = pairs.GetValues("sharedRevenueActivities");
-            foreach (var activityCode in activityValues)
-            {
-                var businessActivity = await _businessActivityService.GetBusinessActivityByCode(activityCode);
-                var businessActivityPercentage = pairs.Get(count);
-                businessActivity.Pecentage = decimal.Parse(businessActivityPercentage);
-                await _businessActivityService.UpdateBusinessActivity(businessActivity);
-                businessActivities.Add(businessActivity);
-                count++;
+                var territory = await _territoryService.GetTerritoryTemplateByName("NZ");
+                territoryTemplates.Add(territory);
             }
 
-            using (var uow = _unitOfWork.BeginUnitOfWork())
+            foreach(var terr in territoryTemplates)
             {
-                RevenueByActivity revenueByActivity = new RevenueByActivity(user)
-                {
-                    TotalRevenue = totalRevenue,
-                    Activities = businessActivities,
-                    Territories = territories,
-                };
-                sheet.RevenueData = revenueByActivity;
-                await uow.Commit();
+                var newTerritory = new Territory(user);
+                newTerritory.Location = terr.Location;
+                newTerritory.TerritoryTemplateId = terr.Id;
+                await _territoryService.AddTerritory(newTerritory);
+                revenueByActivity.Territories.Add(newTerritory);
             }
 
+            await _revenueByActivityRespository.AddAsync(revenueByActivity);
+            sheet.RevenueData = revenueByActivity;
+            await _clientInformationService.UpdateInformation(sheet);
             return Ok();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveRevenueDataTabTwo(string[] BusinessActivities, string ClientInformationSheetId)
+        {
+            var user = await CurrentUser();
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            var revenueByActivity = sheet.RevenueData;
+
+            foreach (var baId in BusinessActivities)
+            {
+                var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(baId));
+
+                var newBusinessActivity = new BusinessActivity(user)
+                {
+                    AnzsciCode = businessActivityTemplate.AnzsciCode,
+                    Classification = businessActivityTemplate.Classification,
+                    Description = businessActivityTemplate.Description                                       
+                };
+                newBusinessActivity.RevenueByActivities.Add(revenueByActivity);
+                await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
+                revenueByActivity.Activities.Add(newBusinessActivity);                
+            }
+            await _revenueByActivityRespository.AddAsync(revenueByActivity);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveRevenueDataTabThree(string TableSerialised)
+        {           
+            string[] tableRow = TableSerialised.Split('&');
+            foreach(var str in tableRow)
+            {
+                string[] valueId = str.Split('=');
+                var territoryTemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(valueId[0]));
+                var territory = await _territoryService.GetTerritoryByTemplateId(territoryTemplate.Id);
+                territory.Pecentage = decimal.Parse(valueId[1]);
+                await _territoryService.UpdateTerritory(territory);
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveRevenueDataTabFour(string TableSerialised, string ClientInformationSheetId, string TotalRevenue)
+        {
+
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            sheet.RevenueData.TotalRevenue = decimal.Parse(TotalRevenue);
+            string[] tableRow = TableSerialised.Split('&');
+            foreach (var str in tableRow)
+            {
+                string[] valueId = str.Split('=');
+                var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(valueId[0]));
+                var businessActivity = await _businessActivityService.GetBusinessActivityByCode(businessActivityTemplate.AnzsciCode);
+                businessActivity.Pecentage = decimal.Parse(valueId[1]);
+                await _businessActivityService.UpdateBusinessActivity(businessActivity);
+            }
+            await _clientInformationService.UpdateInformation(sheet);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveRevenueDataTabFive(string OtherInformation, string ClientInformationSheetId)
+        {
+
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            sheet.RevenueData.OtherInfomation = OtherInformation;
+
+            await _clientInformationService.UpdateInformation(sheet);
+            return Ok();
+        }
+
 
         public async Task<InformationViewModel> GetInformationViewModel(Guid programmeId)
         {

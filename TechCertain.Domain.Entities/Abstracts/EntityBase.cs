@@ -24,7 +24,7 @@ namespace TechCertain.Domain.Entities.Abstracts
         public virtual User CreatedBy { get; protected set; }
 
         [DisplayName("Deleted By")]
-        public virtual User DeletedBy { get; protected set; }
+        public virtual User DeletedBy { get; set; }
 
         [DisplayName("Last Modified By")]
         public virtual User LastModifiedBy { get; set; }        

@@ -816,7 +816,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                                     }
                             }
                         }
-                        break; ;
+                        break;
                     }
                 case 4:
                     {
