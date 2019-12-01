@@ -88,25 +88,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                            <div class="tab-pane" id="tab2">
-                                                <br />
-                                                <h3><strong>Setup </strong> - Programme Activities</h3>
-
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <div class="form-group">
-                                                            <label><strong>InclorExcl</strong></label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.DropDownListFor(m => m.ActivityAttach.SelectedProgramme, Model.ActivityAttach.BaseProgList)
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                             </div>
                                             <div id="tab3" class="tab-pane step-content">
                                                 <div>
@@ -264,7 +245,9 @@
 
         function UploadFile() {
             debugger;
-            var file = $('#UploadFileId').val();
+            var fakePath = $('#UploadFileId').val();
+            var file = fakePath.replace("\fakepath\\", "");
+            debugger;
             var postData = { FileName: file };
             debugger;
             $.ajax({
@@ -387,35 +370,41 @@
            });
 
 
-           $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-               debugger;
-                        event.preventDefault();
+        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+            event.preventDefault();
+            if (stepNumber === 1 && stepDirection != "Backwards") {
 
-               if (stepNumber === 1) {
-                   if (confirm("Are you sure you want to submit this document?")) {
-                       console.log("submitted!");
-                       var date = $("#wizard-1").serialize();
+                var activities = [];
+                $('#Activities option:selected').each(function (index) {
+                    activities.push($(this).val());
+                });
 
-                       $.ajax({
-                           type: "POST",
-                           url: '@Url.Action("CreateProgrammeActivities", "Programme")',
-                           data: $("#wizard-1").serialize() // serializes the form's elements.
-                       })
-                           .done(function (json) {
-                               //var model = JSON.parse(json);
+                var isOn = $('#Builder_Ispublic').val();
+                var isPublic = true;
+                if (isOn != "On") {
+                    isPublic = false;
+                }
+
+                var programmeId = $('#ActivityAttach_SelectedProgramme').val();
+
+                var postData = { ProgrammeId: programmeId, IsPublic: isPublic, Activities: activities }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateProgrammeActivities", "Programme")',
+                    data: postData
+                })
+                    .done(function (json) {
+                        //var model = JSON.parse(json);
                                //$('#successModal').modal();
-                               //$('#productAutoReview').text("");
-
-                           })
-                           .fail(function (err, ajaxOptions, thrownError) {
-                               $('#failureModal').modal();
-                               $('#productAutoReview').text(err.responseText);
-                           });
-                   }
-           }
-           });
-
-
+                        //$('#productAutoReview').text("");
+                    })
+                    .fail(function (err, ajaxOptions, thrownError) {
+                        $('#failureModal').modal();
+                        $('#productAutoReview').text(err.responseText);
+                    });
+            }
+        });
     });
     </script>
 }

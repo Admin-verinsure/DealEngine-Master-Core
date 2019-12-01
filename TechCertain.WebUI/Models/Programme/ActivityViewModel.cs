@@ -18,10 +18,10 @@ namespace TechCertain.WebUI.Models.Programme
 
     public class ActivityBuilderVM
     {
-        public IList<BusinessActivity> Level1Classifications { get; set; }
-        public IList<BusinessActivity> Level2Classifications { get; set; }
-        public IList<BusinessActivity> Level3Classifications { get; set; }
-        public IList<BusinessActivity> Level4Classifications { get; set; }
+        public IList<BusinessActivityTemplate> Level1Classifications { get; set; }
+        public IList<BusinessActivityTemplate> Level2Classifications { get; set; }
+        public IList<BusinessActivityTemplate> Level3Classifications { get; set; }
+        public IList<BusinessActivityTemplate> Level4Classifications { get; set; }
         public IList<SelectListItem> Activities { get; set; }
         public string[] SelectedActivities { get; set; }
         public bool Ispublic { get; set; }

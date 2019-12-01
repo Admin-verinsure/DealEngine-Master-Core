@@ -25,12 +25,12 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<RiskCover> _riskCoverRepository;
 		IMapperSession<Organisation> _organisationRepository;
 		IMapperSession<Document> _documentRepository;
-		IMapperSession<Programme> _programmeRepository;
+        IProgrammeService _programmeService;
 
-		public ProductController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<RevenueByActivity> revenueByActivityRepository,
+        public ProductController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<RevenueByActivity> revenueByActivityRepository,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, ITerritoryService territoryService, IMapperSession<RiskCategory> riskRepository,
 		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
-								 IMapperSession<Document> documentRepository, IMapperSession<Programme> programmeRepository)
+								 IMapperSession<Document> documentRepository, IProgrammeService programmeService)
 			: base (userRepository)
 		{
             _revenueByActivityRepository = revenueByActivityRepository;
@@ -42,7 +42,7 @@ namespace TechCertain.WebUI.Controllers
 			_riskCoverRepository = riskCoverRepository;
 			_organisationRepository = organisationRepository;
 			_documentRepository = documentRepository;
-			_programmeRepository = programmeRepository;
+            _programmeService = programmeService;
 		}
 
 		[HttpGet]
@@ -135,28 +135,8 @@ namespace TechCertain.WebUI.Controllers
 				model.Description.BaseProducts.Add (new SelectListItem { Text = product.Name, Value = product.Id.ToString () });
 			}
 
-			//model.Risks = new ProductRisksVM {
-			//	new RiskEntityViewModel { Insured = "People", CoverAll = true, CoverLoss = true, CoverInterruption = false, CoverThirdParty = false },
-			//	new RiskEntityViewModel { Insured = "Businesses", CoverAll = true, CoverLoss = false, CoverInterruption = true, CoverThirdParty = false },
-			//	new RiskEntityViewModel { Insured = "Associations", CoverAll = false, CoverLoss = false, CoverInterruption = true, CoverThirdParty = true },
-			//	new RiskEntityViewModel { Insured = "Professions", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false },
-			//	new RiskEntityViewModel { Insured = "Goods", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false },
-			//	new RiskEntityViewModel { Insured = "Agriculture", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false },
-			//	new RiskEntityViewModel { Insured = "Transport", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false },
-			//	new RiskEntityViewModel { Insured = "Marine", CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false }
-			//};
 			foreach (RiskCategory risk in _riskRepository.FindAll())
 				model.Risks.Add (new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
-
-			//model.InformationSheet = new ProductInformationSheetVM ();
-			//var templates = _informationService.GetAllTemplates ();
-			//foreach (var template in templates)
-			//	((IList<SelectListItem>)model.InformationSheet.InformationSheets).Add (
-			//		new SelectListItem { 
-			//			Text = template.Name,
-			//			Value = template.Id.ToString()
-			//		}
-			//	);
 
 			// set product settings
 			foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == user.PrimaryOrganisation))
@@ -181,8 +161,9 @@ namespace TechCertain.WebUI.Controllers
 					model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = org.Name, Value = org.Id.ToString () });
 
 			var programmes = new List<Programme>();
+            var programmeList = await _programmeService.GetAllProgrammes();
 			//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
-			foreach (Programme programme in _programmeRepository.FindAll())
+			foreach (Programme programme in programmeList)
 				model.Settings.InsuranceProgrammes.Add (
 					new SelectListItem {
 						Text = programme.Name,
@@ -218,11 +199,10 @@ namespace TechCertain.WebUI.Controllers
                     new SelectListItem { Text = "Exclusion", Value = "Excl" },
                    
                 }
-                //BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
             };
 
             List<SelectListItem> proglist = new List<SelectListItem>();
-            var progList = _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id);
+            var progList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
             foreach (Programme programme in progList)
             {
                  proglist.Add(new SelectListItem
@@ -255,24 +235,18 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 var user = await CurrentUser();
-                var programme = await _programmeRepository.GetByIdAsync(Guid.Parse(ProgrammeId));
+                var programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
 
-                Territory territory = new Territory(user, Location)
+                TerritoryTemplate territoryTemplate = new TerritoryTemplate(user, Location)
                 {
                     Ispublic = IsPublic,
                     Zoneorder = ZoneNo,
-                    ExclorIncl = IncluExclu,
-                    Programme = programme
+                    ExclorIncl = IncluExclu,                    
                 };
 
-                var territoryNZ = await _territoryService.GetTerritoryByName("NZ");
-                await _territoryService.AddTerritory(territory);
-
-                //RevenueByActivity sharedRevenue = new RevenueByActivity(user);
-                //sharedRevenue.Territory = territory;                
-                //await _revenueByActivityRepository.AddAsync(sharedRevenue);
-                //programme.RevenueByActivity = sharedRevenue;
-                //await _programmeRepository.UpdateAsync(programme);
+                var territoryNZ = await _territoryService.GetTerritoryTemplateByName("NZ");
+                await _territoryService.AddTerritoryTemplate(territoryTemplate);
+                await _programmeService.AttachClientProgrammeToTerritory(programme, territoryTemplate);
 
                 return Redirect("~/Product/MyProducts");
             }
@@ -350,7 +324,7 @@ namespace TechCertain.WebUI.Controllers
                     Guid programmeId = Guid.Empty;
                     if (Guid.TryParse(model.Settings.SelectedInsuranceProgramme, out programmeId))
                     {
-                        Programme programme = await _programmeRepository.GetByIdAsync(programmeId);
+                        Programme programme = await _programmeService.GetProgrammeById(programmeId);
                         programme.Products.Add(product);
                     }
                 }

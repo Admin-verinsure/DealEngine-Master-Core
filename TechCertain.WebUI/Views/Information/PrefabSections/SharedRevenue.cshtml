@@ -1,170 +1,187 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
-    <form class="smart-form" id="sharedRevenueId" formaction="#">
+<form class="smart-form" id="sharedRevenueId" formaction="#">
 
-        <div id="SharedRevenue">
+    <div id="SharedRevenue">
 
-            <ul id="tab" class="nav nav-tabs">
-                <li class="nav nav-tabs Territory"> <a href="#RevenueTabs1"> Territory </a> </li>
-                <li class="nav nav-tabs Activities"> <a href="#RevenueTabs2"> Activities </a> </li>
-                <li class="nav nav-tabs TerritoryBreakdown"> <a href="#RevenueTabs3"> Territory Breakdown </a> </li>
-                <li class="nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4"> Activity Breakdown </a> </li>
-            </ul>
+        <ul id="sharedRevenTabs" class="nav nav-tabs">
+            <li class="nav nav-tabs Territory"> <a href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
+            <li class="disabled nav nav-tabs Activities"> <a href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
+            <li class="nav nav-tabs TerritoryBreakdown"> <a href="#RevenueTabs3" data-toggle="tab"> Territory Breakdown </a> </li>
+            <li class="nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4" data-toggle="tab"> Activity Breakdown </a> </li>
+            <li class="nav nav-tabs AdditionalInformation"> <a href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
+            <li class="nav nav-tabs SharedRevenueData"> <a href="#RevenueTabs6" data-toggle="tab"> Shared Revenue Data </a> </li>
+        </ul>
 
-            <div id="RevenueTabs1" class="tab-content">
-                <fieldset>
-                    <div class="container-fluid">
-                        <div class="input-group mb-3">
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <div id="RevenueTabs1" class="tab-content">
+            <fieldset>
+                <div class="container-fluid">
+                    <div class="input-group mb-3">
 
-                                <div class="row">
-                                    <label class="btn btn-primary col-12">
-                                        <input name="radio-outsideTradeNZ" type="radio" value="yes" onchange="toggleTerritoriesVisible('active')"><i></i> Yes, I do trade outside of New Zealand
-                                    </label>
-                                </div>
-                                <div class="row">
-                                    <label class="btn btn-primary">
-                                        <input name="radio-outsideTradeNZ" type="radio" value="no" onchange="toggleTerritoriesVisible('Inactive')"><i></i> No, I don't trade outside of New Zealand
-                                    </label>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
-                            <select data-placeholder="Choose Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" required>
-                                @foreach (var territory in Model.RevenueByTerritories)
-                                {
-                                    <option value="@territory.Territory">@territory.Territory</option>
-                                }
-                            </select>
+                        <div class="btn-group btn-group-toggle" required data-toggle="buttons">
+                            <label class="btn btn-primary">
+                                <input type="radio" name="tradingOption" id="tradingOption1" value=true autocomplete="off" required onchange="toggleTerritoriesVisible('active')"> Yes, I do trade outside of New Zealand
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="tradingOption" id="tradingOption2" value=false autocomplete="off" required onchange="toggleTerritoriesVisible('Inactive')"> No, I don't trade outside of New Zealand
+                            </label>
                         </div>
 
-                        <div class="input-group mb-3">
-                            <button class="btn-primary btn" onclick="SetCurrentTab('RevenueTabs2');event.preventDefault()">  Go to Activities  </button>
-                        </div>
+                    </div>
+                    <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
+                        <select data-placeholder="Choose Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" required>
+                            @foreach (var territory in Model.RevenueByActivityViewModel.Territories)
+                            {
+                                <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
+                            }
+                        </select>
                     </div>
 
-                </fieldset>
-            </div>
-
-            <div id="RevenueTabs2" class="tab-content">
-
-                <fieldset>
-                    <div class="container-fluid">
-                        <div class="input-group mb-3">
-                            <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" data-placeholder="Choose Activities" required>
-                                @foreach (var ou in Model.BusinessActivities)
-                                {
-                                    <option value="@ou.AnzsciCode">@ou.Description</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div id="sharedRevenueTerritoriesBreakdownTab" class="input-group mb-3" style="display:none">
-                            <button class="btn-primary btn" onclick="BuildRevenuesTable('true');SetCurrentTab('RevenueTabs3');event.preventDefault()">Go To Territory Breakdown</button>
-                        </div>
-
-                        <div id="sharedRevenueActivity" class="input-group mb-3" style="display:none">
-                            <button class="btn-primary btn" onclick="BuildRevenuesTable('false');SetCurrentTab('RevenueTabs4');event.preventDefault()">Go To Activity Breakdown</button>
-                        </div>
+                    <div class="input-group mb-3">
+                        <button class="btn-primary btn" id="tradingButton" onclick="SaveTabOne()" style="display:none">  Next  </button>
                     </div>
-                </fieldset>
-            </div>
+                </div>
 
-            <div id="RevenueTabs3" class="tab-content">
-                <fieldset>
-                    <div class="container-fluid">
-                        <div class="input-group mb-3">
-                            <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" aria-label="Amount (to the nearest dollar)">
-                        @*</div>
-
-                        <div class="input-group mb-3">*@
-                            <table id="sharedRevenueTerritoriesTable" class="table">
-                                <thead>
-                                </thead>
-                                <tbody>
-                                    @*foreach (var activity in Model.RevenueByActivity)
-                                    {
-                                        <tr>
-                                            <td>@activity.Activity</td>
-                                            @foreach (var territory in Model.RevenueByTerritories)
-                                            {
-                                                <td>
-                                                    <div class="input-group">
-                                                        <label class="input">
-                                                            <input type="text" class="form-control" value="@territory.DeclaredRevenue" />
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                            }
-                                        </tr>
-                                    }*@
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="input-group mb-3">
-                            <div id="sharedRevenueActivity" class="input-group">
-                                <button class="btn-primary btn" onclick="BuildRevenuesTable('false');SetCurrentTab('RevenueTabs4');event.preventDefault()">Go To Activity Breakdown</button>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-
-            <div id="RevenueTabs4" class="tab-content">
-
-                <fieldset>
-                    <div class="container-fluid">
-                        <div class="input-group mb-3">
-                            <table id="sharedRevenueActivityTable" class="table">
-                                <thead>
-                                </thead>
-                                <tbody>
-                                    @*foreach (var activity in Model.RevenueByActivity)
-                                    {
-                                        <tr>
-                                            <td>@activity.Activity</td>
-                                            @foreach (var territory in Model.RevenueByTerritories)
-                                            {
-                                                <td>
-                                                    <section>
-                                                        <label class="input">
-                                                            <input type="text" class="form-control" value="@territory.DeclaredRevenue" />
-                                                        </label>
-                                                    </section>
-                                                </td>
-                                            }
-                                        </tr>
-                                    }*@
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="input-group mb-3">
-                            <div class="footer">
-                                <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="return (SharedRevenueCalculation()); event.preventDefault()">
-                                <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
+            </fieldset>
         </div>
-    </form>
 
+        <div id="RevenueTabs2" class="tab-content">
 
-<style>
+            <fieldset>
+                <div class="container-fluid">
+                    <div class="input-group mb-3">
+                        <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" data-placeholder="Choose Activities" required>
+                            @foreach (var ou in Model.RevenueByActivityViewModel.Activities)
+                            {
+                                <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
+                            }
+                        </select>
+                    </div>
 
-    .required:after {
-        content: " *";
-        color: red;
-        font-size: 20px;
-    }
+                    <div id="sharedRevenueTerritoriesBreakdownTab" class="input-group mb-3" style="display:none">
+                        <button class="btn-primary btn" onclick="SaveTabTwo('true')">Next</button>
+                    </div>
 
-    .selectuse option {
-        background-color: white;
-    }
-</style>
+                    <div id="sharedRevenueActivity" class="input-group mb-3" style="display:none">
+                        <button class="btn-primary btn" onclick="SaveTabTwo('false')">Next</button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div id="RevenueTabs3" class="tab-content">
+            <fieldset>
+                <div class="container-fluid">
+                    <div class="input-group mb-3">
+                        <table id="sharedRevenueTerritoriesTable" class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div id="sharedRevenueActivity" class="input-group">
+                            <button class="btn-primary btn" onclick="SaveTabThree('false')">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div id="RevenueTabs4" class="tab-content">
+
+            <fieldset>
+                <div class="container-fluid">
+                    <div class="input-group mb-3">
+                        <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <table id="sharedRevenueActivityTable" class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="footer" id="submitTab4">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveTabFour('false')">
+                            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+                        </div>
+                        <div class="footer" id="additionalInfomation" style="display:none">
+                            <button class="btn-primary btn" onclick="SaveTabFour('true')">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="RevenueTabs5" class="tab-content">
+            <fieldset>
+                <div class="container-fluid" style="display:none" id="addtionalInformationContainer">
+                    <div class="input-group mb-3">
+                        <input id="addtionalInformation" name="addtionalInformation" type="Text" class="form-control" aria-label="Please provide further details">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="footer">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveTabFive()">
+                            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="RevenueTabs6" class="tab-content active">
+            <fieldset>
+                @if (Model.RevenueByActivityViewModel.RevenueData != null)
+                {
+                    <div class="input-group mb-3">
+                        <input id="displayRevenue" name="displayRevenue" type="Text" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue">
+                    </div>
+                    <div class="input-group mb-3">
+                        <table class="table">
+                            @foreach (var territoryData in Model.RevenueByActivityViewModel.RevenueData.Territories)
+                            {
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">@territoryData.Location</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">@territoryData.Pecentage</th>
+                                    </tr>
+                                </tbody>
+                            }
+
+                        </table>
+                    </div>
+                    <div class="input-group mb-3">
+                        <table class="table">
+                            @foreach (var businessActivityData in Model.RevenueByActivityViewModel.RevenueData.Activities)
+                            {
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">@businessActivityData.Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">@businessActivityData.Pecentage</th>
+                                    </tr>
+                                </tbody>
+                            }
+
+                        </table>
+                    </div>
+                }
+
+            </fieldset>
+        </div>
+    </div>
+
+</form>
 
 
