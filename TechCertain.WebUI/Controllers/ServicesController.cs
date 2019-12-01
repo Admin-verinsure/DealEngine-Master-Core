@@ -1985,15 +1985,15 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
             try
             {
-                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("Principal");
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                 if (insuranceAttribute == null)
                 {
-                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "Principal");
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
                 }
-                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
                 if (organisationType == null)
                 {
-                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, "Person - Individual");
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, model.OrganisationTypeName);
                 }
 
                 Organisation organisation = null;
@@ -2023,7 +2023,14 @@ namespace TechCertain.WebUI.Controllers
                 organisation = await _organisationService.GetOrganisationByEmail(model.Email);
                 if (organisation == null)
                 {
-                    var organisationName = model.FirstName + " " + model.LastName;
+                    var organisationName = "";
+                    if (model.OrganisationTypeName == "Person-Individual") { 
+                     organisationName = model.FirstName + " " + model.LastName;
+                    }
+                    else
+                    {
+                        organisationName = model.OrganisationName;
+                    }
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
                     organisation.Qualifications = model.Qualifications;
                     organisation.IsNZIAmember = model.IsNZIAmember;

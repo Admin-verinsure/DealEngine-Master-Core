@@ -51,12 +51,14 @@ namespace TechCertain.WebUI.Models
         public string NZIAmembership { get; set; }
         public string YearofPractice { get; set; }
         public string prevPractice { get; set; }
-
+        public string Type { get; set; }
         public bool IsADNZmember { get; set; }
+        public DateTime DateofRetirement { get; set; }
+        public DateTime DateofDeceased { get; set; }
         public bool IsLPBCategory3 { get; set; }
         public bool IsOtherdirectorship { get; set; }
         public string Othercompanyname { get; set; }
-
+        public string Activities { get; set; }
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
 
 
