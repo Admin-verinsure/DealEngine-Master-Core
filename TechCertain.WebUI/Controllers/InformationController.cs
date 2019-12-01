@@ -2044,7 +2044,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 foreach (ClientAgreement agreement in sheet.Programme.Agreements)
                 {
-                    await _referenceService.CreateClientAgreementReference(reference, agreement.Id);
+                    await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
                 }
             }
 

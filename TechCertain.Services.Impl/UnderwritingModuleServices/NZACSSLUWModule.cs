@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace TechCertain.Services.Impl.UnderwritingModuleServices
 {
-    public class NZACSPIUWModule : IUnderwritingModule
+    public class NZACSSLUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public NZACSPIUWModule()
+        public NZACSSLUWModule()
         {
-            Name = "NZACS_PI";
+            Name = "NZACS_SL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -24,9 +24,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
         {
             ClientAgreement agreement = GetClientAgreement(underwritingUser, informationSheet, informationSheet.Programme, product, reference);
             Guid id = agreement.Id;
-
-            ClientAgreementTerm term = GetAgreementTerm(underwritingUser, agreement, "PI");
-
+                      
             if (agreement.ClientAgreementRules.Count == 0)
                 foreach (var rule in product.Rules.Where(r => !string.IsNullOrWhiteSpace(r.Name)))
                     agreement.ClientAgreementRules.Add(new ClientAgreementRule(underwritingUser, rule, agreement));
@@ -35,7 +33,17 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium");
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "SL" && ct.DateDeleted == null) != null)
+            {
+                foreach (ClientAgreementTerm slterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "SL" && ct.DateDeleted == null))
+                {
+                    slterm.Delete(underwritingUser);
+                }
+            }
+
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl250klimitminpremium", "sl500klimitminpremium", "sl1millimitminpremium",
+                "sl250klimitunder6employeerate", "sl500klimitunder6employeerate", "sl1millimitunder6employeerate", "sl250klimit6to10employeerate", "sl500klimit6to10employeerate", 
+                "sl1millimit6to10employeerate", "sl250klimitover10employeerate", "sl500klimitover10employeerate", "sl1millimitover10employeerate");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -52,23 +60,55 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
-            
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit = 0;
-            decimal TermPremium = 0m;
+            int TermLimit250k = 250000;
+            decimal TermPremium250k = 0m;
+            decimal TermBrokerage250k = 0m;
+            int TermLimit500k = 500000;
+            decimal TermPremium500k = 0m;
+            decimal TermBrokerage500k = 0m;
+            int TermLimit1mil = 1000000;
+            decimal TermPremium1mil = 0m;
+            decimal TermBrokerage1mil = 0m;
+
             int TermExcess = 0;
-            decimal TermBrokerage = 0m;
-
+            int employeenumber = 5;
             //Calculation
-            TermLimit = 1000000;
-            TermExcess = 2500;
 
-            term.TermLimit = TermLimit;
-            term.Premium = TermPremium;
-            term.Excess = TermExcess;
-            term.BrokerageRate = agreement.Brokerage;
-            term.Brokerage = TermBrokerage;
+            //Return terms based on the limit options
+
+            TermExcess = 500;
+
+            TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
+            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit250k, TermExcess);
+            termsl250klimitoption.TermLimit = TermLimit250k;
+            termsl250klimitoption.Premium = TermPremium250k;
+            termsl250klimitoption.Excess = TermExcess;
+            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl250klimitoption.Brokerage = TermBrokerage250k;
+            termsl250klimitoption.DateDeleted = null;
+            termsl250klimitoption.DeletedBy = null;
+
+            TermPremium500k = GetPremiumFor(rates, employeenumber, TermLimit500k);
+            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit500k, TermExcess);
+            termsl500klimitoption.TermLimit = TermLimit500k;
+            termsl500klimitoption.Premium = TermPremium500k;
+            termsl500klimitoption.Excess = TermExcess;
+            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl500klimitoption.Brokerage = TermBrokerage500k;
+            termsl500klimitoption.DateDeleted = null;
+            termsl500klimitoption.DeletedBy = null;
+
+            TermPremium1mil = GetPremiumFor(rates, employeenumber, TermLimit1mil);
+            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit1mil, TermExcess);
+            termsl1millimitoption.TermLimit = TermLimit1mil;
+            termsl1millimitoption.Premium = TermPremium1mil;
+            termsl1millimitoption.Excess = TermExcess;
+            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1millimitoption.Brokerage = TermBrokerage1mil;
+            termsl1millimitoption.DateDeleted = null;
+            termsl1millimitoption.DeletedBy = null;
 
             //Referral points per agreement
             //Prior insurance
@@ -85,7 +125,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             }
 
 
-            string auditLogDetail = "NZACS PI UW created/modified";
+            string auditLogDetail = "NZACS SL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -131,9 +171,10 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             return clientAgreement;
         }
 
-        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm)
+        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm, int limitoption, decimal excessoption)
         {
-            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted == null);
+            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted != null && t.TermLimit == limitoption && t.Excess == excessoption);
+            
             if (term == null)
             {
                 term = new ClientAgreementTerm(CurrentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
@@ -153,7 +194,75 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-       
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, int employeenumber, int limitoption)
+        {
+            decimal premiumoption = 0M;
+            decimal minpremiumoption = 0M;
+
+            switch (limitoption)
+            {
+                case 250000:
+                    {
+                        minpremiumoption = rates["sl250klimitminpremium"];
+                        if (employeenumber <= 5)
+                        {
+                            premiumoption = rates["sl250klimitunder6employeerate"] * employeenumber;
+                        }
+                        else if (employeenumber > 5 && employeenumber <= 10)
+                        {
+                            premiumoption = rates["sl250klimit6to10employeerate"] * employeenumber;
+                        }
+                        else if (employeenumber > 10)
+                        {
+                            premiumoption = rates["sl250klimitover10employeerate"] * employeenumber;
+                                                    }
+                        premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
+                        break;
+                    }
+                case 500000:
+                    {
+                        minpremiumoption = rates["sl500klimitminpremium"];
+                        if (employeenumber <= 5)
+                        {
+                            premiumoption = rates["sl500klimitunder6employeerate"] * employeenumber;
+                        }
+                        else if (employeenumber > 5 && employeenumber <= 10)
+                        {
+                            premiumoption = rates["sl500klimit6to10employeerate"] * employeenumber;
+                        }
+                        else if (employeenumber > 10)
+                        {
+                            premiumoption = rates["sl500klimitover10employeerate"] * employeenumber;
+                        }
+                        premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
+                        break;
+                    }
+                case 1000000:
+                    {
+                        minpremiumoption = rates["sl1millimitminpremium"];
+                        if (employeenumber <= 5)
+                        {
+                            premiumoption = rates["sl1millimitunder6employeerate"] * employeenumber;
+                        }
+                        else if (employeenumber > 5 && employeenumber <= 10)
+                        {
+                            premiumoption = rates["sl1millimit6to10employeerate"] * employeenumber;
+                        }
+                        else if (employeenumber > 10)
+                        {
+                            premiumoption = rates["sl1millimitover10employeerate"] * employeenumber;
+                        }
+                        premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception(string.Format("Can not calculate premium for SL"));
+                    }
+            }
+
+            return premiumoption;
+        }
 
         void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
         {
@@ -182,10 +291,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             }
         }
 
-       
+
 
 
     }
 }
+
 
 

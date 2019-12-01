@@ -16,7 +16,7 @@ namespace TechCertain.Services.Impl
         IClientAgreementTermService _clientAgreementTermService;
         IClientAgreementMVTermService _clientAgreementMVTermService;
         IClientAgreementEndorsementService _clientAgreementEndorsementService;
-        IUnderwritingModule _underwritingModule;        
+        IUnderwritingModule _underwritingModule;
 
         public UWMService(
             IUnderwritingModule underwritingModule,
@@ -31,25 +31,35 @@ namespace TechCertain.Services.Impl
             _clientAgreementTermService = clientAgreementTermService;
             _clientAgreementMVTermService = clientAgreementMVTermService;
             _clientAgreementEndorsementService = clientAgreementEndorsementService;
-            _underwritingModule = underwritingModule;            
+            _underwritingModule = underwritingModule;
         }
 
-        
+
         public bool UWM(User createdBy, ClientInformationSheet sheet, string reference)
         {
             var _modules = new Dictionary<string, IUnderwritingModule>();
             var modules = RegisterModules();
             bool result = false;
-			foreach (Product product in sheet.Programme.BaseProgramme.Products) {
+            int productcount = 0;
+            string referenceId = reference;
+            foreach (Product product in sheet.Programme.BaseProgramme.Products.OrderBy(t => t.OrderNumber)) {
 				if (!product.UnderwritingEnabled)
 					continue;
-				
-				string uwmCode = product.UnderwritingModuleCode;
+                
+                if (!product.IsMasterProduct)
+                {
+                    productcount += 1;
+                    int.TryParse(referenceId, out int newReference);
+                    referenceId = (newReference + productcount).ToString();
+                }
+
+                string uwmCode = product.UnderwritingModuleCode;
 				if (string.IsNullOrWhiteSpace (uwmCode))
 					throw new Exception ("No underwriting module specificed for product '" + product.Id + "'");
 				var uwm = Load(uwmCode, _modules);
-				result &= uwm.Underwrite (createdBy, sheet, product, reference);
-			}
+				result &= uwm.Underwrite (createdBy, sheet, product, referenceId);
+
+            }
 			return result;
         }
 
@@ -73,11 +83,18 @@ namespace TechCertain.Services.Impl
         protected IUnderwritingModule[] RegisterModules()
         {
             var modules = new IUnderwritingModule[] {
+                new EmptyUWModule(),
                 new ICIBHIANZUWModule(),
                 new ICIBARCCOUWModule(),
                 new MarshCoastGuardUWModule(),
                 new NZACSPIUWModule(),
-                new EmptyUWModule(),
+                new NZACSSLUWModule(),
+                new NZACSELUWModule(),
+                new NZACSEDUWModule(),
+                new NZACSDOUWModule(),
+                new NZACSPLUWModule(),
+                new NZACSCLUWModule(),
+                
             };
             return modules;
         }

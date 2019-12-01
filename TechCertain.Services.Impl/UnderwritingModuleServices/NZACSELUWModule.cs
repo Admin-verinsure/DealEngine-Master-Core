@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace TechCertain.Services.Impl.UnderwritingModuleServices
 {
-    public class NZACSPIUWModule : IUnderwritingModule
+    public class NZACSELUWModule : IUnderwritingModule
     {
         public string Name { get; protected set; }
 
-        public NZACSPIUWModule()
+        public NZACSELUWModule()
         {
-            Name = "NZACS_PI";
+            Name = "NZACS_EL";
         }
 
         public bool Underwrite(User CurrentUser, ClientInformationSheet informationSheet)
@@ -25,7 +25,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             ClientAgreement agreement = GetClientAgreement(underwritingUser, informationSheet, informationSheet.Programme, product, reference);
             Guid id = agreement.Id;
 
-            ClientAgreementTerm term = GetAgreementTerm(underwritingUser, agreement, "PI");
+            ClientAgreementTerm term = GetAgreementTerm(underwritingUser, agreement, "EL");
 
             if (agreement.ClientAgreementRules.Count == 0)
                 foreach (var rule in product.Rules.Where(r => !string.IsNullOrWhiteSpace(r.Name)))
@@ -52,7 +52,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
-            
+
             agreement.QuoteDate = DateTime.UtcNow;
 
             int TermLimit = 0;
@@ -85,7 +85,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             }
 
 
-            string auditLogDetail = "NZACS PI UW created/modified";
+            string auditLogDetail = "NZACS SL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -115,7 +115,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     }
                 }
                 clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
-                if (product.IsMasterProduct)
+                if (clientAgreement.Product.IsMasterProduct)
                 {
                     clientAgreement.MasterAgreement = true;
                 }
@@ -153,7 +153,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-       
+
 
         void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
         {
@@ -182,10 +182,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             }
         }
 
-       
+
 
 
     }
 }
+
 
 
