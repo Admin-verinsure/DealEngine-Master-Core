@@ -9,7 +9,7 @@ namespace TechCertain.WebUI.Models.Programme
     public class ActivityListViewModel : BaseViewModel
     {
         public IList<Domain.Entities.Programme> ProgrammeList { get; set; }
-        public IList<BusinessActivity> BusinessActivityList { get; set; }
+        public IList<BusinessActivityTemplate> BusinessActivityList { get; set; }
 
     };
 

@@ -8,14 +8,17 @@ namespace TechCertain.Services.Interfaces
 {
     public interface IBusinessActivityService
     {
-        Task<List<BusinessActivity>> GetBusinessActivitiesByClassification (int classification);
-        Task<List<BusinessActivity>> GetBusinessActivities();
-        Task CreateBusinessActivity(BusinessActivity businessActivity);
+        Task<List<BusinessActivityTemplate>> GetBusinessActivitiesByClassification (int classification);
+        Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplate();
+        //Task<BusinessActivityTemplate> GetBusinessActivitiesTemplate(BusinessActivityTemplate businessActivity);
         Task<BusinessActivity> GetBusinessActivity(Guid Id);
-        Task AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity);
-        Task<BusinessActivity> GetBusinessActivitiesByClientProgramme(Guid programmeId);
+        Task<BusinessActivityTemplate> GetBusinessActivityTemplate(Guid Id);
+        Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivity);
         Task<BusinessActivity> GetBusinessActivityByCode(string AnzsciCode);
         Task UpdateBusinessActivity(BusinessActivity businessActivity);
+        Task CreateBusinessActivityTemplate(BusinessActivityTemplate businessActivity);
+        Task CreateBusinessActivity(BusinessActivity newBusinessActivity);
+        Task<BusinessActivityTemplate> GetBusinessActivityTemplateByCode(string anzsciCode);
     }
     
 }

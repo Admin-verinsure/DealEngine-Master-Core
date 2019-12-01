@@ -64,9 +64,9 @@ namespace TechCertain.Services.Impl
 			return await _programmeRepository.GetByIdAsync(id);
 		}
 
-		public async Task<Programme> GetProgrammesByOwner (Guid ownerOrganisationId)
+		public async Task<List<Programme>> GetProgrammesByOwner (Guid ownerOrganisationId)
 		{
-            return await _programmeRepository.FindAll().FirstOrDefaultAsync(cp => cp.Owner.Id == ownerOrganisationId);
+            return await _programmeRepository.FindAll().Where(p => p.Owner.Id == ownerOrganisationId || p.IsPublic == true).ToListAsync();
         }
 
         public async Task<Programme> GetCoastGuardProgramme()
@@ -109,6 +109,28 @@ namespace TechCertain.Services.Impl
 
 			return newClientProgramme;
 		}
-	}
+
+        public async Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate)
+        {
+            programme.BusinessActivityTemplates.Add(businessActivityTemplate);
+            await _programmeRepository.UpdateAsync(programme);
+        }
+
+        public async Task AttachClientProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate)
+        {
+            programme.TerritoryTemplates.Add(territoryTemplate);
+            await _programmeRepository.UpdateAsync(programme);
+        }
+
+        public async Task<List<Programme>> GetAllProgrammes()
+        {
+            return await _programmeRepository.FindAll().ToListAsync();
+        }
+
+        public async Task<Programme> GetProgrammeById(Guid ProgrammeId)
+        {
+            return await _programmeRepository.GetByIdAsync(ProgrammeId);
+        }
+    }
 }
 

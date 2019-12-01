@@ -12,21 +12,23 @@ namespace TechCertain.Services.Impl
     public class BusinessActivityService : IBusinessActivityService
     {
         IMapperSession<BusinessActivity> _businessActivityRepository;
+        IMapperSession<BusinessActivityTemplate> _businessActivityTemplateRepository;
 
-        public BusinessActivityService(IMapperSession<BusinessActivity> businessActivityRepository)
+        public BusinessActivityService(IMapperSession<BusinessActivity> businessActivityRepository, IMapperSession<BusinessActivityTemplate> businessActivityTemplateRepository)
         {
             _businessActivityRepository = businessActivityRepository;
+            _businessActivityTemplateRepository = businessActivityTemplateRepository;
         }
 
-        public async Task AttachClientProgrammeToActivities(Programme programme, BusinessActivity businessActivity)
+        public async Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivity)
         {
             businessActivity.Programme = programme;
             await Update(businessActivity);
         }
 
-        public async Task Update(BusinessActivity businessActivity)
+        public async Task Update(BusinessActivityTemplate businessActivity)
         {
-            await _businessActivityRepository.UpdateAsync(businessActivity);
+            await _businessActivityTemplateRepository.UpdateAsync(businessActivity);
         }
 
         public async Task CreateBusinessActivity(BusinessActivity businessActivity)
@@ -37,25 +39,20 @@ namespace TechCertain.Services.Impl
             }
         }
 
-        public async Task<List<BusinessActivity>> GetBusinessActivities()
+        public async Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplate()
         {
-            return await _businessActivityRepository.FindAll().OrderBy(ba => ba.AnzsciCode).ToListAsync();            
+            return await _businessActivityTemplateRepository.FindAll().OrderBy(ba => ba.AnzsciCode).ToListAsync();            
         }
 
-        public async Task<List<BusinessActivity>> GetBusinessActivitiesByClassification(int classification)
+        public async Task<List<BusinessActivityTemplate>> GetBusinessActivitiesByClassification(int classification)
         {
-            var list = await GetBusinessActivities();
+            var list = await GetBusinessActivitiesTemplate();
             return list.Where(ba => ba.Classification == classification).ToList();
         }
 
         public async Task<BusinessActivity> GetBusinessActivity(Guid Id)
         {
             return await _businessActivityRepository.GetByIdAsync(Id);
-        }
-
-        public async Task<BusinessActivity> GetBusinessActivitiesByClientProgramme(Guid programmeId)
-        {
-            return await _businessActivityRepository.FindAll().FirstOrDefaultAsync(t => t.Programme.Id == programmeId);
         }
 
         public async Task<BusinessActivity> GetBusinessActivityByCode(string AnzsciCode)
@@ -66,6 +63,24 @@ namespace TechCertain.Services.Impl
         public async Task UpdateBusinessActivity(BusinessActivity businessActivity)
         {
             await _businessActivityRepository.UpdateAsync(businessActivity);
+        }
+
+        public async Task CreateBusinessActivityTemplate(BusinessActivityTemplate businessActivityTemplate)
+        {
+            if (businessActivityTemplate.AnzsciCode != null || businessActivityTemplate.Description != null)
+            {
+                await _businessActivityTemplateRepository.AddAsync(businessActivityTemplate);
+            }
+        }
+
+        public async Task<BusinessActivityTemplate> GetBusinessActivityTemplate(Guid Id)
+        {
+            return await _businessActivityTemplateRepository.GetByIdAsync(Id);
+        }
+
+        public async Task<BusinessActivityTemplate> GetBusinessActivityTemplateByCode(string anzsciCode)
+        {
+            return await _businessActivityTemplateRepository.FindAll().FirstOrDefaultAsync(bat => bat.AnzsciCode == anzsciCode);
         }
     }
 }

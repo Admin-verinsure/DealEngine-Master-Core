@@ -49,11 +49,7 @@ namespace TechCertain.WebUI.Models
 
         public IEnumerable<OrganisationViewModel> InterestedParties { get; set; }
 
-        public IEnumerable<RevenueByActivityViewModel> RevenueByActivity { get; set; }
-        public IEnumerable<RevenueByTerritoryViewModel> RevenueByTerritories { get; set; }
         public IEnumerable<RoleDetailViewModel> RolesByLocation { get; set; }
-
-        public IEnumerable<BusinessActivityViewModel> BusinessActivities { get; set; }
 
         public Guid OrganisationId { get; set; }
 
@@ -97,6 +93,7 @@ namespace TechCertain.WebUI.Models
         //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
         public Guid ClientProgrammeID { get; set; }
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
+        public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
     }
 
     public class InformationSectionViewModel
@@ -287,26 +284,16 @@ namespace TechCertain.WebUI.Models
 
     public class RevenueByActivityViewModel
     {
-        public IList<Territory> Territories { get; set; }
-        public IList<BusinessActivity> Activities { get; set; }
+        public bool IsTradingOutsideNZ { get; set; }
+        public IList<SelectListItem> Territories { get; set; }
+        public IList<SelectListItem> Activities { get; set; }
         public decimal TotalRevenue { get; set; }
-    }
-
-    public class RevenueByTerritoryViewModel
-    {
-        public string Territory;
-        public decimal DeclaredRevenue { get; set; }
+        public RevenueByActivity RevenueData { get; set; }
     }
 
     public class RoleDetailViewModel
     {
         public Role Role;        
-    }
-
-    public class RevenueByCountryViewModel
-    {
-        public string Country { get; set; }
-        public decimal DeclaredRevenue { get; set; }
     }
 
     public class BusinessActivityViewModel
