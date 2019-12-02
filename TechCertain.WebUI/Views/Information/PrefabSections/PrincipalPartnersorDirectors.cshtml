@@ -241,7 +241,7 @@
                             <label class="input">
                                 <select id="AddPrincial13" onchange="Principal13Selected('AddPrincial13')" class="form-control rmv editable" name="Type">
                                     <option selected="selected" value="">-- Select --</option>
-                                    <option value="Principals">Principals</option>
+                                    <option value="Principal">Principal</option>
                                     <option value="Subsidiary">Subsidiary</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
                                     <option value="Megers">Megers</option>
@@ -254,13 +254,12 @@
                         </section>
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Organisatiobn Type</label>
+                            <label class="label required">Organisation Type</label>
                             <label class="input">
-                                <select id="AddPrincial14" onchange="Principal14Selected('AddPrincial14')" class="form-control rmv editable" name="OrganisationType">
+                                <select id="AddPrincial14" onchange="Principal14Selected('AddPrincial14')" class="form-control rmv editable" name="OrganisationTypeName">
                                     <option selected="selected" value="">-- Select --</option>
-                                    <option value="Person-Individual">Person-Individual</option>
-                                    <option value="Private">Private</option>
-                                    <option value="Company">Company</option>
+                                    <option value="Person-Individual">Private</option>
+                                    <option value="Corporate">Company</option>
                                     <option value="Trust">Trust</option>
                                     <option value="Partnership">Partnership</option>
 
@@ -273,18 +272,16 @@
                             <label class="label required">Date of Retirement</label>
                             <label class="input">
                                 <i></i>
-                                <input name="EffectiveDate" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial15" type="text">
+                                <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial15" type="text">
                             </label>
-                            <p class="validationContainer" id="ValidatePrincial15"></p>
                         </section>
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Date of Deceased</label>
                             <label class="input">
                                 <i></i>
-                                <input name="EffectiveDate" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial16" type="text">
+                                <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial16" type="text">
                             </label>
-                            <p class="validationContainer" id="ValidatePrincial16"></p>
                         </section>
                         <div class="hidden" id="Orgnamesec">
 
@@ -542,7 +539,7 @@
 
      function Principal13Selected(PrincipalSelected) {
         var principalSelected = document.getElementById(PrincipalSelected);
-        if (principalSelected.options[principalSelected.selectedIndex].value == "Principals") {
+        if (principalSelected.options[principalSelected.selectedIndex].value == "Principal") {
             $('#AddIndividualPrincipal').removeClass('hidden');
             $('#AddIndividual1').removeClass('hidden');
             $('#AddIndividual2').removeClass('hidden');
@@ -813,7 +810,7 @@
              }
          }
          
-         for (var index = 9; index <= 16 && index !=12 ; index++) {
+         for (var index = 9; index <= 14 && index !=12 ; index++) {
                      var addPrincial = "#AddPrincial" + index;
                  var value = $(addPrincial).val();
                  var validator = "#ValidatePrincial" + index;
@@ -871,9 +868,11 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        var orgnisationType = $('#OrganisationType').val();
+        var orgnisationType = $('#AddPrincial14').val();
+        var boatUseEffectiveDate = $('#BoatUseLiveEffectiveDateModal').serialize();
+         var boatUseCeaseDate = $('#BoatUseLiveCeaseDateModal').serialize();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&OrganisationType=" + orgnisationType;
+        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType;
         $.ajax({
             url: '@Url.Action("AddPrincipalDirectors", "Services")',
             type: "POST",
@@ -883,8 +882,14 @@
                 debugger;
                 SetCurrentTab(currenttab);
                 $(tableId).trigger('reloadGrid');
-                   $(tabId + " :input").val("");
-
+                $(tabId + " :input").val("");
+                $('#AddIndividual1').addClass('hidden');
+                $('#AddIndividual2').addClass('hidden');
+                $('#AddIndividual3').addClass('hidden');
+                $('#AddIndividualPrincipal').addClass('hidden');
+                $('#Princial6Sec').addClass('hidden');
+                $('#Princial8Sec').addClass('hidden');
+                $('#Princial12Sec').addClass('hidden');
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 $('#AddTrailer').hide();

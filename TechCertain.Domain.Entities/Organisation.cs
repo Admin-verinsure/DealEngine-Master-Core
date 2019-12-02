@@ -114,7 +114,23 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
+        public virtual DateTime DateofRetirement 
+        { 
+            get; 
+            set; 
+        }
+        public virtual string Activities 
+        { 
+            get; 
+            set; 
+        }
 
+
+        public virtual DateTime DateofDeceased 
+        {
+            get; 
+            set; 
+        }
         public virtual IList<Boat> Boat
         {
             get;

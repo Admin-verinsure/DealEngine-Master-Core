@@ -1983,24 +1983,54 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+            string orgTypeName = "";
+
             try
             {
+                switch (model.OrganisationTypeName)
+                {
+                    case "Person-Individual":
+                        {
+                            orgTypeName = "Person - Individual";
+                            break;
+                        }
+                    case "Corporate":
+                        {
+                            orgTypeName = "Corporation – Limited liability";
+                            break;
+                        }
+                    case "Trust":
+                        {
+                            orgTypeName = "Trust";
+                            break;
+                        }
+                    case "Partnership":
+                        {
+                            orgTypeName = "Partnership";
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
+                        }
+                }
+
                 InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                 if (insuranceAttribute == null)
                 {
                     insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
                 }
-                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
                 if (organisationType == null)
                 {
-                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, model.OrganisationTypeName);
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
                 }
 
                 Organisation organisation = null;
                 User userdb = null;
                 try
                 {
-                    if (model.OrganisationTypeName == "Person-Individual")
+                    if (orgTypeName == "Person - Individual")
                     {
                         userdb = await _userService.GetUserByEmail(model.Email);
                         if (userdb == null)
@@ -2025,7 +2055,7 @@ namespace TechCertain.WebUI.Controllers
                 catch (Exception ex)
                 {
 
-                    if (model.OrganisationTypeName == "Person-Individual")
+                    if (orgTypeName == "Person - Individual")
                     {
                         userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
                         userdb.FirstName = model.FirstName;
@@ -2041,11 +2071,10 @@ namespace TechCertain.WebUI.Controllers
                     }
 
                 }
-                organisation = await _organisationService.GetOrganisationByEmail(model.Email);
-                if (organisation == null)
-                {
+              
                     var organisationName = "";
-                    if (model.OrganisationTypeName == "Person-Individual") { 
+                    if (orgTypeName == "Person - Individual")
+                    { 
                      organisationName = model.FirstName + " " + model.LastName;
                     }
                     else
@@ -2062,12 +2091,14 @@ namespace TechCertain.WebUI.Controllers
                     organisation.prevPractice = model.prevPractice;
                     organisation.IsOtherdirectorship = model.IsOtherdirectorship;
                     organisation.Othercompanyname = model.Othercompanyname;
-                    organisation.Email = model.Email;
+                    organisation.Activities = model.Activities;
+                    organisation.DateofRetirement = model.DateofRetirement;
+                    organisation.DateofDeceased = model.DateofDeceased;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
                     userdb.SetPrimaryOrganisation(organisation);
-                }
+                
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     userdb.SetPrimaryOrganisation(organisation);
