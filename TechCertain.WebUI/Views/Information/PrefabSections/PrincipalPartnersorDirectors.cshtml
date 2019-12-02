@@ -307,9 +307,7 @@
                             </section>
                         </div>
 
-                        <div class="hidden" id="AddIndividual">
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden"  id="AddIndividual1">
                                 <label class="label required">First Name</label>
                                 <label class="input">
                                     <i></i>
@@ -318,7 +316,7 @@
                                 <p class="validationContainer" id="ValidatePrincial1"></p>
 
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden"  id="AddIndividual2">
                                 <label class="label required">Last Name</label>
                                 <label class="input">
                                     <i></i>
@@ -327,7 +325,7 @@
                                 <p class="validationContainer" id="ValidatePrincial2"></p>
 
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden"  id="AddIndividual3">
                                 <label class="label required">Email</label>
                                 <label class="input">
                                     <i></i>
@@ -336,7 +334,6 @@
                                 <p class="validationContainer" id="ValidatePrincial3"></p>
 
                             </section>
-                        </div>
                         <div class="hidden" id="AddIndividualPrincipal">
 
 
@@ -528,14 +525,18 @@
              $('#AddPrincial1').val('');
             $('#AddPrincial2').val('');
             $('#AddPrincial3').val('');
-            $('#AddIndividual').addClass('hidden');
+            $('#AddIndividual1').addClass('hidden');
+            $('#AddIndividual2').addClass('hidden');
+            $('#AddIndividual3').addClass('hidden');
 
         } else {
             
             $('#AddPrincial17').val('');
             $('#AddPrincial18').val('');
             $('#Orgnamesec').addClass('hidden');
-            $('#AddIndividual').removeClass('hidden');
+            $('#AddIndividual1').removeClass('hidden');
+            $('#AddIndividual2').removeClass('hidden');
+            $('#AddIndividual3').removeClass('hidden');
         }
      }
 
@@ -543,6 +544,10 @@
         var principalSelected = document.getElementById(PrincipalSelected);
         if (principalSelected.options[principalSelected.selectedIndex].value == "Principals") {
             $('#AddIndividualPrincipal').removeClass('hidden');
+            $('#AddIndividual1').removeClass('hidden');
+            $('#AddIndividual2').removeClass('hidden');
+            $('#AddIndividual3').removeClass('hidden');
+
             $('#AddPrincial14').val('Person-Individual');
             $('#AddPrincial14').prop("disabled", true);
 
@@ -559,8 +564,14 @@
             $('#AddPrincial10').val('');
             $('#AddPrincial11').val('');
             $('#AddPrincial14').val('');
+             $('#AddPrincial17').val('');
+            $('#AddPrincial18').val('');
             $('#AddPrincial14').prop("disabled", false);
             $('#AddIndividualPrincipal').addClass('hidden');
+            $('#AddIndividual1').addClass('hidden');
+            $('#AddIndividual2').addClass('hidden');
+            $('#AddIndividual3').addClass('hidden');
+
         }
      }
 
@@ -740,13 +751,32 @@
          debugger;
          event.preventDefault();
              var validity = true;
-         
-             for (var index = 1; index <= 5; index++) {
+           if ($('#AddPrincial1').val() == '' && $('#AddPrincial14').val() == "Person-Individual") {
+             $('#ValidatePrincial1').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             } else {
+                 $('#ValidatePrincial6').html("<i></i>");
+             }
+         }
+           if ($('#AddPrincial2').val() == '' && $('#AddPrincial14').val() == "Person-Individual") {
+            $('#ValidatePrincial2').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+         }if ($('#AddPrincial3').val() == '' && $('#AddPrincial14').val() == "Person-Individual") {
+            $('#ValidatePrincial3').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+         }
+
+             for (var index = 4; index <= 5; index++) {
                      var addPrincial = "#AddPrincial" + index;
                  var value = $(addPrincial).val();
                  var validator = "#ValidatePrincial" + index;
 
-                  if (value == "" && $('#AddPrincial13').val() == "Principals" ) {
+                  if (value == "" && $('#AddPrincial13').val() == "Principals") {
               $(validator).html("<font color='red'>Field is required</font>")
                 if (validity) {
                   validity = false;
@@ -808,11 +838,11 @@
              }
          };
            if ($('#AddPrincial18').val() == '' && $('#AddPrincial14').val() != "Person-Individual") {
-             $('#ValidatePrincial128).html("<font color='red'>Field is required</font>")
+             $('#ValidatePrincial18').html("<font color='red'>Field is required</font>")
              if (validity) {
                  validity = false;
              } else {
-                 $('#ValidatePrincia128).html("<i></i>");
+                 $('#ValidatePrincia18').html("<i></i>");
              }
          };
 
@@ -830,7 +860,7 @@
 
 
          if (validity) {
-               AddPrincipalDirectors(event, '#Principaltabs3', '#PrincipalDirectors', '#Principaltabs1','Principaltabs1');
+               AddPrincipalDirectors(event, '#Principaltabs3', '#PrincipalDirectors','Principaltabs1');
              };
 
 

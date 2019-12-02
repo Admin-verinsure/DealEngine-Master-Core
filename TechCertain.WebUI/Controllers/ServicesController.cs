@@ -2000,8 +2000,32 @@ namespace TechCertain.WebUI.Controllers
                 User userdb = null;
                 try
                 {
-                    userdb = await _userService.GetUserByEmail(model.Email);
-                    if(userdb == null)
+                    if (model.OrganisationTypeName == "Person-Individual")
+                    {
+                        userdb = await _userService.GetUserByEmail(model.Email);
+                        if (userdb == null)
+                        {
+                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
+                            userdb.FirstName = model.FirstName;
+                            userdb.LastName = model.LastName;
+                            userdb.FullName = model.FirstName + " " + model.LastName;
+                            userdb.Email = model.Email;
+                            await _userService.Create(userdb);
+                        }
+
+
+                    }
+                    else
+                    {
+                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation==sheet.Owner);
+
+                    }
+                   
+                }
+                catch (Exception ex)
+                {
+
+                    if (model.OrganisationTypeName == "Person-Individual")
                     {
                         userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
                         userdb.FirstName = model.FirstName;
@@ -2010,15 +2034,12 @@ namespace TechCertain.WebUI.Controllers
                         userdb.Email = model.Email;
                         await _userService.Create(userdb);
                     }
-                }
-                catch (Exception ex)
-                {
-                    userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-                    userdb.FirstName = model.FirstName;
-                    userdb.LastName = model.LastName;
-                    userdb.FullName = model.FirstName + " " + model.LastName;
-                    userdb.Email = model.Email;
-                    await _userService.Create(userdb);
+                    else
+                    {
+                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                    }
+
                 }
                 organisation = await _organisationService.GetOrganisationByEmail(model.Email);
                 if (organisation == null)
