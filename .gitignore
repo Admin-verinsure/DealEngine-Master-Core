@@ -21,3 +21,5 @@ sqlite3
 /TechCertain.WebUI/Views/UI - contains examples
 /web.config
 /packages
+/TechCertain.WebUI/appsettings.json
+
