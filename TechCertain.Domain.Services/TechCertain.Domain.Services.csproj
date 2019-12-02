@@ -1,13 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>C:\inetpub\wwwroot\techcertain2019core\Backup\TechCertain.Domain.Services\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Novell.Directory.Ldap.NETStandard\Novell.Directory.Ldap.NETStandard.csproj" />
     <ProjectReference Include="..\TechCertain.Domain.Entities\TechCertain.Domain.Entities.csproj" />
     <ProjectReference Include="..\TechCertain.Services.Interfaces\TechCertain.Services.Interfaces.csproj" />
   </ItemGroup>
-
 </Project>
