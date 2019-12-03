@@ -483,6 +483,7 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement agreement = await _clientAgreementService.GetAgreement(id);
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
             model.ClientAgreementId = id;
+            model.ClientProgrammeId = agreement.ClientInformationSheet.Programme.Id;
             foreach (var terms in agreement.ClientAgreementTerms)
             {
                 if (terms.BoatTerms.Where(bvt => bvt.DateDeleted == null).Count() > 0)
@@ -669,6 +670,9 @@ namespace TechCertain.WebUI.Controllers
                     else if (term.SubTermType == "BV")
                     {
                         riskname = "Vessel";
+                    } else
+                    {
+                        riskname = agreement.Product.Name;
                     }
                     insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
                 }
@@ -711,6 +715,16 @@ namespace TechCertain.WebUI.Controllers
                         {
                             RiskName = "Vessel",
                             Exclusion = "Excess: refer to vessel excess "
+                        });
+                    }
+                } else
+                {
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        insuranceExclusion.Add(new InsuranceExclusion
+                        {
+                            RiskName = agreement.Product.Name,
+                            Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture)
                         });
                     }
                 }
@@ -985,6 +999,9 @@ namespace TechCertain.WebUI.Controllers
                     else if (term.SubTermType == "BV")
                     {
                         riskname = "Vessel";
+                    } else
+                    {
+                        riskname = agreement.Product.Name;
                     }
                 }
 

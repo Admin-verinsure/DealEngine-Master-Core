@@ -1798,7 +1798,30 @@ namespace TechCertain.WebUI.Controllers
 
             return Json(GeneralLiabilityAnwers);
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> GetProfessionalIdemnity(Guid ClientInformationSheet)
+        {
+            String[][] ProfessionalIndemnityAnswer = new String[1][];
+            var count = 0;
+            String[] ProfessionalIndemnity;
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1")))
+            {
+                ProfessionalIndemnity = new String[2];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    ProfessionalIndemnity[i] = answer.ItemName;
+                    ProfessionalIndemnity[i + 1] = answer.Value;
+                }
+
+                ProfessionalIndemnityAnswer[count] = ProfessionalIndemnity;
+                count++;
+            }
+
+            return Json(ProfessionalIndemnityAnswer);
+        }
+
         [HttpPost]
         public async Task<IActionResult> GetEmployerLiability(Guid ClientInformationSheet)
         {
@@ -1985,7 +2008,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 foreach (ClientAgreement agreement in sheet.Programme.Agreements)
                 {
-                    await _referenceService.CreateClientAgreementReference(reference, agreement.Id);
+                    await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
                 }
             }
 

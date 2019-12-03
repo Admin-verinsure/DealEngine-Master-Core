@@ -35,7 +35,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium");
+            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -55,17 +55,20 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int totalTermLimit = 0;
-            decimal totalTermPremium = 0m;
-            decimal totalTermBrokerage = 0m;
+            int TermLimit = 0;
+            decimal TermPremium = 0m;
+            int TermExcess = 0;
+            decimal TermBrokerage = 0m;
 
             //Calculation
+            TermLimit = 1000000;
+            TermExcess = 2500;
 
-
-            term.TermLimit = totalTermLimit;
-            term.Premium = totalTermPremium;
+            term.TermLimit = TermLimit;
+            term.Premium = TermPremium;
+            term.Excess = TermExcess;
             term.BrokerageRate = agreement.Brokerage;
-            term.Brokerage = totalTermBrokerage;
+            term.Brokerage = TermBrokerage;
 
             //Referral points per agreement
             //Prior insurance
@@ -82,7 +85,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             }
 
 
-            string auditLogDetail = "NZACS UW created/modified";
+            string auditLogDetail = "NZACS PI UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -112,7 +115,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     }
                 }
                 clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
-                if (clientAgreement.Product.IsMasterProduct)
+                if (product.IsMasterProduct)
                 {
                     clientAgreement.MasterAgreement = true;
                 }

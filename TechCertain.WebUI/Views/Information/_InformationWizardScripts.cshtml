@@ -325,6 +325,13 @@
         minDate:0
     });
 
+    $('.Startdate').datepicker({
+       maxDate: "+30d",
+       minDate: 0,
+       dateFormat: "dd/mm/yy"
+
+     });
+
 
      function showmore() {
                 var _sheetId = $('#AnswerSheetId').val();
@@ -391,6 +398,7 @@
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');
+               $('#Principal,Partners or Directors').trigger('reloadGrid');
                $('#tblWaterLocation').trigger('reloadGrid');
                $('#tblLocation').trigger('reloadGrid');
                $('#tblRegisteredMV').trigger('reloadGrid');
@@ -403,6 +411,7 @@
                $('#ui-accordion-accordion-header-3').trigger('chosen:updated');
                $('#BoatLandLocation').trigger('chosen:updated');
                $('#tblBusinessContract').trigger('reloadGrid');
+               $('#PrincipalDirectors').trigger('reloadGrid');
            })
            .fail(function () {
                alert("Unable to save.");
@@ -4637,15 +4646,7 @@ async: true
     })
         .done(function (data) {
             debugger;
-            //if (data.OperatorYearsOfExp != "" && data.OperatorYearsOfExp != null ) {
-            //    $('#SkprExpSec').show('2000');
-            //    $('#SkprExpSec').removeClass("hidden");
-            //    $('#OperatorYearsOfExpModal').val(data.OperatorYearsOfExp);
-            //} else {
-            //    $('#SkprExpSec').hide('2000');
-            //    $('#SkprExpSec').addClass("hidden");
-            //    $('#OperatorYearsOfExpModal').val("");
-            //}
+           
         $('#NamedPartyOrganisationId').val(data.id);
         $('#NPOrgName').val(data.organisationName);
         $('#NPOrgPhone').val(data.organisationPhone);

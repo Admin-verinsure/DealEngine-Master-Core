@@ -48,6 +48,11 @@ namespace TechCertain.Services.Impl
                 logInfo.AnalyzeXMLRSA = "test save";
                 //_logInfoMapperSession.AddAsync(logInfo);
 
+                Console.WriteLine("Content: ");
+                Console.WriteLine(HardCodedRSABody());
+                Console.WriteLine("Timestamp: ");
+                Console.WriteLine(DateTime.UtcNow.ToString());
+
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
@@ -56,14 +61,22 @@ namespace TechCertain.Services.Impl
             }
             catch (HttpRequestException e)
             {
+                
                 responseMessage = e.Message + " status code not 200";
+                Console.WriteLine("Exception1: ");
+                Console.WriteLine(responseMessage);
             }
             catch (Exception ex)
             {
                 responseMessage = ex.Message;
+                Console.WriteLine("Exception2: ");
+                Console.WriteLine(responseMessage);
             }
             _socketsHttpHandler.Dispose();
             _httpRequestMessage.Dispose();
+
+            Console.WriteLine("ResponseMessage: ");
+            Console.WriteLine(responseMessage);
 
             return responseMessage;
         }
@@ -193,11 +206,18 @@ namespace TechCertain.Services.Impl
 
         private string HardCodedRSABody()
         {
-
             return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                                             <soap:Header>                                       
-                                             </soap:Header>                                           
-                                              <soap:Body>                                            
+                        <soap:Header>
+                        <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
+                        <wsse:UsernameToken wsu:Id=""UsernameToken-bd15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
+                        <wsse:Username>MarshNZSOAPUser</wsse:Username>              
+                        <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                     
+                        <wsse:Nonce EncodingType = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"">ufoWBVGZ+MgRHRcw5j0EQQ==</wsse:Nonce>                              
+                        <wsu:Created>" + DateTime.UtcNow.ToString() + @"</wsu:Created>                                        
+                        </wsse:UsernameToken>                                         
+                        </wsse:Security>                                          
+                        </soap:Header> 
+                                             <soap:Body>                                            
                                                   <analyze xmlns = ""http://ws.csd.rsa.com"">                                             
                                                       <request>                                             
                                                          <actionTypeList>                                             
@@ -209,14 +229,14 @@ namespace TechCertain.Services.Impl
                                                             <httpAccept/>
                                                             <httpAcceptEncoding/>
                                                             <httpAcceptLanguage/>                                                                                                                                                                                                                                                                                                        
-                                                            <httpReferrer>localhost</httpReferrer>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-                                                            <ipAddress>172.30.1.208</ipAddress>                                                                                                                                                                                                                                                                                                           
+                                                            <httpReferrer>https://staging.mydealslive.com/Account/Login?ReturnUrl=%2f</httpReferrer>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                            <ipAddress>172.30.1.245</ipAddress>                                                                                                                                                                                                                                                                                                           
                                                             </deviceRequest>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
                                                             <identificationData>
                                                             <delegated>false</delegated>                                                                                                                                                                                                                                                                                                           
                                                             <groupName>Clients</groupName>                                                                                                                                                                                                                                                                                                           
                                                             <orgName>Marsh_Model</orgName>                                                                                                                                                                                                                                                                                                           
-                                                            <userName>9f86eaa67cdb5b28a1cedc19015a9d54e6ae96f448c9086b7b6ab81dc1f6b1db</userName>                                                                                                                                                                                                                                                                                                              
+                                                            <userName>ray@techcertain.com</userName>                                                                                                                                                                                                                                                                                                              
                                                             <userStatus>VERIFIED</userStatus>                                                                                                                                                                                                                                                                                                              
                                                             <userType>PERSISTENT</userType>                                                                                                                                                                                                                                                                                                              
                                                             </identificationData>                                                                                                                                                                                                                                                                                                              
@@ -248,17 +268,6 @@ namespace TechCertain.Services.Impl
                                                             </soap:Body>
                                                             </soap:Envelope>";
 
-              //     < wsse:Security soap:mustUnderstand = ""1"" xmlns: wsse = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
-              //< wsse:UsernameToken wsu:Id = ""UsernameToken - bd15e0d7 - 37fa - 4de8 - 8bd9 - 758caa95112c"" xmlns: wsu = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
-              //       < wsse:Username > MarshNZSOAPUser </ wsse:Username >
-     
-              //                 < wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                     
-              //                   < wsse:Nonce EncodingType = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"">ufoWBVGZ+MgRHRcw5j0EQQ==</wsse:Nonce>                              
-              //                            < wsu:Created > 2019 - 07 - 29T07: 47:49.072Z </ wsu:Created >
-          
-              //                                             </ wsse:UsernameToken >
-           
-              //                                            </ wsse:Security >
         }
     }
 }
