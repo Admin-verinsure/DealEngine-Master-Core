@@ -1,0 +1,191 @@
+﻿@model TechCertain.WebUI.Models.Programme.SharedRoleTemplateViewModel
+<div class="container">
+    @*<div class="row">
+             col
+            <div class="container">
+                <h1 class="page-title txt-color-blueDark">
+                     PAGE HEADER
+                    <i class="fa-fw fa fa-home"></i>  <span>
+                        <a href="~/Programme/TermSheetConfirguration/@Model.Id"> Package Term Sheet</a>
+                        > Business Activities
+                    </span>
+                </h1>
+                <span>
+                    <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme", new { Id = @Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+                </span>
+            </div>
+             end col
+        </div>*@
+
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Add Shared Role To Programme
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <div class="card-body">
+                        <form action="#" id="wizard-1" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="novalidate">
+                            <div id="smartwizard" class="sw-main sw-theme-circles">
+                                <ul class="nav nav-tabs step-anchor">
+                                    <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Configuration</small></a></li>
+                                    <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Submit</small></a></li>
+                                </ul>
+                                <div class="tab-content">
+
+                                    <div class="tab-pane" id="tab1">
+                                        <br />
+                                        <h3><strong>Setup </strong> - Programme Shared Roles</h3>
+
+                                        <div class="container-fluid">
+                                            <div class="form">
+                                                <div class="form-group">
+                                                    <label for="baseProgrammeId">Select Programme:</label>
+                                                    <select class="form-control" id="baseProgrammeId">
+                                                        @foreach (var programme in Model.BaseProgList)
+                                                        {
+                                                            <option value="@programme.Value">@programme.Text</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="RoleNameId">Select Roles:</label>
+                                                    <select class="cselect form-control" id="RoleNameId" multiple="multiple">
+                                                        @foreach (var sharedRole in Model.Roles)
+                                                        {
+                                                            <option value="@sharedRole.Value">@sharedRole.Text</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="tab2">
+                                        <p>complete modal to come..</p>
+                                    </div>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Add/Update/Edit Roles on Programme
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <p>Update/Edit functions to come..</p>
+                    <div class="container-fluid">
+                        <div class="form">
+                            <div class="form-group">
+                                <label for="SharedRoleTemplateNameId">Shared Role Name:</label>
+                                <input type="text" class="form-control" id="SharedRoleTemplateNameId" placeholder="developer..">
+                            </div>
+                            <div class="form-group">
+                                <label for="SharedRoleTemplateBoolId">Shared Role is Public:</label>
+                                <input type="radio" class="form-control" id="SharedRoleTemplateBoolId" />
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary" onclick="SumbitRole()">Submit</button>
+                            </div>
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @section pagespecific {
+        <script src="~/bootstrap-multiselect/js/bootstrap-multiselect.min.js"></script>
+        <link href="~/css/bootstrap-chosen.css" rel="stylesheet" />
+        <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+        <script type="text/javascript">
+
+
+        function SumbitRole() {
+            var templateName = $('#SharedRoleTemplateNameId').val();
+            var isPublic = $('#SharedRoleTemplateBoolId').val();
+            debugger;
+            var postData = { TemplateName: templateName, IsPublic : isPublic};
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateSharedDataRoleTemplate", "Programme")',
+                data: postData
+            })
+        }
+
+    $(document).ready(function () {
+
+	    // find all multiselect items and apply Chosen
+		$('.cselect').each(function() {
+			$('#'+this.id).chosen( { width: '100%' } );
+        });
+
+         $('#smartwizard').smartWizard({
+            selected: 0,  // Initial selected step, 0 = first step
+            keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+            autoAdjustHeight:false, // Automatically adjust content height
+            cycleSteps: false, // Allows to cycle the navigation of steps
+            backButtonSupport: true, // Enable the back button support
+            useURLhash: true, // Enable selection of the step based on url hash
+            lang: {  // Language variables
+                next: 'Next',
+                previous: 'Previous'
+            },
+            toolbarSettings: {
+                toolbarPosition: 'both', // none, top, bottom, both
+                toolbarButtonPosition: 'right', // left, right
+                showNextButton: true, // show/hide a Next button
+                showPreviousButton: true, // show/hide a Previous button
+
+            },
+            anchorSettings: {
+                anchorClickable: true, // Enable/Disable anchor navigation
+                enableAllAnchors: false, // Activates all anchors clickable all times
+                markDoneStep: true, // add done css
+                enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+            },
+            contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+            disabledSteps: [],    // Array Steps disabled
+            errorSteps: [],    // Highlight step with errors
+            theme: 'dots',
+            transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+            transitionSpeed: '400'
+           });
+
+
+        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+            event.preventDefault();
+            debugger;
+            if (stepNumber === 0 && stepDirection != "forward") {
+
+                var templateNames = [];
+                $('#RoleNameId option:selected').each(function (index) {
+                    templateNames.push($(this).val());
+                });
+
+                var programmeId = $('#baseProgrammeId').val();
+                var postData = { ProgrammeId: programmeId, TemplateNames: templateNames }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateProgrammeSharedRoles", "Programme")',
+                    data: postData
+                })
+            }
+        });
+    });
+        </script>
+    }

@@ -38,9 +38,7 @@ namespace TechCertain.Domain.Entities
         public virtual IList<BoatUse> BoatUses { get; protected set; }
         public virtual IList<Organisation> Organisation { get; protected set; }
 
-
-        [Obsolete("No longer required with the new Programme implementation")]
-		public virtual ClientSharedData SharedData { get; set; }
+		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }
 
 		public virtual RevenueByActivity RevenueData { get; set; }
 
@@ -75,7 +73,8 @@ namespace TechCertain.Domain.Entities
 		protected ClientInformationSheet (User createdBy)
 			: base (createdBy)
 		{
-			Answers = new List<ClientInformationAnswer> ();
+            SharedDataRoles = new List<SharedDataRole>();
+            Answers = new List<ClientInformationAnswer> ();
 			Vehicles = new List<Vehicle> ();
 			Locations = new List<Location> ();
             WaterLocations = new List<WaterLocation>();
@@ -212,9 +211,6 @@ namespace TechCertain.Domain.Entities
             foreach (BoatUse boatUse in BoatUses.Where(bu => !bu.Removed && bu.DateDeleted == null))
                 newSheet.AddBoatUse(boatUse.CloneForNewSheet(newSheet));
 
-            if (this.SharedData != null)
-				newSheet.SharedData = this.SharedData.CloneForNewSheet (newSheet);
-
 			return newSheet;
 		}
 
@@ -224,11 +220,6 @@ namespace TechCertain.Domain.Entities
 			sheet.IsRenewawl = true;
 			return sheet;
 		}
-
-		//public virtual Product Product ()
-		//{
-		//	return InformationTemplate.Product;
-		//}
 
 		public virtual Product Product { get; set; }
 	}

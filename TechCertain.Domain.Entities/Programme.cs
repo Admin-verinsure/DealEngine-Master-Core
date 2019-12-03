@@ -12,6 +12,7 @@ namespace TechCertain.Domain.Entities
         public virtual IList<Product> Products { get; protected set; }
         public virtual IList<TerritoryTemplate> TerritoryTemplates { get; set; }
         public virtual IList<BusinessActivityTemplate> BusinessActivityTemplates { get; set; }
+        public virtual IList<SharedDataRoleTemplate> SharedDataRoleTemplates { get; set; }
         public virtual string Declaration { get; set; }
         public virtual IList<EmailTemplate> EmailTemplates { get; protected set; }
         public virtual IList<ClientProgramme> ClientProgrammes { get; protected set; }
@@ -59,6 +60,7 @@ namespace TechCertain.Domain.Entities
 
         public Programme(User createdBy) : base(createdBy)
         {
+            SharedDataRoleTemplates = new List<SharedDataRoleTemplate>();
             BusinessActivityTemplates = new List<BusinessActivityTemplate>();
             TerritoryTemplates = new List<TerritoryTemplate>();
             Products = new List<Product>();
@@ -85,8 +87,7 @@ namespace TechCertain.Domain.Entities
         {
             return Products.SelectMany((arg) => arg.Documents);
         }
-
-        public virtual RevenueByActivity  RevenueByActivity { get; set; }
+        
 		//public virtual IEnumerable<InformationSection> GetInformationSections ()
 		//{
 		//	List<InformationSection> sections = new List<InformationSection> ();

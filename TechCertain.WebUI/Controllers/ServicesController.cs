@@ -15,6 +15,7 @@ using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
 using System.Threading.Tasks;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -345,7 +346,9 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("No valid information for id " + informationId);
 
             var organisations = new List<Organisation>();
-            foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Principal"))
+            foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
+                                                                                                || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture" 
+                                                                                                || ia.InsuranceAttributeName == "Megers"))
             {
                 foreach (var org in IA.IAOrganisations)
                 {
@@ -1883,6 +1886,8 @@ namespace TechCertain.WebUI.Controllers
             }
             return new JsonResult(true);
         }
+      
+
 
         [HttpPost]
         public async Task<IActionResult> UndoBoatRemovedStatus(BoatViewModel removedboat)
@@ -1983,24 +1988,54 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
                 throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+            string orgTypeName = "";
+
             try
             {
+                switch (model.OrganisationTypeName)
+                {
+                    case "Person - Individual":
+                        {
+                            orgTypeName = "Person - Individual";
+                            break;
+                        }
+                    case "Corporate":
+                        {
+                            orgTypeName = "Corporation – Limited liability";
+                            break;
+                        }
+                    case "Trust":
+                        {
+                            orgTypeName = "Trust";
+                            break;
+                        }
+                    case "Partnership":
+                        {
+                            orgTypeName = "Partnership";
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
+                        }
+                }
+
                 InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                 if (insuranceAttribute == null)
                 {
                     insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
                 }
-                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
                 if (organisationType == null)
                 {
-                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, model.OrganisationTypeName);
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
                 }
 
                 Organisation organisation = null;
                 User userdb = null;
                 try
                 {
-                    if (model.OrganisationTypeName == "Person-Individual")
+                    if (orgTypeName == "Person - Individual")
                     {
                         userdb = await _userService.GetUserByEmail(model.Email);
                         if (userdb == null)
@@ -2025,7 +2060,7 @@ namespace TechCertain.WebUI.Controllers
                 catch (Exception ex)
                 {
 
-                    if (model.OrganisationTypeName == "Person-Individual")
+                    if (orgTypeName == "Person - Individual")
                     {
                         userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
                         userdb.FirstName = model.FirstName;
@@ -2041,18 +2076,18 @@ namespace TechCertain.WebUI.Controllers
                     }
 
                 }
-                organisation = await _organisationService.GetOrganisationByEmail(model.Email);
-                if (organisation == null)
-                {
-                    var organisationName = "";
-                    if (model.OrganisationTypeName == "Person-Individual") { 
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
+
+                var organisationName = "";
+                    if (orgTypeName == "Person - Individual")
+                    { 
                      organisationName = model.FirstName + " " + model.LastName;
                     }
                     else
                     {
                         organisationName = model.OrganisationName;
                     }
-                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
+                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
                     organisation.Qualifications = model.Qualifications;
                     organisation.IsNZIAmember = model.IsNZIAmember;
                     organisation.NZIAmembership = model.NZIAmembership;
@@ -2062,12 +2097,16 @@ namespace TechCertain.WebUI.Controllers
                     organisation.prevPractice = model.prevPractice;
                     organisation.IsOtherdirectorship = model.IsOtherdirectorship;
                     organisation.Othercompanyname = model.Othercompanyname;
-                    organisation.Email = model.Email;
+                    organisation.Activities = model.Activities;
+                    organisation.Email = userdb.Email;
+                    organisation.Type = model.Type;
+                    organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
                     userdb.SetPrimaryOrganisation(organisation);
-                }
+                
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     userdb.SetPrimaryOrganisation(organisation);
@@ -2085,6 +2124,148 @@ namespace TechCertain.WebUI.Controllers
             }
             return Json(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPrincipalDirectors(OrganisationViewModel model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            var currentUser = await CurrentUser();
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+            if (sheet == null)
+                throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+            string orgTypeName = "";
+
+            try
+            {
+                switch (model.OrganisationTypeName)
+                {
+                    case "Person - Individual":
+                        {
+                            orgTypeName = "Person - Individual";
+                            break;
+                        }
+                    case "Corporate":
+                        {
+                            orgTypeName = "Corporation – Limited liability";
+                            break;
+                        }
+                    case "Trust":
+                        {
+                            orgTypeName = "Trust";
+                            break;
+                        }
+                    case "Partnership":
+                        {
+                            orgTypeName = "Partnership";
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
+                        }
+                }
+
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
+                if (insuranceAttribute == null)
+                {
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
+                }
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+                if (organisationType == null)
+                {
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(currentUser, orgTypeName);
+                }
+
+                User userdb = null;
+                try
+                {
+                    if (orgTypeName == "Person - Individual")
+                    {
+                        userdb = await _userService.GetUserByEmail(model.Email);
+                        if (userdb == null)
+                        {
+                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
+                            userdb.FirstName = model.FirstName;
+                            userdb.LastName = model.LastName;
+                            userdb.FullName = model.FirstName + " " + model.LastName;
+                            userdb.Email = model.Email;
+                            await _userService.Create(userdb);
+                        }
+
+
+                    }
+                    else
+                    {
+                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                    if (orgTypeName == "Person - Individual")
+                    {
+                        userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
+                        userdb.FirstName = model.FirstName;
+                        userdb.LastName = model.LastName;
+                        userdb.FullName = model.FirstName + " " + model.LastName;
+                        userdb.Email = model.Email;
+                        await _userService.Create(userdb);
+                    }
+                    else
+                    {
+                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+
+                    }
+
+                }
+
+                var organisationName = "";
+                if (orgTypeName == "Person - Individual")
+                {
+                    organisationName = model.FirstName + " " + model.LastName;
+                }
+                else
+                {
+                    organisationName = model.OrganisationName;
+                }
+                Organisation organisation = null;
+
+                organisation = await _organisationService.GetOrganisation(model.ID);
+                //{
+                //    organisation = new Organisation(CurrentUser(), Guid.NewGuid(), model.OrganisationName);
+                //    _organisationService.CreateNewOrganisation(organisation);
+                //}
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    organisation.ChangeOrganisationName(model.OrganisationName);
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.IsNZIAmember = model.IsNZIAmember;
+                    organisation.NZIAmembership = model.NZIAmembership;
+                    organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                    organisation.YearofPractice = model.YearofPractice;
+                    organisation.prevPractice = model.prevPractice;
+                    organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                    organisation.Othercompanyname = model.Othercompanyname;
+                    organisation.Activities = model.Activities;
+                    organisation.Email = userdb.Email;
+                    organisation.Type = model.Type;
+                    organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    await uow.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+            }
+            return Json(model);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetPrincipalPartners(Guid answerSheetId, Guid partyID)
@@ -2106,8 +2287,24 @@ namespace TechCertain.WebUI.Controllers
                 model.IsLPBCategory3 = org.IsLPBCategory3;
                 model.YearofPractice = org.YearofPractice;
                 model.prevPractice = org.prevPractice;
+                if (org.OrganisationType.Name == "Corporation – Limited liability")
+                {
+                    model.OrganisationTypeName = "Corporate";
+                }
+                else
+                {
+                    model.OrganisationTypeName = org.OrganisationType.Name;
+                }
                 model.IsOtherdirectorship = org.IsOtherdirectorship;
                 model.Othercompanyname = org.Othercompanyname;
+                model.Type = org.Type;
+                model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                //model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                //model.DateofDeceased = DateTime.Parse(LocalizeTime(org.DateofDeceased, "d"));
+                //model.DateofRetirement = DateTime.Parse(LocalizeTime(org.DateofRetirement, "d"));
+                model.OrganisationName = org.Name;
+                model.Activities = org.Activities;
                 model.AnswerSheetId = answerSheetId;
             }
             

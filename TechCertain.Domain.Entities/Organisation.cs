@@ -114,7 +114,23 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
+        public virtual DateTime DateofRetirement 
+        { 
+            get; 
+            set; 
+        }
+        public virtual string Activities 
+        { 
+            get; 
+            set; 
+        }
 
+
+        public virtual DateTime DateofDeceased 
+        {
+            get; 
+            set; 
+        }
         public virtual IList<Boat> Boat
         {
             get;
@@ -163,6 +179,7 @@ namespace TechCertain.Domain.Entities
         public virtual bool IsADNZmember { get; set; }
         public virtual string YearofPractice { get; set; }
         public virtual string prevPractice { get; set; }
+        public virtual string Type { get; set; }
         public virtual bool IsLPBCategory3 { get; set; }
         public virtual bool IsOtherdirectorship { get; set; }
         public virtual string Othercompanyname { get; set; }

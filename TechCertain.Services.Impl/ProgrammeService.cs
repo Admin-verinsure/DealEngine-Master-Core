@@ -110,13 +110,13 @@ namespace TechCertain.Services.Impl
 			return newClientProgramme;
 		}
 
-        public async Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate)
+        public async Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate)
         {
             programme.BusinessActivityTemplates.Add(businessActivityTemplate);
             await _programmeRepository.UpdateAsync(programme);
         }
 
-        public async Task AttachClientProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate)
+        public async Task AttachProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate)
         {
             programme.TerritoryTemplates.Add(territoryTemplate);
             await _programmeRepository.UpdateAsync(programme);
@@ -130,6 +130,12 @@ namespace TechCertain.Services.Impl
         public async Task<Programme> GetProgrammeById(Guid ProgrammeId)
         {
             return await _programmeRepository.GetByIdAsync(ProgrammeId);
+        }
+
+        public async Task AttachProgrammeToharedRole(Programme programme, SharedDataRoleTemplate sharedRole)
+        {
+            programme.SharedDataRoleTemplates.Add(sharedRole);
+            await _programmeRepository.UpdateAsync(programme);
         }
     }
 }
