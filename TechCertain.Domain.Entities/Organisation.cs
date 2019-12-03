@@ -179,6 +179,7 @@ namespace TechCertain.Domain.Entities
         public virtual bool IsADNZmember { get; set; }
         public virtual string YearofPractice { get; set; }
         public virtual string prevPractice { get; set; }
+        public virtual string Type { get; set; }
         public virtual bool IsLPBCategory3 { get; set; }
         public virtual bool IsOtherdirectorship { get; set; }
         public virtual string Othercompanyname { get; set; }
