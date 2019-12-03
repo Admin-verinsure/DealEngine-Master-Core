@@ -4,11 +4,11 @@
 
         <div id="SharedRevenue">
 
-            <ul id="sharedRevenTabs" class="nav nav-tabs">
-                <li class="nav nav-tabs Territory"> <a href="#RevenueTabs1" data-toggle="tab" disabled> Territory </a> </li>
-                <li class="nav nav-tabs Activities"> <a href="#RevenueTabs2" data-toggle="tab" onfocus="SharedRevenueTabChange(this.id)"> Activities </a> </li>
-                <li class="nav nav-tabs TerritoryBreakdown"> <a href="#RevenueTabs3" data-toggle="tab"> Territory Breakdown </a> </li>
-                <li class="nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4" data-toggle="tab"> Activity Breakdown </a> </li>
+            <ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
+                <li class="nav nav-tabs Territory"> <a href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
+                <li class="nav nav-tabs Activities"> <a href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
+                <li class="disabled nav nav-tabs TerritoryBreakdown"> <a href="#RevenueTabs3" data-toggle="tab" onclick="BuildRevenuesTable('true')"> Territory Breakdown </a> </li>
+                <li class="disabled nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4" data-toggle="tab" onclick="BuildRevenuesTable('false')"> Activity Breakdown </a> </li>
                 <li class="nav nav-tabs AdditionalInformation"> <a href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
                 <li class="nav nav-tabs SharedRevenueData"> <a href="#RevenueTabs6" data-toggle="tab"> Shared Revenue Data </a> </li>
             </ul>
@@ -44,7 +44,6 @@
 
                 </fieldset>
             </div>
-
             <div id="RevenueTabs2" class="tab-content">
 
                 <fieldset>
@@ -58,17 +57,13 @@
                             </select>
                         </div>
 
-                        <div id="sharedRevenueTerritoriesBreakdownTab" class="input-group mb-3" style="display:none">
+                        <div id="sharedRevenueTerritoriesBreakdownTab" class="input-group mb-3">
                             <button class="btn-primary btn" onclick="SaveTabTwo('true')">Next</button>
                         </div>
 
-                        <div id="sharedRevenueActivity" class="input-group mb-3" style="display:none">
-                            <button class="btn-primary btn" onclick="SaveTabTwo('false')">Next</button>
-                        </div>
                     </div>
                 </fieldset>
             </div>
-
             <div id="RevenueTabs3" class="tab-content">
                 <fieldset>
                     <div class="container-fluid">
@@ -89,7 +84,6 @@
                     </div>
                 </fieldset>
             </div>
-
             <div id="RevenueTabs4" class="tab-content">
 
                 <fieldset>
@@ -121,9 +115,55 @@
             <div id="RevenueTabs5" class="tab-content">
                 <fieldset>
                     <div class="container-fluid" style="display:none" id="addtionalInformationContainer">
-                        <div class="input-group mb-3">
-                            <input id="addtionalInformation" name="addtionalInformation" type="Text" class="form-control" aria-label="Please provide further details">
+                        <div class="input-group mb-3" id="InspectionReport">
+                            <div class="form-group">
+                                <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+                                <textarea id="InspectionReportTextId" name="InspectionReportTextId" type="Text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
+                                <input id="InspectionReportBoolId" name="InspectionReportTextId" type="checkbox"  class="form-control" />
+                            </div>
                         </div>
+                        <div class="input-group mb-3" id="Valuation">
+                            <div class="form-group">
+                                <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
+                                <textarea id="ValuationTextId" name="ValuationTextId" type="Text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
+                                <textarea id="ValuationTextId2" name="ValuationTextId2" type="Text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
+                                <input id="ValuationBoolId" name="ValuationBoolId" type="checkbox"  class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3" id="SchoolsDesignWork">
+
+                            <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
+                                <input id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" type="checkbox" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
+                                <input id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" type="checkbox"  class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
+                                <input id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" type="checkbox"  class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
+                                <input id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" type="checkbox"  class="form-control" />
+                            </div>
+                        </div>
+                        <div class="input-group mb-3" id="OtherActivities">
+                            <div class="form-group">
+                                <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
+                                <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" type="Text" class="form-control" ></textarea>
+                            </div>
                         <div class="input-group mb-3">
                             <div class="footer">
                                 <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveTabFive()">
@@ -133,7 +173,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div id="RevenueTabs6" class="tab-content">
+            <div id="RevenueTabs6" class="tab-content active">
                 <fieldset>
                     @if (Model.RevenueByActivityViewModel.RevenueData != null)
                     {
@@ -180,6 +220,7 @@
 
                 </fieldset>
             </div>
+
         </div>
         
     </form>

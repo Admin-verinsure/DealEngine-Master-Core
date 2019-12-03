@@ -1967,12 +1967,8 @@ function ListNonNZCountries() {
         $('#tradingButton').show();
         if (value == 'active') {
             $('#sharedRevenueTerritories').show();
-            $('#sharedRevenueTerritoriesBreakdownTab').show();
-            $('#sharedRevenueActivity').hide();
         } else {
-            $('#sharedRevenueTerritories').hide();
-            $('#sharedRevenueTerritoriesBreakdownTab').hide();
-            $('#sharedRevenueActivity').show();                
+            $('#sharedRevenueTerritories').hide();               
         }
     }
 
@@ -2009,12 +2005,12 @@ function ListNonNZCountries() {
     }
 
     function SaveTabTwo(tableType) {
-            event.preventDefault();
-            if (tableType == 'true') {
-                SetCurrentTab('RevenueTabs3')
-            } else {
-                SetCurrentTab('RevenueTabs4')
-            }
+        event.preventDefault();
+        if (tableType == 'true') {
+            SetCurrentTab('RevenueTabs3')
+        } else {
+            SetCurrentTab('RevenueTabs4')
+        }
         
         var businessActivities = GetActivitiesForRevenue('value');        
         var clientInformationSheetId = $('#AnswerSheetId').val();
@@ -2025,18 +2021,16 @@ function ListNonNZCountries() {
             type: "POST",
             data: postData
         })
-            .done(function (Data) {
-                BuildRevenuesTable(tableType);
-            });
     }
 
-    function SaveTabThree(tableType) {
+    function SaveTabThree() {
         event.preventDefault();       
         table = document.getElementById("sharedRevenueTerritoriesTable");
         if (validateTableTerritory(table)) {
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
-
-            var postData = {TableSerialised: tableSerialised }
+            var clientInformationSheetId = $('#AnswerSheetId').val();
+            debugger;
+            var postData = {TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
             SetCurrentTab('RevenueTabs4');
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
@@ -2044,17 +2038,19 @@ function ListNonNZCountries() {
                 data: postData
             })
                 .done(function (Data) {
-                    BuildRevenuesTable(tableType);
+                    var activitiesStr = GetActivitiesForRevenue('text');
+                    activitiesStr.forEach(function (item, index) {
+                        if (item === "Other Work not listed above " ||
+                            item === "Inspection Reports " ||
+                            item === "Valuations " ||
+                            item === "Architecture - Schools MOE " ||
+                            item === "Architecture - Schools - Non MOE " ||
+                            item === "Canterbury Earthquake Rebuild Work") {
+                            $('#submitTab4').hide();
+                            $('#additionalInfomation').show();
+                        }
+                    });
                 });
-
-            var activitiesStr = GetActivitiesForRevenue('text');
-            activitiesStr.forEach(function (item, index) {
-                if (item === "Other Work not listed above ") {
-                    $('#submitTab4').hide();
-                    $('#additionalInfomation').show();
-                }
-            });
-
         }
     }
 
@@ -2074,7 +2070,6 @@ function ListNonNZCountries() {
             })
             
             if (isSubmit == 'true') {
-                debugger;
                 $('#addtionalInformationContainer').show();
                 SetCurrentTab('RevenueTabs5');
             }
@@ -2178,11 +2173,12 @@ function GetActivitiesForRevenue(type) {
 
     function BuildRevenuesTable(TableType) {
         var revenueTable;
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val(); 
         var listc;
-        if (TableType == 'true') {
+        if (TableType == 'true') {            
             listc = [ 'Territory Breakdown' ]; //GetTerritoriesForRevenue();
             revenueTable = $('#sharedRevenueTerritoriesTable');
-        } else {
+        } else {            
              listc = [ 'Revenue Breakdown' ];
              revenueTable = $('#sharedRevenueActivityTable');
         }
@@ -2200,6 +2196,12 @@ function GetActivitiesForRevenue(type) {
         if (TableType == 'true') {
             lista = GetTerritoriesForRevenue('Text');
             listb = GetTerritoriesForRevenue('value');
+            console.log(lista);
+            if (tradingOutsideNZValue == 'false') {
+                lista = ['NZ'];
+                listb = ['NZ'];
+            }
+            
         }
 
         var header = $('<tr>');
@@ -2241,13 +2243,17 @@ function GetActivitiesForRevenue(type) {
     function validateTableTerritory(table) {        
         var totalSharedRevenue = 0;
         var territoryTable = GetSharedRevenueTable(table);
-        var territories = GetTerritoriesForRevenue('value')        
+        var territories = GetTerritoriesForRevenue('value')      
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();         
+        if (tradingOutsideNZValue == 'false') {
+            territories = ['NZ'];
+        }
 
         for (var i = 0; i < territoryTable.length; i++) {
             var value = 0;
             totalSharedRevenue = 0;
             for (var k = 0; k < territories.length; k++) {
-                elementname = territories[k];                              
+                elementname = territories[k];         
                 value = parseInt(document.getElementById(elementname).value);
                 if (percentage_check(!value)) {
                     alert("Please the correct percentage.");
@@ -2273,7 +2279,8 @@ function GetActivitiesForRevenue(type) {
             var value = 0;
             totalSharedRevenue = 0;
             for (var k = 0; k < activities.length; k++) {
-                elementname = activities[k];                                
+                elementname = activities[k];             
+                debugger;
                 value = parseInt(document.getElementById(elementname).value);
                 if (percentage_check(!value)) {
                     alert("Please the correct percentage.");
