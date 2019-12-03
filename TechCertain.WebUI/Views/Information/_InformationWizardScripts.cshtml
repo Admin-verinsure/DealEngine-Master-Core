@@ -239,6 +239,7 @@
     $('#tabs').tabs();
     $('#Boattabs').tabs();
     $('#SharedRevenue').tabs();
+    $('#SharedRole').tabs();
     $('#registeredtrailertabs').tabs();
     $('#Landtabs').tabs();
     $('#Claimtabs').tabs();
@@ -1981,20 +1982,7 @@ function ListNonNZCountries() {
         }
     }
 
-    function SharedRevenueTabChange(tab) {
-        debugger;
-        var test = $("#sharedRevenTabs").tabs;//('option', 'active');
-        var test2 = $("ul.nav-tabs li a.active");
-        var test3 = test2.prevObject;
-        debugger;
-        if (tab == 'territory') {
-            var territories = GetTerritoriesForRevenue('value');
-            var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();   
-            debugger;            
-        }
-    }
-
-    function SaveTabOne() {
+    function SaveRevenueTabOne() {
         event.preventDefault();                
         var territories = GetTerritoriesForRevenue('value');
         var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();        
@@ -2013,7 +2001,7 @@ function ListNonNZCountries() {
         }
     }
 
-    function SaveTabTwo(tableType) {
+    function SaveRevenueTabTwo(tableType) {
         event.preventDefault();
         if (tableType == 'true') {
             SetCurrentTab('RevenueTabs3')
@@ -2032,7 +2020,7 @@ function ListNonNZCountries() {
         })
     }
 
-    function SaveTabThree() {
+    function SaveRevenueTabThree() {
         event.preventDefault();       
         table = document.getElementById("sharedRevenueTerritoriesTable");
         if (validateTableTerritory(table)) {
@@ -2063,7 +2051,7 @@ function ListNonNZCountries() {
         }
     }
 
-    function SaveTabFour(isSubmit) {
+    function SaveRevenueTabFour(isSubmit) {
         event.preventDefault();               
         table = document.getElementById("sharedRevenueActivityTable");
         if (validateTableActivity(table)) {
@@ -2085,16 +2073,46 @@ function ListNonNZCountries() {
         }
     }
 
-    function SaveTabFive() {
+    function SaveRevenueTabFive() {
         event.preventDefault();                       
         var otherInformation = $("#addtionalInformation").val();         
-
+        var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { OtherInformation: otherInformation, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
                 type: "POST",        
                 data: postData
             })                   
+    }
+
+    function SaveRoleTabTwo() {
+        event.preventDefault();    
+        var tableSerialised = $("#sharedRoleTable :input").serialize();
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+
+        var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
+            $.ajax({
+                url: '@Url.Action("SaveSharedRoleTabTwo", "Information")',
+                type: "POST",        
+                data: postData
+            })   
+
+    }
+
+    function SaveRoleTabOne() {
+        event.preventDefault();    
+        BuildRolesTable();
+        SetCurrentTab('sharedRoleTabs2');
+        var sharedDataRoles = GetRoles('val');
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+
+        var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
+            $.ajax({
+                url: '@Url.Action("SaveSharedRoleTabOne", "Information")',
+                type: "POST",        
+                data: postData
+            })   
+
     }
 
 
@@ -2127,26 +2145,24 @@ function GetActivitiesForRevenue(type) {
         return territoriesArray;
     };
 
-    function GetRoles() {
+    function GetRoles(type) {
         var roles = [];
-        $('#roleSelect option:selected').each (function(index) {
-        roles.push($(this).text());
-        });
+        if (type == 'text') {
+            $('#sharedRoleTemplates option:selected').each(function (index) {
+                roles.push($(this).text());
+            });
+        } else {
+            $('#sharedRoleTemplates option:selected').each(function (index) {
+                roles.push($(this).val());
+            });
+        }
+
         return roles;
     };
 
-        function GetLocations() {
-        var Locations = [];
-        $('#locationSelect option:selected').each (function(index) {
-        Locations.push($(this).text());
-        });
-        return Locations;
-     };
-
-
 
     function BuildRolesTable() {
-        var roleTable = $('#sharedRoleLocationTable');
+        var roleTable = $('#sharedRoleTable');
         if (roleTable != null) {
         // clear previous table
         roleTable.empty();
@@ -2154,25 +2170,26 @@ function GetActivitiesForRevenue(type) {
         var thead = $('<thead>');
         var tbody = $('<tbody>');
         roleTable.append(thead, tbody);
-            var lista = GetRoles();
-            var listb = GetLocations();
+            var lista = GetRoles('text');
+            var listb = ['NZ'];
+            var listd = GetRoles('val');
         var header = $('<tr>');
         header.append($('<th>'));
         listb.forEach( function(countryName) {
             header.append($('<th>').text(countryName));
         });
-        thead.append(header);
-        console.log(roleTable);
-        lista.forEach (function(role) {
+            thead.append(header);
+            var count = 0;
+            lista.forEach(function (role) {
             var row = $('<tr>');
             row.append($('<td>').text(role));
-            listb.forEach( function(countryIndex) {
-                var name = 'actRevMat_' + role + '_' + countryIndex;
-                row.append($('<td>').append(
-                    $('<section>').append(
-                        $('<label>', { class: 'input'}).append(
-                            $('<input>', { type: 'text', class: 'form-control col-4', name: name, id: name })
-                ))));
+                listb.forEach(function (countryIndex) {                    
+                    var name = listd[count];
+                    row.append($('<td>').append(
+                        $('<section>').append(
+                            $('<label>', { class: 'input' }).append(
+                                $('<input>', { type: 'text', class: 'form-control col-4', name: name, id: name })
+                            ))));
             });
             tbody.append(row);
         });
@@ -2225,7 +2242,6 @@ function GetActivitiesForRevenue(type) {
             row.append($('<td>').text(activityName));
             listc.forEach(function (countryIndex) {                
                 var name = listb[count];
-                //var name = 'actRevMat_' + activityName;
                 row.append($('<td>').append(
                     $('<section>').append(
                         $('<label>', { class: 'input'}).append(
