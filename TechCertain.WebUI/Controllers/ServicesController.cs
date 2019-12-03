@@ -359,11 +359,6 @@ namespace TechCertain.WebUI.Controllers
 
                 }
             }
-
-            //foreach (var org in sheet.Organisation.Where(o => o.OrganisationType.Name == "Principal"))
-            //{
-            //    organisations.Add(org);
-            //}
             for (var i = 0; i < sheet.Organisation.Where(o => o.OrganisationType.Name == "Principal").Count(); i++)
             {
                 organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
@@ -421,6 +416,108 @@ namespace TechCertain.WebUI.Controllers
                 return Xml(document);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDeletedPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                        string searchField, string searchString, string searchOper, string filters)
+        {
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+            XDocument document = null;
+            JqGridViewModel model = new JqGridViewModel();
+
+            User userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+            if (sheet == null)
+                throw new Exception("No valid information for id " + informationId);
+
+            var organisations = new List<Organisation>();
+            Boolean exist = true;
+            foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
+                                                                                                || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
+                                                                                                || ia.InsuranceAttributeName == "Megers"))
+            {
+                foreach (var org in IA.IAOrganisations)
+                {
+                    foreach (var userorg in userdb.Organisations)
+                    {
+                        if (!sheet.Organisation.Where(o => o.Id == org.Id).Contains(userorg))
+                        {
+                            organisations.Add(userorg);
+                        }
+                    }
+                }
+
+            }
+
+            //foreach(var org in userdb.Organisations)
+            //{
+            //    foreach(var sheetorg in sheet.Organisation)
+            //    {
+            //        if(org == sheetorg)
+            //        {
+            //            organisations.Add(org);
+
+            //        }
+            //    }
+            //}
+
+            //for (var i = 0; i < sheet.Organisation.Where(o => o.OrganisationType.Name == "Principal").Count(); i++)
+            //{
+            //    organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
+            //}
+
+
+            try
+            {
+
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                model.Page = page;
+                model.TotalRecords = organisations.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
+                model.AddRow(row1);
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+                    Organisation organisation = organisations[i];
+                    JqGridRow row = new JqGridRow(organisation.Id);
+
+                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    {
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
+                    }
+                    model.AddRow(row);
+                }
+
+
+                //// convert model to XDocument for rendering.
+                //document = model.ToXml();
+                return Xml(document);
+            }
+            catch (Exception ex)
+            {
+                document = model.ToXml();
+                return Xml(document);
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetNamedParties(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,

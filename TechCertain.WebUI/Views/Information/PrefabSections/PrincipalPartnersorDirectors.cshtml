@@ -29,7 +29,7 @@
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
-                                colNames: ["","Organisation Name","Organisation Type", "Delete Vessel"],
+                                colNames: ["","Organisation Name","Organisation Type", "Removed"],
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
@@ -498,7 +498,7 @@
                             <script type="text/javascript">
                                  $(".PrincipalRemoved").click(function () {
                                $("#tblRemovedPrincipalDirectors").jqGrid({
-                                url: "/Services/GetPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
+                                url: "/Services/GetDeletedPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
                                 datatype: "xml",
                                    mtype: "GET",
                                 async: true,

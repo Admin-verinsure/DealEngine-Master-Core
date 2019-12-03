@@ -1795,23 +1795,22 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetProfessionalIdemnity(Guid ClientInformationSheet)
         {
-            String[][] ProfessionalIndemnityAnswer = new String[1][];
+            String[][] ProfessionalIndemnityAnswer = new String[6][];
             var count = 0;
             String[] ProfessionalIndemnity;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1") || (c.ItemName == "ProfessionalIndemnity2")
+                                                                                                                                || (c.ItemName == "ProfessionalIndemnity3") || (c.ItemName == "ProfessionalIndemnity4")
+                                                                                                                                || (c.ItemName == "ProfessionalIndemnity5") || (c.ItemName == "ProfessionalIndemnity6")))
             {
                 ProfessionalIndemnity = new String[2];
-
                 for (var i = 0; i < 1; i++)
                 {
                     ProfessionalIndemnity[i] = answer.ItemName;
                     ProfessionalIndemnity[i + 1] = answer.Value;
                 }
-
                 ProfessionalIndemnityAnswer[count] = ProfessionalIndemnity;
                 count++;
             }
-
             return Json(ProfessionalIndemnityAnswer);
         }
 
