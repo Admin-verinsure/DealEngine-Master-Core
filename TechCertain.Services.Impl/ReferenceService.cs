@@ -61,6 +61,8 @@ namespace TechCertain.Services.Impl
         {
             if (ClientAgreementId == Guid.Empty)
                 throw new ArgumentNullException(nameof(ClientAgreementId));
+            if (Reference == null)
+                throw new ArgumentNullException(nameof(Reference));
 
             var hasAgreement = await HasAgreementId(ClientAgreementId);
             if (!hasAgreement)
@@ -68,19 +70,15 @@ namespace TechCertain.Services.Impl
                 var hasReference = await HasReference(Reference);
                 if (!hasReference)
                 {
-                    Reference = await GetLatestReferenceId();
-                }
+                    //Reference = await GetLatestReferenceId();
+                    Reference referenceObj = new Reference
+                    {
+                        ClientAgreementId = ClientAgreementId,
+                        ReferenceId = Reference,
+                    };
 
-                if (Reference == null)
-                    throw new ArgumentNullException(nameof(Reference));
-
-                Reference referenceObj = new Reference
-                {
-                    ClientAgreementId = ClientAgreementId,
-                    ReferenceId = Reference,
-                };
-
-                await CreateAsync(referenceObj);
+                    await CreateAsync(referenceObj);
+                }                 
             }
               
         }

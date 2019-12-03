@@ -17,7 +17,36 @@ namespace TechCertain.Domain.Entities
 		public virtual IList<Territory> Territories { get; set; }
 		public virtual IList<BusinessActivity> Activities { get; set; }
         public virtual decimal TotalRevenue { get; set; }
-        public virtual string OtherInfomation { get; set; }
+        public virtual AdditionalInformation AdditionalInformation { get; set; }
+    }
+
+    public class AdditionalInformation : EntityBase, IAggregateRoot
+    {
+        protected AdditionalInformation() : this(null) { }
+
+        public AdditionalInformation(User createdBy)
+            : base(createdBy)
+        {
+        }
+
+        public virtual InspectionReportsSupplementaryQuestionnaire InspectionReportsSupplementaryQuestionnaire { get; set; }
+
+
+
+    }
+
+    public class InspectionReportsSupplementaryQuestionnaire : EntityBase, IAggregateRoot
+    {
+        protected InspectionReportsSupplementaryQuestionnaire() : this(null) { }
+
+        public InspectionReportsSupplementaryQuestionnaire(User createdBy)
+            : base(createdBy)
+        {
+        }
+
+        public virtual string QuestionOneAnswer { get; set; }
+        public virtual bool QuestionTwoAnswer { get; set; }
+
     }
 }
 

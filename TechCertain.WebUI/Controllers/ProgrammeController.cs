@@ -34,6 +34,7 @@ namespace TechCertain.WebUI.Controllers
         IBusinessActivityService _busActivityService;
         IMapperSession<Document> _documentRepository;
         IProgrammeService _programmeService;
+        ISharedDataRoleService _sharedDataRoleService;
         IFileService _fileService;
         IEmailService _emailService;
         IRuleService _RuleService;
@@ -43,10 +44,11 @@ namespace TechCertain.WebUI.Controllers
         public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRuleService ruleService, IMapperSession<Document> documentRepository,
-                                 IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService,
+                                 IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService, ISharedDataRoleService sharedDataRoleService,
                                  IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IHttpClientService httpClientService)
             : base (userRepository)
-        {            
+        {
+            _sharedDataRoleService = sharedDataRoleService;
             _informationService = informationService;
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
@@ -245,7 +247,7 @@ namespace TechCertain.WebUI.Controllers
                 foreach (string str in Activities)
                 {
                     BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(str));                    
-                    await _programmeService.AttachClientProgrammeToActivities(programme, businessActivityTemplate);
+                    await _programmeService.AttachProgrammeToActivities(programme, businessActivityTemplate);
                 }
           
                 //return Redirect("~/Programme/ActivityBuilder");
@@ -400,32 +402,69 @@ namespace TechCertain.WebUI.Controllers
             return Redirect("/Programme/ActivityBuilder");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateRole(string title)
+        [HttpGet]
+        public async Task<IActionResult> SharedDataRoleBuilder()
         {
-            //_roleService.CreateRole(title);
-            return Redirect("/Programme/RoleBuilder");
+            var user = await CurrentUser();
+            var programmeList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
+            var sharedRoleList = await _sharedDataRoleService.GetRolesByOwner(user.PrimaryOrganisation.Id);
+            SharedRoleTemplateViewModel model = new SharedRoleTemplateViewModel();
+            model.Roles = new List<SelectListItem>();
+            model.BaseProgList = new List<SelectListItem>();
+            foreach (var programme in programmeList)
+            {
+                model.BaseProgList.Add(new SelectListItem
+                {
+                    Text = programme.Name,
+                    Value = programme.Id.ToString()
+                });
+            }
+
+            foreach (var template in sharedRoleList)
+            {
+                model.Roles.Add(new SelectListItem
+                {
+                    Text = template.Name,
+                    Value = template.Id.ToString()
+                });
+            }
+
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProgrammeRoles(RoleViewModel model)
+        public async Task<IActionResult> CreateSharedDataRoleTemplate(string TemplateName, bool IsPublic)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    ModelState.AddModelError("", "Form has not been completed");
-            //    throw new Exception("Form has not been completed");
-            //}
+            var user = await CurrentUser();
+            var newSharedRole = new SharedDataRoleTemplate();
+            newSharedRole.IsPublic = IsPublic;
+            newSharedRole.Name = TemplateName;
+            newSharedRole.Organisation = user.PrimaryOrganisation;
+
+            await _sharedDataRoleService.CreateSharedDataRoleTemplate(newSharedRole);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProgrammeSharedRoles(string ProgrammeId,  string[] TemplateNames)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Form has not been completed");
+                throw new Exception("Form has not been completed");
+            }
 
             try
             {
-                Programme programme = await _programmeService.GetProgramme(Guid.Parse(model.RoleAttach.SelectedProgramme[0]));
-                foreach (string str in model.Builder.SelectedRoles)
+                Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProgrammeId));
+                foreach (string str in TemplateNames)
                 {
-                    //Role role = _roleService.GetRole(Guid.Parse(str));
-                    //_roleService.AttachClientProgrammeToRole(programme, role);
-                }
+                    var sharedRole = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(str));
+                    await _programmeService.AttachProgrammeToharedRole(programme, sharedRole);
+                }                
 
-                return Redirect("~/Programme/ActivityBuilder");
+                return Ok();
 
             }
             catch (Exception ex)
