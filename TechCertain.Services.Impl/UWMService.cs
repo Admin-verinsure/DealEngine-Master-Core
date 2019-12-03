@@ -40,7 +40,6 @@ namespace TechCertain.Services.Impl
             var _modules = new Dictionary<string, IUnderwritingModule>();
             var modules = RegisterModules();
             bool result = false;
-            int productcount = 0;
             string referenceId = reference;
             foreach (Product product in sheet.Programme.BaseProgramme.Products.OrderBy(t => t.OrderNumber)) {
 				if (!product.UnderwritingEnabled)
@@ -48,9 +47,8 @@ namespace TechCertain.Services.Impl
                 
                 if (!product.IsMasterProduct)
                 {
-                    productcount += 1;
                     int.TryParse(referenceId, out int newReference);
-                    referenceId = (newReference + productcount).ToString();
+                    referenceId = (newReference + 1).ToString();
                 }
 
                 string uwmCode = product.UnderwritingModuleCode;
