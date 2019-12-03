@@ -1,118 +1,210 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
-<div class="padding-10">
-    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate" name="sharedRoleForm" onsubmit="return (SharedRoleValidation());">
-        @*@using (var tabs = Html.Bootstrap().Begin(new Tabs("roleTabs")))*@
-        {
-            @*@tabs.Tab("Location")
-            @tabs.Tab("Roles")
-            @tabs.Tab("Location Breakdown")*@
+    <form class="smart-form" id="sharedRoleId" formaction="#">
 
-            using (tabs.BeginPanel())
-            {
+        <div id="sharedRole">
+
+            <ul id="sharedRole" class="nav nav-tabs d-sm-flex">
+                <li class="nav nav-tabs Roles"> <a href="#sharedRoleTabs1" data-toggle="tab"> Shared Roles </a> </li>                
+                <li class="disabled nav nav-tabs SharedRolesBreakdown"> <a href="#sharedRoleTabs2" data-toggle="tab"> Shared Roles Breakdown </a> </li>
+                @*<li class="disabled nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4" data-toggle="tab" onclick="BuildRevenuesTable('false')"> Activity Breakdown </a> </li>
+                <li class="nav nav-tabs AdditionalInformation"> <a href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
+                <li class="nav nav-tabs SharedRevenueData"> <a href="#RevenueTabs6" data-toggle="tab"> Shared Revenue Data </a> </li>*@
+            </ul>
+
+            <div id="sharedRoleTabs1" class="tab-content">
                 <fieldset>
-                    <section class="col col-xs-12">
-                        <label class="label">Do you have offices outside of New Zealand?</label>
-                        <div class="inline-group">
-                            <label class="radio">
-                                <input name="radio-outsideTradeNZ" type="radio" value="yes" onchange="toggleLocationsVisible('active')">
-                                <i></i>Yes
-                            </label>
-                            <label class="radio">
-                                <input name="radio-outsideTradeNZ" type="radio" value="no" onchange="toggleLocationsVisible('Inactive')">
-                                <i></i>No
-                            </label>
-                        </div>
-                    </section>
-
-                    <section class="col col-xs-12">
-                        <div id="RoleLocation" name="RoleLocation" hidden>
-                            <label class="label">Locations</label>
-                            <label class="input">
-                                <select class="cselect form-control" data-placeholder="Locations" id="locationSelect" multiple="multiple" name="locationSelect" style="display: none;" hidden>
-                                    @foreach (var location in Model.Locations)
-                                    {
-                                        <option value="@location.LocationId">@location.Country</option>
-                                    }
-                                </select>
-                            </label>
-                        </div>
-                    </section>
-
-                    <section id="sharedRole" class="col col-xs-12">
-                        <button onclick="SetCurrentTab('roleTabs-2')" class="btn-sm">Go to Roles</button>
-
-                        @*@Html.Bootstrap().Button().Text("Go to Roles").HtmlAttributes(new { onclick = "SetCurrentTab('roleTabs-2');" }).Class("btn-sm")*@
-                    </section>
-                </fieldset>
-            }
-
-            using (tabs.BeginPanel())
-            {
-                <fieldset>
-                    <section class="col col-xs-12">
-                        <label class="label">Team Members in Role</label>
-                        <label class="input">
-                            <select class="cselect form-control" data-placeholder="Roles" id="roleSelect" multiple="multiple" name="roleSelect" style="display: none;">
-                                @foreach (var role in Model.RolesByLocation)
+                    <div class="container-fluid">
+                        <div class="input-group mb-3">
+                            <select data-placeholder="Choose Territories" id="sharedRoleTemplates" name="sharedRoleTemplates" multiple class="col-6 chosen-select form-control b" required>
+                                @foreach (var role in Model.SharedRoleViewModel.SharedRoles)
                                 {
-                                    <option value="@role.Role.Id">@role.Role.Title</option>
+                                    <option selected="@role.Selected" value="@role.Value">@role.Text</option>
                                 }
                             </select>
-                        </label>
-                    </section>
+                        </div>
 
-                    <section id="roleLocation" class="col col-xs-12">
-                        <button class="btn btn-default btn-sm" type="button" onclick="BuildRolesTable();SetCurrentTab('roleTabs-3');">Go To Location Breakdown</button>
-                    </section>
+                        <div class="input-group mb-3">
+                            <button class="btn-primary btn" id="tradingButton" onclick="SaveTabOne()" style="display:none">  Next  </button>
+                        </div>
+                    </div>
 
                 </fieldset>
-            }
-            using (tabs.BeginPanel())
-            {
-                @*<fieldset>
-                    <section class="col col-xs-12">
-                        <table id="sharedRoleLocationTable" class="table">
-                            <thead>
-                            </thead>
-                            <tbody>
-                                @foreach (var activity in Model.RevenueByActivity)
+            </div>
+            <div id="sharedRoleTabs2" class="tab-content">
+
+                <fieldset>
+                    <div class="container-fluid">
+                        <div class="input-group mb-3">
+                            
+                        </div>
+
+                        @*<div id="sharedRevenueTerritoriesBreakdownTab" class="input-group mb-3">
+                            <button class="btn-primary btn" onclick="SaveTabTwo('true')">Next</button>
+                        </div>*@
+
+                    </div>
+                </fieldset>
+            </div>
+            <div id="RevenueTabs3" class="tab-content">
+                <fieldset>
+                    <div class="container-fluid">
+                        <div class="input-group mb-3">
+                            <table id="sharedRevenueTerritoriesTable" class="table">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div id="sharedRevenueActivity" class="input-group">
+                                <button class="btn-primary btn" onclick="SaveTabThree('false')">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="RevenueTabs4" class="tab-content">
+
+                <fieldset>
+                    <div class="container-fluid">
+                        <div class="input-group mb-3">
+                            <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue" required>
+                        </div>
+                        <div class="input-group mb-3">
+                            <table id="sharedRevenueActivityTable" class="table">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="footer" id="submitTab4">
+                                <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveTabFour('false')">
+                                <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+                            </div>
+                            <div class="footer" id="additionalInfomation" style="display:none">
+                                <button class="btn-primary btn" onclick="SaveTabFour('true')">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="RevenueTabs5" class="tab-content">
+                <fieldset>
+                    <div class="container-fluid" style="display:none" id="addtionalInformationContainer">
+                        <div class="input-group mb-3" id="InspectionReport">
+                            <div class="form-group">
+                                <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+                                <textarea id="InspectionReportTextId" name="InspectionReportTextId" type="Text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
+                                <input id="InspectionReportBoolId" name="InspectionReportTextId" type="checkbox"  class="form-control" />
+                            </div>
+                        </div>
+                        <div class="input-group mb-3" id="Valuation">
+                            <div class="form-group">
+                                <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
+                                <textarea id="ValuationTextId" name="ValuationTextId" type="Text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
+                                <textarea id="ValuationTextId2" name="ValuationTextId2" type="Text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
+                                <input id="ValuationBoolId" name="ValuationBoolId" type="checkbox"  class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3" id="SchoolsDesignWork">
+
+                            <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
+                                <input id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" type="checkbox" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
+                                <input id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" type="checkbox"  class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
+                                <input id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" type="checkbox"  class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
+                                <input id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" type="checkbox"  class="form-control" />
+                            </div>
+                        </div>
+                        <div class="input-group mb-3" id="OtherActivities">
+                            <div class="form-group">
+                                <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
+                                <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" type="Text" class="form-control" ></textarea>
+                            </div>
+                        <div class="input-group mb-3">
+                            <div class="footer">
+                                <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveTabFive()">
+                                <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="RevenueTabs6" class="tab-content active">
+                <fieldset>
+                    @if (Model.RevenueByActivityViewModel.RevenueData != null)
+                    {
+                        <div class="input-group mb-3">
+                            <input id="displayRevenue" name="displayRevenue" type="Text" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue">
+                        </div>
+                        <div class="input-group mb-3">
+                            <table class="table">
+                                @foreach (var territoryData in Model.RevenueByActivityViewModel.RevenueData.Territories)
                                 {
-                                    <tr>
-                                        <td>@activity.Activity</td>
-                                        @foreach (var territory in Model.RevenueByTerritories)
-                                        {
-                                            <td>
-                                                <section>
-                                                    <label class="input">
-                                                        <input type="text" class="form-control" value="@territory.DeclaredRevenue" />
-                                                    </label>
-                                                </section>
-                                            </td>
-                                        }
-                                    </tr>
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">@territoryData.Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">@territoryData.Pecentage</th>
+                                        </tr>
+                                    </tbody>
                                 }
-                            </tbody>
-                        </table>
-                    </section>
 
-                    <section id="sharedRevenueActivity" class="col col-xs-12">
-                            <button class="btn btn-default btn-sm" type="button" onclick="BuildRevenuesTable('false');SetCurrentTab('roleTabs-4');">Go To Activity Breakdown</button>
-                        </section>
+                            </table>
+                        </div>
+                        <div class="input-group mb-3">
+                            <table class="table">
+                                @foreach (var businessActivityData in Model.RevenueByActivityViewModel.RevenueData.Activities)
+                                {
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">@businessActivityData.Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">@businessActivityData.Pecentage</th>
+                                        </tr>
+                                    </tbody>
+                                }
 
-                </fieldset>*@
+                            </table>
+                        </div>
+                    }
 
-            }
+                </fieldset>
+            </div>
 
-        }
-
-    </div>
-</div>
-
-
-
-
-
-
+        </div>
+        
+    </form>
 
 

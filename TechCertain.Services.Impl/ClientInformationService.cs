@@ -99,10 +99,6 @@ namespace TechCertain.Services.Impl
             //ConfigureSharedData (sheet);
 
             // save data to shared data
-            if (sheet.SharedData != null)
-            {
-                sheet.SharedData.SetData(sharedData);
-            }
         }
 
         #endregion

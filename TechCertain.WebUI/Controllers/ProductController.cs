@@ -246,7 +246,7 @@ namespace TechCertain.WebUI.Controllers
 
                 var territoryNZ = await _territoryService.GetTerritoryTemplateByName("NZ");
                 await _territoryService.AddTerritoryTemplate(territoryTemplate);
-                await _programmeService.AttachClientProgrammeToTerritory(programme, territoryTemplate);
+                await _programmeService.AttachProgrammeToTerritory(programme, territoryTemplate);
 
                 return Redirect("~/Product/MyProducts");
             }
