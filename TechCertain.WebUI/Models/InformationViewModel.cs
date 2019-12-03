@@ -49,8 +49,6 @@ namespace TechCertain.WebUI.Models
 
         public IEnumerable<OrganisationViewModel> InterestedParties { get; set; }
 
-        public IEnumerable<RoleDetailViewModel> RolesByLocation { get; set; }
-
         public Guid OrganisationId { get; set; }
 
         public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
@@ -60,8 +58,6 @@ namespace TechCertain.WebUI.Models
         public OrganisationDetailsVM OrganisationDetails { get; set; }
 
         public UserDetailsVM UserDetails { get; set; }
-
-        public SharedDataViewModel SharedData { get; set; }
 
         public IEnumerable<BuildingViewModel> Buildings { get; set; }
 
@@ -94,6 +90,7 @@ namespace TechCertain.WebUI.Models
         public Guid ClientProgrammeID { get; set; }
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
         public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
+        public SharedRoleViewModel SharedRoleViewModel { get; set; }
     }
 
     public class InformationSectionViewModel
@@ -249,39 +246,7 @@ namespace TechCertain.WebUI.Models
             return model;
         }
     }
-
-    public class SharedDataViewModel
-    {
-        IDictionary<string, string> _sharedData;
-
-        public string this[string key]
-        {
-            get { return Get(key); }
-            set { Add(key, value); }
-        }
-
-        public SharedDataViewModel()
-            : this(new Dictionary<string, string>())
-        { }
-
-        public SharedDataViewModel(IDictionary<string, string> sharedData)
-        {
-            _sharedData = sharedData;
-        }
-
-        public string Get(string key)
-        {
-            if (_sharedData.ContainsKey(key))
-                return _sharedData[key];
-            return "";
-        }
-
-        public void Add(string key, string value)
-        {
-            _sharedData[key] = value;
-        }
-    }
-
+   
     public class RevenueByActivityViewModel
     {
         public bool IsTradingOutsideNZ { get; set; }
@@ -291,9 +256,13 @@ namespace TechCertain.WebUI.Models
         public RevenueByActivity RevenueData { get; set; }
     }
 
-    public class RoleDetailViewModel
+    public class SharedRoleViewModel
     {
-        public Role Role;        
+        public SharedRoleViewModel()
+        {
+            SharedRoles = new List<SelectListItem>();
+        }
+        public IList<SelectListItem> SharedRoles { get; set; }
     }
 
     public class BusinessActivityViewModel

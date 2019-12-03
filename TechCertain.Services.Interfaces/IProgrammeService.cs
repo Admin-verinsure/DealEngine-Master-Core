@@ -30,10 +30,11 @@ namespace TechCertain.Services.Interfaces
         Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
 
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
-        Task AttachClientProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);
+        Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);
         Task<List<Programme>> GetAllProgrammes();
         Task<Programme> GetProgrammeById(Guid ProgrammeId);
-        Task AttachClientProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate);
+        Task AttachProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate);
+        Task AttachProgrammeToharedRole(Programme programme, SharedDataRoleTemplate sharedRole);
     }
 }
 

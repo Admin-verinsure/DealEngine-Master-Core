@@ -19,7 +19,7 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class InformationController : BaseController
     {
-
+        ISharedDataRoleService _sharedDataRoleService;
         IActivityService _activityService;
         IInformationItemService _informationItemService;
         IInformationSectionService _informationSectionService;
@@ -79,7 +79,8 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
             IMapperSession<Territory> territoryRepository,
-             IMapperSession<ChangeReason> changeReasonRepository,
+            ISharedDataRoleService sharedDataRoleService,
+            IMapperSession<ChangeReason> changeReasonRepository,
             IUnitOfWork unitOfWork,
             IMapperSession<BusinessActivity> busActivityRespository,
             IMapperSession<InformationSection> informationSectionRepository,
@@ -90,6 +91,7 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper)
             : base (userService)
         {
+            _sharedDataRoleService = sharedDataRoleService;
             _revenueByActivityRespository = revenueByActivityRespository;
             _territoryService = territoryService;
             _advisoryService = advisoryService;
@@ -862,10 +864,6 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit().ConfigureAwait(false);
             }
 
-            model.SharedData = new SharedDataViewModel();
-            //foreach (var answer in sheet.SharedData.SharedAnswers)
-            //	model.SharedData.Add (answer.ItemName, answer.Value);
-
             var boats = new List<BoatViewModel>();
             foreach (Boat b in sheet.Boats)
             {
@@ -997,21 +995,6 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
 
-            //model.BusinessActivities = _mapper.Map<IEnumerable<BusinessActivityViewModel>>(_busActivityRespository.FindAll());
-            //var businessactivity = new List<BusinessActivityViewModel>();
-            //foreach (var ba in _busActivityRespository.FindAll())
-            //{
-            //    businessactivity.Add(new BusinessActivityViewModel
-            //    {
-            //        Classification = ba.Classification,
-            //        AnzsciCode = ba.AnzsciCode,
-            //        Description = ba.Description
-
-            //    });
-            //}
-
-            //model.BusinessActivities = businessactivity;
-
             return View("InformationWizard", model);
         }
 
@@ -1084,8 +1067,6 @@ namespace TechCertain.WebUI.Controllers
                         if (answer != null)
                             item.Value = answer.Value;
                     }
-
-                model.SharedData = new SharedDataViewModel();
 
                 var boats = new List<BoatViewModel>();
                 foreach (Boat b in sheet.Boats)
@@ -1354,7 +1335,33 @@ namespace TechCertain.WebUI.Controllers
 
             }
 
-            model.SharedData = new SharedDataViewModel();
+            SharedRoleViewModel sharedRoleViewModel = new SharedRoleViewModel();
+            if(sheet.SharedDataRoles.Count != 0)
+            {
+                foreach(var sharedRole in sheet.SharedDataRoles)
+                {
+                    var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateByRoleName(sharedRole.Name);
+                    sharedRoleViewModel.SharedRoles.Add(new SelectListItem
+                    {
+                        Text = sharedRoleTemplate.Name,
+                        Value = sharedRoleTemplate.Id.ToString(),
+                        Selected = true
+                    });
+                }
+            }
+
+            var programmeSharedRoles = await _sharedDataRoleService.GetSharedRoleTemplatesByProgramme(clientProgramme.BaseProgramme);
+            foreach (var sharedRoleTemplate in programmeSharedRoles)
+            {
+                sharedRoleViewModel.SharedRoles.Add(new SelectListItem
+                {
+                    Text = sharedRoleTemplate.Name,
+                    Value = sharedRoleTemplate.Id.ToString(),
+                    Selected = false
+                });
+            }
+
+            model.SharedRoleViewModel = sharedRoleViewModel;
 
             RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
             List<SelectListItem> territoryTemplates = new List<SelectListItem>();
