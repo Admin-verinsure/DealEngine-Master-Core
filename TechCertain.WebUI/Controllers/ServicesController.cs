@@ -437,8 +437,9 @@ namespace TechCertain.WebUI.Controllers
             {
                 foreach (var org in IA.IAOrganisations)
                 {
-                    foreach (var userorg in userdb.Organisations)
+                    foreach (var userorg in userdb.Organisations.Where(o => o.Id == org.Id))
                     {
+
                         if (!sheet.Organisation.Where(o => o.Id == org.Id).Contains(userorg))
                         {
                             organisations.Add(userorg);
@@ -488,9 +489,6 @@ namespace TechCertain.WebUI.Controllers
                 model.Page = page;
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
-                model.AddRow(row1);
                 int offset = rows * (page - 1);
                 for (int i = offset; i < offset + rows; i++)
                 {
@@ -1010,8 +1008,17 @@ namespace TechCertain.WebUI.Controllers
             {
                 if (org != null && answersheetId != null)
                 {
-                    sheet.Organisation.Remove(org);
-                   
+                    if(status)
+                    {
+                        sheet.Organisation.Remove(org);
+
+                    }
+                    else
+                    {
+                        if (!status)
+                            sheet.Organisation.Add(org);
+                    }
+
                 }
                 await uow.Commit();
             }
@@ -2197,17 +2204,22 @@ namespace TechCertain.WebUI.Controllers
                     organisation.Activities = model.Activities;
                     organisation.Email = userdb.Email;
                     organisation.Type = model.Type;
+                    if(model.DateofRetirement != null)
+                    {
                     organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    }
+                   if (model.DateofDeceased != null)
+                    {
                     organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    }
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
-                    userdb.SetPrimaryOrganisation(organisation);
                 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    userdb.SetPrimaryOrganisation(organisation);
-                    currentUser.Organisations.Add(organisation);
+                    //User owneruser = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                    //owneruser.Organisations.Add(organisation);
                     userdb.Organisations.Add(organisation);
                     sheet.Organisation.Add(organisation);
                     model.ID = organisation.Id;
