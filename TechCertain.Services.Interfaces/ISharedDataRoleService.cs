@@ -13,6 +13,8 @@ namespace TechCertain.Services.Interfaces
         Task<SharedDataRoleTemplate> GetSharedRoleTemplateById(Guid Id);
         Task<SharedDataRoleTemplate> GetSharedRoleTemplateByRoleName(string Name);
         Task<List<SharedDataRoleTemplate>> GetSharedRoleTemplatesByProgramme(Programme Programme);
+        Task CreateSharedDataRole(SharedDataRole newSharedRole);
+        Task UpdateSharedRole(SharedDataRole sharedRole);
     }
 
 }

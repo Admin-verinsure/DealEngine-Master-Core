@@ -33,11 +33,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm elterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm plterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null))
                 {
-                    elterm.Delete(underwritingUser);
+                    plterm.Delete(underwritingUser);
                 }
             }
 
@@ -65,16 +65,16 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
-            int TermLimit2mil = 1000000;
+            int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
-            int TermLimit3mil = 1000000;
+            int TermLimit3mil = 3000000;
             decimal TermPremium3mil = 0m;
             decimal TermBrokerage3mil = 0m;
-            int TermLimit4mil = 1000000;
+            int TermLimit4mil = 4000000;
             decimal TermPremium4mil = 0m;
             decimal TermBrokerage4mil = 0m;
-            int TermLimit5mil = 1000000;
+            int TermLimit5mil = 5000000;
             decimal TermPremium5mil = 0m;
             decimal TermBrokerage5mil = 0m;
 

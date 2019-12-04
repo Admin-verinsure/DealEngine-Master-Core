@@ -1802,23 +1802,22 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetProfessionalIdemnity(Guid ClientInformationSheet)
         {
-            String[][] ProfessionalIndemnityAnswer = new String[1][];
+            String[][] ProfessionalIndemnityAnswer = new String[6][];
             var count = 0;
             String[] ProfessionalIndemnity;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1") || (c.ItemName == "ProfessionalIndemnity2")
+                                                                                                                                || (c.ItemName == "ProfessionalIndemnity3") || (c.ItemName == "ProfessionalIndemnity4")
+                                                                                                                                || (c.ItemName == "ProfessionalIndemnity5") || (c.ItemName == "ProfessionalIndemnity6")))
             {
                 ProfessionalIndemnity = new String[2];
-
                 for (var i = 0; i < 1; i++)
                 {
                     ProfessionalIndemnity[i] = answer.ItemName;
                     ProfessionalIndemnity[i + 1] = answer.Value;
                 }
-
                 ProfessionalIndemnityAnswer[count] = ProfessionalIndemnity;
                 count++;
             }
-
             return Json(ProfessionalIndemnityAnswer);
         }
 
@@ -2276,6 +2275,47 @@ namespace TechCertain.WebUI.Controllers
             }
 
             return Redirect("/Information/StartInformation/" + cis.Id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSharedRoleTabOne(string[] SharedDataRoles, string ClientInformationSheetId)
+        {
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            sheet.SharedDataRoles.Clear();
+            foreach (var id in SharedDataRoles)
+            {
+                var template = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(id));
+                var newSharedRole = new SharedDataRole();
+                newSharedRole.Name = template.Name;
+                await _sharedDataRoleService.CreateSharedDataRole(newSharedRole);
+                sheet.SharedDataRoles.Add(newSharedRole);
+            }
+
+            await _clientInformationService.UpdateInformation(sheet);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSharedRoleTabTwo(string TableSerialised, string ClientInformationSheetId)
+        {
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            foreach (var sharedRole in sheet.SharedDataRoles)
+            {
+                string[] tableRow = TableSerialised.Split('&');
+                foreach (var str in tableRow)
+                {
+                    string[] valueId = str.Split('=');
+                    var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(valueId[0]));
+                    if (sharedRoleTemplate.Name == sharedRole.Name)
+                    {
+                        sharedRole.Count = int.Parse(valueId[1]);
+                        await _sharedDataRoleService.UpdateSharedRole(sharedRole);
+                    }
+                }
+            }
+            
+            return Ok();
         }
 
         [HttpPost]
