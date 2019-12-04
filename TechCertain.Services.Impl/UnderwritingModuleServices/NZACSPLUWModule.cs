@@ -33,17 +33,17 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null) != null)
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null) != null)
             {
-                foreach (ClientAgreementTerm elterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "EL" && ct.DateDeleted == null))
+                foreach (ClientAgreementTerm plterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "PL" && ct.DateDeleted == null))
                 {
-                    elterm.Delete(underwritingUser);
+                    plterm.Delete(underwritingUser);
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "el250klimitminpremium", "el500klimitminpremium", "el1millimitminpremium",
-                "el250klimitunder6employeerate", "el500klimitunder6employeerate", "el1millimitunder6employeerate", "el250klimit6to10employeerate", "el500klimit6to10employeerate",
-                "el1millimit6to10employeerate", "el250klimitover10employeerate", "el500klimitover10employeerate", "el1millimitover10employeerate");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitincomeunder1milpremium", "pl2millimitincomeunder1milpremium", "pl3millimitincomeunder1milpremium", "pl4millimitincomeunder1milpremium", "pl5millimitincomeunder1milpremium",
+                "pl1millimitincome1milto3milpremium", "pl2millimitincome1milto3milpremium", "pl3millimitincome1milto3milpremium", "pl4millimitincome1milto3milpremium", "pl5millimitincome1milto3milpremium",
+                "pl1millimitincome3milto5milpremium", "pl2millimitincome3milto5milpremium", "pl3millimitincome3milto5milpremium", "pl4millimitincome3milto5milpremium", "pl5millimitincome3milto5milpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -65,16 +65,16 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
-            int TermLimit2mil = 1000000;
+            int TermLimit2mil = 2000000;
             decimal TermPremium2mil = 0m;
             decimal TermBrokerage2mil = 0m;
-            int TermLimit3mil = 1000000;
+            int TermLimit3mil = 3000000;
             decimal TermPremium3mil = 0m;
             decimal TermBrokerage3mil = 0m;
-            int TermLimit4mil = 1000000;
+            int TermLimit4mil = 4000000;
             decimal TermPremium4mil = 0m;
             decimal TermBrokerage4mil = 0m;
-            int TermLimit5mil = 1000000;
+            int TermLimit5mil = 5000000;
             decimal TermPremium5mil = 0m;
             decimal TermBrokerage5mil = 0m;
 

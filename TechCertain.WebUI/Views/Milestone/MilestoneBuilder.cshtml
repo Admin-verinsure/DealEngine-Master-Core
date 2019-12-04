@@ -66,13 +66,13 @@
                                                                             <div class="container-fluid">
                                                                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                                                                     <label class="btn btn-primary">
-                                                                                        <input type="radio" name="milestoneOptions" id="Advisory" onchange="PartialView('Advisory')"> Advisory
+                                                                                        <input style="display:none;" type="button" name="milestoneOptions" id="Advisory" onchange="PartialView('Advisory')"> Advisory
                                                                                     </label>
                                                                                     <label class="btn btn-primary">
-                                                                                        <input type="radio" name="milestoneOptions" id="Email" onchange="PartialView('Email')"> Email
+                                                                                        <input style="display:none;" type="button" name="milestoneOptions" id="Email" onchange="PartialView('Email')"> Email
                                                                                     </label>
                                                                                     <label class="btn btn-primary">
-                                                                                        <input type="radio" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
+                                                                                        <input style="display:none;" type="button" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
                                                                                     </label>
                                                                                     @if (User.HasClaim("Edit", "EditMilestones"))
                                                                                     {
