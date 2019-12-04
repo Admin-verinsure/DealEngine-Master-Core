@@ -81,6 +81,11 @@ namespace TechCertain.Services.Impl
         {
             return await _territoryRepository.FindAll().FirstOrDefaultAsync(t => t.TerritoryTemplateId == Id);
         }
+
+        public async Task RemoveTerritory(Territory territory)
+        {
+            await _territoryRepository.RemoveAsync(territory);
+        }
     }
 }
 

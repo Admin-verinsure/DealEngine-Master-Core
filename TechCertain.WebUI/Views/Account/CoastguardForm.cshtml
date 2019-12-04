@@ -22,7 +22,7 @@
     <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
 
         <div>
-            <ul class="bootstrapWizard hidden">
+            <ul class="nav nav-tabs d-sm-flex hidden">
                 <li class="active" data-target="#step1">
                     <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Step 1</span> </a>
                 </li>
@@ -34,6 +34,9 @@
                 </li>
                 <li data-target="#step4">
                     <a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Step 4</span> </a>
+                </li>
+                <li data-target="#step5">
+                    <a href="#tab5" data-toggle="tab"> <span class="step">5</span> <span class="title">Step 5</span> </a>
                 </li>
 
             </ul>
@@ -139,12 +142,12 @@
                             </div>
                             <div class="form-group" style="margin-bottom:0;" id="qquotfgroup">
                                 <div class="input-group w100">
-                                    <button style="background-color:#00B0D3 !important; color:white;" type="submit" onclick="validationCheck(); return false;" class="btn btn-secondary w100">Get your Quote now</button>
+                                    <button style="background-color:#00B0D3 !important; color:white;" type="submit" onclick="validationCheck('quoteNow'); return false;" class="btn btn-secondary w100">Get your Quote now</button>
                                 </div>
                             </div>
                         </div>
                         <div id="quoteResult" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 margin-top-10 hidden">
-                            <div style="width:100%; margin-bottom:0; font-size:1.1em;" id="qref" class="alert alert-danger hidden">Quick Quote is not available for the combination you have selected. Please click "Notify Marsh to Call me" below. </div>
+                            <div style="width:100%; margin-bottom:0; font-size:1.1em;" id="qref" class="alert alert-danger hidden">Quick Quote is not available for the combination you have selected. Please click "Please give me a call to discuss" below. </div>
                             <div id="indiQuoteSpan" class="w100" style="text-align:center">
                                 <label class="indiQuoteValue">$</label>
                                 <label class="indiQuoteValue" id="indiQuote">Placeholder</label>
@@ -169,7 +172,8 @@
                                 <!--<a href="#tab2" data-toggle="tab"><button onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</button></a>-->
                                 <a href="#tab2" data-toggle="tab" onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</a>
                                 <!--<button type="button" class="btn btn-secondary margin-top-10 w100 hidden">Save for later</button>-->
-                                <button style="background-color:#004280 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</button>
+                                <a data-toggle="tab" onclick="pleaseCallButton(); return false;" style="background-color:#004280 !important;color:white;" type="submit" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</a>
+                                @*<button style="background-color:#004280 !important;color:white;" href="#tab2" type="button" class="btn btn-secondary margin-top-10 w100" onlick="validationCheck()">Please give me a call to discuss</button>*@
                                 <!--<a style="background-color:#F04E45 !important;color:white;" href="Coastguardreg"><button type="button" class="btn btn-secondary margin-top-10 w100">NO THANKS</button>-->
                                 <a style="background-color:#F04E45 !important;color:white;" href="Coastguardreg" class="btn btn-secondary margin-top-10 w100">No Thanks, I think I'll leave it</a>
 
@@ -178,9 +182,6 @@
                     </div>
                 </form>
             </div>
-
-
-
 
             <div class="tab-pane" id="tab2">
                 <div class="row">
@@ -252,16 +253,16 @@
                                 <a href="#tab1" data-toggle="tab"><button style="width:47.5%; background-color:#F04E45 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">BACK</button></a>
                                 <!--href="#tab1"-->
                                 <!--href="#tab3"-->
-                                <a onclick="validationCheck2(); return false;" data-toggle="tab"><button style="width:47.5%; float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">NEXT</button></a>
+                                <a onclick="validationCheck2(); return false;" id="nextButton" data-toggle="tab"><button style="width:47.5%; float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">NEXT</button></a>
+                                <a onclick="validationCheck2('pleaseCall'); return false;" data-toggle="tab"><button style="width:47.5%; float:right; background-color:#72BF44 !important;color:white; display:none" id="callMeNext" type="button" class="btn btn-secondary margin-top-10 w100">NEXT</button></a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-
             <div class="tab-pane" id="tab3">
-                <div class="form-group">                    
+                <div class="form-group">
 
                     <p class="lead" style="text-align:center">
                         <br />
@@ -309,6 +310,25 @@
                 </div>
             </div>
 
+            <div class="tab-pane" id="tab5">
+                <div class="form-group">
+
+                    <p class="lead" style="text-align:center">
+                        <br />
+                        Thank you.
+                    </p>
+                    <p class="lead" style="text-align:center">
+                        One of our Marine Insurance Specialists will contact you to discuss your requirements
+                    </p>
+
+                </div>
+
+                <div class="form-group">
+                    <a href="~/Account/Coastguardreg" style="background-color:#F04E45 !important;color:white;" type="submit" class="btn btn-secondary margin-top-10 w100 ">Close</a>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>
@@ -329,6 +349,7 @@
         var t2 = document.getElementById("tab2");
         var t3 = document.getElementById("tab3");
         var t4 = document.getElementById("tab4");
+        var t5 = document.getElementById("tab5");
         var eleArray = [l, n, v, c, h, m, t, vi];
         var cgdata = [];
         var vival = document.getElementById('vival');
@@ -438,8 +459,7 @@
             }
         }
 
-        function validationCheck() {
-            debugger;
+        function validationCheck(type) {
             //get boxes
             var indiQuoteSpan = document.getElementById("indiQuoteSpan");
             var quoteInc = document.getElementById("quoteIncludes");
@@ -469,16 +489,20 @@
                 }
             }
             if (j == 0) {
-                quickQuote();
+                if (type != 'call') {
+                    quickQuote();                                   
+                }                
+                return true;
             }
             else {
                 indiQuoteSpan.classList.add("hidden");
                 quoteInc.classList.add("hidden");
                 next.classList.add("hidden");
+                return false;
             }
         }
 
-        function validationCheck2() {
+        function validationCheck2(type) {
             //for tab2
             var f = document.getElementById("fnamefgroup");
             var s = document.getElementById("snamefgroup");
@@ -505,7 +529,26 @@
                     dropVal.classList.remove("requiredVal");
                 }
             }
-            if (z == 0) {
+            if (z == 0 && type == 'pleaseCall') {
+                addCGData();
+                t2.classList.remove("active");
+                $.ajax({
+                    type: "POST",
+                    url: "/Services/CoastGuardSelfRegCall",
+                    data: { craftType: cgdata[0], membershipNumber: cgdata[1], boatType: cgdata[2], constructionType: cgdata[3], hullConfiguration: cgdata[4], mooredType: cgdata[5], trailered: cgdata[6], boatInsuredValue: cgdata[7], quickQuotePremium: cgdata[8], firstName: cgdata[9], lastName: cgdata[10], email: cgdata[11], orgType: cgdata[12], homePhone: cgdata[13], mobilePhone: cgdata[14] },
+                })
+                    .done(function (data, textStatus, jQxhr) {
+                        debugger;
+                        SetCurrentTab('Tab5');  
+                        t5.classList.add("active");
+                        debugger;
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+
+            } else if (z == 0) {
                 addCGData();
                 t2.classList.remove("active");
                 postCGData();
@@ -524,9 +567,6 @@
                 traditional: true,
             })
                 .done(function (data, textStatus, jQxhr) {
-                    debugger;
-                    console.log(data);
-                    debugger;
                     if (data) {
                         t3.classList.add("active");
                         $('#response pre').html(data);
@@ -589,6 +629,26 @@
                 c.classList.remove("hidden");
                 h.classList.remove("hidden");
             }
+        }
+
+        function SetCurrentTab(tabPaneId) {            
+            $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
+            $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
+        };
+
+        function pleaseCallButton() {
+            if (validationCheck()) {                
+                SetCurrentTab('tab2');                
+                saveQuickQuote();                
+                $('#vownrfgroup').hide();   
+                $('#callMeNext').show();
+                document.getElementById("nextButton").style.display = "none";
+                document.getElementById("nextButton").style.visibility = "hidden";
+            }
+        }
+
+        function pleaseCallNext() {
+            validationCheck2();
         }
 
         function quickQuote() {

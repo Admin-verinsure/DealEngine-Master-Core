@@ -411,23 +411,30 @@ namespace TechCertain.WebUI.Controllers
             SharedRoleTemplateViewModel model = new SharedRoleTemplateViewModel();
             model.Roles = new List<SelectListItem>();
             model.BaseProgList = new List<SelectListItem>();
-            foreach (var programme in programmeList)
+            if(programmeList.Count != 0)
             {
-                model.BaseProgList.Add(new SelectListItem
+                foreach (var programme in programmeList)
                 {
-                    Text = programme.Name,
-                    Value = programme.Id.ToString()
-                });
+                    model.BaseProgList.Add(new SelectListItem
+                    {
+                        Text = programme.Name,
+                        Value = programme.Id.ToString()
+                    });
+                }
             }
 
-            foreach (var template in sharedRoleList)
+            if (sharedRoleList.Count != 0)
             {
-                model.Roles.Add(new SelectListItem
+                foreach (var template in sharedRoleList)
                 {
-                    Text = template.Name,
-                    Value = template.Id.ToString()
-                });
+                    model.Roles.Add(new SelectListItem
+                    {
+                        Text = template.Name,
+                        Value = template.Id.ToString()
+                    });
+                }
             }
+            
 
             return View(model);
         }
@@ -461,7 +468,7 @@ namespace TechCertain.WebUI.Controllers
                 foreach (string str in TemplateNames)
                 {
                     var sharedRole = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(str));
-                    await _programmeService.AttachProgrammeToharedRole(programme, sharedRole);
+                    await _programmeService.AttachProgrammeToSharedRole(programme, sharedRole);
                 }                
 
                 return Ok();

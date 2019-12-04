@@ -132,7 +132,7 @@ namespace TechCertain.Services.Impl
             return await _programmeRepository.GetByIdAsync(ProgrammeId);
         }
 
-        public async Task AttachProgrammeToharedRole(Programme programme, SharedDataRoleTemplate sharedRole)
+        public async Task AttachProgrammeToSharedRole(Programme programme, SharedDataRoleTemplate sharedRole)
         {
             programme.SharedDataRoleTemplates.Add(sharedRole);
             await _programmeRepository.UpdateAsync(programme);

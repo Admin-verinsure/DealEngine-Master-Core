@@ -10,6 +10,7 @@ namespace TechCertain.Services.Interfaces
         string CarJamApiKey { get; }
         string IntermediatePassword { get; }
         string domainQueryString { get; }
+        bool RequireRSA { get; }
     }
 }
 

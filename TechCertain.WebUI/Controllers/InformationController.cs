@@ -2324,21 +2324,33 @@ namespace TechCertain.WebUI.Controllers
             var user = await CurrentUser();
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));           
             List<TerritoryTemplate> territoryTemplates = new List<TerritoryTemplate>();
-            var revenueByActivity = new RevenueByActivity(user);
+            if (sheet.RevenueData == null)
+            {
+                sheet.RevenueData = new RevenueByActivity(user);
+                await _revenueByActivityRespository.AddAsync(sheet.RevenueData);
+            }
+            else
+            {
+                foreach(Territory territory in sheet.RevenueData.Territories)
+                {
+                    territory.DateDeleted = DateTime.Now;
+                    territory.DeletedBy = user;
+                    await _territoryService.UpdateTerritory(territory);
+                }
+                sheet.RevenueData.Territories.Clear();
+            }
 
+            var territorytemplate = await _territoryService.GetTerritoryTemplateByName("NZ");
+            territoryTemplates.Add(territorytemplate);
             if (IsTradingOutsideNZ)
             {
                 foreach (var territoryId in Territories)
                 {
-                    var territory = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
-                    territoryTemplates.Add(territory);
+                    territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
+                    territoryTemplates.Add(territorytemplate);
                 }
             }
-            else
-            {
-                var territory = await _territoryService.GetTerritoryTemplateByName("NZ");
-                territoryTemplates.Add(territory);
-            }
+
 
             foreach(var terr in territoryTemplates)
             {
@@ -2346,11 +2358,9 @@ namespace TechCertain.WebUI.Controllers
                 newTerritory.Location = terr.Location;
                 newTerritory.TerritoryTemplateId = terr.Id;
                 await _territoryService.AddTerritory(newTerritory);
-                revenueByActivity.Territories.Add(newTerritory);
+                sheet.RevenueData.Territories.Add(newTerritory);
             }
 
-            await _revenueByActivityRespository.AddAsync(revenueByActivity);
-            sheet.RevenueData = revenueByActivity;
             await _clientInformationService.UpdateInformation(sheet);
             return Ok();
         }
@@ -2360,23 +2370,37 @@ namespace TechCertain.WebUI.Controllers
         {
             var user = await CurrentUser();
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-            var revenueByActivity = sheet.RevenueData;
+            if(sheet.RevenueData == null)
+            {
+                sheet.RevenueData = new RevenueByActivity(user);
+            }
+            else
+            {
+                foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
+                {
+                    businessActivity.DateDeleted = DateTime.Now;
+                    businessActivity.DeletedBy = user;
+                    await _businessActivityService.UpdateBusinessActivity(businessActivity);
+                }
+                sheet.RevenueData.Activities.Clear();
+            }
 
             foreach (var baId in BusinessActivities)
             {
                 var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(baId));
-
                 var newBusinessActivity = new BusinessActivity(user)
                 {
                     AnzsciCode = businessActivityTemplate.AnzsciCode,
                     Classification = businessActivityTemplate.Classification,
                     Description = businessActivityTemplate.Description                                       
                 };
-                newBusinessActivity.RevenueByActivities.Add(revenueByActivity);
+
+                newBusinessActivity.RevenueByActivities.Add(sheet.RevenueData);
                 await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
-                revenueByActivity.Activities.Add(newBusinessActivity);                
+                sheet.RevenueData.Activities.Add(newBusinessActivity);                
             }
-            await _revenueByActivityRespository.AddAsync(revenueByActivity);
+
+            await _clientInformationService.UpdateInformation(sheet);
             return Ok();
         }
 
@@ -2384,6 +2408,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SaveRevenueDataTabThree(string TableSerialised, string ClientInformationSheetId)
         {
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            if(sheet.RevenueData == null)
+            {
+                throw new Exception("Please complete Territories Tab");
+            }
 
             if(TableSerialised.Length == 6)
             {
@@ -2422,6 +2450,10 @@ namespace TechCertain.WebUI.Controllers
         {
 
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            if (sheet.RevenueData == null)
+            {
+                throw new Exception("Please complete Activities Tab");
+            }
             sheet.RevenueData.TotalRevenue = decimal.Parse(TotalRevenue);
             string[] tableRow = TableSerialised.Split('&');
             foreach (var saveActivity in sheet.RevenueData.Activities)
@@ -2442,12 +2474,60 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabFive(string OtherInformation, string ClientInformationSheetId)
+        public async Task<IActionResult> SaveRevenueDataTabFive(IFormCollection form)
         {
+            var user = await CurrentUser();
+            var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
+            var additionalInformation = new AdditionalInformation(user);
 
-            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-            //sheet.RevenueData.OtherInfomation = OtherInformation;
-
+            var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalInformationTable"].ToString();
+            var FormString = serialisedAdditionalInformationTableFormString.Split('&');
+            //loop through form
+            foreach(var questionFormString in FormString)
+            {
+                var questionSplit = questionFormString.Split("=");
+                switch (questionSplit[0])
+                {
+                    case "InspectionReportTextId":
+                        additionalInformation.InspectionReportTextId = questionSplit[1];
+                        break;
+                    case "InspectionReportBoolId":
+                        additionalInformation.InspectionReportBoolId = questionSplit[1];
+                        break;
+                    case "ValuationTextId":
+                        additionalInformation.ValuationTextId = questionSplit[1];
+                        break;
+                    case "ValuationTextId2":
+                        additionalInformation.ValuationTextId2 = questionSplit[1];
+                        break;
+                    case "ValuationBoolId":
+                        additionalInformation.ValuationBoolId = questionSplit[1];
+                        break;
+                    case "SchoolsDesignWorkBoolId":
+                        additionalInformation.SchoolsDesignWorkBoolId = questionSplit[1];
+                        break;
+                    case "SchoolsDesignWorkBoolId2":
+                        additionalInformation.SchoolsDesignWorkBoolId2 = questionSplit[1];
+                        break;
+                    case "SchoolsDesignWorkBoolId3":
+                        additionalInformation.SchoolsDesignWorkBoolId3 = questionSplit[1];
+                        break;
+                    case "SchoolsDesignWorkBoolId4":
+                        additionalInformation.SchoolsDesignWorkBoolId4 = questionSplit[1];
+                        break;
+                    case "OtherActivitiesTextId":
+                        additionalInformation.OtherActivitiesTextId = questionSplit[1];
+                        break;
+                    case "CanterburyEarthquakeRebuildWorkId":
+                        additionalInformation.CanterburyEarthquakeRebuildWorkId = questionSplit[1];
+                        break;
+                    default:
+                        throw new Exception("Add more form question 'cases'");
+                }
+            }
+            
+            sheet.RevenueData.AdditionalInformation = additionalInformation;
             await _clientInformationService.UpdateInformation(sheet);
             return Ok();
         }
