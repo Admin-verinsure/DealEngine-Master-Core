@@ -20,6 +20,11 @@ namespace TechCertain.Services.Impl
             _sharedDataRoleTemplateRepository = businessActivityTemplateRepository;
         }
 
+        public async Task CreateSharedDataRole(SharedDataRole newSharedRole)
+        {
+            await _sharedDataRoleRepository.AddAsync(newSharedRole);
+        }
+
         public async Task CreateSharedDataRoleTemplate(SharedDataRoleTemplate newSharedRole)
         {
             await _sharedDataRoleTemplateRepository.AddAsync(newSharedRole);
@@ -43,6 +48,11 @@ namespace TechCertain.Services.Impl
         public async Task<List<SharedDataRoleTemplate>> GetSharedRoleTemplatesByProgramme(Programme Programme)
         {
             return await _sharedDataRoleTemplateRepository.FindAll().Where(s => s.Programme == Programme).ToListAsync();
+        }
+
+        public async Task UpdateSharedRole(SharedDataRole sharedRole)
+        {
+            await _sharedDataRoleRepository.UpdateAsync(sharedRole);
         }
     }
 }

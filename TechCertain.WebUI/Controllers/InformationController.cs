@@ -2278,6 +2278,47 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> SaveSharedRoleTabOne(string[] SharedDataRoles, string ClientInformationSheetId)
+        {
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            sheet.SharedDataRoles.Clear();
+            foreach (var id in SharedDataRoles)
+            {
+                var template = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(id));
+                var newSharedRole = new SharedDataRole();
+                newSharedRole.Name = template.Name;
+                await _sharedDataRoleService.CreateSharedDataRole(newSharedRole);
+                sheet.SharedDataRoles.Add(newSharedRole);
+            }
+
+            await _clientInformationService.UpdateInformation(sheet);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSharedRoleTabTwo(string TableSerialised, string ClientInformationSheetId)
+        {
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            foreach (var sharedRole in sheet.SharedDataRoles)
+            {
+                string[] tableRow = TableSerialised.Split('&');
+                foreach (var str in tableRow)
+                {
+                    string[] valueId = str.Split('=');
+                    var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(valueId[0]));
+                    if (sharedRoleTemplate.Name == sharedRole.Name)
+                    {
+                        sharedRole.Count = int.Parse(valueId[1]);
+                        await _sharedDataRoleService.UpdateSharedRole(sharedRole);
+                    }
+                }
+            }
+            
+            return Ok();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SaveRevenueDataTabOne(string[] Territories, bool IsTradingOutsideNZ, string ClientInformationSheetId)
         {
             var user = await CurrentUser();
