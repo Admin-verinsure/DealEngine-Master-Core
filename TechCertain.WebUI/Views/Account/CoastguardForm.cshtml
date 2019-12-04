@@ -171,6 +171,7 @@
                             <div class="btn-group w100" role="group" aria-label="First group">
                                 <!--<a href="#tab2" data-toggle="tab"><button onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</button></a>-->
                                 <a href="#tab2" data-toggle="tab" onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</a>
+                                <a href="Coastguardreg" style="background-color:#72BF44 !important;color:white;" id="newQuote" class="btn btn-secondary margin-top-10 w100 hidden">Get A New Quote</a>
                                 <!--<button type="button" class="btn btn-secondary margin-top-10 w100 hidden">Save for later</button>-->
                                 <a data-toggle="tab" onclick="pleaseCallButton(); return false;" style="background-color:#004280 !important;color:white;" type="submit" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</a>
                                 @*<button style="background-color:#004280 !important;color:white;" href="#tab2" type="button" class="btn btn-secondary margin-top-10 w100" onlick="validationCheck()">Please give me a call to discuss</button>*@
@@ -664,6 +665,7 @@
             var m = document.getElementById("mtype");
             var t = document.getElementById("hastr");
             var next = document.getElementById("next");
+            var newQuote = document.getElementById("newQuote");
             var water = ["Berthed", "Moored"];
             var badCount = 0;
             var badTypes = ["Trimaran", "Other", "Swing", "Carbon fibre"];
@@ -708,6 +710,7 @@
             }
 
             if (badCount > 0 || (craftType == "Roadtrailer" && insVal > 250000) || (craftType == "Stored" && insVal > 250000) || (vtype == "Jetski" && insVal > 100000) || (craftType == "Berthed" && insVal > 500000) || (craftType == "Moored" && insVal > 500000)) {
+                debugger;
                 qref.classList.remove("hidden");
                 indiQuoteSpan.classList.add("hidden");
                 quoteInc.classList.add("hidden");
@@ -716,6 +719,14 @@
 
             else {
                 if (badCount < 1) {
+                    debugger;
+                    $('#mnumb').attr('readonly', 'readonly');
+                    $('#vtype').attr('readonly', 'readonly');
+                    $('#ctype').attr('readonly', 'readonly');
+                    $('#hcfig').attr('readonly', 'readonly');
+                    $('#vival').attr('readonly', 'readonly');
+                    $('#mtype').attr('readonly', 'readonly');
+                    newQuote.classList.remove("hidden");
                     qref.classList.add("hidden");
                     indiQuoteSpan.classList.remove("hidden");
                     quoteInc.classList.remove("hidden");
