@@ -11,6 +11,7 @@ namespace TechCertain.Services.Interfaces
         string IntermediatePassword { get; }
         string domainQueryString { get; }
         bool RequireRSA { get; }
+        string GetMarineInsuranceSpecialistEmail { get; }
     }
 }
 

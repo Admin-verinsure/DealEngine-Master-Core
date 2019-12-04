@@ -45,12 +45,13 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Organisation> _OrganisationRepository;
         IReferenceService _referenceService;
         IEmailService _emailService;
+        IAppSettingService _appSettingService;
         IInsuranceAttributeService _insuranceAttributeService;
         IMapperSession<BusinessContract> _businessContractRepository;
         IMapper _mapper;
 
 
-        public ServicesController(IUserService userService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IUserService userService, IAppSettingService appSettingService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<InsuranceAttribute> insuranceAttributesRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService, IMapperSession<BusinessContract> businessContractRepository,
@@ -58,7 +59,7 @@ namespace TechCertain.WebUI.Controllers
 
             : base(userService)
         {
-
+            _appSettingService = appSettingService;
             _userRepository = userRepository;
             _clientInformationService = clientInformationService;
             _vehicleRepository = vehicleRepository;
@@ -3515,7 +3516,7 @@ namespace TechCertain.WebUI.Controllers
         {
             var emailBody = "First Name : " + firstName + Environment.NewLine +
                 " Last Name : " + lastName + Environment.NewLine +
-                " Email : " + craftType + Environment.NewLine +
+                " Email : " + email + Environment.NewLine +
                 " Mobile phone : " + mobilePhone + Environment.NewLine +
                 " Home Phone : " + homePhone + Environment.NewLine +
                 " Craft type : " + craftType + Environment.NewLine +
@@ -3528,9 +3529,8 @@ namespace TechCertain.WebUI.Controllers
                 " Boat insured value : " + boatInsuredValue + Environment.NewLine +
                 " Quick Quote premium : " + quickQuotePremium + Environment.NewLine;
 
-            //hardcoded receiver 
-            var receiver = "";
-            //await _emailService.MarshPleaseCallMe(receiver, "Please Call Me " + firstName, emailBody);
+            //hardcoded receiver             
+            //await _emailService.MarshPleaseCallMe(_appSettingService.GetMarineInsuranceSpecialistEmail, "Coastguard Pleasurecraft Insurance Query ", emailBody);
 
             return Ok();
         }

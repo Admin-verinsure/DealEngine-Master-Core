@@ -50,5 +50,13 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetValue<bool>("RequireRSA");
             }
         }
+
+        public string GetMarineInsuranceSpecialistEmail
+        {
+            get
+            {
+                return _configuration.GetValue<string>("MarineInsuranceSpecialistEmail");
+            }
+        }
     }
 }
