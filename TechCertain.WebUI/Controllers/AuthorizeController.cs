@@ -159,6 +159,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 identityUser = new IdentityUser();
                 identityUser.UserName = user.UserName;
+                identityUser.Email = user.Email;
                 await _userManager.CreateAsync(identityUser);
             }
 

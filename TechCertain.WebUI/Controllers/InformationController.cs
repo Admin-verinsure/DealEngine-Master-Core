@@ -1311,7 +1311,6 @@ namespace TechCertain.WebUI.Controllers
                     {
                         advisoryDesc = advisory.Description;
                     }
-
                 }
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2340,17 +2339,19 @@ namespace TechCertain.WebUI.Controllers
                 sheet.RevenueData.Territories.Clear();
             }
 
-            var territorytemplate = await _territoryService.GetTerritoryTemplateByName("NZ");
-            territoryTemplates.Add(territorytemplate);
+            var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("NZ");
+            territoryTemplates.Add(territorytemplateNZ);
             if (IsTradingOutsideNZ)
             {
                 foreach (var territoryId in Territories)
                 {
-                    territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
-                    territoryTemplates.Add(territorytemplate);
+                    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
+                    if(territorytemplate.Location != territorytemplateNZ.Location)
+                    {
+                        territoryTemplates.Add(territorytemplate);
+                    }                    
                 }
             }
-
 
             foreach(var terr in territoryTemplates)
             {
@@ -2378,6 +2379,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
                 {
+                    businessActivity.RevenueByActivities.Clear();
                     businessActivity.DateDeleted = DateTime.Now;
                     businessActivity.DeletedBy = user;
                     await _businessActivityService.UpdateBusinessActivity(businessActivity);
@@ -2395,9 +2397,12 @@ namespace TechCertain.WebUI.Controllers
                     Description = businessActivityTemplate.Description                                       
                 };
 
-                newBusinessActivity.RevenueByActivities.Add(sheet.RevenueData);
-                await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
-                sheet.RevenueData.Activities.Add(newBusinessActivity);                
+                if (!sheet.RevenueData.Activities.Contains(newBusinessActivity))
+                {
+                    await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
+                    sheet.RevenueData.Activities.Add(newBusinessActivity);
+                    newBusinessActivity.RevenueByActivities.Add(sheet.RevenueData);                    
+                }                              
             }
 
             await _clientInformationService.UpdateInformation(sheet);
