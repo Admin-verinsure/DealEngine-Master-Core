@@ -3521,23 +3521,24 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CoastGuardSelfRegCall(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
             string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
         {
-            var emailBody = "First Name : " + firstName + Environment.NewLine +
-                " Last Name : " + lastName + Environment.NewLine +
-                " Email : " + email + Environment.NewLine +
-                " Mobile phone : " + mobilePhone + Environment.NewLine +
-                " Home Phone : " + homePhone + Environment.NewLine +
-                " Craft type : " + craftType + Environment.NewLine +
-                " Membership Number : " + membershipNumber + Environment.NewLine +
-                " Boat type : " + boatType + Environment.NewLine +
-                " Construction type : " + constructionType + Environment.NewLine +
-                " Hull configuration : " + hullConfiguration + Environment.NewLine +
-                " Moored type : " + mooredType + Environment.NewLine +
-                " Trailered : " + trailered + Environment.NewLine +
-                " Boat insured value : " + boatInsuredValue + Environment.NewLine +
-                " Quick Quote premium : " + quickQuotePremium + Environment.NewLine;
-
-            //hardcoded receiver             
-            //await _emailService.MarshPleaseCallMe(_appSettingService.GetMarineInsuranceSpecialistEmail, "Coastguard Pleasurecraft Insurance Query ", emailBody);
+            var emailBody = "First Mate Cover Programme Quick Quote Please Call Request " + "<br/>" +
+                " Client Details : <br/>" + 
+                " First Name : " + firstName + "<br/>" +
+                " Last Name : " + lastName + "<br/>" +
+                " Email : " + email + "<br/>" +
+                " Mobile phone : " + mobilePhone + "<br/>" +
+                " Home Phone : " + homePhone + "<br/>" +
+                " Craft type : " + craftType + "<br/>" +
+                " Membership Number : " + membershipNumber + "<br/>" +
+                " Boat type : " + boatType + "<br/>" +
+                " Construction type : " + constructionType + "<br/>" +
+                " Hull configuration : " + hullConfiguration + "<br/>" +
+                " Moored type : " + mooredType + "<br/>" +
+                " Trailered : " + trailered + "<br/>" +
+                " Boat insured value : " + boatInsuredValue + "<br/>" +
+                " Quick Quote premium : " + quickQuotePremium + "<br/>";
+            if (_appSettingService.GetMarineInsuranceSpecialistEmail != "")
+                await _emailService.MarshPleaseCallMe(_appSettingService.GetMarineInsuranceSpecialistEmail, "Coastguard Pleasurecraft Insurance Query ", emailBody);
 
             return Ok();
         }
