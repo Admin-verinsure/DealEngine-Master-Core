@@ -721,11 +721,19 @@
                 if (badCount < 1) {
                     debugger;
                     $('#mnumb').attr('readonly', 'readonly');
+                    $('#mnumb').disableSelection;
                     $('#vtype').attr('readonly', 'readonly');
+                    $('#vtype').attr('disabled', 'true');
                     $('#ctype').attr('readonly', 'readonly');
+                    $('#ctype').attr('disabled', 'true');
                     $('#hcfig').attr('readonly', 'readonly');
+                    $('#hcfig').attr('disabled', 'true');
                     $('#vival').attr('readonly', 'readonly');
+                    $('#vival').disableSelection;
                     $('#mtype').attr('readonly', 'readonly');
+                    $('#mtype').attr('disabled', 'true');
+                    $('#hastr').attr('readonly', 'readonly');
+                    $('#hastr').attr('disabled', 'true');
                     newQuote.classList.remove("hidden");
                     qref.classList.add("hidden");
                     indiQuoteSpan.classList.remove("hidden");
