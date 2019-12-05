@@ -1,16 +1,15 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
-<form class="smart-form" id="sharedRevenueId" formaction="#">
+@*<form class="smart-form" id="sharedRevenueId" formaction="#">*@
 
     <div id="SharedRevenue">
 
         <ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
             <li class="nav nav-tabs Territory"> <a href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
             <li class="nav nav-tabs Activities"> <a href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
-            <li class="disabled nav nav-tabs TerritoryBreakdown"> <a href="#RevenueTabs3" data-toggle="tab" onclick="BuildRevenuesTable('true')"> Territory Breakdown </a> </li>
-            <li class="disabled nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4" data-toggle="tab" onclick="BuildRevenuesTable('false')"> Activity Breakdown </a> </li>
+            <li class="nav nav-tabs TerritoryBreakdown"> <a href="#RevenueTabs3" data-toggle="tab"> Territory Breakdown </a> </li>
+            <li class="nav nav-tabs ActivityBreakdown"> <a href="#RevenueTabs4" data-toggle="tab"> Activity Breakdown </a> </li>
             <li class="nav nav-tabs AdditionalInformation"> <a href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
-            <li class="nav nav-tabs SharedRevenueData"> <a href="#RevenueTabs6" data-toggle="tab"> Shared Revenue Data </a> </li>
         </ul>
 
         <div id="RevenueTabs1" class="tab-content">
@@ -69,10 +68,22 @@
                 <div class="container-fluid">
                     <div class="input-group mb-3">
                         <table id="sharedRevenueTerritoriesTable" class="table">
-                            <thead>
-                            </thead>
+                            <thead class="thead-dark">
+                                <tr>
+                                    @foreach (var territoryData in Model.RevenueByActivityViewModel.RevenueData.Territories)
+                                    {
+                                        <th scope="col">@territoryData.Location</th>
+                                    }
+                                </tr>
+                                </thead>
                             <tbody>
-                            </tbody>
+                                <tr>
+                                    @foreach (var territoryData in Model.RevenueByActivityViewModel.RevenueData.Territories)
+                                    {
+                                        <th scope="row">@territoryData.Pecentage</th>
+                                    }
+                                </tr>
+                                </tbody>                            
                         </table>
                     </div>
 
@@ -93,13 +104,24 @@
                     </div>
                     <div class="input-group mb-3">
                         <table id="sharedRevenueActivityTable" class="table">
-                            <thead>
+                            <thead class="thead-dark">
+                                <tr>
+                                    @foreach (var businessActivityData in Model.RevenueByActivityViewModel.RevenueData.Activities)
+                                    {
+                                        <th scope="col">@businessActivityData.Description</th>
+                                    }
+                                </tr>
                             </thead>
                             <tbody>
+                                <tr>
+                                    @foreach (var businessActivityData in Model.RevenueByActivityViewModel.RevenueData.Activities)
+                                    {
+                                        <th scope="row">@businessActivityData.Pecentage</th>
+                                    }
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-
                     <div class="input-group mb-3">
                         <div class="footer" id="submitTab4">
                             <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveTabFour('false')">
@@ -114,18 +136,21 @@
         </div>
         <div id="RevenueTabs5" class="tab-content">
             <fieldset>
-                <div class="container-fluid" style="display:none" id="addtionalInformationContainer">
-                    <div class="input-group mb-3" id="InspectionReport">
+                <form class="smart-form" id="addtionalInformationContainer">
+                    <div class="input-group mb-3" style="display:none" id="InspectionReport">
                         <div class="form-group">
                             <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
-                            <textarea id="InspectionReportTextId" name="InspectionReportTextId" type="Text" class="form-control"></textarea>
+                            <textarea id="InspectionReportTextId" name="InspectionReportTextId" type="Text" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
-                            <input id="InspectionReportBoolId" name="InspectionReportTextId" type="checkbox" class="form-control" />
+                            <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId">
+                                <option selected value="Yes">Yes</option>
+                                <option value="No">No</option>                                
+                            </select>
                         </div>
                     </div>
-                    <div class="input-group mb-3" id="Valuation">
+                    <div class="input-group mb-3" style="display:none" id="Valuation">
                         <div class="form-group">
                             <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
                             <textarea id="ValuationTextId" name="ValuationTextId" type="Text" class="form-control"></textarea>
@@ -136,94 +161,68 @@
                         </div>
                         <div class="form-group">
                             <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
-                            <input id="ValuationBoolId" name="ValuationBoolId" type="checkbox" class="form-control" />
+                            <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId">
+                                <option selected value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="input-group mb-3" id="SchoolsDesignWork">
+                    <div class="input-group mb-3" style="display:none" id="SchoolsDesignWork">
 
                         <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
                         <div class="form-group">
                             <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
-                            <input id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" type="checkbox" class="form-control" />
+                            <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId">
+                                <option selected value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
-                            <input id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" type="checkbox" class="form-control" />
+                            <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2">
+                                <option selected value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
-                            <input id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" type="checkbox" class="form-control" />
+                            <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3">
+                                <option selected value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
-                            <input id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" type="checkbox" class="form-control" />
+                            <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4">
+                                <option selected value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="input-group mb-3" id="OtherActivities">
+                    <div class="input-group mb-3" style="display:none" id="OtherActivities">
                         <div class="form-group">
                             <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
                             <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" type="Text" class="form-control"></textarea>
                         </div>
-                        <div class="input-group mb-3">
-                            <div class="footer">
-                                <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabFive()">
-                                <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
-                            </div>
+                    </div>
+                    <div class="input-group mb-3" style="display:none" id="CanterburyEarthquakeRebuildWork">
+                        <div class="form-group">
+                            <label for="CanterburyEarthquakeRebuildWorkd"> If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
+                            <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" type="Text" class="form-control"></textarea>
                         </div>
                     </div>
-                </div>
+                    <div class="input-group mb-3">
+                        <div class="footer">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabFive()">
+                            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+                        </div>
+                    </div>
+                </form>
             </fieldset>
-        </div>
-        <div id="RevenueTabs6" class="tab-content active">
-            <fieldset>
-                @if (Model.RevenueByActivityViewModel.RevenueData != null)
-                {
-                    <div class="input-group mb-3">
-                        <input id="displayRevenue" name="displayRevenue" type="Text" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue">
-                    </div>
-                    <div class="input-group mb-3">
-                        <table class="table">
-                            @foreach (var territoryData in Model.RevenueByActivityViewModel.RevenueData.Territories)
-                            {
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">@territoryData.Location</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">@territoryData.Pecentage</th>
-                                    </tr>
-                                </tbody>
-                            }
-
-                        </table>
-                    </div>
-                    <div class="input-group mb-3">
-                        <table class="table">
-                            @foreach (var businessActivityData in Model.RevenueByActivityViewModel.RevenueData.Activities)
-                            {
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">@businessActivityData.Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">@businessActivityData.Pecentage</th>
-                                    </tr>
-                                </tbody>
-                            }
-
-                        </table>
-                    </div>
-                }
-
-            </fieldset>
-        </div>
+        </div>       
 
     </div>
 
-</form>
+@*</form>*@
 
 

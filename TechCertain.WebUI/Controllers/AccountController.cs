@@ -347,7 +347,11 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
                     
-                    var result = await LoginMarsh(user, viewModel.DevicePrint);
+                    if (_appSettingService.RequireRSA)
+                    {
+                        var result = await LoginMarsh(user, viewModel.DevicePrint);
+                    }
+                    
                     return LocalRedirect("~/Home/Index");
                 }
 

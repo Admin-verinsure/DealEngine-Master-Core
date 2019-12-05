@@ -34,7 +34,7 @@ namespace TechCertain.Services.Interfaces
         Task<List<Programme>> GetAllProgrammes();
         Task<Programme> GetProgrammeById(Guid ProgrammeId);
         Task AttachProgrammeToTerritory(Programme programme, TerritoryTemplate territoryTemplate);
-        Task AttachProgrammeToharedRole(Programme programme, SharedDataRoleTemplate sharedRole);
+        Task AttachProgrammeToSharedRole(Programme programme, SharedDataRoleTemplate sharedRole);
     }
 }
 

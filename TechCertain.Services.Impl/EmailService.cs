@@ -151,6 +151,18 @@ namespace TechCertain.Services.Impl
 			email.Send ();
 		}
 
+        public async Task MarshPleaseCallMe(string sender, string subject, string body)
+        {
+            string subjectPrefix = "Proposalonline Please Call Request: ";
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@techcertain.com");
+            email.From(sender);
+            email.WithSubject(subjectPrefix + subject);
+            email.WithBody(body);
+            email.UseHtmlBody(true);
+            email.Send();
+        }
+
         public async Task SendSystemEmailLogin(string recipent)
         {
             var user = await _userService.GetUserByEmail(recipent);
