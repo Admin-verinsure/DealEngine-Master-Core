@@ -623,7 +623,7 @@
 
         function Close() {
             debugger;
-            $("#modal").hide();
+            $("#modal").modal.hide();
         }
 
     $('#myPanelEditModal').on('show.bs.modal', function (e) {
@@ -2074,6 +2074,10 @@ function showAccordionPanel(id, panelNo) {
                 type: "POST",        
                 data: postData
             })                   
+    }
+
+    fuunction SaveRoleTabThree(){
+        event.preventDefault();   
     }
 
     function SaveRoleTabTwo() {
