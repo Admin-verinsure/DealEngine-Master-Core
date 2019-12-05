@@ -750,6 +750,7 @@ namespace TechCertain.WebUI.Controllers
 
                 // Status
                 model.ProductName = agreement.Product.Name;
+                model.IsMultipleOption = agreement.Product.IsMultipleOption;
                 model.Status = agreement.Status;
                 if (agreement.Status == "Referred")
                 {

@@ -32,7 +32,8 @@ namespace TechCertain.WebUI.Models.Agreement
 		public string BrokerageRate { get; set; }
 		public IList<AgreementDocumentViewModel> Documents { get; set; }
 		public bool EditEnabled { get; set; }
-		public Guid ClientProgrammeId { get; set; }
+        public bool IsMultipleOption { get; set; }
+        public Guid ClientProgrammeId { get; set; }
         public bool HasBoats { get; set; }
         public IEnumerable<BoatViewModel> Boats { get; set; }
         public List<EditTermsViewModel> BVTerms { get; internal set; }

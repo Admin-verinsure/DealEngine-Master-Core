@@ -2174,34 +2174,40 @@ namespace TechCertain.WebUI.Controllers
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
 
                 var organisationName = "";
-                if (orgTypeName == "Person - Individual")
-                {
-                    organisationName = model.FirstName + " " + model.LastName;
-                }
-                else
-                {
-                    organisationName = model.OrganisationName;
-                }
-                organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                organisation.Qualifications = model.Qualifications;
-                organisation.IsNZIAmember = model.IsNZIAmember;
-                organisation.NZIAmembership = model.NZIAmembership;
-                organisation.IsADNZmember = model.IsADNZmember;
-                organisation.IsLPBCategory3 = model.IsLPBCategory3;
-                organisation.YearofPractice = model.YearofPractice;
-                organisation.prevPractice = model.prevPractice;
-                organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                organisation.Othercompanyname = model.Othercompanyname;
-                organisation.Activities = model.Activities;
-                organisation.Email = userdb.Email;
-                organisation.Type = model.Type;
-                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
-                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
-                organisation.InsuranceAttributes.Add(insuranceAttribute);
-                insuranceAttribute.IAOrganisations.Add(organisation);
-                await _organisationService.CreateNewOrganisation(organisation);
-                userdb.SetPrimaryOrganisation(organisation);
-
+                    if (orgTypeName == "Person - Individual")
+                    { 
+                     organisationName = model.FirstName + " " + model.LastName;
+                    }
+                    else
+                    {
+                        organisationName = model.OrganisationName;
+                    }
+                    organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
+                    organisation.Qualifications = model.Qualifications;
+                    organisation.IsNZIAmember = model.IsNZIAmember;
+                    organisation.NZIAmembership = model.NZIAmembership;
+                    organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                    organisation.YearofPractice = model.YearofPractice;
+                    organisation.prevPractice = model.prevPractice;
+                    organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                    organisation.Othercompanyname = model.Othercompanyname;
+                    organisation.Activities = model.Activities;
+                    organisation.Email = userdb.Email;
+                    organisation.Type = model.Type;
+                    if(model.DateofRetirement != null)
+                    {
+                    organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    }
+                   if (model.DateofDeceased != null)
+                    {
+                    organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    }
+                    organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    insuranceAttribute.IAOrganisations.Add(organisation);
+                    await _organisationService.CreateNewOrganisation(organisation);
+                
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     //User owneruser = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
@@ -2391,6 +2397,7 @@ namespace TechCertain.WebUI.Controllers
                     model.OrganisationTypeName = org.OrganisationType.Name;
                 }
                 model.IsOtherdirectorship = org.IsOtherdirectorship;
+                model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                 model.Othercompanyname = org.Othercompanyname;
                 model.Type = org.Type;
                 model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
