@@ -64,13 +64,20 @@ namespace TechCertain.Services.Impl
                 systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
                 await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
             }
+            //else
+            //{
+            //    systemEmailTemplate.DateDeleted = DateTime.Now;
+            //    systemEmailTemplate.DeletedBy = user;
+            //    await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
+            //}
+
 
             systemEmailTemplate.Milestone = milestone;
             systemEmailTemplate.Activity = activity;
             await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
         }
 
-        public async Task CreateAdvisory(Milestone milestone, Activity activity, string advisoryString)
+        public async Task CreateAdvisory(User user, Milestone milestone, Activity activity, string advisoryString)
         {
             Advisory advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
             if (advisory == null)
@@ -78,6 +85,12 @@ namespace TechCertain.Services.Impl
                 advisory = new Advisory(advisoryString);                
                 await _advisoryService.CreateAdvisory(advisory);
             }
+            //else
+            //{
+            //    advisory.DateDeleted = DateTime.Now;
+            //    advisory.DeletedBy = user;
+
+            //}
 
             advisory.Milestone = milestone;
             advisory.Activity = activity;

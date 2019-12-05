@@ -52,6 +52,26 @@
                                                 <div id="form-step-0" role="form" data-toggle="validator">
                                                     <div class="form-group">
 
+                                                        @if (Model.Advisory != "")
+                                                        {
+                                                            <div class="container modal-lg" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Advisory</h5>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            @Html.Raw(Model.Advisory)
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
                                                         <div class="row">
                                                             @{ await Html.RenderPartialAsync("_ViewInformation"); }
                                                             <div class="modal" id="addOperatorModal" tabindex="-1" role="dialog" data-backdrop="static">
@@ -760,11 +780,11 @@
                                                                         </div>
                                                                     </div>
 
-                                                                        <div class="modal-footer">
+                                                                    <div class="modal-footer">
 
-                                                                            <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
-                                                                        </div>
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
                                                                     </div>
+                                                                </div>
                                                             </div>
 
                                                             <div id="BoatRemoveModal" class="modal" role="dialog">
@@ -838,13 +858,13 @@
                                                                             </section>
                                                                         </div>
 
-                                                                     </div>
-
-                                                                        <div class="modal-footer">
-
-                                                                            <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
-                                                                        </div>
                                                                     </div>
+
+                                                                    <div class="modal-footer">
+
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
 
