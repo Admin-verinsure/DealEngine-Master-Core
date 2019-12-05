@@ -21,7 +21,7 @@ namespace TechCertain.WebUI.Controllers
 {
 
     public class ServicesController : BaseController
-    {        
+    {
         IClientInformationService _clientInformationService;
         IMapperSession<Vehicle> _vehicleRepository;
         IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
@@ -45,20 +45,21 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Organisation> _OrganisationRepository;
         IReferenceService _referenceService;
         IEmailService _emailService;
+        IAppSettingService _appSettingService;
         IInsuranceAttributeService _insuranceAttributeService;
         IMapperSession<BusinessContract> _businessContractRepository;
         IMapper _mapper;
 
 
-        public ServicesController(IUserService userService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IUserService userService, IAppSettingService appSettingService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<InsuranceAttribute> insuranceAttributesRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService, IMapperSession<BusinessContract> businessContractRepository,
             IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
 
-            : base (userService)
+            : base(userService)
         {
-
+            _appSettingService = appSettingService;
             _userRepository = userRepository;
             _clientInformationService = clientInformationService;
             _vehicleRepository = vehicleRepository;
@@ -151,11 +152,11 @@ namespace TechCertain.WebUI.Controllers
                     model.VIN = vehicle.VIN;
                     model.ChassisNumber = vehicle.ChassisNumber;
                     model.EngineNumber = vehicle.EngineNumber;
-                    model.GrossVehicleMass = vehicle.GrossVehicleMass.ToString();             
+                    model.GrossVehicleMass = vehicle.GrossVehicleMass.ToString();
                 }
             }
             catch (Exception ex)
-            {                
+            {
                 Console.WriteLine(ex);
                 throw ex;
             }
@@ -256,7 +257,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed,  bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
+        public async Task<IActionResult> GetVehicles(Guid informationId, bool validated, bool removed, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
@@ -347,7 +348,7 @@ namespace TechCertain.WebUI.Controllers
 
             var organisations = new List<Organisation>();
             foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
-                                                                                                || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture" 
+                                                                                                || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
                                                                                                 || ia.InsuranceAttributeName == "Megers"))
             {
                 foreach (var org in IA.IAOrganisations)
@@ -437,8 +438,9 @@ namespace TechCertain.WebUI.Controllers
             {
                 foreach (var org in IA.IAOrganisations)
                 {
-                    foreach (var userorg in userdb.Organisations)
+                    foreach (var userorg in userdb.Organisations.Where(o => o.Id == org.Id))
                     {
+
                         if (!sheet.Organisation.Where(o => o.Id == org.Id).Contains(userorg))
                         {
                             organisations.Add(userorg);
@@ -488,9 +490,6 @@ namespace TechCertain.WebUI.Controllers
                 model.Page = page;
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
-                model.AddRow(row1);
                 int offset = rows * (page - 1);
                 for (int i = offset; i < offset + rows; i++)
                 {
@@ -537,7 +536,7 @@ namespace TechCertain.WebUI.Controllers
                 organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
             }
 
-            
+
             try
             {
 
@@ -613,7 +612,7 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
             //return new JsonResult(true);
-            return new JsonResult(new { status = true, id = vehicleId } );
+            return new JsonResult(new { status = true, id = vehicleId });
         }
 
         [HttpPost]
@@ -1011,7 +1010,6 @@ namespace TechCertain.WebUI.Controllers
                 if (org != null && answersheetId != null)
                 {
                     sheet.Organisation.Remove(org);
-                   
                 }
                 await uow.Commit();
             }
@@ -1278,7 +1276,7 @@ namespace TechCertain.WebUI.Controllers
             waterLocations = sheet.WaterLocations.Where(wl => wl.Removed == removed && wl.DateDeleted == null).ToList();
 
             if (_search)
-            {               
+            {
                 switch (searchOper)
                 {
                     case "eq":
@@ -1357,7 +1355,7 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
 
-            return new JsonResult(true); 
+            return new JsonResult(true);
         }
 
         #endregion
@@ -1538,7 +1536,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-                
+
                 switch (searchOper)
                 {
                     case "eq":
@@ -1841,7 +1839,7 @@ namespace TechCertain.WebUI.Controllers
                     model.OriginalBoatId = Guid.Parse("00000000-0000-0000-0000-000000000000");
                 }
             }
-           return Json(model);
+            return Json(model);
         }
 
 
@@ -1860,8 +1858,8 @@ namespace TechCertain.WebUI.Controllers
                 if (boat.BoatWaterLocation != null)
                     model.BoatWaterLocation = boat.BoatWaterLocation.Id;
                 if (boat.BoatTrailer != null)
-                if (boat.BoatTrailer != null)
-                    model.BoatTrailer = boat.BoatTrailer.Id;
+                    if (boat.BoatTrailer != null)
+                        model.BoatTrailer = boat.BoatTrailer.Id;
 
                 if (boat.OtherMarinaName != null)
                     model.OtherMarinaName = boat.OtherMarinaName;
@@ -1886,30 +1884,30 @@ namespace TechCertain.WebUI.Controllers
             }
             //if (boat.InterestedParties != null)
             //{
-                //model.BoatUse = new List<BoatUse>();
-                model.BoatpartyVal = new List<String>();
-                model.BoatpartyText = new List<Guid>();
+            //model.BoatUse = new List<BoatUse>();
+            model.BoatpartyVal = new List<String>();
+            model.BoatpartyText = new List<Guid>();
 
-                try
+            try
+            {
+                foreach (var boatparty in boat.InterestedParties)
                 {
-                    foreach (var boatparty in boat.InterestedParties)
-                    {
-                        //model.BoatUse.Add(_boatUseService.GetBoatUse(boatuse.Id));
-                        model.BoatpartyVal.Add(boatparty.Name);
-                        model.BoatpartyText.Add(boatparty.Id);
-                    }
+                    //model.BoatUse.Add(_boatUseService.GetBoatUse(boatuse.Id));
+                    model.BoatpartyVal.Add(boatparty.Name);
+                    model.BoatpartyText.Add(boatparty.Id);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             //}
             return Json(model);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed,  bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
+        public async Task<IActionResult> GetBoats(Guid informationId, bool validated, bool removed, bool transfered, bool _search, string nd, int rows, int page, string sidx, string sord,
                                          string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
@@ -1920,7 +1918,7 @@ namespace TechCertain.WebUI.Controllers
 
             var boats = new List<Boat>();
 
-           if (transfered)
+            if (transfered)
             {
                 boats = sheet.Boats.Where(b => b.Removed == removed && b.DateDeleted == null && b.BoatCeaseDate > DateTime.MinValue && b.BoatCeaseReason == 4).ToList();
             }
@@ -1983,7 +1981,7 @@ namespace TechCertain.WebUI.Controllers
             }
             return new JsonResult(true);
         }
-      
+
 
 
         [HttpPost]
@@ -1997,11 +1995,11 @@ namespace TechCertain.WebUI.Controllers
                 await uow.Commit();
             }
             return new JsonResult(true);
-        
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate,int ceaseReason)
+        public async Task<IActionResult> SetBoatCeasedStatus(Guid boatId, bool status, DateTime ceaseDate, int ceaseReason)
         {
             Boat boat = await _boatRepository.GetByIdAsync(boatId);
 
@@ -2074,7 +2072,7 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> AddPrincipalDirectors(OrganisationViewModel model)
         {
@@ -2149,10 +2147,10 @@ namespace TechCertain.WebUI.Controllers
                     }
                     else
                     {
-                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation==sheet.Owner);
+                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
 
                     }
-                   
+
                 }
                 catch (Exception ex)
                 {
@@ -2189,6 +2187,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.IsNZIAmember = model.IsNZIAmember;
                     organisation.NZIAmembership = model.NZIAmembership;
                     organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                     organisation.IsLPBCategory3 = model.IsLPBCategory3;
                     organisation.YearofPractice = model.YearofPractice;
                     organisation.prevPractice = model.prevPractice;
@@ -2197,23 +2196,28 @@ namespace TechCertain.WebUI.Controllers
                     organisation.Activities = model.Activities;
                     organisation.Email = userdb.Email;
                     organisation.Type = model.Type;
+                    if(model.DateofRetirement != null)
+                    {
                     organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    }
+                   if (model.DateofDeceased != null)
+                    {
                     organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    }
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
-                    userdb.SetPrimaryOrganisation(organisation);
                 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    userdb.SetPrimaryOrganisation(organisation);
-                    currentUser.Organisations.Add(organisation);
+                    //User owneruser = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                    //owneruser.Organisations.Add(organisation);
                     userdb.Organisations.Add(organisation);
                     sheet.Organisation.Add(organisation);
                     model.ID = organisation.Id;
                     //NewMethod(uow);
                     await uow.Commit();
-                }                                   
+                }
             }
             catch (Exception ex)
             {
@@ -2393,6 +2397,7 @@ namespace TechCertain.WebUI.Controllers
                     model.OrganisationTypeName = org.OrganisationType.Name;
                 }
                 model.IsOtherdirectorship = org.IsOtherdirectorship;
+                model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                 model.Othercompanyname = org.Othercompanyname;
                 model.Type = org.Type;
                 model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
@@ -2404,7 +2409,7 @@ namespace TechCertain.WebUI.Controllers
                 model.Activities = org.Activities;
                 model.AnswerSheetId = answerSheetId;
             }
-            
+
             return Json(model);
         }
 
@@ -2457,13 +2462,13 @@ namespace TechCertain.WebUI.Controllers
                 model.ID = partyID;
                 model.OrganisationName = org.Name;
                 model.OrganisationPhone = org.Phone;
-                model.Email= org.Email;
+                model.Email = org.Email;
                 model.OperatorYearsOfExp = org.SkipperExp;
                 model.AnswerSheetId = answerSheetId;
             }
             else
             {
-                if(partyID == sheet.Owner.Id)
+                if (partyID == sheet.Owner.Id)
                 {
                     model.ID = partyID;
                     model.OrganisationName = sheet.Owner.Name;
@@ -2491,8 +2496,8 @@ namespace TechCertain.WebUI.Controllers
                 OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName("Other Marina");
                 var user = await CurrentUser();
                 if (organisationType == null)
-                {                    
-                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, "Other Marina");                    
+                {
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, "Other Marina");
                 }
                 Organisation organisation = null;
 
@@ -2572,19 +2577,19 @@ namespace TechCertain.WebUI.Controllers
             User user = null;
             var userName = "";
 
-                    try
-                    {
-                       user = await _userService.GetUserByEmail(Useremail);
-                       userName = user.FirstName;
-                      
-                    }
-                    catch (Exception ex)
-                    {
-                            if(user == null)
-                           userName = "NotFound";
+            try
+            {
+                user = await _userService.GetUserByEmail(Useremail);
+                userName = user.FirstName;
 
-                    }
-         
+            }
+            catch (Exception ex)
+            {
+                if (user == null)
+                    userName = "NotFound";
+
+            }
+
             return Json(userName);
         }
 
@@ -2611,7 +2616,7 @@ namespace TechCertain.WebUI.Controllers
 
                 OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(model.OrganisationTypeName);
                 if (organisationType == null)
-                {                    
+                {
                     organisationType = await _organisationTypeService.CreateNewOrganisationType(user, model.OrganisationTypeName);
                 }
 
@@ -2848,7 +2853,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (_search)
             {
-               
+
                 switch (searchOper)
                 {
                     case "eq":
@@ -2932,7 +2937,7 @@ namespace TechCertain.WebUI.Controllers
                 User userdb = null;
                 try
                 {
-                    userdb = await _userService.GetUserByEmail(model.Email);                            
+                    userdb = await _userService.GetUserByEmail(model.Email);
                 }
                 catch (Exception ex)
                 {
@@ -2947,14 +2952,14 @@ namespace TechCertain.WebUI.Controllers
                     await _userService.Create(userdb);
 
                 }
-                
+
                 organisation = await _organisationService.GetOrganisationByEmail(model.Email);
                 if (organisation == null)
                 {
                     var organisationName = model.FirstName + " " + model.LastName;
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, model.Email);
-                            //organisation.OperatorYearsOfExp = model.OperatorYearsOfExp;
-                            // organisation.OrganisationType = organisationType;
+                    //organisation.OperatorYearsOfExp = model.OperatorYearsOfExp;
+                    // organisation.OrganisationType = organisationType;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
                     await _organisationService.CreateNewOrganisation(organisation);
@@ -2973,7 +2978,7 @@ namespace TechCertain.WebUI.Controllers
                     await uow.Commit();
                 }
 
-                        //model.PartyUseId = organisationId;                                    
+                //model.PartyUseId = organisationId;                                    
             }
             catch (Exception ex)
             {
@@ -3001,7 +3006,7 @@ namespace TechCertain.WebUI.Controllers
             if (businessContract == null)
                 businessContract = model.ToEntity(user);
             model.UpdateEntity(businessContract);
-            
+
             using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
                 sheet.BusinessContracts.Add(businessContract);
@@ -3328,7 +3333,7 @@ namespace TechCertain.WebUI.Controllers
         #endregion
 
         [HttpPost]
-        public async Task<IActionResult> IssueUIS(string orgName, Guid programmeID, string firstName, string membershipNumber,string lastName, string email, string orgType, string mobilePhone)
+        public async Task<IActionResult> IssueUIS(string orgName, Guid programmeID, string firstName, string membershipNumber, string lastName, string email, string orgType, string mobilePhone)
         {
 
             bool hasAccount = true;
@@ -3374,9 +3379,9 @@ namespace TechCertain.WebUI.Controllers
                     }
             }
             string phonenumber = null;
-            
-                phonenumber = mobilePhone;
-            
+
+            phonenumber = mobilePhone;
+
             OrganisationType organisationType = null;
             organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
             if (organisationType == null)
@@ -3412,7 +3417,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         user2 = await _userService.GetUser(username);
 
-                if (user2 != null && user == user2)
+                        if (user2 != null && user == user2)
                         {
                             Random random = new Random();
                             int randomNumber = random.Next(10, 99);
@@ -3459,27 +3464,27 @@ namespace TechCertain.WebUI.Controllers
 
                     await _referenceService.CreateClientInformationReference(sheet);
 
-               
 
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
-                  
-                    organisation.OrganisationalUnits.Add(ou);
-                    clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                    clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                    sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
-                    try
-                    {
-                        Thread.Sleep(1000);
-                        await uow.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
 
-                }
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
+
+                        organisation.OrganisationalUnits.Add(ou);
+                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                        clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                        try
+                        {
+                            Thread.Sleep(1000);
+                            await uow.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message);
+                        }
+
+                    }
                     ////send out login email
                     //await _emailService.SendSystemEmailLogin(email);
                     //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
@@ -3512,5 +3517,29 @@ namespace TechCertain.WebUI.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CoastGuardSelfRegCall(string craftType, string membershipNumber, string boatType, string constructionType, string hullConfiguration, string mooredType, string trailered,
+            string boatInsuredValue, string quickQuotePremium, string firstName, string lastName, string email, string orgType, string homePhone, string mobilePhone)
+        {
+            var emailBody = "First Name : " + firstName + Environment.NewLine +
+                " Last Name : " + lastName + Environment.NewLine +
+                " Email : " + email + Environment.NewLine +
+                " Mobile phone : " + mobilePhone + Environment.NewLine +
+                " Home Phone : " + homePhone + Environment.NewLine +
+                " Craft type : " + craftType + Environment.NewLine +
+                " Membership Number : " + membershipNumber + Environment.NewLine +
+                " Boat type : " + boatType + Environment.NewLine +
+                " Construction type : " + constructionType + Environment.NewLine +
+                " Hull configuration : " + hullConfiguration + Environment.NewLine +
+                " Moored type : " + mooredType + Environment.NewLine +
+                " Trailered : " + trailered + Environment.NewLine +
+                " Boat insured value : " + boatInsuredValue + Environment.NewLine +
+                " Quick Quote premium : " + quickQuotePremium + Environment.NewLine;
+
+            //hardcoded receiver             
+            //await _emailService.MarshPleaseCallMe(_appSettingService.GetMarineInsuranceSpecialistEmail, "Coastguard Pleasurecraft Insurance Query ", emailBody);
+
+            return Ok();
+        }
     }
 }

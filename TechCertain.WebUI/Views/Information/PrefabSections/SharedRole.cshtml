@@ -19,7 +19,7 @@
                 <div class="container-fluid">
 
                     <div class="input-group mb-3">
-                        <select data-placeholder="Choose Territories" id="sharedRoleTemplates" name="sharedRoleTemplates" multiple class="col-6 chosen-select form-control b" required>
+                        <select data-placeholder="Choose Shared Role" id="sharedRoleTemplates" name="sharedRoleTemplates" multiple class="col-6 chosen-select form-control b" required>
                             @foreach (var role in Model.SharedRoleViewModel.SharedRoles)
                             {
                                 <option selected="@role.Selected" value="@role.Value">@role.Text</option>

@@ -89,6 +89,8 @@ namespace TechCertain.Domain.Entities
 
         public virtual bool IsMasterProduct { get; set; }
 
+        public virtual bool IsMultipleOption { get; set; }
+
         protected Product() : base(null) { }
 
         protected Product(User createdBy)

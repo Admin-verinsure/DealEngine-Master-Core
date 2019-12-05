@@ -1987,12 +1987,13 @@ function ListNonNZCountries() {
         var territories = GetTerritoriesForRevenue('value');
         var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();        
         var clientInformationSheetId = $('#AnswerSheetId').val();
-        debugger;
+
         if (territories.length == 0 && tradingOutsideNZValue == 'true') {
             alert("Please select territories.");
         } else {
             SetCurrentTab('RevenueTabs2');
             var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
+                    debugger;
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabOne", "Information")',
                 type: "POST",
@@ -2018,6 +2019,9 @@ function ListNonNZCountries() {
             type: "POST",
             data: postData
         })
+            .done(function (Data) {
+                BuildRevenuesTable('true');
+            });
     }
 
     function SaveRevenueTabThree() {
@@ -2035,6 +2039,7 @@ function ListNonNZCountries() {
                 data: postData
             })
                 .done(function (Data) {
+                    BuildRevenuesTable('false');
                     var activitiesStr = GetActivitiesForRevenue('text');
                     activitiesStr.forEach(function (item, index) {
                         if (item === "Other Work not listed above " ||
@@ -2067,7 +2072,24 @@ function ListNonNZCountries() {
             })
             
             if (isSubmit == 'true') {
-                $('#addtionalInformationContainer').show();
+                var activitiesStr = GetActivitiesForRevenue('text');
+                    activitiesStr.forEach(function (item, index) {
+                        if (item === "Other Work not listed above ") {
+                            $('#OtherActivities').show();                            
+                        }
+                        if (item === "Inspection Reports ") {
+                            $('#InspectionReport').show();
+                        }
+                        if (item === "Valuations ") {
+                            $('#Valuation').show();
+                        }
+                        if (item === "Architecture - Schools MOE " || item === "Architecture - Schools - Non MOE ") {
+                            $('#SchoolsDesignWork').show();
+                        }
+                        if (item === "Canterbury Earthquake Rebuild Work") {
+                           $('#CanterburyEarthquakeRebuildWork').show(); 
+                        }
+                    });
                 SetCurrentTab('RevenueTabs5');
             }
         }
@@ -2075,9 +2097,9 @@ function ListNonNZCountries() {
 
     function SaveRevenueTabFive() {
         event.preventDefault();                       
-        var otherInformation = $("#addtionalInformation").val();         
+        var serialisedAdditionalInformationTable = $('#addtionalInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { OtherInformation: otherInformation, ClientInformationSheetId: clientInformationSheetId };
+            var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
                 type: "POST",        
@@ -2096,7 +2118,6 @@ function ListNonNZCountries() {
                 type: "POST",        
                 data: postData
             })   
-
     }
 
     function SaveRoleTabOne() {

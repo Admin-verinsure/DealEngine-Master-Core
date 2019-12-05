@@ -22,6 +22,18 @@ namespace TechCertain.Domain.Entities
 
     public class AdditionalInformation : EntityBase, IAggregateRoot
     {
+        public virtual string InspectionReportTextId { get; set; }
+        public virtual string InspectionReportBoolId { get; set; }
+        public virtual string ValuationTextId { get; set; }
+        public virtual string ValuationTextId2 { get; set; }
+        public virtual string SchoolsDesignWorkBoolId { get; set; }
+        public virtual string SchoolsDesignWorkBoolId2 { get; set; }
+        public virtual string SchoolsDesignWorkBoolId3 { get; set; }
+        public virtual string SchoolsDesignWorkBoolId4 { get; set; }
+        public virtual string OtherActivitiesTextId { get; set; }
+        public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
+        public virtual string ValuationBoolId { get; set; }
+
         protected AdditionalInformation() : this(null) { }
 
         public AdditionalInformation(User createdBy)
@@ -29,24 +41,9 @@ namespace TechCertain.Domain.Entities
         {
         }
 
-        public virtual InspectionReportsSupplementaryQuestionnaire InspectionReportsSupplementaryQuestionnaire { get; set; }
-
 
 
     }
-
-    public class InspectionReportsSupplementaryQuestionnaire : EntityBase, IAggregateRoot
-    {
-        protected InspectionReportsSupplementaryQuestionnaire() : this(null) { }
-
-        public InspectionReportsSupplementaryQuestionnaire(User createdBy)
-            : base(createdBy)
-        {
-        }
-
-        public virtual string QuestionOneAnswer { get; set; }
-        public virtual bool QuestionTwoAnswer { get; set; }
-
-    }
+    
 }
 
