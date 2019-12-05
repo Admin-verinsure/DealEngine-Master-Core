@@ -2196,6 +2196,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.IsNZIAmember = model.IsNZIAmember;
                     organisation.NZIAmembership = model.NZIAmembership;
                     organisation.IsADNZmember = model.IsADNZmember;
+                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                     organisation.IsLPBCategory3 = model.IsLPBCategory3;
                     organisation.YearofPractice = model.YearofPractice;
                     organisation.prevPractice = model.prevPractice;
@@ -2405,6 +2406,7 @@ namespace TechCertain.WebUI.Controllers
                     model.OrganisationTypeName = org.OrganisationType.Name;
                 }
                 model.IsOtherdirectorship = org.IsOtherdirectorship;
+                model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                 model.Othercompanyname = org.Othercompanyname;
                 model.Type = org.Type;
                 model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";

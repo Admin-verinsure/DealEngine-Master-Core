@@ -119,6 +119,12 @@ namespace TechCertain.Domain.Entities
             get; 
             set; 
         }
+
+        public virtual bool IsRetiredorDecieved
+        {
+            get;
+            set;
+        }
         public virtual string Activities 
         { 
             get; 

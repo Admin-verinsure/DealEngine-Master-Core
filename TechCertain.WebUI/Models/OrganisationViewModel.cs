@@ -56,6 +56,7 @@ namespace TechCertain.WebUI.Models
         public string DateofRetirement { get; set; }
         public string DateofDeceased { get; set; }
         public bool IsLPBCategory3 { get; set; }
+        public bool IsRetiredorDecieved { get; set; }
         public bool IsOtherdirectorship { get; set; }
         public string Othercompanyname { get; set; }
         public string Activities { get; set; }
