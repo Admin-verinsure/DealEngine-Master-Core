@@ -182,9 +182,13 @@ namespace TechCertain.WebUI.Controllers
 
             if (milestone != null)
             {
-                var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, milestoneActivity);
-                var systemEmailTemplate = await _systemEmailService.GetEmailTemplateByMilestone(milestone, milestoneActivity);
-                var userTask = await _taskingService.GetUserTaskByMilestone(milestone, milestoneActivity);
+                var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == milestoneActivity.Name && a.DateDeleted == null);
+
+                var systemEmailTemplateList = await _systemEmailService.GetEmailTemplatesByMilestone(milestone);
+                var systemEmailTemplate = systemEmailTemplateList.FirstOrDefault(s => s.Activity == milestoneActivity && s.DateDeleted == null);
+                var userTaskList = await _taskingService.GetUserTasksByMilestone(milestone);
+                var userTask = userTaskList.FirstOrDefault(t => t.Activity == milestoneActivity && t.DateDeleted == null);
                 if (advisory != null)
                 {
                     model.AdvisoryContent.Advisory = advisory.Description;

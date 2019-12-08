@@ -17,10 +17,10 @@ namespace TechCertain.Domain.Entities
 		public virtual IList<Territory> Territories { get; set; }
 		public virtual IList<BusinessActivity> Activities { get; set; }
         public virtual decimal TotalRevenue { get; set; }
-        public virtual AdditionalInformation AdditionalInformation { get; set; }
+        public virtual AdditionalActivityInformation AdditionalActivityInformation { get; set; }
     }
 
-    public class AdditionalInformation : EntityBase, IAggregateRoot
+    public class AdditionalActivityInformation : EntityBase, IAggregateRoot
     {
         public virtual string InspectionReportTextId { get; set; }
         public virtual string InspectionReportBoolId { get; set; }
@@ -34,9 +34,9 @@ namespace TechCertain.Domain.Entities
         public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
         public virtual string ValuationBoolId { get; set; }
 
-        protected AdditionalInformation() : this(null) { }
+        protected AdditionalActivityInformation() : this(null) { }
 
-        public AdditionalInformation(User createdBy)
+        public AdditionalActivityInformation(User createdBy)
             : base(createdBy)
         {
         }

@@ -54,7 +54,7 @@
 
                                                         @if (Model.Advisory != "")
                                                         {
-                                                            <div class="modal-lg" id="modal" tabindex="-1" role="document" aria-hidden="true">
+                                                            <div class="modal-lg container-fluid" id="advisoryModal" tabindex="-1" role="document" aria-hidden="true">
                                                                 <div class="modal-dialog" role="document">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
@@ -64,8 +64,8 @@
                                                                             @Html.Raw(Model.Advisory)
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Close</button>
+                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1105,7 +1105,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -1115,24 +1115,21 @@
 </div>
 
 @section pagespecific {
+
     <script>
         $(window).on("load", function () {
-            debugger;
             if ("@Model.Status" == "Submitted") {
-                debugger;
                 if (document.getElementById('fieldset') != null) {
-                    //document.getElementById("fieldset").disabled = true;
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {
                     document.getElementById('btn1').removeAttribute("disabled");
                 }
                 $('.btn-sm').addClass("hidden");
                 $('.btn').addClass("hidden");
-
             }
 
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
+            var clientInformationSheet = $('#AnswerSheetId').val();
+            var postData = { ClientInformationSheet: clientInformationSheet };
 
             $.ajax({
                 // change back once mono decides to fix
@@ -1141,11 +1138,13 @@
                 data: postData
             })
                 .done(function (data) {
-                    debugger;
-                    if (data != "") {
+                    if (data != "" &&
+                        (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null)
+                    ){
                         for (var item = 0; item < data.length; item++){
                             var arr = data[item];
                             var count = 0;
+                            debugger;
                             $('#' + arr[count]).val(arr[count + 1]);
                             if (arr[count + 1] == "true") {
                                 $('#' + arr[count] + 'Details').val(arr[count + 2]);
@@ -1162,15 +1161,12 @@
                     alert("Unable to save.");
                 });
         });
-
-        function CloseAdvisory() {
-            debugger;
-            $('#modal').modal('hide');
-        }
     </script>
-
-
     @await Html.PartialAsync("_InformationWizardScripts")
+    
+
+
+
 }
 
 

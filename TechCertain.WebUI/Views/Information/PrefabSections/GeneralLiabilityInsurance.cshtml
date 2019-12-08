@@ -82,44 +82,39 @@
 </div>
 
 
-
 <script type="text/javascript">
 
-         $(window).on("load", function () {
-
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetGeneralLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-             if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#GeneralLiabilityInsurance1').val() == 'true') {
-                        $('#GeneralLiabilityInsurance2Sec').removeClass('hidden');
-                        $('#GeneralLiabilityInsurance3Sec').removeClass('hidden');
-
-                    } else {
-                        $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
-                        $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
-
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("GetGeneralLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                if (data != "" &&
+                    (data[0] != null && data[1] != null && data[2] != null)
+                ) {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        var count = 0;
+                        $('#' + arr[count]).val(arr[count + 1]);
+                        if ($('#GeneralLiabilityInsurance1').val() == 'true') {
+                            $('#GeneralLiabilityInsurance2Sec').removeClass('hidden');
+                            $('#GeneralLiabilityInsurance3Sec').removeClass('hidden');
+                        } else {
+                            $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
+                            $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
+                        }
                     }
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
-         });
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
 
     function GeneralLiabilityInsurance1Selected(GeneralLiability) {

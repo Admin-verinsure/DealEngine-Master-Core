@@ -695,10 +695,6 @@ namespace TechCertain.Services.Impl
 			return attachments;
 		}
 
-        public Task GetEmailTemplateByMilestone(Milestone milestone)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 

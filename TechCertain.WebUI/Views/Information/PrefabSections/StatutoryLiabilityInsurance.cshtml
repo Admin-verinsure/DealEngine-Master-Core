@@ -50,7 +50,7 @@
 
                     </section>
 
-                  
+
 
                 </div>
             </div>
@@ -64,46 +64,38 @@
 
 
 <script type="text/javascript">
-
-         $(window).on("load", function () {
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-
-
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetStatutoryLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-             if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#StatutoryLiability1').val() == 'true') {
-                        $('#StatutoryLiability2Sec').removeClass('hidden');
-
-                    } else {
-                        $('#StatutoryLiability2Sec').addClass('hidden');
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("GetStatutoryLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                if (data != "" &&
+                    (data[0] != null && data[1] != null)
+                ) {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        var count = 0;
+                        $('#' + arr[count]).val(arr[count + 1]);
+                        if ($('#StatutoryLiability1').val() == 'true') {
+                            $('#StatutoryLiability2Sec').removeClass('hidden');
+                        } else {
+                            $('#StatutoryLiability2Sec').addClass('hidden');
+                        }
                     }
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
          });
 
-    
-    
     function StatutoryLiability1Selected(StatutoryLiability) {
-        debugger;
-
         var statutoryLiability = document.getElementById(StatutoryLiability);
         var vhh = statutoryLiability.options[statutoryLiability.selectedIndex].value;
 
@@ -141,7 +133,7 @@
         }
 
         if (validity) {
-            SaveStatutoryLiability(); 
+            SaveStatutoryLiability();
         }
     };
 

@@ -254,6 +254,7 @@ namespace TechCertain.WebUI.Models
         public IList<SelectListItem> Activities { get; set; }
         public decimal TotalRevenue { get; set; }
         public RevenueByActivity RevenueData { get; set; }
+        public AdditionalActivityInformation AdditionalInformation { get; set; }
     }
 
     public class SharedRoleViewModel
@@ -262,6 +263,7 @@ namespace TechCertain.WebUI.Models
         {
             SharedRoles = new List<SelectListItem>();
         }
+        public string OtherProfessionId { get; set; }
         public IList<SelectListItem> SharedRoles { get; set; }
     }
 

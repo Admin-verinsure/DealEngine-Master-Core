@@ -757,9 +757,10 @@ namespace TechCertain.WebUI.Controllers
                     var milestone = await _milestoneService.GetMilestoneByBaseProgramme(answerSheet.Programme.BaseProgramme.Id);
                     if (milestone != null)
                     {
-                        var activity = await _activityService.GetActivityByName("Agreement Status – Referred");
-                        var userTask = await _taskingService.GetUserTaskByMilestone(milestone, activity);
-                        var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                        var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                        var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status – Referred" && a.DateDeleted == null);
+                        var userTaskList = await _taskingService.GetUserTasksByMilestone(milestone);
+                        var userTask = userTaskList.FirstOrDefault(t => t.Activity.Name == "Agreement Status – Referred" && t.DateDeleted == null);
                         if (userTask != null)
                         {
                             userTask.IsActive = true;
@@ -767,7 +768,7 @@ namespace TechCertain.WebUI.Controllers
                         }
                         if(advisory != null)
                         {
-                            model.Advisory = System.Net.WebUtility.HtmlDecode(advisory.Description);
+                            model.Advisory = advisory.Description;
                         }                       
                         
                     }
@@ -935,11 +936,11 @@ namespace TechCertain.WebUI.Controllers
             var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
             if (milestone != null)
             {
-                var activity = await _activityService.GetActivityByName("Agreement Status - Declined");
-                var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
                 if(advisory != null)
                 {
-                    advisoryDesc = WebUtility.HtmlDecode(advisory.Description);
+                    advisoryDesc = advisory.Description;
                 }
                 
             }
