@@ -28,6 +28,7 @@
 
                     </div>
                     <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
+                        <label for="SharedTerritories">Select Territories</label>
                         <select data-placeholder="Choose Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" required>
                             @foreach (var territory in Model.RevenueByActivityViewModel.Territories)
                             {
@@ -48,6 +49,7 @@
             <fieldset>
                 <div class="container-fluid">
                     <div class="input-group mb-3">
+                        <label for="sharedRevenueActivities">Select Activites</label>
                         <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" data-placeholder="Choose Activities" required>
                             @foreach (var ou in Model.RevenueByActivityViewModel.Activities)
                             {
@@ -80,7 +82,9 @@
                                 <tr>
                                     @foreach (var territoryData in Model.RevenueByActivityViewModel.RevenueData.Territories)
                                     {
-                                        <th scope="row">@territoryData.Pecentage</th>
+                                    <th scope="row">
+                                        <input class="form-control" type="text" name="@territoryData.Id" id="@territoryData.Id" maxlength="3" value="@territoryData.Pecentage">
+                                    </th>
                                     }
                                 </tr>
                                 </tbody>                            
@@ -100,7 +104,8 @@
             <fieldset>
                 <div class="container-fluid">
                     <div class="input-group mb-3">
-                        <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue" required>
+                        <label for="totalRevenue">Enter Total Revenue</label>
+                        <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.RevenueByActivityViewModel.TotalRevenue" placeholder="10000" required>
                     </div>
                     <div class="input-group mb-3">
                         <table id="sharedRevenueActivityTable" class="table">
@@ -116,7 +121,9 @@
                                 <tr>
                                     @foreach (var businessActivityData in Model.RevenueByActivityViewModel.RevenueData.Activities)
                                     {
-                                        <th scope="row">@businessActivityData.Pecentage</th>
+                                        <th scope="row">
+                                            <input class="form-control" type="text" name="@businessActivityData.Id" id="@businessActivityData.Id" maxlength="3" value="@businessActivityData.Pecentage">
+                                        </th>
                                     }
                                 </tr>
                             </tbody>

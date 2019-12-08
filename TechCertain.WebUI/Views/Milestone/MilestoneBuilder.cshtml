@@ -74,7 +74,7 @@
                                                                                     <label class="btn btn-primary">
                                                                                         <input style="display:none;" type="button" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
                                                                                     </label>
-                                                                                    @if (User.HasClaim("Edit", "EditMilestones"))
+                                                                                    @if (User.HasClaim("EditMilestones", "EditMilestones"))
                                                                                     {
                                                                                         <label class="btn btn-primary">
                                                                                             <input type="radio" name="options" id="option4" onchange="SaveStatus()"> Save Milestone

@@ -141,7 +141,7 @@ namespace TechCertain.Services.Impl
 
         public async Task ContactSupport (string sender, string subject, string body)
 		{
-			string subjectPrefix = "Proposalonline Support Request: ";
+			string subjectPrefix = "Support Request: ";
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@techcertain.com");
 			email.From (sender);
@@ -151,12 +151,12 @@ namespace TechCertain.Services.Impl
 			email.Send ();
 		}
 
-        public async Task MarshPleaseCallMe(string sender, string subject, string body)
+        public async Task MarshPleaseCallMe(string recipient, string subject, string body)
         {
-            string subjectPrefix = "Proposalonline Please Call Request: ";
+            string subjectPrefix = "Quick Quote Please Call Request: ";
 
-            EmailBuilder email = await GetLocalizedEmailBuilder(sender, "support@techcertain.com");
-            email.From(sender);
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            email.From(DefaultSender);
             email.WithSubject(subjectPrefix + subject);
             email.WithBody(body);
             email.UseHtmlBody(true);

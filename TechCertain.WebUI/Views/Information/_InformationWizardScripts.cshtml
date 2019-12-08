@@ -677,7 +677,8 @@
     });
 
         function Close() {
-            $("#modal").hide();
+            debugger;
+            $("#modal").modal.hide();
         }
 
     $('#myPanelEditModal').on('show.bs.modal', function (e) {
@@ -1641,12 +1642,8 @@
     }
 
     function SetCurrentTab(tabPaneId) {
-        //event.preventDefault();
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
-        //$('#tblLocation').trigger('reloadGrid
         $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
-
-        //$('.nav-tabs a[href="#' + tabPaneId + '"]').reload();
 };
 
 function UpdateChosen() {
@@ -2001,34 +1998,7 @@ function showAccordionPanel(id, panelNo) {
     $(id).accordion('option', 'active', panelNo);
 };
 
-function HasNonNZCountry() {
-    ListNonNZCountries();
-    return true;
-};
-
-function ListNonNZCountries() {
-    var list = $('#sharedRevenueNonNZCountries');
-    if (list == null)
-        return;
-
-    var _sheetId = $('#AnswerSheetId').val();
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("GetLocationsByCountry", "Services")',
-        type: "Post",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({ answerSheetId : _sheetId })
-    })
-    .done(function (listData) {
-        list.empty();
-        $.each(listData, function(index, data) {
-            console.log(data);
-            list.append($('<li>', { value: data.LocationId, text: data.Country }));
-        });
-    });
-    };
-
-        function toggleTerritoriesVisible(value) {
+    function toggleTerritoriesVisible(value) {
         $('#tradingButton').show();
         if (value == 'active') {
             $('#sharedRevenueTerritories').show();
@@ -2085,7 +2055,6 @@ function ListNonNZCountries() {
         if (validateTableTerritory(table)) {
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
-            debugger;
             var postData = {TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
             SetCurrentTab('RevenueTabs4');
             $.ajax({
@@ -2160,6 +2129,10 @@ function ListNonNZCountries() {
                 type: "POST",
                 data: postData
             })
+    }
+
+    function SaveRoleTabThree(){
+        event.preventDefault();   
     }
 
     function SaveRoleTabTwo() {
@@ -2264,8 +2237,11 @@ function GetActivitiesForRevenue(type) {
                     row.append($('<td>').append(
                         $('<section>').append(
                             $('<label>', { class: 'input' }).append(
-                                $('<input>', { type: 'text', class: 'form-control col-4', name: name, id: name })
-                            ))));
+                                $('<input>', { type: 'text', class: 'form-control col-4', name: name, id: name, placeholder: 'Number of People' }
+                                )
+                            )
+                        )
+                    ));
             });
             tbody.append(row);
         });
@@ -2298,12 +2274,13 @@ function GetActivitiesForRevenue(type) {
         if (TableType == 'true') {
             lista = GetTerritoriesForRevenue('Text');
             listb = GetTerritoriesForRevenue('value');
-            console.log(lista);
+
+            //adds nz if not selected
             if (tradingOutsideNZValue == 'false') {
                 lista = ['NZ'];
                 listb = ['NZ'];
-            }
 
+            }            
         }
 
         var header = $('<tr>');
@@ -2321,7 +2298,7 @@ function GetActivitiesForRevenue(type) {
                 row.append($('<td>').append(
                     $('<section>').append(
                         $('<label>', { class: 'input'}).append(
-                            $('<input>', { type: 'number', class: 'form-control', name: name, id: name, max:'100', pattern:'^[0-9]$' })
+                            $('<input>', { type: 'number', class: 'form-control', name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
                 ))));
             });
             count++;

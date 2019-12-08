@@ -52,6 +52,26 @@
                                                 <div id="form-step-0" role="form" data-toggle="validator">
                                                     <div class="form-group">
 
+                                                        @if (Model.Advisory != "")
+                                                        {
+                                                            <div class="modal-lg" id="modal" tabindex="-1" role="document" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Advisory</h5>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            @Html.Raw(Model.Advisory)
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
                                                         <div class="row">
                                                             @{ await Html.RenderPartialAsync("_ViewInformation"); }
                                                             <div class="modal" id="addOperatorModal" tabindex="-1" role="dialog" data-backdrop="static">
@@ -760,11 +780,11 @@
                                                                         </div>
                                                                     </div>
 
-                                                                        <div class="modal-footer">
+                                                                    <div class="modal-footer">
 
-                                                                            <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
-                                                                        </div>
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
                                                                     </div>
+                                                                </div>
                                                             </div>
 
                                                             <div id="BoatRemoveModal" class="modal" role="dialog">
@@ -838,13 +858,13 @@
                                                                             </section>
                                                                         </div>
 
-                                                                     </div>
-
-                                                                        <div class="modal-footer">
-
-                                                                            <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
-                                                                        </div>
                                                                     </div>
+
+                                                                    <div class="modal-footer">
+
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
 
@@ -1104,79 +1124,49 @@
                     //document.getElementById("fieldset").disabled = true;
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {
-                document.getElementById('btn1').removeAttribute("disabled");
-                 }
-
-              
+                    document.getElementById('btn1').removeAttribute("disabled");
+                }
                 $('.btn-sm').addClass("hidden");
-                 $('.btn').addClass("hidden");
+                $('.btn').addClass("hidden");
 
-                //var trashbutton = document.getElementsByClassName("fa fa-trash");
-                //$(trashbutton).addClass("hidden");
-                //$(trashbutton).hide();
-
-                //var tbutton = document.getElementsByClassName("btn-danger");
-                //$(tbutton).addClass("hidden");
-                //$(tbutton).hide();
-
-                //var trash = document.getElementById("trash");
-                //$(trash).addClass("hidden");
-                //$(trash).hide();
-
-                //var t = document.getElementById("span");
-                //$(t).addClass("hidden");
-                //$(t).hide();
-
-                //var t = document.getElementById("ClearBoat");
-                //$(t).addClass("hidden");
-                //$(t).hide();
-
-                //var tr = document.getElementsByClassName("btn-default  btn btn-sm");
-                //$(tr).addClass("hidden");
-                //$(tr).hide();
             }
 
            var clientInformationSheet = $('#AnswerSheetId').val();
-
            var postData = {ClientInformationSheet : clientInformationSheet};
 
-
             $.ajax({
-     	// change back once mono decides to fix
-        url: '@Url.Action("GetClaimHistory", "Information")',
-        type: "POST",
-        data: postData
-    })
+                // change back once mono decides to fix
+                url: '@Url.Action("GetClaimHistory", "Information")',
+                type: "POST",
+                data: postData
+            })
                 .done(function (data) {
                     debugger;
-            if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                var arr = data[item];
-                var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if (arr[count + 1] == "true") {
-                        $('#' + arr[count] + 'Details').val(arr[count + 2]);
-
-                        $('#' + arr[count] + 'Sec').removeClass('hidden');
-                    } else {
-                         $('#' + arr[count] + 'Details').val("");
-
-                        $('#' + arr[count] + 'Sec').addClass('hidden');
-                    }
-            }
-
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++){
+                            var arr = data[item];
+                            var count = 0;
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if (arr[count + 1] == "true") {
+                                $('#' + arr[count] + 'Details').val(arr[count + 2]);
+                                $('#' + arr[count] + 'Sec').removeClass('hidden');
+                            } else {
+                                $('#' + arr[count] + 'Details').val("");
+                                $('#' + arr[count] + 'Sec').addClass('hidden');
+                            }
+                        }
                     };
-
-    })
+                })
                 .fail(function (a, s, d) {
                     debugger;
-        alert("Unable to save.");
+                    alert("Unable to save.");
+                });
         });
 
-
-
-          });
+        function CloseAdvisory() {
+            debugger;
+            $('#modal').modal('hide');
+        }
     </script>
 
 

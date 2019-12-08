@@ -225,7 +225,7 @@ namespace TechCertain.WebUI.Controllers
 
             if (model.AdvisoryContent != null)
             {
-                await _milestoneService.CreateAdvisory(milestone, activity, System.Net.WebUtility.HtmlDecode(model.AdvisoryContent.Advisory));
+                await _milestoneService.CreateAdvisory(user, milestone, activity, System.Net.WebUtility.HtmlDecode(model.AdvisoryContent.Advisory));
             }
 
             if (model.UserTask != null)
