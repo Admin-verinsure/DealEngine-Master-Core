@@ -126,7 +126,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
-
+            }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
             }
             return clientAgreement;
         }

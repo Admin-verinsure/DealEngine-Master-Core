@@ -2548,7 +2548,18 @@ namespace TechCertain.WebUI.Controllers
                 Sections = new List<InformationSectionViewModel>()
             };
             model.Name = programme.Name;
-            Product product = programme.Products.FirstOrDefault();
+            Product product = null;
+            if (programme.Products.Count > 1)
+            {
+                foreach (var prod in programme.Products.Where(progp => progp.IsMasterProduct))
+                {
+                    product = prod;
+                }
+            } else
+            {
+                product = programme.Products.FirstOrDefault();
+            }
+
             List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(product.Id);
             List<InformationSection> sections = new List<InformationSection>();
             foreach (var template in informationTemplate)

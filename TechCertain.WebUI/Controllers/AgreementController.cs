@@ -646,7 +646,7 @@ namespace TechCertain.WebUI.Controllers
             //		insuranceRoles.Add (new InsuranceRoleViewModel () { RoleName = kvp.Key, Name = kvp.Value.Name, ManagedBy = kvp.Value.Name, Email = "" });
             //	}
 
-            foreach (ClientAgreement agreement in clientProgramme.Agreements)
+            foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(apa => apa.DateDeleted == null).OrderBy(apa => apa.Product.OrderNumber))
             {
                 ViewAgreementViewModel model = new ViewAgreementViewModel
                 {
