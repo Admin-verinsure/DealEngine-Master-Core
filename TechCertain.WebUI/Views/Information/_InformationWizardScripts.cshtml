@@ -136,24 +136,79 @@
                     return false;
                }
                $('.sw-btn-prev').hide();
+               $('#getAgreementDecModal').show();
+               debugger;
+               var ID = $('#Id').val();
+               var postdata = {
+                     id : ID
+                }
 
-
-                $('#getAgreementDecModal').show();
                 $.ajax({
-                    url: '@Url.Action("QuoteToAgree", "Information")',
+                   url: '@Url.Action("GetProductName", "Information")',
+                   type: "POST",
+                   data: postdata
+               })
+                    .done(function (data) {
+                        debugger;
+                        var prodname = data;
+                        for (var i = 0; i < prodname.length; i++) {
+                            var ProdName = prodname[i];
+                            var kk =$('input[name="Employers - General"]:checked').val();
+                            var Isboatexist =$('input[name=ProdName]:checked').val();
+                        }
+                        @*@foreach(var prod in prodname){
+                          var selectedBoatUseCategory = $('input[name=Model.ListProductName[i]]:checked').val();
+                        }*@
+                   })
+                   .fail(function (jqXHR, textStatus, errorThrown) {
+                       alert("There was an error getting your agreement.");
+                   });
+
+
+
+               //var prod = $("#ListProductName").val();
+
+               //.forEach(function (countryName) {
+               //  header.append($('<th>').text(countryName));
+               //});
+               //foreach(){
+
+//}
+               //var employersGeneral =  document.getElementsByName("abc").val();
+               ////var generalorPublicLiability = $('input[name="General or Public Liability":checked').val();
+               ////var employersPractices = $('input[name="Employers Practices":checked').val();
+               ////var PI = $('input[name="Professional Indemnity":checked').val();
+               ////var cyberLiability = $('input[name="Cyber Liability":checked').val();
+               ////var statutoryLiabilities= $('input[name="Statutory Liabilities":checked').val();
+
+
+               //$.each(model.ListProductName, function () {
+               //    $.each(this.Items, function () {
+               //        var h = this.Items;
+               //        //var selectedBoatUseCategory = $('input[name=this]:checked').val();
+
+               //    })
+               // });
+
+               @*foreach(var uh in @Model){
+               var selectedBoatUseCategory = $('input[name=Model.ListProductName[i]]:checked').val();
+               }*@
+
+                $.ajax({
+                url: '@Url.Action("QuoteToAgree", "Information")',
                     type: "POST",
                     data: $("#tab1 :input").serialize({ json: true })
                 })
                     .done(function (url) {
                         $("#agreementDeclarationView").load(url, function () {
                             $('#getAgreementDecModal').hide();
-                        });
-                    })
+                    });
+                })
                     .fail(function (jqXHR, textStatus, errorThrown) {
 
                         $('#getAgreementDecModal').hide();
-                        alert("There was an error getting your agreement declaration.");
-                    });
+                    alert("There was an error getting your agreement declaration.");
+                });
                 if (status == "Bound") {
                     var nextbutton = document.getElementsByClassName("next");
                     $(nextbutton).addClass("hidden");
@@ -690,7 +745,7 @@
 		   var status =  $('#status').val();
 		   var sourcetable = $('#sourceTable').val();
             var desttable = $('#destTable').val();
-            
+
             SetBoatCeasedStatus(boatId, status,sourcetable,desttable);
             debugger;
                 SetBoatRemovedStatus(boatId,status,sourcetable,desttable);
@@ -713,7 +768,7 @@
 
     });
 
-    
+
 
     $("#btnPanelSubmit").click(function () {
         var PanelId = $("#PanelId").val();
@@ -856,7 +911,7 @@
         return validity;
     }
 
-    
+
      function RemoveVehicle(vehicleId, status, sourceTable, destTable,Modelstatus) {
         debugger;
            var _sheetId = $('#AnswerSheetId').val();
@@ -887,7 +942,7 @@
                    } else {
                             alert("Information Sheet has already been submitted, and cannot be updated.");
                     }
-                    
+
                 } else {
                     debugger;
                     SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable);
@@ -1948,14 +2003,14 @@ function showAccordionPanel(id, panelNo) {
         if (value == 'active') {
             $('#sharedRevenueTerritories').show();
         } else {
-            $('#sharedRevenueTerritories').hide();               
+            $('#sharedRevenueTerritories').hide();
         }
     }
 
     function SaveRevenueTabOne() {
-        event.preventDefault();                
+        event.preventDefault();
         var territories = GetTerritoriesForRevenue('value');
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();        
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
         var clientInformationSheetId = $('#AnswerSheetId').val();
 
         if (territories.length == 0 && tradingOutsideNZValue == 'true') {
@@ -1979,8 +2034,8 @@ function showAccordionPanel(id, panelNo) {
         } else {
             SetCurrentTab('RevenueTabs4')
         }
-        
-        var businessActivities = GetActivitiesForRevenue('value');        
+
+        var businessActivities = GetActivitiesForRevenue('value');
         var clientInformationSheetId = $('#AnswerSheetId').val();
         var postData = { BusinessActivities: businessActivities, ClientInformationSheetId: clientInformationSheetId }
 
@@ -1995,7 +2050,7 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRevenueTabThree() {
-        event.preventDefault();       
+        event.preventDefault();
         table = document.getElementById("sharedRevenueTerritoriesTable");
         if (validateTableTerritory(table)) {
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
@@ -2004,7 +2059,7 @@ function showAccordionPanel(id, panelNo) {
             SetCurrentTab('RevenueTabs4');
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
             })
                 .done(function (Data) {
@@ -2026,25 +2081,25 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRevenueTabFour(isSubmit) {
-        event.preventDefault();               
+        event.preventDefault();
         table = document.getElementById("sharedRevenueActivityTable");
         if (validateTableActivity(table)) {
             var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
-            var totalRevenue = $('#totalRevenue').val();            
+            var totalRevenue = $('#totalRevenue').val();
 
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId, TotalRevenue: totalRevenue };
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabFour", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
             })
-            
+
             if (isSubmit == 'true') {
                 var activitiesStr = GetActivitiesForRevenue('text');
                     activitiesStr.forEach(function (item, index) {
                         if (item === "Other Work not listed above ") {
-                            $('#OtherActivities').show();                            
+                            $('#OtherActivities').show();
                         }
                         if (item === "Inspection Reports ") {
                             $('#InspectionReport').show();
@@ -2056,7 +2111,7 @@ function showAccordionPanel(id, panelNo) {
                             $('#SchoolsDesignWork').show();
                         }
                         if (item === "Canterbury Earthquake Rebuild Work") {
-                           $('#CanterburyEarthquakeRebuildWork').show(); 
+                           $('#CanterburyEarthquakeRebuildWork').show();
                         }
                     });
                 SetCurrentTab('RevenueTabs5');
@@ -2065,15 +2120,15 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRevenueTabFive() {
-        event.preventDefault();                       
+        event.preventDefault();
         var serialisedAdditionalInformationTable = $('#addtionalInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
-            })                   
+            })
     }
 
     function SaveRoleTabThree(){
@@ -2081,20 +2136,20 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRoleTabTwo() {
-        event.preventDefault();    
+        event.preventDefault();
         var tableSerialised = $("#sharedRoleTable :input").serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
 
         var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabTwo", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
-            })   
+            })
     }
 
     function SaveRoleTabOne() {
-        event.preventDefault();    
+        event.preventDefault();
         BuildRolesTable();
         SetCurrentTab('sharedRoleTabs2');
         var sharedDataRoles = GetRoles('val');
@@ -2103,9 +2158,9 @@ function showAccordionPanel(id, panelNo) {
         var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabOne", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
-            })   
+            })
 
     }
 
@@ -2177,7 +2232,7 @@ function GetActivitiesForRevenue(type) {
             lista.forEach(function (role) {
             var row = $('<tr>');
             row.append($('<td>').text(role));
-                listb.forEach(function (countryIndex) {                    
+                listb.forEach(function (countryIndex) {
                     var name = listd[count];
                     row.append($('<td>').append(
                         $('<section>').append(
@@ -2196,12 +2251,12 @@ function GetActivitiesForRevenue(type) {
 
     function BuildRevenuesTable(TableType) {
         var revenueTable;
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val(); 
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
         var listc;
-        if (TableType == 'true') {            
+        if (TableType == 'true') {
             listc = [ 'Territory Breakdown' ]; //GetTerritoriesForRevenue();
             revenueTable = $('#sharedRevenueTerritoriesTable');
-        } else {            
+        } else {
              listc = [ 'Revenue Breakdown' ];
              revenueTable = $('#sharedRevenueActivityTable');
         }
@@ -2224,6 +2279,7 @@ function GetActivitiesForRevenue(type) {
             if (tradingOutsideNZValue == 'false') {
                 lista = ['NZ'];
                 listb = ['NZ'];
+
             }            
         }
 
@@ -2237,7 +2293,7 @@ function GetActivitiesForRevenue(type) {
         lista.forEach (function(activityName) {
             var row = $('<tr>');
             row.append($('<td>').text(activityName));
-            listc.forEach(function (countryIndex) {                
+            listc.forEach(function (countryIndex) {
                 var name = listb[count];
                 row.append($('<td>').append(
                     $('<section>').append(
@@ -2262,11 +2318,11 @@ function GetActivitiesForRevenue(type) {
         return array;
     }
 
-    function validateTableTerritory(table) {        
+    function validateTableTerritory(table) {
         var totalSharedRevenue = 0;
         var territoryTable = GetSharedRevenueTable(table);
-        var territories = GetTerritoriesForRevenue('value')      
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();         
+        var territories = GetTerritoriesForRevenue('value')
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
         if (tradingOutsideNZValue == 'false') {
             territories = ['NZ'];
         }
@@ -2275,14 +2331,14 @@ function GetActivitiesForRevenue(type) {
             var value = 0;
             totalSharedRevenue = 0;
             for (var k = 0; k < territories.length; k++) {
-                elementname = territories[k];         
+                elementname = territories[k];
                 value = parseInt(document.getElementById(elementname).value);
                 if (percentage_check(!value)) {
                     alert("Please the correct percentage.");
                 }
-                totalSharedRevenue += value;            
+                totalSharedRevenue += value;
             }
-            
+
             if (totalSharedRevenue != 100) {
                 //take user to the cell that doesnt calculate
                 alert("Percentage calculation does not equal to 100%");
@@ -2293,22 +2349,22 @@ function GetActivitiesForRevenue(type) {
         return true;
     }
 
-    function validateTableActivity(table) {        
+    function validateTableActivity(table) {
         var totalSharedRevenue = 0;
         var activityTable = GetSharedRevenueTable(table);
-        var activities = GetActivitiesForRevenue('value')        
+        var activities = GetActivitiesForRevenue('value')
         for (var i = 0; i < activityTable.length; i++) {
             var value = 0;
             totalSharedRevenue = 0;
             for (var k = 0; k < activities.length; k++) {
-                elementname = activities[k];             
+                elementname = activities[k];
                 debugger;
                 value = parseInt(document.getElementById(elementname).value);
                 if (percentage_check(!value)) {
                     alert("Please the correct percentage.");
                 }
-                totalSharedRevenue += value;                
-            }            
+                totalSharedRevenue += value;
+            }
             if (totalSharedRevenue != 100) {
                 //take user to the cell that doesnt calculate
                 alert("Percentage calculation does not equal to 100%");
@@ -3655,7 +3711,7 @@ function EditClaim(claimId, tableId) {
                 $('#validateBoatDescription').html("");
             }
 
-			
+
             return validation;
     }
         function ValidateVehicleremove() {
@@ -3684,7 +3740,7 @@ function EditClaim(claimId, tableId) {
                 $('#validateVehicleDescription').html("");
             }
 
-			
+
             return validation;
         }
 
@@ -4659,7 +4715,7 @@ async: true
     })
         .done(function (data) {
             debugger;
-           
+
         $('#NamedPartyOrganisationId').val(data.id);
         $('#NPOrgName').val(data.organisationName);
         $('#NPOrgPhone').val(data.organisationPhone);

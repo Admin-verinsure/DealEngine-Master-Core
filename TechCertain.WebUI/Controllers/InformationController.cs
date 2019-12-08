@@ -1282,6 +1282,29 @@ namespace TechCertain.WebUI.Controllers
 
             return null;
         }
+        [HttpPost]
+        public async Task<IActionResult> GetProductName(Guid id)
+        {
+            //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
+
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+            ClientInformationSheet sheet = clientProgramme.InformationSheet;
+
+            List<string> productname = new List<string>();
+            try
+            {
+                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true))
+                {
+                    productname.Add(agreement.Product.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Json(productname);
+        }
 
         [HttpGet]
         public async Task<IActionResult> EditInformation(Guid id)
@@ -1296,6 +1319,19 @@ namespace TechCertain.WebUI.Controllers
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
             model.Id = id;
+            //List<string> productname = new List<string>();
+            //try
+            //{
+            //    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption = true))
+            //    {
+            //        productname.Add(agreement.Product.Name);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            //model.ListProductName = productname;
             var user = await CurrentUser();
             //add milestone process here
 
