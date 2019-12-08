@@ -658,6 +658,7 @@ namespace TechCertain.WebUI.Controllers
                 var insuranceInclusion = new List<InsuranceInclusion>();
                 var insuranceExclusion = new List<InsuranceExclusion>();
                 var riskPremiums = new List<RiskPremiumsViewModel>();
+                var nzacsCoverOptions  = new List<NZACSCoverOptions>();
                 string riskname = null;
 
                 // List Agreement Inclusions
@@ -675,6 +676,12 @@ namespace TechCertain.WebUI.Controllers
                         riskname = agreement.Product.Name;
                     }
                     insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
+                }
+
+                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                {
+
+                    nzacsCoverOptions.Add(new NZACSCoverOptions { RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                 }
 
                 // List Agreement Exclusions
@@ -747,7 +754,7 @@ namespace TechCertain.WebUI.Controllers
                 model.Inclusions = insuranceInclusion;
                 model.Exclusions = insuranceExclusion;
                 model.RiskPremiums = riskPremiums;
-
+                model.NZACSCoverOptions = nzacsCoverOptions;
                 // Status
                 model.ProductName = agreement.Product.Name;
                 model.IsMultipleOption = agreement.Product.IsMultipleOption;

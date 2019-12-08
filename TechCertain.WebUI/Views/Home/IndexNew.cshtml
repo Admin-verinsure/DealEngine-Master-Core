@@ -305,22 +305,22 @@
                                                     </td>
                                                     <td>
                                                         @*
-                                                @foreach (var button in item.Buttons) {*@
+                            @foreach (var button in item.Buttons) {*@
                                                         @*@switch (Model.DisplayRole)
-                                                {
-                                                    case "Broker":
-                                                        <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
-                                                       break;
-                                                    case "Client":*@
+                            {
+                                case "Broker":
+                                    <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
+                                   break;
+                                case "Client":*@
                                                         <a class="btn btn-success btn-xs" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                         @*break;
-                                                }*@
+                            }*@
                                                     </td>
                                                     @*<td>
-                                                @foreach (var button in item.Buttons) {
-                                                <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
-                                                }
-                                            </td>*@
+                            @foreach (var button in item.Buttons) {
+                            <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
+                            }
+                        </td>*@
                                                 </tr>
                                             }
                                         </tbody>
