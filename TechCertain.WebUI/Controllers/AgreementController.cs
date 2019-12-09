@@ -662,79 +662,100 @@ namespace TechCertain.WebUI.Controllers
                 string riskname = null;
 
                 // List Agreement Inclusions
-                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                if (agreement.Product.IsMultipleOption)
                 {
-                    if (term.SubTermType == "MV")
+                    if (agreement.Product.Id == new Guid("79dc8bcd-01f2-4551-9caa-aa9200f1d659")) //NZACS DO
                     {
-                        riskname = "Motor Vehicle";
-                    }
-                    else if (term.SubTermType == "BV")
-                    {
-                        riskname = "Vessel";
+                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below / Extension Covers" });
                     } else
                     {
-                        riskname = agreement.Product.Name;
+                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below" });
                     }
-                    insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
+                    
+                    insuranceExclusion.Add(new InsuranceExclusion { RiskName = agreement.Product.Name, Exclusion = "Excess: Options displayed below" });
+
+                } else 
+                {
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    {
+                        if (term.SubTermType == "MV")
+                        {
+                            riskname = "Motor Vehicle";
+                        }
+                        else if (term.SubTermType == "BV")
+                        {
+                            riskname = "Vessel";
+                        }
+                        else
+                        {
+                            riskname = agreement.Product.Name;
+                        }
+                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
+                    }
+
+                    // List Agreement Exclusions
+                    if (agreement.Product.Id == new Guid("107c38d6-0d46-4ec1-b3bd-a73b0021f2e3")) //HIANZ
+                    {
+                        foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                        {
+                            insuranceExclusion.Add(new InsuranceExclusion
+                            {
+                                RiskName = "Motor Vehicle",
+                                Exclusion = "Excess: <br /> - 1% of Sum Insured subject to a minimum of $500 " +
+                                                                "<br /> - theft excess 1 % of the sum insured with a minimum of $1,000 including whilst on hire, non return from hire and from the clients yard " +
+                                                                "<br /> - theft excess nil for any vehicle or item insured fitted with a GPS tracking device " +
+                                                                "<br /> PLUS " +
+                                                                "<br /> - Whilst being driven by any person under 25 years of age $500 " +
+                                                                "<br /> - Breach of Warranty / Invalidation Clause $1, 000"
+                            });
+                        }
+                    }
+                    else if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
+                    { //Arcco
+                        foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                        {
+                            insuranceExclusion.Add(new InsuranceExclusion
+                            {
+                                RiskName = "Motor Vehicle",
+                                Exclusion = "Excess: <br /> $2,000 each and every claim. " +
+                                                                "<br /> An additional $1,000 excess applies when the vehicle is on hire and is being driven by an under 21 year old driver or has held a full licence less than 12 months. " +
+                                                                "<br /> $500 excess on trailers. "
+                            });
+                        }
+                    }
+                    else if (agreement.Product.Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a"))
+                    { //CoastGuard
+                        foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                        {
+                            insuranceExclusion.Add(new InsuranceExclusion
+                            {
+                                RiskName = "Vessel",
+                                Exclusion = "Excess: refer to vessel excess "
+                            });
+                        }
+                    }
+                    else
+                    {
+                        foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                        {
+                            insuranceExclusion.Add(new InsuranceExclusion
+                            {
+                                RiskName = agreement.Product.Name,
+                                Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture)
+                            });
+                        }
+                    }
                 }
 
-                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                
+
+                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.OrderBy(acat => acat.TermLimit))
                 {
 
                     nzacsCoverOptions.Add(new NZACSCoverOptions { RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                 }
 
-                // List Agreement Exclusions
-                if (agreement.Product.Id == new Guid("107c38d6-0d46-4ec1-b3bd-a73b0021f2e3")) //HIANZ
-                {
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                    {
-                        insuranceExclusion.Add(new InsuranceExclusion
-                        {
-                            RiskName = "Motor Vehicle",
-                            Exclusion = "Excess: <br /> - 1% of Sum Insured subject to a minimum of $500 " +
-                                                            "<br /> - theft excess 1 % of the sum insured with a minimum of $1,000 including whilst on hire, non return from hire and from the clients yard " +
-                                                            "<br /> - theft excess nil for any vehicle or item insured fitted with a GPS tracking device " +
-                                                            "<br /> PLUS " +
-                                                            "<br /> - Whilst being driven by any person under 25 years of age $500 " +
-                                                            "<br /> - Breach of Warranty / Invalidation Clause $1, 000"
-                        });
-                    }
-                }
-                else if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
-                { //Arcco
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                    {
-                        insuranceExclusion.Add(new InsuranceExclusion
-                        {
-                            RiskName = "Motor Vehicle",
-                            Exclusion = "Excess: <br /> $2,000 each and every claim. " +
-                                                            "<br /> An additional $1,000 excess applies when the vehicle is on hire and is being driven by an under 21 year old driver or has held a full licence less than 12 months. " +
-                                                            "<br /> $500 excess on trailers. "
-                        });
-                    }
-                }
-                else if (agreement.Product.Id == new Guid("e2eae6d8-d68e-4a40-b50a-f200f393777a"))
-                { //CoastGuard
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                    {
-                        insuranceExclusion.Add(new InsuranceExclusion
-                        {
-                            RiskName = "Vessel",
-                            Exclusion = "Excess: refer to vessel excess "
-                        });
-                    }
-                } else
-                {
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                    {
-                        insuranceExclusion.Add(new InsuranceExclusion
-                        {
-                            RiskName = agreement.Product.Name,
-                            Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture)
-                        });
-                    }
-                }
+                
 
                 // List Agreement Premiums
                 foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
