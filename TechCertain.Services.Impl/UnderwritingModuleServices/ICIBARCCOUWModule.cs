@@ -402,6 +402,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 programme.Agreements.Add(clientAgreement);
 
             }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
+            }
             return clientAgreement;
         }
 

@@ -22,6 +22,7 @@ namespace TechCertain.WebUI.Models.Agreement
 		public string AdministrationFee { get; set; }
         public IEnumerable<InsuranceInclusion> Inclusions { get; set; }
         public IEnumerable<InsuranceExclusion> Exclusions { get; set; }
+        public IEnumerable<NZACSCoverOptions> NZACSCoverOptions { get; set; }
         public IEnumerable<RiskPremiumsViewModel> RiskPremiums { get; set; }
 		public Guid InformationSheetId { get; set; }
 		public bool HasVehicles { get; set; }
@@ -58,6 +59,14 @@ namespace TechCertain.WebUI.Models.Agreement
 
         public string Inclusion { get; set; }
    
+    }
+
+    public class NZACSCoverOptions
+    {
+        public string RiskName { get; set; }
+        public string Inclusion { get; set; }
+        public string Exclusion { get; set; }
+        public string TotalPremium { get; set; }
     }
 
     public class InsuranceExclusion

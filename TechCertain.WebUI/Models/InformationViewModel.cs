@@ -28,8 +28,9 @@ namespace TechCertain.WebUI.Models
         public IEnumerable<String> UserRole { get; set; }
 
         public IEnumerable<InformationItem> SectionItems { get; set; }
-
         public List<InformationSection> Section { get; set; }
+        public List<string> ListProductName { get; set; }
+
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
 
         // TODO - find a better way to pass these in

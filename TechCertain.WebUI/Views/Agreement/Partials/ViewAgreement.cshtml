@@ -89,10 +89,10 @@
                 <section class="col col-9">
                     @Html.DisplayFor(m => m.StartDate) 4pm local time
                     @*@if (Model.InformationSheetStatus != "Submitted" && Model.InformationSheetStatus != "Bound")
-        {*@
+                    {*@
                     @*<a href="#getStartDate" style="color:green">
-            <i class="fa fa-edit" aria-hidden="true"></i>
-        </a>*@
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                    </a>*@
                     @if (Model.NextInfoSheet == false)
                     {
                         <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
@@ -275,73 +275,148 @@
 
         </fieldset>
 
-        <fieldset>
-            <div class="row">
-                <section class="col col-12 font-md">
-                    <strong>Premium</strong>
-                </section>
-            </div>
-
-            <div class="row">
-                <section class="col col-3 font-md">
-                    <strong>Risk</strong>
-                </section>
-                <section class="col col-3 font-md">
-                    <strong>Premium Adjustment</strong>
-                </section>
-                <section class="col col-3 font-md">
-                    <strong>FSL</strong>
-                </section>
-                <section class="col col-3 font-md">
-                    <strong>Premium Total</strong>
-                </section>
-
-            </div>
-            @foreach (var item in Model.RiskPremiums)
-            {
-
+        @if (!Model.IsMultipleOption)
+        {
+            <fieldset>
                 <div class="row">
-                    <section class="col col-3">
-                        @item.RiskName:
-                    </section>
-                    <section class="col col-3">
-                        @item.Premium
-                    </section>
-                    <section class="col col-3">
-                        @item.FSL
-                    </section>
-                    <section class="col col-3">
-                        @item.TotalPremium
+                    <section class="col col-12 font-md">
+                        <strong>Premium</strong>
                     </section>
                 </div>
 
-            }
+                <div class="row">
+                    <section class="col col-3 font-md">
+                        <strong>Risk</strong>
+                    </section>
+                    <section class="col col-3 font-md">
+                        <strong>Premium Adjustment</strong>
+                    </section>
+                    <section class="col col-3 font-md">
+                        <strong>FSL</strong>
+                    </section>
+                    <section class="col col-3 font-md">
+                        <strong>Premium Total</strong>
+                    </section>
 
-            @*<div class="row">
-                <section class="col col-3">
-                    <strong>@Html.DisplayNameFor(m => m.BrokerageRate):</strong>
-                </section>
-                <section class="col col-9">
-                    @Model.BrokerageRate
-                </section>
-            </div>*@
+                </div>
+                @foreach (var item in Model.RiskPremiums)
+                {
 
-            <div class="row">
-                <section class="col col-3">
-                    <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
-                </section>
-                <section class="col col-3">
-                    @Model.AdministrationFee
-                </section>
-            </div>
-        </fieldset>
+                    <div class="row">
+                        <section class="col col-3">
+                            @item.RiskName:
+                        </section>
+                        <section class="col col-3">
+                            @item.Premium
+                        </section>
+                        <section class="col col-3">
+                            @item.FSL
+                        </section>
+                        <section class="col col-3">
+                            @item.TotalPremium
+                        </section>
+                    </div>
+
+                }
+
+                @*<div class="row">
+                    <section class="col col-3">
+                        <strong>@Html.DisplayNameFor(m => m.BrokerageRate):</strong>
+                    </section>
+                    <section class="col col-9">
+                        @Model.BrokerageRate
+                    </section>
+                </div>*@
+
+                <div class="row">
+                    <section class="col col-3">
+                        <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
+                    </section>
+                    <section class="col col-3">
+                        @Model.AdministrationFee
+                    </section>
+                </div>
+            </fieldset>
+        }
+        else
+        {
+    <fieldset>
+
+        <div class="row">
+            <section class="col col-12 font-md">
+                <strong>Cover Options</strong>
+            </section>
+        </div>
+
+        <div class="row">
+
+            <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+
+                <tr>
+                    <th class="text-center" width="10%"></th>
+                    <th class="text-center" width="20%">Risk Name</th>
+                    <th class="text-center" width="20%">Limit</th>
+                    <th class="text-center" width="20%">Excess</th>
+                    <th class="text-center" width="20%">Premium</th>
+                </tr>
+
+
+                @foreach (var item in Model.NZACSCoverOptions)
+                {
+                    <tr class="clickable-row">
+                        @*<td width="9%">
+                            <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal"
+                               data-riskname="@item.RiskName" data-inclusion="@item.Inclusion" data-exclusion="@item.Exclusion"
+                               data-totalPremium="@item.TotalPremium"><i class="fa fa-edit"> </i></a>
+                        </td>*@
+                        <td>
+                            @*<label class="radio-inline" style="width:10%;" id="@item.RiskName" value="@item.RiskName,@item.Inclusion,@item.Exclusion">
+                                <input onclick="CoverOptionsSelected()" type="radio" dirname=""
+                                       data-riskname="@item.RiskName" data-inclusion="@item.Inclusion" data-exclusion="@item.Exclusion"
+                                       data-totalPremium="@item.TotalPremium" name="InsuranceAttribute" value="Financial">Financial
+                            </label>*@
+                            <input type="radio" dirname=""
+                                   name="@item.RiskName" value="@item.Inclusion">
+                            @*<input onclick="CoverOptionsSelected()" type="radio" dirname=""
+                            name="@item.RiskName" value="@item.RiskName,@item.Inclusion,@item.Exclusion,@item.TotalPremium">*@
+                        </td>
+
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.RiskName
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Inclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Exclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.TotalPremium
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </div>
+
+        <div class="row">
+            <section class="col col-3">
+                <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
+            </section>
+            <section class="col col-3">
+                @Model.AdministrationFee
+            </section>
+        </div>
+    </fieldset>
+
+        }
     </div>
 
 
 
 
 <!-- Edit Start Date -->
-<div id="getStartDate" style="width:350px;  margin-left:800px;" class="modal" role="dialog" >
+<div id="getStartDate" style="width:350px;  margin-left:800px;" class="modal" role="dialog">
 
     <!-- Modal content-->
 
@@ -356,7 +431,7 @@
 
                 <div class="form-group">
                     <label class="label cgmodalLabel hidden">Start Date</label>
-                    <input name="EffectiveDate" placeholder="Effective Date" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="StartDate" type="text" >
+                    <input name="EffectiveDate" placeholder="Effective Date" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="StartDate" type="text">
                 </div>
 
             </form>
@@ -372,9 +447,9 @@
 
 <script>
 
-    
 
-    
+
+
     $('#getStartDate').on('show.bs.modal', function (e) {
         debugger;
         $('.modal').css('width', '600px');
@@ -386,15 +461,17 @@
      $('.Startdate').datepicker({
        maxDate: "+30d",
        minDate: 0,
-       dateFormat: "dd/mm/yy" 
+       dateFormat: "dd/mm/yy"
 
      });
 
             function Close() {
             $("#modal").hide();
-        }
+    }
 
+    function CoverOptionsSelected() {
 
+    }
 
     function dateChange() {
         var agreementId = $("#ClientAgreementId").val();

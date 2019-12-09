@@ -1281,6 +1281,29 @@ namespace TechCertain.WebUI.Controllers
 
             return null;
         }
+        [HttpPost]
+        public async Task<IActionResult> GetProductName(Guid id)
+        {
+            //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
+
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+            ClientInformationSheet sheet = clientProgramme.InformationSheet;
+
+            List<string> productname = new List<string>();
+            try
+            {
+                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true))
+                {
+                    productname.Add(agreement.Product.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Json(productname);
+        }
 
         [HttpGet]
         public async Task<IActionResult> EditInformation(Guid id)
@@ -1292,6 +1315,19 @@ namespace TechCertain.WebUI.Controllers
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
             model.Id = id;
+            //List<string> productname = new List<string>();
+            //try
+            //{
+            //    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption = true))
+            //    {
+            //        productname.Add(agreement.Product.Name);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            //model.ListProductName = productname;
             var user = await CurrentUser();
 
             string advisoryDesc = "";
@@ -2596,7 +2632,18 @@ namespace TechCertain.WebUI.Controllers
                 Sections = new List<InformationSectionViewModel>()
             };
             model.Name = programme.Name;
-            Product product = programme.Products.FirstOrDefault();
+            Product product = null;
+            if (programme.Products.Count > 1)
+            {
+                foreach (var prod in programme.Products.Where(progp => progp.IsMasterProduct))
+                {
+                    product = prod;
+                }
+            } else
+            {
+                product = programme.Products.FirstOrDefault();
+            }
+
             List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(product.Id);
             List<InformationSection> sections = new List<InformationSection>();
             foreach (var template in informationTemplate)

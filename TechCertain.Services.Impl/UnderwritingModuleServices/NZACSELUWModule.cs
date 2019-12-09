@@ -73,8 +73,15 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil = 0m;
 
             int TermExcess = 0;
-            int employeenumber = 5;
+            int employeenumber = 0;
             //Calculation
+            foreach (var uISSharedDataRoles in agreement.ClientInformationSheet.SharedDataRoles.Where(sdr => sdr.DateDeleted == null))
+            {
+                if (uISSharedDataRoles.Count > 0)
+                {
+                    employeenumber += uISSharedDataRoles.Count;
+                }
+            }
 
             //Return terms based on the limit options
 
@@ -165,7 +172,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
-
+            }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
             }
             return clientAgreement;
         }
