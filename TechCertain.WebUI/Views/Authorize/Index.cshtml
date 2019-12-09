@@ -151,7 +151,7 @@
             var roleName = $('#UpdateRoleSelect').val();
             var claim = $('#UpdateClaims').val();
             var postData = { RoleName: roleName, Claims: claim }
-
+            debugger;
             $.ajax({
                 url: '@Url.Action("UpdateRole", "Authorize")',
                 type: "POST",
