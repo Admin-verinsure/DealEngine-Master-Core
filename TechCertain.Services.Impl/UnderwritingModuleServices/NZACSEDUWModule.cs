@@ -206,11 +206,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["ed250klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed250klimitunder6employeerate"] * 5) + (rates["ed250klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["ed250klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed250klimitunder6employeerate"] * 5) + (rates["ed250klimit6to10employeerate"] * 5) + rates["ed250klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -224,11 +224,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["ed500klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed500klimitunder6employeerate"] * 5) + (rates["ed500klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["ed500klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed500klimitunder6employeerate"] * 5) + (rates["ed500klimit6to10employeerate"] * 5) + rates["ed500klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;

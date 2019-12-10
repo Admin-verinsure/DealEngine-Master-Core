@@ -210,7 +210,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl1andhalfmillimitoption.DeletedBy = null;
 
             //TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil);
-            ClientAgreementTerm termsl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2mil, TermExcess);
+            ClientAgreementTerm termsl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             termsl2millimitoption.TermLimit = TermLimit2mil;
             termsl2millimitoption.Premium = TermPremium2mil;
             termsl2millimitoption.Excess = TermExcess;
