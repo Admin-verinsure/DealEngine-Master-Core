@@ -140,7 +140,7 @@ namespace TechCertain.WebUI.Controllers
                 foreach (var cl in Claims)
                 {
                     var template = await _claimService.GetTemplateByName(cl);
-                    var claim = new Claim(template.Type, template.Value);
+                    var claim = new Claim(template.Value, template.Value);
                     await _roleManager.AddClaimAsync(role, claim);
                 }
 

@@ -4,6 +4,8 @@ using TechCertain.Domain.Entities;
 using System.Threading.Tasks;
 using NHibernate.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TechCertain.Services.Impl
 {
@@ -21,11 +23,10 @@ namespace TechCertain.Services.Impl
             await _advisoryRepository.AddAsync(advisory);
         }
 
-        public async Task<Advisory> GetAdvisoryByMilestone(Milestone milestone, Activity activity)
+        public async Task<List<Advisory>> GetAdvisorysByMilestone(Milestone milestone)
         {
-            return await _advisoryRepository.FindAll().FirstOrDefaultAsync(a => a.Milestone == milestone && a.Activity == activity);            
+            return await _advisoryRepository.FindAll().Where(a=>a.Milestone == milestone && a.DateDeleted == null).ToListAsync();
         }
-
         public async Task UpdateAdvisory(Advisory advisory)
         {
             await _advisoryRepository.UpdateAsync(advisory);

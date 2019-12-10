@@ -156,7 +156,9 @@
              data: postData
              })
                 .done(function (data) {
-                    if (data != "") {
+                    if (data != "" &&
+                        (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null && data[5] != null)
+                    ) {
                         debugger;
                 for (var item = 0; item < data.length; item++){
                   var arr = data[item];

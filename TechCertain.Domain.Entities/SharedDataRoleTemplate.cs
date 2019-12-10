@@ -2,12 +2,13 @@
 
 namespace TechCertain.Domain.Entities
 {
-    public class SharedDataRole : EntityBase, IAggregateRoot
+    public class SharedDataRoleTemplate : EntityBase, IAggregateRoot
     {
-        public SharedDataRole() : base(null) { }
-        public virtual Programme Programme { get; set; }
+        public SharedDataRoleTemplate() : base(null) { }
+        public virtual bool IsPublic { get; set; }
         public virtual string Name { get; set; }
-        public virtual int Count { get; set; }
+        public virtual Organisation Organisation { get; set; }
+        public virtual Programme Programme { get; set; }
     }
 }
 

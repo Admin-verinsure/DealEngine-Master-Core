@@ -35,6 +35,7 @@ namespace TechCertain.WebUI.Models
             CreateMap<InformationBuilder, InformationBuilderViewModel>().ReverseMap();
 
             // Information
+            CreateMap<AdditionalActivityInformation, RevenueByActivityViewModel>();
             CreateMap<InformationTemplate, InformationViewModel>();
             CreateMap<InformationSection, InformationSectionViewModel>();
             CreateMap<InformationItem, InformationItemViewModel>()
@@ -47,6 +48,7 @@ namespace TechCertain.WebUI.Models
                 .Include<SubmitButtonItem, InformationItemViewModel>()
                 .Include<SectionBreakItem, InformationItemViewModel>()
                 .Include<MotorVehicleListItem, InformationItemViewModel>();
+                //.Include<AdditionalInformation, RevenueByActivityViewModel>();
                 //.Include<InformationItemConditional, InformationItemViewModel>();
 
             CreateMap<SelectListItem, DropdownListOption>().ReverseMap();

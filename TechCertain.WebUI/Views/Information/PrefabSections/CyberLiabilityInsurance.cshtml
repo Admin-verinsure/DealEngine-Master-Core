@@ -259,47 +259,42 @@
     </div>
 </div>
 
+<script type="text/javascript">
 
-    <script type="text/javascript">
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
 
-         $(window).on("load", function () {
-            
-           var clientInformationSheet = $('#AnswerSheetId').val();
+        $.ajax({
+            url: '@Url.Action("GetDNO", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                if (data != "" &&
+                    (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null &&
+                    data[5] != null && data[6] != null && data[7] != null && data[8] != null && data[9] != null &&
+                    data[10] != null)
+                ) {
 
-           var postData = {ClientInformationSheet : clientInformationSheet};
-
-
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetDNO", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-             if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                 }
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        var count = 0;
+                        $('#' + arr[count]).val(arr[count + 1]);
+                    }
 
                     if ($('#DNO1').val() == "true") {
-
-                      $('#CyberLiabilitySec').show();
+                        $('#CyberLiabilitySec').show();
                     } else {
-
-                      $('#CyberLiabilitySec').hide();
-                     }
-
-                     }
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
-         });
+                        $('#CyberLiabilitySec').hide();
+                    }
+                }
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
 
         var clientInformationSheet = $('#AnswerSheetId').val();

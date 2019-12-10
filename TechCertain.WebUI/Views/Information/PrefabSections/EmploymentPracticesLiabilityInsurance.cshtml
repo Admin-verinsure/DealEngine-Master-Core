@@ -65,42 +65,35 @@
 
 <script type="text/javascript">
 
-         $(window).on("load", function () {
-            debugger;
-
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-
-
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetEmployerPracticesLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-                    debugger;
-             if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#EmployerPracticesLiability1').val() == 'true') {
-                        $('#EmployerPracticesLiability2Sec').removeClass('hidden');
-
-                    } else {
-                        $('#EmployerPracticesLiability2Sec').addClass('hidden');
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("GetEmployerPracticesLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                if (data != "" &&
+                    (data[0] != null && data[1] != null)
+                ) {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        var count = 0;
+                        $('#' + arr[count]).val(arr[count + 1]);
+                        if ($('#EmployerPracticesLiability1').val() == 'true') {
+                            $('#EmployerPracticesLiability2Sec').removeClass('hidden');
+                        } else {
+                            $('#EmployerPracticesLiability2Sec').addClass('hidden');
+                        }
                     }
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
-         });
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
     function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {
         debugger;

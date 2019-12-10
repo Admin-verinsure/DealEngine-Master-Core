@@ -81,7 +81,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                         {
                             foreach(var ex in schemaUpdate.Exceptions)
                             {
-                                throw ex;
+                                 throw ex;
                             }
                         }
 

@@ -48,7 +48,12 @@
                     </div>
 
                     <div class="input-group mb-3">
-                        <button class="btn-primary btn" onclick="SaveRoleTabTwo()">  Submit  </button>
+                        <div class="footer" id="submitTab1">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRoleSubmit" onclick="SaveRoleTabTwo()">
+                        </div>
+                        <div class="footer" id="additionalRoleInfomationBtn" style="display:none">
+                            <button class="btn-primary btn" onclick="SaveRoleTabTwo(true)">Next</button>
+                        </div>
                     </div>
 
                 </div>
@@ -56,20 +61,28 @@
         </div>
         <div id="sharedRoleTabs3" class="tab-content">
             <fieldset>
-                <div class="container-fluid">
-                    <form class="smart-form">
+
+                <div class="container-fluid" id="additionalRoleInfomation" style="display:none">
+                    <form class="smart-form" id="addtionalRoleInformationContainer">
                         <div class="form-group">
                             <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
-                            <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control"></textarea>
+                            @if (Model.SharedRoleViewModel.OtherProfessionId != null)
+                            {
+                                <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control">@Model.SharedRoleViewModel.OtherProfessionId</textarea>
+                            }
+                            else
+                            {
+                                <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control"></textarea>
+                            }
+
                         </div>
                     </form>
 
                     <div class="input-group mb-3">
                         <button class="btn-primary btn" onclick="SaveRoleTabThree()">  Submit  </button>
                     </div>
-
                 </div>
-            </fieldset>
+</fieldset>
         </div>
     </div>
 

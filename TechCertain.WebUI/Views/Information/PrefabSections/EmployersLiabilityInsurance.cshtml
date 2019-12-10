@@ -65,36 +65,34 @@
 
 <script type="text/javascript">
 
-         $(window).on("load", function () {
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetEmployerLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-             if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#EmployerLiabilityInsurance1').val() == 'true') {
-                        $('#EmployerLiabilityInsurance2Sec').removeClass('hidden');
-
-                    } else {
-                        $('#EmployerLiabilityInsurance2Sec').addClass('hidden');
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("GetEmployerLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                if (data != "" &&
+                    (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null && data[5] != null)
+                ) {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        var count = 0;
+                        $('#' + arr[count]).val(arr[count + 1]);
+                        if ($('#EmployerLiabilityInsurance1').val() == 'true') {
+                            $('#EmployerLiabilityInsurance2Sec').removeClass('hidden');
+                        } else {
+                            $('#EmployerLiabilityInsurance2Sec').addClass('hidden');
+                        }
                     }
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
          });
 
      function ValidateEmployer() {

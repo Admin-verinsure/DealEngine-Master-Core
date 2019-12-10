@@ -13,7 +13,6 @@ namespace TechCertain.Infrastructure.FluentNHibernate.MappingOverrides
         {
             mapping.Id (p => p.Id).GeneratedBy.Assigned();
             mapping.IgnoreProperty (p => p.Location);
-            //mapping.IgnoreProperty (p => p.Organisations);
             mapping.IgnoreProperty (p => p.Branches);
 			mapping.IgnoreProperty (p => p.Departments);
 			mapping.HasManyToMany (p => p.Organisations);

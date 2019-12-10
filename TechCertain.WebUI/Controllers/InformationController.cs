@@ -78,7 +78,6 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
-            IMapperSession<Territory> territoryRepository,
             ISharedDataRoleService sharedDataRoleService,
             IMapperSession<ChangeReason> changeReasonRepository,
             IUnitOfWork unitOfWork,
@@ -1308,12 +1307,9 @@ namespace TechCertain.WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> EditInformation(Guid id)
-        {
-            //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
-
+        {            
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
-
             InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
 
             model.AnswerSheetId = sheet.Id;
@@ -1333,7 +1329,6 @@ namespace TechCertain.WebUI.Controllers
             //}
             //model.ListProductName = productname;
             var user = await CurrentUser();
-            //add milestone process here
 
             string advisoryDesc = "";
             if (sheet.Status == "Not Started")
@@ -1341,8 +1336,8 @@ namespace TechCertain.WebUI.Controllers
                 var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 if (milestone != null)
                 {
-                    var activity = await _activityService.GetActivityByName("Agreement Status - Not Started");
-                    var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                    var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
                     if (advisory != null)
                     {
                         advisoryDesc = advisory.Description;
@@ -1382,6 +1377,11 @@ namespace TechCertain.WebUI.Controllers
                         Value = sharedRoleTemplate.Id.ToString(),
                         Selected = true
                     });
+                    
+                    if(sharedRole.AdditionalRoleInformation != null)
+                    {
+                        sharedRoleViewModel.OtherProfessionId = sharedRole.AdditionalRoleInformation.OtherProfessionId;
+                    }
                 }
             }
 
@@ -1419,7 +1419,7 @@ namespace TechCertain.WebUI.Controllers
 
                 if (sheet.RevenueData.Activities.Count > 0)
                 {
-                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
+                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities.OrderBy(ba => ba.AnzsciCode))
                     {
                         var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplateByCode(businessActivity.AnzsciCode);
                         businessActivityTemplates.Add(new SelectListItem
@@ -1430,6 +1430,8 @@ namespace TechCertain.WebUI.Controllers
                         });
                     }
                 }
+
+                revenueByActivityViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityInformation>(sheet.RevenueData.AdditionalActivityInformation);
                 revenueByActivityViewModel.TotalRevenue = sheet.RevenueData.TotalRevenue;
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
@@ -1444,7 +1446,7 @@ namespace TechCertain.WebUI.Controllers
                 });
             }
             
-            foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+            foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates.OrderBy(ba=>ba.AnzsciCode))
             {
                 businessActivityTemplates.Add(new SelectListItem
                 {
@@ -2316,11 +2318,12 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SaveSharedRoleTabOne(string[] SharedDataRoles, string ClientInformationSheetId)
         {
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            var user = await CurrentUser();
             sheet.SharedDataRoles.Clear();
             foreach (var id in SharedDataRoles)
             {
                 var template = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(id));
-                var newSharedRole = new SharedDataRole();
+                var newSharedRole = new SharedDataRole(user);
                 newSharedRole.Name = template.Name;
                 await _sharedDataRoleService.CreateSharedDataRole(newSharedRole);
                 sheet.SharedDataRoles.Add(newSharedRole);
@@ -2328,7 +2331,7 @@ namespace TechCertain.WebUI.Controllers
 
             await _clientInformationService.UpdateInformation(sheet);
 
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2349,8 +2352,48 @@ namespace TechCertain.WebUI.Controllers
                     }
                 }
             }
+
+            return Json("OK");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSharedRoleTabThree(IFormCollection form)
+        {
+            var user = await CurrentUser();
+            var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
+            var additionalRoleInformation = new AdditionalRoleInformation(user);
+            var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalRoleInformationTable"].ToString();
+            var FormString = serialisedAdditionalInformationTableFormString.Split('&');
+            if (sheet.SharedDataRoles.Count == 0)
+            {
+                throw new Exception("Please complete Activities Tab");
+            }
+
+            //loop through form
+            foreach (var questionFormString in FormString)
+            {
+                var questionSplit = questionFormString.Split("=");
+                switch (questionSplit[0])
+                {
+                    case "OtherProfessionId":
+                        additionalRoleInformation.OtherProfessionId = questionSplit[1];
+                        break;                    
+                    default:
+                        throw new Exception("Add more form question 'cases'");
+                }
+            }
             
-            return Ok();
+            foreach (var role in sheet.SharedDataRoles)
+            {
+                if(role.Name == "Other Professions")
+                {
+                    role.AdditionalRoleInformation = additionalRoleInformation;
+                    await _sharedDataRoleService.UpdateSharedRole(role);
+                }
+            }
+
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2399,7 +2442,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2442,7 +2485,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2482,8 +2525,8 @@ namespace TechCertain.WebUI.Controllers
                     }
                 }
             }
-            
-            return Ok();
+
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2511,7 +2554,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2520,10 +2563,15 @@ namespace TechCertain.WebUI.Controllers
             var user = await CurrentUser();
             var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
-            var additionalInformation = new AdditionalInformation(user);
-
+            var additionalInformation = new AdditionalActivityInformation(user);
             var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalInformationTable"].ToString();
             var FormString = serialisedAdditionalInformationTableFormString.Split('&');
+
+            if (sheet.RevenueData == null)
+            {
+                throw new Exception("Please complete Activities Tab");
+            }
+
             //loop through form
             foreach(var questionFormString in FormString)
             {
@@ -2568,9 +2616,9 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             
-            sheet.RevenueData.AdditionalInformation = additionalInformation;
+            sheet.RevenueData.AdditionalActivityInformation = additionalInformation;
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
 
