@@ -675,11 +675,11 @@ namespace TechCertain.WebUI.Controllers
                     //insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
                 
 
-                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                {
+                //foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                //{
 
-                    multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id , isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name,limit = term.TermLimit.ToString(), premium =term.Premium.ToString(), excess = term.Excess.ToString(), Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
-                }
+                //    multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id , isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name,limit = term.TermLimit.ToString(), premium =term.Premium.ToString(), excess = term.Excess.ToString(), Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                //}
 
 
                 } else  {
