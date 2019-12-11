@@ -90,7 +90,7 @@ namespace TechCertain.Domain.Entities
         public virtual bool Bound
         {
             get;
-            protected set;
+            set;
         }
 
         public virtual decimal BrokerageRate

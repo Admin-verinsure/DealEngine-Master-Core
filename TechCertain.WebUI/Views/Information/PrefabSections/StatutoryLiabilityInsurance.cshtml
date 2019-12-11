@@ -38,7 +38,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="StatutoryLiability2" class="form-control rmv editable" name="StatutoryLiability2">
+                                <select id="StatutoryLiability2" onchange="StatutoryLiability2Selected('StatutoryLiability2')" class="form-control rmv editable" name="StatutoryLiability2">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -50,13 +50,89 @@
 
                     </section>
 
+                    <div class="hidden" id="PreviousInsuranceSec">
+                        <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                        <br/>
 
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    $ Amount of Cover:
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="StatutoryLiability3" name="StatutoryLiability3" placeholder="$ Amount of Cover" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateStatutoryLiability3"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    When Lapsed:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="StatutoryLiability4" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="StatutoryLiability4" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateStatutoryLiability4"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Name of Insurer:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="StatutoryLiability5" name="StatutoryLiability5" placeholder="Insurer Name" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateStatutoryLiability5"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Retroactive date:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="StatutoryLiability6" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="StatutoryLiability6" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateStatutoryLiability6"></p>
+
+                            </section>
+
+                        </section>
+
+                    </div>
 
                 </div>
             </div>
 
             <button onclick="ValidateStatutory(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-            @*<button onclick="$('#StatutoryLiability1').val('');$('#StatutoryLiability2').val(''); event.preventDefault();" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
 
         </fieldset>
     </div>
@@ -68,31 +144,40 @@
         var clientInformationSheet = $('#AnswerSheetId').val();
         var postData = { ClientInformationSheet: clientInformationSheet };
         $.ajax({
-            // change back once mono decides to fix
-            url: '@Url.Action("GetStatutoryLiability", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                if (data != "" &&
-                    (data[0] != null && data[1] != null)
-                ) {
-                    for (var item = 0; item < data.length; item++){
-                        var arr = data[item];
-                        var count = 0;
-                        $('#' + arr[count]).val(arr[count + 1]);
-                        if ($('#StatutoryLiability1').val() == 'true') {
-                            $('#StatutoryLiability2Sec').removeClass('hidden');
-                        } else {
-                            $('#StatutoryLiability2Sec').addClass('hidden');
-                        }
+     	// change back once mono decides to fix
+             url: '@Url.Action("GetStatutoryLiability", "Information")',
+             type: "POST",
+             data: postData
+             })
+                .done(function (data) {
+             if (data != "" &&
+                    (data[0] != null && data[1] != null)) {
+                for (var item = 0; item < data.length; item++){
+
+                  var arr = data[item];
+                  var count = 0;
+                    $('#' + arr[count]).val(arr[count + 1]);
+                    if ($('#StatutoryLiability1').val() == 'true') {
+                        $('#StatutoryLiability2Sec').removeClass('hidden');
+
+                    } else {
+                        $('#StatutoryLiability2Sec').addClass('hidden');
                     }
-                };
-            })
-            .fail(function (a, s, d) {
-                debugger;
-                alert("Unable to save.");
-            });
+                     if ($('#StatutoryLiability2').val() == 'false') {
+                        $('#PreviousInsuranceSec').removeClass('hidden');
+
+                    } else {
+                        $('#PreviousInsuranceSec').addClass('hidden');
+                    }
+
+                }
+             };
+
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                  alert("Unable to save.");
+                });
          });
 
     function StatutoryLiability1Selected(StatutoryLiability) {
@@ -107,6 +192,24 @@
         }
     }
 
+    function StatutoryLiability2Selected(StatutoryLiability) {
+        debugger;
+
+        var statutoryLiability = document.getElementById(StatutoryLiability);
+        var vhh = statutoryLiability.options[statutoryLiability.selectedIndex].value;
+
+        if (statutoryLiability.options[statutoryLiability.selectedIndex].value == "false") {
+            $('#PreviousInsuranceSec').removeClass('hidden');
+        } else {
+            $('#StatutoryLiability3').val('');
+            $('#StatutoryLiability4').val('');
+            $('#StatutoryLiability5').val('');
+            $('#StatutoryLiability6').val('');
+
+            $('#PreviousInsuranceSec').addClass('hidden');
+        }
+    }
+
     var clientInformationSheet = $('#AnswerSheetId').val();
 
       function ValidateStatutory() {
@@ -114,6 +217,10 @@
 
         var GLI1 = $('#StatutoryLiability1').val();
         var GLI2 = $('#StatutoryLiability2').val();
+        var GLI3 = $('#StatutoryLiability3').val();
+        var GLI4 = $('#StatutoryLiability4').val();
+        var GLI5 = $('#StatutoryLiability5').val();
+        var GLI6 = $('#StatutoryLiability6').val();
         var validity = true;
         if (GLI1 == "") {
             $('#ValidateStatutoryLiability1').html("<font color='red'>Field is required</font>")
@@ -124,6 +231,38 @@
             $('#ValidateStatutoryLiability1').html("<i></i>");
         }
         if (GLI2 == "" && GLI1 == 'true') {
+            $('#ValidateStatutoryLiability2').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateStatutoryLiability2').html("<i></i>");
+          }
+          if (GLI3 == "" && GLI2 == 'false') {
+            $('#ValidateStatutoryLiability3').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateStatutoryLiability3').html("<i></i>");
+          }
+          if (GLI4 == "" && GLI2 == 'false') {
+            $('#ValidateStatutoryLiability4').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateStatutoryLiability4').html("<i></i>");
+          }
+          if (GLI5 == "" && GLI2 == 'false') {
+            $('#ValidateStatutoryLiability5').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateStatutoryLiability5').html("<i></i>");
+          }
+          if (GLI6 == "" && GLI2 == 'false') {
             $('#ValidateStatutoryLiability2').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -142,13 +281,13 @@
 
         function SaveStatutoryLiability() {
             debugger;
-                   var StatutoryLiability = new Array(2);
+                   var StatutoryLiability = new Array(6);
 
                    for (var i = 0; i < StatutoryLiability.length; i++) {
                        StatutoryLiability[i] = new Array(2);
                    }
 
-            for (var i = 1; i <= 2; i++) {
+            for (var i = 1; i <= 6; i++) {
                 for (var j = 0; j < 2; j++) {
                     StatutoryLiability[i-1][0] = "StatutoryLiability" + i;
                 var statutoryLiability = "#StatutoryLiability" + i;
@@ -175,3 +314,10 @@
         }
 </script>
 
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>

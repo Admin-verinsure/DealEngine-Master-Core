@@ -28,28 +28,7 @@
 
                     </section>
 
-                    <div id="CyberLiabilitySec" style="display:none">
-
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                <label class="label required">
-                                    Is this a renewal of an existing Cyber or Internet liability policy placed with NZACS?
-                                </label>
-                            </section>
-                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                <label class="input">
-                                    <select id="DNO2" class="form-control rmv editable" name="DNO2">
-                                        <option selected="selected" value="">-- Select --</option>
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
-                                    </select>
-                                </label>
-                                <p class="validationContainer" id="ValidateDNO2"></p>
-
-                            </section>
-
-                        </section>
+                    <div id="CyberLiabilitySec" class="hidden">
 
                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
@@ -248,6 +227,105 @@
 
                         </section>
 
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <label class="label required">
+                                    Is this a renewal of an existing Cyber or Internet liability policy placed with NZACS?
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                <label class="input">
+                                    <select id="DNO2" onchange="CyberLiabilityInsurance2Selected('DNO2')" class="form-control rmv editable" name="DNO2">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="ValidateDNO2"></p>
+
+                            </section>
+
+                        </section>
+
+                        <div class="hidden" id="CyberPreviousInsuranceSec">
+                            <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                            <br />
+
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="label required">
+                                        $ Amount of Cover:
+                                    </label>
+                                </section>
+
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="input form-group">
+                                        <i></i>
+                                        <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="DNO12" name="DNO12" placeholder="$ Amount of Cover" value="" required>
+                                    </label>
+                                    <p class="validationContainer" id="ValidateDNO12"></p>
+
+                                </section>
+
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="label required">
+                                        When Lapsed:
+                                    </label>
+                                </section>
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="input form-group">
+                                        <label class="input ">
+                                            <i class="icon-append fa fa-calendar"></i>
+                                            <input name="DNO13" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="DNO13" type="text">
+                                        </label>
+                                    </label>
+                                    <p class="validationContainer" id="ValidateDNO13"></p>
+
+                                </section>
+
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="label required">
+                                        Name of Insurer:
+                                    </label>
+                                </section>
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="input form-group">
+                                        <i></i>
+                                        <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="DNO14" name="DNO14" placeholder="Insurer Name" value="" required>
+                                    </label>
+                                    <p class="validationContainer" id="ValidateDNO14"></p>
+
+                                </section>
+
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="label required">
+                                        Retroactive date:
+                                    </label>
+                                </section>
+                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="input form-group">
+                                        <label class="input ">
+                                            <i class="icon-append fa fa-calendar"></i>
+                                            <input name="DNO15" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="DNO15" type="text">
+                                        </label>
+                                    </label>
+                                    <p class="validationContainer" id="ValidateDNO15"></p>
+
+                                </section>
+
+                            </section>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -259,42 +337,59 @@
     </div>
 </div>
 
-<script type="text/javascript">
 
-    $(window).on("load", function () {
-        var clientInformationSheet = $('#AnswerSheetId').val();
-        var postData = { ClientInformationSheet: clientInformationSheet };
+    <script type="text/javascript">
 
-        $.ajax({
-            url: '@Url.Action("GetDNO", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                if (data != "" &&
+         $(window).on("load", function () {
+            
+           var clientInformationSheet = $('#AnswerSheetId').val();
+
+           var postData = {ClientInformationSheet : clientInformationSheet};
+
+
+            $.ajax({
+     	// change back once mono decides to fix
+             url: '@Url.Action("GetDNO", "Information")',
+             type: "POST",
+             data: postData
+             })
+                .done(function (data) {
+                    debugger;
+
+                   if (data != "" &&
                     (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null &&
                     data[5] != null && data[6] != null && data[7] != null && data[8] != null && data[9] != null &&
                     data[10] != null)
                 ) {
+                        for (var item = 0; item < data.length; item++){
 
-                    for (var item = 0; item < data.length; item++){
-                        var arr = data[item];
-                        var count = 0;
-                        $('#' + arr[count]).val(arr[count + 1]);
-                    }
+                          var arr = data[item];
+                          var count = 0;
+                          $('#' + arr[count]).val(arr[count + 1]);
+                        }
+                      if ($('#DNO1').val() == "true") {
 
-                    if ($('#DNO1').val() == "true") {
-                        $('#CyberLiabilitySec').show();
-                    } else {
-                        $('#CyberLiabilitySec').hide();
-                    }
-                }
-            })
-            .fail(function (a, s, d) {
-                debugger;
-                alert("Unable to save.");
-            });
-    });
+                        $('#CyberLiabilitySec').removeClass('hidden');
+                      } else {
+
+                        $('#CyberLiabilitySec').addClass('hidden');
+                      }
+                    }     
+
+                     if ($('#DNO2').val() == "false") {
+
+                      $('#CyberPreviousInsuranceSec').removeClass('hidden');
+                     } else {
+
+                      $('#CyberPreviousInsuranceSec').addClass('hidden');
+                     }
+                         
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                  alert("Unable to save.");
+                });
+         });
 
 
         var clientInformationSheet = $('#AnswerSheetId').val();
@@ -306,7 +401,7 @@
 
             if (CyberLiability.options[CyberLiability.selectedIndex].value == "true") {
 
-            $('#CyberLiabilitySec').show();
+                $('#CyberLiabilitySec').removeClass('hidden');
             } else {
             $('#DNO2').val('');
             $('#DNO3').val('');
@@ -318,10 +413,28 @@
             $('#DNO9').val('');
             $('#DNO10').val('');
             $('#DNO11').val('');
-            $('#CyberLiabilitySec').hide();
+                $('#CyberLiabilitySec').addClass('hidden');
             }
 
         };
+
+         function CyberLiabilityInsurance2Selected(DNO) {
+        debugger;
+
+        var CyberLiability = document.getElementById(DNO);
+
+            if (CyberLiability.options[CyberLiability.selectedIndex].value == "false") {
+
+                $('#CyberPreviousInsuranceSec').removeClass('hidden');
+            } else {
+            $('#DNO12').val('');
+            $('#DNO13').val('');
+            $('#DNO14').val('');
+            $('#DNO15').val('');
+                $('#CyberPreviousInsuranceSec').addClass('hidden');
+            }
+        };
+
 
          function ValidateCyber() {
              debugger;
@@ -351,6 +464,23 @@
 
              }
 
+             for (var index = 12; index <= 15; index++) {
+                     var DNOId = "#DNO" + index;
+                 var value = $(DNOId).val();
+                 var validator = "#ValidateDNO" + index;
+
+                  if (value == "" && ($('#DNO2').val()=='false')) {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+
+             }
+
+
              if (validity) {
                 ValidateDNO(); 
               }
@@ -359,13 +489,22 @@
 
         function ValidateDNO() {
             debugger;
-                   var DNO = new Array(11); 
+                   var DNO = new Array(15); 
     
                    for (var i = 0; i < DNO.length; i++) { 
                        DNO[i] = new Array(2); 
                    } 
 
-            for (var i = 1; i <= 11; i++) {
+            for (var i = 1; i <= 15; i++) {
+                for (var j = 0; j < 2; j++) {
+                    DNO[i-1][0] = "DNO" + i;
+                var DNOId = "#DNO" + i;
+                DNO[i-1][1] = $(DNOId).val();
+                }
+                       
+            }
+
+             for (var i = 12; i <= 15; i++) {
                 for (var j = 0; j < 2; j++) {
                     DNO[i-1][0] = "DNO" + i;
                 var DNOId = "#DNO" + i;
@@ -380,7 +519,7 @@
                            url: '@Url.Action("UpdateAnswer", "Information")',
                            type: "POST",
                            data: postData
-                       })
+             })
                            .done(function (data) {
 
                            })
@@ -391,4 +530,10 @@
   
         }
     </script>
-
+    <style>
+        .required:after {
+            content: " *";
+            color: red;
+            font-size: 20px;
+        }
+    </style>

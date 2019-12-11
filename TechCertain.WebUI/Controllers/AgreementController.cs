@@ -632,7 +632,6 @@ namespace TechCertain.WebUI.Controllers
             Organisation insured = clientProgramme.Owner;
             ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
-
             var insuranceRoles = new List<InsuranceRoleViewModel>();
 
             NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
@@ -658,7 +657,7 @@ namespace TechCertain.WebUI.Controllers
                 var insuranceInclusion = new List<InsuranceInclusion>();
                 var insuranceExclusion = new List<InsuranceExclusion>();
                 var riskPremiums = new List<RiskPremiumsViewModel>();
-                var nzacsCoverOptions  = new List<NZACSCoverOptions>();
+                var multiCoverOptions  = new List<MultiCoverOptions>();
                 string riskname = null;
 
                 // List Agreement Inclusions
@@ -671,11 +670,19 @@ namespace TechCertain.WebUI.Controllers
                     {
                         insuranceInclusion.Add(new InsuranceInclusion { RiskName = agreement.Product.Name, Inclusion = "Limit: Options displayed below" });
                     }
-                    
-                    insuranceExclusion.Add(new InsuranceExclusion { RiskName = agreement.Product.Name, Exclusion = "Excess: Options displayed below" });
+                     insuranceExclusion.Add(new InsuranceExclusion { RiskName = agreement.Product.Name, Exclusion = "Excess: Options displayed below" });
 
-                } else 
+                    //insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
+                
+
+                foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
                 {
+
+                    multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id , isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name,limit = term.TermLimit.ToString(), premium =term.Premium.ToString(), excess = term.Excess.ToString(), Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                }
+
+
+                } else  {
                     foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
                     {
                         if (term.SubTermType == "MV")
@@ -752,7 +759,7 @@ namespace TechCertain.WebUI.Controllers
                 foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.OrderBy(acat => acat.TermLimit))
                 {
 
-                    nzacsCoverOptions.Add(new NZACSCoverOptions { RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                multiCoverOptions.Add(new MultiCoverOptions { RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                 }
 
                 
@@ -766,16 +773,17 @@ namespace TechCertain.WebUI.Controllers
                     }
                     else
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                        riskPremiums.Add(new RiskPremiumsViewModel {  RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                     }
                 }
 
                 // Populate the ViewModel
+                model.Sheetstatus = answerSheet.Status;
                 model.InsuranceRoles = insuranceRoles;
                 model.Inclusions = insuranceInclusion;
                 model.Exclusions = insuranceExclusion;
                 model.RiskPremiums = riskPremiums;
-                model.NZACSCoverOptions = nzacsCoverOptions;
+                model.MultiCoverOptions = multiCoverOptions;
                 // Status
                 model.ProductName = agreement.Product.Name;
                 model.IsMultipleOption = agreement.Product.IsMultipleOption;

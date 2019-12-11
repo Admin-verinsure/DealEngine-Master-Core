@@ -23,6 +23,7 @@ namespace TechCertain.WebUI.Models
         public string AgreementStatus { get; set; }
 
         public string Status { get; set; }
+        public string SheetStatus { get; set; }
         public string SectionView { get; set; }
         //public string UserRole { get; set; }
         public IEnumerable<String> UserRole { get; set; }
@@ -263,9 +264,11 @@ namespace TechCertain.WebUI.Models
         public SharedRoleViewModel()
         {
             SharedRoles = new List<SelectListItem>();
+            SharedDataRoles = new List<SharedDataRole>();
         }
         public string OtherProfessionId { get; set; }
         public IList<SelectListItem> SharedRoles { get; set; }
+        public IList<SharedDataRole> SharedDataRoles { get; set; }
     }
 
     public class BusinessActivityViewModel
