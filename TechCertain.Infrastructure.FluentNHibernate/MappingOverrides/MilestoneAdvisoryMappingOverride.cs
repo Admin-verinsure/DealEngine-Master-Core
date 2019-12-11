@@ -10,7 +10,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.MappingOverrides
     {
         public void Override(AutoMapping<Advisory> mapping)
         {
-            mapping.Map(x => x.Description).Length(4000);
+            mapping.Map(x => x.Description).Length(10000);
         }
     }
 }

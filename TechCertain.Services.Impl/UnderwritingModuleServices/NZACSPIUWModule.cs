@@ -41,9 +41,16 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitincomeunder1milpremium", "pl2millimitincomeunder1milpremium", "pl3millimitincomeunder1milpremium", "pl4millimitincomeunder1milpremium", "pl5millimitincomeunder1milpremium",
-            //    "pl1millimitincome1milto3milpremium", "pl2millimitincome1milto3milpremium", "pl3millimitincome1milto3milpremium", "pl4millimitincome1milto3milpremium", "pl5millimitincome1milto3milpremium",
-            //    "pl1millimitincome3milto5milpremium", "pl2millimitincome3milto5milpremium", "pl3millimitincome3milto5milpremium", "pl4millimitincome3milto5milpremium", "pl5millimitincome3milto5milpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piexcessrate", "piminexcess", "pimaxexcess", "piexcessdiscountrate4kto5k", "piexcessdiscountrate5kto6k",
+                            "piexcessdiscountrate6kto7k", "piexcessdiscountrate7kto8k", "piexcessdiscountrate8kto9k", "piexcessdiscountrate9kto10k", "pischoolactivityloadingunder5percentage",
+                            "pischoolactivityloading5to20percentage", "pischoolactivityloading20to65percentage", "pischoolactivityloading65to100percentage", "pimarkupfeerate",
+                            "pimaxmarkupfee", "pi250klimitbasepremium", "pi350klimitbasepremium", "pi400klimitbasepremium", "pi500klimitbasepremium", "pi600klimitbasepremium", "pi750klimitbasepremium",
+                            "pi1millimitbasepremium", "pi1andhalfmillimitbasepremium", "pi2millimitbasepremium", "pi2andhalfmillimitbasepremium", "pi3millimitbasepremium", "pi4millimitbasepremium",
+                            "pi5millimitbasepremium", "pi6millimitbasepremium", "pi8millimitbasepremium", "pi10millimitbasepremium", "pi250klimitminmarkupfee", "pi350klimitminmarkupfee",
+                            "pi400klimitminmarkupfee", "pi500klimitminmarkupfee", "pi600klimitminmarkupfee", "pi750klimitminmarkupfee", "pi1millimitminmarkupfee", "pi1andhalfmillimitminmarkupfee", 
+                            "pi2millimitminmarkupfee", "pi2andhalfmillimitminmarkupfee", "pi3millimitminmarkupfee", "pi4millimitminmarkupfee", "pi5millimitminmarkupfee", "pi6millimitminmarkupfee",
+                            "pi8millimitminmarkupfee", "pi10millimitminmarkupfee", "pi250klimitunder1milrate", "pi250klimit1milto2milrate", "pi250klimitover2milrate", "pi350klimitunder1milrate",
+                            "pi350klimit1milto2milrate", "pi350klimitover2milrate");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -113,6 +120,10 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
 
             int TermExcess = 0;
             decimal feeincome = 0;
+
+            decimal schoolsactivitymoepercentage = 0M;
+            decimal schoolsactivitynonmoepercentage = 0M;
+
             //Calculation
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
@@ -123,13 +134,31 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
                     }
                 }
+
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "M692130") //Architecture - Schools Activity MOE
+                    {
+                        schoolsactivitymoepercentage = uISActivity.Pecentage;
+                    } else if (uISActivity.AnzsciCode == "M692140") //Architecture - Schools Activity Non-MOE
+                    {
+                        schoolsactivitynonmoepercentage = uISActivity.Pecentage;
+                    }
+                }
             }
 
             //Return terms based on the limit options
 
-            TermExcess = 500;
+            TermExcess = Convert.ToInt32(Math.Round((feeincome * rates["piexcessrate"]), 0, MidpointRounding.AwayFromZero));
+            if (TermExcess >= 0 && TermExcess <= Convert.ToInt32(rates["piminexcess"]))
+            {
+                TermExcess = Convert.ToInt32(rates["piminexcess"]);
+            } else if (TermExcess >= Convert.ToInt32(rates["pimaxexcess"]))
+            {
+                TermExcess = Convert.ToInt32(rates["pimaxexcess"]);
+            }
 
-            //TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
+            TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit250k, TermExcess);
             termsl250klimitoption.TermLimit = TermLimit250k;
             termsl250klimitoption.Premium = TermPremium250k;
@@ -139,7 +168,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl250klimitoption.DateDeleted = null;
             termsl250klimitoption.DeletedBy = null;
 
-            //TermPremium350k = GetPremiumFor(rates, feeincome, TermLimit350k);
+            TermPremium350k = GetPremiumFor(rates, feeincome, TermLimit350k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl350klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit350k, TermExcess);
             termsl350klimitoption.TermLimit = TermLimit350k;
             termsl350klimitoption.Premium = TermPremium350k;
@@ -149,7 +178,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl350klimitoption.DateDeleted = null;
             termsl350klimitoption.DeletedBy = null;
 
-            //TermPremium400k = GetPremiumFor(rates, feeincome, TermLimit400k);
+            //TermPremium400k = GetPremiumFor(rates, feeincome, TermLimit400k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl400klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit400k, TermExcess);
             termsl400klimitoption.TermLimit = TermLimit400k;
             termsl400klimitoption.Premium = TermPremium400k;
@@ -159,7 +188,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl400klimitoption.DateDeleted = null;
             termsl400klimitoption.DeletedBy = null;
 
-            //TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k);
+            //TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit500k, TermExcess);
             termsl500klimitoption.TermLimit = TermLimit500k;
             termsl500klimitoption.Premium = TermPremium500k;
@@ -169,7 +198,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl500klimitoption.DateDeleted = null;
             termsl500klimitoption.DeletedBy = null;
 
-            //TermPremium600k = GetPremiumFor(rates, feeincome, TermLimit600k);
+            //TermPremium600k = GetPremiumFor(rates, feeincome, TermLimit600k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl600klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit600k, TermExcess);
             termsl600klimitoption.TermLimit = TermLimit600k;
             termsl600klimitoption.Premium = TermPremium600k;
@@ -179,7 +208,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl600klimitoption.DateDeleted = null;
             termsl600klimitoption.DeletedBy = null;
 
-            //TermPremium750k = GetPremiumFor(rates, feeincome, TermLimit750k);
+            //TermPremium750k = GetPremiumFor(rates, feeincome, TermLimit750k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl750klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit750k, TermExcess);
             termsl750klimitoption.TermLimit = TermLimit750k;
             termsl750klimitoption.Premium = TermPremium750k;
@@ -189,7 +218,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl750klimitoption.DateDeleted = null;
             termsl750klimitoption.DeletedBy = null;
 
-            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
             termsl1millimitoption.TermLimit = TermLimit1mil;
             termsl1millimitoption.Premium = TermPremium1mil;
@@ -199,7 +228,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl1millimitoption.DateDeleted = null;
             termsl1millimitoption.DeletedBy = null;
 
-            //TermPremium1andhalfmil = GetPremiumFor(rates, feeincome, TermLimit1andhalfmil);
+            //TermPremium1andhalfmil = GetPremiumFor(rates, feeincome, TermLimit1andhalfmil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl1andhalfmillimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1andhalfmil, TermExcess);
             termsl1andhalfmillimitoption.TermLimit = TermLimit1andhalfmil;
             termsl1andhalfmillimitoption.Premium = TermPremium1andhalfmil;
@@ -209,7 +238,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl1andhalfmillimitoption.DateDeleted = null;
             termsl1andhalfmillimitoption.DeletedBy = null;
 
-            //TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil);
+            //TermPremium2mil = GetPremiumFor(rates, feeincome, TermLimit2mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             termsl2millimitoption.TermLimit = TermLimit2mil;
             termsl2millimitoption.Premium = TermPremium2mil;
@@ -219,7 +248,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl2millimitoption.DateDeleted = null;
             termsl2millimitoption.DeletedBy = null;
 
-            //TermPremium2andhalfmil = GetPremiumFor(rates, feeincome, TermLimit2andhalfmil);
+            //TermPremium2andhalfmil = GetPremiumFor(rates, feeincome, TermLimit2andhalfmil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl2andhalfmillimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2andhalfmil, TermExcess);
             termsl2andhalfmillimitoption.TermLimit = TermLimit2andhalfmil;
             termsl2andhalfmillimitoption.Premium = TermPremium2andhalfmil;
@@ -229,7 +258,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl2andhalfmillimitoption.DateDeleted = null;
             termsl2andhalfmillimitoption.DeletedBy = null;
 
-            //TermPremium3mil = GetPremiumFor(rates, feeincome, TermLimit3mil);
+            //TermPremium3mil = GetPremiumFor(rates, feeincome, TermLimit3mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl3millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit3mil, TermExcess);
             termsl3millimitoption.TermLimit = TermLimit3mil;
             termsl3millimitoption.Premium = TermPremium3mil;
@@ -239,7 +268,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl3millimitoption.DateDeleted = null;
             termsl3millimitoption.DeletedBy = null;
 
-            //TermPremium4mil = GetPremiumFor(rates, feeincome, TermLimit4mil);
+            //TermPremium4mil = GetPremiumFor(rates, feeincome, TermLimit4mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl4millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit4mil, TermExcess);
             termsl4millimitoption.TermLimit = TermLimit4mil;
             termsl4millimitoption.Premium = TermPremium4mil;
@@ -249,7 +278,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl4millimitoption.DateDeleted = null;
             termsl4millimitoption.DeletedBy = null;
 
-            //TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil);
+            //TermPremium5mil = GetPremiumFor(rates, feeincome, TermLimit5mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             termsl5millimitoption.TermLimit = TermLimit5mil;
             termsl5millimitoption.Premium = TermPremium5mil;
@@ -259,7 +288,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl5millimitoption.DateDeleted = null;
             termsl5millimitoption.DeletedBy = null;
 
-            //TermPremium6mil = GetPremiumFor(rates, feeincome, TermLimit6mil);
+            //TermPremium6mil = GetPremiumFor(rates, feeincome, TermLimit6mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl6millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit6mil, TermExcess);
             termsl6millimitoption.TermLimit = TermLimit6mil;
             termsl6millimitoption.Premium = TermPremium6mil;
@@ -269,7 +298,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl6millimitoption.DateDeleted = null;
             termsl6millimitoption.DeletedBy = null;
 
-            //TermPremium8mil = GetPremiumFor(rates, feeincome, TermLimit8mil);
+            //TermPremium8mil = GetPremiumFor(rates, feeincome, TermLimit8mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl8millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit8mil, TermExcess);
             termsl8millimitoption.TermLimit = TermLimit8mil;
             termsl8millimitoption.Premium = TermPremium8mil;
@@ -279,7 +308,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl8millimitoption.DateDeleted = null;
             termsl8millimitoption.DeletedBy = null;
 
-            //TermPremium10mil = GetPremiumFor(rates, feeincome, TermLimit10mil);
+            //TermPremium10mil = GetPremiumFor(rates, feeincome, TermLimit10mil, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
             ClientAgreementTerm termsl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit10mil, TermExcess);
             termsl10millimitoption.TermLimit = TermLimit10mil;
             termsl10millimitoption.Premium = TermPremium10mil;
@@ -376,95 +405,106 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption)
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption, int termexcess, decimal schoolsactivitymoepercentage, decimal schoolsactivitynonmoepercentage)
         {
             decimal premiumoption = 0M;
+            decimal basepremium = 0M;
+            decimal excessdiscountrate = 0M;
+            decimal schoolloading = 0M;
+            decimal schoolloadingpremium = 0M;
+            decimal markupfee = 0M;
+            decimal minmarkupfee = 0M;
 
+            //Get the excess discount
+            if (termexcess >= 4000 && termexcess <= 5000)
+            {
+                excessdiscountrate = rates["piexcessdiscountrate4kto5k"];
+            } else if(termexcess > 5000 && termexcess <= 6000)
+            {
+                excessdiscountrate = rates["piexcessdiscountrate5kto6k"];
+            } else if (termexcess > 6000 && termexcess <= 7000)
+            {
+                excessdiscountrate = rates["piexcessdiscountrate6kto7k"];
+            } else if (termexcess > 7000 && termexcess <= 8000)
+            {
+                excessdiscountrate = rates["piexcessdiscountrate7kto8k"];
+            } else if (termexcess > 8000 && termexcess <= 9000)
+            {
+                excessdiscountrate = rates["piexcessdiscountrate8kto9k"];
+            } else if (termexcess > 9000 && termexcess <= 10000)
+            {
+                excessdiscountrate = rates["piexcessdiscountrate9kto10k"];
+            }
+
+            //Get the school activity loading
+            if ((schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) >= 0 && (schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) <= 5)
+            {
+                schoolloading = rates["pischoolactivityloadingunder5percentage"];
+            }
+            else if ((schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) > 5 && (schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) <= 20)
+            {
+                schoolloading = rates["pischoolactivityloading5to20percentage"];
+            }
+            else if ((schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) > 20 && (schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) <= 65)
+            {
+                schoolloading = rates["pischoolactivityloading20to65percentage"];
+            }
+            else if ((schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) > 65 && (schoolsactivitymoepercentage + schoolsactivitynonmoepercentage) <= 100)
+            {
+                schoolloading = rates["pischoolactivityloading65to100percentage"];
+            }
+            
             switch (limitoption)
             {
-                case 1000000:
+                case 250000:
                     {
-                        if (feeincome >= 0 && feeincome < 1000000)
+                        basepremium = rates["pi250klimitbasepremium"];
+                        minmarkupfee = rates["pi250klimitminmarkupfee"];
+                        if (feeincome >= 0 && feeincome <= 1000000)
                         {
-                            premiumoption = rates["pl1millimitincomeunder1milpremium"];
+                            premiumoption = rates["pi250klimitunder1milrate"] * feeincome;
                         }
-                        else if (feeincome >= 1000000 && feeincome < 3000000)
+                        else if (feeincome > 1000000 && feeincome <= 2000000)
                         {
-                            premiumoption = rates["pl1millimitincome1milto3milpremium"];
+                            premiumoption = (rates["pi250klimitunder1milrate"] * 1000000) + (rates["pi250klimit1milto2milrate"] * (feeincome - 1000000));
                         }
-                        else if (feeincome >= 3000000 && feeincome < 5000000)
+                        else if (feeincome > 2000000)
                         {
-                            premiumoption = rates["pl1millimitincome3milto5milpremium"];
+                            premiumoption = (rates["pi250klimitunder1milrate"] * 1000000) + (rates["pi250klimit1milto2milrate"] * 1000000) + rates["pi250klimitover2milrate"] * (feeincome - 2000000);
                         }
+                        premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
+                        schoolloadingpremium = premiumoption * schoolloading / 100;
+                        markupfee = ((premiumoption+ schoolloadingpremium)* rates["pimarkupfeerate"]/100 > minmarkupfee) ? (premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 : minmarkupfee;
+                        markupfee = (markupfee < rates["pimaxmarkupfee"]) ? markupfee : rates["pimaxmarkupfee"];
+                        premiumoption = premiumoption + schoolloadingpremium + markupfee;
                         break;
                     }
-                case 2000000:
+                case 350000:
                     {
-                        if (feeincome >= 0 && feeincome < 1000000)
+                        basepremium = rates["pi350klimitbasepremium"];
+                        minmarkupfee = rates["pi350klimitminmarkupfee"];
+                        if (feeincome >= 0 && feeincome <= 1000000)
                         {
-                            premiumoption = rates["pl2millimitincomeunder1milpremium"];
+                            premiumoption = rates["pi350klimitunder1milrate"] * feeincome;
                         }
-                        else if (feeincome >= 1000000 && feeincome < 3000000)
+                        else if (feeincome > 1000000 && feeincome <= 2000000)
                         {
-                            premiumoption = rates["pl2millimitincome1milto3milpremium"];
+                            premiumoption = (rates["pi350klimitunder1milrate"] * 1000000) + (rates["pi350klimit1milto2milrate"] * (feeincome - 1000000));
                         }
-                        else if (feeincome >= 3000000 && feeincome < 5000000)
+                        else if (feeincome > 2000000)
                         {
-                            premiumoption = rates["pl2millimitincome3milto5milpremium"];
+                            premiumoption = (rates["pi350klimitunder1milrate"] * 1000000) + (rates["pi350klimit1milto2milrate"] * 1000000) + rates["pi350klimitover2milrate"] * (feeincome - 2000000);
                         }
-                        break;
-                    }
-                case 3000000:
-                    {
-                        if (feeincome >= 0 && feeincome < 1000000)
-                        {
-                            premiumoption = rates["pl3millimitincomeunder1milpremium"];
-                        }
-                        else if (feeincome >= 1000000 && feeincome < 3000000)
-                        {
-                            premiumoption = rates["pl3millimitincome1milto3milpremium"];
-                        }
-                        else if (feeincome >= 3000000 && feeincome < 5000000)
-                        {
-                            premiumoption = rates["pl3millimitincome3milto5milpremium"];
-                        }
-                        break;
-                    }
-                case 4000000:
-                    {
-                        if (feeincome >= 0 && feeincome < 1000000)
-                        {
-                            premiumoption = rates["pl4millimitincomeunder1milpremium"];
-                        }
-                        else if (feeincome >= 1000000 && feeincome < 3000000)
-                        {
-                            premiumoption = rates["pl4millimitincome1milto3milpremium"];
-                        }
-                        else if (feeincome >= 3000000 && feeincome < 5000000)
-                        {
-                            premiumoption = rates["pl4millimitincome3milto5milpremium"];
-                        }
-                        break;
-                    }
-                case 5000000:
-                    {
-                        if (feeincome >= 0 && feeincome < 1000000)
-                        {
-                            premiumoption = rates["pl5millimitincomeunder1milpremium"];
-                        }
-                        else if (feeincome >= 1000000 && feeincome < 3000000)
-                        {
-                            premiumoption = rates["pl5millimitincome1milto3milpremium"];
-                        }
-                        else if (feeincome >= 3000000 && feeincome < 5000000)
-                        {
-                            premiumoption = rates["pl5millimitincome3milto5milpremium"];
-                        }
+                        premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
+                        schoolloadingpremium = premiumoption * schoolloading / 100;
+                        markupfee = ((premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 > minmarkupfee) ? (premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 : minmarkupfee;
+                        markupfee = (markupfee < rates["pimaxmarkupfee"]) ? markupfee : rates["pimaxmarkupfee"];
+                        premiumoption = premiumoption + schoolloadingpremium + markupfee;
                         break;
                     }
                 default:
                     {
-                        throw new Exception(string.Format("Can not calculate premium for PL"));
+                        throw new Exception(string.Format("Can not calculate premium for PI"));
                     }
             }
 
