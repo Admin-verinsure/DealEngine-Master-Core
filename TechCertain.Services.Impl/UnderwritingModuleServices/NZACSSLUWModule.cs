@@ -118,8 +118,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             termsl1millimitoption.DeletedBy = null;
 
             //Referral points per agreement
-            //Prior insurance
-            uwrfpriorinsurance(underwritingUser, agreement);
+
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -221,11 +220,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["sl250klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["sl250klimitunder6employeerate"] * 5) + (rates["sl250klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["sl250klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["sl250klimitunder6employeerate"] * 5) + (rates["sl250klimit6to10employeerate"] * 5) + rates["sl250klimitover10employeerate"] * (employeenumber - 10);
                                                     }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -239,11 +238,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["sl500klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["sl500klimitunder6employeerate"] * 5) + (rates["sl500klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["sl500klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["sl500klimitunder6employeerate"] * 5) + (rates["sl500klimit6to10employeerate"] * 5) + rates["sl500klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -257,11 +256,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["sl1millimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["sl1millimitunder6employeerate"] * 5) + (rates["sl1millimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["sl1millimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["sl1millimitunder6employeerate"] * 5) + (rates["sl1millimit6to10employeerate"] * 5) + rates["sl1millimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -274,34 +273,6 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
 
             return premiumoption;
         }
-
-        void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp2").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp3").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp4").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp5").First().Value == "true")
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
 
 
 

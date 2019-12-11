@@ -220,11 +220,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["el250klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["el250klimitunder6employeerate"] * 5) + (rates["el250klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["el250klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["el250klimitunder6employeerate"] * 5) + (rates["el250klimit6to10employeerate"] * 5) + rates["el250klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -238,11 +238,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["el500klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["el500klimitunder6employeerate"] * 5) + (rates["el500klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["el500klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["el500klimitunder6employeerate"] * 5) + (rates["el500klimit6to10employeerate"] * 5) + rates["el500klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -256,11 +256,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["el1millimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["el1millimitunder6employeerate"] * 5) + (rates["el1millimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["el1millimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["el1millimitunder6employeerate"] * 5) + (rates["el1millimit6to10employeerate"] * 5) + rates["el1millimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
