@@ -31,14 +31,6 @@ namespace TechCertain.Infrastructure.Tasking
             return task;
         }
 
-        public async Task<UserTask> CreateTaskForMilestone(User createdBy, Organisation createdFor, DateTime dueDate, Milestone milestone)
-        {
-            UserTask task = new UserTask(createdBy, createdFor, dueDate);
-            task.Milestone = milestone;
-            await _taskRespository.AddAsync(task);
-            return task;
-        }
-
         public async Task<List<UserTask>> GetAllTasksFor(Organisation organisation)
 		{
 			if (organisation == null)
@@ -75,9 +67,9 @@ namespace TechCertain.Infrastructure.Tasking
             await _taskRespository.AddAsync(task);			
 		}
 
-        public async Task<UserTask> GetUserTaskByMilestone(Milestone milestone, Activity activity)
+        public async Task<List<UserTask>> GetUserTasksByMilestone(Milestone milestone)
         {
-            return await _taskRespository.FindAll().FirstOrDefaultAsync(t => t.Milestone == milestone && t.Activity == activity);            
+            return await _taskRespository.FindAll().Where(t => t.Milestone == milestone).ToListAsync();            
         }
 
         public async Task UpdateUserTask(UserTask userTask)

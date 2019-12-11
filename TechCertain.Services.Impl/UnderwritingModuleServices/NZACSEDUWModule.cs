@@ -69,8 +69,15 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage500k = 0m;
 
             int TermExcess = 0;
-            int employeenumber = 5;
+            int employeenumber = 0;
             //Calculation
+            foreach (var uISSharedDataRoles in agreement.ClientInformationSheet.SharedDataRoles.Where(sdr => sdr.DateDeleted == null))
+            {
+                if (uISSharedDataRoles.Count > 0)
+                {
+                    employeenumber += uISSharedDataRoles.Count;
+                }
+            }
 
             //Return terms based on the limit options
 
@@ -151,7 +158,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
-
+            }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
             }
             return clientAgreement;
         }
@@ -195,11 +206,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["ed250klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed250klimitunder6employeerate"] * 5) + (rates["ed250klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["ed250klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed250klimitunder6employeerate"] * 5) + (rates["ed250klimit6to10employeerate"] * 5) + rates["ed250klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;
@@ -213,11 +224,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         }
                         else if (employeenumber > 5 && employeenumber <= 10)
                         {
-                            premiumoption = rates["ed500klimit6to10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed500klimitunder6employeerate"] * 5) + (rates["ed500klimit6to10employeerate"] * (employeenumber - 5));
                         }
                         else if (employeenumber > 10)
                         {
-                            premiumoption = rates["ed500klimitover10employeerate"] * employeenumber;
+                            premiumoption = (rates["ed500klimitunder6employeerate"] * 5) + (rates["ed500klimit6to10employeerate"] * 5) + rates["ed500klimitover10employeerate"] * (employeenumber - 10);
                         }
                         premiumoption = (premiumoption > minpremiumoption) ? premiumoption : minpremiumoption;
                         break;

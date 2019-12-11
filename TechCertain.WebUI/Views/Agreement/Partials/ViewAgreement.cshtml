@@ -4,6 +4,7 @@
         @Html.HiddenFor(m => m.ClientProgrammeId)
         @Html.HiddenFor(m => m.Sheetstatus)
 
+
         @if (Model.EditEnabled)
         {
             <div class="row padding-10">
@@ -29,7 +30,8 @@
 
         @if (Model.Advisory != null)
         {
-            <div class="container modal-lg" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+
+            <div class="container modal-lg" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -39,8 +41,8 @@
                             @Html.Raw(Model.Advisory)
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="Close()">Close</button>
-                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="Close()">Ok</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="advisoryModal" onclick="AdvisoryModelClose('advisoryModal')">Close</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="advisoryModal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
                         </div>
                     </div>
                 </div>
@@ -106,6 +108,7 @@
 
                 </section>
             </div>
+              
             <div class="row">
                 <section class="col col-3">
                     <strong>Policy End Date:</strong>
@@ -139,6 +142,7 @@
                 </section>
             </div>
         </fieldset>
+
         @if (!Model.IsMultipleOption)
         {
             <fieldset>
@@ -342,27 +346,25 @@
         }
         else
         {
-            <fieldset>
+           <fieldset>
 
-                <div class="row">
-                    <section class="col col-12 font-md">
-                        <strong>Cover Options</strong>
-                    </section>
-                </div>
+             <div class="row">
+                <section class="col col-12 font-md">
+                    <strong>Cover Options</strong>
+                 </section>
+             </div>
 
-                <div class="row">
+             <div class="row">
 
-                    <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+               <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
 
-                        <tr>
-                            <th class="text-center" width="10%"></th>
-                            <th class="text-center" width="20%">Risk Name</th>
-                            <th class="text-center" width="20%">Limit</th>
-                            <th class="text-center" width="20%">Excess</th>
-                            <th class="text-center" width="20%">Premium</th>
-                        </tr>
-
-
+                <tr>
+                    <th class="text-center" width="10%"></th>
+                    <th class="text-center" width="20%">Risk Name</th>
+                    <th class="text-center" width="20%">Limit</th>
+                    <th class="text-center" width="20%">Excess</th>
+                    <th class="text-center" width="20%">Premium</th>
+                </tr>
                         @foreach (var item in Model.MultiCoverOptions)
                         {
                             <tr class="clickable-row">

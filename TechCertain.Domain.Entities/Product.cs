@@ -91,6 +91,10 @@ namespace TechCertain.Domain.Entities
 
         public virtual bool IsMultipleOption { get; set; }
 
+        public virtual bool IsOptionalProduct { get; set; }
+
+        public virtual string OptionalProductRequiredAnswer { get; set; }
+
         protected Product() : base(null) { }
 
         protected Product(User createdBy)
@@ -101,6 +105,8 @@ namespace TechCertain.Domain.Entities
             Rules = new List<Rule>();
             EmailTemplates = new List<EmailTemplate>();
             Public = false;
+            IsMultipleOption = false;
+            IsOptionalProduct = false;
         }
 
         public Product(User createdBy, Guid creatorCompany, string name)

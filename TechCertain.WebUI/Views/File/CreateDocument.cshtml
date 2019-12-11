@@ -99,6 +99,7 @@
                                             </div>
 
                                         </div>
+                                    </div>
 
                                 </form>
                             </div>
@@ -112,17 +113,6 @@
 </div>
 
 @section pagespecific {
-    @*<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-        <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
-        <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-        <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="~/lib/popper.js/umd/popper.js"></script>*@
-
-    @*<script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-        <script src="~/lib/popper.js/umd/popper.js"></script>*@
-
 
     <script src="~/jquery/jquery.js"></script>
     <script src="~/jqueryui/jquery-ui.js"></script>
@@ -134,25 +124,7 @@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
-    @*<script src="https ://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ ckeditor.js"></script>*@
-    @*<script type="module" >
-        import Alignment from './@@ckeditor/ckeditor5-alignment/src/alignment';
 
-
-         let editor;// <--- ADDED
-        ClassicEditor
-    .create( document.querySelector( '#Content' ), {
-        plugins: [ Essentials, Paragraph, Bold, Italic, Alignment ],     // <--- MODIFIED
-        toolbar: [ 'bold', 'italic', 'alignment' ]                       // <--- MODIFIED
-    } )
-    .then( editor => {
-        console.log( 'Editor was initialized', editor );
-    } )
-    .catch( error => {
-        console.error( error.stack );
-    } );
-
-    </script>*@
     <script type="text/javascript">
 
 //// DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -248,34 +220,6 @@ $(document).ready(function () {
              }
          }
      });
-
-        @*$('#Submit').on('click', function () {
-        debugger;
-    	if (confirm("Are you sure you want to submit this document?"))
-    	{
-	        console.log("submitted!");
-
-			$.ajax({
-				type: "POST",
-				url: '@Url.Action("CreateDocument", "File")',
-				data: $("#wizard-1").serialize() // serializes the form's elements.
-			})
-	        .done(function (json) {
-	        	//var model = JSON.parse(json);
-                debugger;
-				$("#productAutoReview")
-				console.log(json);
-	        })
-                .fail(function (err, ajaxOptions, thrownError) {
-                    debugger;
-				alert("Unable to save." + err.responseText );
-				console.log(err);
-				console.log(ajaxOptions);
-				console.log(thrownError);
-	        });
-        }
-    });*@
-
 });
 
 

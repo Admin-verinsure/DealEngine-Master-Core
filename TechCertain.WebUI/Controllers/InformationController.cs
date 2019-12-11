@@ -81,7 +81,6 @@ namespace TechCertain.WebUI.Controllers
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
             IMapperSession<PolicyDocumentTemplate> documentRepository,
-            IMapperSession<Territory> territoryRepository,
             ISharedDataRoleService sharedDataRoleService,
             IMapperSession<ChangeReason> changeReasonRepository,
             IUnitOfWork unitOfWork,
@@ -1359,12 +1358,9 @@ namespace TechCertain.WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> EditInformation(Guid id)
-        {
-            //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
-
+        {            
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
-
             InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
 
             model.AnswerSheetId = sheet.Id;
@@ -1384,8 +1380,8 @@ namespace TechCertain.WebUI.Controllers
             //    Console.WriteLine(ex.Message);
             //}
             //model.ListProductName = productname;
+
             var user = await CurrentUser();
-            //add milestone process here
 
             string advisoryDesc = "";
             if (sheet.Status == "Not Started")
@@ -1393,8 +1389,8 @@ namespace TechCertain.WebUI.Controllers
                 var milestone = await _milestoneService.GetMilestoneByBaseProgramme(clientProgramme.BaseProgramme.Id);
                 if (milestone != null)
                 {
-                    var activity = await _activityService.GetActivityByName("Agreement Status - Not Started");
-                    var advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
+                    var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+                    var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
                     if (advisory != null)
                     {
                         advisoryDesc = advisory.Description;
@@ -1434,6 +1430,13 @@ namespace TechCertain.WebUI.Controllers
                         Value = sharedRoleTemplate.Id.ToString(),
                         Selected = true
                     });
+                    
+                    if(sharedRole.AdditionalRoleInformation != null)
+                    {
+                        sharedRoleViewModel.OtherProfessionId = sharedRole.AdditionalRoleInformation.OtherProfessionId;
+                    }
+
+                    sharedRoleViewModel.SharedDataRoles.Add(sharedRole);
                 }
             }
 
@@ -1459,11 +1462,10 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (Territory territory in sheet.RevenueData.Territories)
                     {
-                        var territoryTemplate = await _territoryService.GetTerritoryTemplateByName(territory.Location);
                         territoryTemplates.Add(new SelectListItem
                         {
-                            Value = territoryTemplate.Id.ToString(),
-                            Text = territoryTemplate.Location,
+                            Value = territory.TerritoryTemplateId.ToString(),
+                            Text = territory.Location,
                             Selected = true
                         });
                     }
@@ -1471,17 +1473,18 @@ namespace TechCertain.WebUI.Controllers
 
                 if (sheet.RevenueData.Activities.Count > 0)
                 {
-                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
+                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities.OrderBy(ba => ba.AnzsciCode))
                     {
-                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplateByCode(businessActivity.AnzsciCode);
                         businessActivityTemplates.Add(new SelectListItem
                         {
-                            Value = businessActivityTemplate.Id.ToString(),
-                            Text = businessActivityTemplate.Description,
+                            Value = businessActivity.BusinessActivityTemplate.ToString(),
+                            Text = businessActivity.Description,
                             Selected = true
                         });
                     }
                 }
+
+                revenueByActivityViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityInformation>(sheet.RevenueData.AdditionalActivityInformation);
                 revenueByActivityViewModel.TotalRevenue = sheet.RevenueData.TotalRevenue;
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
@@ -1496,7 +1499,7 @@ namespace TechCertain.WebUI.Controllers
                 });
             }
             
-            foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+            foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates.OrderBy(ba=>ba.AnzsciCode))
             {
                 businessActivityTemplates.Add(new SelectListItem
                 {
@@ -2376,11 +2379,12 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SaveSharedRoleTabOne(string[] SharedDataRoles, string ClientInformationSheetId)
         {
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            var user = await CurrentUser();
             sheet.SharedDataRoles.Clear();
             foreach (var id in SharedDataRoles)
             {
                 var template = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(id));
-                var newSharedRole = new SharedDataRole();
+                var newSharedRole = new SharedDataRole(user);
                 newSharedRole.Name = template.Name;
                 await _sharedDataRoleService.CreateSharedDataRole(newSharedRole);
                 sheet.SharedDataRoles.Add(newSharedRole);
@@ -2388,7 +2392,7 @@ namespace TechCertain.WebUI.Controllers
 
             await _clientInformationService.UpdateInformation(sheet);
 
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2409,8 +2413,48 @@ namespace TechCertain.WebUI.Controllers
                     }
                 }
             }
+
+            return Json("OK");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSharedRoleTabThree(IFormCollection form)
+        {
+            var user = await CurrentUser();
+            var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
+            var additionalRoleInformation = new AdditionalRoleInformation(user);
+            var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalRoleInformationTable"].ToString();
+            var FormString = serialisedAdditionalInformationTableFormString.Split('&');
+            if (sheet.SharedDataRoles.Count == 0)
+            {
+                throw new Exception("Please complete Activities Tab");
+            }
+
+            //loop through form
+            foreach (var questionFormString in FormString)
+            {
+                var questionSplit = questionFormString.Split("=");
+                switch (questionSplit[0])
+                {
+                    case "OtherProfessionId":
+                        additionalRoleInformation.OtherProfessionId = questionSplit[1];
+                        break;                    
+                    default:
+                        throw new Exception("Add more form question 'cases'");
+                }
+            }
             
-            return Ok();
+            foreach (var role in sheet.SharedDataRoles)
+            {
+                if(role.Name == "Other Professions")
+                {
+                    role.AdditionalRoleInformation = additionalRoleInformation;
+                    await _sharedDataRoleService.UpdateSharedRole(role);
+                }
+            }
+
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2459,7 +2503,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2490,7 +2534,8 @@ namespace TechCertain.WebUI.Controllers
                 {
                     AnzsciCode = businessActivityTemplate.AnzsciCode,
                     Classification = businessActivityTemplate.Classification,
-                    Description = businessActivityTemplate.Description                                       
+                    Description = businessActivityTemplate.Description,
+                    BusinessActivityTemplate = businessActivityTemplate.Id
                 };
 
                 if (!sheet.RevenueData.Activities.Contains(newBusinessActivity))
@@ -2502,7 +2547,7 @@ namespace TechCertain.WebUI.Controllers
             }
 
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2527,6 +2572,8 @@ namespace TechCertain.WebUI.Controllers
                 }
             }else
             {
+                Guid NZId = Guid.Empty;
+                var runningPercentage = 0;
                 foreach (var saveTerritory in sheet.RevenueData.Territories)
                 {
                     string[] tableRow = TableSerialised.Split('&');
@@ -2536,14 +2583,26 @@ namespace TechCertain.WebUI.Controllers
                         var territoryTemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(valueId[0]));
                         if (territoryTemplate.Location == saveTerritory.Location)
                         {
-                            saveTerritory.Pecentage = decimal.Parse(valueId[1]);
+                            var percentage = int.Parse(valueId[1]);
+                            runningPercentage += percentage;
+                            saveTerritory.Pecentage = percentage;
                             await _territoryService.UpdateTerritory(saveTerritory);
+                        }
+                        if(saveTerritory.Location == "NZ")
+                        {
+                            NZId = saveTerritory.Id;
                         }
                     }
                 }
+                if (runningPercentage != 100)
+                {
+                    var nzTerritory = await _territoryService.GetTerritoryById(NZId);
+                    nzTerritory.Pecentage = (100 - runningPercentage);
+                    await _territoryService.UpdateTerritory(nzTerritory);
+                }
             }
-            
-            return Ok();
+
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2571,7 +2630,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
 
         [HttpPost]
@@ -2580,10 +2639,15 @@ namespace TechCertain.WebUI.Controllers
             var user = await CurrentUser();
             var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
-            var additionalInformation = new AdditionalInformation(user);
-
+            var additionalInformation = new AdditionalActivityInformation(user);
             var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalInformationTable"].ToString();
             var FormString = serialisedAdditionalInformationTableFormString.Split('&');
+
+            if (sheet.RevenueData == null)
+            {
+                throw new Exception("Please complete Activities Tab");
+            }
+
             //loop through form
             foreach(var questionFormString in FormString)
             {
@@ -2628,11 +2692,10 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             
-            sheet.RevenueData.AdditionalInformation = additionalInformation;
+            sheet.RevenueData.AdditionalActivityInformation = additionalInformation;
             await _clientInformationService.UpdateInformation(sheet);
-            return Ok();
+            return Json("OK");
         }
-
 
         public async Task<InformationViewModel> GetInformationViewModel(Guid programmeId)
         {
@@ -2644,7 +2707,18 @@ namespace TechCertain.WebUI.Controllers
                 Sections = new List<InformationSectionViewModel>()
             };
             model.Name = programme.Name;
-            Product product = programme.Products.FirstOrDefault();
+            Product product = null;
+            if (programme.Products.Count > 1)
+            {
+                foreach (var prod in programme.Products.Where(progp => progp.IsMasterProduct))
+                {
+                    product = prod;
+                }
+            } else
+            {
+                product = programme.Products.FirstOrDefault();
+            }
+
             List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(product.Id);
             List<InformationSection> sections = new List<InformationSection>();
             foreach (var template in informationTemplate)

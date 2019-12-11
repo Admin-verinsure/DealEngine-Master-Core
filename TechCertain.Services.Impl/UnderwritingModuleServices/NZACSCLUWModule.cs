@@ -77,22 +77,32 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil = 0m;
 
             int TermExcess = 0;
-            decimal feeincome = 5;
+            decimal feeincome = 0;
             //Calculation
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
+                {
+                    if (uISTerritory.Location == "NZ") //NZ income only
+                    {
+                        feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
+                    }
+                }
+            }
 
             //Return terms based on the limit options
 
             TermExcess = 2500;
 
-            TermPremium100k = GetPremiumFor(rates, feeincome, TermLimit100k);
-            ClientAgreementTerm termsl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
-            termsl100klimitoption.TermLimit = TermLimit100k;
-            termsl100klimitoption.Premium = TermPremium100k;
-            termsl100klimitoption.Excess = TermExcess;
-            termsl100klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl100klimitoption.Brokerage = TermBrokerage100k;
-            termsl100klimitoption.DateDeleted = null;
-            termsl100klimitoption.DeletedBy = null;
+            //TermPremium100k = GetPremiumFor(rates, feeincome, TermLimit100k);
+            //ClientAgreementTerm termsl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
+            //termsl100klimitoption.TermLimit = TermLimit100k;
+            //termsl100klimitoption.Premium = TermPremium100k;
+            //termsl100klimitoption.Excess = TermExcess;
+            //termsl100klimitoption.BrokerageRate = agreement.Brokerage;
+            //termsl100klimitoption.Brokerage = TermBrokerage100k;
+            //termsl100klimitoption.DateDeleted = null;
+            //termsl100klimitoption.DeletedBy = null;
 
             TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
@@ -180,7 +190,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
-
+            }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
             }
             return clientAgreement;
         }

@@ -162,6 +162,7 @@
 
 <script type="text/javascript">
 
+    
          $(window).on("load", function () {
 
            var clientInformationSheet = $('#AnswerSheetId').val();
@@ -173,7 +174,7 @@
              data: postData
              })
                 .done(function (data) {
-             if (data != "") {
+             if (data != "" &&(data[0] != null && data[1] != null && data[2] != null) ) {
                 for (var item = 0; item < data.length; item++){
 
                   var arr = data[item];
@@ -206,7 +207,6 @@
                   alert("Unable to save.");
                 });
          });
-
 
     function DirectorsandOfficersLiabilityInsurance1Selected(DirectorsandOfficers) {
         debugger;

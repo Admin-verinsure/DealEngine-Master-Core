@@ -129,13 +129,10 @@
 
                     </div>
 
-
-
                 </div>
             </div>
 
             <button onclick="ValidateStatutory(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-            @*<button onclick="$('#StatutoryLiability1').val('');$('#StatutoryLiability2').val(''); event.preventDefault();" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
 
         </fieldset>
     </div>
@@ -143,20 +140,18 @@
 
 
 <script type="text/javascript">
-
-         $(window).on("load", function () {
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-
-
-            $.ajax({
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+        $.ajax({
      	// change back once mono decides to fix
              url: '@Url.Action("GetStatutoryLiability", "Information")',
              type: "POST",
              data: postData
              })
                 .done(function (data) {
-             if (data != "") {
+             if (data != "" &&
+                    (data[0] != null && data[1] != null)) {
                 for (var item = 0; item < data.length; item++){
 
                   var arr = data[item];
@@ -185,11 +180,7 @@
                 });
          });
 
-    
-    
     function StatutoryLiability1Selected(StatutoryLiability) {
-        debugger;
-
         var statutoryLiability = document.getElementById(StatutoryLiability);
         var vhh = statutoryLiability.options[statutoryLiability.selectedIndex].value;
 
@@ -281,7 +272,7 @@
         }
 
         if (validity) {
-            SaveStatutoryLiability(); 
+            SaveStatutoryLiability();
         }
     };
 

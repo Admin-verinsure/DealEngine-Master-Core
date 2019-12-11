@@ -1,5 +1,4 @@
 ﻿@model DashboardViewModel
-
 <!-- MAIN CONTENT -->
 <div id="content">
     <div class="modal fade" id="agreementsListModal" tabindex="-1" role="dialog">
@@ -32,7 +31,7 @@
         </div>
     </div>
     <!-- widget grid -->
-    <section id="widget-grid" class="">        
+    <section id="widget-grid" class="">
 
         <div class="row">
             <article class="container">
@@ -46,9 +45,7 @@
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                             <h2> Coming Up </h2>
                             <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
-
-                </div>-->
+                            </div>-->
                         </header>
                         <!-- widget div-->
                         <div>
@@ -56,7 +53,6 @@
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 There are currently no upcoming tasks.
                             </div>
-                            @*@Html.Bootstrap().Alert("There are currently no upcoming tasks").Style(AlertColor.Info)*@
                             <!-- widget edit box -->
                             <div class="jarviswidget-editbox">
                                 <div>
@@ -68,38 +64,6 @@
 
                             <div class="widget-body widget-hide-overflow no-padding">
                                 <!-- content goes here -->
-                                @*<form class="smart-form">
-                            <table class="table table-striped table-hover table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>Task</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><a href="~/Information/ViewInformation/3">Wellness & Health Associated Professionals Contract Renewal</a></td>
-                                        <td>15/11/2015</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);">Peter Smith WAHAP Renewal</a></td>
-                                        <td>17/11/2015</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);">John Doe - Motorcycle Renewal</a></td>
-                                        <td>22/11/2015</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><a href="javascript:void(0);">Billy Josh - Contents Policy Lapsing</a></td>
-                                        <td>25/11/2015</td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </form>*@
                                 <!-- end content -->
                             </div>
 
@@ -116,9 +80,7 @@
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                             <h2> Tasks </h2>
                             <!--<div class="widget-toolbar">
-                      add: non-hidden - to disable auto hide
-
-                </div>-->
+                            </div>-->
                         </header>
                         <!-- widget div-->
                         <div>
@@ -227,9 +189,9 @@
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                             <h2> Client Agreements</h2>
                             <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
+                                 add: non-hidden - to disable auto hide
 
-                </div>-->
+                            </div>-->
                         </header>
                         <!-- widget div-->
                         <div>
@@ -305,22 +267,22 @@
                                                     </td>
                                                     <td>
                                                         @*
-                            @foreach (var button in item.Buttons) {*@
+                                                            @foreach (var button in item.Buttons) {*@
                                                         @*@switch (Model.DisplayRole)
-                            {
-                                case "Broker":
-                                    <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
-                                   break;
-                                case "Client":*@
+                                                            {
+                                                                case "Broker":
+                                                                    <a class="btn btn-primary btn-xs" href="/Programme/Manage/@item.ProgrammeId"><i class="fa fa-search"></i> Manage</a>
+                                                                   break;
+                                                                case "Client":*@
                                                         <a class="btn btn-success btn-xs" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                         @*break;
-                            }*@
+                                                            }*@
                                                     </td>
                                                     @*<td>
-                            @foreach (var button in item.Buttons) {
-                            <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
-                            }
-                        </td>*@
+                                                            @foreach (var button in item.Buttons) {
+                                                            <a class="btn btn-primary btn-xs" href="@button.RedirectLink"><i class="@button.Classes"></i> @button.Text</a>
+                                                            }
+                                                        </td>*@
                                                 </tr>
                                             }
                                         </tbody>
@@ -341,9 +303,9 @@
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                             <h2> Broker/Underwriter Term Sheets </h2>
                             <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
+                                 add: non-hidden - to disable auto hide
 
-                </div>-->
+                            </div>-->
                         </header>
                         <!-- widget div-->
                         <div>
@@ -441,10 +403,10 @@
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                             <h2> Libraries </h2>
                             <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
+                                 add: non-hidden - to disable auto hide
 
 
-                </div>-->
+                            </div>-->
                         </header>
                         <!-- widget div-->
                         <div>
@@ -462,115 +424,135 @@
                                     <fieldset>
                                         <table class="table table-striped table-hover table-condensed">
                                             <tbody>
-                                                @* @if (Model.HasRole("CanEditProduct"))*@
-                                                @if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+
+                                                @if (User.HasClaim("ViewTerritories", "ViewTerritories"))
                                                 {
                                                     <tr>
                                                         <td>Territories</td>
                                                         <td>Territories</td>
                                                         <td><a class="btn btn-success btn-xs" href="/Product/CreateTerritory"><i class="fa fa-search"></i> View</a></td>
-
-                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewActivities", "ViewActivities"))
+                                                {
                                                     <tr>
                                                         <td>Activities</td>
                                                         <td>ANZSIC Codes</td>
                                                         <td><a class="btn btn-success btn-xs" href="/Programme/ActivityBuilder"><i class="fa fa-search"></i> View</a></td>
                                                     </tr>
+                                                }
+                                                @if (User.HasClaim("ViewEmploymentPrincipals", "ViewEmploymentPrincipals"))
+                                                {
                                                     <tr>
                                                         <td>Employment Principal & Staff Roles</td>
                                                         <td>Roles for Employment Liability Product Disclosure</td>
                                                         <td><a class="btn btn-success btn-xs" href="/Programme/SharedDataRoleBuilder"><i class="fa fa-search"></i> View</a></td>
                                                     </tr>
+                                                }
+                                                @if (User.HasClaim("ViewAddresses", "ViewAddresses"))
+                                                {
                                                     <tr>
                                                         <td>Addresses</td>
                                                         <td>Address API used </td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewManageDocuments", "ViewManageDocuments"))
+                                                {
                                                     <tr>
                                                         <td>Manage Documents</td>
                                                         <td>Certs, Schedules, Wording, Invoices</td>
                                                         <td><a class="btn btn-success btn-xs" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
-
                                                     </tr>
+                                                }
+                                                @if (User.HasClaim("ViewEmails", "ViewEmails"))
+                                                {
                                                     <tr>
                                                         <td>Emails</td>
                                                         <td>System and proggramme specific</td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewMarinas/FinancialInstitutions", "ViewMarinas/FinancialInstitutions"))
+                                                {
                                                     <tr>
                                                         <td>Financial Institutions</td>
                                                         <td>For selecting as Named Parties</td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewMilestones", "ViewMilestones"))
+                                                {
                                                     <tr>
                                                         <td>Milestones</td>
                                                         <td>Milestones</td>
                                                         <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
-
-                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> In Dev</a></td>*@
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewMotor", "ViewMotor"))
+                                                {
                                                     <tr>
                                                         <td>Motor</td>
                                                         <td>Motor API used   </td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                     </tr>
-
-
+                                                }
+                                                @if (User.HasClaim("ViewProducts", "ViewProducts"))
+                                                {
                                                     <tr>
                                                         <td>Products</td>
                                                         <td>Insurance Policies for adding to a programme   </td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Product/CreateNew"><i class="fa fa-search"></i> In Dev</a></td>*@
                                                     </tr>
-
-
+                                                }
+                                                @if (User.HasClaim("ViewSections", "ViewSections"))
+                                                {
                                                     <tr>
                                                         <td>Sections</td>
                                                         <td>Sections for the Client Information Sheet   </td>
                                                         <td><a class="btn btn-success btn-xs" href="/Information/GetProgrammes"><i class="fa fa-search"></i> View</a></td>
                                                     </tr>
-
-
+                                                }
+                                                @if (User.HasClaim("ViewSpecialTerms", "ViewSpecialTerms"))
+                                                {
                                                     <tr>
                                                         <td>Special Terms</td>
                                                         <td>Endorsements</td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                                        @*<td><a class="btn btn-success btn-xs disabled" href="/Policy/SectionBuilder"><i class="fa fa-search"></i> In Dev</a></td>*@
                                                     </tr>
+                                                }
+                                                @if (User.HasClaim("ViewRules", "ViewRules"))
+                                                {
                                                     <tr>
                                                         <td>Rules</td>
                                                         <td>Configure the Rules</td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
 
                                                     </tr>
+                                                }
+                                                @if (User.HasClaim("ViewUnderwritingRules", "ViewUnderwritingRules"))
+                                                {
                                                     <tr>
                                                         <td>Underwriting Rules</td>
                                                         <td>Underwriting Rules</td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewUsers", "ViewUsers"))
+                                                {
                                                     <tr>
                                                         <td>Users</td>
                                                         <td>User Management</td>
                                                         <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                     </tr>
-
+                                                }
+                                                @if (User.HasClaim("ViewWater", "ViewWater"))
+                                                {
                                                     <tr>
                                                         <td>Water</td>
                                                         <td>Water Location API used</td>
                                                         <td><a class="btn btn-succes btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                                     </tr>
-
                                                 }
                                             </tbody>
                                         </table>
@@ -593,9 +575,9 @@
                             <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
                             <h2> Admin </h2>
                             <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
+                                 add: non-hidden - to disable auto hide
 
-                </div>-->
+                            </div>-->
                         </header>
                         <!-- widget div-->
                         <div>

@@ -356,7 +356,11 @@
                 .done(function (data) {
                     debugger;
 
-                    if (data != "") {
+                   if (data != "" &&
+                    (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null &&
+                    data[5] != null && data[6] != null && data[7] != null && data[8] != null && data[9] != null &&
+                    data[10] != null)
+                ) {
                         for (var item = 0; item < data.length; item++){
 
                           var arr = data[item];
@@ -515,7 +519,7 @@
                            url: '@Url.Action("UpdateAnswer", "Information")',
                            type: "POST",
                            data: postData
-                       })
+             })
                            .done(function (data) {
 
                            })

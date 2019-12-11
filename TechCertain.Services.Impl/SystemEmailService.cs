@@ -78,9 +78,9 @@ namespace TechCertain.Services.Impl
             await _systemEmailRepository.UpdateAsync(systemEmailTemplate);
         }
 
-        public async Task<SystemEmail> GetEmailTemplateByMilestone(Milestone milestone, Activity activity)
+        public async Task<List<SystemEmail>> GetEmailTemplatesByMilestone(Milestone milestone)
         {
-            return await _systemEmailRepository.FindAll().FirstOrDefaultAsync(e => e.Milestone == milestone && e.Activity == activity);                        
+            return await _systemEmailRepository.FindAll().Where(e => e.Milestone == milestone).ToListAsync();                        
         }
     }
 }

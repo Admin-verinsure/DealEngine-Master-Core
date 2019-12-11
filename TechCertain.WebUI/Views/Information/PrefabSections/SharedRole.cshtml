@@ -40,15 +40,37 @@
 
                     <div class="input-group mb-3">
                         <table id="sharedRoleTable" class="table">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            </tbody>
+                            @if (Model.SharedRoleViewModel.SharedDataRoles.Count != 0)
+                            {
+                                <thead>
+                                    <tr>
+                                        @foreach (var sharedDataRole in Model.SharedRoleViewModel.SharedDataRoles)
+                                        {
+                                            <th scope="col">@sharedDataRole.Name</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        @foreach (var sharedDataRole in Model.SharedRoleViewModel.SharedDataRoles)
+                                        {
+                                            <th scope="row">
+                                                <input class="form-control" type="text" name="@sharedDataRole.Id" id="@sharedDataRole.Id" maxlength="3" value="@sharedDataRole.Count">
+                                            </th>
+                                        }
+                                    </tr>
+                                </tbody>
+                            }
                         </table>
                     </div>
 
                     <div class="input-group mb-3">
-                        <button class="btn-primary btn" onclick="SaveRoleTabTwo()">  Submit  </button>
+                        <div class="footer" id="submitTab1">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRoleSubmit" onclick="SaveRoleTabTwo()">
+                        </div>
+                        <div class="footer" id="additionalRoleInfomationBtn" style="display:none">
+                            <button class="btn-primary btn" onclick="SaveRoleTabTwo(true)">Next</button>
+                        </div>
                     </div>
 
                 </div>
@@ -56,19 +78,34 @@
         </div>
         <div id="sharedRoleTabs3" class="tab-content">
             <fieldset>
-                <div class="container-fluid">
-                    <form class="smart-form">
-                        <div class="form-group">
-                            <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
-                            <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control"></textarea>
-                        </div>
-                    </form>
+                @if (Model.SharedRoleViewModel.OtherProfessionId != null)
+                {
+                    <div class="container-fluid" id="additionalRoleInfomation">
+                        
+                            <div class="form-group">
+                                <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
+                                <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control" form="addtionalRoleInformationContainer">@Model.SharedRoleViewModel.OtherProfessionId</textarea>
+                            </div>
 
-                    <div class="input-group mb-3">
-                        <button class="btn-primary btn" onclick="SaveRoleTabThree()">  Submit  </button>
+                        <div class="input-group mb-3">
+                            <button class="btn-success btn" type="submit" onclick="SaveRoleTabThree()">  Submit  </button>
+                        </div>
                     </div>
 
-                </div>
+                }
+                else
+                {
+                    <div class="container-fluid" id="additionalRoleInfomation" style="display:none">
+                            <div class="form-group">
+                                <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
+                                <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control" form="addtionalRoleInformationContainer"></textarea>
+                            </div>
+
+                        <div class="input-group mb-3">
+                            <button class="btn-success btn" type="submit" onclick="SaveRoleTabThree()">  Submit  </button>
+                        </div>
+                    </div>
+                }
             </fieldset>
         </div>
     </div>
