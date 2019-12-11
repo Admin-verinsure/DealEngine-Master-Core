@@ -38,7 +38,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="EmployerLiabilityInsurance2" class="form-control rmv editable" name="EmployerLiabilityInsurance2">
+                                <select id="EmployerLiabilityInsurance2" onchange="EmployerLiabilityInsurance2Selected('EmployerLiabilityInsurance2')" class="form-control rmv editable" name="EmployerLiabilityInsurance2">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -49,6 +49,86 @@
                         </section>
 
                     </section>
+
+
+                    <div class="hidden" id="EmployersInsuranceSec">
+                        <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                        <br />
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    $ Amount of Cover:
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="EmployerLiabilityInsurance3" name="EmployerLiabilityInsurance3" placeholder="$ Amount of Cover" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerLiability3"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    When Lapsed:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="EmployerLiabilityInsurance4" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="EmployerLiabilityInsurance4" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerLiability4"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Name of Insurer:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="EmployerLiabilityInsurance5" name="EmployerLiabilityInsurance5" placeholder="Insurer Name" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerLiability5"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Retroactive date:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="EmployerLiabilityInsurance6" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="EmployerLiabilityInsurance6" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerLiability6"></p>
+
+                            </section>
+
+                        </section>
+
+                    </div>
 
 
 
@@ -75,6 +155,7 @@
              data: postData
              })
                 .done(function (data) {
+                debugger;
              if (data != "") {
                 for (var item = 0; item < data.length; item++){
 
@@ -86,6 +167,13 @@
 
                     } else {
                         $('#EmployerLiabilityInsurance2Sec').addClass('hidden');
+                    }
+
+                     if ($('#EmployerLiabilityInsurance2').val() == 'false') {
+                        $('#EmployersInsuranceSec').removeClass('hidden');
+
+                    } else {
+                        $('#EmployersInsuranceSec').addClass('hidden');
                     }
                 }
              };
@@ -99,7 +187,6 @@
 
      function ValidateEmployer() {
         event.preventDefault();
-
         var GLI1 = $('#EmployerLiabilityInsurance1').val();
         var GLI2 = $('#EmployerLiabilityInsurance2').val();
         var validity = true;
@@ -118,7 +205,24 @@
             }
         } else {
             $('#ValidateEmployerLiability2').html("<i></i>");
-        }
+         }
+
+          for (var index = 3; index <=6; index++) {
+                     var employerLiabilityInsurance = "#EmployerLiabilityInsurance" + index;
+                 var value = $(employerLiabilityInsurance).val();
+                 var validator = "#ValidateEmployerLiability" + index;
+
+                  if (value == "" && ($('#EmployerLiabilityInsurance2').val()=='false')) {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+
+          }
+
 
         if (validity) {
             SaveEmployerLiabilityInsurance(); 
@@ -139,16 +243,33 @@
         }
     }
 
+    function EmployerLiabilityInsurance2Selected(EmployerLiabilityInsurance) {
+        debugger;
 
+        var employerLiabilityInsurance = document.getElementById(EmployerLiabilityInsurance);
+
+        if (employerLiabilityInsurance.options[employerLiabilityInsurance.selectedIndex].value == "false") {
+            $('#EmployersInsuranceSec').removeClass('hidden');
+        } else {
+            $('#EmployerLiabilityInsurance3').val('');
+            $('#EmployerLiabilityInsurance4').val('');
+            $('#EmployerLiabilityInsurance5').val('');
+            $('#EmployerLiabilityInsurance6').val('');
+            $('#EmployersInsuranceSec').addClass('hidden');
+        }
+    }
+
+
+    
        function SaveEmployerLiabilityInsurance() {
             debugger;
-                   var EmployerLiability = new Array(2);
+                   var EmployerLiability = new Array(6);
 
                    for (var i = 0; i < EmployerLiability.length; i++) {
                        EmployerLiability[i] = new Array(2);
                    }
 
-            for (var i = 1; i <= 2; i++) {
+            for (var i = 1; i <= 6; i++) {
                 for (var j = 0; j < 2; j++) {
                     EmployerLiability[i-1][0] = "EmployerLiabilityInsurance" + i;
                 var employerLiability = "#EmployerLiabilityInsurance" + i;
@@ -175,3 +296,10 @@
         }
 </script>
 
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>

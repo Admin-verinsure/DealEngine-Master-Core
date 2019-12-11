@@ -17,12 +17,13 @@ namespace TechCertain.WebUI.Models.Agreement
         public DateTime? AcceptedDate { get; set; }
         public Boolean NextInfoSheet { get; set; }
         public string StartDate { get; set; }
-		public string EndDate { get; set; }
+        public string Sheetstatus { get; set; }
+        public string EndDate { get; set; }
         public string CurrencySymbol { get; set; }
 		public string AdministrationFee { get; set; }
         public IEnumerable<InsuranceInclusion> Inclusions { get; set; }
         public IEnumerable<InsuranceExclusion> Exclusions { get; set; }
-        public IEnumerable<NZACSCoverOptions> NZACSCoverOptions { get; set; }
+        public IEnumerable<MultiCoverOptions> MultiCoverOptions { get; set; }
         public IEnumerable<RiskPremiumsViewModel> RiskPremiums { get; set; }
 		public Guid InformationSheetId { get; set; }
 		public bool HasVehicles { get; set; }
@@ -61,11 +62,17 @@ namespace TechCertain.WebUI.Models.Agreement
    
     }
 
-    public class NZACSCoverOptions
+    public class MultiCoverOptions
     {
+        public Guid ProductId { get; set; }
+        public Guid TermId { get; set; }
         public string RiskName { get; set; }
+        public string isSelected { get; set; }
         public string Inclusion { get; set; }
         public string Exclusion { get; set; }
+        public string limit { get; set; }
+        public string excess { get; set; }
+        public string premium { get; set; }
         public string TotalPremium { get; set; }
     }
 

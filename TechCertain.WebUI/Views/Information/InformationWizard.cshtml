@@ -1117,9 +1117,7 @@
 @section pagespecific {
     <script>
         $(window).on("load", function () {
-            debugger;
             if ("@Model.Status" == "Submitted") {
-                debugger;
                 if (document.getElementById('fieldset') != null) {
                     //document.getElementById("fieldset").disabled = true;
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
@@ -1141,7 +1139,6 @@
                 data: postData
             })
                 .done(function (data) {
-                    debugger;
                     if (data != "") {
                         for (var item = 0; item < data.length; item++){
                             var arr = data[item];
@@ -1158,13 +1155,11 @@
                     };
                 })
                 .fail(function (a, s, d) {
-                    debugger;
                     alert("Unable to save.");
                 });
         });
 
         function CloseAdvisory() {
-            debugger;
             $('#modal').modal('hide');
         }
     </script>

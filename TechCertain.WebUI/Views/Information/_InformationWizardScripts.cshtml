@@ -108,6 +108,32 @@
                }
 
                $('#getAgreementModal').show();
+               debugger;
+                  if ($("#Sheetstatus").val() != "Started") {
+                       debugger;
+                       var progId = $('#ClientProgrammeId').val();
+                       var postData = {ProgrammeId: progId };
+
+                      $.ajax({
+                  // change back once mono decides to fix
+                         url: '@Url.Action("GetCoverOptions", "Information")',
+                         type: "POST",
+                         data: postData
+                      }).done(function (data) {
+                         debugger;
+                        if (data != "") {
+                          for (var item = 0; item < data.length; item++) {
+                              var arr = data[item];
+                              var count = 0;
+                              $('#' + arr[count]).val(arr[count + 1]);
+                          }
+                         };
+                      }).fail(function (a, s, d) {
+                            debugger;
+                            alert("Unable to save.");
+                      });
+
+                  }
 
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
@@ -129,7 +155,6 @@
                    });
            } else if (stepNumber === 1) {
                var status = $('#Status').val();
-               debugger;
                 if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                 }
                 else {
@@ -142,27 +167,55 @@
                var postdata = {
                      id : ID
                 }
-
                 $.ajax({
                    url: '@Url.Action("GetProductName", "Information")',
                    type: "POST",
                    data: postdata
-               })
-                    .done(function (data) {
+               }).done(function (data) {
                         debugger;
                         var prodname = data;
+                        var CoverOptions = new Array(prodname.length);
+                       
                         for (var i = 0; i < prodname.length; i++) {
                             var ProdName = prodname[i];
-                            var kk =$('input[name="Employers - General"]:checked').val();
-                            var Isboatexist =$('input[name=ProdName]:checked').val();
+                            var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
+                            var optionsselected = $(queryselector).val();
+                                    CoverOptions[i] = optionsselected;
                         }
-                        @*@foreach(var prod in prodname){
-                          var selectedBoatUseCategory = $('input[name=Model.ListProductName[i]]:checked').val();
-                        }*@
-                   })
-                   .fail(function (jqXHR, textStatus, errorThrown) {
-                       alert("There was an error getting your agreement.");
-                   });
+
+                          var progId = $('#ClientProgrammeId').val();
+                          var postData = { Answers: CoverOptions , ProgrammeId: progId };
+
+                           $.ajax({
+                             url: '@Url.Action("SaveCoverOptions", "Information")',
+                             type: "POST",
+                             data: postData
+                            })
+                           .done(function (data) {
+
+                           })
+                           .fail(function (a, s, d) {
+                               alert("Unable to save.");
+                           });
+
+
+                       @*var postData = { coverOptions: CoverOptions , covers: CoverOptions};
+                        $.ajax({
+                            url: '@Url.Action("SaveCoverOptions", "Information")',
+                            type: "POST",
+                            data: postdata
+                        }).done(function (data) {
+                                debugger;
+                                   alert("Cover Options saving");
+
+                            }).fail(function (jqXHR, textStatus, errorThrown) { 
+                                debugger;
+                              alert("There was an error saving Cover Options");
+                             });*@
+
+               }).fail(function (jqXHR, textStatus, errorThrown) { 
+                       alert("There was an error getting ProductName.");
+               });
 
 
 
@@ -317,7 +370,7 @@
     $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
     $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
     //$('.multiselect').style({width:20px});
-        $('.multiselect-container').css({ "width": "100%"});
+    $('.multiselect-container').css({ "width": "100%" });
 
       $('.multiselect').multiselect({
         includeSelectAllOption: true,
