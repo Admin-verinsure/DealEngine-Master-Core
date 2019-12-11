@@ -263,9 +263,11 @@ namespace TechCertain.WebUI.Models
         public SharedRoleViewModel()
         {
             SharedRoles = new List<SelectListItem>();
+            SharedDataRoles = new List<SharedDataRole>();
         }
         public string OtherProfessionId { get; set; }
         public IList<SelectListItem> SharedRoles { get; set; }
+        public IList<SharedDataRole> SharedDataRoles { get; set; }
     }
 
     public class BusinessActivityViewModel

@@ -1315,19 +1315,6 @@ namespace TechCertain.WebUI.Controllers
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
             model.Id = id;
-            //List<string> productname = new List<string>();
-            //try
-            //{
-            //    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption = true))
-            //    {
-            //        productname.Add(agreement.Product.Name);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            //model.ListProductName = productname;
             var user = await CurrentUser();
 
             string advisoryDesc = "";
@@ -1382,6 +1369,8 @@ namespace TechCertain.WebUI.Controllers
                     {
                         sharedRoleViewModel.OtherProfessionId = sharedRole.AdditionalRoleInformation.OtherProfessionId;
                     }
+
+                    sharedRoleViewModel.SharedDataRoles.Add(sharedRole);
                 }
             }
 
@@ -1407,11 +1396,10 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (Territory territory in sheet.RevenueData.Territories)
                     {
-                        var territoryTemplate = await _territoryService.GetTerritoryTemplateByName(territory.Location);
                         territoryTemplates.Add(new SelectListItem
                         {
-                            Value = territoryTemplate.Id.ToString(),
-                            Text = territoryTemplate.Location,
+                            Value = territory.TerritoryTemplateId.ToString(),
+                            Text = territory.Location,
                             Selected = true
                         });
                     }
@@ -1421,11 +1409,10 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities.OrderBy(ba => ba.AnzsciCode))
                     {
-                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplateByCode(businessActivity.AnzsciCode);
                         businessActivityTemplates.Add(new SelectListItem
                         {
-                            Value = businessActivityTemplate.Id.ToString(),
-                            Text = businessActivityTemplate.Description,
+                            Value = businessActivity.BusinessActivityTemplate.ToString(),
+                            Text = businessActivity.Description,
                             Selected = true
                         });
                     }
@@ -2473,7 +2460,8 @@ namespace TechCertain.WebUI.Controllers
                 {
                     AnzsciCode = businessActivityTemplate.AnzsciCode,
                     Classification = businessActivityTemplate.Classification,
-                    Description = businessActivityTemplate.Description                                       
+                    Description = businessActivityTemplate.Description,
+                    BusinessActivityTemplate = businessActivityTemplate.Id
                 };
 
                 if (!sheet.RevenueData.Activities.Contains(newBusinessActivity))
@@ -2510,6 +2498,8 @@ namespace TechCertain.WebUI.Controllers
                 }
             }else
             {
+                Guid NZId = Guid.Empty;
+                var runningPercentage = 0;
                 foreach (var saveTerritory in sheet.RevenueData.Territories)
                 {
                     string[] tableRow = TableSerialised.Split('&');
@@ -2519,10 +2509,22 @@ namespace TechCertain.WebUI.Controllers
                         var territoryTemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(valueId[0]));
                         if (territoryTemplate.Location == saveTerritory.Location)
                         {
-                            saveTerritory.Pecentage = decimal.Parse(valueId[1]);
+                            var percentage = int.Parse(valueId[1]);
+                            runningPercentage += percentage;
+                            saveTerritory.Pecentage = percentage;
                             await _territoryService.UpdateTerritory(saveTerritory);
                         }
+                        if(saveTerritory.Location == "NZ")
+                        {
+                            NZId = saveTerritory.Id;
+                        }
                     }
+                }
+                if (runningPercentage != 100)
+                {
+                    var nzTerritory = await _territoryService.GetTerritoryById(NZId);
+                    nzTerritory.Pecentage = (100 - runningPercentage);
+                    await _territoryService.UpdateTerritory(nzTerritory);
                 }
             }
 
@@ -2620,7 +2622,6 @@ namespace TechCertain.WebUI.Controllers
             await _clientInformationService.UpdateInformation(sheet);
             return Json("OK");
         }
-
 
         public async Task<InformationViewModel> GetInformationViewModel(Guid programmeId)
         {
