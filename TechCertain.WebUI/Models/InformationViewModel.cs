@@ -23,6 +23,7 @@ namespace TechCertain.WebUI.Models
         public string AgreementStatus { get; set; }
 
         public string Status { get; set; }
+        public string SheetStatus { get; set; }
         public string SectionView { get; set; }
         //public string UserRole { get; set; }
         public IEnumerable<String> UserRole { get; set; }

@@ -1,6 +1,10 @@
 ﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
 
     <div class="widget-body widget-hide-overflow">
+        @Html.HiddenFor(m => m.ClientProgrammeId)
+        @Html.HiddenFor(m => m.Sheetstatus)
+
+
         @if (Model.EditEnabled)
         {
             <div class="row padding-10">
@@ -26,6 +30,7 @@
 
         @if (Model.Advisory != null)
         {
+
             <div class="container modal-lg" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -103,6 +108,7 @@
 
                 </section>
             </div>
+              
             <div class="row">
                 <section class="col col-3">
                     <strong>Policy End Date:</strong>
@@ -137,146 +143,146 @@
             </div>
         </fieldset>
 
-        <fieldset>
-            <div class="row">
-                <section class="col col-12 font-md">
-                    <strong>Inclusions</strong>
-                </section>
-            </div>
-            <div class="row">
-                <section class="col col-3 font-md">
-                    <strong>Risk</strong>
-                </section>
-                <section class="col col-9 font-md">
-                    <strong>Terms</strong>
-                </section>
-
-            </div>
-            @foreach (var item in Model.Inclusions)
-            {
-                <div class="row">
-                    <section class="col col-3">
-                        @item.RiskName:
-                    </section>
-                    <section class="col col-9">
-                        @Html.Raw(@item.Inclusion)
-                    </section>
-                </div>
-
-            }
-
-            @if (Model.HasBoats && (Model.Boats.Count() > 0))
-            {
-                <!-- content goes here -->
-                <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
-
-                    <tr>
-                        <th class="text-center" width="13%">Vessel Name</th>
-                        <th class="text-center" width="13%">Vessel Make</th>
-                        <th class="text-center" width="13%">Vessel Model</th>
-                        <th class="text-center" width="13%">Vessel Sum Insured</th>
-                        <th class="text-center" width="13%">Vessel Excess</th>
-                    </tr>
-                    @foreach (var item in Model.BVTerms)
-                    {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half" width="13%" contenteditable="true" id="BoatName">
-                                @item.BoatName
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.BoatMake
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.BoatModel
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                        </tr>
-
-                    }
-                </table>
-
-            }
-
-            <div class="row">
-                &nbsp;<br />
-            </div>
-
-            @if (Model.HasVehicles && (Model.Vehicles.Count() > 0))
-            {
-                <!-- content goes here -->
-                <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
-                    <tr>
-                        <th class="text-center" width="13%">Trailer Registration</th>
-                        <th class="text-center" width="13%">Trailer Year</th>
-                        <th class="text-center" width="13%">Trailer Make</th>
-                        <th class="text-center" width="13%">Trailer Model</th>
-                        <th class="text-center" width="13%">Trailer Sum Insured</th>
-                    </tr>
-                    @foreach (var item in Model.Vehicles)
-                    {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Registration
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Year
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.Make
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.VehicleModel
-                            </td>
-                            <td class="pt-3-half" width="13%" contenteditable="true">
-                                @item.SumInsured.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-
-                        </tr>
-                    }
-                </table>
-
-            }
-
-        </fieldset>
-
-        <fieldset>
-            <div class="row">
-                <section class="col col-12 font-md">
-                    <strong>Exclusions</strong>
-                </section>
-            </div>
-
-            <div class="row">
-                <section class="col col-3 font-md">
-                    <strong>Risk</strong>
-                </section>
-                <section class="col col-9 font-md">
-                    <strong>Terms</strong>
-                </section>
-
-            </div>
-            @foreach (var item in Model.Exclusions)
-            {
-                <div class="row">
-                    <section class="col col-3">
-                        @item.RiskName:
-                    </section>
-                    <section class="col col-9">
-                        @Html.Raw(@item.Exclusion)
-                    </section>
-                </div>
-
-            }
-
-        </fieldset>
-
         @if (!Model.IsMultipleOption)
         {
+            <fieldset>
+                <div class="row">
+                    <section class="col col-12 font-md">
+                        <strong>Inclusions</strong>
+                    </section>
+                </div>
+                <div class="row">
+                    <section class="col col-3 font-md">
+                        <strong>Risk</strong>
+                    </section>
+                    <section class="col col-9 font-md">
+                        <strong>Terms</strong>
+                    </section>
+
+                </div>
+                @foreach (var item in Model.Inclusions)
+                {
+                    <div class="row">
+                        <section class="col col-3">
+                            @item.RiskName:
+                        </section>
+                        <section class="col col-9">
+                            @Html.Raw(@item.Inclusion)
+                        </section>
+                    </div>
+
+                }
+
+                @if (Model.HasBoats && (Model.Boats.Count() > 0))
+                {
+                    <!-- content goes here -->
+                    <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+
+                        <tr>
+                            <th class="text-center" width="13%">Vessel Name</th>
+                            <th class="text-center" width="13%">Vessel Make</th>
+                            <th class="text-center" width="13%">Vessel Model</th>
+                            <th class="text-center" width="13%">Vessel Sum Insured</th>
+                            <th class="text-center" width="13%">Vessel Excess</th>
+                        </tr>
+                        @foreach (var item in Model.BVTerms)
+                        {
+                            <tr class="clickable-row">
+                                <td class="pt-3-half" width="13%" contenteditable="true" id="BoatName">
+                                    @item.BoatName
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.BoatMake
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.BoatModel
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+
+                }
+
+                <div class="row">
+                    &nbsp;<br />
+                </div>
+
+                @if (Model.HasVehicles && (Model.Vehicles.Count() > 0))
+                {
+                    <!-- content goes here -->
+                    <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
+                        <tr>
+                            <th class="text-center" width="13%">Trailer Registration</th>
+                            <th class="text-center" width="13%">Trailer Year</th>
+                            <th class="text-center" width="13%">Trailer Make</th>
+                            <th class="text-center" width="13%">Trailer Model</th>
+                            <th class="text-center" width="13%">Trailer Sum Insured</th>
+                        </tr>
+                        @foreach (var item in Model.Vehicles)
+                        {
+                            <tr class="clickable-row">
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Registration
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Year
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.Make
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.VehicleModel
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true">
+                                    @item.SumInsured.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                </td>
+
+                            </tr>
+                        }
+                    </table>
+
+                }
+
+            </fieldset>
+
+            <fieldset>
+                <div class="row">
+                    <section class="col col-12 font-md">
+                        <strong>Exclusions</strong>
+                    </section>
+                </div>
+
+                <div class="row">
+                    <section class="col col-3 font-md">
+                        <strong>Risk</strong>
+                    </section>
+                    <section class="col col-9 font-md">
+                        <strong>Terms</strong>
+                    </section>
+
+                </div>
+                @foreach (var item in Model.Exclusions)
+                {
+                    <div class="row">
+                        <section class="col col-3">
+                            @item.RiskName:
+                        </section>
+                        <section class="col col-9">
+                            @Html.Raw(@item.Exclusion)
+                        </section>
+                    </div>
+
+                }
+
+            </fieldset>
+
             <fieldset>
                 <div class="row">
                     <section class="col col-12 font-md">
@@ -340,17 +346,17 @@
         }
         else
         {
-    <fieldset>
+           <fieldset>
 
-        <div class="row">
-            <section class="col col-12 font-md">
-                <strong>Cover Options</strong>
-            </section>
-        </div>
+             <div class="row">
+                <section class="col col-12 font-md">
+                    <strong>Cover Options</strong>
+                 </section>
+             </div>
 
-        <div class="row">
+             <div class="row">
 
-            <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+               <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
 
                 <tr>
                     <th class="text-center" width="10%"></th>
@@ -359,55 +365,39 @@
                     <th class="text-center" width="20%">Excess</th>
                     <th class="text-center" width="20%">Premium</th>
                 </tr>
+                        @foreach (var item in Model.MultiCoverOptions)
+                        {
+                            <tr class="clickable-row">
+                                <td>
+                                    <input type="radio" dirname=""
+                                           id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.RiskName
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.Inclusion
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.Exclusion
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.TotalPremium
+                                </td>
+                            </tr>
 
+                        }
 
-                @foreach (var item in Model.NZACSCoverOptions)
-                {
-                    <tr class="clickable-row">
-                        @*<td width="9%">
-                            <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal"
-                               data-riskname="@item.RiskName" data-inclusion="@item.Inclusion" data-exclusion="@item.Exclusion"
-                               data-totalPremium="@item.TotalPremium"><i class="fa fa-edit"> </i></a>
-                        </td>*@
-                        <td>
-                            @*<label class="radio-inline" style="width:10%;" id="@item.RiskName" value="@item.RiskName,@item.Inclusion,@item.Exclusion">
-                                <input onclick="CoverOptionsSelected()" type="radio" dirname=""
-                                       data-riskname="@item.RiskName" data-inclusion="@item.Inclusion" data-exclusion="@item.Exclusion"
-                                       data-totalPremium="@item.TotalPremium" name="InsuranceAttribute" value="Financial">Financial
-                            </label>*@
-                            <input type="radio" dirname=""
-                                   name="@item.RiskName" value="@item.Inclusion">
-                            @*<input onclick="CoverOptionsSelected()" type="radio" dirname=""
-                            name="@item.RiskName" value="@item.RiskName,@item.Inclusion,@item.Exclusion,@item.TotalPremium">*@
-                        </td>
+                        <tr>
+                            <td class="pt-3-half" width="15%">
+                                <label><input type="radio" dirname="" name="@Model.ProductName" value="None"> I don't want this cover</label>
+                            </td>
+                        </tr>
 
-                        <td class="pt-3-half" width="20%" contenteditable="true">
-                            @item.RiskName
-                        </td>
-                        <td class="pt-3-half" width="20%" contenteditable="true">
-                            @item.Inclusion
-                        </td>
-                        <td class="pt-3-half" width="20%" contenteditable="true">
-                            @item.Exclusion
-                        </td>
-                        <td class="pt-3-half" width="20%" contenteditable="true">
-                            @item.TotalPremium
-                        </td>
-                    </tr>
+                    </table>
+                </div>
 
-                }
-            </table>
-        </div>
-
-        <div class="row">
-            <section class="col col-3">
-                <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
-            </section>
-            <section class="col col-3">
-                @Model.AdministrationFee
-            </section>
-        </div>
-    </fieldset>
+            </fieldset>
 
         }
     </div>
@@ -417,8 +407,6 @@
 
 <!-- Edit Start Date -->
 <div id="getStartDate" style="width:350px;  margin-left:800px;" class="modal" role="dialog">
-
-    <!-- Modal content-->
 
     <div class="modal-content">
 
@@ -446,10 +434,7 @@
 
 
 <script>
-
-
-
-
+  
     $('#getStartDate').on('show.bs.modal', function (e) {
         debugger;
         $('.modal').css('width', '600px');
@@ -467,10 +452,6 @@
 
             function Close() {
             $("#modal").hide();
-    }
-
-    function CoverOptionsSelected() {
-
     }
 
     function dateChange() {

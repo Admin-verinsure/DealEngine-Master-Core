@@ -58,7 +58,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="GeneralLiabilityInsurance3" class="form-control rmv editable" name="GeneralLiabilityInsurance3">
+                                <select id="GeneralLiabilityInsurance3" onchange="GeneralLiabilityInsurance3Selected('GeneralLiabilityInsurance3')" class="form-control rmv editable" name="GeneralLiabilityInsurance3">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -70,6 +70,84 @@
 
                     </section>
 
+                    <div class="hidden" id="GeneralLiaInsuranceSec">
+                        <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                        <br />
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    $ Amount of Cover:
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="GeneralLiabilityInsurance4" name="GeneralLiabilityInsurance4" placeholder="$ Amount of Cover" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateGeneralLiabilityInsurance4"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    When Lapsed:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="GeneralLiabilityInsurance5" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="GeneralLiabilityInsurance5" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateGeneralLiabilityInsurance5"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Name of Insurer:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="GeneralLiabilityInsurance6" name="GeneralLiabilityInsurance6" placeholder="Insurer Name" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateGeneralLiabilityInsurance6"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Retroactive date:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="GeneralLiabilityInsurance7" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="GeneralLiabilityInsurance7" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateGeneralLiabilityInsurance7"></p>
+
+                            </section>
+
+                        </section>
+
+                    </div>
 
 
                 </div>
@@ -84,37 +162,47 @@
 
 <script type="text/javascript">
 
-    $(window).on("load", function () {
-        var clientInformationSheet = $('#AnswerSheetId').val();
-        var postData = { ClientInformationSheet: clientInformationSheet };
-        $.ajax({
-            url: '@Url.Action("GetGeneralLiability", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                if (data != "" &&
-                    (data[0] != null && data[1] != null && data[2] != null)
-                ) {
-                    for (var item = 0; item < data.length; item++){
-                        var arr = data[item];
-                        var count = 0;
-                        $('#' + arr[count]).val(arr[count + 1]);
-                        if ($('#GeneralLiabilityInsurance1').val() == 'true') {
-                            $('#GeneralLiabilityInsurance2Sec').removeClass('hidden');
-                            $('#GeneralLiabilityInsurance3Sec').removeClass('hidden');
-                        } else {
-                            $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
-                            $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
-                        }
-                    }
-                };
-            })
-            .fail(function (a, s, d) {
-                debugger;
-                alert("Unable to save.");
-            });
-    });
+        $(window).on("load", function () {
+
+           var clientInformationSheet = $('#AnswerSheetId').val();
+           var postData = {ClientInformationSheet : clientInformationSheet};
+            $.ajax({
+     	// change back once mono decides to fix
+             url: '@Url.Action("GetGeneralLiability", "Information")',
+             type: "POST",
+             data: postData
+             })
+                .done(function (data) {
+                  if (data != "" && (data[0] != null && data[1] != null && data[2] != null)) {
+                     for (var item = 0; item < data.length; item++){
+
+                       var arr = data[item];
+                       var count = 0;
+                       $('#' + arr[count]).val(arr[count + 1]);
+                       if ($('#GeneralLiabilityInsurance1').val() == 'true') {
+                        $('#GeneralLiabilityInsurance2Sec').removeClass('hidden');
+                        $('#GeneralLiabilityInsurance3Sec').removeClass('hidden');
+
+                       } else {
+                        $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
+                        $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
+
+                       }
+
+                       if ($('#GeneralLiabilityInsurance3').val() == 'false') {
+                        $('#GeneralLiaInsuranceSec').removeClass('hidden');
+                       } else {
+                        $('#GeneralLiaInsuranceSec').addClass('hidden');
+                       }
+                     }
+                  };
+
+                })
+                .fail(function (a, s, d) {
+                    debugger;
+                  alert("Unable to save.");
+                });
+         });
 
 
     function GeneralLiabilityInsurance1Selected(GeneralLiability) {
@@ -129,9 +217,29 @@
         } else {
             $('#GeneralLiabilityInsurance2').val('');
             $('#GeneralLiabilityInsurance3').val('');
+             $('#GeneralLiabilityInsurance4').val('');
+             $('#GeneralLiabilityInsurance5').val('');
+             $('#GeneralLiabilityInsurance6').val('');
+             $('#GeneralLiabilityInsurance7').val('');
             $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
             $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
 
+        }
+    }
+
+     function GeneralLiabilityInsurance3Selected(GeneralLiability) {
+        debugger;
+
+        var generalLiability = document.getElementById(GeneralLiability);
+
+        if (generalLiability.options[generalLiability.selectedIndex].value == "false") {
+            $('#GeneralLiaInsuranceSec').removeClass('hidden');
+        } else {
+             $('#GeneralLiabilityInsurance4').val('');
+             $('#GeneralLiabilityInsurance5').val('');
+             $('#GeneralLiabilityInsurance6').val('');
+             $('#GeneralLiabilityInsurance7').val('');
+             $('#GeneralLiaInsuranceSec').addClass('hidden');
         }
     }
 
@@ -167,6 +275,20 @@
             $('#ValidateGeneralLiabilityInsurance3').html("<i></i>");
         }
 
+           for (var index = 4; index <=7; index++) {
+                     var employerLiabilityInsurance = "#GeneralLiabilityInsurance" + index;
+                 var value = $(employerLiabilityInsurance).val();
+                 var validator = "#ValidateGeneralLiabilityInsurance" + index;
+
+                  if (value == "" && (GLI3=='false')) {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                  }
+           }
         if (validity) {
             SaveGeneralLiability(); 
         }
@@ -174,13 +296,13 @@
 
         function SaveGeneralLiability() {
             debugger;
-                   var GeneralLiability = new Array(3);
+                   var GeneralLiability = new Array(7);
 
                    for (var i = 0; i < GeneralLiability.length; i++) {
                        GeneralLiability[i] = new Array(2);
                    }
 
-            for (var i = 1; i <= 3; i++) {
+            for (var i = 1; i <= 7; i++) {
                 for (var j = 0; j < 2; j++) {
                     GeneralLiability[i-1][0] = "GeneralLiabilityInsurance" + i;
                 var generalLiability = "#GeneralLiabilityInsurance" + i;
@@ -206,18 +328,12 @@
     };
 
    
-
-    //function init() {
-    //    debugger;
-    //var count=5;
-    //var counter=setInterval(timer,1000);
-    //    function timer(){
-    //        count=count-1;
-    //        if(count==0){
-    //            alert("Data has beed saved.")
-    //            return;
-    //        } 
-    //    }
-    //};
 </script>
 
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>

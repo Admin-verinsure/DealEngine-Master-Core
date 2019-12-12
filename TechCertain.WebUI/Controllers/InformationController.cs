@@ -52,6 +52,8 @@ namespace TechCertain.WebUI.Controllers
         IClientInformationAnswerService _clientInformationAnswer;
         IMapperSession<InformationSection> _informationSectionRepository;
         IMapperSession<ChangeReason> _changeReasonRepository;
+        IMapperSession<ClientAgreementTerm> _clientAgreementTermRepository;
+
 
         public InformationController(
             IActivityService activityService,
@@ -74,6 +76,7 @@ namespace TechCertain.WebUI.Controllers
             IReferenceService referenceService,
             IProductService productService,
             ITaskingService taskingService,
+            IMapperSession<ClientAgreementTerm>  clientAgreementTermRepository,
             IMapperSession<RevenueByActivity> revenueByActivityRespository,
             IMapperSession<Organisation> organisationRepository,
             IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
@@ -104,6 +107,7 @@ namespace TechCertain.WebUI.Controllers
             _clientInformationAnswer = clientInformationAnswer;
             _informationTemplateService = informationTemplateService;
             _clientAgreementService = clientAgreementService;
+            _clientAgreementTermRepository = clientAgreementTermRepository;
             _clientAgreementTermService = clientAgreementTermService;
             _clientAgreementMVTermService = clientAgreementMVTermService;
             _clientAgreementRuleService = clientAgreementRuleService;
@@ -121,6 +125,7 @@ namespace TechCertain.WebUI.Controllers
             _documentRepository = documentRepository;
             _programmeService = programmeService;
             _unitOfWork = unitOfWork;
+
             _informationSectionRepository = informationSectionRepository;
             _mapper = mapper;
             _emailService = emailService;
@@ -1305,6 +1310,52 @@ namespace TechCertain.WebUI.Controllers
             return Json(productname);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SaveCoverOptions(string[] Answers, Guid ProgrammeId)
+        {
+            try
+            {
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    foreach (var option in Answers)
+                    {
+                       ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
+                        List<ClientAgreementTerm> listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Id== Guid.Parse(option)).ToList();
+                        foreach (var term in listClientAgreementerm)
+                        {
+                            term.Bound = true;
+                            await uow.Commit();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+            return Json(true);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCoverOptions(Guid ProgrammeId)
+        {
+            List<ClientAgreementTerm> listClientAgreementerm = new List<ClientAgreementTerm>();
+            try
+            {
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                     listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Bound == true).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return Json(listClientAgreementerm);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> EditInformation(Guid id)
         {            
@@ -1315,6 +1366,21 @@ namespace TechCertain.WebUI.Controllers
             model.AnswerSheetId = sheet.Id;
             model.IsChange = sheet.IsChange;
             model.Id = id;
+            model.SheetStatus = sheet.Status;
+            //List<string> productname = new List<string>();
+            //try
+            //{
+            //    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption = true))
+            //    {
+            //        productname.Add(agreement.Product.Name);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            //model.ListProductName = productname;
+
             var user = await CurrentUser();
 
             string advisoryDesc = "";
@@ -1778,12 +1844,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDNO(Guid ClientInformationSheet)
         {
-            String[][] DNOAnwers = new String[11][];
+            String[][] DNOAnwers = new String[15][];
             var count = 0;
             String[] DNOItem;
             foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DNO1" || c.ItemName == "DNO2" || c.ItemName == "DNO3"
                                                                                                                                                           || c.ItemName == "DNO4" || c.ItemName == "DNO5" || c.ItemName == "DNO6" || c.ItemName == "DNO7"
-                                                                                                                                                          || c.ItemName == "DNO8" || c.ItemName == "DNO9" || c.ItemName == "DNO10" || c.ItemName == "DNO11")))
+                                                                                                                                                          || c.ItemName == "DNO8" || c.ItemName == "DNO9" || c.ItemName == "DNO10" || c.ItemName == "DNO11"
+                                                                                                                                                          || c.ItemName == "DNO12" || c.ItemName == "DNO13" || c.ItemName == "DNO14" || c.ItemName == "DNO15")))
             {
                 DNOItem = new String[2];
 
@@ -1803,10 +1870,11 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStatutoryLiability(Guid ClientInformationSheet)
         {
-            String[][] GeneralLiabilityAnwers = new String[2][];
+            String[][] GeneralLiabilityAnwers = new String[6][];
             var count = 0;
             String[] GeneralLiability;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "StatutoryLiability1" || c.ItemName == "StatutoryLiability2")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "StatutoryLiability1" || c.ItemName == "StatutoryLiability2" || c.ItemName == "StatutoryLiability3" 
+                                                                                                                                                      || c.ItemName == "StatutoryLiability4" || c.ItemName == "StatutoryLiability5" || c.ItemName == "StatutoryLiability6")))
             {
                 GeneralLiability = new String[2];
 
@@ -1826,12 +1894,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetProfessionalIdemnity(Guid ClientInformationSheet)
         {
-            String[][] ProfessionalIndemnityAnswer = new String[6][];
+            String[][] ProfessionalIndemnityAnswer = new String[11][];
             var count = 0;
             String[] ProfessionalIndemnity;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1") || (c.ItemName == "ProfessionalIndemnity2")
-                                                                                                                                || (c.ItemName == "ProfessionalIndemnity3") || (c.ItemName == "ProfessionalIndemnity4")
-                                                                                                                                || (c.ItemName == "ProfessionalIndemnity5") || (c.ItemName == "ProfessionalIndemnity6")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1") || (c.ItemName == "ProfessionalIndemnity2") || (c.ItemName == "ProfessionalIndemnity11")
+                                                                                                                                || (c.ItemName == "ProfessionalIndemnity3") || (c.ItemName == "ProfessionalIndemnity4") || (c.ItemName == "ProfessionalIndemnity5") || (c.ItemName == "ProfessionalIndemnity10")
+                                                                                                                                || (c.ItemName == "ProfessionalIndemnity6") || (c.ItemName == "ProfessionalIndemnity7") || (c.ItemName == "ProfessionalIndemnity8") || (c.ItemName == "ProfessionalIndemnity9")))
             {
                 ProfessionalIndemnity = new String[2];
                 for (var i = 0; i < 1; i++)
@@ -1848,10 +1916,12 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetEmployerLiability(Guid ClientInformationSheet)
         {
-            String[][] GeneralLiabilityAnwers = new String[2][];
+            String[][] GeneralLiabilityAnwers = new String[6][];
             var count = 0;
             String[] GeneralLiability;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerLiabilityInsurance1" || c.ItemName == "EmployerLiabilityInsurance2")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerLiabilityInsurance1" || c.ItemName == "EmployerLiabilityInsurance2"
+                                                                                                                                                     || c.ItemName == "EmployerLiabilityInsurance3" || c.ItemName == "EmployerLiabilityInsurance4"
+                                                                                                                                                     || c.ItemName == "EmployerLiabilityInsurance5" || c.ItemName == "EmployerLiabilityInsurance6")))
             {
                 GeneralLiability = new String[2];
 
@@ -1872,10 +1942,12 @@ namespace TechCertain.WebUI.Controllers
              [HttpPost]
         public async Task<IActionResult> GetEmployerPracticesLiability(Guid ClientInformationSheet)
         {
-            String[][] GeneralLiabilityAnwers = new String[2][];
+            String[][] GeneralLiabilityAnwers = new String[6][];
             var count = 0;
             String[] GeneralLiability;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerPracticesLiability1" || c.ItemName == "EmployerPracticesLiability2")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "EmployerPracticesLiability1" || c.ItemName == "EmployerPracticesLiability2"
+                                                                                                                                                     ||c.ItemName == "EmployerPracticesLiability3" || c.ItemName == "EmployerPracticesLiability4"
+                                                                                                                                                     ||c.ItemName == "EmployerPracticesLiability5" || c.ItemName == "EmployerPracticesLiability6")))
             {
                 GeneralLiability = new String[2];
 
@@ -1895,10 +1967,11 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetGeneralLiability(Guid ClientInformationSheet)
         {
-            String[][] GeneralLiabilityAnwers = new String[3][];
+            String[][] GeneralLiabilityAnwers = new String[7][];
             var count = 0;
             String[] GeneralLiability;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "GeneralLiabilityInsurance1" || c.ItemName == "GeneralLiabilityInsurance2" || c.ItemName == "GeneralLiabilityInsurance3")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "GeneralLiabilityInsurance1" || c.ItemName == "GeneralLiabilityInsurance2" || c.ItemName == "GeneralLiabilityInsurance3"
+                                                                                                                                                     || c.ItemName == "GeneralLiabilityInsurance4" || c.ItemName == "GeneralLiabilityInsurance5" || c.ItemName == "GeneralLiabilityInsurance6" || c.ItemName == "GeneralLiabilityInsurance7")))
 
             {
                 GeneralLiability = new String[2];
@@ -1921,10 +1994,11 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDirectorsandOfficersLiability(Guid ClientInformationSheet)
         {
-            String[][] GeneralLiabilityAnwers = new String[3][];
+            String[][] GeneralLiabilityAnwers = new String[7][];
             var count = 0;
             String[] GeneralLiability;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DirectorsandOfficers1" || c.ItemName == "DirectorsandOfficers2" || c.ItemName == "DirectorsandOfficers3")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "DirectorsandOfficers1" || c.ItemName == "DirectorsandOfficers2" || c.ItemName == "DirectorsandOfficers3"
+                                                                                                                                                     || c.ItemName == "DirectorsandOfficers4" || c.ItemName == "DirectorsandOfficers5" || c.ItemName == "DirectorsandOfficers6" || c.ItemName == "DirectorsandOfficers7")))
 
             {
                 GeneralLiability = new String[2];

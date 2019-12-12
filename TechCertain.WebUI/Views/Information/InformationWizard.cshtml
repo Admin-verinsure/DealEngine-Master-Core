@@ -1160,10 +1160,14 @@
                     };
                 })
                 .fail(function (a, s, d) {
-                    debugger;
                     alert("Unable to save.");
                 });
         });
+
+        function CloseAdvisory() {
+            $('#modal').modal('hide');
+        }
+
     </script>
     @await Html.PartialAsync("_InformationWizardScripts")
     
