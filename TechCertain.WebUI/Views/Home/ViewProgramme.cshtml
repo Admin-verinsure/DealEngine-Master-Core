@@ -62,16 +62,16 @@
                                         <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
                                         <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
                                         <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                            <div class="btn-group btn-secondary" role="group" aria-label="Basic example">
                                                 @if (item.Status.StartsWith("Bound"))
                                                 {
                                                     @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
                                                     @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
-                                                    <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
+                                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
                                                     @*<a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>*@
                                                     if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                     {
-                                                        <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                        <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
                                                     }
                                                     if (item.NextInfoSheet == false)
                                                     {
@@ -83,24 +83,24 @@
                                                 }
                                                 else if (item.Status == "Started")
                                                 {
-                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                    <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
                                                 }
                                                 else if (item.Status.StartsWith("Submitted"))
                                                 {
-                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                    <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
                                                     if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                     {
-                                                        <a class="btn btn-primary btn-xs" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
+                                                        <a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
                                                     }
                                                     if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
                                                     {
-                                                        <a class="btn btn-primary btn-xs" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                        <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
                                                     }
                                                 }
                                                 else if (item.Status == "Not Started")
                                                 {
                                                     //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                    <a class="btn btn-primary btn-xs" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                    <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
                                                 }
                                             </div>
                                         </td>

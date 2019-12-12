@@ -1948,6 +1948,7 @@ function showAccordionPanel(id, panelNo) {
             var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var totalRevenue = $('#totalRevenue').val();
+            debugger;
 
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId, TotalRevenue: totalRevenue };
             $.ajax({
@@ -2291,7 +2292,6 @@ function showAccordionPanel(id, panelNo) {
             totalSharedRevenue = 0;
             for (var k = 0; k < activities.length; k++) {
                 elementname = activities[k];
-                debugger;
                 value = parseInt(document.getElementById(elementname).value);
                 if (percentage_check(!value)) {
                     alert("Please the correct percentage.");
