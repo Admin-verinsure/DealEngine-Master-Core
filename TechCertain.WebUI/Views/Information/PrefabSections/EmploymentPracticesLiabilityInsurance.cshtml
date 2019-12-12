@@ -192,6 +192,11 @@
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "true") {
             $('#EmployerPracticesLiability2Sec').removeClass('hidden');
         } else {
+            $('#EmployerPracticesLiability2').val('');
+            $('#EmployerPracticesLiability3').val('');
+            $('#EmployerPracticesLiability4').val('');
+            $('#EmployerPracticesLiability5').val('');
+            $('#EmployerPracticesLiability6').val('');
             $('#EmployerPracticesLiability2Sec').addClass('hidden');
         }
     };
@@ -204,7 +209,11 @@
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "false") {
             $('#LiabilityInsuranceSec').removeClass('hidden');
         } else {
-            $('#LiabilityInsuranceSec').addClass('hidden');
+              $('#EmployerPracticesLiability3').val('');
+              $('#EmployerPracticesLiability4').val('');
+              $('#EmployerPracticesLiability5').val('');
+              $('#EmployerPracticesLiability6').val('');
+              $('#LiabilityInsuranceSec').addClass('hidden');
         }
     };
     

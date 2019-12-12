@@ -187,7 +187,12 @@
         if (statutoryLiability.options[statutoryLiability.selectedIndex].value == "true") {
             $('#StatutoryLiability2Sec').removeClass('hidden');
         } else {
-             $('#StatutoryLiability2').val('');
+            $('#StatutoryLiability2').val('');
+             $('#StatutoryLiability3').val('');
+            $('#StatutoryLiability4').val('');
+            $('#StatutoryLiability5').val('');
+            $('#StatutoryLiability6').val('');
+            $('#PreviousInsuranceSec').addClass('hidden');
             $('#StatutoryLiability2Sec').addClass('hidden');
         }
     }
@@ -205,7 +210,6 @@
             $('#StatutoryLiability4').val('');
             $('#StatutoryLiability5').val('');
             $('#StatutoryLiability6').val('');
-
             $('#PreviousInsuranceSec').addClass('hidden');
         }
     }

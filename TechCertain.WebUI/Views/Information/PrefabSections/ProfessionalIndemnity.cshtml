@@ -285,6 +285,10 @@
         if (professionalIndemnity.options[professionalIndemnity.selectedIndex].value == "false") {
             $('#ProfessionalInsuranceSec').removeClass('hidden');
         } else {
+            $('#ProfessionalIndemnity8').val('');
+            $('#ProfessionalIndemnity9').val('');
+            $('#ProfessionalIndemnity10').val('');
+            $('#ProfessionalIndemnity11').val('');
             $('#ProfessionalInsuranceSec').addClass('hidden');
         }
     }

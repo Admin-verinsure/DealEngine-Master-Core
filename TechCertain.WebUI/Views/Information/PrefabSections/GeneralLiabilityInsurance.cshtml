@@ -217,6 +217,10 @@
         } else {
             $('#GeneralLiabilityInsurance2').val('');
             $('#GeneralLiabilityInsurance3').val('');
+             $('#GeneralLiabilityInsurance4').val('');
+             $('#GeneralLiabilityInsurance5').val('');
+             $('#GeneralLiabilityInsurance6').val('');
+             $('#GeneralLiabilityInsurance7').val('');
             $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
             $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
 
@@ -231,7 +235,11 @@
         if (generalLiability.options[generalLiability.selectedIndex].value == "false") {
             $('#GeneralLiaInsuranceSec').removeClass('hidden');
         } else {
-            $('#GeneralLiaInsuranceSec').addClass('hidden');
+             $('#GeneralLiabilityInsurance4').val('');
+             $('#GeneralLiabilityInsurance5').val('');
+             $('#GeneralLiabilityInsurance6').val('');
+             $('#GeneralLiabilityInsurance7').val('');
+             $('#GeneralLiaInsuranceSec').addClass('hidden');
         }
     }
 
