@@ -355,12 +355,16 @@
              })
                 .done(function (data) {
                     debugger;
-
-                   if (data != "" &&
-                    (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null &&
-                    data[5] != null && data[6] != null && data[7] != null && data[8] != null && data[9] != null &&
-                    data[10] != null)
-                ) {
+                     var valid = "true";
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
+                  
                         for (var item = 0; item < data.length; item++){
 
                           var arr = data[item];
@@ -374,7 +378,7 @@
 
                         $('#CyberLiabilitySec').addClass('hidden');
                       }
-                    }     
+              }     
 
                      if ($('#DNO2').val() == "false") {
 
@@ -413,6 +417,10 @@
             $('#DNO9').val('');
             $('#DNO10').val('');
             $('#DNO11').val('');
+            $('#DNO12').val('');
+            $('#DNO13').val('');
+            $('#DNO14').val('');
+            $('#DNO15').val('');
                 $('#CyberLiabilitySec').addClass('hidden');
             }
 

@@ -256,9 +256,15 @@
              data: postData
              })
                 .done(function (data) {
-                    if (data != "" &&
-                        (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null && data[5] != null)
-                    ) {
+                     var valid = "true";
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
                         debugger;
                 for (var item = 0; item < data.length; item++){
                   var arr = data[item];
@@ -285,6 +291,10 @@
         if (professionalIndemnity.options[professionalIndemnity.selectedIndex].value == "false") {
             $('#ProfessionalInsuranceSec').removeClass('hidden');
         } else {
+            $('#ProfessionalIndemnity8').val('');
+            $('#ProfessionalIndemnity9').val('');
+            $('#ProfessionalIndemnity10').val('');
+            $('#ProfessionalIndemnity11').val('');
             $('#ProfessionalInsuranceSec').addClass('hidden');
         }
     }

@@ -77,7 +77,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             //Console.WriteLine (xml);
             _logger.LogDebug(xml);
             _logger.LogDebug(analyzeRequest.ToString());
-            var analyzeResponse = _httpClientService.Analyze(xml);
+            var analyzeResponseXmlStr = _httpClientService.Analyze(xml);
+
 
 			//UserStatus userStatus = analyzeResponse.identificationData.userStatus;
 			//ActionCode actionCode = analyzeResponse.riskResult.triggeredRule.actionCode;

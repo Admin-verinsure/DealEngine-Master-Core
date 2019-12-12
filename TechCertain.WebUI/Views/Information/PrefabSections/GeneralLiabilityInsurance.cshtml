@@ -173,7 +173,15 @@
              data: postData
              })
                 .done(function (data) {
-                  if (data != "" && (data[0] != null && data[1] != null && data[2] != null)) {
+                     var valid = "true";
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
                      for (var item = 0; item < data.length; item++){
 
                        var arr = data[item];
@@ -217,6 +225,10 @@
         } else {
             $('#GeneralLiabilityInsurance2').val('');
             $('#GeneralLiabilityInsurance3').val('');
+             $('#GeneralLiabilityInsurance4').val('');
+             $('#GeneralLiabilityInsurance5').val('');
+             $('#GeneralLiabilityInsurance6').val('');
+             $('#GeneralLiabilityInsurance7').val('');
             $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
             $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
 
@@ -231,7 +243,11 @@
         if (generalLiability.options[generalLiability.selectedIndex].value == "false") {
             $('#GeneralLiaInsuranceSec').removeClass('hidden');
         } else {
-            $('#GeneralLiaInsuranceSec').addClass('hidden');
+             $('#GeneralLiabilityInsurance4').val('');
+             $('#GeneralLiabilityInsurance5').val('');
+             $('#GeneralLiabilityInsurance6').val('');
+             $('#GeneralLiabilityInsurance7').val('');
+             $('#GeneralLiaInsuranceSec').addClass('hidden');
         }
     }
 

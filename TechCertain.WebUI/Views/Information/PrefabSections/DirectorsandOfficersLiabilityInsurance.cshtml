@@ -174,7 +174,15 @@
              data: postData
              })
                 .done(function (data) {
-             if (data != "" &&(data[0] != null && data[1] != null && data[2] != null) ) {
+                     var valid = "true";
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
                 for (var item = 0; item < data.length; item++){
 
                   var arr = data[item];
@@ -220,6 +228,10 @@
         } else {
             $('#DirectorsandOfficers2').val('');
             $('#DirectorsandOfficers3').val('');
+            $('#DirectorsandOfficers4').val('');
+            $('#DirectorsandOfficers5').val('');
+            $('#DirectorsandOfficers6').val('');
+            $('#DirectorsandOfficers7').val('');
             $('#DirectorsandOfficersLiabilityInsurance2Sec').addClass('hidden');
             $('#DirectorsandOfficersLiabilityInsurance3Sec').addClass('hidden');
 
@@ -234,6 +246,10 @@
             $('#DirectorsInsuranceSec').removeClass('hidden');
 
         } else {
+            $('#DirectorsandOfficers4').val('');
+            $('#DirectorsandOfficers5').val('');
+            $('#DirectorsandOfficers6').val('');
+            $('#DirectorsandOfficers7').val('');
             $('#DirectorsInsuranceSec').addClass('hidden');
 
         }

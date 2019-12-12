@@ -156,7 +156,15 @@
              })
                 .done(function (data) {
                     debugger;
-             if (data != ""if (data != "" && (data[0] != null && data[1] != null) ) {
+                    var valid = "true";
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
                 for (var item = 0; item < data.length; item++){
 
                   var arr = data[item];
@@ -192,6 +200,11 @@
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "true") {
             $('#EmployerPracticesLiability2Sec').removeClass('hidden');
         } else {
+            $('#EmployerPracticesLiability2').val('');
+            $('#EmployerPracticesLiability3').val('');
+            $('#EmployerPracticesLiability4').val('');
+            $('#EmployerPracticesLiability5').val('');
+            $('#EmployerPracticesLiability6').val('');
             $('#EmployerPracticesLiability2Sec').addClass('hidden');
         }
     };
@@ -204,7 +217,11 @@
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "false") {
             $('#LiabilityInsuranceSec').removeClass('hidden');
         } else {
-            $('#LiabilityInsuranceSec').addClass('hidden');
+              $('#EmployerPracticesLiability3').val('');
+              $('#EmployerPracticesLiability4').val('');
+              $('#EmployerPracticesLiability5').val('');
+              $('#EmployerPracticesLiability6').val('');
+              $('#LiabilityInsuranceSec').addClass('hidden');
         }
     };
     

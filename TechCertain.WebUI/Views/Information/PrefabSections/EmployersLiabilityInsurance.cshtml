@@ -145,7 +145,6 @@
 
 <script type="text/javascript">
 
-<<<<<<< HEAD
          $(window).on("load", function () {
            var clientInformationSheet = $('#AnswerSheetId').val();
            var postData = {ClientInformationSheet : clientInformationSheet};
@@ -156,8 +155,16 @@
              data: postData
              })
                 .done(function (data) {
-                debugger;
-             if (data != "" && (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null && data[5] != null)) {
+                    debugger;
+                     var valid = "true";
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+                    if (data != "" && valid == "true") {
                 for (var item = 0; item < data.length; item++){
 
                   var arr = data[item];
@@ -241,6 +248,11 @@
             $('#EmployerLiabilityInsurance2Sec').removeClass('hidden');
         } else {
             $('#EmployerLiabilityInsurance2').val('');
+             $('#EmployerLiabilityInsurance3').val('');
+            $('#EmployerLiabilityInsurance4').val('');
+            $('#EmployerLiabilityInsurance5').val('');
+            $('#EmployerLiabilityInsurance6').val('');
+            $('#EmployersInsuranceSec').addClass('hidden');
             $('#EmployerLiabilityInsurance2Sec').addClass('hidden');
         }
     }
