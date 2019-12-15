@@ -64,7 +64,7 @@
                 <section class="col col-9">
                     <label class="checkbox">
                         @Html.CheckBoxFor(m => m.UsesEGlobal)
-                        <i></i>I want this product to use EGlobal API.
+                        <i></i>I want this programme to use EGlobal API.
                     </label>
                 </section>
 
@@ -73,7 +73,16 @@
                 <section class="col col-9">
                     <label class="checkbox">
                         @Html.CheckBoxFor(m => m.IsPublic)
-                        <i></i>I want this product to be publicly available.
+                        <i></i>I want this programme to be publicly available.
+                    </label>
+                </section>
+
+                <section class="col col-3">
+                </section>
+                <section class="col col-9">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(m => m.StopAgreement)
+                        <i></i>I want this programme to suspend all agreements.
                     </label>
                 </section>
 

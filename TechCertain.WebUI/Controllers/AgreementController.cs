@@ -672,16 +672,6 @@ namespace TechCertain.WebUI.Controllers
                     }
                      insuranceExclusion.Add(new InsuranceExclusion { RiskName = agreement.Product.Name, Exclusion = "Excess: Options displayed below" });
 
-                    //insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
-                
-
-                //foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
-                //{
-
-                //    multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id , isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name,limit = term.TermLimit.ToString(), premium =term.Premium.ToString(), excess = term.Excess.ToString(), Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
-                //}
-
-
                 } else  {
                     foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
                     {
@@ -902,12 +892,24 @@ namespace TechCertain.WebUI.Controllers
 
                 model.InformationSheetId = answerSheet.Id;
 
+                model.ProgrammeStopAgreement = clientProgramme.BaseProgramme.StopAgreement;
+                model.ProgrammeStopAgreementMessage = clientProgramme.BaseProgramme.StopAgreementMessage;
+
                 models.Add(model);
             }
 
             ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
-            return PartialView("_ViewAgreementList", models);
+            ClientAgreement masterclientagreement = clientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault();
+            if (clientProgramme.BaseProgramme.StopAgreement && masterclientagreement.DateCreated >= clientProgramme.BaseProgramme.StopAgreementDateTime)
+            {
+                return PartialView("_ViewStopAgreementMessage", models);
+            } else
+            {
+                return PartialView("_ViewAgreementList", models);
+            }
+
+            
         }
 
         

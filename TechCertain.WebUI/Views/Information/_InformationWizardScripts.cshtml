@@ -5,7 +5,7 @@
 
 <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-<script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js" defer></script>
+@*<script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js" defer></script>*@
 <script src="~/lib/popper.js/umd/popper.js" defer></script>
 
 <script type="text/javascript">
@@ -81,7 +81,7 @@
                        $("[id='Claims Experience / Insurance History']").trigger("click");
                        return false;
 
-                   }
+                   }                  
 
                    var stringArray = new Array();
                    stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
@@ -645,6 +645,7 @@
             event.preventDefault();
         }
     });
+    
 
     $("#btnRemoveSubmit").click(function () {
         debugger;
@@ -1942,7 +1943,7 @@ function showAccordionPanel(id, panelNo) {
                 data: postData
             })
                 .done(function (Data) {
-                    $('#SharedRevenueTab1').show();
+                    $('#SharedRevenueTab2').show();
                 });
         }
     }
@@ -1966,7 +1967,7 @@ function showAccordionPanel(id, panelNo) {
         })
             .done(function (Data) {
                 BuildRevenuesTable('true');
-                $('#SharedRevenueTab2').show();
+                $('#SharedRevenueTab3').show();
             });
     }
 
@@ -1974,7 +1975,6 @@ function showAccordionPanel(id, panelNo) {
         event.preventDefault();
         table = document.getElementById("sharedRevenueTerritoriesTable");
         if (validateTableTerritory(table)) {
-            debugger;
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
@@ -1986,7 +1986,7 @@ function showAccordionPanel(id, panelNo) {
             })
                 .done(function (Data) {
                     BuildRevenuesTable('false');
-                    $('#SharedRevenueTab3').show();
+                    $('#SharedRevenueTab4').show();
                     var activitiesStr = GetActivitiesForRevenue('text');
                     activitiesStr.forEach(function (item, index) {
                         if (item.trim() === "Other Work not listed above" ||
@@ -2010,7 +2010,6 @@ function showAccordionPanel(id, panelNo) {
             var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var totalRevenue = $('#totalRevenue').val();
-            debugger;
 
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId, TotalRevenue: totalRevenue };
             $.ajax({
@@ -2019,31 +2018,34 @@ function showAccordionPanel(id, panelNo) {
                 data: postData
             })
                 .done(function (Data) {                    
-                    $('#SharedRevenueTab4').show();
+                    $('#SharedRevenueTab5').show();
                 });
 
             if (isSubmit == 'true') {
                 var activitiesStr = GetActivitiesForRevenue('text');
-                $('#SharedRevenueTab4').show();
+                $('#SharedRevenueTab5').show();
                 $('#additionalActivitySubmit').show();
-                    activitiesStr.forEach(function (item, index) {
-                        if (item.trim() === "Other Work not listed above") {
-                            $('#OtherActivities').show();                            
-                        }
-                        if (item.trim() === "Inspection Reports") {
-                            $('#InspectionReport').show();
-                        }
-                        if (item.trim() === "Valuations") {
-                            $('#Valuation').show();
-                        }
-                        if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
-                            $('#SchoolsDesignWork').show();
-                        }
-                        if (item.trim() === "Canterbury Earthquake Rebuild Work") {
-                           $('#CanterburyEarthquakeRebuildWork').show(); 
-                        }
-                    });
+                activitiesStr.forEach(function (item, index) {
+                    if (item.trim() === "Other Work not listed above") {
+                        $('#OtherActivities').show();
+                    }
+                    if (item.trim() === "Inspection Reports") {
+                        $('#InspectionReport').show();
+                    }
+                    if (item.trim() === "Valuations") {
+                        $('#Valuation').show();
+                    }
+                    if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
+                        $('#SchoolsDesignWork').show();
+                    }
+                    if (item.trim() === "Canterbury Earthquake Rebuild Work") {
+                        $('#CanterburyEarthquakeRebuildWork').show();
+                    }
+                });
                 SetCurrentTab('RevenueTabs5');
+            } else {
+                SetCurrentTab('RevenueTabs6');
+                BuildRevenueOverview();
             }
         }
     }
@@ -2052,15 +2054,48 @@ function showAccordionPanel(id, panelNo) {
         event.preventDefault();                       
         var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
-            $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (Data) {
-                    $('#SharedRevenueTab5').show();
-                });
+        var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
+
+        $.ajax({
+            url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (Data) {
+                SetCurrentTab('RevenueTabs6');
+                BuildRevenueOverview();
+            });
+    }
+
+    function CopyTableValues(currentTable, newTable) {
+        var inputTable = document.getElementById(currentTable);
+        var overViewTerTable = document.getElementById(newTable);
+        var arr = [];
+        var tableRow = inputTable.childNodes[1];
+
+        for (var i = 0; i < tableRow.childNodes.length; i++) {
+            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;            
+            arr.push(value);
+        }
+
+        overViewTerTable.innerHTML = document.getElementById(currentTable).innerHTML;
+        tableRow = overViewTerTable.childNodes[1];
+        for (var i = 0; i < tableRow.childNodes.length; i++) {
+            tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value = arr[i];
+        }
+
+    }
+
+    function BuildRevenueOverview() {
+        $('#SharedRevenueTab1').hide();
+        $('#SharedRevenueTab2').hide();
+        $('#SharedRevenueTab3').hide();
+        $('#SharedRevenueTab4').hide();
+        $('#SharedRevenueTab5').hide();
+
+        CopyTableValues("sharedRevenueTerritoriesTable", "ListSharedRevenueTerritories");
+        CopyTableValues("sharedRevenueActivityTable", "ListSharedRevenueActivities");
+        document.getElementById("SharedTotalRevenue").value = $('#totalRevenue').val();
     }
 
     function UpdateSharedRevenue() {
@@ -2212,20 +2247,25 @@ function showAccordionPanel(id, panelNo) {
         };
     };
 
-    function BuildRevenuesTable(TableType) {
-        var revenueTable;
-        var listc;
-        if (TableType == 'true') {            
+    function BuildRevenuesTable(TableType, Table) {
+        var revenueTable = Table;       
+        var listc = [ 'Breakdown' ];
+        if (TableType == 'true') {
             listc = [ 'Territory Breakdown' ];
-            revenueTable = $('#sharedRevenueTerritoriesTable');
-        } else {
+            if (typeof revenueTable === 'undefined') {
+                revenueTable = $('#sharedRevenueTerritoriesTable');
+            }
+        } else if(typeof revenueTable === 'undefined') {
              listc = [ 'Revenue Breakdown' ];
              revenueTable = $('#sharedRevenueActivityTable');
         }
-
+        debugger;
         if (revenueTable != null) {
         // clear previous table
-        revenueTable.empty();
+            if (revenueTable.className != "table") {
+                revenueTable.empty();
+            }
+        
         // create table sections
         var thead = $('<thead>');
         var tbody = $('<tbody>');
@@ -2359,6 +2399,7 @@ function showAccordionPanel(id, panelNo) {
                     alert("Please the correct percentage.");
                 }
                 totalSharedRevenue += value;
+                document.getElementById(elementname).value = value;
             }
             if (totalSharedRevenue != 100) {
                 //take user to the cell that doesnt calculate

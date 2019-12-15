@@ -11,6 +11,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate.MappingOverrides
         public void Override(AutoMapping<Programme> mapping)
         {
             mapping.Map(x => x.Declaration).Length(4000);
+            mapping.Map(x => x.StopAgreementMessage).Length(4000);
         }
     }
 }

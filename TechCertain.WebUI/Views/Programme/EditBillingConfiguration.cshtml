@@ -2,6 +2,19 @@
 
 <script src="https://www.jqueryscript.net/demo/Bootstrap-Dropdown-Replacement-Plugin-DDL/js/bootstrap-ddl.js"></script>
 
+@{
+    string EGlobalIsActiveOrNot = "";
+    if (Model.EGlobalIsActiveOrNot)
+    {
+        EGlobalIsActiveOrNot = @"EGlobal site is active";
+    }
+    else
+    {
+        EGlobalIsActiveOrNot = @"EGlobal site is inactive";
+    }
+
+}
+
 <!-- MAIN CONTENT -->
 <div id="content">
     <!-- Bread crumb is created dynamically -->
@@ -11,9 +24,10 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i>  
-                    <a href="~/Agreement/ViewAcceptedAgreement/@Model.clientprogramme.Id"> Agreement</a>
-                    > <span>Edit Billing Configuration
+                <i class="fa-fw fa fa-home"></i>
+                <a href="~/Agreement/ViewAcceptedAgreement/@Model.clientprogramme.Id"> Agreement</a>
+                > <span>
+                    Edit Billing Configuration
                 </span>
             </h1>
         </div>
@@ -26,128 +40,138 @@
     @Html.HiddenFor(m => m.Id)
 
     <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-6">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2> </h2>
-                    </header>
-                    @*<div class="row">*@
+<section id="widget-grid" class="">
 
-                    <section>
-                        <table class="table table-bordered table-striped table-hover table-condensed">
-                            <tbody>
+    <div class="row">
+        <article class="col-sm-12 col-md-12 col-lg-6">
+            <!-- new widget -->
+            <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                    <h2> </h2>
+                </header>
+                @*<div class="row">*@
 
-                                <tr>
+                <section>
+                    <table class="table table-bordered table-striped table-hover table-condensed">
+                        <tbody>
+                            <tr>
 
-                                    <td align="left">
-                                        <b>Client Number:</b>
-                                    </td>
+                                <td align="left">
+                                    <b>Eglobal status: </b>
+                                </td>
 
-                                    <td align="left">
-                                        <select class="browser-default custom-select custom-select-lg mb-3 col-sm-3" id="branch">
-                                            <option selected="selected" value="">-- Select here --</option>
-                                            <option value="AKL">AKL</option>
-                                            <option value="CHC">CHC</option>
-                                            <option value="DUN">DUN</option>
-                                            <option value="NAP">NAP</option>
-                                            <option value="NPL">NPL</option>
-                                            <option value="TGA">TGA</option>
-                                            <option value="WEL">WEL</option>
-                                        </select>
-                                        <div style="text-align:right" class="col-sm-5">
-                                            <input id="clientId" class="form-control" type="text">
-                                        </div>
-                                    </td>
-                                </tr>
+                                <td align="left">
+                                    @EGlobalIsActiveOrNot
+                                </td>
 
-                                <tr>
+                            </tr>
+                            <tr>
 
-                                    <td align="left">
-                                        <b>Contact Broker</b>
-                                    </td>
+                                <td align="left">
+                                    <b>Client Number:</b>
+                                </td>
 
-                                    <td align="left">
-                                        @Model.BrokerContactUser.FullName (@Model.BrokerContactUser.SalesPersonUserName)
-                                    </td>
+                                <td align="left">
+                                    <select class="browser-default custom-select custom-select-lg mb-3 col-sm-3" id="branch">
+                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option value="AKL">AKL</option>
+                                        <option value="CHC">CHC</option>
+                                        <option value="DUN">DUN</option>
+                                        <option value="NAP">NAP</option>
+                                        <option value="NPL">NPL</option>
+                                        <option value="TGA">TGA</option>
+                                        <option value="WEL">WEL</option>
+                                    </select>
+                                    <div style="text-align:right" class="col-sm-5">
+                                        <input id="clientId" class="form-control" type="text">
+                                    </div>
+                                </td>
+                            </tr>
 
-                                </tr>
-                                <tr>
+                            <tr>
 
-                                    <td align="left">
-                                        <b>Broker Branch</b>
-                                    </td>
+                                <td align="left">
+                                    <b>Contact Broker</b>
+                                </td>
 
-                                    <td align="left">
-                                        @Model.BrokerContactUser.DefaultOU.Name (@Model.BrokerContactUser.DefaultOU.EbixDepartmentCode)
-                                    </td>
+                                <td align="left">
+                                    @Model.BrokerContactUser.FullName (@Model.BrokerContactUser.SalesPersonUserName)
+                                </td>
 
-                                </tr>
-                                <tr>
+                            </tr>
+                            <tr>
 
-                                    <td align="left">
-                                        <b>Client Status</b>
-                                    </td>
+                                <td align="left">
+                                    <b>Broker Branch</b>
+                                </td>
 
-                                    <td style="align-content: center">
-                                        <div class="form-group drop-down-list">
-                                            <div class="col-sm-5" style="text-align: center">
-                                                <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
-                                                    <option selected="selected" value="">-- Select here --</option>
-                                                    <option value="New">New</option>
-                                                    <option value="Renew">Renew</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
+                                <td align="left">
+                                    @Model.BrokerContactUser.DefaultOU.Name (@Model.BrokerContactUser.DefaultOU.EbixDepartmentCode)
+                                </td>
 
-                                    <td align="left">
-                                        <b>Transaction Description</b>
-                                    </td>
+                            </tr>
+                            @*<tr>
 
-                                    <td align="left">
-                                        <div class="custom-control custom-radio">
-                                            <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="TransactionRadio">
-                                                <option selected="selected" value="">-- Select here --</option>
-                                                <option value="True">Yes</option>
-                                                <option value="False">No</option>
-                                            </select>
+            <td align="left">
+                <b>Client Status</b>
+            </td>
 
-                                            @*<input type="radio" class="custom-control-input" id="TransactionRadio" name="defaultExampleRadios">*@
-                                            <label class="custom-control-label" for="defaultUnchecked">Use custom transaction description</label>
-                                        </div>
-                                        <div class="form-group">
-                                            <textarea class="form-control" placeholder="Custom description" rows="5" id="TransactionComment"></textarea>
-                                        </div>
-                                    </td>
-
-                                </tr>
-                            </tbody>
-                        </table>
-
-                    </section>
+            <td style="align-content: center">
+                <div class="form-group drop-down-list">
+                    <div class="col-sm-5" style="text-align: center">
+                        <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
+                            <option selected="selected" value="">-- Select here --</option>
+                            <option value="New">New</option>
+                            <option value="Renew">Renew</option>
+                        </select>
+                    </div>
                 </div>
-            </article>
+            </td>
+        </tr>
+        <tr>
 
-            <div class="form-group row col-xs-12">
-                <div class="left col-xs-2">
-                    @*@Html.Bootstrap().Button().Text("Clear").HtmlAttributes(new { onclick = "ClearForm()" }).Class("btn-sm float-left")*@
-                    @*@Html.Bootstrap().Button().Text("Save").HtmlAttributes(new { onclick = "SaveBillingConfiguration()" }).Class("btn-sm float-right")*@
-                    <button onclick="ClearForm()" class="btn-sm float-left" id="ClearForm">Clear</button>
-                    <button onclick="SaveBillingConfiguration()" class="btn-sm float-right" id="SaveBillingConfiguration">Save</button>
+            <td align="left">
+                <b>Transaction Description</b>
+            </td>
+
+            <td align="left">
+                <div class="custom-control custom-radio">
+                    <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="TransactionRadio">
+                        <option selected="selected" value="">-- Select here --</option>
+                        <option value="True">Yes</option>
+                        <option value="False">No</option>
+                    </select>
+
+                    <label class="custom-control-label" for="defaultUnchecked">Use custom transaction description</label>
                 </div>
-                <div class="col-sm-offset-5">
-                    @*@Html.Bootstrap().Button().Text("Send Invoice").HtmlAttributes(new { onclick = "SendInvoice()" }).Class("btn-sm")*@
-                    <button onclick="SendInvoice()" class="btn-sm" id="SendInvoice">Send Invoice</button>
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="Custom description" rows="5" id="TransactionComment"></textarea>
                 </div>
+            </td>
+
+        </tr>*@
+                        </tbody>
+                    </table>
+
+                </section>
+            </div>
+        </article>
+
+        <div class="form-group row col-xs-12">
+            <div class="left col-xs-2">
+                @*@Html.Bootstrap().Button().Text("Clear").HtmlAttributes(new { onclick = "ClearForm()" }).Class("btn-sm float-left")*@
+                @*@Html.Bootstrap().Button().Text("Save").HtmlAttributes(new { onclick = "SaveBillingConfiguration()" }).Class("btn-sm float-right")*@
+                <button onclick="ClearForm()" class="btn-sm float-left" id="ClearForm">Clear</button>
+                <button onclick="SaveBillingConfiguration()" class="btn-sm float-right" id="SaveBillingConfiguration">Save</button>
+            </div>
+            <div class="col-sm-offset-5">
+                @*@Html.Bootstrap().Button().Text("Send Invoice").HtmlAttributes(new { onclick = "SendInvoice()" }).Class("btn-sm")*@
+                <button onclick="SendInvoice()" class="btn-sm" id="SendInvoice">Send Invoice</button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 </div>
 
 @section pagespecific {
@@ -157,15 +181,11 @@
         $(window).on("load", function () {
             debugger;
             $('#branch').val(@Model.EGlobalBranchCode);
-            $('#clientStatus').val(@Model.EGlobalClientStatus);
+            @*$('#clientStatus').val(@Model.EGlobalClientStatus);*@
             $('#clientId').val(@Model.EGlobalClientNumber);
-            $('#TransactionRadio').val(@Model.HasEGlobalCustomDescription);
-            $('TransactionComment').val(@Model.EGlobalCustomDescription);
-
-
-
+            @*$('#TransactionRadio').val(@Model.HasEGlobalCustomDescription);
+            $('TransactionComment').val(@Model.EGlobalCustomDescription);*@
         });
-
 
         var bcdata = [];
         var programmeId;
@@ -220,18 +240,19 @@
         function ClearForm() {
             document.getElementById("branch").value = "";
             document.getElementById("clientId").value = "";
-            document.getElementById("TransactionComment").value = "";
-            document.getElementById("clientStatus").value = "";
+            //document.getElementById("TransactionComment").value = "";
+            //document.getElementById("clientStatus").value = "";
         }
 
         function addBCData() {
             programmeId = $('#Id').val();
             var branch = document.getElementById("branch").value;
             var clientId = document.getElementById("clientId").value;
-            var clientStatus = document.getElementById("clientStatus").value;
-            var TransactionComment = document.getElementById("TransactionComment").value;
-            var TransactionRadio = document.getElementById("TransactionRadio").value;
-            bcdata = [branch, clientId, clientStatus, TransactionComment,TransactionRadio];
+            //var clientStatus = document.getElementById("clientStatus").value;
+            //var TransactionComment = document.getElementById("TransactionComment").value;
+            //var TransactionRadio = document.getElementById("TransactionRadio").value;
+            //bcdata = [branch, clientId, clientStatus, TransactionComment,TransactionRadio];
+            bcdata = [branch, clientId];
         }
 
     </script>
@@ -239,16 +260,16 @@
 }
 
 
-    <script>
+<script>
 
         $(window).on("load", function () {
             debugger;
             $('#branch').val("@Model.EGlobalBranchCode");
-            $('#clientStatus').val("@Model.EGlobalClientStatus");
+            @*$('#clientStatus').val("@Model.EGlobalClientStatus");*@
             $('#clientId').val("@Model.EGlobalClientNumber");
-            $('#TransactionRadio').val("@Model.HasEGlobalCustomDescription");
-            $('TransactionComment').val("@Model.EGlobalCustomDescription");
+            @*$('#TransactionRadio').val("@Model.HasEGlobalCustomDescription");
+            $('TransactionComment').val("@Model.EGlobalCustomDescription");*@
 
         });
 
-    </script>
+</script>

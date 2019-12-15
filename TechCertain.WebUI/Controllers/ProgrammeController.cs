@@ -680,10 +680,13 @@ namespace TechCertain.WebUI.Controllers
             model.BrokerContactUser = programme.BrokerContactUser;
             model.EGlobalBranchCode = programme.EGlobalBranchCode;
             model.EGlobalClientNumber = programme.EGlobalClientNumber;
-            model.EGlobalClientStatus = programme.EGlobalClientStatus;
-            model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
-            model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
+            //model.EGlobalClientStatus = programme.EGlobalClientStatus;
+            //model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
+            //model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
             model.clientprogramme = programme;
+
+            var active = await _httpClientService.GetEglobalStatus();
+            model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
 
             return View(model);
         }
@@ -692,22 +695,25 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {
             ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-            programme.EGlobalBranchCode = billingConfig[0];
-            programme.EGlobalClientNumber = billingConfig[1];
-            programme.EGlobalClientStatus = billingConfig[2];
-            if (string.IsNullOrEmpty(billingConfig[3]))
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
             {
-                programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
-                programme.EGlobalCustomDescription = billingConfig[3];
-            }
-            else
-            {
-                programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
-                programme.EGlobalCustomDescription = billingConfig[3]; 
-            }
-                    
-            await _programmeService.Update(programme).ConfigureAwait(false);
+                programme.EGlobalBranchCode = billingConfig[0];
+                programme.EGlobalClientNumber = billingConfig[1];
+                //programme.EGlobalClientStatus = billingConfig[2];
+                //if (string.IsNullOrEmpty(billingConfig[3]))
+                //{
+                //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
+                //    programme.EGlobalCustomDescription = billingConfig[3];
+                //}
+                //else
+                //{
+                //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
+                //    programme.EGlobalCustomDescription = billingConfig[3]; 
+                //}
+                await uow.Commit();
 
+            }
+            //await _programmeService.Update(programme).ConfigureAwait(false);
             return Redirect("EditBillingConfiguration" + programmeId);
         }
 
@@ -889,12 +895,17 @@ namespace TechCertain.WebUI.Controllers
             var rules = new List<Rule>();
             model.Id = Id;
             model.ProductId = productId;
-            var product = await _productRepository.GetByIdAsync(productId);
-            
-            foreach (var rule in product.Rules)
+
+            foreach(var programmeProduct in programme.Products)
             {
-                rules.Add(rule);
+                var product = await _productRepository.GetByIdAsync(programmeProduct.Id);
+
+                foreach (var rule in product.Rules)
+                {
+                    rules.Add(rule);
+                }
             }
+
             model.Rules = rules;
 
             ViewBag.Title = "Manage Product Rules";
@@ -979,6 +990,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsPublic = programme.IsPublic;
             model.TaxRate = programme.TaxRate;
             model.UsesEGlobal = programme.UsesEGlobal;
+            model.StopAgreement = programme.StopAgreement;
             model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
 
             return View("ManageProgramme", model);
@@ -989,7 +1001,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> ManageProgramme(ProgrammeInfoViewModel model)
         {
             Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
-
+            var user = await CurrentUser();
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 programme.Name = model.programmeName;
@@ -997,6 +1009,13 @@ namespace TechCertain.WebUI.Controllers
                 programme.UsesEGlobal = model.UsesEGlobal;
                 programme.TaxRate = model.TaxRate;
                 programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
+                programme.StopAgreement = model.StopAgreement;
+                if (model.StopAgreement)
+                {
+                    programme.StopAgreementDateTime = DateTime.UtcNow;
+                }
+                programme.LastModifiedBy = user;
+                programme.LastModifiedOn = DateTime.UtcNow;
 
                 await uow.Commit();
             }
