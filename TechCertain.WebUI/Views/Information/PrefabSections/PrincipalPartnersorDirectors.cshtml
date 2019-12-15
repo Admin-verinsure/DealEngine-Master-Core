@@ -890,16 +890,9 @@
                  $('#ValidateEditPrincial3').html("<i></i>");
              }
          }
-          if ($('#AddPrincial5').val() == '' && $('#AddPrincial16').val() == '') {
-            $('#ValidatePrincial15').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            } else {
-                 $('#ValidatePrincial15').html("<i></i>");
-             }
-         }
+         
 
-         if ($('#EditPrincial19').val() == 'false' && $('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '' ) {
+         if ($('#EditPrincial19').val() == 'true' && $('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '' ) {
              $('#ValidateEditPrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
              $('#ValidateEditPrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
             if (validity) {
@@ -1009,9 +1002,10 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        var orgnisationType = $('#EditPrincial14').val();
+         var orgnisationType = $('#EditPrincial14').val();
+         var nziaMembership = $('#EditPrincial6').val();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType;
+        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType + "&NZIAmembership="+nziaMembership;
         $.ajax({
             url: '@Url.Action("EditPrincipalDirectors", "Services")',
             type: "POST",
@@ -1062,7 +1056,7 @@
              }
          }
 
-         if ($('#AddPrincial19').val() == 'false' && $('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
+         if ($('#AddPrincial19').val() == 'true' && $('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
              $('#ValidatePrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
              $('#ValidatePrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
             if (validity) {

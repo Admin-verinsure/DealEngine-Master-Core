@@ -2355,8 +2355,14 @@ namespace TechCertain.WebUI.Controllers
                     organisation.Activities = model.Activities;
                     organisation.Email = userdb.Email;
                     organisation.Type = model.Type;
-                    organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
-                    organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    if(model.DateofRetirement != null)
+                    {
+                        organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                    }
+                    if(model.DateofDeceased != null)
+                    {
+                        organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                    }
                     await uow.Commit();
                 }
             }
@@ -2375,41 +2381,46 @@ namespace TechCertain.WebUI.Controllers
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Organisation org = sheet.Organisation.FirstOrDefault(o => o.Id == partyID);
             User userdb = await _userService.GetUserByEmail(org.Email);
-            if (org != null)
+            try
             {
-                model.ID = partyID;
-                model.FirstName = userdb.FirstName;
-                model.LastName = userdb.LastName;
-                model.Email = org.Email;
-                model.Qualifications = org.Qualifications;
-                model.IsNZIAmember = org.IsNZIAmember;
-                model.NZIAmembership = org.NZIAmembership;
-                model.IsADNZmember = org.IsADNZmember;
-                model.IsLPBCategory3 = org.IsLPBCategory3;
-                model.YearofPractice = org.YearofPractice;
-                model.prevPractice = org.prevPractice;
-                if (org.OrganisationType.Name == "Corporation – Limited liability")
+                if (org != null)
                 {
-                    model.OrganisationTypeName = "Corporate";
+                    model.ID = partyID;
+                    model.FirstName = userdb.FirstName;
+                    model.LastName = userdb.LastName;
+                    model.Email = org.Email;
+                    model.Qualifications = org.Qualifications;
+                    model.IsNZIAmember = org.IsNZIAmember;
+                    model.NZIAmembership = org.NZIAmembership;
+                    model.IsADNZmember = org.IsADNZmember;
+                    model.IsLPBCategory3 = org.IsLPBCategory3;
+                    model.YearofPractice = org.YearofPractice;
+                    model.prevPractice = org.prevPractice;
+                    if (org.OrganisationType.Name == "Corporation – Limited liability")
+                    {
+                        model.OrganisationTypeName = "Corporate";
+                    }
+                    else
+                    {
+                        model.OrganisationTypeName = org.OrganisationType.Name;
+                    }
+                    model.IsOtherdirectorship = org.IsOtherdirectorship;
+                    model.IsRetiredorDecieved = org.IsRetiredorDecieved;
+                    model.Othercompanyname = org.Othercompanyname;
+                    model.Type = org.Type;
+                    model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    //model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
+                    //model.DateofDeceased = DateTime.Parse(LocalizeTime(org.DateofDeceased, "d"));
+                    //model.DateofRetirement = DateTime.Parse(LocalizeTime(org.DateofRetirement, "d"));
+                    model.OrganisationName = org.Name;
+                    model.Activities = org.Activities;
+                    model.AnswerSheetId = answerSheetId;
                 }
-                else
-                {
-                    model.OrganisationTypeName = org.OrganisationType.Name;
-                }
-                model.IsOtherdirectorship = org.IsOtherdirectorship;
-                model.IsRetiredorDecieved = org.IsRetiredorDecieved;
-                model.Othercompanyname = org.Othercompanyname;
-                model.Type = org.Type;
-                model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
-                model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
-                //model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
-                //model.DateofDeceased = DateTime.Parse(LocalizeTime(org.DateofDeceased, "d"));
-                //model.DateofRetirement = DateTime.Parse(LocalizeTime(org.DateofRetirement, "d"));
-                model.OrganisationName = org.Name;
-                model.Activities = org.Activities;
-                model.AnswerSheetId = answerSheetId;
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
-
             return Json(model);
         }
 
