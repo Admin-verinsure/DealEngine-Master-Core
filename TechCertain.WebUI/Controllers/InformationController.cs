@@ -2109,9 +2109,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
 
-            //return View();
             return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
-            //return Content (sheet.Id.ToString());
         }
 
         [HttpPost]

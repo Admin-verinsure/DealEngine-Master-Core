@@ -680,10 +680,13 @@ namespace TechCertain.WebUI.Controllers
             model.BrokerContactUser = programme.BrokerContactUser;
             model.EGlobalBranchCode = programme.EGlobalBranchCode;
             model.EGlobalClientNumber = programme.EGlobalClientNumber;
-            model.EGlobalClientStatus = programme.EGlobalClientStatus;
-            model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
-            model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
+            //model.EGlobalClientStatus = programme.EGlobalClientStatus;
+            //model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
+            //model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
             model.clientprogramme = programme;
+
+            var active = await _httpClientService.GetEglobalStatus();
+            model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
 
             return View(model);
         }
@@ -694,17 +697,17 @@ namespace TechCertain.WebUI.Controllers
             ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
             programme.EGlobalBranchCode = billingConfig[0];
             programme.EGlobalClientNumber = billingConfig[1];
-            programme.EGlobalClientStatus = billingConfig[2];
-            if (string.IsNullOrEmpty(billingConfig[3]))
-            {
-                programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
-                programme.EGlobalCustomDescription = billingConfig[3];
-            }
-            else
-            {
-                programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
-                programme.EGlobalCustomDescription = billingConfig[3]; 
-            }
+            //programme.EGlobalClientStatus = billingConfig[2];
+            //if (string.IsNullOrEmpty(billingConfig[3]))
+            //{
+            //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
+            //    programme.EGlobalCustomDescription = billingConfig[3];
+            //}
+            //else
+            //{
+            //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
+            //    programme.EGlobalCustomDescription = billingConfig[3]; 
+            //}
                     
             await _programmeService.Update(programme).ConfigureAwait(false);
 
@@ -990,7 +993,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> ManageProgramme(ProgrammeInfoViewModel model)
         {
             Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
-
+            var user = await CurrentUser();
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
                 programme.Name = model.programmeName;
@@ -998,6 +1001,13 @@ namespace TechCertain.WebUI.Controllers
                 programme.UsesEGlobal = model.UsesEGlobal;
                 programme.TaxRate = model.TaxRate;
                 programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
+                programme.StopAgreement = model.StopAgreement;
+                if (model.StopAgreement)
+                {
+                    programme.StopAgreementDateTime = DateTime.UtcNow;
+                }
+                programme.LastModifiedBy = user;
+                programme.LastModifiedOn = DateTime.UtcNow;
 
                 await uow.Commit();
             }

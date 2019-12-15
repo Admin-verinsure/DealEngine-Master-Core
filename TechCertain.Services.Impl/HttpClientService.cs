@@ -85,7 +85,7 @@ namespace TechCertain.Services.Impl
         {
             var responseMessage ="";            
             var SOAPAction = @"http://www.example.org/invoice-service/createInvoice";
-            var service =  "https://staging.ap.marsh.com:19443/services/invoice/service"; //"http://localhost:8088/mockInvoiceServiceImplPortBinding";
+            var service = "https://stg.eglobalinvp.marsh.com/services/invoice/service"; //"https://staging.ap.marsh.com:19443/services/invoice/service"; old staging end point
             var body = generateBody(xmlPayload);
             HttpResponseMessage response;
             SocketsHttpHandler _socketsHttpHandler;
@@ -131,7 +131,7 @@ namespace TechCertain.Services.Impl
         {
             var responseMessage = "";
             var SOAPAction = "http://www.example.org/invoice-service/getEGlobalSiteStatus";
-            var service = "https://staging.ap.marsh.com:19443/services/invoice/service";
+            var service = "https://stg.eglobalinvp.marsh.com/services/invoice/service"; //"https://staging.ap.marsh.com:19443/services/invoice/service"; old staging end point
             var body = GenerateGetSiteActiveSoapBody();
             HttpResponseMessage response;
             SocketsHttpHandler _socketsHttpHandler;
