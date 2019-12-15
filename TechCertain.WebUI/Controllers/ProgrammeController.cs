@@ -892,12 +892,17 @@ namespace TechCertain.WebUI.Controllers
             var rules = new List<Rule>();
             model.Id = Id;
             model.ProductId = productId;
-            var product = await _productRepository.GetByIdAsync(productId);
-            
-            foreach (var rule in product.Rules)
+
+            foreach(var programmeProduct in programme.Products)
             {
-                rules.Add(rule);
+                var product = await _productRepository.GetByIdAsync(programmeProduct.Id);
+
+                foreach (var rule in product.Rules)
+                {
+                    rules.Add(rule);
+                }
             }
+
             model.Rules = rules;
 
             ViewBag.Title = "Manage Product Rules";

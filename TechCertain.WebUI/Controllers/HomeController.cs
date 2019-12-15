@@ -34,15 +34,17 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<Programme> _programmeRepository;
         IClientInformationService _clientInformationService;
         IClientAgreementService _clientAgreementService;
+        IHttpClientService _httpClientService;
         IMapper _mapper;
 
-        public HomeController(IMapper mapper, IUserService userRepository,
+        public HomeController(IMapper mapper, IUserService userRepository, IHttpClientService httpClientService,
             ITaskingService taskingService, IClientInformationService customerInformationService, IPrivateServerService privateServerService, IClientAgreementService clientAgreementService, IClientInformationService clientInformationService,
             IMapperSession<Product> productRepository, IMapperSession<Programme> programmeRepository)
 
             : base (userRepository)
-        {            
+        {
 
+            _httpClientService = httpClientService;
             _customerInformationService = customerInformationService;
             _privateServerService = privateServerService;
             _taskingService = taskingService;
@@ -78,7 +80,7 @@ namespace TechCertain.WebUI.Controllers
             //var tzs = TimeZoneInfo.GetSystemTimeZones ();
             //foreach (var tz in tzs)
             //	Console.WriteLine (tz.DisplayName + " " + tz.Id);
-
+            _httpClientService.GetEglobalStatus();
             DashboardViewModel model = new DashboardViewModel();
             model.ProductItems = new List<ProductItemV2>();
             model.DealItems = new List<ProductItem>();

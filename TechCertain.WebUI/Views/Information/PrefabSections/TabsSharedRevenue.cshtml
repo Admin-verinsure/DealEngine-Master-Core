@@ -1,13 +1,14 @@
 ﻿@model TechCertain.WebUI.Models.RevenueByActivityViewModel
 
     <ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
-        <li class="nav nav-tabs Territory" style="display:none" id="SharedRevenueTab1"> <a href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
-        <li class="nav nav-tabs Activities" style="display:none" id="SharedRevenueTab2"> <a href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
-        <li class="nav nav-tabs TerritoryBreakdown" style="display:none" id="SharedRevenueTab3"> <a href="#RevenueTabs3" data-toggle="tab"> Territory Breakdown </a> </li>
-        <li class="nav nav-tabs ActivityBreakdown" style="display:none" id="SharedRevenueTab4"> <a href="#RevenueTabs4" data-toggle="tab"> Activity Breakdown </a> </li>
-        <li class="nav nav-tabs AdditionalInformation" style="display:none" id="SharedRevenueTab5"> <a href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
+        <li class="nav nav-tabs Territory" id="SharedRevenueTab1"> <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
+        <li class="nav nav-tabs Activities" style="display:none" id="SharedRevenueTab2"> <a class="nav-link" href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
+        <li class="nav nav-tabs TerritoryBreakdown" style="display:none" id="SharedRevenueTab3"> <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Territory Breakdown </a> </li>
+        <li class="nav nav-tabs ActivityBreakdown" style="display:none" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Activity Breakdown </a> </li>
+        <li class="nav nav-tabs AdditionalInformation" style="display:none" id="SharedRevenueTab5"> <a class="nav-link" href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
+        <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab6"> <a class="nav-link" href="#RevenueTabs6" data-toggle="tab"> Summary </a> </li>
     </ul>
-
+    
     <div id="RevenueTabs1" class="tab-content">
         <fieldset>
             <div class="container-fluid">
@@ -198,4 +199,24 @@
                 </div>
             </div>
         </fieldset>
+    </div>
+    <div id="RevenueTabs6" class="tab-content">
+        <div class="input-group mb-3">
+            <label for="SharedTotalRevenue">Fee Income</label>
+            <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" required>
+        </div>
+        <div class="input-group mb-3">
+            <table id="ListSharedRevenueTerritories" class="table">
+            </table>
+        </div>
+        <div class="input-group mb-3">
+            <table id="ListSharedRevenueActivities" class="table">
+            </table>
+        </div>
+        <div class="input-group mb-3">
+            <div class="footer" id="UpdateSharedActivity">
+                <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Update</button>
+            </div>
+        </div>
+
     </div>

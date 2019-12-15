@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Xml.Serialization;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -133,9 +135,12 @@ namespace TechCertain.Services.Impl
             var SOAPAction = "http://www.example.org/invoice-service/getEGlobalSiteStatus";
             var service = "https://stg.eglobalinvp.marsh.com/services/invoice/service"; //"https://staging.ap.marsh.com:19443/services/invoice/service"; old staging end point
             var body = GenerateGetSiteActiveSoapBody();
+            Envelope result = new Envelope();
             HttpResponseMessage response;
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
+            XmlSerializer serializer; 
+            StringReader rdr;           
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
@@ -156,6 +161,9 @@ namespace TechCertain.Services.Impl
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
+                serializer = new XmlSerializer(typeof(Envelope));
+                rdr = new StringReader(responseMessage);
+                result = (Envelope)serializer.Deserialize(rdr);
                 client.Dispose();
             }
             catch (HttpRequestException e)
@@ -170,7 +178,7 @@ namespace TechCertain.Services.Impl
             _socketsHttpHandler.Dispose();
             _httpRequestMessage.Dispose();
 
-            return responseMessage;
+            return result.Body.getEGlobalSiteStatusResponse;
         }
 
         private string generateBody(string xmlPayload)
@@ -269,5 +277,56 @@ namespace TechCertain.Services.Impl
                                                             </soap:Envelope>";
 
         }
+
+        #region GetEGlobalResponse
+        // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.xmlsoap.org/soap/envelope/", IsNullable = false)]
+        public partial class Envelope
+        {
+
+            private EnvelopeBody bodyField;
+
+            /// <remarks/>
+            public EnvelopeBody Body
+            {
+                get
+                {
+                    return this.bodyField;
+                }
+                set
+                {
+                    this.bodyField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        public partial class EnvelopeBody
+        {
+
+            private string getEGlobalSiteStatusResponseField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://www.example.org/invoice-service/")]
+            public string getEGlobalSiteStatusResponse
+            {
+                get
+                {
+                    return this.getEGlobalSiteStatusResponseField;
+                }
+                set
+                {
+                    this.getEGlobalSiteStatusResponseField = value;
+                }
+            }
+        }
+        #endregion
     }
 }
