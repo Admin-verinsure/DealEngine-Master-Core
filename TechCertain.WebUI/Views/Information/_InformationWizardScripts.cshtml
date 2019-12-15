@@ -2005,36 +2005,35 @@ function showAccordionPanel(id, panelNo) {
             });
     }
 
+    function CopyTableValues(currentTable, newTable) {
+        var inputTable = document.getElementById(currentTable);
+        var overViewTerTable = document.getElementById(newTable);
+        var arr = [];
+        var tableRow = inputTable.childNodes[1];
+
+        for (var i = 0; i < tableRow.childNodes.length; i++) {
+            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;            
+            arr.push(value);
+        }
+
+        overViewTerTable.innerHTML = document.getElementById(currentTable).innerHTML;
+        tableRow = overViewTerTable.childNodes[1];
+        for (var i = 0; i < tableRow.childNodes.length; i++) {
+            tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value = arr[i];
+        }
+
+    }
+
     function BuildRevenueOverview() {
         $('#SharedRevenueTab1').hide();
         $('#SharedRevenueTab2').hide();
         $('#SharedRevenueTab3').hide();
         $('#SharedRevenueTab4').hide();
         $('#SharedRevenueTab5').hide();
-        var inputTable = document.getElementById("sharedRevenueTerritoriesTable");
-        var tableRow = inputTable.childNodes[1];
-        for (var i = 0; i < tableRow.childNodes.length; i++) {
-            var one = tableRow.childNodes[i];
-            debugger;
-            var two = tableRow.childNodes[i].lastChild;
-            debugger;
-            var three = tableRow.childNodes[i].lastChild.lastChild;
-            debugger;
-            var four = tableRow.childNodes[i].lastChild.lastChild.lastChild;
-            debugger;
-            var five = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.id;
-            debugger
 
-            //var objectValue = document.getElementById(id).value;
-            debugger;
-        }
-
-        var overViewTerTable = document.getElementById("ListSharedRevenueTerritories");
-        overViewTerTable.innerHTML = document.getElementById("sharedRevenueTerritoriesTable").innerHTML;
-        debugger;
-        document.getElementById("ListSharedRevenueActivities").innerHTML = document.getElementById("sharedRevenueActivityTable").innerHTML;       
+        CopyTableValues("sharedRevenueTerritoriesTable", "ListSharedRevenueTerritories");
+        CopyTableValues("sharedRevenueActivityTable", "ListSharedRevenueActivities");
         document.getElementById("SharedTotalRevenue").value = $('#totalRevenue').val();
-        debugger;
     }
 
     function UpdateSharedRevenue() {

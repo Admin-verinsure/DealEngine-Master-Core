@@ -80,7 +80,6 @@ namespace TechCertain.WebUI.Controllers
             //var tzs = TimeZoneInfo.GetSystemTimeZones ();
             //foreach (var tz in tzs)
             //	Console.WriteLine (tz.DisplayName + " " + tz.Id);
-            _httpClientService.GetEglobalStatus();
             DashboardViewModel model = new DashboardViewModel();
             model.ProductItems = new List<ProductItemV2>();
             model.DealItems = new List<ProductItem>();

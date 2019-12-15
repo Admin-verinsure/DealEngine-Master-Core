@@ -1,17 +1,11 @@
 ﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
 
-@{
-    var stopAgreement = Model.ProgrammeStopAgreement;
-    string stopAgreementMessage = Model.ProgrammeStopAgreementMessage;
-
-}
-
     <div class="widget-body widget-hide-overflow">
 
         <div class="row">
             <section class="col col-sm-1"></section>
             <section class="col col-10">
-                @stopAgreementMessage
+                @Html.Raw(Model.ProgrammeStopAgreementMessage)
             </section>
         </div>
 
@@ -24,11 +18,6 @@
 
 
     </div>
-
-
-
-
-
 
 
 <script>
