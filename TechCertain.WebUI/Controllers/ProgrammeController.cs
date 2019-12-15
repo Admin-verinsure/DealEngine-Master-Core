@@ -984,6 +984,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsPublic = programme.IsPublic;
             model.TaxRate = programme.TaxRate;
             model.UsesEGlobal = programme.UsesEGlobal;
+            model.StopAgreement = programme.StopAgreement;
             model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
 
             return View("ManageProgramme", model);

@@ -49,8 +49,10 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                             "pi5millimitbasepremium", "pi6millimitbasepremium", "pi8millimitbasepremium", "pi10millimitbasepremium", "pi250klimitminmarkupfee", "pi350klimitminmarkupfee",
                             "pi400klimitminmarkupfee", "pi500klimitminmarkupfee", "pi600klimitminmarkupfee", "pi750klimitminmarkupfee", "pi1millimitminmarkupfee", "pi1andhalfmillimitminmarkupfee", 
                             "pi2millimitminmarkupfee", "pi2andhalfmillimitminmarkupfee", "pi3millimitminmarkupfee", "pi4millimitminmarkupfee", "pi5millimitminmarkupfee", "pi6millimitminmarkupfee",
-                            "pi8millimitminmarkupfee", "pi10millimitminmarkupfee", "pi250klimitunder1milrate", "pi250klimit1milto2milrate", "pi250klimitover2milrate", "pi350klimitunder1milrate",
-                            "pi350klimit1milto2milrate", "pi350klimitover2milrate");
+                            "pi8millimitminmarkupfee", "pi10millimitminmarkupfee", 
+                            "pi250klimitunder1milrate", "pi250klimit1milto2milrate", "pi250klimitover2milrate", "pi350klimitunder1milrate", "pi350klimit1milto2milrate", "pi350klimitover2milrate", 
+                            "pi400klimitunder1milrate", "pi400klimit1milto2milrate", "pi400klimitover2milrate", "pi500klimitunder1milrate", "pi500klimit1milto2milrate", "pi500klimitover2milrate",
+                            "pi600klimitunder1milrate", "pi600klimit1milto2milrate", "pi600klimitover2milrate", "pi750klimitunder1milrate", "pi750klimit1milto2milrate", "pi750klimitover2milrate");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -494,6 +496,98 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         else if (feeincome > 2000000)
                         {
                             premiumoption = (rates["pi350klimitunder1milrate"] * 1000000) + (rates["pi350klimit1milto2milrate"] * 1000000) + rates["pi350klimitover2milrate"] * (feeincome - 2000000);
+                        }
+                        premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
+                        schoolloadingpremium = premiumoption * schoolloading / 100;
+                        markupfee = ((premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 > minmarkupfee) ? (premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 : minmarkupfee;
+                        markupfee = (markupfee < rates["pimaxmarkupfee"]) ? markupfee : rates["pimaxmarkupfee"];
+                        premiumoption = premiumoption + schoolloadingpremium + markupfee;
+                        break;
+                    }
+                case 400000:
+                    {
+                        basepremium = rates["pi400klimitbasepremium"];
+                        minmarkupfee = rates["pi400klimitminmarkupfee"];
+                        if (feeincome >= 0 && feeincome <= 1000000)
+                        {
+                            premiumoption = rates["pi400klimitunder1milrate"] * feeincome;
+                        }
+                        else if (feeincome > 1000000 && feeincome <= 2000000)
+                        {
+                            premiumoption = (rates["pi400klimitunder1milrate"] * 1000000) + (rates["pi400klimit1milto2milrate"] * (feeincome - 1000000));
+                        }
+                        else if (feeincome > 2000000)
+                        {
+                            premiumoption = (rates["pi400klimitunder1milrate"] * 1000000) + (rates["pi400klimit1milto2milrate"] * 1000000) + rates["pi400klimitover2milrate"] * (feeincome - 2000000);
+                        }
+                        premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
+                        schoolloadingpremium = premiumoption * schoolloading / 100;
+                        markupfee = ((premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 > minmarkupfee) ? (premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 : minmarkupfee;
+                        markupfee = (markupfee < rates["pimaxmarkupfee"]) ? markupfee : rates["pimaxmarkupfee"];
+                        premiumoption = premiumoption + schoolloadingpremium + markupfee;
+                        break;
+                    }
+                case 500000:
+                    {
+                        basepremium = rates["pi500klimitbasepremium"];
+                        minmarkupfee = rates["pi500klimitminmarkupfee"];
+                        if (feeincome >= 0 && feeincome <= 1000000)
+                        {
+                            premiumoption = rates["pi500klimitunder1milrate"] * feeincome;
+                        }
+                        else if (feeincome > 1000000 && feeincome <= 2000000)
+                        {
+                            premiumoption = (rates["pi500klimitunder1milrate"] * 1000000) + (rates["pi500klimit1milto2milrate"] * (feeincome - 1000000));
+                        }
+                        else if (feeincome > 2000000)
+                        {
+                            premiumoption = (rates["pi500klimitunder1milrate"] * 1000000) + (rates["pi500klimit1milto2milrate"] * 1000000) + rates["pi500klimitover2milrate"] * (feeincome - 2000000);
+                        }
+                        premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
+                        schoolloadingpremium = premiumoption * schoolloading / 100;
+                        markupfee = ((premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 > minmarkupfee) ? (premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 : minmarkupfee;
+                        markupfee = (markupfee < rates["pimaxmarkupfee"]) ? markupfee : rates["pimaxmarkupfee"];
+                        premiumoption = premiumoption + schoolloadingpremium + markupfee;
+                        break;
+                    }
+                case 600000:
+                    {
+                        basepremium = rates["pi600klimitbasepremium"];
+                        minmarkupfee = rates["pi600klimitminmarkupfee"];
+                        if (feeincome >= 0 && feeincome <= 1000000)
+                        {
+                            premiumoption = rates["pi600klimitunder1milrate"] * feeincome;
+                        }
+                        else if (feeincome > 1000000 && feeincome <= 2000000)
+                        {
+                            premiumoption = (rates["pi600klimitunder1milrate"] * 1000000) + (rates["pi600klimit1milto2milrate"] * (feeincome - 1000000));
+                        }
+                        else if (feeincome > 2000000)
+                        {
+                            premiumoption = (rates["pi600klimitunder1milrate"] * 1000000) + (rates["pi600klimit1milto2milrate"] * 1000000) + rates["pi600klimitover2milrate"] * (feeincome - 2000000);
+                        }
+                        premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
+                        schoolloadingpremium = premiumoption * schoolloading / 100;
+                        markupfee = ((premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 > minmarkupfee) ? (premiumoption + schoolloadingpremium) * rates["pimarkupfeerate"] / 100 : minmarkupfee;
+                        markupfee = (markupfee < rates["pimaxmarkupfee"]) ? markupfee : rates["pimaxmarkupfee"];
+                        premiumoption = premiumoption + schoolloadingpremium + markupfee;
+                        break;
+                    }
+                case 750000:
+                    {
+                        basepremium = rates["pi750klimitbasepremium"];
+                        minmarkupfee = rates["pi750klimitminmarkupfee"];
+                        if (feeincome >= 0 && feeincome <= 1000000)
+                        {
+                            premiumoption = rates["pi750klimitunder1milrate"] * feeincome;
+                        }
+                        else if (feeincome > 1000000 && feeincome <= 2000000)
+                        {
+                            premiumoption = (rates["pi750klimitunder1milrate"] * 1000000) + (rates["pi750klimit1milto2milrate"] * (feeincome - 1000000));
+                        }
+                        else if (feeincome > 2000000)
+                        {
+                            premiumoption = (rates["pi750klimitunder1milrate"] * 1000000) + (rates["pi750klimit1milto2milrate"] * 1000000) + rates["pi750klimitover2milrate"] * (feeincome - 2000000);
                         }
                         premiumoption = (premiumoption > basepremium) ? premiumoption : basepremium;
                         schoolloadingpremium = premiumoption * schoolloading / 100;

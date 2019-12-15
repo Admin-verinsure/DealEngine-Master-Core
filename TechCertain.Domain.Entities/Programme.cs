@@ -27,6 +27,8 @@ namespace TechCertain.Domain.Entities
         public virtual IList<User> AgreementBoundNotifyUsers { get; set; }
         public virtual IList<User> PaymentConfigNotifyUsers { get; set; }
         public virtual IList<User> InvoiceConfigNotifyUsers { get; set; }
+        public virtual Boolean StopAgreement { get; set; }
+        public virtual string StopAgreementMessage { get; set; }
 
         public virtual bool HasCCPayment
         {
