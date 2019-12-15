@@ -1897,9 +1897,9 @@ namespace TechCertain.WebUI.Controllers
             String[][] ProfessionalIndemnityAnswer = new String[11][];
             var count = 0;
             String[] ProfessionalIndemnity;
-            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1") || (c.ItemName == "ProfessionalIndemnity2") || (c.ItemName == "ProfessionalIndemnity11")
-                                                                                                                                || (c.ItemName == "ProfessionalIndemnity3") || (c.ItemName == "ProfessionalIndemnity4") || (c.ItemName == "ProfessionalIndemnity5") || (c.ItemName == "ProfessionalIndemnity10")
-                                                                                                                                || (c.ItemName == "ProfessionalIndemnity6") || (c.ItemName == "ProfessionalIndemnity7") || (c.ItemName == "ProfessionalIndemnity8") || (c.ItemName == "ProfessionalIndemnity9")))
+            foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "ProfessionalIndemnity1" || c.ItemName == "ProfessionalIndemnity2" || c.ItemName == "ProfessionalIndemnity11"
+                                                                                                                                || c.ItemName == "ProfessionalIndemnity3" || c.ItemName == "ProfessionalIndemnity4" || c.ItemName == "ProfessionalIndemnity5" || c.ItemName == "ProfessionalIndemnity10"
+                                                                                                                                || c.ItemName == "ProfessionalIndemnity6" || c.ItemName == "ProfessionalIndemnity7" || c.ItemName == "ProfessionalIndemnity8" || c.ItemName == "ProfessionalIndemnity9")))
             {
                 ProfessionalIndemnity = new String[2];
                 for (var i = 0; i < 1; i++)
@@ -2027,18 +2027,21 @@ namespace TechCertain.WebUI.Controllers
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    for (var x = 0; x < item.Length - 1; x++)
+                    if (item[1] != null)
                     {
-                        ClientInformationAnswer answer = _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet).Result;
-                        if (answer != null)
+                        for (var x = 0; x < item.Length - 1; x++)
                         {
-                            answer.Value = item[1];
-                            //answer.ClaimDetails = item[2];
-                        }
-                        else
-                        {
-                            sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
-                            await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                            ClientInformationAnswer answer = _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet).Result;
+                            if (answer != null)
+                            {
+                                answer.Value = item[1];
+                                //answer.ClaimDetails = item[2];
+                            }
+                            else
+                            {
+                                sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
+                                await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                            }
                         }
                     }
                     await uow.Commit();

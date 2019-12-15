@@ -89,6 +89,7 @@
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="Principal">Principal</option>
                                     <option value="Subsidiary">Subsidiary</option>
+                                    <option value="SubContracters">Sub Contracters</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
                                     <option value="Megers">Mergers</option>
                                     <option value="JointVenture">Joint Venture</option>
@@ -898,7 +899,7 @@
              }
          }
 
-         if ($('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '') {
+         if ($('#EditPrincial19').val() == 'false' && $('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '' ) {
              $('#ValidateEditPrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
              $('#ValidateEditPrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
             if (validity) {
@@ -1061,7 +1062,7 @@
              }
          }
 
-         if ($('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
+         if ($('#AddPrincial19').val() == 'false' && $('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
              $('#ValidatePrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
              $('#ValidatePrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
             if (validity) {
@@ -1224,5 +1225,10 @@
             }
         });
     };
+
+    //jQuery("select.select-chosen").on('change', function (evt, params) {
+    //    debugger;
+    //jQuery(this).trigger('chosen:open');
+    //});
 
 </script>
