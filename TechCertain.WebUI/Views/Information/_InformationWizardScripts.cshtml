@@ -106,7 +106,86 @@
                    }
                }
 
-               $('#getAgreementModal').show();
+             
+               $.ajax({
+                   url: '@Url.Action("SubmitInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+
+                       //$("#agreementView").on('load', url, function () {
+                       $("#agreementView").load(url, function () {
+                           $('#getAgreementModal').hide();
+                       });
+                   })
+                   .fail(function (data) {
+
+                       $('#getAgreementModal').hide();
+                       console.log(data);
+                       alert("There was an error getting your agreement.");
+                   });
+
+                   if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                       //$("#Vessel").trigger("click");
+
+                       var isprofess = ValidateProfessionalIndemnity();
+                       debugger;
+
+                       if (!ValidateProfessionalIndemnity()) {
+                           window.alert("Please Add Professional Indemnity to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='Professional Indemnity']").trigger("click");
+                           return false;
+
+                       } else if (!ValidateStatutory()) {
+                           window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='Statutory Liability Insurance']").trigger("click");
+                           return false;
+
+                       } else if (!ValidateEmployer()) {
+                           window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='Employers Liability Insurance']").trigger("click");
+                           return false;
+
+                       } else if (!ValidatePractice()) {
+                           window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='Employment Practices Liability Insurance']").trigger("click");
+                           return false;
+
+                       } else if (!ValidateDNOGeneral()) {
+                           window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='Directors and Officers Liability Insurance']").trigger("click");
+                           return false;
+
+                       } else if (!ValidateGeneral()) {
+                           window.alert("Please Add General Liability Insurance to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='General Liability Insurance']").trigger("click");
+                           return false;
+
+                       } else if (!ValidateCyber()) {
+                           window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='Cyber Liability Insurance']").trigger("click");
+                           return false;
+                       } else {
+                           SaveProfessionalIndemnity();
+                           SaveStatutoryLiability();
+                           SaveEmployerLiabilityInsurance();
+                           SaveEmployerPracticesLiability();
+                           SaveGeneralLiability();
+                           SaveDirectorsandOfficersLiability();
+                           ValidateDNO();
+
+                       }
+                   }
+
+                 $('#getAgreementModal').show();
                debugger;
                   if ($("#Sheetstatus").val() != "Started") {
                        debugger;
@@ -134,24 +213,7 @@
 
                   }
 
-               $.ajax({
-                   url: '@Url.Action("SubmitInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
-               })
-                   .done(function (url) {
 
-                       //$("#agreementView").on('load', url, function () {
-                       $("#agreementView").load(url, function () {
-                           $('#getAgreementModal').hide();
-                       });
-                   })
-                   .fail(function (data) {
-
-                       $('#getAgreementModal').hide();
-                       console.log(data);
-                       alert("There was an error getting your agreement.");
-                   });
            } else if (stepNumber === 1) {
                var status = $('#Status').val();
                 if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {

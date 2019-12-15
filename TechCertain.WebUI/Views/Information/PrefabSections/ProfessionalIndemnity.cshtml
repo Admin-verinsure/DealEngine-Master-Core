@@ -16,7 +16,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity1" onchange="ShowAdditionalInfo('ProfessionalIndemnity1')" class="form-control rmv editable" name="ProfessionalIndemnity1">
+                                <select id="ProfessionalIndemnity1"  class="form-control rmv editable" name="ProfessionalIndemnity1">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -234,7 +234,7 @@
                 </div>
             </div>
 
-            <button onclick="ValidateProfessionalIndemnity(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="ValidateProfessionalIndemnity(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
             @*<button onclick="$('#StatutoryLiability1').val('');$('#StatutoryLiability2').val(''); event.preventDefault();" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
 
         </fieldset>
@@ -257,7 +257,7 @@
              })
                 .done(function (data) {
                      var valid = "true";
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length-4; i++) {
                         if (data[i] == null) {
                             if (valid) {
                                 valid = "false";
@@ -333,9 +333,10 @@
                 }
              }
 
-          if (validity) {
-            SaveProfessionalIndemnity();
-          }
+          return validity;
+          //if (validity) {
+          //  SaveProfessionalIndemnity();
+          //}
 
     };
 
@@ -364,22 +365,28 @@
 
             }
 
-                   var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
+               var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
+              var success = false;
 
-             $.ajax({
+                       $.ajax({
+                           async: false,
                            url: '@Url.Action("UpdateAnswer", "Information")',
                            type: "POST",
                            data: postData
                        })
                            .done(function (data) {
-
+                               debugger;
+                               success = true;
                            })
-                           .fail(function (a, s, d) {
+                           .fail(function (a, s, d) { 
+                               debugger;
+                               success = false;
                                alert("Unable to save.");
                            });
-
+                      return success;
 
         }
+
 </script>
 
 

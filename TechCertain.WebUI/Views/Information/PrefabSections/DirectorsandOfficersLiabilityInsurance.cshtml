@@ -151,7 +151,7 @@
 
                 </div>
             </div>
-            <button onclick="ValidateDNOGeneral(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="ValidateDNOGeneral(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
 
 
         </fieldset>
@@ -175,7 +175,7 @@
              })
                 .done(function (data) {
                      var valid = "true";
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length-6; i++) {
                         if (data[i] == null) {
                             if (valid) {
                                 valid = "false";
@@ -300,10 +300,11 @@
                   } else {
                      $(validator).html("<i></i>");
                   }
-           }
-        if (validity) {
-            SaveDirectorsandOfficersLiability(); 
-        }
+         }
+         return validity;
+        //if (validity) {
+        //    SaveDirectorsandOfficersLiability(); 
+        //}
     };
 
         function SaveDirectorsandOfficersLiability() {
@@ -330,7 +331,8 @@
                            type: "POST",
                            data: postData
                        })
-                 .done(function (data) {
+                           .done(function (data) {
+                              return true;
                            })
                            .fail(function (a, s, d) {
                                alert("Unable to save.");
