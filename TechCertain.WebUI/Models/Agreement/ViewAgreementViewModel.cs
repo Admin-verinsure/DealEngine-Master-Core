@@ -52,6 +52,8 @@ namespace TechCertain.WebUI.Models.Agreement
         public string DeclineNotes { get; set; }
         public string Advisory { get; internal set; }
         public string Declaration { get; set; }
+        public bool ProgrammeStopAgreement { get; set; }
+        public string ProgrammeStopAgreementMessage { get; set; }
     }
 
     public class InsuranceInclusion

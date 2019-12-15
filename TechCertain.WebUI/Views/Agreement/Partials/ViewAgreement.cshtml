@@ -346,17 +346,17 @@
         }
         else
         {
-           <fieldset>
+    <fieldset>
 
-             <div class="row">
-                <section class="col col-12 font-md">
-                    <strong>Cover Options</strong>
-                 </section>
-             </div>
+        <div class="row">
+            <section class="col col-12 font-md">
+                <strong>Cover Options</strong>
+            </section>
+        </div>
 
-             <div class="row">
+        <div class="row">
 
-               <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+            <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
 
                 <tr>
                     <th class="text-center" width="10%"></th>
@@ -365,39 +365,48 @@
                     <th class="text-center" width="20%">Excess</th>
                     <th class="text-center" width="20%">Premium</th>
                 </tr>
-                        @foreach (var item in Model.MultiCoverOptions)
-                        {
-                            <tr class="clickable-row">
-                                <td>
-                                    <input type="radio" dirname=""
-                                           id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.RiskName
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.Inclusion
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.Exclusion
-                                </td>
-                                <td class="pt-3-half" width="20%" contenteditable="true">
-                                    @item.TotalPremium
-                                </td>
-                            </tr>
+                @foreach (var item in Model.MultiCoverOptions)
+                {
+                    <tr class="clickable-row">
+                        <td>
+                            <input type="radio" dirname=""
+                                   id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.RiskName
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Inclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.Exclusion
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true">
+                            @item.TotalPremium
+                        </td>
+                    </tr>
 
-                        }
+                }
 
-                        <tr>
-                            <td class="pt-3-half" width="15%">
-                                <label><input type="radio" dirname="" name="@Model.ProductName" value="None"> I don't want this cover</label>
-                            </td>
-                        </tr>
+                <tr>
+                    <td class="pt-3-half" width="15%">
+                        <label><input type="radio" dirname="" name="@Model.ProductName" value="None"> I don't want this cover</label>
+                    </td>
+                </tr>
 
-                    </table>
-                </div>
+            </table>
+        </div>
 
-            </fieldset>
+        <div class="row">
+            <section class="col col-3">
+                <strong>@Html.DisplayNameFor(m => m.AdministrationFee):</strong>
+            </section>
+            <section class="col col-3">
+                @Model.AdministrationFee
+            </section>
+        </div>
+
+    </fieldset>
 
         }
     </div>
