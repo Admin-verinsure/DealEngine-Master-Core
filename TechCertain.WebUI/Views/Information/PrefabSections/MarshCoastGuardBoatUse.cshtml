@@ -246,7 +246,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
-                                            return '<button onclick="SetBoatUseRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoatUse\', \'#tblBoatUse\');" type="button"  class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>';
+                                            return '<button onclick="SetBoatUseRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoatUse\', \'#tblBoatUse\'); SetCurrentTab(\'boatUseTabs1\');" type="button"  class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>';
                                         }
                                     },
                                     { name: "BoatUseCategory", align: 'center' },

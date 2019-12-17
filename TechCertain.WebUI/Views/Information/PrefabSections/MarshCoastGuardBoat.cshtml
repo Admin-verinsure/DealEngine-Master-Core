@@ -1474,7 +1474,7 @@
 
                                     {
                                         name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
-                                            return '<button onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                            return '<button onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');SetCurrentTab(\'boatTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
                                         }
                                     },
                                     { name: "BoatName", align: 'center', key: 'true' },

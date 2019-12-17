@@ -398,12 +398,12 @@
 				$.each (array, function(i, pair) {
 					ids.push (pair.value);
 				});
-				console.log($("#tab2 :input").serialize({ json:true }));
+               console.log($("#tab2 :input").serialize({ json: true }));
            		$('#getDocumentsModal').show();
 				$.ajax({
 	            	// change back once mono decides to fix
 	                url: '@Url.Action("AcceptAgreement", "Agreement")',
-	                type: "POST",
+                    type: "POST",
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status:status })
 	            })
@@ -7283,6 +7283,18 @@ async: true
                                alert("Unable to save.");
                            });
         }
+    }
+
+    function bypassPayment() {
+        event.preventDefault();
+        $.ajax({
+            url: '@Url.Action("ByPassPayment", "Agreement")',
+            type: "Post",
+            data: $("#tab1 :input").serialize({ json: true }),
+            async: true
+        }).done(function (data) {
+               window.location.href = data.url;
+        });
     }
 
 </script>

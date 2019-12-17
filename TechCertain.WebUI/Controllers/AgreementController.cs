@@ -1029,6 +1029,7 @@ namespace TechCertain.WebUI.Controllers
             NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
             currencyFormat.CurrencyNegativePattern = 2;
 
+            decimal totalPayable = 0M;
             foreach (ClientAgreement agreement in clientProgramme.Agreements)
             {
                 ViewAgreementViewModel model = new ViewAgreementViewModel
@@ -1040,7 +1041,7 @@ namespace TechCertain.WebUI.Controllers
 
                 var riskPremiums = new List<RiskPremiumsViewModel>();
                 string riskname = null;
-
+                
                 // List Agreement Inclusions
                 foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
                 {
@@ -1063,10 +1064,12 @@ namespace TechCertain.WebUI.Controllers
                     if (answerSheet.PreviousInformationSheet == null)
                     {
                         riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C"), FSL = term.FSL.ToString("C"), TotalPremium = term.Premium.ToString("C") });
+                        totalPayable += term.Premium;
                     }
                     else
                     {
                         riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = string.Format(currencyFormat, "{0:c}", (term.PremiumDiffer - term.FSLDiffer)), FSL = string.Format(currencyFormat, "{0:c}", term.FSLDiffer), TotalPremium = string.Format(currencyFormat, "{0:c}", term.PremiumDiffer) });
+                        totalPayable += term.PremiumDiffer;
                     }
                 }
 
@@ -1088,12 +1091,29 @@ namespace TechCertain.WebUI.Controllers
                 model.CurrencySymbol = "fa fa-dollar";
                 model.ClientNumber = agreement.ClientNumber;
                 model.PolicyNumber = agreement.PolicyNumber;
+
+                model.NoPaymentRequiredMessage = clientProgramme.BaseProgramme.NoPaymentRequiredMessage;
+
                 models.Add(model);
             }
 
             ViewBag.Title = clientProgramme.BaseProgramme.Name + " Payment for " + clientProgramme.Owner.Name;
 
-            return PartialView("_ViewPaymentList", models);
+            bool requirePayment = false;
+            if (clientProgramme.BaseProgramme.HasCCPayment && totalPayable > 0)
+            {
+                requirePayment = true;
+            }
+
+            if (requirePayment)
+            {
+                return PartialView("_ViewPaymentList", models);
+            } else
+            {
+                return PartialView("_ViewNoPaymentRequiredMsg", models);
+            }
+
+            
         }
 
 
@@ -1318,13 +1338,144 @@ namespace TechCertain.WebUI.Controllers
 
                 if (agreement.Product.Id == new Guid("bc62172c-1e15-4e5a-8547-a7bd002121eb"))
                 { //Arcco
-                   await _clientAgreementService.AcceptAgreement(agreement, user);
+                    await _clientAgreementService.AcceptAgreement(agreement, user);
                 }
 
             }
 
             return PartialView("_ViewAgreementDocs", models);
-            //return View("_ViewAgreementDocs");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ByPassPayment (IFormCollection collection)
+        {
+            Guid sheetId = Guid.Empty;
+            ClientInformationSheet sheet = null;
+            if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+            {
+                sheet = await _customerInformationService.GetInformation(sheetId);
+            }
+
+            ClientProgramme programme = sheet.Programme;
+            var user = await CurrentUser();
+
+            var status = "Bound";
+            status = "Bound and invoice pending";
+
+            var documents = new List<SystemDocument>();
+            foreach (ClientAgreement agreement in programme.Agreements)
+            {
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if (agreement.Status != status)
+                    {
+                        agreement.Status = status;
+                        if (programme.BaseProgramme.PolicyNumberPrefixString != null)
+                        {
+                            agreement.PolicyNumber = programme.BaseProgramme.PolicyNumberPrefixString + "-0" + agreement.ReferenceId;
+                        }
+                        await uow.Commit();
+                    }
+                }
+
+                agreement.Status = status;
+
+                foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                {
+                    doc.Delete(user);
+                }
+                foreach (SystemDocument template in agreement.Product.Documents)
+                {
+                    //render docs except invoice
+                    if (template.DocumentType != 4)
+                    {
+                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                        agreement.Documents.Add(renderedDoc);
+                        documents.Add(renderedDoc);
+                        await _fileService.UploadFile(renderedDoc);
+                    }
+
+                }
+            }
+
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                if (programme.InformationSheet.Status != status)
+                {
+                    programme.InformationSheet.Status = status;
+                    await uow.Commit();
+                }
+            }
+
+            //if (programme.BaseProgramme.UsesEGlobal)
+            //{
+            //    if (programme.EGlobalClientNumber != null)
+            //    {
+            //        var status1 = "Bound and invoiced";
+            //        var eGlobalSerializer = new EGlobalSerializerAPI();
+
+            //        var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
+            //        var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
+            //        eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
+            //        if (programme.ClientAgreementEGlobalResponses.Count > 0)
+            //        {
+            //            EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+            //            if (eGlobalResponse != null)
+            //            {
+            //                var documents1 = new List<SystemDocument>();
+            //                foreach (ClientAgreement agreement in programme.Agreements)
+            //                {
+            //                    if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+            //                    {
+            //                        foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
+            //                        {
+            //                            doc.Delete(user);
+            //                        }
+            //                        foreach (SystemDocument template in agreement.Product.Documents)
+            //                        {
+            //                            //render docs invoice
+            //                            if (template.DocumentType == 4)
+            //                            {
+            //                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+            //                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+            //                                agreement.Documents.Add(renderedDoc);
+            //                                documents1.Add(renderedDoc);
+            //                                await _fileService.UploadFile(renderedDoc);
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //                foreach (ClientAgreement agreement in programme.Agreements)
+            //                {
+            //                    using (var uow = _unitOfWork.BeginUnitOfWork())
+            //                    {
+            //                        if (agreement.Status != status1)
+            //                        {
+            //                            agreement.Status = status1;
+            //                            await uow.Commit();
+            //                        }
+            //                    }
+            //                    agreement.Status = status1;
+            //                }
+            //                using (var uow = _unitOfWork.BeginUnitOfWork())
+            //                {
+            //                    if (programme.InformationSheet.Status != status1)
+            //                    {
+            //                        programme.InformationSheet.Status = status1;
+            //                        await uow.Commit();
+            //                    }
+            //                }
+            //            }
+
+            //        }
+            //    }
+            //}
+
+            var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
+            return Json(new { url });
+
         }
 
         [HttpGet]

@@ -210,7 +210,7 @@
                                 colNames: ["", "Storage Description", "Storage Type", "Street", "Suburb", "City"],
                                 colModel: [
                                     {
-                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetBuildingRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBuilding\', \'#tblBuilding\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetBuildingRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBuilding\', \'#tblBuilding\'); SetCurrentTab(\'buiTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
                                     },
                                     { name: "BuildingName", align: 'center', key: 'true' },
                                     { name: "BuildingCategory", align: 'center' },

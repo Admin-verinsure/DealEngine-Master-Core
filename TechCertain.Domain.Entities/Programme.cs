@@ -30,7 +30,8 @@ namespace TechCertain.Domain.Entities
         public virtual Boolean StopAgreement { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
         public virtual string StopAgreementMessage { get; set; }
-
+        public virtual string NoPaymentRequiredMessage { get; set; }
+        public virtual Boolean AllowUsesChange { get; set; }
         public virtual bool HasCCPayment
         {
             get;
