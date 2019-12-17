@@ -150,7 +150,6 @@ namespace TechCertain.WebUI.Controllers
                         string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
                         await _emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
 
-                        ViewBag.EmailSent = true;
                     }
                     
                 }
@@ -164,12 +163,11 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (MailKit.Net.Smtp.SmtpCommandException ex) {               
 
-                ModelState.AddModelError ("FailureMessage", "Oops, Email services are currently unavailable. The techinical support staff have also been notified, and your password reset email will be sent once services have been restored.");
+                ModelState.AddModelError ("FailureMessage", "Oops, Email services are currently unavailable. The technical support staff have also been notified, and your password reset email will be sent once services have been restored.");
 				return View (viewModel);
 			}
 			catch (Exception ex)
 			{
-				//ErrorSignal.FromCurrentContext().Raise(ex);
 				Exception exception = ex;
 				while (exception.InnerException != null) exception = exception.InnerException;
 
