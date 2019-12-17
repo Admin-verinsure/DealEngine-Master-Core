@@ -40,6 +40,13 @@ namespace TechCertain.WebUI.Models.Agreement
         public IEnumerable<BoatViewModel> Boats { get; set; }
         public List<EditTermsViewModel> BVTerms { get; internal set; }
         public List<EditTermsViewModel> MVTerms { get; internal set; }
+        public List<EditTermsViewModel> PLTerms { get; internal set; }
+        public List<EditTermsViewModel> EDTerms { get; internal set; }
+        public List<EditTermsViewModel> PITerms { get; internal set; }
+        public List<EditTermsViewModel> ELTerms { get; internal set; }
+        public List<EditTermsViewModel> CLTerms { get; internal set; }
+        public List<EditTermsViewModel> SLTerms { get; internal set; }
+        public List<EditTermsViewModel> DOTerms { get; internal set; }
         public List<ClientAgreementReferral> Referrals { get; set; }
         public User CurrentUser { get; set; }
         public DateTime CancellEffectiveDate { get; set; }
