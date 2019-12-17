@@ -99,6 +99,18 @@
                                                     //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
                                                     <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
                                                 }
+                                                else if (item.Status == "Not Taken Up")
+                                                {
+                                                    <a class="btn btn-primary btn-sm" href="/Information/Resume/@item.Id"><i class="fa fa-unlock"></i> Resume</a>
+                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                    {
+                                                        <a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
+                                                    }
+                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                    {
+                                                        <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                    }
+                                                }
                                             </div>
                                         </td>
                                     </tr>

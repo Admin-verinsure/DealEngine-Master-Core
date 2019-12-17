@@ -3350,9 +3350,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CloseAdvisory(string ClientInformationSheetId)
         {
             var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            sheet.Status = "Not Taken Up";
             foreach(var agreement in sheet.Programme.Agreements)
             {
-                agreement.Status = "NTU";
+                agreement.Status = "Not Taken Up";
                 await _clientAgreementService.UpdateClientAgreement(agreement);
             }
 
