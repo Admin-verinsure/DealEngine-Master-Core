@@ -135,7 +135,7 @@
                 </div>
             </div>
 
-            <button onclick="ValidateEmployer(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="ValidateEmployer(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
             @*<button onclick="SaveEmployerLiability(event,'#DNOForm')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
 
         </fieldset>
@@ -157,7 +157,7 @@
                 .done(function (data) {
                     debugger;
                      var valid = "true";
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length-5; i++) {
                         if (data[i] == null) {
                             if (valid) {
                                 valid = "false";
@@ -231,11 +231,11 @@
                 }
 
           }
+         return validity;
 
-
-        if (validity) {
-            SaveEmployerLiabilityInsurance(); 
-        }
+        //if (validity) {
+        //    SaveEmployerLiabilityInsurance(); 
+        //}
     };
 
 
@@ -300,7 +300,7 @@
                            data: postData
                        })
                            .done(function (data) {
-
+                              return true;
                            })
                            .fail(function (a, s, d) {
                                alert("Unable to save.");

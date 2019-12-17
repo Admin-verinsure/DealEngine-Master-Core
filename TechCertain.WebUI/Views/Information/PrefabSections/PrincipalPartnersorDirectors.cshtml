@@ -89,6 +89,7 @@
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="Principal">Principal</option>
                                     <option value="Subsidiary">Subsidiary</option>
+                                    <option value="SubContracters">Sub Contracters</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
                                     <option value="Megers">Mergers</option>
                                     <option value="JointVenture">Joint Venture</option>
@@ -889,16 +890,9 @@
                  $('#ValidateEditPrincial3').html("<i></i>");
              }
          }
-          if ($('#AddPrincial5').val() == '' && $('#AddPrincial16').val() == '') {
-            $('#ValidatePrincial15').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            } else {
-                 $('#ValidatePrincial15').html("<i></i>");
-             }
-         }
+         
 
-         if ($('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '') {
+         if ($('#EditPrincial19').val() == 'true' && $('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '' ) {
              $('#ValidateEditPrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
              $('#ValidateEditPrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
             if (validity) {
@@ -1008,9 +1002,10 @@
         debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        var orgnisationType = $('#EditPrincial14').val();
+         var orgnisationType = $('#EditPrincial14').val();
+         var nziaMembership = $('#EditPrincial6').val();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType;
+        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType + "&NZIAmembership="+nziaMembership;
         $.ajax({
             url: '@Url.Action("EditPrincipalDirectors", "Services")',
             type: "POST",
@@ -1061,7 +1056,7 @@
              }
          }
 
-         if ($('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
+         if ($('#AddPrincial19').val() == 'true' && $('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
              $('#ValidatePrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
              $('#ValidatePrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
             if (validity) {
@@ -1224,5 +1219,10 @@
             }
         });
     };
+
+    //jQuery("select.select-chosen").on('change', function (evt, params) {
+    //    debugger;
+    //jQuery(this).trigger('chosen:open');
+    //});
 
 </script>

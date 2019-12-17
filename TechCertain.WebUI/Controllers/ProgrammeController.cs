@@ -695,22 +695,25 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {
             ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-            programme.EGlobalBranchCode = billingConfig[0];
-            programme.EGlobalClientNumber = billingConfig[1];
-            //programme.EGlobalClientStatus = billingConfig[2];
-            //if (string.IsNullOrEmpty(billingConfig[3]))
-            //{
-            //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
-            //    programme.EGlobalCustomDescription = billingConfig[3];
-            //}
-            //else
-            //{
-            //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
-            //    programme.EGlobalCustomDescription = billingConfig[3]; 
-            //}
-                    
-            await _programmeService.Update(programme).ConfigureAwait(false);
+            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            {
+                programme.EGlobalBranchCode = billingConfig[0];
+                programme.EGlobalClientNumber = billingConfig[1];
+                //programme.EGlobalClientStatus = billingConfig[2];
+                //if (string.IsNullOrEmpty(billingConfig[3]))
+                //{
+                //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
+                //    programme.EGlobalCustomDescription = billingConfig[3];
+                //}
+                //else
+                //{
+                //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
+                //    programme.EGlobalCustomDescription = billingConfig[3]; 
+                //}
+                await uow.Commit();
 
+            }
+            //await _programmeService.Update(programme).ConfigureAwait(false);
             return Redirect("EditBillingConfiguration" + programmeId);
         }
 

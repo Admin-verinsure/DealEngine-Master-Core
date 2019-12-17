@@ -132,7 +132,7 @@
                 </div>
             </div>
 
-            <button onclick="ValidateStatutory(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="ValidateStatutory(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
 
         </fieldset>
     </div>
@@ -151,7 +151,7 @@
              })
                 .done(function (data) {
              var valid = "true";
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length-5; i++) {
                         if (data[i] == null) {
                             if (valid) {
                                 valid = "false";
@@ -159,7 +159,7 @@
                         }
                     }
              if (data != "" && valid == "true") {
-                for (var item = 0; item < data.length; item++){
+                for (var item = 0; item < data.length-4; item++){
 
                   var arr = data[item];
                   var count = 0;
@@ -282,9 +282,10 @@
             $('#ValidateStatutoryLiability2').html("<i></i>");
         }
 
-        if (validity) {
-            SaveStatutoryLiability();
-        }
+          return validity;
+        //if (validity) {
+        //    SaveStatutoryLiability();
+        //}
     };
 
 
@@ -315,6 +316,7 @@
                            data: postData
                        })
                            .done(function (data) {
+                                   return true;
 
                            })
                            .fail(function (a, s, d) {

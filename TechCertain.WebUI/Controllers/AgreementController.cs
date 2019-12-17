@@ -903,6 +903,18 @@ namespace TechCertain.WebUI.Controllers
             ClientAgreement masterclientagreement = clientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault();
             if (clientProgramme.BaseProgramme.StopAgreement && masterclientagreement.DateCreated >= clientProgramme.BaseProgramme.StopAgreementDateTime)
             {
+                if (clientProgramme.InformationSheet.Status != "Submitted" && clientProgramme.InformationSheet.Status != "Bound")
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        clientProgramme.InformationSheet.Status = "Submitted";
+                        clientProgramme.InformationSheet.SubmitDate = DateTime.UtcNow;
+                        clientProgramme.InformationSheet.SubmittedBy = user;
+                        await uow.Commit();
+                    }
+
+                }
+
                 return PartialView("_ViewStopAgreementMessage", models);
             } else
             {

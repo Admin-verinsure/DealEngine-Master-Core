@@ -43,12 +43,6 @@
 <section id="widget-grid" class="">
 
     <div class="row">
-        <label>
-            Eglobal status: @EGlobalIsActiveOrNot
-        </label>
-    </div>
-
-    <div class="row">
         <article class="col-sm-12 col-md-12 col-lg-6">
             <!-- new widget -->
             <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
@@ -61,7 +55,17 @@
                 <section>
                     <table class="table table-bordered table-striped table-hover table-condensed">
                         <tbody>
+                            <tr>
 
+                                <td align="left">
+                                    <b>Eglobal status: </b>
+                                </td>
+
+                                <td align="left">
+                                    @EGlobalIsActiveOrNot
+                                </td>
+
+                            </tr>
                             <tr>
 
                                 <td align="left">
@@ -109,44 +113,44 @@
                             </tr>
                             @*<tr>
 
-                                    <td align="left">
-                                        <b>Client Status</b>
-                                    </td>
+            <td align="left">
+                <b>Client Status</b>
+            </td>
 
-                                    <td style="align-content: center">
-                                        <div class="form-group drop-down-list">
-                                            <div class="col-sm-5" style="text-align: center">
-                                                <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
-                                                    <option selected="selected" value="">-- Select here --</option>
-                                                    <option value="New">New</option>
-                                                    <option value="Renew">Renew</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
+            <td style="align-content: center">
+                <div class="form-group drop-down-list">
+                    <div class="col-sm-5" style="text-align: center">
+                        <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
+                            <option selected="selected" value="">-- Select here --</option>
+                            <option value="New">New</option>
+                            <option value="Renew">Renew</option>
+                        </select>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
 
-                                    <td align="left">
-                                        <b>Transaction Description</b>
-                                    </td>
+            <td align="left">
+                <b>Transaction Description</b>
+            </td>
 
-                                    <td align="left">
-                                        <div class="custom-control custom-radio">
-                                            <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="TransactionRadio">
-                                                <option selected="selected" value="">-- Select here --</option>
-                                                <option value="True">Yes</option>
-                                                <option value="False">No</option>
-                                            </select>
+            <td align="left">
+                <div class="custom-control custom-radio">
+                    <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="TransactionRadio">
+                        <option selected="selected" value="">-- Select here --</option>
+                        <option value="True">Yes</option>
+                        <option value="False">No</option>
+                    </select>
 
-                                            <label class="custom-control-label" for="defaultUnchecked">Use custom transaction description</label>
-                                        </div>
-                                        <div class="form-group">
-                                            <textarea class="form-control" placeholder="Custom description" rows="5" id="TransactionComment"></textarea>
-                                        </div>
-                                    </td>
+                    <label class="custom-control-label" for="defaultUnchecked">Use custom transaction description</label>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="Custom description" rows="5" id="TransactionComment"></textarea>
+                </div>
+            </td>
 
-                                </tr>*@
+        </tr>*@
                         </tbody>
                     </table>
 
@@ -181,11 +185,7 @@
             $('#clientId').val(@Model.EGlobalClientNumber);
             @*$('#TransactionRadio').val(@Model.HasEGlobalCustomDescription);
             $('TransactionComment').val(@Model.EGlobalCustomDescription);*@
-
-
-
         });
-
 
         var bcdata = [];
         var programmeId;
@@ -252,6 +252,7 @@
             //var TransactionComment = document.getElementById("TransactionComment").value;
             //var TransactionRadio = document.getElementById("TransactionRadio").value;
             //bcdata = [branch, clientId, clientStatus, TransactionComment,TransactionRadio];
+            bcdata = [branch, clientId];
         }
 
     </script>
