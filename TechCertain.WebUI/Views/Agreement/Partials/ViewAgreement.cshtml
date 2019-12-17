@@ -12,7 +12,7 @@
                     <!--<button href="~/Policy/ViewDocumentTemplate?id=09485282-29a6-4dff-88ef-a5b40160eb07" enabled="false" class="btn btn-primary btn-sm">View Terms</button>-->
                     <!--<a href="~/Information/ViewInformation/@Model.InformationSheetId" class="btn btn-primary btn-sm">View Information</a>-->
                     <!--<button href="~/Policy/RenderDocument" enabled="false" class="btn btn-primary btn-sm">View Agreement Documents</button>-->
-                    @foreach (var roles in Model.UserRoles)
+                    @*@foreach (var roles in Model.UserRoles)
                     {
                         if (roles.Equals("CanViewAllInformation") && Model.Status.Equals("Bound"))
                         {
@@ -22,7 +22,7 @@
                             <a href="~/Agreement/EditTerms/@Model.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
                             <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @Model.ClientProgrammeId,informationsheet=@Model.InformationSheetId, agreementId = @Model.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                         }
-                    }
+                    }*@
 
                 </div>
             </div>
