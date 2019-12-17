@@ -356,7 +356,7 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@techcertain.com.");
-                return View(viewModel);                
+                return View(viewModel);
 
             }
 			catch (UserImportException ex)
@@ -372,7 +372,7 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-		public Task<IdentityResult> LoginMarsh (User user, string devicePrint)
+		public async Task<IdentityResult> LoginMarsh (User user, string devicePrint)
 		{
             MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService);
             MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
@@ -390,7 +390,7 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 Console.WriteLine("Analzying RSA User");
-                RsaStatus rsaStatus = rsaAuth.Analyze(rsaUser, true);
+                RsaStatus rsaStatus = await rsaAuth.Analyze(rsaUser, true);
                 if (rsaStatus == RsaStatus.Allow)
                 {
                     Console.WriteLine("RSA User allowed, signing in...");
@@ -413,7 +413,7 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception(ex.Message);
             }
 
-            return Task.FromResult(IdentityResult.Success);
+            return IdentityResult.Success;
         }
 
         [HttpPost]

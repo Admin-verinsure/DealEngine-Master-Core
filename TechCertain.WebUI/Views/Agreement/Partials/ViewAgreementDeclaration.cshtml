@@ -21,7 +21,7 @@
 
         @if (Model.Advisory != null)
         {
-            <div class="modal-lg" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true" hidden>
+            <div class="modal-lg container-fluid" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true" hidden>
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -32,7 +32,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Close</button>
-                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal', 'record')">Ok</button>
                         </div>
                     </div>
                 </div>

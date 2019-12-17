@@ -23,6 +23,7 @@ namespace TechCertain.WebUI.Controllers
     public class ServicesController : BaseController
     {
         IClientInformationService _clientInformationService;
+        IClientAgreementService _clientAgreementService;
         IMapperSession<Vehicle> _vehicleRepository;
         IMapperSession<OrganisationalUnit> _organisationalUnitRepository;
         IMapperSession<Location> _locationRepository;
@@ -51,7 +52,7 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 
-        public ServicesController(IUserService userService, IAppSettingService appSettingService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
+        public ServicesController(IUserService userService, IClientAgreementService clientAgreementService, IAppSettingService appSettingService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
             IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<InsuranceAttribute> insuranceAttributesRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
             IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
             IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService, IMapperSession<BusinessContract> businessContractRepository,
@@ -59,6 +60,7 @@ namespace TechCertain.WebUI.Controllers
 
             : base(userService)
         {
+            _clientAgreementService = clientAgreementService;
             _appSettingService = appSettingService;
             _userRepository = userRepository;
             _clientInformationService = clientInformationService;
@@ -3330,6 +3332,23 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
+        #endregion
+
+        #region Advisory
+        [HttpPost]
+        public async Task<IActionResult> CloseAdvisory(string ClientInformationSheetId)
+        {
+            var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+            foreach(var agreement in sheet.Programme.Agreements)
+            {
+                agreement.Status = "NTU";
+                await _clientAgreementService.UpdateClientAgreement(agreement);
+            }
+
+            string domainQueryString = _appSettingService.domainQueryString;
+
+            return Ok("https://" + domainQueryString + "/Home/Index/");
+        }
         #endregion
 
         [HttpPost]
