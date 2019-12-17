@@ -56,5 +56,10 @@ namespace TechCertain.Services.Impl
             await _clientAgreementRepository.UpdateAsync(agreement);
             return agreement;
 		}
+
+        public async Task UpdateClientAgreement(ClientAgreement clientAgreement)
+        {
+            await _clientAgreementRepository.UpdateAsync(clientAgreement);
+        }
     }
 }

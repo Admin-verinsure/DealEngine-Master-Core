@@ -13,6 +13,7 @@ namespace TechCertain.Services.Interfaces
         Task<ClientAgreement> AcceptAgreement (ClientAgreement agreement, User acceptingUser);
         //ClientAgreement AcceptAgreement (ClientAgreement agreement, User acceptingUser);
         Task<ClientAgreement> GetAgreementbyReferenceNum(string reference);
+        Task UpdateClientAgreement(ClientAgreement clientAgreement);
 
     }
 }
