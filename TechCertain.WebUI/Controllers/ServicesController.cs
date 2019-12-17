@@ -2084,7 +2084,7 @@ namespace TechCertain.WebUI.Controllers
             var currentUser = await CurrentUser();
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
             if (sheet == null)
-                throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
+                throw new Exception("Unable to save - No Client information for " + model.AnswerSheetId);
             string orgTypeName = "";
 
             try
@@ -2156,6 +2156,7 @@ namespace TechCertain.WebUI.Controllers
                 }
                 catch (Exception ex)
                 {
+                    Console.Write(ex.Message);
 
                     if (orgTypeName == "Person - Individual")
                     {
@@ -2242,34 +2243,36 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                switch (model.OrganisationTypeName)
+                if (model.OrganisationTypeName != null)
                 {
-                    case "Person - Individual":
-                        {
-                            orgTypeName = "Person - Individual";
-                            break;
-                        }
-                    case "Corporate":
-                        {
-                            orgTypeName = "Corporation – Limited liability";
-                            break;
-                        }
-                    case "Trust":
-                        {
-                            orgTypeName = "Trust";
-                            break;
-                        }
-                    case "Partnership":
-                        {
-                            orgTypeName = "Partnership";
-                            break;
-                        }
-                    default:
-                        {
-                            throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
-                        }
+                    switch (model.OrganisationTypeName)
+                    {
+                        case "Person - Individual":
+                            {
+                                orgTypeName = "Person - Individual";
+                                break;
+                            }
+                        case "Corporate":
+                            {
+                                orgTypeName = "Corporation – Limited liability";
+                                break;
+                            }
+                        case "Trust":
+                            {
+                                orgTypeName = "Trust";
+                                break;
+                            }
+                        case "Partnership":
+                            {
+                                orgTypeName = "Partnership";
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
+                            }
+                    }
                 }
-
                 InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                 if (insuranceAttribute == null)
                 {
@@ -2382,11 +2385,12 @@ namespace TechCertain.WebUI.Controllers
             OrganisationViewModel model = new OrganisationViewModel();
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
             Organisation org = sheet.Organisation.FirstOrDefault(o => o.Id == partyID);
-            User userdb = await _userService.GetUserByEmail(org.Email);
             try
             {
                 if (org != null)
                 {
+                    User userdb = await _userService.GetUserByEmail(org.Email);
+
                     model.ID = partyID;
                     model.FirstName = userdb.FirstName;
                     model.LastName = userdb.LastName;
@@ -2418,6 +2422,17 @@ namespace TechCertain.WebUI.Controllers
                     model.OrganisationName = org.Name;
                     model.Activities = org.Activities;
                     model.AnswerSheetId = answerSheetId;
+                }
+                else
+                {
+                    if (partyID == sheet.Owner.Id)
+                    {
+                        model.ID = partyID;
+                        model.OrganisationName = sheet.Owner.Name;
+                        model.Type = "Owner";
+                        model.Email = sheet.Owner.Email;
+                        model.AnswerSheetId = answerSheetId;
+                    }
                 }
             } catch (Exception ex)
             {

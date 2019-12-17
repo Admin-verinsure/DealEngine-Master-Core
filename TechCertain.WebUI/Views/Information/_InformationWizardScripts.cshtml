@@ -107,26 +107,7 @@
                }
 
              
-               $.ajax({
-                   url: '@Url.Action("SubmitInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
-               })
-                   .done(function (url) {
-
-                       //$("#agreementView").on('load', url, function () {
-                       $("#agreementView").load(url, function () {
-
-                           $('#getAgreementModal').hide();
-                       });
-                   })
-                   .fail(function (data) {
-
-                       $('#getAgreementModal').hide();
-                       console.log(data);
-                       alert("There was an error getting your agreement.");
-                   });
-
+             
                    if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
 
@@ -240,6 +221,26 @@
                       });
 
                   }
+
+                 $.ajax({
+                   url: '@Url.Action("SubmitInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+
+                       //$("#agreementView").on('load', url, function () {
+                       $("#agreementView").load(url, function () {
+
+                           $('#getAgreementModal').hide();
+                       });
+                   })
+                   .fail(function (data) {
+
+                       $('#getAgreementModal').hide();
+                       console.log(data);
+                       alert("There was an error getting your agreement.");
+                   });
 
 
            } else if (stepNumber === 1) {
@@ -383,8 +384,8 @@
 
 
     //$('[data-toggle="popover"]').popover();
-    //    $('[data-toggle="tooltip"]').tooltip();
-            $(".chosen-select").chosen({ width: "95%" });
+    $('[data-toggle="tooltip"]').tooltip({html: true});
+    $(".chosen-select").chosen({ width: "95%" });
 
     $('#Principaltabs').tabs();
     $('#Nonregisteredtabs').tabs();
@@ -420,7 +421,6 @@
         includeSelectAllOption: true,
           buttonWidth: '100%'
       });
-
 
     $('.overlay').css({
     "position": "fixed",
