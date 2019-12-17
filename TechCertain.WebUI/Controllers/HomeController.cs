@@ -440,12 +440,12 @@ namespace TechCertain.WebUI.Controllers
 
                         string status = client.InformationSheet.Status;
                         string referenceid = client.InformationSheet.ReferenceId;
-                        string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
+                        string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");
                         string localDateSubmitted = null;
 
                         if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
                         {
-                            localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
+                            localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy");
                         }
 
                         deals.Add(new DealItem
@@ -471,12 +471,12 @@ namespace TechCertain.WebUI.Controllers
 
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
-                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
+                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy");//"dd/MM/yyyy h:mm tt"
                     string localDateSubmitted = null;
 
                     if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
                     {
-                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
+                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy");
                     }
 
                     deals.Add(new DealItem
@@ -543,6 +543,13 @@ namespace TechCertain.WebUI.Controllers
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
                     Boolean nextInfoSheet = false;
+                    Boolean programmeAllowUsesChange = false;
+
+                    if (client.BaseProgramme.AllowUsesChange)
+                    {
+                        programmeAllowUsesChange = true;
+                    }
+
                     if (null != client.InformationSheet.NextInformationSheet)
                     {
                         nextInfoSheet = true;
@@ -561,6 +568,7 @@ namespace TechCertain.WebUI.Controllers
                         Id = client.Id.ToString(),
                         Name = programme.Name + " for " + client.Owner.Name,
                         NextInfoSheet = nextInfoSheet,
+                        ProgrammeAllowUsesChange = programmeAllowUsesChange,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
@@ -575,9 +583,16 @@ namespace TechCertain.WebUI.Controllers
                     string status = client.InformationSheet.Status;
                     string referenceid = client.InformationSheet.ReferenceId;
                     Boolean nextInfoSheet = false;
+                    Boolean programmeAllowUsesChange = false;
 
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
                     string localDateSubmitted = null;
+
+                    if (client.BaseProgramme.AllowUsesChange)
+                    {
+                        programmeAllowUsesChange = true;
+                    }
+
                     if (null != client.InformationSheet.PreviousInformationSheet)
                     {
                         nextInfoSheet = true;
@@ -593,6 +608,7 @@ namespace TechCertain.WebUI.Controllers
                         Id = client.Id.ToString(),
                         Name = programme.Name + " for " + client.Owner.Name,
                         NextInfoSheet = nextInfoSheet,
+                        ProgrammeAllowUsesChange = programmeAllowUsesChange,
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,

@@ -16,6 +16,7 @@ namespace TechCertain.WebUI.Models.Agreement
         public DateTime? IssuedToCustomer { get; set; }
         public DateTime? AcceptedDate { get; set; }
         public Boolean NextInfoSheet { get; set; }
+        public Boolean IsChange { get; set; }
         public string StartDate { get; set; }
         public string Sheetstatus { get; set; }
         public string EndDate { get; set; }
@@ -61,6 +62,8 @@ namespace TechCertain.WebUI.Models.Agreement
         public string Declaration { get; set; }
         public bool ProgrammeStopAgreement { get; set; }
         public string ProgrammeStopAgreementMessage { get; set; }
+        public bool RequirePayment { get; set; }
+        public string NoPaymentRequiredMessage { get; set; }
     }
 
     public class InsuranceInclusion

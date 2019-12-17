@@ -30,6 +30,9 @@ namespace TechCertain.Services.Impl
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
             HttpResponseMessage response;
+            XmlSerializer serializer;
+            StringReader rdr;
+            RSAEnvelope result = new RSAEnvelope();
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
@@ -59,6 +62,18 @@ namespace TechCertain.Services.Impl
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
+                var msg = ResposeMessage();
+                serializer = new XmlSerializer(typeof(RSAEnvelope));
+                rdr = new StringReader(msg);
+                try
+                {
+                    result = (RSAEnvelope)serializer.Deserialize(rdr);
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
+
                 client.Dispose();
             }
             catch (HttpRequestException e)
@@ -211,7 +226,6 @@ namespace TechCertain.Services.Impl
 
             return body;
         }
-
         private string HardCodedRSABody()
         {
             return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -277,7 +291,862 @@ namespace TechCertain.Services.Impl
                                                             </soap:Envelope>";
 
         }
+        private string ResposeMessage()
+        {
+            return "<?xml version = '1.0' encoding = 'utf-8'?><soapenv:Envelope xmlns:soapenv =\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body><ns1:analyzeResponse xmlns:ns1=\"http://ws.csd.rsa.com\"><ns1:analyzeReturn xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ns1:AnalyzeResponse\"><ns1:deviceResult><ns1:authenticationResult><ns1:authStatusCode>FAIL</ns1:authStatusCode><ns1:risk>0</ns1:risk></ns1:authenticationResult><ns1:callStatus><ns1:statusCode>SUCCESS</ns1:statusCode></ns1:callStatus><ns1:deviceData><ns1:bindingType>NONE</ns1:bindingType><ns1:deviceTokenCookie>PMV61pYQVSs1ggLnIxiqnJ4QWBmDrFX40bSP7yLHfUlDTrm7QS6XL5cgBPhG5LEqJ%2BSrUupdmaC%2BXoqzAFcglUWK0Sm02ONa297xBLee9YamXtzBk%3D</ns1:deviceTokenCookie><ns1:deviceTokenFSO>PMV61pYQVSs1ggLnIxiqnJ4QWBmDrFX40bSP7yLHfUlDTrm7QS6XL5cgBPhG5LEqJ%2BSrUupdmaC%2BXoqzAFcglUWK0Sm02ONa297xBLee9YamXtzBk%3D</ns1:deviceTokenFSO></ns1:deviceData></ns1:deviceResult><ns1:identificationData><ns1:delegated>false</ns1:delegated><ns1:groupName>Clients</ns1:groupName><ns1:orgName>Marsh_Model</ns1:orgName><ns1:sessionId>812834347167267526393-ksat-reganam-krow||1576541731958</ns1:sessionId><ns1:transactionId>TRX_work-manager-task-39-6652711369631216351</ns1:transactionId><ns1:userName>ray@techcertain.com</ns1:userName><ns1:userStatus>UNVERIFIED</ns1:userStatus><ns1:userType>PERSISTENT</ns1:userType></ns1:identificationData><ns1:messageHeader><ns1:apiType>DIRECT_SOAP_API</ns1:apiType><ns1:requestType>ANALYZE</ns1:requestType><ns1:timeStamp>2019-12-17T00:05:31.958Z</ns1:timeStamp><ns1:version>7.0</ns1:version></ns1:messageHeader><ns1:statusHeader><ns1:reasonCode>0</ns1:reasonCode><ns1:reasonDescription>Operations were completed successfully\n\n</ns1:reasonDescription><ns1:statusCode>200</ns1:statusCode></ns1:statusHeader><ns1:requiredCredentialList><ns1:requiredCredential><ns1:credentialType>USER_DEFINED</ns1:credentialType><ns1:genericCredentialType>OTP</ns1:genericCredentialType><ns1:groupName>DEFAULT</ns1:groupName><ns1:preference>0</ns1:preference><ns1:required>true</ns1:required></ns1:requiredCredential></ns1:requiredCredentialList><ns1:riskResult><ns1:riskScore>345</ns1:riskScore><ns1:riskScoreBand>SCORE_BAND_1</ns1:riskScoreBand><ns1:triggeredRule><ns1:actionCode>CHALLENGE</ns1:actionCode><ns1:actionName>User_Device_Not_Bound</ns1:actionName><ns1:actionType>STRICT</ns1:actionType><ns1:clientFactList/><ns1:ruleId>User_Device_Not_Bound</ns1:ruleId><ns1:ruleName>User_Device_Not_Bound</ns1:ruleName></ns1:triggeredRule><ns1:deviceAssuranceLevel>LOW</ns1:deviceAssuranceLevel></ns1:riskResult></ns1:analyzeReturn></ns1:analyzeResponse></soapenv:Body></soapenv:Envelope>";
+        }
+        #region RSA
 
+        // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.xmlsoap.org/soap/envelope/", IsNullable = false)]
+        public partial class RSAEnvelope
+        {
+
+            public RSAEnvelopeBody evbodyField { get; set; }
+
+            /// <remarks/>
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        public partial class RSAEnvelopeBody
+        {
+
+            private analyzeResponse analyzeResponseField;
+
+            /// <remarks/>
+            [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://ws.csd.rsa.com")]
+            public analyzeResponse analyzeResponse
+            {
+                get
+                {
+                    return this.analyzeResponseField;
+                }
+                set
+                {
+                    this.analyzeResponseField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://ws.csd.rsa.com", IsNullable = false)]
+        public partial class analyzeResponse
+        {
+
+            private analyzeResponseAnalyzeReturn analyzeReturnField;
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturn analyzeReturn
+            {
+                get
+                {
+                    return this.analyzeReturnField;
+                }
+                set
+                {
+                    this.analyzeReturnField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturn
+        {
+
+            private analyzeResponseAnalyzeReturnDeviceResult deviceResultField;
+
+            private analyzeResponseAnalyzeReturnIdentificationData identificationDataField;
+
+            private analyzeResponseAnalyzeReturnMessageHeader messageHeaderField;
+
+            private analyzeResponseAnalyzeReturnStatusHeader statusHeaderField;
+
+            private analyzeResponseAnalyzeReturnRequiredCredentialList requiredCredentialListField;
+
+            private analyzeResponseAnalyzeReturnRiskResult riskResultField;
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnDeviceResult deviceResult
+            {
+                get
+                {
+                    return this.deviceResultField;
+                }
+                set
+                {
+                    this.deviceResultField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnIdentificationData identificationData
+            {
+                get
+                {
+                    return this.identificationDataField;
+                }
+                set
+                {
+                    this.identificationDataField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnMessageHeader messageHeader
+            {
+                get
+                {
+                    return this.messageHeaderField;
+                }
+                set
+                {
+                    this.messageHeaderField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnStatusHeader statusHeader
+            {
+                get
+                {
+                    return this.statusHeaderField;
+                }
+                set
+                {
+                    this.statusHeaderField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnRequiredCredentialList requiredCredentialList
+            {
+                get
+                {
+                    return this.requiredCredentialListField;
+                }
+                set
+                {
+                    this.requiredCredentialListField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnRiskResult riskResult
+            {
+                get
+                {
+                    return this.riskResultField;
+                }
+                set
+                {
+                    this.riskResultField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnDeviceResult
+        {
+
+            private analyzeResponseAnalyzeReturnDeviceResultAuthenticationResult authenticationResultField;
+
+            private analyzeResponseAnalyzeReturnDeviceResultCallStatus callStatusField;
+
+            private analyzeResponseAnalyzeReturnDeviceResultDeviceData deviceDataField;
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnDeviceResultAuthenticationResult authenticationResult
+            {
+                get
+                {
+                    return this.authenticationResultField;
+                }
+                set
+                {
+                    this.authenticationResultField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnDeviceResultCallStatus callStatus
+            {
+                get
+                {
+                    return this.callStatusField;
+                }
+                set
+                {
+                    this.callStatusField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnDeviceResultDeviceData deviceData
+            {
+                get
+                {
+                    return this.deviceDataField;
+                }
+                set
+                {
+                    this.deviceDataField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnDeviceResultAuthenticationResult
+        {
+
+            private string authStatusCodeField;
+
+            private byte riskField;
+
+            /// <remarks/>
+            public string authStatusCode
+            {
+                get
+                {
+                    return this.authStatusCodeField;
+                }
+                set
+                {
+                    this.authStatusCodeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public byte risk
+            {
+                get
+                {
+                    return this.riskField;
+                }
+                set
+                {
+                    this.riskField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnDeviceResultCallStatus
+        {
+
+            private string statusCodeField;
+
+            /// <remarks/>
+            public string statusCode
+            {
+                get
+                {
+                    return this.statusCodeField;
+                }
+                set
+                {
+                    this.statusCodeField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnDeviceResultDeviceData
+        {
+
+            private string bindingTypeField;
+
+            private string deviceTokenCookieField;
+
+            private string deviceTokenFSOField;
+
+            /// <remarks/>
+            public string bindingType
+            {
+                get
+                {
+                    return this.bindingTypeField;
+                }
+                set
+                {
+                    this.bindingTypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string deviceTokenCookie
+            {
+                get
+                {
+                    return this.deviceTokenCookieField;
+                }
+                set
+                {
+                    this.deviceTokenCookieField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string deviceTokenFSO
+            {
+                get
+                {
+                    return this.deviceTokenFSOField;
+                }
+                set
+                {
+                    this.deviceTokenFSOField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnIdentificationData
+        {
+
+            private bool delegatedField;
+
+            private string groupNameField;
+
+            private string orgNameField;
+
+            private string sessionIdField;
+
+            private string transactionIdField;
+
+            private string userNameField;
+
+            private string userStatusField;
+
+            private string userTypeField;
+
+            /// <remarks/>
+            public bool delegated
+            {
+                get
+                {
+                    return this.delegatedField;
+                }
+                set
+                {
+                    this.delegatedField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string groupName
+            {
+                get
+                {
+                    return this.groupNameField;
+                }
+                set
+                {
+                    this.groupNameField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string orgName
+            {
+                get
+                {
+                    return this.orgNameField;
+                }
+                set
+                {
+                    this.orgNameField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string sessionId
+            {
+                get
+                {
+                    return this.sessionIdField;
+                }
+                set
+                {
+                    this.sessionIdField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string transactionId
+            {
+                get
+                {
+                    return this.transactionIdField;
+                }
+                set
+                {
+                    this.transactionIdField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string userName
+            {
+                get
+                {
+                    return this.userNameField;
+                }
+                set
+                {
+                    this.userNameField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string userStatus
+            {
+                get
+                {
+                    return this.userStatusField;
+                }
+                set
+                {
+                    this.userStatusField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string userType
+            {
+                get
+                {
+                    return this.userTypeField;
+                }
+                set
+                {
+                    this.userTypeField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnMessageHeader
+        {
+
+            private string apiTypeField;
+
+            private string requestTypeField;
+
+            private System.DateTime timeStampField;
+
+            private decimal versionField;
+
+            /// <remarks/>
+            public string apiType
+            {
+                get
+                {
+                    return this.apiTypeField;
+                }
+                set
+                {
+                    this.apiTypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string requestType
+            {
+                get
+                {
+                    return this.requestTypeField;
+                }
+                set
+                {
+                    this.requestTypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public System.DateTime timeStamp
+            {
+                get
+                {
+                    return this.timeStampField;
+                }
+                set
+                {
+                    this.timeStampField = value;
+                }
+            }
+
+            /// <remarks/>
+            public decimal version
+            {
+                get
+                {
+                    return this.versionField;
+                }
+                set
+                {
+                    this.versionField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnStatusHeader
+        {
+
+            private byte reasonCodeField;
+
+            private string reasonDescriptionField;
+
+            private byte statusCodeField;
+
+            /// <remarks/>
+            public byte reasonCode
+            {
+                get
+                {
+                    return this.reasonCodeField;
+                }
+                set
+                {
+                    this.reasonCodeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string reasonDescription
+            {
+                get
+                {
+                    return this.reasonDescriptionField;
+                }
+                set
+                {
+                    this.reasonDescriptionField = value;
+                }
+            }
+
+            /// <remarks/>
+            public byte statusCode
+            {
+                get
+                {
+                    return this.statusCodeField;
+                }
+                set
+                {
+                    this.statusCodeField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnRequiredCredentialList
+        {
+
+            private analyzeResponseAnalyzeReturnRequiredCredentialListRequiredCredential requiredCredentialField;
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnRequiredCredentialListRequiredCredential requiredCredential
+            {
+                get
+                {
+                    return this.requiredCredentialField;
+                }
+                set
+                {
+                    this.requiredCredentialField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnRequiredCredentialListRequiredCredential
+        {
+
+            private string credentialTypeField;
+
+            private string genericCredentialTypeField;
+
+            private string groupNameField;
+
+            private byte preferenceField;
+
+            private bool requiredField;
+
+            /// <remarks/>
+            public string credentialType
+            {
+                get
+                {
+                    return this.credentialTypeField;
+                }
+                set
+                {
+                    this.credentialTypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string genericCredentialType
+            {
+                get
+                {
+                    return this.genericCredentialTypeField;
+                }
+                set
+                {
+                    this.genericCredentialTypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string groupName
+            {
+                get
+                {
+                    return this.groupNameField;
+                }
+                set
+                {
+                    this.groupNameField = value;
+                }
+            }
+
+            /// <remarks/>
+            public byte preference
+            {
+                get
+                {
+                    return this.preferenceField;
+                }
+                set
+                {
+                    this.preferenceField = value;
+                }
+            }
+
+            /// <remarks/>
+            public bool required
+            {
+                get
+                {
+                    return this.requiredField;
+                }
+                set
+                {
+                    this.requiredField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnRiskResult
+        {
+
+            private ushort riskScoreField;
+
+            private string riskScoreBandField;
+
+            private analyzeResponseAnalyzeReturnRiskResultTriggeredRule triggeredRuleField;
+
+            private string deviceAssuranceLevelField;
+
+            /// <remarks/>
+            public ushort riskScore
+            {
+                get
+                {
+                    return this.riskScoreField;
+                }
+                set
+                {
+                    this.riskScoreField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string riskScoreBand
+            {
+                get
+                {
+                    return this.riskScoreBandField;
+                }
+                set
+                {
+                    this.riskScoreBandField = value;
+                }
+            }
+
+            /// <remarks/>
+            public analyzeResponseAnalyzeReturnRiskResultTriggeredRule triggeredRule
+            {
+                get
+                {
+                    return this.triggeredRuleField;
+                }
+                set
+                {
+                    this.triggeredRuleField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string deviceAssuranceLevel
+            {
+                get
+                {
+                    return this.deviceAssuranceLevelField;
+                }
+                set
+                {
+                    this.deviceAssuranceLevelField = value;
+                }
+            }
+        }
+
+        /// <remarks/>
+        [System.SerializableAttribute()]
+        [System.ComponentModel.DesignerCategoryAttribute("code")]
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
+        public partial class analyzeResponseAnalyzeReturnRiskResultTriggeredRule
+        {
+
+            private string actionCodeField;
+
+            private string actionNameField;
+
+            private string actionTypeField;
+
+            private object clientFactListField;
+
+            private string ruleIdField;
+
+            private string ruleNameField;
+
+            /// <remarks/>
+            public string actionCode
+            {
+                get
+                {
+                    return this.actionCodeField;
+                }
+                set
+                {
+                    this.actionCodeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string actionName
+            {
+                get
+                {
+                    return this.actionNameField;
+                }
+                set
+                {
+                    this.actionNameField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string actionType
+            {
+                get
+                {
+                    return this.actionTypeField;
+                }
+                set
+                {
+                    this.actionTypeField = value;
+                }
+            }
+
+            /// <remarks/>
+            public object clientFactList
+            {
+                get
+                {
+                    return this.clientFactListField;
+                }
+                set
+                {
+                    this.clientFactListField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string ruleId
+            {
+                get
+                {
+                    return this.ruleIdField;
+                }
+                set
+                {
+                    this.ruleIdField = value;
+                }
+            }
+
+            /// <remarks/>
+            public string ruleName
+            {
+                get
+                {
+                    return this.ruleNameField;
+                }
+                set
+                {
+                    this.ruleNameField = value;
+                }
+            }
+        }
+
+
+        #endregion
         #region GetEGlobalResponse
         // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
         /// <remarks/>

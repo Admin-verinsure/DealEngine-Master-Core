@@ -175,8 +175,16 @@ namespace TechCertain.Services.Impl
 			mergeFields.Add (new KeyValuePair<string, string> ("[[AdministrationFee]]", agreement.BrokerFee.ToString ("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
             if (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced")
             {
-                mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardType));
-                mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardNumber));
+                if (agreement.ClientInformationSheet.Programme.Payment != null)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardType));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardNumber));
+                } else
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", "No Credit Card Payment"));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", "No Credit Card Payment"));
+                }
+               
             }
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
 			currencyFormat.CurrencyNegativePattern = 2;

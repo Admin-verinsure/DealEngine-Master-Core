@@ -288,54 +288,9 @@
                                alert("Unable to save.");
                            });
 
-
-                       @*var postData = { coverOptions: CoverOptions , covers: CoverOptions};
-                        $.ajax({
-                            url: '@Url.Action("SaveCoverOptions", "Information")',
-                            type: "POST",
-                            data: postdata
-                        }).done(function (data) {
-                                debugger;
-                                   alert("Cover Options saving");
-
-                            }).fail(function (jqXHR, textStatus, errorThrown) { 
-                                debugger;
-                              alert("There was an error saving Cover Options");
-                             });*@
-
                }).fail(function (jqXHR, textStatus, errorThrown) { 
                        alert("There was an error getting ProductName.");
                });
-
-
-
-               //var prod = $("#ListProductName").val();
-
-               //.forEach(function (countryName) {
-               //  header.append($('<th>').text(countryName));
-               //});
-               //foreach(){
-
-//}
-               //var employersGeneral =  document.getElementsByName("abc").val();
-               ////var generalorPublicLiability = $('input[name="General or Public Liability":checked').val();
-               ////var employersPractices = $('input[name="Employers Practices":checked').val();
-               ////var PI = $('input[name="Professional Indemnity":checked').val();
-               ////var cyberLiability = $('input[name="Cyber Liability":checked').val();
-               ////var statutoryLiabilities= $('input[name="Statutory Liabilities":checked').val();
-
-
-               //$.each(model.ListProductName, function () {
-               //    $.each(this.Items, function () {
-               //        var h = this.Items;
-               //        //var selectedBoatUseCategory = $('input[name=this]:checked').val();
-
-               //    })
-               // });
-
-               @*foreach(var uh in @Model){
-               var selectedBoatUseCategory = $('input[name=Model.ListProductName[i]]:checked').val();
-               }*@
 
                 $.ajax({
                 url: '@Url.Action("QuoteToAgree", "Information")',
@@ -361,8 +316,8 @@
                     $(prevbutton).hide();
                 }
             } else if (stepNumber === 2) {
-               if (!$('#agreementAccept').is(":checked")) {
-                   $("#modal").show();
+               if (!$('#agreementAccept').is(":checked")) {                   
+                   document.getElementById("advisoryModal").hidden = false;
                    return false;
                }
 
@@ -399,12 +354,12 @@
 				$.each (array, function(i, pair) {
 					ids.push (pair.value);
 				});
-				console.log($("#tab2 :input").serialize({ json:true }));
+               console.log($("#tab2 :input").serialize({ json: true }));
            		$('#getDocumentsModal').show();
 				$.ajax({
 	            	// change back once mono decides to fix
 	                url: '@Url.Action("AcceptAgreement", "Agreement")',
-	                type: "POST",
+                    type: "POST",
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status:status })
 	            })
@@ -429,8 +384,8 @@
 
 
     //$('[data-toggle="popover"]').popover();
-    //    $('[data-toggle="tooltip"]').tooltip();
-            $(".chosen-select").chosen({ width: "95%" });
+    $('[data-toggle="tooltip"]').tooltip({html: true});
+    $(".chosen-select").chosen({ width: "95%" });
 
     $('#Principaltabs').tabs();
     $('#Nonregisteredtabs').tabs();
@@ -466,7 +421,6 @@
         includeSelectAllOption: true,
           buttonWidth: '100%'
       });
-
 
     $('.overlay').css({
     "position": "fixed",
@@ -1944,6 +1898,7 @@ function showAccordionPanel(id, panelNo) {
             $('#sharedRevenueTerritories').show();
         } else {
             $('#sharedRevenueTerritories').hide();
+
         }
     }
 
@@ -1972,6 +1927,7 @@ function showAccordionPanel(id, panelNo) {
                 data: postData
             })
                 .done(function (Data) {
+                    SaveRevenueTabThree();
                     $('#SharedRevenueTab2').show();
                 });
         }
@@ -1979,11 +1935,11 @@ function showAccordionPanel(id, panelNo) {
 
     function SaveRevenueTabTwo(tableType) {
         event.preventDefault();
-        if (tableType == 'true') {
-            SetCurrentTab('RevenueTabs3');
-        } else {
-            SetCurrentTab('RevenueTabs4');
-        }
+        //if (tableType == 'true') {
+        //    SetCurrentTab('RevenueTabs3');
+        //} else {
+        //    SetCurrentTab('RevenueTabs4');
+        //}
 
         var businessActivities = GetActivitiesForRevenue('value');
         var clientInformationSheetId = $('#AnswerSheetId').val();
@@ -1995,44 +1951,43 @@ function showAccordionPanel(id, panelNo) {
             data: postData
         })
             .done(function (Data) {
-                BuildRevenuesTable('true');
+                SaveRevenueTabFour();
                 $('#SharedRevenueTab3').show();
             });
     }
 
     function SaveRevenueTabThree() {
-        event.preventDefault();
         table = document.getElementById("sharedRevenueTerritoriesTable");
         if (validateTableTerritory(table)) {
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
-            SetCurrentTab('RevenueTabs4');
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
                 type: "POST",
                 data: postData
             })
                 .done(function (Data) {
-                    BuildRevenuesTable('false');
-                    $('#SharedRevenueTab4').show();
-                    var activitiesStr = GetActivitiesForRevenue('text');
-                    activitiesStr.forEach(function (item, index) {
-                        if (item.trim() === "Other Work not listed above" ||
-                            item.trim() === "Inspection Reports" ||
-                            item.trim() === "Valuations" ||
-                            item.trim() === "Architecture - Schools MOE" ||
-                            item.trim() === "Architecture - Schools - Non MOE" ||
-                            item.trim() === "Canterbury Earthquake Rebuild Work") {
-                            $('#submitTab4').hide();
-                            $('#additionalInfomation').show();
-                        }
-                    });
+                    $('#SharedRevenueTab2').show();
+                    //BuildRevenuesTable('false');
+                    //$('#SharedRevenueTab4').show();
+                    //var activitiesStr = GetActivitiesForRevenue('text');
+                    //activitiesStr.forEach(function (item, index) {
+                    //    if (item.trim() === "Other Work not listed above" ||
+                    //        item.trim() === "Inspection Reports" ||
+                    //        item.trim() === "Valuations" ||
+                    //        item.trim() === "Architecture - Schools MOE" ||
+                    //        item.trim() === "Architecture - Schools - Non MOE" ||
+                    //        item.trim() === "Canterbury Earthquake Rebuild Work") {
+                    //        $('#submitTab4').hide();
+                    //        $('#additionalInfomation').show();
+                    //    }
+                    //});
                 });
         }
     }
 
-    function SaveRevenueTabFour(isSubmit) {
+    function SaveRevenueTabFour(isSubmit, type) {
         event.preventDefault();
         table = document.getElementById("sharedRevenueActivityTable");
         if (validateTableActivity(table)) {
@@ -2073,13 +2028,18 @@ function showAccordionPanel(id, panelNo) {
                 });
                 SetCurrentTab('RevenueTabs5');
             } else {
-                SetCurrentTab('RevenueTabs6');
+                if (type == 6) {
+                    SetCurrentTab('RevenueTabs6');
+                }
+                else {
+                    SetCurrentTab('RevenueTabs0');
+                }
                 BuildRevenueOverview();
             }
         }
     }
 
-    function SaveRevenueTabFive() {
+    function SaveRevenueTabFive(type) {
         event.preventDefault();                       
         var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
@@ -2091,7 +2051,13 @@ function showAccordionPanel(id, panelNo) {
             data: postData
         })
             .done(function (Data) {
-                SetCurrentTab('RevenueTabs6');
+                if (type == 6) {
+                    SetCurrentTab('RevenueTabs6');
+                }
+                else {
+                    SetCurrentTab('RevenueTabs0');
+                }
+                
                 BuildRevenueOverview();
             });
     }
@@ -2121,6 +2087,12 @@ function showAccordionPanel(id, panelNo) {
         $('#SharedRevenueTab3').hide();
         $('#SharedRevenueTab4').hide();
         $('#SharedRevenueTab5').hide();
+
+        $('#revenueTab1').hide();
+        $('#revenueTab2').hide();
+        $('#revenueTab3').hide();
+        $('#revenueTab4').hide();
+        $('#revenueTab5').hide();
 
         CopyTableValues("sharedRevenueTerritoriesTable", "ListSharedRevenueTerritories");
         CopyTableValues("sharedRevenueActivityTable", "ListSharedRevenueActivities");
@@ -3543,38 +3515,6 @@ function EditClaim(claimId, tableId) {
     });
     };
 
-     @*function RemoveBoat(boatId, status, sourceTable, destTable) {
-        debugger;
-           var _sheetId = $('#AnswerSheetId').val();
-             var postData = {
-		       'boatId': boatId,
-		       'answerSheetId': _sheetId
-	        };
-
-	 $.ajax({
-
-        url: '@Url.Action("GetOriginalBoat", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
-            data: postData
-         })
-            .done(function (data) {
-           debugger;
-        if(data.OriginalBoatId != "00000000-0000-0000-0000-000000000000"){
-			$('#BoatRemoveModal').show();
-                $('.modal').css('width', '600px');
-        $('#boatID').val(boatId);
-		$('#status').val(status);
-		$('#sourceTable').val(sourceTable);
-		$('#destTable').val(destTable);
-		}
-
-		 });
-     };*@
-
-
-
 
     function EditBoat(classId, boatId) {
 
@@ -3849,40 +3789,45 @@ async: true
 };
 
    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
-       debugger;
+       var postData = {
+           'boatId': boatId,
+           'status': status
+       };
 
-        var postData = {
-		'boatId': boatId,
-		'status': status
-	};
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("SetBoatRemovedStatus", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, status : status })
-        data: postData,
-async: true
-    })
+       $.ajax({
+           url: '@Url.Action("SetBoatRemovedStatus", "Services")',
+           type: "Post",
+           data: postData,
+       })
         .done(function (data) {
-              $('#BoatRemoveModal').hide();
-             $('#getDetailsModal').hide();
+            $('#BoatRemoveModal').hide();
+            $('#getDetailsModal').hide();
 
-        if (data === true) {
-            $(sourceTable).trigger( 'reloadGrid' );
-            $(destTable).trigger( 'reloadGrid' );
-            //$.smallBox({
-            //    title: "Boat status has been updated",
-            //    color: "#5F895F",
-            //    iconSmall: "fa fa-check bounce animated",
-            //    timeout: 4000
-            //});
-        }
-    });
-};
+            if (data === true) {
+                $(sourceTable).trigger('reloadGrid');
+                $(destTable).trigger('reloadGrid');
+            }
+        });
+    }
 
-    function AdvisoryModelClose(modalId) {
+    function AdvisoryModelClose(modalId, type) {
         document.getElementById(modalId).hidden = true;
+        if (type == 'record') {
+            var clientInformationSheetId = $('#AnswerSheetId').val();
+            var postData = {ClientInformationSheetId : clientInformationSheetId }
+            $.ajax({
+                url: '@Url.Action("CloseAdvisory", "Services")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (data) {
+                    debugger;
+                    window.location = data;
+                })
+                .fail(function (a, b, c) {
+                    debugger;
+                });
+        }
     }
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
@@ -4314,47 +4259,6 @@ async: true
         alert("There was an error while trying to save the Boat Use.");
     });
         }
-
-
- //   @*function AddNamedParty(tabId, tableId) {
- //         var informationId = $('#AnswerSheetId').val();
- //       var name = $('#NPOrgName').val();
- //       var phone = $('#NPOrgPhone').val();
- //       var website = $('#NPOrgWebsite').val();
- //       var email = $('#NPOrgEmail').val();
-
- //       var proddata = {
- //           "OrganisationName": name,
- //           "OrganisationPhone": phone,
- //           "Website": website,
- //           "OrganisationEmail": email,
- //           "AnswerSheetId":informationId
- //       };
-
-    //$.ajax({
-    //	// change back once mono decides to fix
-    //    url: '@Url.Action("AddNamedParty", "Services")',
- //       type: "POST",
- //       data: JSON.stringify({ model: proddata })
- //   })
-    //.done(function (data) {
-    //	$.smallBox({
- //           title: "Named Party has been saved",
-    //	    color: "#5F895F",
-    //	    iconSmall: "fa fa-check bounce animated",
-    //	    timeout: 4000
-    //	});
-    //	$(tableId).trigger( 'reloadGrid' );
-
-    //	$(tabId + " :input").val("");
-    //})
- //       .fail(function (jqXHR, textStatus, errorThrown) {
- //
- //       alert("There was an error while trying to save the Boat Use.");
-    //});
- //   };*@
-
-
 
     function ValidateAddBoatUse(event, tabId, tableId, currenttab) {
         event.preventDefault();
@@ -7284,6 +7188,18 @@ async: true
                                alert("Unable to save.");
                            });
         }
+    }
+
+    function bypassPayment() {
+        event.preventDefault();
+        $.ajax({
+            url: '@Url.Action("ByPassPayment", "Agreement")',
+            type: "Post",
+            data: $("#tab1 :input").serialize({ json: true }),
+            async: true
+        }).done(function (data) {
+               window.location.href = data.url;
+        });
     }
 
 </script>
