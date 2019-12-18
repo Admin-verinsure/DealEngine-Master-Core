@@ -691,7 +691,6 @@ namespace TechCertain.WebUI.Controllers
 
             ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.SubTermType == clientAgreementSubTerm.TermType && t.DateDeleted == null);
 
-            ClientAgreementSubTerm subTerm = null;
            
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {

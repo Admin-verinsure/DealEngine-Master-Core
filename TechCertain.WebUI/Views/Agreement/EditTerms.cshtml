@@ -140,14 +140,14 @@
                                         @item.Model
                                     </td>
                                     <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.TermLimit.ToString("C0")
+                                        @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                     </td>
                                     <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Excess.ToString("C0")
+                                        @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                     </td>
                                     <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Premium.ToString("C")
+                                        @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                     </td>
                                     <td class="pt-3-half" width="13%" contenteditable="true">
@@ -155,9 +155,9 @@
                                     </td>
                                     <td width="9%">
                                         <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                           data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C")"
-                                           data-motor-sum="@item.TermLimit.ToString("C0")" data-motor-premium="@item.Premium.ToString("C")"
-                                           data-motor-excess="@item.Excess.ToString("C0")" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
+                                           data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                           data-motor-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                           data-motor-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
                                         <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.Model"><span class="fa fa-trash" id="span"></span></a>
                                     </td>
                                 </tr>
@@ -214,8 +214,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
@@ -271,8 +271,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
@@ -327,8 +327,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
@@ -383,8 +383,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
@@ -439,8 +439,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
@@ -495,8 +495,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
@@ -553,8 +553,8 @@
 
                             <td width="9%">
                                 <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0")" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C")"
-                                   data-sub-excess="@item.Excess.ToString("C0")" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
                                 <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
                             </td>
                         </tr>
