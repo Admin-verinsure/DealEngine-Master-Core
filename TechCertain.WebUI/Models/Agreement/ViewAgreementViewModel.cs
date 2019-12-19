@@ -113,8 +113,12 @@ namespace TechCertain.WebUI.Models.Agreement
         public string Premium { get; set; }
 
 		public string FSL { get; set; }
+           
+        public string TotalPremium { get; set; }
 
-		public string TotalPremium { get; set; }
+        public string TotalPremiumIncFeeGST { get; set; }
+
+        public string TotalPremiumIncFeeIncGST { get; set; }
 
     }
 

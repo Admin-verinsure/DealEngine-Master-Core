@@ -98,7 +98,7 @@
                     @*<a href="#getStartDate" style="color:green">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                     </a>*@
-                    @if (Model.IsChange == false)
+                    @if (Model.IsChange == false && !Model.InformationSheetStatus.StartsWith("Bound"))
                     {
                         <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
 
