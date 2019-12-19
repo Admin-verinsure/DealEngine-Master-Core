@@ -4,7 +4,7 @@
         <li class="nav nav-tabs Territory" id="SharedRevenueTab1"> <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
         <li class="nav nav-tabs Activities" style="display:none" id="SharedRevenueTab2"> <a class="nav-link" href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
         <li class="nav nav-tabs AdditionalInformation" style="display:none" id="SharedRevenueTab3"> <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
-        <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab6"> <a class="nav-link" href="#RevenueTabs6" data-toggle="tab"> Summary </a> </li>
+        <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Summary </a> </li>
     </ul>
     
     <div id="RevenueTabs1" class="tab-content">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
                     <label for="SharedTerritories">Select Territories</label>
-                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="BuildRevenuesTable('true')" required>
+                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
                         @foreach (var territory in Model.Territories)
                         {
                             <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
@@ -49,6 +49,11 @@
         <fieldset>
             <div class="container-fluid">
                 <div class="input-group mb-3">
+                    <label for="totalRevenue">Enter Fee Income</label>
+                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
+                </div>
+
+                <div class="input-group mb-3">
                     <label for="sharedRevenueActivities">Select Activites</label>
                     <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
                         @foreach (var ou in Model.Activities)
@@ -59,65 +64,24 @@
                 </div>
 
                 <div class="input-group mb-3">
-                    <label for="totalRevenue">Enter Fee Income</label>
-                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
-                </div>
-                <div class="input-group mb-3">
                     <table id="sharedRevenueActivityTable" class="table">
                     </table>
                 </div>
+
                 <div class="input-group mb-3">
                     <div class="footer" id="submitTab4">
-                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabFour('false', 6)">
+                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('newSummary')">
                     </div>
                     <div class="footer" id="additionalInfomation" style="display:none">
-                        <button class="btn-primary btn" onclick="SaveRevenueTabFour('true', 6)">Submit To Save</button>
+                        <button class="btn-primary btn" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
                     </div>
                 </div>
 
             </div>
         </fieldset>
     </div>
+    
     <div id="RevenueTabs3" class="tab-content">
-        <fieldset>
-            @*<div class="container-fluid">
-                <div class="input-group mb-3">
-                    <table id="sharedRevenueTerritoriesTable" class="table">
-                    </table>
-                </div>
-
-                <div class="input-group mb-3">
-                    <div id="sharedRevenueActivity" class="input-group">
-                        <button class="btn-primary btn" onclick="SaveRevenueTabThree('false')">Submit To Save</button>
-                    </div>
-                </div>
-            </div>*@
-        </fieldset>
-    </div>
-    <div id="RevenueTabs4" class="tab-content">
-
-        @*<fieldset>
-            <div class="container-fluid">
-                <div class="input-group mb-3">
-                    <label for="totalRevenue">Enter Fee Income</label>
-                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
-                </div>
-                <div class="input-group mb-3">
-                    <table id="sharedRevenueActivityTable" class="table">
-                    </table>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="footer" id="submitTab4">
-                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabFour('false', 6)">
-                    </div>
-                    <div class="footer" id="additionalInfomation" style="display:none">
-                        <button class="btn-primary btn" onclick="SaveRevenueTabFour('true', 6)">Submit To Save</button>
-                    </div>
-                </div>
-            </div>
-        </fieldset>*@
-    </div>
-    <div id="RevenueTabs5" class="tab-content">
         <fieldset>
             <div class="container-fluid">
                 <div class="form-group" style="display:none" id="InspectionReport">
@@ -210,13 +174,13 @@
 
                 <div class="form-group mb-3">
                     <div class="footer" style="display:none" id="additionalActivitySubmit">
-                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive(6)">
+                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
                     </div>
                 </div>
             </div>
         </fieldset>
     </div>
-    <div id="RevenueTabs6" class="tab-content">
+    <div id="RevenueTabs4" class="tab-content">
         <div class="input-group mb-3">
             <label for="SharedTotalRevenue">Fee Income</label>
             <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" required>

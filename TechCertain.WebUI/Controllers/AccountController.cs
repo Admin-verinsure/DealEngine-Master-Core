@@ -388,7 +388,7 @@ namespace TechCertain.WebUI.Controllers
             try
             {
                 Console.WriteLine("Analzying RSA User");
-                RsaStatus rsaStatus = await rsaAuth.Analyze(rsaUser, true);
+                RsaStatus rsaStatus = await rsaAuth.Analyze(rsaUser, true);                
                 if (rsaStatus == RsaStatus.Allow)
                 {
                     Console.WriteLine("RSA User allowed, signing in...");

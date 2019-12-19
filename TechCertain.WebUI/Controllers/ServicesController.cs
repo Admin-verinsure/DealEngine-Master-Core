@@ -2285,29 +2285,28 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 User userdb = null;
+                Organisation organisation = null;
+
+                organisation = await _organisationService.GetOrganisation(model.ID);
                 try
                 {
                     if (orgTypeName == "Person - Individual")
                     {
-                        userdb = await _userService.GetUserByEmail(model.Email);
-                        if (userdb == null)
+                        userdb = await _userService.GetUserByEmail(organisation.Email);
+                        if (userdb != null)
                         {
-                            userdb = new User(currentUser, Guid.NewGuid(), model.FirstName);
-                            userdb.FirstName = model.FirstName;
-                            userdb.LastName = model.LastName;
-                            userdb.FullName = model.FirstName + " " + model.LastName;
-                            userdb.Email = model.Email;
-                            await _userService.Create(userdb);
+                            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                userdb.FirstName = model.FirstName;
+                                userdb.LastName = model.LastName;
+                                userdb.FullName = model.FirstName + " " + model.LastName;
+                                userdb.Email = model.Email;
+                                await uow.Commit();
+                            }
                         }
 
-
                     }
-                    else
-                    {
-                        userdb = _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
-
-                    }
-
+                   
                 }
                 catch (Exception ex)
                 {
@@ -2338,16 +2337,14 @@ namespace TechCertain.WebUI.Controllers
                 {
                     organisationName = model.OrganisationName;
                 }
-                Organisation organisation = null;
-
-                organisation = await _organisationService.GetOrganisation(model.ID);
+               
                 //{
                 //    organisation = new Organisation(CurrentUser(), Guid.NewGuid(), model.OrganisationName);
                 //    _organisationService.CreateNewOrganisation(organisation);
                 //}
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    organisation.ChangeOrganisationName(model.OrganisationName);
+                    organisation.ChangeOrganisationName(organisationName);
                     organisation.Qualifications = model.Qualifications;
                     organisation.IsNZIAmember = model.IsNZIAmember;
                     organisation.NZIAmembership = model.NZIAmembership;
@@ -2378,6 +2375,32 @@ namespace TechCertain.WebUI.Controllers
             return Json(model);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> EditPrincipalDirectorsOwner(OrganisationViewModel model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+            ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+            Organisation org = await _OrganisationRepository.GetByIdAsync(sheet.Owner.Id);
+            try
+            {
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    org.Email = model.Email;
+                    org.ChangeOrganisationName(model.OrganisationName);
+                    await uow.Commit();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return Json(model);
+
+
+        }
 
         [HttpPost]
         public async Task<IActionResult> GetPrincipalPartners(Guid answerSheetId, Guid partyID)

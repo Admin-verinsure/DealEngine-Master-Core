@@ -4,9 +4,7 @@
     <li class="nav nav-tabs Summary" style="display:none"> <a href="#RevenueTabs0" data-toggle="tab"> Summary </a> </li>
     <li class="nav nav-tabs Territory" style="display:none" id="revenueTab1"> <a href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
     <li class="nav nav-tabs Activities" style="display:none" id="revenueTab2"> <a href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
-    <li class="nav nav-tabs TerritoryBreakdown" style="display:none" id="revenueTab3"> <a href="#RevenueTabs3" data-toggle="tab"> Territory Breakdown </a> </li>
-    <li class="nav nav-tabs ActivityBreakdown" style="display:none" id="revenueTab4"> <a href="#RevenueTabs4" data-toggle="tab"> Activity Breakdown </a> </li>
-    <li class="nav nav-tabs AdditionalInformation" style="display:none" id="revenueTab5"> <a href="#RevenueTabs5" data-toggle="tab"> Additional Information </a> </li>
+    <li class="nav nav-tabs AdditionalInformation" style="display:none" id="revenueTab3"> <a href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
 </ul>
 
 <div id="RevenueTabs0" class="tab-content">
@@ -77,37 +75,6 @@
                 </select>
             </div>
 
-            <div id="sharedRevenue1Btn" style="display:none" class="input-group mb-3">
-                <button class="btn-primary btn" id="tradingButton" onclick="SaveRevenueTabOne()">Submit To Save</button>
-            </div>
-        </div>
-
-    </fieldset>
-</div>
-<div id="RevenueTabs2" class="tab-content">
-
-    <fieldset>
-        <div class="container-fluid">
-            <div class="input-group mb-3">
-                <label for="sharedRevenueActivities">Select Activites</label>
-                <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
-                    @foreach (var ou in Model.Activities)
-                    {
-                        <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div id="sharedRevenue2Btn" class="input-group mb-3" style="display:none">
-                <button class="btn-primary btn" onclick="SaveRevenueTabTwo('true')">Submit To Save</button>
-            </div>
-
-        </div>
-    </fieldset>
-</div>
-<div id="RevenueTabs3" class="tab-content">
-    <fieldset>
-        <div class="container-fluid">
             <div class="input-group mb-3">
                 <table id="sharedRevenueTerritoriesTable" class="table">
                     <thead>
@@ -133,15 +100,14 @@
                 </table>
             </div>
 
-            <div class="input-group mb-3">
-                <div id="sharedRevenueActivity" class="input-group">
-                    <button class="btn-primary btn" onclick="SaveRevenueTabThree('false')">Submit To Save</button>
-                </div>
+            <div id="sharedRevenue1Btn" style="display:none" class="input-group mb-3">
+                <button class="btn-primary btn" id="tradingButton" onclick="SaveRevenueTabOne()">Submit To Save</button>
             </div>
         </div>
+
     </fieldset>
 </div>
-<div id="RevenueTabs4" class="tab-content">
+<div id="RevenueTabs2" class="tab-content">
 
     <fieldset>
         <div class="container-fluid">
@@ -149,6 +115,17 @@
                 <label for="totalRevenue">Enter Fee Income</label>
                 <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
             </div>
+
+            <div class="input-group mb-3">
+                <label for="sharedRevenueActivities">Select Activites</label>
+                <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                    @foreach (var ou in Model.Activities)
+                    {
+                        <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
+                    }
+                </select>
+            </div>
+
             <div class="input-group mb-3">
                 <table id="sharedRevenueActivityTable" class="table">
                     @if (Model.RevenueData != null)
@@ -176,16 +153,17 @@
             </div>
             <div class="input-group mb-3">
                 <div class="footer" id="submitTab4">
-                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabFour('false')">
+                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('newSummary')">
                 </div>
                 <div class="footer" id="additionalInfomation" style="display:none">
-                    <button class="btn-primary btn" onclick="SaveRevenueTabFour('true')">Submit To Save</button>
+                    <button class="btn-primary btn" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
                 </div>
             </div>
+
         </div>
     </fieldset>
 </div>
-<div id="RevenueTabs5" class="tab-content">
+<div id="RevenueTabs3" class="tab-content">
     <fieldset>
         <div class="container-fluid">
             @if (Model.RevenueData.AdditionalActivityInformation != null)
@@ -387,22 +365,10 @@
 
             <div class="form-group mb-3">
                 <div class="footer" style="display:none" id="additionalActivitySubmit">
-                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive()">
+                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
                 </div>
             </div>
         </div>
     </fieldset>
 </div>
-
-@section pagespecific{
-
-    <script type="text/javascript">
-
-        function OpenSharedRevenueModel() {
-            debugger;
-            document.getElementById("exampleModalLong").showModal(); 
-        }
-
-    </script>
-}
 
