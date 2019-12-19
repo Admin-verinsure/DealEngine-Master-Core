@@ -1,6 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
 
-<div class="widget-body widget-hide-overflow">
+@*<div class="widget-body widget-hide-overflow">
 
     <div class="row">
         <section class="col col-sm-1"></section>
@@ -10,4 +10,15 @@
     </div>
 
 
+</div>*@
+
+<div class="container">
+    @Html.Raw(Model.NoPaymentRequiredMessage)
 </div>
+
+
+<script type="text/javascript">
+        var nextbutton1 = document.getElementsByClassName("sw-btn-next");
+                $(nextbutton1).addClass("hidden");
+                $(nextbutton1).hide();
+</script>

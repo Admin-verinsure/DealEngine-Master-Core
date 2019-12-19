@@ -1,6 +1,6 @@
 ﻿@model BaseListViewModel<TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel>
 <!-- NEW WIDGET START -->
-<div class="container">
+<div class="container-fluid">
     <!-- Widget ID (each widget will need unique ID)-->
     <div class="jarviswidget" id="wid-id-10"
          data="false"
@@ -22,15 +22,17 @@
             <!-- end widget edit box -->
             <!-- widget content -->
 
-            <div id="pxpaysection" class="container">
+            <div id="nopaymentsection" class="container">
                 @foreach (var item in Model)
                 {
+                <div class="row">
                     @await Html.PartialAsync("Partials/ViewNoPaymentRequiredMsg", item)
-                    break;
+                </div>
+                break;
                 }
-            </div>
-            <div class="row">
-                <button onclick="bypassPayment()" class="btn btn-primary">Next</button>
+                <div class="row">
+                    <button onclick="bypassPayment()" class="btn btn-primary">Next</button>
+                </div>
             </div>
             <!-- end widget content -->
         </div>
