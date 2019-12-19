@@ -1,12 +1,13 @@
 ﻿
-<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js" defer></script>
-<script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js" defer></script>
-<script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
+<script src="~/Scripts/plugin/jqgrid/grid.locale-en.js"></script>
+<script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
+<script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js"></script>
 
-<script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+<script src="~/smartwizard/js/jquery.smartWizard.min.js"></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-<script src="~/lib/popper.js/umd/popper.js" defer></script>
 
+@*<script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js" defer></script>*@
+@*<script src="~/lib/popper.js/umd/popper.js" defer></script>*@
 <script type="text/javascript">
 
    $(document).ready(function () {
@@ -106,26 +107,7 @@
                }
 
              
-               $.ajax({
-                   url: '@Url.Action("SubmitInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
-               })
-                   .done(function (url) {
-
-                       //$("#agreementView").on('load', url, function () {
-                       $("#agreementView").load(url, function () {
-
-                           $('#getAgreementModal').hide();
-                       });
-                   })
-                   .fail(function (data) {
-
-                       $('#getAgreementModal').hide();
-                       console.log(data);
-                       alert("There was an error getting your agreement.");
-                   });
-
+             
                    if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
 
@@ -239,6 +221,26 @@
                       });
 
                   }
+
+                 $.ajax({
+                   url: '@Url.Action("SubmitInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+
+                       //$("#agreementView").on('load', url, function () {
+                       $("#agreementView").load(url, function () {
+
+                           $('#getAgreementModal').hide();
+                       });
+                   })
+                   .fail(function (data) {
+
+                       $('#getAgreementModal').hide();
+                       console.log(data);
+                       alert("There was an error getting your agreement.");
+                   });
 
 
            } else if (stepNumber === 1) {
@@ -379,13 +381,44 @@
         });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
     $(document).ready(function () {
+        //$('[data-toggle="popover"]').popover();  
+        //$('[data-toggle="popover"]').click(function (e) {
+        //    debugger;
+        //    e.preventDefault();
+        //});
+        //$('[data-toggle="popover"]').mouseleave(function(){
+        //  $('[data-toggle="popover"]').popover('hide');
+        //});  
 
+        $('[data-toggle="popover"]').popover({
+           trigger: 'manual',
+           html: true,
+           animation: false
+        }).on('mouseenter', function () {
+    var _this = this;
+    $(this).popover('show');
+    $('.popover').on('mouseleave', function () {
+        $(_this).popover('hide');
+    });
+     }).on('mouseleave', function () {
+    var _this = this;
+    setTimeout(function () {
+        if (!$('.popover:hover').length) {
+            $(_this).popover('hide');
+        }
+    }, 300);
+      });
 
-    //$('[data-toggle="popover"]').popover();
-    //    $('[data-toggle="tooltip"]').tooltip();
-            $(".chosen-select").chosen({ width: "95%" });
+          //$('[data-toggle="popover"]').popover(); 
+    //$("[rel=tooltip]").tooltip({html:true});
+        //$('[data-toggle="popover"]').popover();
+        //$('[data-toggle="popover"]').popover();
+    //$('[data-toggle="tooltip"]').tooltip({html: true});
+    //$('[data-toggle="tooltip"]').tooltip({html:true});   
 
     $('#Principaltabs').tabs();
+    $(".chosen-select").chosen({ width: "95%" });
+
     $('#Nonregisteredtabs').tabs();
     $('#tabs').tabs();
     $('#Boattabs').tabs();
@@ -420,7 +453,6 @@
           buttonWidth: '100%'
       });
 
-
     $('.overlay').css({
     "position": "fixed",
     "width": "100%",
@@ -431,6 +463,9 @@
      "opacity": "1"
 
     });
+
+    //$('[data-toggle="popover"]').popover();   
+
 
     $('#AddClearBoat').click(function () {
         var mode = "Edit";
@@ -462,8 +497,7 @@
     });
 
     $('.Startdate').datepicker({
-       maxDate: "+30d",
-       minDate: 0,
+       maxDate: "+0d",
        dateFormat: "dd/mm/yy"
 
      });

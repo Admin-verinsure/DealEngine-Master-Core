@@ -1793,7 +1793,31 @@ namespace TechCertain.WebUI.Controllers
             return Redirect(url);
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> Resume(Guid id)
+        {
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
+            ClientInformationSheet sheet = clientProgramme.InformationSheet;
+            var user = await CurrentUser();
+            if (sheet != null)
+            {
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if (sheet.Status == "Not Taken Up")
+                    {
+                        sheet.Status = "Started";
+                        sheet.LastModifiedOn = DateTime.UtcNow;
+                        sheet.LastModifiedBy = user;
+                    }
+                    await uow.Commit();
+
+                }
+            }
+
+            var url = "/Information/EditInformation/" + id;
+            return Redirect(url);
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveInformation(IFormCollection collection)
         {

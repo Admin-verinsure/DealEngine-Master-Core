@@ -525,8 +525,133 @@ namespace TechCertain.WebUI.Controllers
                     }
                     model.MVTerms = motors;
                 }
-            }
 
+                if (terms.MotorTerms.Where(mvt => mvt.DateDeleted == null).Count() > 0)
+                {
+                    var motors = new List<EditTermsViewModel>();
+                    foreach (var motor in terms.MotorTerms)
+                    {
+                        motors.Add(new EditTermsViewModel
+                        {
+                            VesselId = motor.Id,
+                            Registration = motor.Registration,
+                            Make = motor.Make,
+                            Model = motor.Model,
+                            TermLimit = motor.TermLimit,
+                            Excess = Convert.ToInt32(motor.Excess),
+                            Premium = motor.Premium,
+                            FSL = motor.FSL
+                        });
+                    }
+                    model.MVTerms = motors;
+                }
+            }
+            var plterms = new List<EditTermsViewModel>();
+            var edterms = new List<EditTermsViewModel>();
+            var piterms = new List<EditTermsViewModel>();
+            var elterms = new List<EditTermsViewModel>();
+            var clterms = new List<EditTermsViewModel>();
+            var slterms = new List<EditTermsViewModel>();
+            var doterms = new List<EditTermsViewModel>();
+
+            //List<ClientAgreementTerm> plterms = agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PL" && t.DateDeleted == null);
+
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PL" && t.DateDeleted == null))
+            {
+                plterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                }) ;
+
+
+            }
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
+            {
+                edterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                });
+
+
+            }
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PI" && t.DateDeleted == null))
+            {
+                piterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                });
+
+
+            }
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "EL" && t.DateDeleted == null))
+            {
+                elterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                });
+
+
+            }
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "CL" && t.DateDeleted == null))
+            {
+                clterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                });
+
+
+            }
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "SL" && t.DateDeleted == null))
+            {
+                slterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                });
+
+
+            }
+            foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "DO" && t.DateDeleted == null))
+            {
+                doterms.Add(new EditTermsViewModel
+                {
+                    TermId = plterm.Id,
+                    TermType = plterm.SubTermType,
+                    TermLimit = plterm.TermLimit,
+                    Excess = Convert.ToInt32(plterm.Excess),
+                    Premium = plterm.Premium
+                });
+            }
+            model.PLTerms = plterms;
+            model.EDTerms = edterms;
+            model.PITerms = piterms;
+            model.ELTerms = elterms;
+            model.CLTerms = clterms;
+            model.SLTerms = slterms;
+            model.DOTerms = doterms;
             ViewBag.Title = "Edit Terms ";
 
             return View("EditTerms", model);
@@ -536,7 +661,7 @@ namespace TechCertain.WebUI.Controllers
         {
             ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementBVTerm.clientAgreementId);
 
-            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" && t.DateDeleted == null);
+            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "BV" );
 
             ClientAgreementBVTerm bvTerm = null;
             if (term.BoatTerms != null)
@@ -556,6 +681,26 @@ namespace TechCertain.WebUI.Controllers
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementBVTerm.clientAgreementId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSubTerm(Guid clientAgreementId, EditTermsViewModel clientAgreementSubTerm)
+        {
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementId);
+            //ClientAgreementTerm term = agreement.ClientAgreementTerms;
+
+            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementSubTerm.TermId && t.SubTermType == clientAgreementSubTerm.TermType && t.DateDeleted == null);
+
+           
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                term.Premium = clientAgreementSubTerm.Premium;
+                term.TermLimit = clientAgreementSubTerm.TermLimit;
+                term.Excess = clientAgreementSubTerm.Excess;
+                await uow.Commit();
+            }
+
+            return RedirectToAction("EditTerms", new { id = clientAgreementId });
         }
 
         [HttpPost]
@@ -611,6 +756,23 @@ namespace TechCertain.WebUI.Controllers
                     term.MotorTerms.Remove(mvTerm);
                 }
                 await uow.Commit();                
+            }
+
+            return RedirectToAction("EditTerms", new { id = clientAgreementBVTerm.clientAgreementId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteSubTerm(EditTermsViewModel clientAgreementBVTerm)
+        {
+            ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementBVTerm.clientAgreementId);
+
+            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.Id == clientAgreementBVTerm.TermId && t.DateDeleted == null);
+           
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+
+               term.DateDeleted = DateTime.UtcNow;
+                await uow.Commit();
             }
 
             return RedirectToAction("EditTerms", new { id = clientAgreementBVTerm.clientAgreementId });
@@ -802,6 +964,8 @@ namespace TechCertain.WebUI.Controllers
                 }
                 model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                 Boolean nextInfoSheet = false;
+                Boolean IsChange = false;
+
                 if (null != agreement.ClientInformationSheet.NextInformationSheet)
                 {
                     model.NextInfoSheet = true;
@@ -810,6 +974,12 @@ namespace TechCertain.WebUI.Controllers
                 {
                     model.NextInfoSheet = false;
                 }
+
+                if (null != agreement.ClientInformationSheet.IsChange)
+                {
+                    model.IsChange = agreement.ClientInformationSheet.IsChange;
+                }
+               
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);

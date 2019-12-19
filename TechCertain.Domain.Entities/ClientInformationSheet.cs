@@ -42,7 +42,7 @@ namespace TechCertain.Domain.Entities
 
 		public virtual RevenueByActivity RevenueData { get; set; }
 
-        //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound
+        //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up
         public virtual string Status { get; set; }
 
         public virtual string ReferenceId { get; set; }
