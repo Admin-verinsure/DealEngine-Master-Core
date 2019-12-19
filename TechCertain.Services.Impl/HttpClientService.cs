@@ -321,6 +321,7 @@ namespace TechCertain.Services.Impl
                         </soap:Header> 
                         <soap:Body>                        
                         <UpdateUserRequest>
+                        <request>
                         <actionTypeList>
                         <genericActionTypes>SET_USER_STATUS</genericActionTypes>
                         <genericActionTypes>SET_USER_GROUP</genericActionTypes>
@@ -345,6 +346,7 @@ namespace TechCertain.Services.Impl
                             <requestType> UPDATEUSER </requestType>
                             <version> 7.0 </version>
                         </messageHeader>
+                        </request>
                         </UpdateUserRequest>
                         </soap:Body>
                         </soap:Envelope>";
