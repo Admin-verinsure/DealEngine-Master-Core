@@ -233,16 +233,17 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			return new DeviceRequest {
 				devicePrint = rsaUser.DevicePrint,
 				deviceTokenCookie = rsaUser.DeviceTokenCookie,
+				userAgent = "Mozilla/5.0", //rsaUser.UserAgent,
 				// following fields required? if so, will need provide web request data - specialized web api?
 				httpAccept = "",
 				httpAcceptEncoding = "",
 				httpAcceptLanguage = "",
 				httpReferrer = rsaUser.HttpReferer,
 
-                //for testing purposes
-                //ipAddress = rsaUser.IpAddress,
-                ipAddress = GetIP(),
-				userAgent = rsaUser.UserAgent
+				//for testing purposes
+				//ipAddress = rsaUser.IpAddress,
+				ipAddress = GetIP()
+				
 			};
 		}
 
