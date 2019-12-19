@@ -66,9 +66,9 @@
                                         <div class="alert alert-info">
                                             <p>@Model.Description</p>
                                         </div>
-                                        @Html.TextBoxFor(m => m.Subject)
+                                        Subject: @Html.TextBoxFor(m => m.Subject,new {style="width: Auto;" })
                                         <br />
-                                        @Html.TextAreaFor(m => m.Body)
+                                        Body: @Html.TextAreaFor(m => m.Body)
                                         <br />
                                     </div>
                                     <!-- end widget content -->
