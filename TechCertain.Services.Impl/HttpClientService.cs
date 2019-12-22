@@ -321,7 +321,7 @@ namespace TechCertain.Services.Impl
                         </soap:Header> 
                         <soap:Body>                        
                         <UpdateUserRequest>
-                        <request>
+                        <request xmlns = ""http://ws.csd.rsa.com"">
                         <actionTypeList>
                         <genericActionTypes>SET_USER_STATUS</genericActionTypes>
                         <genericActionTypes>SET_USER_GROUP</genericActionTypes>
