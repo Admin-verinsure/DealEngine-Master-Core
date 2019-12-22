@@ -991,7 +991,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 EBixPolicy.BrokerAmountDue += risk.BrokerAmountDue;
                 EBixPolicy.BrokerCeqDue += risk.BrokerCeqDue;
                 EBixPolicy.BSCAmount += risk.BSCAmount;
-                BrokerFeeTotal += EBixPolicy.BSCAmount;
+                //BrokerFeeTotal += EBixPolicy.BSCAmount;
                 EBixPolicy.CEQuake += risk.CEQuake;
                 EBixPolicy.BscGST += risk.BscGST;
                 EBixPolicy.GSTPremium += risk.GSTPremium;
@@ -1000,39 +1000,27 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 EBixPolicy.CoyPremium += risk.CoyPremium;
                 EBixPolicy.GSTBrokerage += risk.GSTBrokerage;
             }
-            //Marsh Real Estate calculate broker fee total
-            /*var BrokerFeeTotal = 0M;
 
-            if (TCPolicy.ProductID == new Guid("d5d29b57-cc40-4122-9515-de93d8f51ccb")) 
-            {
-                foreach (TCQuote quote in gv_objPolicies)
-                {
-                    BrokerFeeTotal += TC_Shared.CNullDec(quote.BrokerFee, 0M);
-                }
-
-                CalculateInvoiceSummary(ep, BrokerFeeTotal);
-            }
-            else
-            {*/
+            BrokerFeeTotal = objClientAgreement.BrokerFee;
             CalculateInvoiceSummary(EBixPolicy, BrokerFeeTotal);
-            //}
+
             EGlobalPolicy.Policy = EBixPolicy;
         }
 
         public void CalculateInvoiceSummary(EBixPolicy ep, decimal brokerFee)
         {
             // Caculate the final few fields, and update where appropriate
-
-            decimal taxRate = EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate; //placeholder
+            EGlobalPolicy.SurchargeRate = EGlobalPolicy.ClientProgramme.BaseProgramme.SurchargeRate;
+            decimal taxRate = EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate;
             decimal surchargeGST = EGlobalPolicy.SurchargeRate * (1 + taxRate);
 
             ep.BSCAmount = brokerFee;
 
-            ep.BscGST = Math.Round(ep.BSCAmount * taxRate);
+            ep.BscGST = Math.Round(ep.BSCAmount * taxRate, 2);
             ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
-            ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate);
+            ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate, 2);
 
-            decimal spcGST = Math.Round(ep.DueByClient * surchargeGST) - ep.SPCFee;
+            decimal spcGST = Math.Round(ep.SPCFee * taxRate, 2);
 
             ep.BscGST += spcGST;
             ep.DueByClient += (ep.SPCFee + spcGST);

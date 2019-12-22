@@ -151,7 +151,7 @@
 
                                     </td>
                                     <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.FSL.ToString("C")
+                                        @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                     </td>
                                     <td width="9%">
                                         <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"

@@ -305,8 +305,10 @@ namespace TechCertain.Domain.Entities
 
             newBoat.InterestedParties = new List<Organisation>(InterestedParties);
             newBoat.BoatUse = new List<BoatUse>(BoatUse);
-            //newBoat.BoatUse = BoatUse;
-
+            foreach (var bu in BoatUse)
+            {
+                newBoat.BoatUse.Add(newSheet.BoatUses.FirstOrDefault(obu => obu.OriginalBoatUse.Id == bu.Id));
+            }
             newBoat.BoatNotes = BoatNotes;
             //newBoat.BoatWaterLocation = newSheet.Organisation.FirstOrDefault(wl => wl.Id == Id);
             newBoat.BoatWaterLocation = BoatWaterLocation;
