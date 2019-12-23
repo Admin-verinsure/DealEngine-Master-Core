@@ -51,8 +51,16 @@ namespace TechCertain.Services.Impl
                     clientAgreement.Delete(createdBy);
 
                 //Check if the cover is required
-                if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "true")
-                    continue;
+                try
+                {
+                  if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "true")
+                        continue;
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
 
                 if (!product.IsMasterProduct)
                 {

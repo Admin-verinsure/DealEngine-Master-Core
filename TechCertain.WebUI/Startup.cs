@@ -10,6 +10,7 @@ using DealEngine.Infrastructure.AppInitialize.Repositories;
 using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
+using ElmahCore.Mvc;
 
 namespace TechCertain.WebUI
 {
@@ -21,8 +22,7 @@ namespace TechCertain.WebUI
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public static void ConfigureServices(IServiceCollection services)
-        {
-
+        {            
             services.AddServices();
             services.AddControllersWithViews();
             services.AddRouting();
@@ -34,6 +34,11 @@ namespace TechCertain.WebUI
             services.AddLogging();
             services.AddRepositories();
             services.AddBaseLdap();
+            services.AddElmah(options =>
+            {
+                //options.CheckPermissionAction = context => context.User.Identity.IsAuthenticated;
+                options.Path = @"elmah";
+            });
             services.AddBaseLdapPackage();
             services.AddResponseCaching();            
         }
@@ -51,8 +56,9 @@ namespace TechCertain.WebUI
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }            
+            }
 
+            app.UseElmah();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

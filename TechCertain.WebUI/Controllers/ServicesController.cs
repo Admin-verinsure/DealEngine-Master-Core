@@ -391,7 +391,7 @@ namespace TechCertain.WebUI.Controllers
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
                 JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
                 model.AddRow(row1);
                 int offset = rows * (page - 1);
                 for (int i = offset; i < offset + rows; i++)
@@ -1011,7 +1011,15 @@ namespace TechCertain.WebUI.Controllers
             {
                 if (org != null && answersheetId != null)
                 {
-                    sheet.Organisation.Remove(org);
+                    if (status)
+                    {
+                        sheet.Organisation.Remove(org);
+                    }
+                    else
+                    {
+                        sheet.Organisation.Add(org);
+
+                    }
                 }
                 await uow.Commit();
             }

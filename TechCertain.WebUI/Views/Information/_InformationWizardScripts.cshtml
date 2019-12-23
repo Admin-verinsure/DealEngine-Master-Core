@@ -120,12 +120,13 @@
                                 $("[id='Professional Indemnity']").trigger("click");
                                 return false;
                            } else {
-                               SaveStatutoryLiability();
+                               SaveProfessionalIndemnity();
 
                            }
                           
 
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       }
+                       if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
                             if (!ValidateStatutory()) {
                                  window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -133,11 +134,12 @@
                            return false;
 
                            } else {
-                               SaveProfessionalIndemnity();
+                               SaveStatutoryLiability();
 
                            }
                          
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       }
+                       if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
                            if (!ValidateEmployer()) {
                                    window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -147,7 +149,8 @@
                                SaveEmployerLiabilityInsurance();
 
                            }
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       }
+                       if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
                            if (!ValidatePractice()) {
                                   window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -159,7 +162,8 @@
                            }
                           
 
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       }
+                       if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
                             if (!ValidateDNOGeneral()) {
                                    window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -170,7 +174,8 @@
 
                            }
                          
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       }
+                       if (document.querySelector('[id="General Liability Insurance"]') !== null) {
                             if (!ValidateGeneral()) {
                                   window.alert("Please Add General Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -180,7 +185,8 @@
                                SaveGeneralLiability();
                            }
                           
-                       } else if ((document.querySelector('[id="Professional Indemnity"]') !== null) && !ValidateCyber()) {
+                       }
+                       if ((document.querySelector('[id="Cyber Liability Insurance"]') !== null) && !ValidateCyber()) {
                             if (!ValidateCyber()) {
                            window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
