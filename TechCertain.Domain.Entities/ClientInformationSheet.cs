@@ -190,28 +190,28 @@ namespace TechCertain.Domain.Entities
 			foreach (Location location in Locations)
 				newSheet.AddLocation (location.CloneForNewSheet (newSheet));
 
-			foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
+            foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
+                newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
+
+            foreach (BoatUse boatUse in BoatUses.Where(bu => !bu.Removed && bu.DateDeleted == null))
+                newSheet.AddBoatUse(boatUse.CloneForNewSheet(newSheet));
+
+            foreach (Vehicle vehicle in Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
 				newSheet.AddVehicle (vehicle.CloneForNewSheet (newSheet));
 
             foreach (Boat boat in Boats.Where(b => !b.Removed && b.DateDeleted == null))
                 newSheet.AddBoat(boat.CloneForNewSheet(newSheet));
 
-            foreach (Building building in Buildings.Where(bui => !bui.Removed && bui.DateDeleted == null))
-                newSheet.AddBuilding(building.CloneForNewSheet(newSheet));
+            foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
+                newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
 
             //foreach (WaterLocation waterLocation in WaterLocations.Where(wl => !wl.Removed && wl.DateDeleted == null))
             //    newSheet.AddWaterLocation(waterLocation.CloneForNewSheet(newSheet));
 
-            foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
-                newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
-
             //foreach (Operator operato in Operators.Where(oper => !oper.Removed && oper.DateDeleted == null))
             //    newSheet.AddOperator(operato.CloneForNewSheet(newSheet));
 
-            foreach (BoatUse boatUse in BoatUses.Where(bu => !bu.Removed && bu.DateDeleted == null))
-                newSheet.AddBoatUse(boatUse.CloneForNewSheet(newSheet));
-
-			return newSheet;
+            return newSheet;
 		}
 
 		public virtual ClientInformationSheet CloneForRenewal (User renewingUser)

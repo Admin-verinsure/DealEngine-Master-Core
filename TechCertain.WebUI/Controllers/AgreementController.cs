@@ -800,7 +800,7 @@ namespace TechCertain.WebUI.Controllers
             currencyFormat.CurrencyNegativePattern = 2;
 
             // List Agreement Parties
-            insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Customer", Name = insured.Name, ManagedBy = "", Email = "" });
+            insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
             //TODO - get from sheet or org?
             //foreach (Product product in products)
             //	foreach (KeyValuePair<string, Organisation> kvp in product.Parties) {
@@ -921,11 +921,17 @@ namespace TechCertain.WebUI.Controllers
                 {
                     if (answerSheet.IsChange && answerSheet.PreviousInformationSheet != null)
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture), FSL = term.FSLDiffer.ToString("C", UserCulture), TotalPremium = term.PremiumDiffer.ToString("C", UserCulture) });
+                        riskPremiums.Add(new RiskPremiumsViewModel { RiskName = riskname, Premium = (term.PremiumDiffer - term.FSLDiffer).ToString("C", UserCulture), FSL = term.FSLDiffer.ToString("C", UserCulture), TotalPremium = term.PremiumDiffer.ToString("C", UserCulture),
+                            TotalPremiumIncFeeGST = ((term.PremiumDiffer + agreement.BrokerFee) * agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate).ToString("C", UserCulture),
+                            TotalPremiumIncFeeIncGST = ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate)).ToString("C", UserCulture)
+                        });
                     }
                     else
                     {
-                        riskPremiums.Add(new RiskPremiumsViewModel {  RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                        riskPremiums.Add(new RiskPremiumsViewModel {  RiskName = riskname, Premium = (term.Premium - term.FSL).ToString("C", UserCulture), FSL = term.FSL.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), 
+                            TotalPremiumIncFeeGST = ((term.Premium + agreement.BrokerFee)*agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate).ToString("C", UserCulture),
+                            TotalPremiumIncFeeIncGST = ((term.Premium + agreement.BrokerFee) * (1+agreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate)).ToString("C", UserCulture)
+                        });
                     }
                 }
 
