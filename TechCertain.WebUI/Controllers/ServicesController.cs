@@ -2193,7 +2193,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                     organisation.IsLPBCategory3 = model.IsLPBCategory3;
                     organisation.YearofPractice = model.YearofPractice;
-                    organisation.prevPractice = model.prevPractice;
+                    organisation.PrevPractice = model.prevPractice;
                     organisation.IsOtherdirectorship = model.IsOtherdirectorship;
                     organisation.Othercompanyname = model.Othercompanyname;
                     organisation.Activities = model.Activities;
@@ -2351,7 +2351,7 @@ namespace TechCertain.WebUI.Controllers
                     organisation.IsADNZmember = model.IsADNZmember;
                     organisation.IsLPBCategory3 = model.IsLPBCategory3;
                     organisation.YearofPractice = model.YearofPractice;
-                    organisation.prevPractice = model.prevPractice;
+                    organisation.PrevPractice = model.prevPractice;
                     organisation.IsOtherdirectorship = model.IsOtherdirectorship;
                     organisation.Othercompanyname = model.Othercompanyname;
                     organisation.Activities = model.Activities;
@@ -2424,7 +2424,7 @@ namespace TechCertain.WebUI.Controllers
                     model.IsADNZmember = org.IsADNZmember;
                     model.IsLPBCategory3 = org.IsLPBCategory3;
                     model.YearofPractice = org.YearofPractice;
-                    model.prevPractice = org.prevPractice;
+                    model.prevPractice = org.PrevPractice;
                     if (org.OrganisationType.Name == "Corporation – Limited liability")
                     {
                         model.OrganisationTypeName = "Corporate";
@@ -2585,7 +2585,7 @@ namespace TechCertain.WebUI.Controllers
             var organisationalUnits = new List<OrganisationalUnitViewModel>();
             List<SelectListItem> mooredtypes = new List<SelectListItem>();
 
-            foreach (var mooredtype in organisation.marinaorgmooredtype)
+            foreach (var mooredtype in organisation.Marinaorgmooredtype)
             {
 
                 mooredtypes.Add(new SelectListItem

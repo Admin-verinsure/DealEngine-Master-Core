@@ -1997,11 +1997,11 @@ function showAccordionPanel(id, panelNo) {
         })
             .done(function (Data) {
                 if (SaveRevenueTabFour()) {
+                    BuildRevenueOverview();
                     if (type == 'additionalInfo') {
                         $('#SharedRevenueTab3').show();
                         SetCurrentTab('RevenueTabs3');
                         $('#additionalActivitySubmit').show();
-                        BuildRevenueOverview();
                         var activitiesStr = GetActivitiesForRevenue('text');
                         activitiesStr.forEach(function (item) {
                             if (item.trim() === "Other Work not listed above") {
@@ -2023,6 +2023,7 @@ function showAccordionPanel(id, panelNo) {
                     } else if (type == 'newSummary') {
                         SetCurrentTab('RevenueTabs4');
                     } else {
+                        debugger;
                         SetCurrentTab('RevenueTabs0');
                     }
                 }                
@@ -2089,21 +2090,41 @@ function showAccordionPanel(id, panelNo) {
 
     function CopyTableValues(currentTable, newTable) {
         var inputTable = document.getElementById(currentTable);
-        var overViewTerTable = document.getElementById(newTable);
+        var overViewTable = document.getElementById(newTable);
         var arr = [];
-        var tableRow = inputTable.childNodes[1];
+        var tableRow = inputTable.lastElementChild;
+        var value;
+        var count = 0;
 
-        for (var i = 0; i < tableRow.childNodes.length; i++) {
-            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;            
-            arr.push(value);
+        if (tableRow.childElementCount == 1) {
+            tableRow = tableRow.lastElementChild;
         }
 
-        overViewTerTable.innerHTML = document.getElementById(currentTable).innerHTML;
-        tableRow = overViewTerTable.childNodes[1];
-        for (var i = 0; i < tableRow.childNodes.length; i++) {
-            tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value = arr[i];
+        for (var i = 0; i < tableRow.children.length; i++) {
+            try {
+                value = tableRow.children[i].lastChild.lastChild.lastChild.lastChild.value;
+                arr.push(value);
+            } catch{
+                value = tableRow.children[i].lastElementChild.value;
+                arr.push(value);                                
+            }                    
         }
 
+        overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
+        tableRow = overViewTable.lastElementChild;
+
+        if (tableRow.childElementCount == 1) {
+            tableRow = tableRow.lastElementChild;
+        }
+
+        for (var k = 0; k < tableRow.children.length; k++) {            
+            try {
+                tableRow.children[k].lastChild.lastChild.lastChild.lastChild.value = arr[k];
+            } catch{
+                tableRow.children[k].lastElementChild.value = arr[count];
+                count++;
+            }
+        }
     }
 
     function BuildRevenueOverview() {
@@ -2378,12 +2399,22 @@ function showAccordionPanel(id, panelNo) {
     function validateTable(table) {  
         var inputTable = document.getElementById(table);
         var arr = [];
-        var tableRow = inputTable.childNodes[1];
+        var tableRow = inputTable.lastElementChild;
         var totalSharedRevenue = 0;
+        var value;
 
-        for (var i = 0; i < tableRow.childNodes.length; i++) {
-            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;            
-            arr.push(value);
+        if (tableRow.childElementCount == 1) {
+            tableRow = tableRow.lastElementChild;
+        }
+
+        for (var i = 0; i < tableRow.children.length; i++) {
+            try {
+                value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;
+                arr.push(value);
+            } catch{
+                value = tableRow.children[i].lastElementChild.value;
+                arr.push(value);
+            }       
         }
 
         for (var i = 0; i < arr.length; i++) {
@@ -2391,7 +2422,6 @@ function showAccordionPanel(id, panelNo) {
         }
 
         if (totalSharedRevenue != 100) {
-            debugger;
             alert("Percentage calculation does not equal to 100%");
             return false;
         }

@@ -2506,16 +2506,14 @@ namespace TechCertain.WebUI.Controllers
 
             var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("NZ");
             territoryTemplates.Add(territorytemplateNZ);
-            if (IsTradingOutsideNZ)
+            
+            foreach (var territoryId in Territories)
             {
-                foreach (var territoryId in Territories)
+                var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
+                if(territorytemplate.Location != territorytemplateNZ.Location)
                 {
-                    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
-                    if(territorytemplate.Location != territorytemplateNZ.Location)
-                    {
-                        territoryTemplates.Add(territorytemplate);
-                    }                    
-                }
+                    territoryTemplates.Add(territorytemplate);
+                }                    
             }
 
             foreach(var terr in territoryTemplates)
@@ -2583,7 +2581,6 @@ namespace TechCertain.WebUI.Controllers
             {
                 throw new Exception("Please complete Territories Tab");
             }
-
             if(TableSerialised.Length == 6)
             {
                 foreach (var saveTerritory in sheet.RevenueData.Territories)
@@ -2595,7 +2592,8 @@ namespace TechCertain.WebUI.Controllers
                         await _territoryService.UpdateTerritory(saveTerritory);
                     }
                 }
-            }else
+            }
+            else
             {
                 Guid NZId = Guid.Empty;
                 var runningPercentage = 0;

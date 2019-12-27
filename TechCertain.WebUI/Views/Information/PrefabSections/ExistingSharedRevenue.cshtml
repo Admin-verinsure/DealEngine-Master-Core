@@ -58,13 +58,14 @@
     </div>
     <div class="input-group mb-3">
         <div class="footer" id="UpdateSharedActivity">
-            <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Update</button>
+            <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
         </div>
     </div>
 </div>
 <div id="RevenueTabs1" class="tab-content">
     <fieldset>
         <div class="container-fluid">
+
             <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories">
                 <label for="SharedTerritories">Select Territories</label>
                 <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
@@ -100,7 +101,7 @@
                 </table>
             </div>
 
-            <div id="sharedRevenue1Btn" style="display:none" class="input-group mb-3">
+            <div id="sharedRevenue1Btn" class="input-group mb-3">
                 <button class="btn-primary btn" id="tradingButton" onclick="SaveRevenueTabOne()">Submit To Save</button>
             </div>
         </div>
@@ -153,7 +154,7 @@
             </div>
             <div class="input-group mb-3">
                 <div class="footer" id="submitTab4">
-                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('newSummary')">
+                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('oldSummary')">
                 </div>
                 <div class="footer" id="additionalInfomation" style="display:none">
                     <button class="btn-primary btn" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>

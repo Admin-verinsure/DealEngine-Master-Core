@@ -178,7 +178,7 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (string MooredType in selectedMooredType)
                 {
-                    organisation.marinaorgmooredtype.Add(MooredType);
+                    organisation.Marinaorgmooredtype.Add(MooredType);
                 }
 
                 organisation.InsuranceAttributes.Add(insuranceAttribute);
