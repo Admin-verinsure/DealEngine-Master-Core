@@ -800,7 +800,7 @@ namespace TechCertain.WebUI.Controllers
             currencyFormat.CurrencyNegativePattern = 2;
 
             // List Agreement Parties
-            insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Customer", Name = insured.Name, ManagedBy = "", Email = "" });
+            insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
             //TODO - get from sheet or org?
             //foreach (Product product in products)
             //	foreach (KeyValuePair<string, Organisation> kvp in product.Parties) {

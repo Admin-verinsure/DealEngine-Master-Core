@@ -34,6 +34,7 @@ namespace TechCertain.WebUI.Controllers
         IBusinessActivityService _busActivityService;
         IMapperSession<Document> _documentRepository;
         IProgrammeService _programmeService;
+        IMapperSession<User> _userRepository;
         ISharedDataRoleService _sharedDataRoleService;
         IFileService _fileService;
         IEmailService _emailService;
@@ -41,7 +42,7 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
         IHttpClientService _httpClientService;
 
-        public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService,
+        public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<User> userRepo,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRuleService ruleService, IMapperSession<Document> documentRepository,
                                  IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService, ISharedDataRoleService sharedDataRoleService,
@@ -58,6 +59,7 @@ namespace TechCertain.WebUI.Controllers
             _busActivityService = busActivityService;
             _documentRepository = documentRepository;
             _programmeRepository = programmeRepository;
+            _userRepository = userRepo;
             _programmeService = programmeService;
             _unitOfWork = unitOfWork;
             _RuleService = ruleService;
@@ -1038,27 +1040,84 @@ namespace TechCertain.WebUI.Controllers
         //    ViewBag.Title = "Add/Edit Programme Email Template";
 
         //    return View("IssueNotification", model);
+        //    return View("IssueNotification", model);
         //}
 
 
         [HttpPost]
-        public async Task<IActionResult> AddselectedParty(string[] selectedParty,Guid informationId)
+        public async Task<IActionResult> AddselectedParty(string[] selectedParty,Guid informationId, String title)
         {
             PartyUserViewModel model = new PartyUserViewModel();
             Programme programme = await _programmeRepository.GetByIdAsync(informationId);
             //model.Id = informationId;
             //model.Parties = programme.Parties;
-           
+             String userType = "";
             if (programme != null)
             {
                 try
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
+                        if (title == "Manage UIS Issue Notification Users")
+                        {
+                            programme.UISIssueNotifyUsers.Clear();
+                        }
+                        else if (title == "Manage UIS Submission Notification Users")
+                        {
+                            programme.UISSubmissionNotifyUsers.Clear();
+                         }
+                        else if (title == "Manage Agreement Refer Notification Users")
+                        {
+                            programme.AgreementReferNotifyUsers.Clear();
+                        }
+                        else if (title == "Manage Agreement Issue Notification Users")
+                        {
+                            programme.AgreementIssueNotifyUsers.Clear();
+                        }
+                        else if (title == "Manage Agreement Bound Notification Users")
+                        {
+                            programme.AgreementBoundNotifyUsers.Clear();                          
+                        }
+
                         foreach (var party in selectedParty)
                         {
                             var user = await _userService.GetUserByEmail(party);
-                            programme.UISIssueNotifyUsers.Add(user);
+                            if( title== "Manage UIS Issue Notification Users")
+                            {
+                                if (!programme.UISIssueNotifyUsers.Contains(user))
+                                {
+                                    programme.UISIssueNotifyUsers.Add(user);
+                                }
+                            }else if (title == "Manage UIS Submission Notification Users")
+                            {
+                                if (!programme.UISSubmissionNotifyUsers.Contains(user))
+                                {
+                                    programme.UISSubmissionNotifyUsers.Add(user);
+                                }
+                            }
+                            else if (title == "Manage Agreement Refer Notification Users")
+                            {
+                                if (!programme.AgreementReferNotifyUsers.Contains(user))
+                                {
+                                    programme.AgreementReferNotifyUsers.Add(user);
+                                }
+                            }
+                            else if (title == "Manage Agreement Issue Notification Users")
+                            {
+                                if (!programme.AgreementIssueNotifyUsers.Contains(user))
+                                {
+                                    programme.AgreementIssueNotifyUsers.Add(user);
+                                }
+
+                            }
+                            else if (title == "Manage Agreement Bound Notification Users")
+                            {
+                                if (!programme.AgreementBoundNotifyUsers.Contains(user))
+                                {
+                                    programme.AgreementBoundNotifyUsers.Add(user);
+                                }
+                            }
+                         
                         }
                         await uow.Commit();
                     }
@@ -1083,31 +1142,27 @@ namespace TechCertain.WebUI.Controllers
             //model.Id = informationId;
             //model.Parties = programme.Parties;
             Organisation organisation = await _organisationRepository.GetByIdAsync(selectedParty);
-            List<PartyUserViewModel> selectedorg = new List<PartyUserViewModel>();
+            List<PartyUserViewModel> userList = new List<PartyUserViewModel>();
             if ("organisation" != null)
             {
                 try
                 {
-                    foreach (var ip in organisation.OrganisationalUnits)
+                    foreach (var user in _userRepository.FindAll().Where(p => p.PrimaryOrganisation == organisation))
                     {
-                        foreach (var org in ip.Users)
+                        userList.Add(new PartyUserViewModel()
                         {
-                            selectedorg.Add(new PartyUserViewModel()
-                            {
-                                Name = org.FirstName,
-                                Id = org.Id.ToString(),
-                                Email =org.Email,
-                            });
-                        }
+                            Name = user.FirstName,
+                            Id = user.Id.ToString(),
+                            Email = user.Email,
+                        });
                     }
-
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
             }
-            return Json(selectedorg);
+            return Json(userList);
         }
 
 
@@ -1163,17 +1218,18 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> IssueNotification(Guid Id)
+        public async Task<IActionResult> IssueNotification(Guid Id, String Title)
         {
             var orguser = new List<string>();
             Programme programme = await _programmeRepository.GetByIdAsync(Id);
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             model.Id = Id;
+            model.Name = Title;
             model.Parties = programme.Parties;
 
             //model.OrgUser = _organisationRepository.GetById(programme.Parties.);
             //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
-
+            //model.OrgUser =   _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation.Name = ")
             ViewBag.Title = "Add/Edit Programme Email Template";
 
             return View("IssueNotification", model);

@@ -1,202 +1,202 @@
 ﻿@model TechCertain.WebUI.Models.RevenueByActivityViewModel
 
-    <ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
-        <li class="nav nav-tabs Territory" id="SharedRevenueTab1"> <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
-        <li class="nav nav-tabs Activities" style="display:none" id="SharedRevenueTab2"> <a class="nav-link" href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
-        <li class="nav nav-tabs AdditionalInformation" style="display:none" id="SharedRevenueTab3"> <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
-        <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Summary </a> </li>
-    </ul>
-    
-    <div id="RevenueTabs1" class="tab-content">
-        <fieldset>
-            <div class="container-fluid">
-                <div class="input-group mb-3">
+<ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
+    <li class="nav nav-tabs Territory" id="SharedRevenueTab1"> <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
+    <li class="nav nav-tabs Activities" style="display:none" id="SharedRevenueTab2"> <a class="nav-link" href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
+    <li class="nav nav-tabs AdditionalInformation" style="display:none" id="SharedRevenueTab3"> <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
+    <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Summary </a> </li>
+</ul>
 
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-primary">
-                            <input type="radio" name="tradingOption" id="tradingOption1" value=true onchange="toggleTerritoriesVisible('active')"> Yes, I do trade outside of New Zealand
-                        </label>
-                        <label class="btn btn-primary">
-                            <input type="radio" name="tradingOption" id="tradingOption2" value=false onchange="toggleTerritoriesVisible('Inactive')"> No, I don't trade outside of New Zealand
-                        </label>
-                    </div>
+<div id="RevenueTabs1" class="tab-content">
+    <fieldset>
+        <div class="container-fluid">
+            <div class="input-group mb-3">
 
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-primary">
+                        <input type="radio" name="tradingOption" id="tradingOption1" value=true onchange="toggleTerritoriesVisible('active')"> Yes, I do trade outside of New Zealand
+                    </label>
+                    <label class="btn btn-primary">
+                        <input type="radio" name="tradingOption" id="tradingOption2" value=false onchange="toggleTerritoriesVisible('Inactive')"> No, I don't trade outside of New Zealand
+                    </label>
                 </div>
-                <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
-                    <label for="SharedTerritories">Select Territories</label>
-                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
-                        @foreach (var territory in Model.Territories)
-                        {
-                            <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
-                        }
+
+            </div>
+            <div class="input-group mb-3" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
+                <label for="SharedTerritories">Select Territories</label>
+                <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
+                    @foreach (var territory in Model.Territories)
+                    {
+                        <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <table id="sharedRevenueTerritoriesTable" class="table">
+                </table>
+            </div>
+
+            <div class="input-group mb-3">
+                <button class="btn-primary btn" id="tradingButton" onclick="SaveRevenueTabOne()" style="display:none">  Submit To Save  </button>
+            </div>
+        </div>
+
+    </fieldset>
+</div>
+<div id="RevenueTabs2" class="tab-content">
+
+    <fieldset>
+        <div class="container-fluid">
+            <div class="input-group mb-3">
+                <label for="totalRevenue">Enter Fee Income</label>
+                <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
+            </div>
+
+            <div class="input-group mb-3">
+                <label for="sharedRevenueActivities">Select Activites</label>
+                <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                    @foreach (var ou in Model.Activities)
+                    {
+                        <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <table id="sharedRevenueActivityTable" class="table">
+                </table>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="footer" id="submitTab4">
+                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('newSummary')">
+                </div>
+                <div class="footer" id="additionalInfomation" style="display:none">
+                    <button class="btn-primary btn" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+</div>
+
+<div id="RevenueTabs3" class="tab-content">
+    <fieldset>
+        <div class="container-fluid">
+            <div class="form-group" style="display:none" id="InspectionReport">
+                <div class="row-fluid">
+                    <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+                    <textarea id="InspectionReportTextId" name="InspectionReportTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+                </div>
+
+                <div class="row-fluid">
+                    <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
+                    <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
+                        <option selected>-- Please Select --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
                     </select>
                 </div>
-
-                <div class="input-group mb-3">
-                    <table id="sharedRevenueTerritoriesTable" class="table">
-                    </table>
-                </div>
-
-                <div class="input-group mb-3">
-                    <button class="btn-primary btn" id="tradingButton" onclick="SaveRevenueTabOne()" style="display:none">  Submit To Save  </button>
-                </div>
             </div>
 
-        </fieldset>
-    </div>
-    <div id="RevenueTabs2" class="tab-content">
-
-        <fieldset>
-            <div class="container-fluid">
-                <div class="input-group mb-3">
-                    <label for="totalRevenue">Enter Fee Income</label>
-                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
+            <div class="form-group" style="display:none" id="Valuation">
+                <div class="row-fluid">
+                    <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
+                    <textarea id="ValuationTextId" name="ValuationTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
                 </div>
 
-                <div class="input-group mb-3">
-                    <label for="sharedRevenueActivities">Select Activites</label>
-                    <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
-                        @foreach (var ou in Model.Activities)
-                        {
-                            <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
-                        }
+                <div class="row-fluid">
+                    <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
+                    <textarea id="ValuationTextId2" name="ValuationTextId2" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+                </div>
+                <div class="row-fluid">
+                    <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
+                    <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
+                        <option selected>-- Please Select --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
                     </select>
                 </div>
-
-                <div class="input-group mb-3">
-                    <table id="sharedRevenueActivityTable" class="table">
-                    </table>
-                </div>
-
-                <div class="input-group mb-3">
-                    <div class="footer" id="submitTab4">
-                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('newSummary')">
-                    </div>
-                    <div class="footer" id="additionalInfomation" style="display:none">
-                        <button class="btn-primary btn" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
-                    </div>
-                </div>
-
             </div>
-        </fieldset>
-    </div>
-    
-    <div id="RevenueTabs3" class="tab-content">
-        <fieldset>
-            <div class="container-fluid">
-                <div class="form-group" style="display:none" id="InspectionReport">
-                    <div class="row-fluid">
-                        <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
-                        <textarea id="InspectionReportTextId" name="InspectionReportTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
-                    </div>
 
-                    <div class="row-fluid">
-                        <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
-                        <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
-                            <option selected>-- Please Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
+            <div class="form-group" style="display:none" id="SchoolsDesignWork">
+                <div class="row-fluid">
+                    <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
                 </div>
-
-                <div class="form-group" style="display:none" id="Valuation">
-                    <div class="row-fluid">
-                        <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
-                        <textarea id="ValuationTextId" name="ValuationTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
-                    </div>
-
-                    <div class="row-fluid">
-                        <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
-                        <textarea id="ValuationTextId2" name="ValuationTextId2" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
-                    </div>
-                    <div class="row-fluid">
-                        <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
-                        <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
-                            <option selected>-- Please Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
+                <div class="row-fluid">
+                    <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
+                    <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
+                        <option selected>-- Please Select --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
                 </div>
-
-                <div class="form-group" style="display:none" id="SchoolsDesignWork">
-                    <div class="row-fluid">
-                        <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
-                    </div>
-                    <div class="row-fluid">
-                        <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
-                        <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
-                            <option selected>-- Please Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                    <div class="row-fluid">
-                        <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
-                        <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
-                            <option selected>-- Please Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                    <div class="row-fluid">
-                        <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
-                        <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
-                            <option selected>-- Please Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                    <div class="row-fluid">
-                        <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
-                        <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
-                            <option selected>-- Please Select --</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
+                <div class="row-fluid">
+                    <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
+                    <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
+                        <option selected>-- Please Select --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
                 </div>
-
-                <div class="form-group" style="display:none" id="OtherActivities">
-                    <div class="row-fluid">
-                        <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
-                        <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
-                    </div>
+                <div class="row-fluid">
+                    <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
+                    <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
+                        <option selected>-- Please Select --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
                 </div>
-
-                <div class="form-group" style="display:none" id="CanterburyEarthquakeRebuildWork">
-                    <div class="row-fluid">
-                        <label for="CanterburyEarthquakeRebuildWorkId"> If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
-                        <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
-                    </div>
-                </div>
-
-                <div class="form-group mb-3">
-                    <div class="footer" style="display:none" id="additionalActivitySubmit">
-                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
-                    </div>
+                <div class="row-fluid">
+                    <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
+                    <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
+                        <option selected>-- Please Select --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
                 </div>
             </div>
-        </fieldset>
-    </div>
-    <div id="RevenueTabs4" class="tab-content">
-        <div class="input-group mb-3">
-            <label for="SharedTotalRevenue">Fee Income</label>
-            <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" required>
-        </div>
-        <div class="input-group mb-3">
-            <table id="ListSharedRevenueTerritories" class="table">
-            </table>
-        </div>
-        <div class="input-group mb-3">
-            <table id="ListSharedRevenueActivities" class="table">
-            </table>
-        </div>
-        <div class="input-group mb-3">
-            <div class="footer" id="UpdateSharedActivity">
-                <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+
+            <div class="form-group" style="display:none" id="OtherActivities">
+                <div class="row-fluid">
+                    <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
+                    <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-group" style="display:none" id="CanterburyEarthquakeRebuildWork">
+                <div class="row-fluid">
+                    <label for="CanterburyEarthquakeRebuildWorkId"> If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
+                    <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <div class="footer" style="display:none" id="additionalActivitySubmit">
+                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
+                </div>
             </div>
         </div>
-
+    </fieldset>
+</div>
+<div id="RevenueTabs4" class="tab-content">
+    <div class="input-group mb-3">
+        <label for="SharedTotalRevenue">Fee Income</label>
+        <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" required>
     </div>
+    <div class="input-group mb-3">
+        <table id="ListSharedRevenueTerritories" class="table">
+        </table>
+    </div>
+    <div class="input-group mb-3">
+        <table id="ListSharedRevenueActivities" class="table">
+        </table>
+    </div>
+    <div class="input-group mb-3">
+        <div class="footer" id="UpdateSharedActivity">
+            <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+        </div>
+    </div>
+
+</div>

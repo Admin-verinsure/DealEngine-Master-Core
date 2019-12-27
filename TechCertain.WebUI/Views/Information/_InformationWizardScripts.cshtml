@@ -81,7 +81,7 @@
                        $("[id='Claims Experience / Insurance History']").trigger("click");
                        return false;
 
-                   }                  
+                   }
 
                    var stringArray = new Array();
                    stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
@@ -106,8 +106,8 @@
                    }
                }
 
-             
-             
+
+
                    if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
 
@@ -120,12 +120,13 @@
                                 $("[id='Professional Indemnity']").trigger("click");
                                 return false;
                            } else {
-                               SaveStatutoryLiability();
+                               SaveProfessionalIndemnity();
 
                            }
-                          
 
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+
+                       }
+                       if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
                             if (!ValidateStatutory()) {
                                  window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -133,11 +134,12 @@
                            return false;
 
                            } else {
-                               SaveProfessionalIndemnity();
+                               SaveStatutoryLiability();
 
                            }
-                         
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+
+                       }
+                       if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
                            if (!ValidateEmployer()) {
                                    window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -147,7 +149,8 @@
                                SaveEmployerLiabilityInsurance();
 
                            }
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       }
+                       if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
                            if (!ValidatePractice()) {
                                   window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -157,9 +160,10 @@
                                SaveEmployerPracticesLiability();
 
                            }
-                          
 
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+
+                       }
+                       if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
                             if (!ValidateDNOGeneral()) {
                                    window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -169,8 +173,9 @@
                                SaveDirectorsandOfficersLiability();
 
                            }
-                         
-                       } else if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+
+                       }
+                       if (document.querySelector('[id="General Liability Insurance"]') !== null) {
                             if (!ValidateGeneral()) {
                                   window.alert("Please Add General Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -179,8 +184,9 @@
                            } else {
                                SaveGeneralLiability();
                            }
-                          
-                       } else if ((document.querySelector('[id="Professional Indemnity"]') !== null) && !ValidateCyber()) {
+
+                       }
+                       if ((document.querySelector('[id="Cyber Liability Insurance"]') !== null) && !ValidateCyber()) {
                             if (!ValidateCyber()) {
                            window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
@@ -190,7 +196,7 @@
                                ValidateDNO();
                            }
 
-                        
+
 
                        }
                    }
@@ -265,7 +271,7 @@
                         debugger;
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
-                       
+
                         for (var i = 0; i < prodname.length; i++) {
                             var ProdName = prodname[i];
                             var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
@@ -288,7 +294,7 @@
                                alert("Unable to save.");
                            });
 
-               }).fail(function (jqXHR, textStatus, errorThrown) { 
+               }).fail(function (jqXHR, textStatus, errorThrown) {
                        alert("There was an error getting ProductName.");
                });
 
@@ -316,7 +322,7 @@
                     $(prevbutton).hide();
                 }
             } else if (stepNumber === 2) {
-               if (!$('#agreementAccept').is(":checked")) {                   
+               if (!$('#agreementAccept').is(":checked")) {
                    document.getElementById("advisoryModal").hidden = false;
                    return false;
                }
@@ -381,14 +387,14 @@
         });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
     $(document).ready(function () {
-        //$('[data-toggle="popover"]').popover();  
+        //$('[data-toggle="popover"]').popover();
         //$('[data-toggle="popover"]').click(function (e) {
         //    debugger;
         //    e.preventDefault();
         //});
         //$('[data-toggle="popover"]').mouseleave(function(){
         //  $('[data-toggle="popover"]').popover('hide');
-        //});  
+        //});
 
         $('[data-toggle="popover"]').popover({
            trigger: 'manual',
@@ -406,15 +412,15 @@
         if (!$('.popover:hover').length) {
             $(_this).popover('hide');
         }
-    }, 300);
+    }, 450);
       });
 
-          //$('[data-toggle="popover"]').popover(); 
+          //$('[data-toggle="popover"]').popover();
     //$("[rel=tooltip]").tooltip({html:true});
         //$('[data-toggle="popover"]').popover();
         //$('[data-toggle="popover"]').popover();
     //$('[data-toggle="tooltip"]').tooltip({html: true});
-    //$('[data-toggle="tooltip"]').tooltip({html:true});   
+    //$('[data-toggle="tooltip"]').tooltip({html:true});
 
     $('#Principaltabs').tabs();
     $(".chosen-select").chosen({ width: "95%" });
@@ -464,7 +470,7 @@
 
     });
 
-    //$('[data-toggle="popover"]').popover();   
+    //$('[data-toggle="popover"]').popover();
 
 
     $('#AddClearBoat').click(function () {
@@ -661,7 +667,7 @@
             event.preventDefault();
         }
     });
-    
+
 
     $("#btnRemoveSubmit").click(function () {
         debugger;
@@ -1931,6 +1937,7 @@ function showAccordionPanel(id, panelNo) {
             $('#sharedRevenueTerritories').show();
         } else {
             $('#sharedRevenueTerritories').hide();
+
         }
     }
 
@@ -1968,7 +1975,8 @@ function showAccordionPanel(id, panelNo) {
 
         if (territories.length == 0 && tradingOutsideNZValue == 'true') {
             alert("Please select territories.");
-        } else {            
+        } else {
+            SetCurrentTab('RevenueTabs2');
             var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabOne", "Information")',
@@ -1976,10 +1984,8 @@ function showAccordionPanel(id, panelNo) {
                 data: postData
             })
                 .done(function (Data) {
-                    if (SaveRevenueTabThree()) {
-                        $('#SharedRevenueTab2').show();
-                        SetCurrentTab('RevenueTabs2');
-                    }                    
+                    SaveRevenueTabThree();
+                    $('#SharedRevenueTab2').show();
                 });
         }
     }
@@ -2030,8 +2036,9 @@ function showAccordionPanel(id, panelNo) {
             });
     }
 
-    function SaveRevenueTabThree() {        
-        if (validateTable("sharedRevenueTerritoriesTable")) {
+    function SaveRevenueTabThree() {
+        table = document.getElementById("sharedRevenueTerritoriesTable");
+        if (validateTableTerritory(table)) {
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
@@ -2043,12 +2050,10 @@ function showAccordionPanel(id, panelNo) {
                 .done(function (Data) {
                     $('#SharedRevenueTab2').show();
                 });
-            return true;
         }
-        return false;
     }
 
-    function SaveRevenueTabFour() {        
+    function SaveRevenueTabFour() {
         if (validateTable("sharedRevenueActivityTable")) {
             var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
@@ -2063,7 +2068,6 @@ function showAccordionPanel(id, panelNo) {
             return true;
         }
         return false;
-        
     }
 
     function SaveRevenueTabFive(type) {
@@ -2106,8 +2110,8 @@ function showAccordionPanel(id, panelNo) {
                 arr.push(value);
             } catch{
                 value = tableRow.children[i].lastElementChild.value;
-                arr.push(value);                                
-            }                    
+                arr.push(value);
+            }
         }
 
         overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
@@ -2117,7 +2121,7 @@ function showAccordionPanel(id, panelNo) {
             tableRow = tableRow.lastElementChild;
         }
 
-        for (var k = 0; k < tableRow.children.length; k++) {            
+        for (var k = 0; k < tableRow.children.length; k++) {
             try {
                 tableRow.children[k].lastChild.lastChild.lastChild.lastChild.value = arr[k];
             } catch{
@@ -2146,7 +2150,7 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function UpdateSharedRevenue() {
-        event.preventDefault(); 
+        event.preventDefault();
         $('#revenueTab1').show();
         $('#revenueTab2').show();
         $('#revenueTab3').show();
@@ -2156,19 +2160,19 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRoleTabThree(){
-        event.preventDefault();                       
+        event.preventDefault();
         var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { SerialisedAdditionalRoleInformationTable: serialisedAdditionalRoleInformationTable, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabThree", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
-            })  
+            })
     }
 
     function SaveRoleTabTwo(hasAddInfo) {
-        event.preventDefault();       
+        event.preventDefault();
         table = document.getElementById("sharedRoleTable");
         if (validateTableRoles(table)) {
             var tableSerialised = $("#sharedRoleTable :input").serialize();
@@ -2276,7 +2280,7 @@ function showAccordionPanel(id, panelNo) {
             lista.forEach(function (role) {
             var row = $('<tr>');
             row.append($('<td>').text(role));
-                listb.forEach(function (Index) {                    
+                listb.forEach(function (Index) {
                     var name = listd[count];
                     row.append($('<td>').append(
                         $('<section>').append(
@@ -2295,7 +2299,7 @@ function showAccordionPanel(id, panelNo) {
     };
 
     function BuildRevenuesTable(TableType, Table) {
-        var revenueTable = Table;       
+        var revenueTable = Table;
         var listc = [ 'Breakdown' ];
         if (TableType == 'true') {
             listc = [ 'Territory Breakdown' ];
@@ -2312,7 +2316,7 @@ function showAccordionPanel(id, panelNo) {
             if (revenueTable.className != "table") {
                 revenueTable.empty();
             }
-        
+
         // create table sections
         var thead = $('<thead>');
         var tbody = $('<tbody>');
@@ -2354,7 +2358,7 @@ function showAccordionPanel(id, panelNo) {
                         $('<section>').append(
                         $('<label>', { class: 'input'}).append(
                             $('<input>', { type: 'number', class: 'form-control', name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
-                            ))));                    
+                            ))));
                 });
                 count++;
             tbody.append(row);
@@ -2362,7 +2366,7 @@ function showAccordionPanel(id, panelNo) {
 
     };
     };
-    
+
     function GetTableArray(table) {
         var array = [];
         row = table.rows[0];
@@ -2372,31 +2376,31 @@ function showAccordionPanel(id, panelNo) {
         return array;
     }
 
-    function validateTableRoles(table) {        
+    function validateTableRoles(table) {
         var roleTable = GetTableArray(table);
-        var roles = GetRoles('value')        
+        var roles = GetRoles('value')
         for (var i = 0; i < roleTable.length; i++) {
             var value = 0;
             for (var k = 0; k < roles.length; k++) {
-                elementname = roles[k];             
+                elementname = roles[k];
                 value = document.getElementById(elementname).value;
                 try {
                     var isValueInt = wholeNumberCheck(value);
                     if (!isValueInt) {
-                        throw(elementname);                        
+                        throw(elementname);
                     }
                 } catch (name) {
                     alert("Please enter a whole number.");
                     BuildRolesTable();
                     return false;
                 }
-            }            
-            
+            }
+
         }
         return true;
     }
 
-    function validateTable(table) {  
+    function validateTable(table) {
         var inputTable = document.getElementById(table);
         var arr = [];
         var tableRow = inputTable.lastElementChild;
@@ -2414,7 +2418,7 @@ function showAccordionPanel(id, panelNo) {
             } catch{
                 value = tableRow.children[i].lastElementChild.value;
                 arr.push(value);
-            }       
+            }
         }
 
         for (var i = 0; i < arr.length; i++) {
@@ -2426,7 +2430,7 @@ function showAccordionPanel(id, panelNo) {
             return false;
         }
         return true;
-    
+
     }
 
     function wholeNumberCheck(n) {

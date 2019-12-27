@@ -43,7 +43,10 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                     {
                         EGlobalPolicy.PaymentType = "INVOICE";
                         xml = EGlobalPolicy.Serialize();
+                        //removed for testing
+                        //SaveXml(xml, EGlobalPolicy.FTPFolder);
 
+                        //Save the request transaction
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
@@ -74,6 +77,17 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             try
             {
                 xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, CurrentUser, _unitOfWork);
+
+                ////Save the response transaction
+                //using (var uow = _unitOfWork.BeginUnitOfWork())
+                //{
+                //    EGlobalResponse eGlobalResponse = new EGlobalResponse(CurrentUser());
+                //    eGlobalResponse.ResponseXML = xml;
+                //    programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
+
+                //    uow.Commit();
+
+                //}
             }
             catch (Exception ex)
             {
@@ -118,7 +132,13 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EGlobalPolicy.PaymentType = "3";
             EGlobalPolicyAPI.CreatePolicyInvoice();
 
+            //            gv_objXML.SaveTransaction();
+            //
             string xml = EGlobalPolicy.Serialize();
+            //TC_Shared.LogEvent(TC_Shared.EventType.Information, "EGlobal XML Invoice", xml);
+            //
+            //            SaveXml(xml, gv_objXML.FTPFolder);
+            //            SendEGlobalPolicy(xml, gv_objPolicy);
 
             if (EGlobalPolicyAPI != null)
             {

@@ -66,9 +66,20 @@
                                         <div class="alert alert-info">
                                             <p>@Model.Description</p>
                                         </div>
-                                        @Html.TextBoxFor(m => m.Subject)
+                                        <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
+                                            Subject:
+                                        </section>
+                                        <section class="col col-xs-12 col-sm-11 col-md-11 col-lg-11">
+                                            @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;" })
+                                        </section>
+                                        <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
+                                            Body:
+                                        </section>
+                                        <section class="col col-xs-12 col-sm-11 col-md-11 col-lg-11">
+                                            @Html.TextAreaFor(m => m.Body)
+                                        </section>
                                         <br />
-                                        @Html.TextAreaFor(m => m.Body)
+                                       
                                         <br />
                                     </div>
                                     <!-- end widget content -->

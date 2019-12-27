@@ -11,9 +11,9 @@
         <div id="Principaltabs">
             <ul id="tab" class="nav nav-tabs">
                 <li class="nav nav-tabs active"> <a href="#Principaltabs1"> List All </a> </li>
-                <li class="nav nav-tabs"> <a href="#Principaltabs2"> Edit </a> </li>
+                <li class="nav nav-tabs disabled"> <a href="#Principaltabs2"> Edit </a> </li>
                 <li class="nav nav-tabs"> <a href="#Principaltabs3"> Add </a> </li>
-                <li class="nav nav-tabs PrincipalRemoved"> <a href="#Principaltabs4"> Remove </a> </li>
+                <li class="nav nav-tabs PrincipalRemoved"> <a href="#Principaltabs4"> Removed </a> </li>
 
             </ul>
 
@@ -29,7 +29,7 @@
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
-                                colNames: ["","Organisation Name","Organisation Type", "Removed"],
+                                colNames: ["","Organisation Name","Organisation Type", "Remove"],
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
@@ -289,7 +289,7 @@
                             </section>
                         </div>
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <button onclick="ValidateEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Edit</button>
+                            <button onclick="ValidateEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats(event,'#Principaltabs2','Principaltabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
 

@@ -304,13 +304,13 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 	public partial class TriggeredRule
 	{
 
-		private string actionCodeField;
+		private ActionCode actionCodeField;
 
 		private bool actionCodeFieldSpecified;
 
 		private string actionNameField;
 
-		private string actionTypeField;
+		private ActionApplyType actionTypeField;
 
 		private bool actionTypeFieldSpecified;
 
@@ -321,7 +321,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		private string ruleNameField;
 
 		/// <remarks/>
-		public string actionCode {
+		public ActionCode actionCode {
 			get {
 				return this.actionCodeField;
 			}
@@ -352,7 +352,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		}
 
 		/// <remarks/>
-		public string actionType {
+		public ActionApplyType actionType {
 			get {
 				return this.actionTypeField;
 			}
@@ -590,7 +590,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		private TriggeredRule triggeredRuleField;
 
-		private string deviceAssuranceLevelField;
+		private TriggeredRule triggeredTestRuleField;
+
+		private DeviceAssuranceLevels deviceAssuranceLevelField;
 
 		private bool deviceAssuranceLevelFieldSpecified;
 
@@ -636,7 +638,17 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		}
 
 		/// <remarks/>
-		public string deviceAssuranceLevel {
+		public TriggeredRule triggeredTestRule {
+			get {
+				return this.triggeredTestRuleField;
+			}
+			set {
+				this.triggeredTestRuleField = value;
+			}
+		}
+
+		/// <remarks/>
+		public DeviceAssuranceLevels deviceAssuranceLevel {
 			get {
 				return this.deviceAssuranceLevelField;
 			}
@@ -3826,9 +3838,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 	public abstract partial class GenericResponse
 	{
 
-		public DeviceResult deviceResultField;
+		private DeviceResult deviceResultField;
 
-		public IdentificationData identificationDataField;
+		private IdentificationData identificationDataField;
 
 		private MessageHeader messageHeaderField;
 
@@ -3914,11 +3926,11 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		private string userNameField;
 
-		private string userStatusField;
+		private UserStatus userStatusField;
 
 		private bool userStatusFieldSpecified;
 
-		private string userTypeField;
+		private WSUserType userTypeField;
 
 		private bool userTypeFieldSpecified;
 
@@ -4077,7 +4089,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         }
 
         /// <remarks/>
-        public string userStatus {
+        public UserStatus userStatus {
 			get {
 				return this.userStatusField;
 			}
@@ -4098,7 +4110,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		}
 
 		/// <remarks/>
-		public string userType {
+		public WSUserType userType {
 			get {
 				return this.userTypeField;
 			}
@@ -4663,7 +4675,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		private RequiredCredential [] requiredCredentialListField;
 
-		public RiskResult riskResultField;
+		private RiskResult riskResultField;
 
 		private ServerRedirectData serverRedirectDataField;
 
