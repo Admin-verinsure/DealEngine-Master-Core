@@ -56,7 +56,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
             /// Build the schema of the database.  
             /// </summary>  
             /// <param name="config">Configuration.</param>  
-        private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
+        private static void BuildSchema(Configuration config, string connectionStringName)
         {
 
             using (var connection = new NpgsqlConnection(connectionStringName))

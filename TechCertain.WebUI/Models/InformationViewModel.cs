@@ -18,6 +18,7 @@ namespace TechCertain.WebUI.Models
         public Boolean IsChange { get; set; }
         public Guid MilestoneId { get; set; }
         public string MilestoneStatus { get; set; }
+        public string CompanyName { get; set; }
 
         public string Name { get; set; }
         public string AgreementStatus { get; set; }

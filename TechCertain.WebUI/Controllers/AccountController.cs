@@ -303,7 +303,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                await RunAONImport();
+                //await RunAONImport();
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);

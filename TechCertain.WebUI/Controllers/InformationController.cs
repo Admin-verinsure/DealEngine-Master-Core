@@ -20,6 +20,7 @@ namespace TechCertain.WebUI.Controllers
     public class InformationController : BaseController
     {
         ISharedDataRoleService _sharedDataRoleService;
+        IAppSettingService _appSettingService;
         IActivityService _activityService;
         IInformationItemService _informationItemService;
         IInformationSectionService _informationSectionService;
@@ -57,6 +58,7 @@ namespace TechCertain.WebUI.Controllers
 
         public InformationController(
             IActivityService activityService,
+            IAppSettingService appSettingService,
             IAdvisoryService advisoryService,
             IUserService userService,
             ITerritoryService territoryService,
@@ -93,6 +95,7 @@ namespace TechCertain.WebUI.Controllers
             IMapper mapper)
             : base (userService)
         {
+            _appSettingService = appSettingService;
             _sharedDataRoleService = sharedDataRoleService;
             _revenueByActivityRespository = revenueByActivityRespository;
             _territoryService = territoryService;
@@ -125,7 +128,6 @@ namespace TechCertain.WebUI.Controllers
             _documentRepository = documentRepository;
             _programmeService = programmeService;
             _unitOfWork = unitOfWork;
-
             _informationSectionRepository = informationSectionRepository;
             _mapper = mapper;
             _emailService = emailService;
@@ -158,14 +160,11 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProgrammeSections(Guid informationTemplateID)
         {
-            //var informationTemplate = new IList<InformationTemplate>();
-
             InformationTemplate template = await _informationTemplateService.GetTemplate(informationTemplateID);
 
             Information model = new Information();
             var Litems = new List<InformationItems>();
             var sections = new List<InformationSection>();
-           // sections = new List<InformationSection>(_informationSectionService.GetAllSections().Where(pos => pos.Position > 0));
 
             foreach (var item in template.Sections)
             {
@@ -173,22 +172,8 @@ namespace TechCertain.WebUI.Controllers
                 
             }
             model.informationitem = Litems;
-           // model.Sections = sections;
-                return View(model);
+            return View(model);
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> SectionBuilder(Guid SectionId)
-        //{
-        //    //  InformationTemplate template = _informationTemplateService.GetAllTemplates().FirstOrDefault(t => t.Id == informationTemplateID);
-
-        //    InformationSection section = await _informationSectionService.GetSection(SectionId);
-        //    InformationViewModel model = new InformationViewModel();
-          
-        //    model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
-        //    return View(section);
-        //}
-
 
         [HttpPost]
         public async Task<IActionResult> SectionBuilder(Guid SectionId)
@@ -225,14 +210,6 @@ namespace TechCertain.WebUI.Controllers
                 });
             }
 
-
-            // InformationTemplate informationTemplate = _informationTemplateService.GetTemplate(new Guid("fd442ea1-353d-4f98-86cd-aab200d933f4"));
-            // InformationBuilderViewModel model = new InformationBuilderViewModel();
-            // var template = new List<InformationTemplate>();
-
-            //template.Add(informationTemplate);
-
-            // model.InformationTemplates = template;
             return Json(Litems);
         }
 
@@ -839,16 +816,13 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> StartInformation(Guid id)
         {
-            //ClientInformationSheet sheet = _clientInformationService.GetInformation (id);
-
-            //InformationViewModel model = GetInformationViewModel(sheet.Programme.Id);
-
             ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
             ClientInformationSheet sheet = clientProgramme.InformationSheet;
             InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
             var user = await CurrentUser();
             model.AnswerSheetId = sheet.Id;
             model.OrganisationId = sheet.Owner.Id;
+            model.CompanyName = _appSettingService.GetCompanyTitle;
 
             using (var uow = _unitOfWork.BeginUnitOfWork())
             {
@@ -874,14 +848,6 @@ namespace TechCertain.WebUI.Controllers
                 boats.Add(BoatViewModel.FromEntity(b));
             }
             model.Boats = boats;
-
-            //var interestedParties = new List<OrganisationViewModel>();
-            //foreach (Organisation org in _organisationRepository.FindAll().Result.Where(o => o.OrganisationType != null))
-            //{
-            //    OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
-            //    ovm.OrganisationName = org.Name;
-            //    interestedParties.Add(ovm);
-            //}
 
             var operators = new List<OrganisationViewModel>();
             foreach (Organisation or in _organisationRepository.FindAll().Where(o => o.OrganisationType.Name == "Skipper"))
@@ -999,7 +965,7 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
 
-            return View("InformationWizard", model);
+            return View("InformationWizards", model);
         }
 
         [HttpPost]
@@ -1343,10 +1309,7 @@ namespace TechCertain.WebUI.Controllers
             List<ClientAgreementTerm> listClientAgreementerm = new List<ClientAgreementTerm>();
             try
             {
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                     listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Bound == true).ToList();
-                }
+                listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Bound == true).ToList();
             }
             catch (Exception ex)
             {
@@ -1367,19 +1330,7 @@ namespace TechCertain.WebUI.Controllers
             model.IsChange = sheet.IsChange;
             model.Id = id;
             model.SheetStatus = sheet.Status;
-            //List<string> productname = new List<string>();
-            //try
-            //{
-            //    foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption = true))
-            //    {
-            //        productname.Add(agreement.Product.Name);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            //model.ListProductName = productname;
+            model.CompanyName = _appSettingService.GetCompanyTitle;
 
             var user = await CurrentUser();
 
@@ -1697,8 +1648,8 @@ namespace TechCertain.WebUI.Controllers
                 buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
 
             }
-
-         try
+            
+            try
             {
                 foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
                 {
@@ -1718,14 +1669,12 @@ namespace TechCertain.WebUI.Controllers
                 Console.WriteLine(ex.Message);
             }
 
-
             model.MarinaLocations = MarinaLocations;
 
             for (var i = 0; i < sheet.WaterLocations.Count(); i++)
             {
                 waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
             }
-
 
             var availableProducts = new List<ProductItem>();          
             var userDetails = _mapper.Map<UserDetailsVM>(user);
@@ -1735,11 +1684,6 @@ namespace TechCertain.WebUI.Controllers
             userDetails.Email = user.Email;
             
             var roles = new List<String>();
-
-            //for (var i = 0; i < user.Groups.Count(); i++)
-            //{
-            //    roles.Add(user.Groups.ElementAtOrDefault(i).Name);
-            //}s
 
             model.UserRole = roles;
 
@@ -1765,7 +1709,7 @@ namespace TechCertain.WebUI.Controllers
             informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
             model.ClientInformationAnswers = informationAnswers;
 
-            return View("InformationWizard", model);
+            return View("InformationWizards", model);
         }
 
         [HttpGet]

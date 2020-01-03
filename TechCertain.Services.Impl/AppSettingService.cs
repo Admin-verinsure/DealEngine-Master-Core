@@ -58,5 +58,13 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetValue<string>("MarineInsuranceSpecialistEmail");
             }
         }
+
+        public string GetCompanyTitle
+        {
+            get
+            {
+                return _configuration.GetValue<string>("GetCompanyTitle");
+            }
+        }
     }
 }
