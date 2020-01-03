@@ -368,8 +368,10 @@
                         for (var item = 0; item < data.length; item++){
 
                           var arr = data[item];
-                          var count = 0;
-                          $('#' + arr[count]).val(arr[count + 1]);
+                            var count = 0;
+                            if (arr != null) {
+                               $('#' + arr[count]).val(arr[count + 1]);
+                            }
                         }
                       if ($('#DNO1').val() == "true") {
 

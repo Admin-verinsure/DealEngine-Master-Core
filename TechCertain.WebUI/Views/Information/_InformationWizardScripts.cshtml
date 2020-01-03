@@ -81,7 +81,7 @@
                        $("[id='Claims Experience / Insurance History']").trigger("click");
                        return false;
 
-                   }                  
+                   }
 
                    var stringArray = new Array();
                    stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
@@ -106,8 +106,8 @@
                    }
                }
 
-             
-             
+
+
                    if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
 
@@ -123,7 +123,7 @@
                                SaveProfessionalIndemnity();
 
                            }
-                          
+
 
                        }
                        if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
@@ -137,7 +137,7 @@
                                SaveStatutoryLiability();
 
                            }
-                         
+
                        }
                        if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
                            if (!ValidateEmployer()) {
@@ -160,7 +160,7 @@
                                SaveEmployerPracticesLiability();
 
                            }
-                          
+
 
                        }
                        if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
@@ -173,7 +173,7 @@
                                SaveDirectorsandOfficersLiability();
 
                            }
-                         
+
                        }
                        if (document.querySelector('[id="General Liability Insurance"]') !== null) {
                             if (!ValidateGeneral()) {
@@ -184,7 +184,7 @@
                            } else {
                                SaveGeneralLiability();
                            }
-                          
+
                        }
                        if ((document.querySelector('[id="Cyber Liability Insurance"]') !== null) && !ValidateCyber()) {
                             if (!ValidateCyber()) {
@@ -196,7 +196,7 @@
                                ValidateDNO();
                            }
 
-                        
+
 
                        }
                    }
@@ -271,7 +271,7 @@
                         debugger;
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
-                       
+
                         for (var i = 0; i < prodname.length; i++) {
                             var ProdName = prodname[i];
                             var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
@@ -294,7 +294,7 @@
                                alert("Unable to save.");
                            });
 
-               }).fail(function (jqXHR, textStatus, errorThrown) { 
+               }).fail(function (jqXHR, textStatus, errorThrown) {
                        alert("There was an error getting ProductName.");
                });
 
@@ -322,7 +322,7 @@
                     $(prevbutton).hide();
                 }
             } else if (stepNumber === 2) {
-               if (!$('#agreementAccept').is(":checked")) {                   
+               if (!$('#agreementAccept').is(":checked")) {
                    document.getElementById("advisoryModal").hidden = false;
                    return false;
                }
@@ -387,14 +387,14 @@
         });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
     $(document).ready(function () {
-        //$('[data-toggle="popover"]').popover();  
+        //$('[data-toggle="popover"]').popover();
         //$('[data-toggle="popover"]').click(function (e) {
         //    debugger;
         //    e.preventDefault();
         //});
         //$('[data-toggle="popover"]').mouseleave(function(){
         //  $('[data-toggle="popover"]').popover('hide');
-        //});  
+        //});
 
         $('[data-toggle="popover"]').popover({
            trigger: 'manual',
@@ -415,12 +415,12 @@
     }, 450);
       });
 
-          //$('[data-toggle="popover"]').popover(); 
+          //$('[data-toggle="popover"]').popover();
     //$("[rel=tooltip]").tooltip({html:true});
         //$('[data-toggle="popover"]').popover();
         //$('[data-toggle="popover"]').popover();
     //$('[data-toggle="tooltip"]').tooltip({html: true});
-    //$('[data-toggle="tooltip"]').tooltip({html:true});   
+    //$('[data-toggle="tooltip"]').tooltip({html:true});
 
     $('#Principaltabs').tabs();
     $(".chosen-select").chosen({ width: "95%" });
@@ -470,7 +470,7 @@
 
     });
 
-    //$('[data-toggle="popover"]').popover();   
+    //$('[data-toggle="popover"]').popover();
 
 
     $('#AddClearBoat').click(function () {
@@ -667,7 +667,7 @@
             event.preventDefault();
         }
     });
-    
+
 
     $("#btnRemoveSubmit").click(function () {
         debugger;
@@ -1942,11 +1942,11 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function ToggleSharedRevenueTab2Button() {
-        $('#sharedRevenue2Btn').show();        
+        $('#sharedRevenue2Btn').show();
     }
 
     function ToggleSharedRevenueTab1Button() {
-        $('#sharedRevenue1Btn').show();        
+        $('#sharedRevenue1Btn').show();
     }
 
     function SaveRevenueTabOne() {
@@ -2040,7 +2040,7 @@ function showAccordionPanel(id, panelNo) {
                 type: "POST",
                 data: postData
             })
-                .done(function (Data) {                    
+                .done(function (Data) {
                     $('#SharedRevenueTab5').show();
                 });
 
@@ -2079,7 +2079,7 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRevenueTabFive(type) {
-        event.preventDefault();                       
+        event.preventDefault();
         var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
         var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
@@ -2096,7 +2096,7 @@ function showAccordionPanel(id, panelNo) {
                 else {
                     SetCurrentTab('RevenueTabs0');
                 }
-                
+
                 BuildRevenueOverview();
             });
     }
@@ -2108,7 +2108,7 @@ function showAccordionPanel(id, panelNo) {
         var tableRow = inputTable.childNodes[1];
 
         for (var i = 0; i < tableRow.childNodes.length; i++) {
-            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;            
+            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;
             arr.push(value);
         }
 
@@ -2139,7 +2139,7 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function UpdateSharedRevenue() {
-        event.preventDefault(); 
+        event.preventDefault();
         $('#revenueTab1').show();
         $('#revenueTab2').show();
         $('#revenueTab3').show();
@@ -2149,19 +2149,19 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRoleTabThree(){
-        event.preventDefault();                       
+        event.preventDefault();
         var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { SerialisedAdditionalRoleInformationTable: serialisedAdditionalRoleInformationTable, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabThree", "Information")',
-                type: "POST",        
+                type: "POST",
                 data: postData
-            })  
+            })
     }
 
     function SaveRoleTabTwo(hasAddInfo) {
-        event.preventDefault();       
+        event.preventDefault();
         table = document.getElementById("sharedRoleTable");
         if (validateTableRoles(table)) {
             var tableSerialised = $("#sharedRoleTable :input").serialize();
@@ -2269,7 +2269,7 @@ function showAccordionPanel(id, panelNo) {
             lista.forEach(function (role) {
             var row = $('<tr>');
             row.append($('<td>').text(role));
-                listb.forEach(function (Index) {                    
+                listb.forEach(function (Index) {
                     var name = listd[count];
                     row.append($('<td>').append(
                         $('<section>').append(
@@ -2288,7 +2288,7 @@ function showAccordionPanel(id, panelNo) {
     };
 
     function BuildRevenuesTable(TableType, Table) {
-        var revenueTable = Table;       
+        var revenueTable = Table;
         var listc = [ 'Breakdown' ];
         if (TableType == 'true') {
             listc = [ 'Territory Breakdown' ];
@@ -2305,7 +2305,7 @@ function showAccordionPanel(id, panelNo) {
             if (revenueTable.className != "table") {
                 revenueTable.empty();
             }
-        
+
         // create table sections
         var thead = $('<thead>');
         var tbody = $('<tbody>');
@@ -2347,7 +2347,7 @@ function showAccordionPanel(id, panelNo) {
                         $('<section>').append(
                         $('<label>', { class: 'input'}).append(
                             $('<input>', { type: 'number', class: 'form-control', name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
-                            ))));                    
+                            ))));
                 });
                 count++;
             tbody.append(row);
@@ -2355,7 +2355,7 @@ function showAccordionPanel(id, panelNo) {
 
     };
     };
-    
+
     function GetTableArray(table) {
         var array = [];
         row = table.rows[0];
@@ -2365,35 +2365,35 @@ function showAccordionPanel(id, panelNo) {
         return array;
     }
 
-    function validateTableRoles(table) {        
+    function validateTableRoles(table) {
         var roleTable = GetTableArray(table);
-        var roles = GetRoles('value')        
+        var roles = GetRoles('value')
         for (var i = 0; i < roleTable.length; i++) {
             var value = 0;
             for (var k = 0; k < roles.length; k++) {
-                elementname = roles[k];             
+                elementname = roles[k];
                 value = document.getElementById(elementname).value;
                 try {
                     var isValueInt = wholeNumberCheck(value);
                     if (!isValueInt) {
-                        throw(elementname);                        
+                        throw(elementname);
                     }
                 } catch (name) {
                     alert("Please enter a whole number.");
                     BuildRolesTable();
                     return false;
                 }
-            }            
-            
+            }
+
         }
         return true;
     }
 
-    function validateTableTerritory(table) {        
+    function validateTableTerritory(table) {
         var totalSharedRevenue = 0;
         var territoryTable = GetTableArray(table);
-        var territories = GetTerritoriesForRevenue('value')      
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();         
+        var territories = GetTerritoriesForRevenue('value')
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
         if (tradingOutsideNZValue == 'false') {
             territories = ['NZ'];
         }
@@ -2404,13 +2404,13 @@ function showAccordionPanel(id, panelNo) {
             for (var k = 0; k < territories.length; k++) {
                 debugger;
                 elementname = territories[k];
-                value = parseInt(document.getElementById(elementname).value);              
+                value = parseInt(document.getElementById(elementname).value);
                 if (percentage_check(!value)) {
                     alert("Please the correct percentage.");
                 }
                 totalSharedRevenue += value;
             }
-            
+
             if (tradingOutsideNZValue == 'true' && territories.length == 1) {
                 var difference = (100 - totalSharedRevenue);
                 totalSharedRevenue += difference;
@@ -2428,7 +2428,7 @@ function showAccordionPanel(id, panelNo) {
     function validateTableActivity(table) {
         var totalSharedRevenue = 0;
         var activityTable = GetTableArray(table);
-        var activities = GetActivitiesForRevenue('value')        
+        var activities = GetActivitiesForRevenue('value')
         for (var i = 0; i < activityTable.length; i++) {
             var value = 0;
             totalSharedRevenue = 0;
