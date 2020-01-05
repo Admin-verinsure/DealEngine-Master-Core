@@ -83,6 +83,15 @@
 
                    }
 
+                   if ($('#CompanyName').val() === "AON") {
+                       var nextbutton = document.getElementsByClassName("next");
+                       $(nextbutton).addClass("hidden");
+                       $(nextbutton).hide();
+                       var prevbutton = document.getElementsByClassName("previous");
+                       $(prevbutton).addClass("hidden");
+                       $(prevbutton).hide();
+                   }
+
                    var stringArray = new Array();
                    stringArray[0] = ["Claimexp1", claim1, $('#Claimexp1Details').val()];
                    stringArray[1] = ["Claimexp2", claim2, $('#Claimexp2Details').val()];
@@ -105,9 +114,6 @@
                            });
                    }
                }
-
-
-
                    if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
 
@@ -125,140 +131,126 @@
                            }
 
 
+
                        }
-                       if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
-                            if (!ValidateStatutory()) {
-                                 window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
+                   }
+                   if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
+                       if (!ValidateStatutory()) {
+                           window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
                            $("[id='Statutory Liability Insurance']").trigger("click");
                            return false;
 
-                           } else {
+                       } else {
                                SaveStatutoryLiability();
 
-                           }
-
                        }
-                       if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
-                           if (!ValidateEmployer()) {
-                                   window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
+
+
+                       
+                   }
+                   if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
+                       if (!ValidateEmployer()) {
+                           window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
                            $("[id='Employers Liability Insurance']").trigger("click");
                            return false;
-                           } else {
-                               SaveEmployerLiabilityInsurance();
-
-                           }
+                       } else {
+                           SaveEmployerLiabilityInsurance();
                        }
-                       if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
-                           if (!ValidatePractice()) {
-                                  window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
+                   }
+                   if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
+                       if (!ValidatePractice()) {
+                           window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
                            $("[id='Employment Practices Liability Insurance']").trigger("click");
                            return false;
                            } else {
                                SaveEmployerPracticesLiability();
 
-                           }
-
-
                        }
-                       if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
-                            if (!ValidateDNOGeneral()) {
-                                   window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
+
+                   }
+                   if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
+                       if (!ValidateDNOGeneral()) {
+                           window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
                            $("[id='Directors and Officers Liability Insurance']").trigger("click");
                            return false;
                            } else {
                                SaveDirectorsandOfficersLiability();
 
-                           }
-
                        }
-                       if (document.querySelector('[id="General Liability Insurance"]') !== null) {
-                            if (!ValidateGeneral()) {
-                                  window.alert("Please Add General Liability Insurance to proceed for policy. ");
+                   }
+                   if (document.querySelector('[id="General Liability Insurance"]') !== null) {
+                       if (!ValidateGeneral()) {
+                           window.alert("Please Add General Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
                            $("[id='General Liability Insurance']").trigger("click");
                            return false;
                            } else {
                                SaveGeneralLiability();
-                           }
-
                        }
-                       if ((document.querySelector('[id="Cyber Liability Insurance"]') !== null) && !ValidateCyber()) {
-                            if (!ValidateCyber()) {
+                   }
+                   if ((document.querySelector('[id="Cyber Liability Insurance"]') !== null) && !ValidateCyber()) {
+                       if (!ValidateCyber()) {
                            window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
                            $("#more").trigger("click");
                            $("[id='Cyber Liability Insurance']").trigger("click");
                            return false;
                            } else {
-                               ValidateDNO();
-                           }
-
-
-
+                           ValidateDNO();
+                           
                        }
+
                    }
+               
+               //$('#getAgreementModal').show();
+               if ($("#Sheetstatus").val() != "Started") {
+                   var progId = $('#ClientProgrammeId').val();
+                   var postData = { ProgrammeId: progId };
 
-                 $('#getAgreementModal').show();
-               debugger;
-                  if ($("#Sheetstatus").val() != "Started") {
+                   $.ajax({
+                       url: '@Url.Action("GetCoverOptions", "Information")',
+                       type: "POST",
+                       data: postData
+                   }).done(function (data) {
+                       if (data != "") {
+                           for (var item = 0; item < data.length; item++) {
+                               var arr = data[item];
+                               var count = 0;
+                               $('#' + arr[count]).val(arr[count + 1]);
+                           }
+                       };
+                   }).fail(function (a, s, d) {
                        debugger;
-                       var progId = $('#ClientProgrammeId').val();
-                       var postData = {ProgrammeId: progId };
+                   });
+               }
 
-                      $.ajax({
-                  // change back once mono decides to fix
-                         url: '@Url.Action("GetCoverOptions", "Information")',
-                         type: "POST",
-                         data: postData
-                      }).done(function (data) {
-                         debugger;
-                        if (data != "") {
-                          for (var item = 0; item < data.length; item++) {
-                              var arr = data[item];
-                              var count = 0;
-                              $('#' + arr[count]).val(arr[count + 1]);
-                          }
-                         };
-                      }).fail(function (a, s, d) {
-                            debugger;
-                      });
-
-                  }
-
-                 $.ajax({
+               $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
                    data: $("#tab1 :input").serialize({ json: true })
                })
                    .done(function (url) {
-
-                       //$("#agreementView").on('load', url, function () {
                        $("#agreementView").load(url, function () {
-
-                           $('#getAgreementModal').hide();
+                           //$('#getAgreementModal').hide();
                        });
                    })
-                   .fail(function (data) {
-
-                       $('#getAgreementModal').hide();
-                       console.log(data);
-                       alert("There was an error getting your agreement.");
+                   .fail(function (a, s, d) {
+                       $('#getAgreementModal').hide();                       
+                       debugger;
                    });
-
 
            } else if (stepNumber === 1) {
                var status = $('#Status').val();
-                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
-                }
-                else {
-                    return false;
+               if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
+               }
+               else {
+                   return false;
                }
                $('.sw-btn-prev').hide();
                $('#getAgreementDecModal').show();
-               debugger;
                var ID = $('#Id').val();
                var postdata = {
                      id : ID
@@ -267,8 +259,8 @@
                    url: '@Url.Action("GetProductName", "Information")',
                    type: "POST",
                    data: postdata
-               }).done(function (data) {
-                        debugger;
+                })
+                    .done(function (data) {
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
 
@@ -279,148 +271,130 @@
                                     CoverOptions[i] = optionsselected;
                         }
 
-                          var progId = $('#ClientProgrammeId').val();
-                          var postData = { Answers: CoverOptions , ProgrammeId: progId };
+                        var progId = $('#ClientProgrammeId').val();
+                        var postData = { Answers: CoverOptions, ProgrammeId: progId };
 
-                           $.ajax({
-                             url: '@Url.Action("SaveCoverOptions", "Information")',
-                             type: "POST",
-                             data: postData
+                        $.ajax({
+                            url: '@Url.Action("SaveCoverOptions", "Information")',
+                            type: "POST",
+                            data: postData
+                        })
+                            .done(function (data) {
                             })
-                           .done(function (data) {
+                            .fail(function (a, s, d) {
+                                alert("Unable to save.");
+                            });
 
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
-
-               }).fail(function (jqXHR, textStatus, errorThrown) {
-                       alert("There was an error getting ProductName.");
-               });
-
-                $.ajax({
-                url: '@Url.Action("QuoteToAgree", "Information")',
-                    type: "POST",
-                    data: $("#tab1 :input").serialize({ json: true })
-                })
-                    .done(function (url) {
-                        $("#agreementDeclarationView").load(url, function () {
-                            $('#getAgreementDecModal').hide();
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
                     });
-                })
-                    .fail(function (jqXHR, textStatus, errorThrown) {
 
-                        $('#getAgreementDecModal').hide();
-                    alert("There was an error getting your agreement declaration.");
-                });
-                if (status == "Bound") {
-                    var nextbutton = document.getElementsByClassName("next");
-                    $(nextbutton).addClass("hidden");
-                    $(nextbutton).hide();
-                    var prevbutton = document.getElementsByClassName("previous");
-                    $(prevbutton).addClass("hidden");
-                    $(prevbutton).hide();
-                }
-            } else if (stepNumber === 2) {
+               $.ajax({
+                   url: '@Url.Action("QuoteToAgree", "Information")',
+                   type: "POST",
+                   data: $("#tab1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+                       $("#agreementDeclarationView").load(url, function () {
+                           $('#getAgreementDecModal').hide();
+                       });
+                   })
+                   .fail(function (jqXHR, textStatus, errorThrown) {
+                       $('#getAgreementDecModal').hide();
+                       alert("There was an error getting your agreement declaration.");
+                   });
+
+               if (status == "Bound") {
+                   var nextbutton = document.getElementsByClassName("next");
+                   $(nextbutton).addClass("hidden");
+                   $(nextbutton).hide();
+                   var prevbutton = document.getElementsByClassName("previous");
+                   $(prevbutton).addClass("hidden");
+                   $(prevbutton).hide();
+               }
+           } else if (stepNumber === 2) {
                if (!$('#agreementAccept').is(":checked")) {
                    document.getElementById("advisoryModal").hidden = false;
                    return false;
                }
 
+               $('#getAgreementPaymentModal').show();
+               var nextbutton = document.getElementsByClassName("next");
+               $(nextbutton).addClass("hidden");
+               $(nextbutton).hide();
+               $.ajax({
+                   url: '@Url.Action("PaymentInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab1 :input").serialize({ json: true })
+               })
+                   .done(function (url) {
+                       $("#pxpaymentView").load(url, function () {
+                           $('#getAgreementPaymentModal').hide();
+                           $('#getErrorModal').hide();
+                       });
+                   });
 
-                $('#getAgreementPaymentModal').show();
-                var nextbutton = document.getElementsByClassName("next");
-                $(nextbutton).addClass("hidden");
-                $(nextbutton).hide();
-                $.ajax({
-                    url: '@Url.Action("PaymentInformation", "Information")',
-                    type: "POST",
-                    data: $("#tab1 :input").serialize({ json: true }),
+           } else if (stepNumber === 3) {
+               var status = $('#Status').val();
+               if (status == "Bound") {
+                   var nextbutton = document.getElementsByClassName("next");
+                   $(nextbutton).addClass("hidden");
+                   $(nextbutton).hide();
+                   var prevbutton = document.getElementsByClassName("previous");
+                   $(prevbutton).addClass("hidden");
+                   $(prevbutton).hide();
+               }
 
-                })
-                    .done(function (url) {
-                        $("#pxpaymentView").load(url, function () {
-                            $('#getAgreementPaymentModal').hide();
-                            $('#getErrorModal').hide();
-                        });
-                    });
-            } else if (stepNumber === 3) {
-                var status = $('#Status').val();
-                if (status == "Bound") {
-                    var nextbutton = document.getElementsByClassName("next");
-                    $(nextbutton).addClass("hidden");
-                    $(nextbutton).hide();
-                    var prevbutton = document.getElementsByClassName("previous");
-                    $(prevbutton).addClass("hidden");
-                    $(prevbutton).hide();
-                }
-                var AnswerSheetId = $('#AnswerSheetId').val();
-				var array = $("#tab2 :input").serializeArray();
-				var ids = [];
-				$.each (array, function(i, pair) {
-					ids.push (pair.value);
-				});
-               console.log($("#tab2 :input").serialize({ json: true }));
-           		$('#getDocumentsModal').show();
-				$.ajax({
-	            	// change back once mono decides to fix
-	                url: '@Url.Action("AcceptAgreement", "Agreement")',
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status:status })
-	            })
-                    .done(function (response) {
-	            	$("#documentsSection").replaceWith(response);
-                    $('#getDocumentsModal').hide();
-                    var prevbutton = document.getElementsByClassName("previous");
-                    $(prevbutton).hide();
-				})
-				.fail(function () {
-                    $('#getDocumentsModal');
-	            	alert("There was an error getting your documents.");
-				});
-            } else if (stepNumber === 4) {
-	        } else if (stepNumber === 5) {
-	        }
-
-      });
-        });
+               var AnswerSheetId = $('#AnswerSheetId').val();
+               var array = $("#tab2 :input").serializeArray();
+               var ids = [];
+               $.each(array, function (i, pair) {
+                   ids.push(pair.value);
+               });
+               $('#getDocumentsModal').show();
+               $.ajax({
+                   url: '@Url.Action("AcceptAgreement", "Agreement")',
+                   type: "POST",
+                   contentType: "application/json; charset=utf-8",
+                   data: JSON.stringify({ ClientAgreementIds: ids, answerSheetId: AnswerSheetId, Status: status })
+               })
+                   .done(function (response) {
+                       $("#documentsSection").replaceWith(response);
+                       $('#getDocumentsModal').hide();
+                       var prevbutton = document.getElementsByClassName("previous");
+                       $(prevbutton).hide();
+                   })
+                   .fail(function () {
+                       $('#getDocumentsModal');
+                       alert("There was an error getting your documents.");
+                   });
+           } else if (stepNumber === 4) {
+           } else if (stepNumber === 5) {
+           }
+       });
+   });
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
     $(document).ready(function () {
-        //$('[data-toggle="popover"]').popover();
-        //$('[data-toggle="popover"]').click(function (e) {
-        //    debugger;
-        //    e.preventDefault();
-        //});
-        //$('[data-toggle="popover"]').mouseleave(function(){
-        //  $('[data-toggle="popover"]').popover('hide');
-        //});
 
         $('[data-toggle="popover"]').popover({
-           trigger: 'manual',
-           html: true,
-           animation: false
+            trigger: 'manual',
+            html: true,
+            animation: false
         }).on('mouseenter', function () {
-    var _this = this;
-    $(this).popover('show');
-    $('.popover').on('mouseleave', function () {
-        $(_this).popover('hide');
-    });
-     }).on('mouseleave', function () {
-    var _this = this;
-    setTimeout(function () {
-        if (!$('.popover:hover').length) {
-            $(_this).popover('hide');
-        }
-    }, 450);
-      });
 
-          //$('[data-toggle="popover"]').popover();
-    //$("[rel=tooltip]").tooltip({html:true});
-        //$('[data-toggle="popover"]').popover();
-        //$('[data-toggle="popover"]').popover();
-    //$('[data-toggle="tooltip"]').tooltip({html: true});
-    //$('[data-toggle="tooltip"]').tooltip({html:true});
+            var _this = this;
+            $(this).popover('show');
+            $('.popover').on('mouseleave', function () {
+                $(_this).popover('hide');
+            });
+        }).on('mouseleave', function () {
+            var _this = this;
+            setTimeout(function () {
+                if (!$('.popover:hover').length) {
+                    $(_this).popover('hide');
+                }
+            }, 450);
+        });
 
     $('#Principaltabs').tabs();
     $(".chosen-select").chosen({ width: "95%" });
@@ -1945,8 +1919,9 @@ function showAccordionPanel(id, panelNo) {
         $('#sharedRevenue2Btn').show();
     }
 
-    function ToggleSharedRevenueTab1Button() {
-        $('#sharedRevenue1Btn').show();
+     function ToggleSharedRevenueTab1Button() {
+        $('#sharedRevenue1Btn').show();        
+        BuildRevenuesTable('true')
     }
 
     function SaveRevenueTabOne() {
@@ -1972,14 +1947,8 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function SaveRevenueTabTwo(tableType) {
+    function SaveRevenueTabTwo(type) {
         event.preventDefault();
-        //if (tableType == 'true') {
-        //    SetCurrentTab('RevenueTabs3');
-        //} else {
-        //    SetCurrentTab('RevenueTabs4');
-        //}
-
         var businessActivities = GetActivitiesForRevenue('value');
         var clientInformationSheetId = $('#AnswerSheetId').val();
         var postData = { BusinessActivities: businessActivities, ClientInformationSheetId: clientInformationSheetId }
@@ -1990,8 +1959,37 @@ function showAccordionPanel(id, panelNo) {
             data: postData
         })
             .done(function (Data) {
-                SaveRevenueTabFour();
-                $('#SharedRevenueTab3').show();
+                if (SaveRevenueTabFour()) {
+                    BuildRevenueOverview();
+                    if (type == 'additionalInfo') {
+                        $('#SharedRevenueTab3').show();
+                        SetCurrentTab('RevenueTabs3');
+                        $('#additionalActivitySubmit').show();
+                        var activitiesStr = GetActivitiesForRevenue('text');
+                        activitiesStr.forEach(function (item) {
+                            if (item.trim() === "Other Work not listed above") {
+                                $('#OtherActivities').show();
+                            }
+                            if (item.trim() === "Inspection Reports") {
+                                $('#InspectionReport').show();
+                            }
+                            if (item.trim() === "Valuations") {
+                                $('#Valuation').show();
+                            }
+                            if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
+                                $('#SchoolsDesignWork').show();
+                            }
+                            if (item.trim() === "Canterbury Earthquake Rebuild Work") {
+                                $('#CanterburyEarthquakeRebuildWork').show();
+                            }
+                        });
+                    } else if (type == 'newSummary') {
+                        SetCurrentTab('RevenueTabs4');
+                    } else {
+                        debugger;
+                        SetCurrentTab('RevenueTabs0');
+                    }
+                }                
             });
     }
 
@@ -2008,28 +2006,11 @@ function showAccordionPanel(id, panelNo) {
             })
                 .done(function (Data) {
                     $('#SharedRevenueTab2').show();
-                    //BuildRevenuesTable('false');
-                    //$('#SharedRevenueTab4').show();
-                    //var activitiesStr = GetActivitiesForRevenue('text');
-                    //activitiesStr.forEach(function (item, index) {
-                    //    if (item.trim() === "Other Work not listed above" ||
-                    //        item.trim() === "Inspection Reports" ||
-                    //        item.trim() === "Valuations" ||
-                    //        item.trim() === "Architecture - Schools MOE" ||
-                    //        item.trim() === "Architecture - Schools - Non MOE" ||
-                    //        item.trim() === "Canterbury Earthquake Rebuild Work") {
-                    //        $('#submitTab4').hide();
-                    //        $('#additionalInfomation').show();
-                    //    }
-                    //});
                 });
         }
     }
-
-    function SaveRevenueTabFour(isSubmit, type) {
-        event.preventDefault();
-        table = document.getElementById("sharedRevenueActivityTable");
-        if (validateTableActivity(table)) {
+        function SaveRevenueTabFour() {
+        if (validateTable("sharedRevenueActivityTable")) {
             var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var totalRevenue = $('#totalRevenue').val();
@@ -2040,43 +2021,11 @@ function showAccordionPanel(id, panelNo) {
                 type: "POST",
                 data: postData
             })
-                .done(function (Data) {
-                    $('#SharedRevenueTab5').show();
-                });
-
-            if (isSubmit == 'true') {
-                var activitiesStr = GetActivitiesForRevenue('text');
-                $('#SharedRevenueTab5').show();
-                $('#additionalActivitySubmit').show();
-                activitiesStr.forEach(function (item, index) {
-                    if (item.trim() === "Other Work not listed above") {
-                        $('#OtherActivities').show();
-                    }
-                    if (item.trim() === "Inspection Reports") {
-                        $('#InspectionReport').show();
-                    }
-                    if (item.trim() === "Valuations") {
-                        $('#Valuation').show();
-                    }
-                    if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
-                        $('#SchoolsDesignWork').show();
-                    }
-                    if (item.trim() === "Canterbury Earthquake Rebuild Work") {
-                        $('#CanterburyEarthquakeRebuildWork').show();
-                    }
-                });
-                SetCurrentTab('RevenueTabs5');
-            } else {
-                if (type == 6) {
-                    SetCurrentTab('RevenueTabs6');
-                }
-                else {
-                    SetCurrentTab('RevenueTabs0');
-                }
-                BuildRevenueOverview();
-            }
+            return true;
         }
+        return false;
     }
+
 
     function SaveRevenueTabFive(type) {
         event.preventDefault();
@@ -2090,34 +2039,53 @@ function showAccordionPanel(id, panelNo) {
             data: postData
         })
             .done(function (Data) {
-                if (type == 6) {
-                    SetCurrentTab('RevenueTabs6');
+                if (type == 'newSummary') {
+                    SetCurrentTab('RevenueTabs4');
                 }
                 else {
                     SetCurrentTab('RevenueTabs0');
-                }
-
+                }                
                 BuildRevenueOverview();
             });
     }
 
     function CopyTableValues(currentTable, newTable) {
         var inputTable = document.getElementById(currentTable);
-        var overViewTerTable = document.getElementById(newTable);
+        var overViewTable = document.getElementById(newTable);
         var arr = [];
-        var tableRow = inputTable.childNodes[1];
+        var tableRow = inputTable.lastElementChild;
+        var value;
+        var count = 0;
 
-        for (var i = 0; i < tableRow.childNodes.length; i++) {
-            var value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;
-            arr.push(value);
+        if (tableRow.childElementCount == 1) {
+            tableRow = tableRow.lastElementChild;
         }
 
-        overViewTerTable.innerHTML = document.getElementById(currentTable).innerHTML;
-        tableRow = overViewTerTable.childNodes[1];
-        for (var i = 0; i < tableRow.childNodes.length; i++) {
-            tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value = arr[i];
+        for (var i = 0; i < tableRow.children.length; i++) {
+            try {
+                value = tableRow.children[i].lastChild.lastChild.lastChild.lastChild.value;
+                arr.push(value);
+            } catch{
+                value = tableRow.children[i].lastElementChild.value;
+                arr.push(value);
+            }
         }
 
+        overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
+        tableRow = overViewTable.lastElementChild;
+
+        if (tableRow.childElementCount == 1) {
+            tableRow = tableRow.lastElementChild;
+        }
+
+        for (var k = 0; k < tableRow.children.length; k++) {
+            try {
+                tableRow.children[k].lastChild.lastChild.lastChild.lastChild.value = arr[k];
+            } catch{
+                tableRow.children[k].lastElementChild.value = arr[count];
+                count++;
+            }
+        }
     }
 
     function BuildRevenueOverview() {
@@ -2388,74 +2356,37 @@ function showAccordionPanel(id, panelNo) {
         }
         return true;
     }
-
-    function validateTableTerritory(table) {
+    function validateTable(table) {
+        var inputTable = document.getElementById(table);
+        var arr = [];
+        var tableRow = inputTable.lastElementChild;
         var totalSharedRevenue = 0;
-        var territoryTable = GetTableArray(table);
-        var territories = GetTerritoriesForRevenue('value')
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-        if (tradingOutsideNZValue == 'false') {
-            territories = ['NZ'];
+        var value;
+
+        if (tableRow.childElementCount == 1) {
+            tableRow = tableRow.lastElementChild;
         }
-        debugger;
-        for (var i = 0; i < territoryTable.length; i++) {
-            var value = 0;
-            totalSharedRevenue = 0;
-            for (var k = 0; k < territories.length; k++) {
-                debugger;
-                elementname = territories[k];
-                value = parseInt(document.getElementById(elementname).value);
-                if (percentage_check(!value)) {
-                    alert("Please the correct percentage.");
-                }
-                totalSharedRevenue += value;
-            }
 
-            if (tradingOutsideNZValue == 'true' && territories.length == 1) {
-                var difference = (100 - totalSharedRevenue);
-                totalSharedRevenue += difference;
+        for (var i = 0; i < tableRow.children.length; i++) {
+            try {
+                value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;
+                arr.push(value);
+            } catch{
+                value = tableRow.children[i].lastElementChild.value;
+                arr.push(value);
             }
+        }
 
-            if (totalSharedRevenue != 100) {
-                alert("Percentage calculation does not equal to 100%");
-                BuildRevenuesTable('true');
-                return false;
-            }
+        for (var i = 0; i < arr.length; i++) {
+            totalSharedRevenue += parseInt(arr[i]);
+        }
+
+        if (totalSharedRevenue != 100) {
+            alert("Percentage calculation does not equal to 100%");
+            return false;
         }
         return true;
-    }
 
-    function validateTableActivity(table) {
-        var totalSharedRevenue = 0;
-        var activityTable = GetTableArray(table);
-        var activities = GetActivitiesForRevenue('value')
-        for (var i = 0; i < activityTable.length; i++) {
-            var value = 0;
-            totalSharedRevenue = 0;
-            for (var k = 0; k < activities.length; k++) {
-                elementname = activities[k];
-                value = parseInt(document.getElementById(elementname).value);
-                if (percentage_check(!value)) {
-                    alert("Please the correct percentage.");
-                }
-                totalSharedRevenue += value;
-                document.getElementById(elementname).value = value;
-            }
-            if (totalSharedRevenue != 100) {
-                //take user to the cell that doesnt calculate
-                alert("Percentage calculation does not equal to 100%");
-                BuildRevenuesTable('false');
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function percentage_check(n) {
-        if (n.toString().match(/^\d+\.?\d?\d?%?$/) && parseFloat(n) <= 100 && parseFloat(n) >= 0) {
-            return true;
-        }
-        return false;
     }
 
     function wholeNumberCheck(n) {

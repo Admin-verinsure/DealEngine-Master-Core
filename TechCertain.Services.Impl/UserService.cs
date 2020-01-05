@@ -191,5 +191,10 @@ namespace TechCertain.Services.Impl
 			Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation (user, user, personalOrganisationType);
 			user.Organisations.Add (defaultOrganisation);
 		}
-    }
+
+		public async Task<User> GetUserByMembershipNo(string MembershipNo)
+		{
+			return await _userRepository.FindAll().FirstOrDefaultAsync(u => u.MembershipNo == MembershipNo);
+		}
+	}
 }

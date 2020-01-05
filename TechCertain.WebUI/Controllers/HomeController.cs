@@ -86,8 +86,7 @@ namespace TechCertain.WebUI.Controllers
             model.CriticalTaskItems = new List<TaskItem>();
             model.ImportantTaskItems = new List<TaskItem>();
             model.CompletedTaskItems = new List<TaskItem>();
-
-            var c = System.Threading.Thread.CurrentThread.CurrentCulture;
+            
             var user = await CurrentUser();
             if (DemoEnvironment)
             {
@@ -126,36 +125,7 @@ namespace TechCertain.WebUI.Controllers
                 model.ProgrammeItems = new List<ProgrammeItem>();
                 foreach (Programme programme in _programmeRepository.FindAll())
                 {
-
-                    //if (!hasRole && !hasViewAllRole)
-                        //continue;
-
                     List<DealItem> deals = new List<DealItem>();
-                    //foreach (ClientProgramme client in programme.ClientProgrammes.OrderBy(cp => cp.Owner.Name).OrderBy(cp => cp.DateCreated))
-                    //{
-
-                    //string status = client.InformationSheet.Status;
-
-                    //deals.Add(new DealItem
-                    //{
-                    //    Id = client.InformationSheet.Id.ToString(),
-                    //    Name = programme.Name + " for " + client.Owner.Name,
-                    //    Status = (status == "Submitted") ? "Submitted on " + client.InformationSheet.SubmitDate.ToString("g") : status			// Move into ClientProgramme?
-                    //});
-
-                    //if (CurrentUser.Organisations.Contains(client.Owner))
-                    //{
-                    //    model.DealItems.Add(new ProductItem
-                    //    {
-                    //        Languages = languages,
-                    //        Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
-                    //        Description = proposal.Description,
-                    //        RedirectLink = proposal.URL,
-                    //        Status = status
-                    //    });
-                    //}
-                    //}
-
                     var taskList = await _taskingService.GetAllTasksFor(user);
                     foreach (var task in taskList)
                     {
@@ -189,109 +159,8 @@ namespace TechCertain.WebUI.Controllers
                         ProgrammeId = programme.Id.ToString()
                     });
                 }
+
                 return View("IndexNew", model);
-
-
-
-                foreach (var product in _productRepositoy.FindAll().Where(p => p.Public && !p.IsBaseProduct))
-                {
-                    foreach (var org in user.Organisations)
-                    {
-                        var informationForList = await _customerInformationService.GetAllInformationFor(org);
-                        var answerSheets = informationForList.Where(s => s.Product == product).OrderByDescending(s => s.DateCreated);
-
-                        // conditions
-                        // no uis = display start
-                        // started uis = display started
-                        // finished uis = display view/update/renew
-                        // updated/renewed uis = display view only
-
-                        // assume no uis
-                        //if (answerSheets != null && answerSheets.Count () > 0) {
-                        //	foreach (var answerSheet in answerSheets) {
-                        //		// clear buttons
-                        //		var productItem = new ProductItem {
-                        //			Buttons = new List<ButtonItem> (),
-                        //			Description = product.Description,
-                        //			Languages = product.Languages,
-                        //			Name = product.Name + " for " + org.Name,
-                        //			Status = answerSheet.Status
-                        //		};
-                        //		if (answerSheet.Status == "Submitted") {
-                        //			productItem.Buttons.Add (new ButtonItem { Classes = "fa fa-search", RedirectLink = "" + answerSheet.Id, Text = "View" });
-                        //			if (answerSheet.NextInformationSheet == null) {
-                        //				productItem.Buttons.Add (new ButtonItem { Classes = "fa fa-pencil", RedirectLink = "" + answerSheet.Id, Text = "Update" });
-                        //				productItem.Buttons.Add (new ButtonItem { Classes = "fa fa-repeat", RedirectLink = "" + answerSheet.Id, Text = "Renew" });
-                        //			}
-                        //		}
-                        //		else if (answerSheet.Status == "Started")
-                        //			productItem.Buttons.Add (new ButtonItem { Classes = "fa fa-arrow-right", RedirectLink = "" + answerSheet.Id, Text = "Go" });
-                        //		else
-                        //			productItem.Buttons.Add (new ButtonItem { Classes = "fa fa-arrow-right", RedirectLink = "" + answerSheet.Id, Text = "Go" });
-
-                        //		model.ProductItems.Add (productItem);
-                        //	}
-                        //}
-                        //else {
-                        //	model.ProductItems.Add (new ProductItem {
-                        //		Buttons = new List<ButtonItem> {
-                        //			new ButtonItem { Classes = "fa fa-pencil", RedirectLink = "" + product.Id, Text = "Get" }
-                        //		},
-                        //		Description = product.Description,
-                        //		Languages = product.Languages,
-                        //		Name = product.Name + " for " + org.Name,
-                        //		Status = "Not Subscribed"
-                        //	});
-                        //}
-
-                        if (answerSheets != null && answerSheets.Count() > 0)
-                        {
-                            foreach (var answerSheet in answerSheets)
-                            {
-                                if (answerSheet.NextInformationSheet != null)
-                                    continue;
-
-                                ProductItemV2 pItem = new ProductItemV2
-                                {
-                                    Description = product.Description,
-                                    Languages = product.Languages,
-                                    Name = product.Name + " for " + org.Name,
-                                    SheetHistory = new List<KeyValuePair<string, Guid>>(),
-                                    SheetId = "" + answerSheet.Id,
-                                    Status = answerSheet.Status
-                                };
-
-                                ClientInformationSheet currentSheet = answerSheet;
-                                do
-                                {
-                                    pItem.SheetHistory.Add(new KeyValuePair<string, Guid>(string.Format("{0} for {1} (Submitted at: {2})", currentSheet.Product.Name, org.Name,
-                                                                                                           LocalizeTime(currentSheet.SubmitDate)), currentSheet.Id));
-                                    currentSheet = currentSheet.PreviousInformationSheet;
-                                }
-                                while (currentSheet != null);
-
-                                model.ProductItems.Add(pItem);
-                            }
-                        }
-                    }
-                }
-
-                //foreach (var task in _taskingService.GetAllTasksFor(CurrentUser))
-                //{
-                //    var taskItem = Mapper.Map<TaskItem>(task);
-                //    taskItem.DueDate = LocalizeTime(task.DueDate);
-                //    if (task.Completed)
-                //    {
-                //        model.CompletedTaskItems.Add(taskItem);
-                //        continue;
-                //    }
-                //    if (task.Priority == 1)
-                //        model.CriticalTaskItems.Add(taskItem);
-                //    else
-                //        model.ImportantTaskItems.Add(taskItem);
-                //}
-
-                return View("Index_DEMO", model);
             }
 
 
@@ -311,81 +180,6 @@ namespace TechCertain.WebUI.Controllers
                 }
 
             }
-
-            //removed as we are no longer using servicestack
-            //foreach (string server in servers)
-            //{
-            //    JsonServiceClient client = null;
-
-            //    IList<string> languages = new List<string>();
-            //    languages.Add("nz");
-
-            //    bool staging = server.Contains("demo") || server.Contains("staging");
-            //    bool isAuthenticatedForServer = true;
-
-
-            //    //removed as we are no longer using servicestack
-            //    try
-            //    {
-            //        client = new JsonServiceClient(server)
-            //        {
-            //            UserName = "admin",
-            //            Password = "admin"
-            //        };
-
-            //        client.Timeout = TimeSpan.FromSeconds(10);
-            //        client.AlwaysSendBasicAuthHeader = true;
-
-            //        SchemesResponse schemesResponse = client.Post(new SchemesRequest() { UserId = CurrentUser.Id });
-
-            //        foreach (var scheme in schemesResponse.Schemes)
-            //        {
-            //            model.ProductItems.Add(new ProductItemV2
-            //            {
-            //                Languages = languages,
-            //                Name = scheme.Name + (staging ? " (Staging)" : string.Empty),
-            //                Description = scheme.Description,
-            //                RedirectLink = scheme.URL
-            //            });
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        WebServiceException webEx = ex as WebServiceException;
-            //        if (webEx != null && webEx.StatusCode == 403)
-            //            isAuthenticatedForServer = false;
-            //        else
-            //            _logger.Error(ex, "Failed to connect to: " + server);
-            //    }
-
-            //    //removed as we are no longer using servicestack
-            //    //if we aren't authenticated for this server, don't bother asking for proposals
-            //    if (isAuthenticatedForServer)
-            //        {
-            //            try
-            //            {
-            //                ProposalsResponse proposalResponse = client.Post(new ProposalsRequest() { UserId = CurrentUser.Id });
-
-            //                foreach (var proposal in proposalResponse.Proposals)
-            //                {
-            //                    model.DealItems.Add(new ProductItem
-            //                    {
-            //                        Languages = languages,
-            //                        Name = proposal.CompanyName,
-            //                        Description = proposal.Description,
-            //                        RedirectLink = proposal.URL,
-            //                        Status = proposal.Status
-            //                    });
-            //                }
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                ErrorSignal.FromCurrentContext().Raise(ex);
-            //            }
-            //        }
-
-            //}
-
 
             if (model.DisplayDeals = model.DealItems.Count > 0 || DemoEnvironment)
             {
