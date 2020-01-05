@@ -4,15 +4,25 @@ using TechCertain.Domain.Entities;
 using System.Threading.Tasks;
 using NHibernate.Linq;
 using System;
+using System.IO;
 
 namespace TechCertain.Services.Impl
 {
     public class ImportService : IImportService
     {
-        public Task ImportAOEService()
+        IOrganisationService _organisationService;
+        IUserService _userService;
+
+        public ImportService(IOrganisationService organisationService, IUserService userService)
+        {
+            _organisationService = organisationService;
+            _userService = userService;
+        }
+
+        public async Task ImportAOEService(User CreatedUser)
         {
             var userFileName = "C:\\tmp\\NZACS Individuals Demo.csv";
-            var currentUser = await CurrentUser();
+            var currentUser = CreatedUser;
             StreamReader reader;
             User user;
             Organisation organisation;
@@ -53,7 +63,7 @@ namespace TechCertain.Services.Impl
                             user.Organisations.Add(organisation);
 
                         user.SetPrimaryOrganisation(organisation);
-                        await _userRepository.AddAsync(user);
+                        await _userService.Create(user);
 
                     }
 
@@ -161,6 +171,11 @@ namespace TechCertain.Services.Impl
                     //figure out how to save
                 }
             }
+        }
+
+        public Task ImportAOEService()
+        {
+            throw new NotImplementedException();
         }
     }
 }
