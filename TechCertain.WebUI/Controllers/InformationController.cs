@@ -965,7 +965,7 @@ namespace TechCertain.WebUI.Controllers
             model.OrganisationDetails = organisationDetails;
             model.UserDetails = userDetails;
 
-            return View("InformationWizards", model);
+            return View("InformationWizard", model);
         }
 
         [HttpPost]
@@ -1709,7 +1709,7 @@ namespace TechCertain.WebUI.Controllers
             informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
             model.ClientInformationAnswers = informationAnswers;
 
-            return View("InformationWizards", model);
+            return View("InformationWizard", model);
         }
 
         [HttpGet]
