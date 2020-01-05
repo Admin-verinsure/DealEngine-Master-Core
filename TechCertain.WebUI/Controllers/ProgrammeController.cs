@@ -1000,6 +1000,12 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CreateProgramme()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ViewProgrammes()
         {
             ProgrammeListModel model = new ProgrammeListModel();
