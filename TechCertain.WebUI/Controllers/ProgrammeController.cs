@@ -76,12 +76,11 @@ namespace TechCertain.WebUI.Controllers
                 var user = await CurrentUser();
                 var programmes = _programmeRepository.FindAll().Where(p => p.Owner == user.PrimaryOrganisation);
                 BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
-                foreach (Programme programme in programmes) {
+                foreach (Programme programme in programmes) 
+                {
                     ProgrammeInfoViewModel model = new ProgrammeInfoViewModel
                     {
                         DateCreated = LocalizeTime(programme.DateCreated.GetValueOrDefault()),
-                        //LocalDateSubmitted = LocalizeTime(programme.DateDeleted.GetValueOrDefault()),
-                        //Status= programme.InformationSheet.Status,
                         Id = programme.Id,
                         Name = programme.Name + " for " + programme.Owner.Name,
                         OwnerCompany = programme.Owner.Name,
@@ -237,11 +236,6 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProgrammeActivities(string ProgrammeId, bool IsPublic, string[] Activities)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    ModelState.AddModelError("", "Form has not been completed");
-            //    throw new Exception("Form has not been completed");
-            //}
 
             try
             {
@@ -981,7 +975,7 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageProgramme(Guid Id)
+        public async Task<IActionResult> EditProgramme(Guid Id)
         {
             Programme programme = await _programmeRepository.GetByIdAsync(Id);
 
@@ -995,12 +989,29 @@ namespace TechCertain.WebUI.Controllers
             model.StopAgreement = programme.StopAgreement;
             model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
 
-            return View("ManageProgramme", model);
+            return View("EditProgramme", model);
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ManageProgramme()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewProgrammes()
+        {
+            ProgrammeListModel model = new ProgrammeListModel();
+            var user = await CurrentUser();
+            var programmes = await _programmeService.GetAllProgrammes();
+            programmes.Where(p => p.IsPublic || p.Owner == user.PrimaryOrganisation);
+            model.Programmes = programmes;
+            return View(model);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> ManageProgramme(ProgrammeInfoViewModel model)
+        public async Task<IActionResult> EditProgramme(ProgrammeInfoViewModel model)
         {
             Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
             var user = await CurrentUser();

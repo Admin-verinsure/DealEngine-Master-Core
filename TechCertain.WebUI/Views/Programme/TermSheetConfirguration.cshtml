@@ -37,7 +37,7 @@
                                 <tr class="table-light">
                                     <td>Programme</td>
                                     <td> @Model.programmeName  </td>
-                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("ManageProgramme", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("ViewProgramme", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewActivities", "ViewActivities"))

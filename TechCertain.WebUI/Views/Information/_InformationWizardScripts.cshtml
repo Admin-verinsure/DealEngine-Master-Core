@@ -1994,8 +1994,7 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRevenueTabThree() {
-        table = document.getElementById("sharedRevenueTerritoriesTable");
-        if (validateTableTerritory(table)) {
+        if (validateTable("sharedRevenueTerritoriesTable")) {
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
