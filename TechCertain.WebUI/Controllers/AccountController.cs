@@ -731,7 +731,8 @@ namespace TechCertain.WebUI.Controllers
 
             Microsoft.Extensions.Primitives.StringValues branchId;
             Request.Form.TryGetValue("branch", out branchId);
-            if (branchId.Count == 1)
+
+            if (branchId.Count == 1 && branchId != "Branch:")
             {
                 defaultOU = Guid.Parse(branchId);
                 OrganisationalUnit DefaultOU = await _organisationalUnitService.GetOrganisationalUnit(defaultOU);
