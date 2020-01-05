@@ -390,8 +390,6 @@
                             <h2> Libraries </h2>
                             <!--<div class="widget-toolbar">
                                  add: non-hidden - to disable auto hide
-
-
                             </div>-->
                         </header>
                         <!-- widget div-->
@@ -411,6 +409,11 @@
                                         <table class="table table-striped table-hover table-condensed">
                                             <tbody>
 
+                                                @*<tr>
+                                                    <td>Programmes</td>
+                                                    <td>Programmes</td>
+                                                    <td><a class="btn btn-success btn-xs" href="/Programme/ManageProgramme"><i class="fa fa-search"></i> View</a></td>
+                                                </tr>*@
                                                 @if (User.HasClaim("ViewTerritories", "ViewTerritories"))
                                                 {
                                                     <tr>
@@ -552,7 +555,6 @@
                 }
                 @*@if (User.IsInRole("TCUser"))*@
                 @if (true)
-
                 {
                     <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
                          data-widget-editbutton="false" data-widget-colorbutton="false">
