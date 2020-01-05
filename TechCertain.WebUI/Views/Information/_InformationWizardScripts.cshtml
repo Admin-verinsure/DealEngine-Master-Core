@@ -1920,6 +1920,23 @@ function showAccordionPanel(id, panelNo) {
 
     function ToggleSharedRevenueTab2Button() {
         $('#sharedRevenue2Btn').show();
+        var activitiesStr = GetActivitiesForRevenue('text');
+        activitiesStr.forEach(function (item, index) {
+            if (item.trim() === "Other Work not listed above" ||
+                item.trim() === "Inspection Reports" ||
+                item.trim() === "Valuations" ||
+                item.trim() === "Architecture - Schools MOE" ||
+                item.trim() === "Architecture - Schools - Non MOE" ||
+                item.trim() === "Canterbury Earthquake Rebuild Work") {
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            } else {
+                $('#submitTab4').show();
+                $('#additionalInfomation').hide();
+            }
+        });
+
+        BuildRevenuesTable('false')
     }
 
      function ToggleSharedRevenueTab1Button() {
