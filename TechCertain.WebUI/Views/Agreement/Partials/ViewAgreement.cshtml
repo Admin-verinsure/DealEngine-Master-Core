@@ -261,10 +261,29 @@
         }
     <div class="row">
 
-        <hr width="70%" style="margin-left:80%">
-        <hr width="70%" style="margin-left:80%">
 
-        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <table class="table text-center" style="border:1px;" id="vehicleTable">
+            <tr>
+                <th class="text-center" width="25%"></th>
+                <th class="text-center" width="25%"></th>
+                <th class="text-center" width="25%"></th>
+                <th class="text-center" width="25%"></th>
+            </tr>
+            @foreach (var item in Model.Inclusions)
+            {
+                <tr class="clickable-row">
+                    <td class="pt-3-half" width="13%" contenteditable="true">
+                        Total Sum Insured
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td class="pt-3-half" width="13%" contenteditable="true">
+                        @Html.Raw(@item.Inclusion)
+                    </td>
+                </tr>
+            }
+        </table>
+        @*<section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
             <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                 <strong>Total Sum Insured</strong>
@@ -278,14 +297,7 @@
                 }
             </section>
 
-        </section>
-
-        <hr width="70%" style="margin-left:80%">
-        <hr width="70%" style="margin-left:80%">
-        <br>
-        <hr width="70%" style="margin-left:80%">
-        <hr width="70%" style="margin-left:80%">
-
+        </section>*@
 
     </div>
 
@@ -392,10 +404,70 @@
         <br />
         <div class="row">
 
-            <hr width="70%" style="margin-left:80%">
-            <hr width="70%" style="margin-left:80%">
+            <table class="table text-center" style="border:1px;" id="vehicleTable">
+                <tr>
+                    <th class="text-center" width="25%"></th>
+                    <th class="text-center" width="25%"></th>
+                    <th class="text-center" width="25%"></th>
+                    <th class="text-center" width="25%"></th>
+                </tr>
+                @foreach (var item in Model.RiskPremiums)
+                {
+                    <tr class="clickable-row">
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            Total Premiums
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            @Html.Raw(@item.TotalPremium)
+                        </td>
+                    </tr>
+                }
+                <tr class="clickable-row">
+                    <td class="pt-3-half" width="13%" contenteditable="true">
+                        Broker Service Fee
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td class="pt-3-half" width="13%" contenteditable="true">
+                        @Model.AdministrationFee
+                    </td>
+                </tr>
 
-            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                @foreach (var item in Model.RiskPremiums)
+                {
+                    <tr class="clickable-row">
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            GST
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            @Html.Raw(@item.TotalPremiumIncFeeGST)
+                        </td>
+                    </tr>
+                }
+
+                @foreach (var item in Model.RiskPremiums)
+                {
+                    <tr class="clickable-row">
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            <strong>Total Amount Due</strong>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            <strong>@Html.Raw(@item.TotalPremiumIncFeeIncGST)</strong> 
+                        </td>
+                    </tr>
+                }
+
+
+            </table>
+
+
+            @*<div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                 <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
                     <strong>Total Premiums</strong>
@@ -437,12 +509,10 @@
                     }
                 </section>
 
-            </div>
+            </div>*@
 
-            <hr width="70%" style="margin-left:80%">
-            <hr width="70%" style="margin-left:80%">
+            @*<hr width="70%" style="margin-left:80%">
             <br>
-            <hr width="70%" style="margin-left:80%">
             <hr width="70%" style="margin-left:80%">
 
             <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -461,10 +531,7 @@
             </div>
 
             <hr width="70%" style="margin-left:80%">
-            <hr width="70%" style="margin-left:80%">
-            <br>
-            <hr width="70%" style="margin-left:80%">
-            <hr width="70%" style="margin-left:80%">
+            <hr width="70%" style="margin-left:80%">*@
 
         </div>
 

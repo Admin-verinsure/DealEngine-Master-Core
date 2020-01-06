@@ -849,7 +849,7 @@ namespace TechCertain.WebUI.Controllers
                         {
                             riskname = agreement.Product.Name;
                         }
-                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
+                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion =  term.TermLimit.ToString("C0", UserCulture) });
                     }
 
                     // List Agreement Exclusions
