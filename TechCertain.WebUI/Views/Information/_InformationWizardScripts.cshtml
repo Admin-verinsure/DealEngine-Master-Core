@@ -424,12 +424,15 @@
     $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
     $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
     //$('.multiselect').style({width:20px});
-    $('.multiselect-container').css({ "width": "100%" });
-
-      $('.multiselect').multiselect({
+    //$('.multiselect').style({width:20px});
+        //$('.multiselect-container.dropdown-menu.li').css({ "width": "248%"});
+    //$(ul.multiselect-container { width: 100% !important; position: relative !important; }
+          //$('#multi-select-demo').multiselect();
+    $('select[multiple]').multiselect({
         includeSelectAllOption: true,
-          buttonWidth: '100%'
-      });
+        buttonWidth: '100%',
+        placeholder: 'Select Languages'
+    });
 
     $('.overlay').css({
     "position": "fixed",
