@@ -272,8 +272,8 @@ namespace TechCertain.Services.Impl
         {
             await ImportAOEServiceIndividuals(user);            
             await ImportAOEServicePrincipals(user);
-            //await ImportAOEServiceClaims(user);
-            //await ImportAOEServiceBusinessContract(user);
+            await ImportAOEServiceClaims(user);
+            await ImportAOEServiceBusinessContract(user);
         }
     }
 }

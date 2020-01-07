@@ -308,7 +308,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 var userimport = await CurrentUser();
 
-                await _importService.ImportAOEService(userimport);
+                //await _importService.ImportAOEService(userimport);
 
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
