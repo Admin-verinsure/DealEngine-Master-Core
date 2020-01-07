@@ -45,8 +45,10 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
         IAppSettingService _appSettingService;
+        IImportService _importService;
 
         public AccountController(
+            IImportService importService,
             IAuthenticationService authenticationService,
 			SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
@@ -60,6 +62,7 @@ namespace TechCertain.WebUI.Controllers
 			IEmailService emailService, IFileService fileService,   
             IOrganisationalUnitService organisationalUnitService, IAppSettingService appSettingService) : base (userService)
 		{
+            _importService = importService;
             _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
@@ -303,6 +306,10 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
+                var userimport = await CurrentUser();
+
+                await _importService.ImportAOEService(userimport);
+
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);

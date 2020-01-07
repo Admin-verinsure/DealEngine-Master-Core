@@ -7,5 +7,6 @@ namespace TechCertain.Infrastructure.FluentNHibernate
     {
         Task Commit();
         IUnitOfWork BeginUnitOfWork();
+        Task Rollback();
     }
 }

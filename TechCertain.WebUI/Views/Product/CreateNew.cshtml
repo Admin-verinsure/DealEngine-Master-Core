@@ -1,7 +1,5 @@
 ﻿@model TechCertain.WebUI.Models.Product.ProductViewModel
 
-@using TechCertain.WebUI.Helpers.CustomHtml
-
 <div id="content">
     <article class="container">
         <!-- Widget ID (each widget will need unique ID)-->
@@ -14,7 +12,7 @@
             <div class="card-body">
                 <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
                     <!-- SmartWizard html -->
-                    <div id="smartwizard" class="sw-main sw-theme-dots">
+                    <div id="smartwizard" class="sw-main sw-theme-circles">
                         <ul class="nav nav-tabs step-anchor">
 
                             <li class="nav-item active">
@@ -70,10 +68,9 @@
 
 
 @section pagespecific {
-    <link href="~/smartwizard/cc/smart_wizard_theme_dots.css" rel="stylesheet" />
+    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-
     <script type="text/javascript">
 
 
