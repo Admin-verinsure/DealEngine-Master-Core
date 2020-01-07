@@ -1,4 +1,4 @@
-﻿using Elmah;
+﻿using ElmahCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -251,7 +251,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                ElmahExtensions.RiseError(ex);
                 Response.StatusCode = 500;
                 return Content(ex.Message);
             }
@@ -472,7 +472,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                ElmahExtensions.RiseError(ex);
                 Response.StatusCode = 500;
                 return Content(ex.Message);
             }

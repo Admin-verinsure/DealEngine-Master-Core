@@ -1,4 +1,4 @@
-﻿using Elmah;
+﻿using ElmahCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -339,7 +339,7 @@ namespace TechCertain.WebUI.Controllers
 				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
 			}
 			catch (Exception ex) {
-				ErrorSignal.FromCurrentContext ().Raise (ex);
+				ElmahExtensions.RiseError(ex);
 				Response.StatusCode = 500;
 				return Content (ex.Message);
 			}

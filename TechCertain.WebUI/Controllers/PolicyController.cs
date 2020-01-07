@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
-using Elmah;
+using ElmahCore;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -230,7 +230,7 @@ namespace TechCertain.WebUI.Controllers
 			}
 			catch (Exception ex) {
 				// log stuff here
-				ErrorSignal.FromCurrentContext().Raise(new Exception("Unable to load Policy Document Templates.", ex));
+				ElmahExtensions.RiseError(new Exception("Unable to load Policy Document Templates.", ex));
 			}
 			//Console.WriteLine (document.ToString ());
 			return this.Xml (document);
