@@ -16,17 +16,119 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity1" class="form-control rmv editable" name="ProfessionalIndemnity">
+                                <select id="ProfessionalIndemnity1" onchange="ShowAdditionalInfo('ProfessionalIndemnity1')" class="form-control rmv editable" name="ProfessionalIndemnity1">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
                                 </select>
                             </label>
-                            <p class="validationContainer" id="ValidateProfessionalIndemnity"></p>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity1"></p>
 
                         </section>
 
                     </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Are you aware of any circumstance that has occurred in your practice or any previous practice which may give rise to a claim that has not previously been reported to NZACS or any Insurer?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="ProfessionalIndemnity2"  onchange="ShowAdditionalInfo('ProfessionalIndemnity2')" class="form-control rmv editable" name="ProfessionalIndemnity2">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity2"></p>
+
+                        </section>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Are you aware of any dispute between third parties concerning work with which your practice was involved, which may give rise to a claim?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="ProfessionalIndemnity3"  onchange="ShowAdditionalInfo('ProfessionalIndemnity3')" class="form-control rmv editable" name="ProfessionalIndemnity3">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity3"></p>
+
+                        </section>
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Are you aware of any dispute between any third party and any other party for whose activities you may be vicariously liable (e.g. a contractor), which may involve you in a claim?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="ProfessionalIndemnity4"  onchange="ShowAdditionalInfo('ProfessionalIndemnity4')" class="form-control rmv editable" name="ProfessionalIndemnity4">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity4"></p>
+
+                        </section>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Are you aware of any third party intimation that you might be held liable in part or in whole for any loss?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="ProfessionalIndemnity5"  onchange="ShowAdditionalInfo('ProfessionalIndemnity5')" class="form-control rmv editable" name="ProfessionalIndemnity5">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity5"></p>
+
+                        </section>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Are you aware of any complaints made against your practice or any individual person, either a principal or employee to any professional body?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="ProfessionalIndemnity6"  onchange="ShowAdditionalInfo('ProfessionalIndemnity6')" class="form-control rmv editable" name="ProfessionalIndemnity6">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity6"></p>
+
+                        </section>
+
+                    </section>
+
 
 
                 </div>
@@ -54,12 +156,12 @@
              data: postData
              })
                 .done(function (data) {
-             if (data != "") {
+                    if (data != "") {
+                        debugger;
                 for (var item = 0; item < data.length; item++){
-
                   var arr = data[item];
                   var count = 0;
-                    $('#ProfessionalIndemnity1').val(arr[count + 1]);
+                    $('#' + arr[count]).val(arr[count + 1]);
                 }
              };
 
@@ -76,42 +178,54 @@
       function ValidateProfessionalIndemnity() {
         event.preventDefault();
           debugger;
-        var ProfessionalIndemnity = $('#ProfessionalIndemnity1').val();
-        var validity = true;
-        if (ProfessionalIndemnity == "") {
-            $('#ValidateProfessionalIndemnity').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            $('#ValidateProfessionalIndemnity').html("<i></i>");
-        }
-       
-        if (validity) {
+          var validity = true;
+             for (var index = 1; index <= 6; index++) {
+                     var addPrincial = "#ProfessionalIndemnity" + index;
+                 var value = $(addPrincial).val();
+                 var validator = "#ValidateProfessionalIndemnity" + index;
+
+                  if (value == "") {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+          }
+
+          if (validity) {
             SaveProfessionalIndemnity(); 
-        }
+          }
+
     };
 
+    function ShowAdditionalInfo(selected) {
+        var value = $("#" + selected).val();
+        if(value == "true")
+        alert ("Please use the  Notification Panel below to notify of this potential claim");
+    };
 
 
 
         function SaveProfessionalIndemnity() {
             debugger;
-                   var StatutoryLiability = new Array(1);
+                   var ProfessionalIndemnity = new Array(6);
 
-                   for (var i = 0; i < StatutoryLiability.length; i++) {
-                       StatutoryLiability[i] = new Array(2);
+                   for (var i = 0; i < ProfessionalIndemnity.length; i++) {
+                       ProfessionalIndemnity[i] = new Array(2);
                    }
 
-            for (var i = 1; i <= 1; i++) {
+            for (var i = 1; i <= 6; i++) {
                 for (var j = 0; j < 2; j++) {
-                    StatutoryLiability[i-1][0] = "ProfessionalIndemnity1";
-                StatutoryLiability[i-1][1] = $('#ProfessionalIndemnity1').val();
+                ProfessionalIndemnity[i - 1][0] = "ProfessionalIndemnity" + i;
+                var professionalIndemnity = "#ProfessionalIndemnity" + i;
+                ProfessionalIndemnity[i-1][1] = $(professionalIndemnity).val();
                 }
 
             }
 
-                   var postData = { Answers: StatutoryLiability, ClientInformationSheet: clientInformationSheet };
+                   var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
 
              $.ajax({
                            url: '@Url.Action("UpdateAnswer", "Information")',
