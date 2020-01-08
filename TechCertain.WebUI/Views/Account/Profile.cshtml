@@ -105,7 +105,7 @@
 
                                     <div class="row">
 
-                                        <div class="col-sm-3 profile-pic">
+                                        @*<div class="col-sm-3 profile-pic">
                                             @if (!string.IsNullOrWhiteSpace(Model.ProfilePicture))
                                             {
                                                 <img src="/Image/@(Model.ProfilePicture)" alt="profile picture">
@@ -113,7 +113,7 @@
                                             else
                                             {
                                                 <img src="/img/avatars/male.png" alt="profile picture">
-                                            }
+                                            }*@
                                             @*<div class="padding-10">
                                                     <h4 class="font-md">
                                                         <strong>0</strong>
@@ -127,7 +127,7 @@
                                                         <small>Connections</small>
                                                     </h4>
                                                 </div>*@
-                                        </div>
+                                        @*</div>*@
                                         <div class="col-sm-6">
                                             <h1>
                                                 @Model.FirstName <span class="semi-bold">@Model.LastName</span>

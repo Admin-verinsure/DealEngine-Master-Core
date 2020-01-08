@@ -27,11 +27,6 @@ namespace TechCertain.Services.Impl
             _organisationTypeService = organisationTypeService;
         }
 
-        //public async Task<User> GetCurrentUser()Async()
-        //{
-        //    //return await _userRepository.GetByIdAsync(_CurrentUser()Guid);
-        //}
-
         public async Task<User> GetUser (string username)
 		{
             User user = null;
@@ -127,7 +122,6 @@ namespace TechCertain.Services.Impl
             await CreateDefaultUserOrganisation (user);
             await _userRepository.AddAsync(user);
             _ldapService.Create (user);
-            Thread.Sleep(2000);
             await Update (user);
 		}
 
@@ -192,9 +186,5 @@ namespace TechCertain.Services.Impl
 			user.Organisations.Add (defaultOrganisation);
 		}
 
-		public async Task<User> GetUserByMembershipNo(string MembershipNo)
-		{
-			return await _userRepository.FindAll().FirstOrDefaultAsync(u => u.MembershipNo == MembershipNo);
-		}
 	}
 }

@@ -73,6 +73,7 @@ namespace TechCertain.Domain.Entities
 		protected ClientInformationSheet (User createdBy)
 			: base (createdBy)
 		{
+            Organisation = new List<Organisation>();
             SharedDataRoles = new List<SharedDataRole>();
             Answers = new List<ClientInformationAnswer> ();
 			Vehicles = new List<Vehicle> ();
@@ -156,11 +157,6 @@ namespace TechCertain.Domain.Entities
 			Locations.Add (location);
 		}
 
-        //public virtual void AddOperator(Operator operato)
-        //{
-        //    Operators.Add(operato);
-        //}
-
         public virtual void AddBoatUse(BoatUse boatUse)
         {
             BoatUses.Add(boatUse);
@@ -176,9 +172,6 @@ namespace TechCertain.Domain.Entities
         }
         public virtual ClientInformationSheet CloneForUpdate (User cloningUser)
 		{
-			//if (PreviousInformationSheet != null)
-			//	throw new Exception ("This UIS has already been cloned for editing/renewal");
-
 			ClientInformationSheet newSheet = new ClientInformationSheet (cloningUser, Owner, null);
 			newSheet.PreviousInformationSheet = this;
 			newSheet.Product = Product;
@@ -204,12 +197,6 @@ namespace TechCertain.Domain.Entities
 
             foreach (ClaimNotification claim in ClaimNotifications.Where(cl => !cl.Removed && cl.DateDeleted == null))
                 newSheet.AddClaim(claim.CloneForNewSheet(newSheet));
-
-            //foreach (WaterLocation waterLocation in WaterLocations.Where(wl => !wl.Removed && wl.DateDeleted == null))
-            //    newSheet.AddWaterLocation(waterLocation.CloneForNewSheet(newSheet));
-
-            //foreach (Operator operato in Operators.Where(oper => !oper.Removed && oper.DateDeleted == null))
-            //    newSheet.AddOperator(operato.CloneForNewSheet(newSheet));
 
             return newSheet;
 		}

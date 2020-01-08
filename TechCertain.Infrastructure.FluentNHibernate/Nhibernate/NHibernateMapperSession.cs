@@ -104,7 +104,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             var transaction = _session.BeginTransaction();
             try
             {
-                await _session.UpdateAsync(entity);
+                await _session.SaveOrUpdateAsync(entity);
                 await transaction.CommitAsync();
             }
             catch (Exception ex)

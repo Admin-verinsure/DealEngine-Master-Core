@@ -849,7 +849,7 @@ namespace TechCertain.WebUI.Controllers
                         {
                             riskname = agreement.Product.Name;
                         }
-                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture) });
+                        insuranceInclusion.Add(new InsuranceInclusion { RiskName = riskname, Inclusion =  term.TermLimit.ToString("C0", UserCulture) });
                     }
 
                     // List Agreement Exclusions
@@ -911,7 +911,7 @@ namespace TechCertain.WebUI.Controllers
                 foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.OrderBy(acat => acat.TermLimit))
                 {
 
-                multiCoverOptions.Add(new MultiCoverOptions { RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                 }
 
                 
@@ -2107,6 +2107,7 @@ namespace TechCertain.WebUI.Controllers
 
             var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
             var user = await CurrentUser();
+
             foreach (ViewAgreementViewModel model in models)
             {
                 model.EditEnabled = false;
@@ -2125,6 +2126,8 @@ namespace TechCertain.WebUI.Controllers
                     }
                 }
             }
+            ViewBag.Id = id;
+
             return View("ViewAcceptedAgreementList", models);
         }
 
