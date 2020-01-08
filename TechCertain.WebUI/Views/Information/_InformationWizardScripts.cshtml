@@ -206,7 +206,7 @@
                    }
                
                //$('#getAgreementModal').show();
-               if ($("#Sheetstatus").val() != "Started") {
+               @*if ($("#Sheetstatus").val() != "Started") {
                    var progId = $('#ClientProgrammeId').val();
                    var postData = { ProgrammeId: progId };
 
@@ -225,7 +225,7 @@
                    }).fail(function (a, s, d) {
                        debugger;
                    });
-               }
+               }*@
 
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
@@ -261,6 +261,7 @@
                    data: postdata
                 })
                     .done(function (data) {
+                        debugger;
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
 
@@ -430,6 +431,7 @@
         //$('.multiselect-container.dropdown-menu.li').css({ "width": "248%"});
     //$(ul.multiselect-container { width: 100% !important; position: relative !important; }
           //$('#multi-select-demo').multiselect();
+
     $('select[multiple]').multiselect({
         includeSelectAllOption: true,
         buttonWidth: '100%',

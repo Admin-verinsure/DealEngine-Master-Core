@@ -23,11 +23,13 @@
             <!-- end widget edit box -->
             <!-- widget content -->
 
-			<div class="smart-form no-padding">
-			@foreach (var item in Model) {
-				@await Html.PartialAsync("Partials/ViewAgreement", item);
-			}
+            <div class="smart-form no-padding">
+                @foreach (var item in Model)
+                {
+                    @await Html.PartialAsync("Partials/ViewAgreement", item);
+                }
             </div>
+           
             <!-- end widget content -->
         </div>
         <!-- end widget div -->
