@@ -23,7 +23,7 @@ namespace TechCertain.WebUI.Controllers
 {
     //[Authorize]
     public class ProgrammeController : BaseController
-    {        
+    {
         IInformationTemplateService _informationService;
         IUnitOfWork _unitOfWork;
         IMapperSession<Programme> _programmeRepository;
@@ -166,73 +166,6 @@ namespace TechCertain.WebUI.Controllers
 
         }
 
-        public async Task<List<BusinessActivityTemplate>> UploadDataFiles(string FileName)
-        {
-            var user = await CurrentUser();
-            List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
-
-            using (StreamReader reader = new StreamReader(FileName))
-            {
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-                    string[] parts = line.Split(';');
-                    BusinessActivityTemplate ba = new BusinessActivityTemplate(user);
-
-                    if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
-                    {
-                        //classification 1
-                        ba.Classification = 1;
-                        ba.AnzsciCode = parts[0];
-                        ba.Description = parts[1];
-                        Debug.WriteLine(parts[0]);
-                        Debug.WriteLine(parts[1]);
-
-                    }
-                    if (!string.IsNullOrEmpty(parts[1]) && !string.IsNullOrEmpty(parts[2]))
-                    {
-                        //classification 2
-                        ba.Classification = 2;
-                        ba.AnzsciCode = parts[1];
-                        ba.Description = parts[2];
-                        Debug.WriteLine(parts[1]);
-                        Debug.WriteLine(parts[2]);
-                    }
-                    if (!string.IsNullOrEmpty(parts[2]) && !string.IsNullOrEmpty(parts[3]))
-                    {
-                        //classification 3
-                        ba.Classification = 3;
-                        ba.AnzsciCode = parts[2];
-                        ba.Description = parts[3];
-                        Debug.WriteLine(parts[2]);
-                        Debug.WriteLine(parts[3]);
-
-                    }
-                    if (!string.IsNullOrEmpty(parts[3]) && !string.IsNullOrEmpty(parts[4]))
-                    {
-                        //classification 4
-                        ba.Classification = 4;
-                        ba.AnzsciCode = parts[3];
-                        ba.Description = parts[4];
-                        Debug.WriteLine(parts[3]);
-                        Debug.WriteLine(parts[4]);
-                    }
-
-                    if(ba.AnzsciCode != null)
-                    {
-                        BAList.Add(ba);
-                    }                    
-                }
-            }
-
-            foreach (BusinessActivityTemplate businessActivity in BAList)
-            {
-                await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
-            }
-
-            return BAList;
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreateProgrammeActivities(string ProgrammeId, bool IsPublic, string[] Activities)
         {
@@ -264,7 +197,7 @@ namespace TechCertain.WebUI.Controllers
             var busActivityList = await _busActivityService.GetBusinessActivitiesTemplate();
             if (busActivityList.Count == 0)
             {
-                busActivityList = await UploadDataFiles("C:\\tmp\\anzsic06completeclassification.csv");
+                return Redirect("~/Error/Error404");                               
             }
 
             var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);

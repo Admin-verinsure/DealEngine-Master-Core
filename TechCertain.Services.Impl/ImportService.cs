@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NHibernate.Linq;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace TechCertain.Services.Impl
 {
@@ -18,14 +19,15 @@ namespace TechCertain.Services.Impl
         IUnitOfWork _unitOfWork;
         IOrganisationTypeService _organisationTypeService;
         IMapperSession<Organisation> _organisationRepository;
-
+        IBusinessActivityService _businessActivityService;
         IInsuranceAttributeService _InsuranceAttributeService;
 
         public ImportService(IOrganisationService organisationService, IUserService userService, 
             IProgrammeService programmeService, IReferenceService referenceService, IClientInformationService clientInformationService,
             IUnitOfWork unitOfWork, IOrganisationTypeService organisationTypeService, IInsuranceAttributeService insuranceAttributeService,
-            IMapperSession<Organisation> organisationRepository)
+            IMapperSession<Organisation> organisationRepository, IBusinessActivityService businessActivityService)
         {
+            _businessActivityService = businessActivityService;
             _organisationRepository = organisationRepository;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
@@ -274,6 +276,62 @@ namespace TechCertain.Services.Impl
             await ImportAOEServicePrincipals(user);
             await ImportAOEServiceClaims(user);
             await ImportAOEServiceBusinessContract(user);
+        }
+
+        public async Task ImportActivities(User user)
+        {
+            var fileName = "C:\\tmp\\anzsic06completeclassification.csv";            
+            List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
+
+            using (StreamReader reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    string[] parts = line.Split(';');
+                    BusinessActivityTemplate ba = new BusinessActivityTemplate(user);
+
+                    if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        //classification 1
+                        ba.Classification = 1;
+                        ba.AnzsciCode = parts[0];
+                        ba.Description = parts[1];
+                    }
+                    if (!string.IsNullOrEmpty(parts[1]) && !string.IsNullOrEmpty(parts[2]))
+                    {
+                        //classification 2
+                        ba.Classification = 2;
+                        ba.AnzsciCode = parts[1];
+                        ba.Description = parts[2];
+                    }
+                    if (!string.IsNullOrEmpty(parts[2]) && !string.IsNullOrEmpty(parts[3]))
+                    {
+                        //classification 3
+                        ba.Classification = 3;
+                        ba.AnzsciCode = parts[2];
+                        ba.Description = parts[3];
+
+                    }
+                    if (!string.IsNullOrEmpty(parts[3]) && !string.IsNullOrEmpty(parts[4]))
+                    {
+                        //classification 4
+                        ba.Classification = 4;
+                        ba.AnzsciCode = parts[3];
+                        ba.Description = parts[4];
+                    }
+
+                    if (ba.AnzsciCode != null)
+                    {
+                        BAList.Add(ba);
+                    }
+                }
+            }
+
+            foreach (BusinessActivityTemplate businessActivity in BAList)
+            {
+                await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
+            }
         }
     }
 }

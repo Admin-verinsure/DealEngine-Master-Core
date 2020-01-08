@@ -1,9 +1,9 @@
 ﻿@{
-//if (!Request.IsAuthenticated)
-//{
-//    ViewBag.PageId = "extr-page";
-//    ViewBag.PageClass = "animated fadeInDown";
-//}
+    if (User.Identity.IsAuthenticated)
+    {
+        ViewBag.PageId = "extr-page";
+        ViewBag.PageClass = "animated fadeInDown";
+    }
 }
 
 @section topright{
