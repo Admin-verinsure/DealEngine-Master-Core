@@ -304,10 +304,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                throw new Exception("Test");
                 var userimport = await CurrentUser();               
-                //await _importService.ImportAOEService(userimport);
-
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);

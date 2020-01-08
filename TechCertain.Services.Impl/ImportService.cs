@@ -330,7 +330,7 @@ namespace TechCertain.Services.Impl
 
             foreach (BusinessActivityTemplate businessActivity in BAList)
             {
-                await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
+                await _businessActivityService.CreateBusinessActivityTemplate(businessActivity);
             }
         }
     }
