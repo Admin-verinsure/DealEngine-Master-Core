@@ -124,9 +124,10 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
 
 
                 Description1 = string.Format(description,
-                            //objClientAgreement.InceptionDate.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")),
-                            objClientAgreement.InceptionDate.ToString("dd MMMM yyyy"),
-                            objClientAgreement.ExpiryDate.ToString("dd MMMM yyyy"));
+                            TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")),
+                            //objClientAgreement.InceptionDate.ToString("dd MMMM yyyy"),
+                            TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")));
+                            //objClientAgreement.ExpiryDate.ToString("dd MMMM yyyy"));
 
                     return Description1;
                 }
