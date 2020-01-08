@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
 
@@ -22,6 +23,25 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         private int gv_transactionType;
         private string gv_strUISReference;
         private string gv_strMasterAgreementReference;
+
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public string UserTimeZone
+        {
+            get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
+        }
+
+        public CultureInfo UserCulture
+        {
+            get { return CultureInfo.CreateSpecificCulture("en-NZ"); }
+        }
 
         public EGlobalPolicyAPI(EGlobalPolicy _EGlobalPolicy, User _CurrentUser)
         {
@@ -945,13 +965,13 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
             // Dates
             EBixPolicy.PolicyDateTime = DateTime.Now;
-            EBixPolicy.EffectiveDate = DateTime.Now; //Change later 
-            EBixPolicy.ExpiryDate = objClientAgreement.ExpiryDate; 
-            EBixPolicy.InceptionDate = objClientAgreement.InceptionDate; 
-            EBixPolicy.LastRenewalDate = objClientAgreement.InceptionDate; 
-            EBixPolicy.PolicyTime = objClientAgreement.InceptionDate;
-            EBixPolicy.TermsofTradeDate = objClientAgreement.InceptionDate;
-            EBixPolicy.RenewalDate = objClientAgreement.ExpiryDate;
+            EBixPolicy.EffectiveDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.ExpiryDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.InceptionDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)); 
+            EBixPolicy.LastRenewalDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)); 
+            EBixPolicy.PolicyTime = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.TermsofTradeDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.RenewalDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
 
             // Set variables
             EBixPolicy.Branch = EGlobalPolicy.ClientProgramme.EGlobalBranchCode;
@@ -1017,13 +1037,14 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             ep.BSCAmount = brokerFee;
 
             ep.BscGST = Math.Round(ep.BSCAmount * taxRate, 2);
-            ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            ep.DueByClient = ep.CoyPremium + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            //ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
             ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate, 2);
 
             decimal spcGST = Math.Round(ep.SPCFee * taxRate, 2);
 
             ep.BscGST += spcGST;
-            ep.DueByClient += (ep.SPCFee + spcGST);
+            ep.DueByClient += ep.SPCFee;
         }
 
         protected virtual EBixPolicyRisk CreatePolicyRisk(PackageProduct packageProduct, ClientAgreementTerm clientAgreementTerm)
@@ -1039,7 +1060,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             pr.SubCoverString = packageProduct.PackageProductSubCover;
             pr.CoyPremium = (clientAgreementTerm.Premium * EGlobalPolicy.DiscountRate);
             pr.GSTPremium = (pr.CoyPremium * packageProduct.PackageProductProduct.TaxRate);
-            pr.BrokerAmountDue = ((clientAgreementTerm.Brokerage / 100m) * pr.CoyPremium);
+            pr.BrokerAmountDue = clientAgreementTerm.Brokerage;
             pr.GSTBrokerage = (pr.BrokerAmountDue * packageProduct.PackageProductProduct.TaxRate);
             pr.DueByClient = (pr.CoyPremium + pr.GSTPremium);
             pr.BrokerCeqDue = 0m;
@@ -1047,7 +1068,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             pr.CEQuake = 0m;
             pr.BscGST = 0m;
             pr.LeviesA = 0m;     //eqc;
-            pr.LeviesB = 0m;     //fsl;
+            pr.LeviesB = clientAgreementTerm.FSL;     //fsl;
             pr.BrokerAmountRate = pr.BrokerCeqDueRate = clientAgreementTerm.Brokerage;
             /************************/
             return pr;
@@ -1141,11 +1162,11 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             ir.BrokerCEQDue_T = risk.BrokerCeqDue * config.EGlobalInsurerConfig_InsurerProportion;
             ir.CEQuake = 0m;//risk.CEQuake * config.InsurerProportion;
             ir.LeviesA = 0m;//risk.LeviesA * config.InsurerProportion;
-            ir.LeviesB = 0m;//risk.LeviesB * config.InsurerProportion;
+            ir.LeviesB = risk.LeviesB * config.EGlobalInsurerConfig_InsurerProportion;
             ir.BrokerCEQRate = 0m;
-            ir.NetPay = (ir.CoyPremium + ir.CEQuake + ir.LeviesA + ir.LeviesB + ir.GSTPremium) -
-                           (ir.BrokerAmountDue_T + ir.GSTBrokerage + ir.BrokerCEQDue_T);
-                           /************************/
+            ir.NetPay = (ir.CoyPremium + ir.GSTPremium) -
+                           (ir.BrokerAmountDue_T + ir.GSTBrokerage);
+            /************************/
             ir.TermsofTradeCode = "80MF";   // Determine
             ir.InsurerPerson = "Policy";    // Determine
             ir.Broker = EbixUser;

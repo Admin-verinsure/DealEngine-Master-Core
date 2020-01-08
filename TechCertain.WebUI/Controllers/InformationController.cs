@@ -1279,19 +1279,38 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveCoverOptions(string[] Answers, Guid ProgrammeId)
         {
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
+
+            using (var uow = _unitOfWork.BeginUnitOfWork())
+            {
+                foreach (var agreement in clientProgramme.Agreements)
+                {
+
+                    foreach (var term in agreement.ClientAgreementTerms)
+                    {
+                        term.Bound = false;
+                        await uow.Commit();
+                    }
+                }
+            }
+
             try
             {
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     foreach (var option in Answers)
                     {
-                       ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
-                        List<ClientAgreementTerm> listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Id== Guid.Parse(option)).ToList();
-                        foreach (var term in listClientAgreementerm)
+                        if(option != "None")
                         {
-                            term.Bound = true;
-                            await uow.Commit();
+                            List<ClientAgreementTerm> listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Id == Guid.Parse(option)).ToList();
+                            foreach (var term in listClientAgreementerm)
+                            {
+                                term.Bound = true;
+                                await uow.Commit();
+                            }
                         }
+                      
+                      
                     }
                 }
             }
@@ -1306,18 +1325,80 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetCoverOptions(Guid ProgrammeId)
         {
+            ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(ProgrammeId);
             List<ClientAgreementTerm> listClientAgreementerm = new List<ClientAgreementTerm>();
+            List<Guid> listClientAgreementermid = new List<Guid>();
+            String[][] OptionItems = new String[clientProgramme.Agreements.Count][];
+            var count = 0;
+            String[] OptionItem;
             try
             {
-                listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Bound == true).ToList();
-            }
-            catch (Exception ex)
-            {
+                foreach (var agreement in clientProgramme.Agreements)
+                {
+
+                    foreach (var term in agreement.ClientAgreementTerms)
+                    {
+                        OptionItem = new String[2];
+                        if (term.Bound)
+                        {
+                            OptionItem[0] = agreement.Product.Name;
+                            OptionItem[1] = "" + term.Id;
+                            OptionItems[count] = OptionItem;
+                            count++;
+                        }
+
+                      
+                        //else
+                        //{
+                        //    OptionItem[0] = agreement.Product.Name;
+                        //    OptionItem[1] = "None";
+                        //    OptionItems[count] = OptionItem;
+                        //    count++;
+
+                        //}
+
+                    }
+                }
+            }catch (Exception ex)
+                {
                 Console.WriteLine(ex.Message);
             }
-            return Json(listClientAgreementerm);
-        }
 
+
+            //try
+            //{
+            //    listClientAgreementerm = _clientAgreementTermRepository.FindAll().Where(cagt => cagt.Bound == true).ToList();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            return Json(OptionItems);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetClaimHistory(Guid ClientInformationSheet)
+        {
+            String[][] ClaimAnswers = new String[5][];
+            var count = 0;
+            String[] ClaimItem;
+            foreach (var answer in _clientInformationAnswer.GetAllClaimHistory().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
+                                                                                                                                                          || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5")))
+            {
+                ClaimItem = new String[3];
+
+                for (var i = 0; i < 1; i++)
+                {
+                    ClaimItem[i] = answer.ItemName;
+                    ClaimItem[i + 1] = answer.Value;
+                    ClaimItem[i + 2] = answer.ClaimDetails;
+                }
+
+                ClaimAnswers[count] = ClaimItem;
+                count++;
+            }
+
+            return Json(ClaimAnswers);
+        }
 
         [HttpGet]
         public async Task<IActionResult> EditInformation(Guid id)
@@ -1784,30 +1865,7 @@ namespace TechCertain.WebUI.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetClaimHistory(Guid ClientInformationSheet)
-        {
-            String[][] ClaimAnswers = new String[5][];
-            var count = 0;
-            String[] ClaimItem;
-            foreach (var answer in _clientInformationAnswer.GetAllClaimHistory().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "Claimexp1" || c.ItemName == "Claimexp2" || c.ItemName == "Claimexp3"
-                                                                                                                                                          || c.ItemName == "Claimexp4" || c.ItemName == "Claimexp5")))
-            {
-                ClaimItem = new String[3];
-
-                for (var i = 0; i < 1; i++)
-                {
-                    ClaimItem[i] = answer.ItemName;
-                    ClaimItem[i + 1] = answer.Value;
-                    ClaimItem[i + 2] = answer.ClaimDetails;
-                }
-
-                ClaimAnswers[count] = ClaimItem;
-                count++;
-            }
-
-            return Json(ClaimAnswers);
-        }
+       
 
         [HttpPost]
         public async Task<IActionResult> GetDNO(Guid ClientInformationSheet)

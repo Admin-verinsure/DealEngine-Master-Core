@@ -362,10 +362,10 @@ namespace TechCertain.WebUI.Controllers
 
                 }
             }
-            for (var i = 0; i < sheet.Organisation.Where(o => o.OrganisationType.Name == "Principal").Count(); i++)
-            {
-                organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
-            }
+            //for (var i = 0; i < sheet.Organisation.Where(o => o.OrganisationType.Name == "Person - Individual").Count(); i++)
+            //{
+            //    organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
+            //}
 
 
             try
