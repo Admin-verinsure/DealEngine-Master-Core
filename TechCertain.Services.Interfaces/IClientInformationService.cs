@@ -11,21 +11,13 @@ namespace TechCertain.Services.Interfaces
     {
 		[Obsolete]
         Task<ClientInformationSheet> IssueInformationFor (User createdBy, Organisation createdFor, InformationTemplate informationTemplate);
-
         Task<ClientInformationSheet> IssueInformationFor (User createdBy, Organisation createdFor, ClientProgramme clientProgramme, string reference);
-
         Task<ClientInformationSheet> GetInformation (Guid informationSheetId);
-
         Task<List<ClientInformationSheet>> GetAllInformationFor (User owner);
-
         Task<List<ClientInformationSheet>> GetAllInformationFor (Organisation owner);
-
         Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId);
-
-
         Task UpdateInformation (ClientInformationSheet sheet);
-
 		Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
-	}
+    }
 }
 

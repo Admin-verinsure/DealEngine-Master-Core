@@ -13,6 +13,5 @@ namespace TechCertain.Services.Interfaces
         Task<List<User>> GetAllUsers ();
         Task Create(User user);
         Task Update(User user);
-        Task<User> GetUserByMembershipNo(string MembershipNo);
     }
 }

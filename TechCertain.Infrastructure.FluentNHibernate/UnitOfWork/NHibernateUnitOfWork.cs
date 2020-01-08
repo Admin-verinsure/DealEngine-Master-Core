@@ -59,11 +59,7 @@ namespace TechCertain.Infrastructure.FluentNHibernate
             }
         }
 
-        public void Dispose()
-        {
-            //_transaction.Dispose();
-            //_transaction = null;
-        }
+        public void Dispose() { }
 
         public IUnitOfWork BeginUnitOfWork()
         {

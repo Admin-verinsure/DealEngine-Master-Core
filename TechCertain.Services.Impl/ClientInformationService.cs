@@ -20,8 +20,6 @@ namespace TechCertain.Services.Impl
             _customerInformationRepository = customerInformationRepository;
         }
 
-        #region ICustomerInformationService implementation
-
         public async Task<ClientInformationSheet> IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
         {
             ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, informationTemplate);
@@ -101,60 +99,6 @@ namespace TechCertain.Services.Impl
             // save data to shared data
         }
 
-        #endregion
-
-        //void ConfigureSharedData(ClientInformationSheet sheet)
-        //{
-        //    // if not shared data object on UIS
-        //    if (sheet.SharedData == null)
-        //    {
-        //        // assume we don't have any shared data
-        //        var hasSharedData = false;
-        //        // check products for other UIS's, and see if they have a shared data object
-        //        foreach (var otherSheet in GetAllInformationFor(sheet.Owner))
-        //        {
-        //            if (sheet.Product.ProductPackage.Contains(otherSheet.Product))
-        //            {
-        //                hasSharedData = true;
-        //                sheet.SharedData = otherSheet.SharedData;
-        //                break;
-        //            }
-        //        }
-        //        // if no shared data object, create one
-        //        if (!hasSharedData)
-        //            sheet.SharedData = new ClientSharedData(sheet.CreatedBy, sheet.Product.ProductPackage);
-        //    }
-        //}
-
-        //change to method
-        //async Task SaveRevenueData(ClientInformationSheet sheet, NameValueCollection revenueData, User creatingUser)
-        //{
-        //    foreach (string key in revenueData.Keys)
-        //    {
-        //        string[] parts = key.Split('_');
-
-        //        RevenueByActivity activityRevenue = sheet.RevenueData.FirstOrDefault(rd => rd.Territory == parts[1]);
-        //        if (activityRevenue == null)
-        //        {
-        //            activityRevenue = new RevenueByActivity(creatingUser)
-        //            {
-        //                Activity = parts[1],
-        //                RevenueByCountry = new List<RevenueByCountry>()
-        //            };
-        //            sheet.RevenueData.Add(activityRevenue);
-        //        }
-        //        RevenueByCountry countryRevenue = activityRevenue.RevenueByCountry.FirstOrDefault(rc => rc.Country == parts[2]);
-        //        if (countryRevenue == null)
-        //        {
-        //            countryRevenue = new RevenueByCountry(creatingUser)
-        //            {
-        //                Country = parts[2]
-        //            };
-        //            activityRevenue.RevenueByCountry.Add(countryRevenue);
-        //        }
-        //        countryRevenue.DeclaredRevenue = Convert.ToDecimal(revenueData.Get(key));
-        //    }
-        //}
     }
 }
 

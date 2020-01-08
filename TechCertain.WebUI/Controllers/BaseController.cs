@@ -79,18 +79,6 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
-        {
-            ViewBag.Title = "Proposalonline";
-            User account = CurrentUser().Result;
-            if (account != null)
-            {
-                ViewBag.Account = account;
-            }
-
-            base.OnActionExecuting(filterContext);
-        }
-
         protected ActionResult PageNotFound ()
 		{
             return Redirect ("~/Error/Error404");

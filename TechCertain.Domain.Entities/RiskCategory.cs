@@ -5,8 +5,6 @@ namespace TechCertain.Domain.Entities
 {
 	public class RiskCategory : EntityBase, IAggregateRoot
 	{
-		//public RiskCategory[] ParentRisks { get; }
-
 		public virtual string Name { get; set; }
 
 		public virtual string DescriptiveName { get; set; }

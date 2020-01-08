@@ -127,15 +127,18 @@ namespace TechCertain.Infrastructure.Ldap.Services
 				var addRequest = new AddRequest (client.NextMessageId, entry);
 				var response = client.Send<AddResponse> (addRequest);
 				client.Unbind ();
-				if (response.ResultCode > 0)
-					throw new Exception ("Unable to create organisation in Ldap: " + response.ErrorMessage);
+				if (response.ResultCode == 68)
+				{
+					var nameExistsException = new Exception("NameAlreadyBoundException");
+					nameExistsException.HResult = 68;
+					throw nameExistsException;
+				}				
+				else if (response.ResultCode > 0)
+				{
+					throw new Exception("Unable to create organisation in Ldap: " + response.ErrorMessage);
+				}
 			}
 		}
-
-		//public void Create (PasswordPolicy passwordPolicy)
-		//{
-
-		//}
 
 		public void  Update (User user)
 		{

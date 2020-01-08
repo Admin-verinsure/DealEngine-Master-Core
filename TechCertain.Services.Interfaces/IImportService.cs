@@ -6,6 +6,6 @@ namespace TechCertain.Services.Interfaces
 {
     public interface IImportService
     { 
-        Task ImportAOEService();
+        Task ImportAOEService(User user);
     }
 }

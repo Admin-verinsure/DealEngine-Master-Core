@@ -125,6 +125,12 @@ namespace TechCertain.Domain.Entities
             set;
         }
 
+        public virtual string ClaimMembershipNumber
+        {
+            get;
+            set;
+        }
+
         public virtual IList<Product> ClaimProducts
         {
             get;

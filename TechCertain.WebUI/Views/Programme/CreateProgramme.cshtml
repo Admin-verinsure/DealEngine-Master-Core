@@ -1,36 +1,33 @@
-﻿<div id="content">
-    <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
-        <div id="smartwizard" class="sw-main sw-theme-dots">
-            <ul class="nav nav-tabs step-anchor">
-                <li class="nav-item active">
-                    <a href="#step-1"> <span class="nav-link">1</span> <span class="title">Programme</span> </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#step-2"> <span class="nav-link">2</span> <span class="title">Product</span> </a>
-                </li>
-            </ul>
+﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
 
-            <div class="sw-container tab-content" style="min-height: 152px;">
-                <div id="step-1" class="tab-pane step-content" style="display: block;">
-                    <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
-                        <div class="form-group">
+<article class="container">
+    <div class="container-fluid">
+        <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
+             data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 
-                        </div>
+            <header>
+                <h2>Create Programme</h2>
+            </header>
+            <div id="smartwizard" class="sw-main sw-theme-circles">
+                <ul class="nav nav-tabs step-anchor">
+                    <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Programme</small></a></li>
+                    <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Product</small></a></li>
+                </ul>
+
+                <div class="sw-container tab-content">
+                    <div id="tab1" class="tab-pane step-content" style="display: block;">
+                        @await Html.PartialAsync("ProgrammeFormPartial", Model)
                     </div>
-                </div>
-
-                <div id="step-2" class="tab-pane step-content" style="display: none;">
-                    <div id="form-step-1" role="form" data-toggle="validator" novalidate="true">
-                        <div class="form-group">
-
-                        </div>
+                    <div id="tab2" class="tab-pane step-content">
+                        @await  Html.PartialAsync("/Product/CreateNew")
                     </div>
+
                 </div>
             </div>
-        </div>
 
-    </form>
-</div>
+        </div>
+    </div>
+</article>
 
 @section pagespecific {
     <script src="~/smartwizard/js/jquery.smartWizard.min.js"></script>
