@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Elmah;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,10 +6,9 @@ using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.WebUI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
+using ElmahCore;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -95,7 +93,7 @@ namespace TechCertain.WebUI.Controllers
             }
 			catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                ElmahExtensions.RiseError(ex);
                 return RedirectToAction("Error500", "Error");
             }
         }
@@ -134,7 +132,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                ElmahExtensions.RiseError(ex);
                 return RedirectToAction("Error500", "Error");
             }
         }
@@ -180,7 +178,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                ElmahExtensions.RiseError(ex);
                 return RedirectToAction("Error500", "Error");
             }
         }
