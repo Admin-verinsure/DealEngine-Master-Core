@@ -445,7 +445,6 @@
 </div>
 
 <style>
-
     .coastguardformtd{
         width: 1100px;
     }
@@ -612,8 +611,8 @@
             }
             if (j == 0) {
                 if (type != 'call') {
-                    quickQuote();                                   
-                }                
+                    quickQuote();
+                }
                 return true;
             }
             else {
@@ -662,14 +661,14 @@
                 })
                     .done(function (data, textStatus, jQxhr) {
                         debugger;
-                        SetCurrentTab('Tab5');  
+                        SetCurrentTab('Tab5');
                         t5.classList.add("active");
                         debugger;
-                })
-                .fail(function (jqXhr, textStatus, errorThrown) {
-                    debugger;
-                    console.log(errorThrown);
-                });
+                    })
+                    .fail(function (jqXhr, textStatus, errorThrown) {
+                        debugger;
+                        console.log(errorThrown);
+                    });
 
             } else if (z == 0) {
                 addCGData();
@@ -754,16 +753,16 @@
             }
         }
 
-        function SetCurrentTab(tabPaneId) {            
+        function SetCurrentTab(tabPaneId) {
             $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
             $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("reloadGrid");
         };
 
         function pleaseCallButton() {
-            if (validationCheck()) {                
-                SetCurrentTab('tab2');                
-                saveQuickQuote();                
-                $('#vownrfgroup').hide();   
+            if (validationCheck()) {
+                SetCurrentTab('tab2');
+                saveQuickQuote();
+                $('#vownrfgroup').hide();
                 $('#callMeNext').show();
                 document.getElementById("nextButton").style.display = "none";
                 document.getElementById("nextButton").style.visibility = "hidden";

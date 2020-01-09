@@ -29,46 +29,41 @@
                 <!-- new widget -->
                 <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
                     <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                        <span class="widget-icon"> <i class="fa fa-comment text-white"></i> </span>
                         <h2>Manage Rules </h2>
                     </header>
                     <!-- widget div-->
                     <div>
-                        <div class="widget-body no-padding smart-form">
-                            <!-- content goes here -->
-                            
-                            <div> </div>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
-                                @if (Model.BrokerContactUser == null)
-                                {
-                                    <label class="label">Broker User: Broker FirstName</label>
-
-                                }
-                                else
-                                {
-                                    <label class="label">Broker User: @Model.BrokerContactUser.FirstName</label>
-
-                                }
-
-                            </section>
-
+                        <div class="widget-body no-padding">
                             <table class="table table-bordered table-striped ">
+                                <thead>
+                                    <tr>
+                                        @if (Model.BrokerContactUser == null)
+                                        {
+                                            <th>Broker User: Broker FirstName</th>
+
+                                        }
+                                        else
+                                        {
+                                            <th class="th">Broker User: @Model.BrokerContactUser.FirstName</th>
+
+                                        }
+                                    </tr>
+                                </thead>
 
                                 <tr>
                                     <td align="left">
                                         @Html.ActionLink("Manage UIS Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users" }, null)
                                     </td>
-                                    <td><a class="btn btn-success btn-xs " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users"})"><i class="fa fa-search"></i>View</a></td>
 
                                 </tr>
-
-
 
                                 <tr>
                                     <td align="left">
                                         @Html.ActionLink("Manage UIS Submission Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users" }, null)
                                     </td>
-                                    <td><a class="btn btn-success btn-xs " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users"})"><i class="fa fa-search"></i>View</a></td>
 
                                 </tr>
 
@@ -76,17 +71,15 @@
                                     <td align="left">
                                         @Html.ActionLink("Manage Agreement Refer Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users" }, null)
                                     </td>
-                                    <td><a class="btn btn-success btn-xs " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
 
                                 </tr>
 
                                 <tr>
                                     <td align="left">
-                                        @Html.ActionLink("Manage Agreement Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users" }, null)
-
-                                        @*@Html.ActionLink("Manage Agreement Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage Agreement Issue Notification Users" }, null)*@
+                                        @Html.ActionLink("Manage Agreement Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users" }, null)                                        
                                     </td>
-                                    <td><a class="btn btn-success btn-xs " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
 
                                 </tr>
 
@@ -95,30 +88,21 @@
                                         @Html.ActionLink("Manage Agreement Bound Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users" }, null)
                                     </td>
 
-                                    <td><a class="btn btn-success btn-xs " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users"})"><i class="fa fa-search"></i>View</a></td>
 
                                 </tr>
 
                                 @foreach (var product in Model.Product)
                                 {
-                            <tr>
-                                <td align="left">
-                                    @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id, productId = product.Id }, null)
-                                </td>
-                                <td><a class="btn btn-success btn-xs " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
+                                    <tr>
+                                        <td align="left">
+                                            @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id, productId = product.Id }, null)
+                                        </td>
+                                        <td><a class="btn btn-success btn-sm " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
 
-                            </tr>
+                                    </tr>
                                 }
-                                <tr>
-                                    <td align="left"></td>
-                                </tr>
                             </table>
-                            @*@foreach (var product in Model.ProductName)
-                            {
-                                @Html.ActionLink("Product Rules for "+product, "/ProductRules", "Programme", new { Id = @Model.Id }, null)
-
-                            }*@
-
                         </div>
                     </div>
                 </div>
