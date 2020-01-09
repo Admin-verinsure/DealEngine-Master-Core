@@ -368,12 +368,50 @@
 
             </fieldset>
 
+<<<<<<< HEAD
             <fieldset>
                 <div class="row">
                     <section class="col col-12 font-md">
                         <strong>Premiums Due</strong>
                     </section>
                 </div>
+=======
+        <fieldset>
+            <div class="row">
+                <section class="col col-12 font-md">
+                    <strong>Premiums Due</strong>
+                </section>
+            </div>
+
+            <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
+                <tr>
+                    <th class="text-center" width="13%">Risk</th>
+                    <th class="text-center" width="13%">Premium</th>
+                    <th class="text-center" width="13%">FENZ Levy</th>
+                    <th class="text-center" width="13%">Total</th>
+                </tr>
+                @foreach (var item in Model.RiskPremiums)
+                {
+                    <tr class="clickable-row">
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            @item.RiskName
+                        </td>
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            @item.Premium
+                        </td>
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            @item.FSL
+                        </td>
+                        <td class="pt-3-half" width="13%" contenteditable="true">
+                            @item.TotalPremium
+                        </td>
+
+                    </tr>
+                }
+            </table>
+            <br />
+            <div class="row">
+>>>>>>> 65bdc74395cc6ce9e96ca6143e97a15936801b10
 
                 <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
                     <tr>
