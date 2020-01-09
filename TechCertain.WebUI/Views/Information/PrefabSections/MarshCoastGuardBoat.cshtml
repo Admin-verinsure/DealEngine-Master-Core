@@ -664,7 +664,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b"" required>
+                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" " required>
 
                                                 @foreach (var bwloc in Model.BoatUseslist)
                                                 {
@@ -675,12 +675,12 @@
 
                                             @*<select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
 
-                                                @foreach (var bwloc in Model.BoatUseslist)
-                                                {
-                                                    <option value="@bwloc.Value"> @bwloc.Text</option>
-                                                }
+                                                    @foreach (var bwloc in Model.BoatUseslist)
+                                                    {
+                                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                    }
 
-                                            </select>*@
+                                                </select>*@
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -1584,7 +1584,6 @@
     </div>
 </div>
 
-
 <style>
 
     .required:after {
@@ -1597,4 +1596,5 @@
         background-color: white;
     }
 </style>
+
 
