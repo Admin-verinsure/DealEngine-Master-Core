@@ -1,23 +1,22 @@
 ﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
-
-@using TechCertain.WebUI.Helpers.CustomHtml
-
 <!-- NEW WIDGET START -->
-    <div class="col col-12">
+<div class="container-fluid">
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i>
-                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
-                > <span>Edit Agreement</span>
-            </h1>
-        </div>
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
+            > <span>Edit Agreement</span>
+        </h1>
+    </div>
+    <div class="row">
         <span>
             <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
+    </div>
 
-        <!-- Widget ID (each widget will need unique ID)-->
+    <div class="row">
         <div class="jarviswidget" id="wid-id-10"
              data="false"
              data-widget-editbutton="false"
@@ -30,103 +29,101 @@
                 <h2>@ViewBag.Title </h2>
             </header>
             <!-- widget div-->
-            <form action="~/Agreement/EditAgreement/@Model.ClientAgreementId" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                <div>
-                    @Html.HiddenFor(m => m.ClientAgreementId)
-                    @Html.HiddenFor(m => m.InformationSheetId)
+            <form action="~/Agreement/EditAgreement/@Model.ClientAgreementId" method="POST" id="update-form" class="smart-form" enctype="multipart/form-data">
+                @Html.HiddenFor(m => m.ClientAgreementId)
+                @Html.HiddenFor(m => m.InformationSheetId)
 
-                    <fieldset>
-                        <div class="row">
-                            <section class="col col-3">
-                                <label class="label required"><strong>Policy Start Date: </strong></label>
-                            </section>
-                            <section class="col col-9">
-                                <label class="input">
-                                    <i class="icon-append fa fa-edit"></i>
-                                    @Html.TextBoxFor(m => m.StartDate)
-                                </label>
-                            </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-3">
-                                <label class="label required"><strong>Policy End Date: </strong></label>
-                            </section>
-                            <section class="col col-9">
-                                <label class="input">
-                                    <i class="icon-append fa fa-edit"></i>
-                                    @Html.TextBoxFor(m => m.EndDate)
-                                </label>
-                            </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-3">
-                                <label class="label required"><strong>Client Number #: </strong></label>
-                            </section>
-                            <section class="col col-9">
-                                <label class="input">
-                                    <i class="icon-append fa fa-edit"></i>
-                                    @Html.TextBoxFor(m => m.ClientNumber)
-                                </label>
-                            </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-3">
-                                <label class="label required"><strong>Insurer Policy #: </strong></label>
-                            </section>
-                            <section class="col col-9">
-                                <label class="input">
-                                    <i class="icon-append fa fa-edit"></i>
-                                    @Html.TextBoxFor(m => m.PolicyNumber)
-                                </label>
-                            </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-3">
-                                <label class="label required"><strong>Brokerage Rate: </strong></label>
-                            </section>
-                            <section class="col col-9">
-                                <label class="input">
-                                    <i class="icon-append fa fa-edit"></i>
-                                    @Html.TextBoxFor(m => m.BrokerageRate)
-                                </label>
-                            </section>
-                        </div>
-                        <div class="row">
-                            <section class="col col-3">
-                                <label class="label required"><strong>Administration Fee: </strong></label>
-                            </section>
-                            <section class="col col-9">
-                                <label class="input">
-                                    <i class="icon-append fa fa-edit"></i>
-                                    @Html.TextBoxFor(m => m.AdministrationFee)
-                                </label>
-                            </section>
-                        </div>
-                    </fieldset>
 
-                    <div class="col-md-10">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label class="label required"><strong>Policy Start Date: </strong></label>
+                        </div>
+                        <div class="col">
+                            <label class="input">
+                                <i class="icon-append fa fa-edit"></i>
+                                @Html.TextBoxFor(m => m.StartDate)
+                            </label>
+                        </div>
                     </div>
-                    <div class="col-md-10">
-                        <button type="submit" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
-                    </div>
-                    <!-- end widget content -->
                 </div>
-                <!-- end widget div -->
 
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label class="label required"><strong>Policy End Date: </strong></label>
+                        </div>
+                        <div class="col">
+                            <label class="input">
+                                <i class="icon-append fa fa-edit"></i>
+                                @Html.TextBoxFor(m => m.EndDate)
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label class="label required"><strong>Client Number #: </strong></label>
+                        </div>
+                        <div class="col">
+                            <label class="input">
+                                <i class="icon-append fa fa-edit"></i>
+                                @Html.TextBoxFor(m => m.ClientNumber)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label class="label required"><strong>Insurer Policy #: </strong></label>
+                        </div>
+                        <div class="col">
+                            <label class="input">
+                                <i class="icon-append fa fa-edit"></i>
+                                @Html.TextBoxFor(m => m.PolicyNumber)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label class="label required"><strong>Brokerage Rate: </strong></label>
+                        </div>
+                        <div class="col">
+                            <label class="input">
+                                <i class="icon-append fa fa-edit"></i>
+                                @Html.TextBoxFor(m => m.BrokerageRate)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label class="label required"><strong>Administration Fee: </strong></label>
+                        </div>
+                        <div class="col">
+                            <label class="input">
+                                <i class="icon-append fa fa-edit"></i>
+                                @Html.TextBoxFor(m => m.AdministrationFee)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                </div>
+              
             </form>
         </div>
-        <!-- end widget -->
     </div>
-<!-- WIDGET END -->
-
-
-@section pagespecific {
-
-    <script type="text/javascript">
-
-
-    </script>
-
-}
+</div>
