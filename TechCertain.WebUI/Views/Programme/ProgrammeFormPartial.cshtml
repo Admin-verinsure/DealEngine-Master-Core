@@ -3,9 +3,9 @@
 <!-- end row -->
 <!-- row -->
 <div class="container-fluid">
-    <form method="POST" id="update-form" enctype="multipart/form-data">
-        <table class="table table-striped table-hover table-condensed">
-            <thead class="thread-blue">
+    <form method="POST" id="update-form" enctype="multipart/form-data" class="client-form" style="color:dodgerblue;">
+        <table class="table table-striped">
+            <thead class="table-dark">
                 <tr>
                     <th>Edit Programme</th>
                 </tr>
@@ -22,7 +22,7 @@
                         </label>
                     </td>
                 </tr>
-                <tr>
+                <tr class="table-light">
                     <td>
                         <label class="label required"><strong>Tax Rate: </strong></label>
                     </td>
@@ -44,7 +44,7 @@
                         </label>
                     </td>
                 </tr>
-                <tr>
+                <tr class="table-light">
                     <td>
                         <label class="checkbox">
                             @Html.CheckBoxFor(m => m.UsesEGlobal)
@@ -60,7 +60,7 @@
                         </label>
                     </td>
                 </tr>
-                <tr>
+                <tr class="table-light">
                     <td>
                         <label class="checkbox">
                             @Html.CheckBoxFor(m => m.StopAgreement)
@@ -76,12 +76,9 @@
                                 <button type="submit" class="btn btn-success"> Save</button>
                             </div>
                         }
-                    </td>                    
+                    </td>      
+                    <td></td>
                 </tr>
-                <tr>
-
-                </tr>
-
             </tbody>
         </table>               
 

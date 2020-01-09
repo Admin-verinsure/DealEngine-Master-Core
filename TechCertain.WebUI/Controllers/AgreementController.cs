@@ -1469,7 +1469,7 @@ namespace TechCertain.WebUI.Controllers
 
             }
 
-            return Redirect("/Information/EditInformation/" + model.ClientProgrammeID);
+            return Redirect(model.ClientAgreementID.ToString());
 
         }
 
