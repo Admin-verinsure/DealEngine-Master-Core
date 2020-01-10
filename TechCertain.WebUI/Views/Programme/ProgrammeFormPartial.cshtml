@@ -1,79 +1,86 @@
 ﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
+@*<article id="programmeEditArticle" class="container-fluid">*@
+<!-- end row -->
+<!-- row -->
+<div class="container-fluid">
+    <form method="POST" id="update-form" enctype="multipart/form-data" class="client-form" style="color:dodgerblue;">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Edit Programme</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <label class="label required"><strong>Programme Name: </strong></label>
+                    </td>
+                    <td>
+                        <label class="input">
+                            @*<i class="icon-append fa fa-edit"></i>*@
+                            @Html.TextBoxFor(m => m.programmeName)
+                        </label>
+                    </td>
+                </tr>
+                <tr class="table-light">
+                    <td>
+                        <label class="label required"><strong>Tax Rate: </strong></label>
+                    </td>
+                    <td>
+                        <label class="input">
+                            @*<i class="icon-append fa fa-edit"></i>*@
+                            @Html.TextBoxFor(m => m.TaxRate)
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="label required"><strong>Policy Number Prefix String: </strong></label>
+                    </td>
+                    <td>
+                        <label class="input">
+                            @*<i class="icon-append fa fa-edit"></i>*@
+                            @Html.TextBoxFor(m => m.PolicyNumberPrefixString)
+                        </label>
+                    </td>
+                </tr>
+                <tr class="table-light">
+                    <td>
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.UsesEGlobal)
+                            <i></i>I want this programme to use EGlobal API.
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.IsPublic)
+                            <i></i>I want this programme to be publicly available.
+                        </label>
+                    </td>
+                </tr>
+                <tr class="table-light">
+                    <td>
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.StopAgreement)
+                            <i></i>I want this programme to suspend all agreements.
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @if (User.HasClaim("EditProgramme", "EditProgramme"))
+                        {
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success"> Save</button>
+                            </div>
+                        }
+                    </td>      
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>               
 
-<section id="widget-grid" class="container-fluid">
-    <!-- end row -->
-    <!-- row -->
-    <form method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-        <fieldset>
-
-            <section class="col col-3">
-                <label class="label required"><strong>Programme Name: </strong></label>
-            </section>
-            <section class="col col-9">
-                <label class="input">
-                    <i class="icon-append fa fa-edit"></i>
-                    @Html.TextBoxFor(m => m.programmeName)
-                </label>
-            </section>
-
-            <section class="col col-3">
-                <label class="label required"><strong>Tax Rate: </strong></label>
-            </section>
-            <section class="col col-9">
-                <label class="input">
-                    <i class="icon-append fa fa-edit"></i>
-                    @Html.TextBoxFor(m => m.TaxRate)
-                </label>
-            </section>
-
-            <section class="col col-3">
-                <label class="label required"><strong>Policy Number Prefix String: </strong></label>
-            </section>
-            <section class="col col-9">
-                <label class="input">
-                    <i class="icon-append fa fa-edit"></i>
-                    @Html.TextBoxFor(m => m.PolicyNumberPrefixString)
-                </label>
-            </section>
-
-            <section class="col col-3">
-            </section>
-            <section class="col col-9">
-                <label class="checkbox">
-                    @Html.CheckBoxFor(m => m.UsesEGlobal)
-                    <i></i>I want this programme to use EGlobal API.
-                </label>
-            </section>
-
-            <section class="col col-3">
-            </section>
-            <section class="col col-9">
-                <label class="checkbox">
-                    @Html.CheckBoxFor(m => m.IsPublic)
-                    <i></i>I want this programme to be publicly available.
-                </label>
-            </section>
-
-            <section class="col col-3">
-            </section>
-            <section class="col col-9">
-                <label class="checkbox">
-                    @Html.CheckBoxFor(m => m.StopAgreement)
-                    <i></i>I want this programme to suspend all agreements.
-                </label>
-            </section>
-
-            <section class="col col-3">
-            </section>
-            @if (User.HasClaim("EditProgramme", "EditProgramme"))
-            {
-                <section class="col col-9">
-                    <button type="submit" class="btn btn-success"> Save</button>                    
-                </section>
-            }
-
-        </fieldset>
     </form>
-
-    <!-- end row -->
-</section>
+</div>

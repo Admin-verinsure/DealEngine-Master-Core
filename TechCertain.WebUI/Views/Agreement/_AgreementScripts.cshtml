@@ -1,9 +1,4 @@
-﻿<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-<script src="~/jquery/jquery.min.js"></script>
-<script src="~/lib/popper.js/umd/popper.min.js"></script>
-<script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
-
-<script type="text/javascript">
+﻿<script type="text/javascript">
 
     $('#boatTable').on('click', '.clickable-row', function (event) {
         $(this).addClass('active').siblings().removeClass('active');
@@ -20,20 +15,8 @@
   picker.open();
     });
 
-
-
-
- //   $('#button').datepicker()
-	//.on('changeDate', function(ev){
- //       $('#button').datepicker('hide');
- //       alert(ev.date.valueOf());
- //   });
-
-
-
-
     $('#myModal').on('show.bs.modal', function (e) {
-        $('.modal').css('width', '600px');
+        $('.modal').css({"position": "absolute", "float": "left", "left": "50%", "width": "50%", "transform": "translate(-50 %, -50 %)"});
         var BoatPremium = $(e.relatedTarget).data('boat-premium');
         var BoatName = $(e.relatedTarget).data('boat-name');
 

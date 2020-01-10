@@ -429,12 +429,17 @@
         //$('.multiselect-container.dropdown-menu.li').css({ "width": "248%"});
     //$(ul.multiselect-container { width: 100% !important; position: relative !important; }
           //$('#multi-select-demo').multiselect();
+          $('.multiselect-container').css({ "width": "100%" });
 
-    $('select[multiple]').multiselect({
+      $('.multiselect').multiselect({
         includeSelectAllOption: true,
-        buttonWidth: '100%',
-        placeholder: 'Select Languages'
-    });
+          buttonWidth: '100%'
+      });
+    //$('select[multiple]').multiselect({
+    //    includeSelectAllOption: true,
+    //    buttonWidth: '100%',
+    //    placeholder: 'Select Languages'
+    //});
 
     $('.overlay').css({
     "position": "fixed",

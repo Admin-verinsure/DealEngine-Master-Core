@@ -2,10 +2,8 @@
 
 
 using AutoMapper;
-using Elmah;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
@@ -14,9 +12,6 @@ using TechCertain.Infrastructure.Tasking;
 using Microsoft.AspNetCore.Authorization;
 using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using TechCertain.WebUI.Controllers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 #endregion

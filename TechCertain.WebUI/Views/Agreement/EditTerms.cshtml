@@ -1,572 +1,573 @@
-﻿
+﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
 
-@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
-@using TechCertain.WebUI.Helpers.CustomHtml
 <!-- NEW WIDGET START -->
-    <div class="col col-12">
+    <div class="container">
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
+        <div class="row">
+            <h1 class="page-title txt-color-blueDark">                
                 <i class="fa-fw fa fa-home"></i>
                 <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
                 > <span>Edit Agreement Term</span>
             </h1>
         </div>
-        <span>
-            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
+        <div class="row">
+            <span>
+                <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            </span>
+        </div>
 
 
-        <!-- Widget ID (each widget will need unique ID)-->
-        <div class="jarviswidget" id="wid-id-10"
-             data="false"
-             data-widget-editbutton="false"
-             data-widget-togglebutton="false"
-             data-widget-deletebutton="false"
-             data-widget-custombutton="false"
-             data-widget-sortable="false">
-            <header>
-                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-                <h2>@ViewBag.Title </h2>
-            </header>
-            @Html.HiddenFor(m => m.ClientAgreementId)
-            @if (Model.BVTerms != null)
-            {
-                if (Model.BVTerms.Any())
+        <div class="row">
+            <!-- Widget ID (each widget will need unique ID)-->
+            <div class="jarviswidget" id="wid-id-10"
+                 data="false"
+                 data-widget-editbutton="false"
+                 data-widget-togglebutton="false"
+                 data-widget-deletebutton="false"
+                 data-widget-custombutton="false"
+                 data-widget-sortable="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                    <h2>@ViewBag.Title </h2>
+                </header>
+                @Html.HiddenFor(m => m.ClientAgreementId)
+                @if (Model.BVTerms != null)
                 {
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                    if (Model.BVTerms.Any())
+                    {
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
 
-                        <header>  Vessel Terms</header>
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
+                            <header>  Vessel Terms</header>
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
 
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%">Vessel Name</th>
-                                <th class="text-center" width="11%">Vessel Make</th>
-                                <th class="text-center" width="11%">Vessel Model</th>
-                                <th class="text-center" width="11%">Vessel Sum Insured</th>
-                                <th class="text-center" width="11%">Vessel Excess</th>
-                                <th class="text-center" width="11%">Vessel Total Premium</th>
-                                <th class="text-center" width="11%">Vessel FSL</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.BVTerms)
-                            {
-                                <tr class="clickable-row">
-                                    <td class="pt-3-half hidden" width="12%" contenteditable="true" id="BoatId">
-                                        @item.VesselId
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true" id="BoatName">
-                                        @item.BoatName
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                        @item.BoatMake
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                        @item.BoatModel
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                        @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                        @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                        @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-
-                                    </td>
-                                    <td class="pt-3-half" width="11%" contenteditable="true">
-                                        @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                                    </td>
-                                    <td width="9%">
-                                        <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                           data-boat-Sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                           data-boat-make="@item.BoatMake" data-boat-model="@item.BoatModel"
-                                           data-boat-name="@item.BoatName"><i class="fa fa-edit"> </i></a>
-                                        <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatName" data-boat-id="@item.VesselId"><span class="fa fa-trash" id="span"></span></a>
-                                    </td>
-
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%">Vessel Name</th>
+                                    <th class="text-center" width="11%">Vessel Make</th>
+                                    <th class="text-center" width="11%">Vessel Model</th>
+                                    <th class="text-center" width="11%">Vessel Sum Insured</th>
+                                    <th class="text-center" width="11%">Vessel Excess</th>
+                                    <th class="text-center" width="11%">Vessel Total Premium</th>
+                                    <th class="text-center" width="11%">Vessel FSL</th>
+                                    <th class="text-center" width="9%"></th>
                                 </tr>
+                                @foreach (var item in Model.BVTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="BoatId">
+                                            @item.VesselId
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true" id="BoatName">
+                                            @item.BoatName
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.BoatMake
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.BoatModel
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            }
-                        </table>
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                    </form>
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td width="9%">
+                                            <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-boat-Sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-boat-make="@item.BoatMake" data-boat-model="@item.BoatModel"
+                                               data-boat-name="@item.BoatName"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatName" data-boat-id="@item.VesselId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+
+                                    </tr>
+
+                                }
+                            </table>
+
+                        </form>
+                    }
                 }
-            }
 
 
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.MVTerms != null)
-            {
-                if (Model.MVTerms.Any())
+                </span>
+                @if (Model.MVTerms != null)
                 {
+                    if (Model.MVTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  Vehicle Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  Vehicle Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%">Vehicle Registration</th>
-                                <th class="text-center" width="11%">Vehicle Make</th>
-                                <th class="text-center" width="11%">Vehicle Model</th>
-                                <th class="text-center" width="11%">Vehicle Sum Insured</th>
-                                <th class="text-center" width="11%">Vehicle Excess</th>
-                                <th class="text-center" width="11%">Vehicle Total Premium</th>
-                                <th class="text-center" width="11%">Vehicle FSL</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.MVTerms)
-                            {
-                                <tr class="clickable-row">
-                                    <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                        @item.VesselId
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Registration
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Make
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Model
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-
-                                    </td>
-                                    <td class="pt-3-half" width="13%" contenteditable="true">
-                                        @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                                    </td>
-                                    <td width="9%">
-                                        <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                           data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                           data-motor-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                           data-motor-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
-                                        <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.Model"><span class="fa fa-trash" id="span"></span></a>
-                                    </td>
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%">Vehicle Registration</th>
+                                    <th class="text-center" width="11%">Vehicle Make</th>
+                                    <th class="text-center" width="11%">Vehicle Model</th>
+                                    <th class="text-center" width="11%">Vehicle Sum Insured</th>
+                                    <th class="text-center" width="11%">Vehicle Excess</th>
+                                    <th class="text-center" width="11%">Vehicle Total Premium</th>
+                                    <th class="text-center" width="11%">Vehicle FSL</th>
+                                    <th class="text-center" width="9%"></th>
                                 </tr>
-                            }
-                        </table>
+                                @foreach (var item in Model.MVTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.VesselId
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.Registration
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.Make
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.Model
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                    </form>
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+
+                                        </td>
+                                        <td class="pt-3-half" width="13%" contenteditable="true">
+                                            @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td width="9%">
+                                            <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-motor-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-motor-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.Model"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+
+                        </form>
+
+                    }
 
                 }
 
-            }
 
-
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.PLTerms != null)
-            {
-                if (Model.PLTerms.Any())
+                </span>
+                @if (Model.PLTerms != null)
                 {
+                    if (Model.PLTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  PL Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  PL Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.PLTerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                            
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.PLTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        </td>
 
-                    </form>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+
+                        </form>
+
+                    }
 
                 }
 
-            }
-
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.EDTerms != null)
-            {
-                if (Model.EDTerms.Any())
+                </span>
+                @if (Model.EDTerms != null)
                 {
+                    if (Model.EDTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  ED Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  ED Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.EDTerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                          
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.EDTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        </td>
 
-                    </form>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+
+                        </form>
+
+                    }
 
                 }
 
-            }
-
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.PITerms != null)
-            {
-                if (Model.PITerms.Any())
+                </span>
+                @if (Model.PITerms != null)
                 {
+                    if (Model.PITerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  PI Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  PI Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.PITerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.PITerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
 
-                    </form>
+                        </form>
+
+                    }
 
                 }
 
-            }
-
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.ELTerms != null)
-            {
-                if (Model.ELTerms.Any())
+                </span>
+                @if (Model.ELTerms != null)
                 {
+                    if (Model.ELTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  EL Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  EL Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.ELTerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.ELTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
 
-                    </form>
+                        </form>
+
+                    }
 
                 }
 
-            }
-
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.CLTerms != null)
-            {
-                if (Model.CLTerms.Any())
+                </span>
+                @if (Model.CLTerms != null)
                 {
+                    if (Model.CLTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  CL Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  CL Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.CLTerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.CLTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
 
-                    </form>
+                        </form>
+
+                    }
 
                 }
 
-            }
-
-            <span>
+                <span>
 
 
 
 
-            </span>
-            @if (Model.SLTerms != null)
-            {
-                if (Model.SLTerms.Any())
+                </span>
+                @if (Model.SLTerms != null)
                 {
+                    if (Model.SLTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  SL Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  SL Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.SLTerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.SLTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
 
-                    </form>
+                        </form>
+
+                    }
 
                 }
 
-            }
-
-            <span>
+                <span>
 
 
 
 
-            </span>
+                </span>
 
-            @if (Model.DOTerms != null)
-            {
-                if (Model.DOTerms.Any())
+                @if (Model.DOTerms != null)
                 {
+                    if (Model.DOTerms.Any())
+                    {
 
-                    <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                        <header>  DO Terms</header>
+                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                            <header>  DO Terms</header>
 
-                        <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
-                            <tr>
-                                <th class="text-center hidden" width="12%"> Id</th>
-                                <th class="text-center" width="11%"> Sum Insured</th>
-                                <th class="text-center" width="11%"> Excess</th>
-                                <th class="text-center" width="11%"> Total Premium</th>
-                                <th class="text-center" width="9%"></th>
-                            </tr>
-                            @foreach (var item in Model.DOTerms)
-                            {
-                        <tr class="clickable-row">
-                            <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
-                                @item.TermId
-                            </td>
-                          
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                            <table class="table table-bordered table-responsive-md table-striped text-center" id="PLTable">
+                                <tr>
+                                    <th class="text-center hidden" width="12%"> Id</th>
+                                    <th class="text-center" width="11%"> Sum Insured</th>
+                                    <th class="text-center" width="11%"> Excess</th>
+                                    <th class="text-center" width="11%"> Total Premium</th>
+                                    <th class="text-center" width="9%"></th>
+                                </tr>
+                                @foreach (var item in Model.DOTerms)
+                                {
+                                    <tr class="clickable-row">
+                                        <td class="pt-3-half hidden" width="12%" contenteditable="true" id="VesselId">
+                                            @item.TermId
+                                        </td>
 
-                            </td>
-                            <td class="pt-3-half" width="11%" contenteditable="true">
-                                @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            </td>
+                                        </td>
+                                        <td class="pt-3-half" width="11%" contenteditable="true">
+                                            @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
-                            <td width="9%">
-                                <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                   data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                   data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
-                                <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
-                            </td>
-                        </tr>
-                            }
-                        </table>
+                                        </td>
 
-                    </form>
+                                        <td width="9%">
+                                            <a href="#SubTermModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
+                                               data-sub-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-type="@item.TermType" data-sub-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                               data-sub-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-sub-id="@item.TermId"><i class="fa fa-edit"> </i></a>
+                                            <a href="#confirmTermDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-term-id="@item.TermId"><span class="fa fa-trash" id="span"></span></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+
+                        </form>
+
+                    }
 
                 }
 
-            }
-
+            </div>
         </div>
     </div>
 
@@ -584,9 +585,8 @@
             <div class="form-group">
             </div>
             <div class="modal-footer">
-                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnMotorDelete">Confirm <i class="fa fa-send"></i></button>
-
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></button>
+                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnMotorDelete">Confirm </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -604,9 +604,8 @@
             <div class="form-group">
             </div>
             <div class="modal-footer">
-                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnTermDelete">Confirm <i class="fa fa-send"></i></button>
-
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></button>
+                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnTermDelete">Confirm </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -626,9 +625,8 @@
                 <input type="text" class="form-control " id="BoatName" name="BoatName" readonly />
             </div>
             <div class="modal-footer">
-                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnDelete">Confirm <i class="fa fa-send"></i></button>
-
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></button>
+                <button type="Submit" data-dismiss="modal" class="btn btn-success" id="btnDelete">Confirm </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -637,7 +635,7 @@
 
 
 <!-- Edit Boat -->
-<div id="myModal" class="modal" role="dialog">
+<div id="myModal" class="modal container-fluid" role="dialog">
 
     <!-- Modal content-->
 
@@ -692,8 +690,7 @@
         </div>
         <div class="modal-footer">
             <input type="Reset" value="Submit" class="btn btn-success" id="btnSubmit">
-
-            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
         </div>
     </div>
 </div>
@@ -753,7 +750,7 @@
         </div>
         <div class="modal-footer">
             <input type="Reset" value="Submit" class="btn btn-success" id="btnMotorSubmit">
-            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
         </div>
     </div>
 </div>
@@ -805,13 +802,13 @@
         </div>
         <div class="modal-footer">
             <input type="Reset" value="Submit" class="btn btn-success" id="btnTermSubmit">
-            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>
+            <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
         </div>
     </div>
 </div>
 
 @section pagespecific {
 
-    @Html.Partial("_AgreementScripts")
+    @await Html.PartialAsync("_AgreementScripts")
 
 }

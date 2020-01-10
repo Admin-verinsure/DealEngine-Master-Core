@@ -14,152 +14,148 @@
     </div>
 
     <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="container">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2>Term Sheet Configuration - [@Model.programmeName] </h2>
-                    </header>
-                    <!-- widget div-->
+    <article class="container">
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
+                <h2>Term Sheet Configuration - [@Model.programmeName] </h2>
+            </header>
+            <!-- widget div-->
+            <div>
+                <div class="widget-body widget-hide-overflow no-padding">
                     <!-- content goes here -->
-
-
-                    <table class="table table-bordered table-striped table-hover table-condensed">
-                        <thead>
-                        </thead>
+                    <table class="table table-striped">
                         <tbody>
-
                             @if (User.HasClaim("ViewProgramme", "ViewProgramme"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Programme</td>
                                     <td> @Model.programmeName  </td>
-                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("EditProgramme", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("EditProgramme", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewActivities", "ViewActivities"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Activities</td>
                                     <td>ANZSIC Codes</td>
-                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("ActivityBuilder", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("ActivityBuilder", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
 
-                            <tr class="table-light">
+                            <tr>
                                 <td>Addresses</td>
                                 <td>Address API used </td>
-                                <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                             </tr>
 
                             @if (User.HasClaim("ViewManageDocuments", "ViewManageDocuments"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Manage Documents</td>
                                     <td>Certificates, Schedules, Wordings, Invoices</td>
-                                    <td><a class="btn btn-success btn-xs" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewRules", "ViewRules"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Rules</td>
                                     <td>Configure the Rules</td>
-                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewEmails", "ViewEmails"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Emails</td>
                                     <td>System and proggramme specific</td>
-                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("EmailTemplate", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("EmailTemplate", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewMilestones", "ViewMilestones"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Milestones</td>
                                     <td>Milestones</td>
-                                    <td><a class="btn btn-success btn-xs" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewMarinas/FinancialInstitutions", "ViewMarinas/FinancialInstitutions"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Marinas/Financial Institutions</td>
                                     <td>Manage Marinas and Financial Institutions</td>
-                                    <td><a class="btn btn-success btn-xs" href="@Url.Action("AddNewOrganisation", "Organisation", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("AddNewOrganisation", "Organisation", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewMotor", "ViewMotor"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Motor</td>
                                     <td>Motor API used   </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewProducts", "ViewProducts"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Products</td>
                                     <td>Insurance Policies for adding to a programme   </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewSections", "ViewSections"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Sections</td>
                                     <td>Sections for the Client Information Sheet   </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewSpecialTerms", "ViewSpecialTerms"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Special Terms</td>
                                     <td>Endorsements</td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewUnderwritingRules", "ViewUnderwritingRules"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Underwriting Rules</td>
                                     <td>Underwriting Rules</td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewUsers", "ViewUsers"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Users</td>
                                     <td>User Management</td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
                             @if (User.HasClaim("ViewWater", "ViewWater"))
                             {
-                                <tr class="table-light">
+                                <tr>
                                     <td>Water</td>
                                     <td>Water Location API used</td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                 </tr>
                             }
-                                <tr class="table-light">
-                                    <td>Images</td>
-                                    <td>Images Management</td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-                                </tr>
-                            </tbody>
+                            <tr>
+                                <td>Images</td>
+                                <td>Images Management</td>
+                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
-            </article>
-        </div>
-    </section>
+            </div>
+        </div>        
+    </article>
 </div>
+

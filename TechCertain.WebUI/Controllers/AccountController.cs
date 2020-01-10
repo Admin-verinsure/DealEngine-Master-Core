@@ -1,5 +1,6 @@
 ﻿#region Using
 
+using ElmahCore;
 using System;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
@@ -9,9 +10,7 @@ using TechCertain.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
-using Elmah;
 using TechCertain.WebUI.Models.Account;
-using TechCertain.WebUI.Models.Permission;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
@@ -23,7 +22,6 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Identity;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
-using System.IO;
 
 #endregion
 
@@ -155,7 +153,7 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             catch (System.Net.Mail.SmtpFailedRecipientsException exception) {
-                ErrorSignal.FromCurrentContext ().Raise (exception);
+                ElmahExtensions.RiseError(exception);
                
 
                 ModelState.AddModelError ("FailureMessage", errorMessage);
@@ -306,10 +304,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
-                var userimport = await CurrentUser();
-
-                //await _importService.ImportAOEService(userimport);
-
+                var userimport = await CurrentUser();               
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
@@ -363,13 +358,15 @@ namespace TechCertain.WebUI.Controllers
             }
 			catch (UserImportException ex)
 			{
-				ErrorSignal.FromCurrentContext().Raise(ex);
-				await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2019 - User Import Error", ex.Message);
+				ElmahExtensions.RiseError(ex);
+				//await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2019 - User Import Error", ex.Message);
 				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. Proposalonline has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}
 			catch(Exception ex)
             {
+                ElmahExtensions.RiseError(ex);
+                HttpContext.RiseError(ex);
                 throw new Exception(ex.Message + " "+ ex.StackTrace);
             }
         }

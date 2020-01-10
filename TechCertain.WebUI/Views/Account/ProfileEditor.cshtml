@@ -84,7 +84,7 @@
 
                                     <section class="row">
 
-                                        <div class="col-sm-3 profile-pic">
+                                        @*<div class="col-sm-3 profile-pic">
                                             @if (!string.IsNullOrWhiteSpace(Model.ProfilePicture))
                                             {
                                                 <img src="/File/Image/@(Model.ProfilePicture)" alt="profile picture">
@@ -93,7 +93,7 @@
                                             {
                                                 <img src="/img/avatars/male.png" alt="profile picture">
                                             }
-                                        </div>
+                                        </div>*@
                                         <section class="col-sm-6">
                                             <form action="~/Account/ProfileEditor" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
                                                 @Html.AntiForgeryToken()
