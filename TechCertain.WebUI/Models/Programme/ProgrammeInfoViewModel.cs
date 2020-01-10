@@ -39,6 +39,8 @@ namespace TechCertain.WebUI.Models.Programme
         public virtual Boolean StopAgreement { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
         public bool EGlobalIsActiveOrNot { get; set; }
+        public virtual IList<EGlobalSubmission> EGlobalSubmissions { get; set; }
+        public virtual IList<EGlobalResponse> EGlobalResponses { get; set; }
 
         //public IList<EmailTemplates> emailTemplate { get; set; }
 
