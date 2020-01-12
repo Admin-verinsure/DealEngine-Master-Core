@@ -4,7 +4,7 @@
 }
 
 @section topright{
-    <span id="extr-page-header-space"> <span class="hidden-mobile">Already registered?</span> <a href="~/Account/Login" class="btn btn-danger">Sign In</a> </span>
+    <span id="extr-page-header-space" class="pull-right"> <span class="hidden-mobile">Already registered?</span> <a href="~/Account/Login" class="btn btn-danger">Sign In</a> </span>
     @*TODO Change back when mono 4.3 or later is installed*@
     @*<span id="extr-page-header-space"> <span class="hidden-mobile">Already registered?</span> <a href="@Url.Action("login", "account")" class="btn btn-danger">Sign In</a> </span>*@
 }
@@ -21,7 +21,7 @@
         <div class="container">
 
             <div>
-                <ul class="nav nav-tabs d-sm-flex hidden">
+                <ul class="nav nav-tabs d-sm-flex" hidden>
                     <li class="active" data-target="#step1" hidden>
                         <a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Step 1</span> </a>
                     </li>
@@ -48,7 +48,7 @@
 
                             <h1 class="text-align-center" style="font-size: 18px;font-weight: 600;font-family: Arial;text-align: center;color: black;padding-bottom: 15px; padding-top:10px" strong id="QuickQuoteText2">Tell us a little bit more about your vessel...</h1>
 
-                            <select onchange="updateLabel()" id="CraftTypeDrop" class="form-control input-lg hidden" style="margin-top: 20px; margin-bottom: 25px;">
+                            <select onchange="updateLabel()" id="CraftTypeDrop" class="form-control input-lg" hidden style="margin-top: 20px; margin-bottom: 25px;">
                                 <option value="" selected="selected">Pick your highest value vessel.</option>
                                 <option>Roadtrailer</option>
                                 <option>Stored</option>
@@ -58,7 +58,7 @@
                             <div class="text-align-center"><label class="text-align-center" style="font-size: 18px;font-weight: 600;font-family: Arial;text-align: center;color: black;padding-bottom: 15px; padding-top:10px" id="CraftType">Type Placeholder</label></div>
                         </div>
                         <br>
-                        <input class="hidden" type="number" id="rate" value=".05" />
+                        <input hidden type="number" id="rate" value=".05" />
                         <div class="row">
                             <div class="container">
                                 <div>
@@ -196,8 +196,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="quoteResult" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 margin-top-10 hidden">
-                                <div style="width:100%; margin-bottom:0; font-size:1.1em;" id="qref" class="alert alert-danger hidden">Quick Quote is not available for the combination you have selected. Please click "Please give me a call to discuss" below. </div>
+                            <div id="quoteResult" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 margin-top-10" hidden>
+                                <div style="width:100%; margin-bottom:0; font-size:1.1em;" id="qref" class="alert alert-danger" hidden>Quick Quote is not available for the combination you have selected. Please click "Please give me a call to discuss" below. </div>
                                 <div id="indiQuoteSpan" class="w100" style="text-align:center">
                                     <label class="indiQuoteValue">$</label>
                                     <label class="indiQuoteValue" id="indiQuote">Placeholder</label>
@@ -206,7 +206,7 @@
                             </div>
 
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="hidden" id="quoteIncludes">
+                                <div hidden id="quoteIncludes">
                                     <span class="font-italic" style="font-size:1.4em;">Cover includes:</span>
                                     <ul>
                                         <li style="font-size:1em;" class="font-italic">$5,000,000 third party limit</li>
@@ -222,7 +222,7 @@
                                 <div role="group" aria-label="First group">
                                     <!--<a href="#tab2" data-toggle="tab"><button onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</button></a>-->
                                         <a href="#tab2" data-toggle="tab" onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</a>
-                                        <a href="Coastguardreg" style=" width:100%; background-color:#72BF44 !important;color:white;" id="newQuote" class="btn btn-secondary margin-top-10 w100 hidden">Get A New Quote</a>
+                                        <a href="Coastguardreg" style=" width:100%; background-color:#72BF44 !important;color:white;" id="newQuote" class="btn btn-secondary margin-top-10 w100" hidden>Get A New Quote</a>
                                     <!--<button type="button" class="btn btn-secondary margin-top-10 w100 hidden">Save for later</button>-->
                                         <a data-toggle="tab" onclick="pleaseCallButton(); return false;" style="width:100%;background-color:#004280 !important;color:white;" type="submit" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</a>
 
@@ -313,7 +313,7 @@
                                             <label class="radio-inline" style="width:15%;"> <input type="radio" name="cgradioselect" id="vown3" value="Trust" onclick="vesselOwnUpdate()"> Trust</label>
                                             <label class="radio-inline" style="width:26%;"> <input type="radio" name="cgradioselect" id="vown4" value="Partnership" onclick="vesselOwnUpdate()"> Partnership</label>
                                         </div>
-                                        <label class="hidden" id="vownr">Private</label>
+                                        <label hidden id="vownr">Private</label>
 
                                     </td>
                                 </tr>
@@ -587,7 +587,7 @@
             var next = document.getElementById("next");
             var j = 0; //counter
             for (i = 0; i < eleArray.length; i++) {
-                if (!(eleArray[i].classList.contains("hidden"))) {
+                if (eleArray[i].hidden == false) {
                     eleVal = eleArray[i].id.substring(0, 5); //eg. vtype,ctype,hcfig etc etc
                     if (eleVal == "mnumb" || eleVal == "vival") {
                         dropVal = document.getElementById(eleVal);
@@ -630,9 +630,16 @@
             var s = document.getElementById("snamefgroup");
             var e = document.getElementById("emailfgroup");
             var hm = document.getElementById("hphon");
+            var Email = document.getElementById("email");
+            var hhjg = Email.value;
             var mb = document.getElementById("mphon");
             var eleArray2 = [f, s, e];
             var z = 0;
+            if (!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(Email.value))) {
+                alert("You have entered an invalid email address!");
+                return (false)
+            }
+	
             if (hm.value == "" && mb.value == "") { //if both are empty
                 hm.classList.add("requiredVal");
                 mb.classList.add("requiredVal");
@@ -682,6 +689,7 @@
         }
 
         function postCGData() {
+            debugger;
             $.ajax({
                 type: "POST",
                 url: "/Services/CoastGuardSelfReg",
@@ -734,7 +742,8 @@
             document.getElementById("hastr").selectedIndex = 0;
             ctselected = ct.options[ct.selectedIndex].text;
             document.getElementById("CraftType").innerHTML = ctselected;
-            qq.classList.remove("hidden");
+              $('#qquotfgroup').show();
+            //qq.classList.remove("hidden");
             reloadForm();
         }
 
@@ -744,12 +753,19 @@
             var c = document.getElementById("ctypefgroup");
             var h = document.getElementById("hcfigfgroup");
             if (ctselected == "Jetski") {
-                c.classList.add("hidden");
-                h.classList.add("hidden")
+                //hidden-sm hidden-md
+                //c.style.display === "block";
+                //h.style.display == "none"
+                c.hidden = true;
+                h.hidden = true;
+                //$('#ctypefgroup').hide();
+                //$('#hcfigfgroup').hide();
             }
             else {
-                c.classList.remove("hidden");
-                h.classList.remove("hidden");
+                $('#ctypefgroup').show();
+                $('#hcfigfgroup').show();
+                //c.classList.remove("hidden");
+                //h.classList.remove("hidden");
             }
         }
 
@@ -821,8 +837,10 @@
                 curTypes.push(vtype, ctype, hcfig, mtype);
                 minPrem = 400;
             }
-
-            quoteRes.classList.remove("hidden");
+            debugger;
+            quoteRes.hidden = false;
+            //$('#quoteResult').show();
+            //quoteRes.classList.remove("hidden");
 
             for (i = 0; i < curTypes.length; i++) {
                 if (badTypes.includes(curTypes[i])) {
@@ -832,10 +850,16 @@
 
             if (badCount > 0 || (craftType == "Roadtrailer" && insVal > 250000) || (craftType == "Stored" && insVal > 250000) || (vtype == "Jetski" && insVal > 100000) || (craftType == "Berthed" && insVal > 500000) || (craftType == "Moored" && insVal > 500000)) {
                 debugger;
-                qref.classList.remove("hidden");
-                indiQuoteSpan.classList.add("hidden");
-                quoteInc.classList.add("hidden");
-                next.classList.add("hidden");
+                ////qref.classList.remove("hidden");
+                //$('#qref').show();
+                 qref.hidden = false;
+                $('#indiQuoteSpan').hide();
+                $('#quoteInc').hide();
+                $('#next').hide();
+
+                //indiQuoteSpan.classList.add("hidden");
+                //quoteInc.classList.add("hidden");
+                //next.classList.add("hidden");
             }
 
             else {
@@ -855,11 +879,17 @@
                     $('#mtype').attr('disabled', 'true');
                     $('#hastr').attr('readonly', 'readonly');
                     $('#hastr').attr('disabled', 'true');
-                    newQuote.classList.remove("hidden");
-                    qref.classList.add("hidden");
-                    indiQuoteSpan.classList.remove("hidden");
-                    quoteInc.classList.remove("hidden");
-                    next.classList.remove("hidden");
+                    $('#newQuote').show();
+                    //newQuote.classList.remove("hidden");
+                    $('#qref').hide();
+                    $('#indiQuoteSpan').show();
+                    $('#quoteInc').show();
+                    $('#next').show();
+
+                    //qref.classList.add("hidden");
+                    //indiQuoteSpan.classList.remove("hidden");
+                    //quoteInc.classList.remove("hidden");
+                    //next.classList.remove("hidden");
                 }
             }
 
@@ -922,62 +952,184 @@
             console.log(option);
             if (option == "Roadtrailer") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                v.classList.remove("hidden");
-                v4.classList.remove("hidden");
-                c.classList.remove("hidden");
-                h.classList.remove("hidden");
-                m.classList.add("hidden");
-                t.classList.add("hidden");
-                v5.classList.add("hidden");
-                c7.classList.add("hidden");
-                c8.classList.add("hidden");
-                h4.classList.add("hidden");
+                v.hidden = false;
+                v4.hidden = false;
+                c.hidden = false;
+                h.hidden = false;
+
+                    //$('#vtypefgroup').show();
+                    //$('#Jetski').show();
+                    //$('#ctypefgroup').show();
+                    //$('#hcfigfgroup').show();
+
+                //v.classList.remove("hidden");
+                //v4.classList.remove("hidden");
+                //c.classList.remove("hidden");
+                //h.classList.remove("hidden");
+
+                m.hidden = true;
+                t.hidden = true;
+                v5.hidden = true;
+                c7.hidden = true;
+                c8.hidden = true;
+                h4.hidden = true;
+
+
+                    //$('#mtypefgroup').hide();
+                    //$('#hastrfgroup').hide();
+                    //$('#VOther').hide();
+                    //$('#Cement').hide();
+                    //$('#COther').hide();
+                    //$('#HOther').hide();
+
+                //m.classList.add("hidden");
+                //t.classList.add("hidden");
+                //v5.classList.add("hidden");
+                //c7.classList.add("hidden");
+                //c8.classList.add("hidden");
+                //h4.classList.add("hidden");
 
             }
             if (option == "Stored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                v.classList.remove("hidden");
-                v4.classList.remove("hidden");
-                c.classList.remove("hidden");
-                h.classList.remove("hidden");
-                t.classList.remove("hidden");
-                m.classList.add("hidden");
-                v5.classList.remove("hidden");
-                c7.classList.remove("hidden");
-                c8.classList.remove("hidden");
-                h4.classList.remove("hidden");
+                //$('#vtypefgroup').show();
+                //$('#Jetski').show();
+                //$('#ctypefgroup').show();
+                //$('#hcfigfgroup').show();
+                //$('#hastrfgroup').show();
+
+                
+                v.hidden = false;
+                v4.hidden = false;
+                c.hidden = false;
+                h.hidden = false;
+                t.hidden = false;
+
+                //v.classList.remove("hidden");
+                //v4.classList.remove("hidden");
+                //c.classList.remove("hidden");
+                //h.classList.remove("hidden");
+
+                m.hidden = true;
+
+                //$('#mtypefgroup').hide();
+
+                //m.classList.add("hidden");
+
+                //$('#VOther').show();
+                //$('#Cement').show();
+                //$('#COther').show();
+                //$('#HOther').show();
+
+                v5.hidden = false;
+                c7.hidden = false;
+                c8.hidden = false;
+                h4.hidden = false;
+
+                //v5.classList.remove("hidden");
+                //c7.classList.remove("hidden");
+                //c8.classList.remove("hidden");
+                //h4.classList.remove("hidden");
             }
             if (option == "Berthed") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                v.classList.remove("hidden");
-                v4.classList.add("hidden");
-                v5.classList.add("hidden");
-                c.classList.remove("hidden");
-                c7.classList.remove("hidden");
-                c8.classList.remove("hidden");
-                h.classList.remove("hidden");
-                h4.classList.remove("hidden");
-                m.classList.add("hidden");
-                m2.classList.add("hidden");
-                t.classList.add("hidden");
+                v.hidden = false;
+                //$('#vtypefgroup').show();
+                //v.classList.remove("hidden");
+
+                v4.hidden = true;
+                v5.hidden = true;
+
+                //$('#Jetski').hide();
+                //$('#VOther').hide();
+
+                //v4.classList.add("hidden");
+                //v5.classList.add("hidden");
+                c.hidden = false;
+                c7.hidden = false;
+                h.hidden = false;
+                h4.hidden = false;
+
+                //$('#ctypefgroup').show();
+                //$('#Cement').show();
+                //$('#COther').show();
+                //$('#hcfigfgroup').show();
+                //$('#HOther').show();
+
+                //c.classList.remove("hidden");
+                //c7.classList.remove("hidden");
+                //c8.classList.remove("hidden");
+                //h.classList.remove("hidden");
+                //h4.classList.remove("hidden");
+
+                //$('#mtypefgroup').hide();
+                //$('#Marina').hide();
+                //$('#hastrfgroup').hide();
+
+                m.hidden = true;
+                m2.hidden = true;
+                t.hidden = true;
+
+                
+                //m.classList.add("hidden");
+                //m2.classList.add("hidden");
+                //t.classList.add("hidden");
             }
             if (option == "Moored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                v.classList.remove("hidden");
-                c.classList.remove("hidden");
-                h.classList.remove("hidden");
-                m.classList.remove("hidden");
-                t.classList.add("hidden");
-                v5.classList.add("hidden");
-                c7.classList.remove("hidden");
-                c8.classList.remove("hidden");
-                h4.classList.remove("hidden");
-                v4.classList.add("hidden");
+                //$('#vtypefgroup').show();
+                //$('#ctypefgroup').show();
+                //$('#hcfigfgroup').show();
+                //$('#mtypefgroup').show();
+
+                v.hidden = false;
+                c.hidden = false;
+                h.hidden = false;
+                m.hidden = false;
+
+
+                //v.classList.remove("hidden");
+                //c.classList.remove("hidden");
+                //h.classList.remove("hidden");
+                //m.classList.remove("hidden");
+
+                //$('#hastrfgroup').hide();
+                //$('#VOther').hide();
+
+                t.hidden = true;
+                v5.hidden = true;
+
+                //t.classList.add("hidden");
+                //v5.classList.add("hidden");
+
+                //$('#Cement').show();
+                //$('#COther').show();
+                //$('#HOther').show();
+
+                c7.hidden = false;
+                c8.hidden = false;
+                h4.hidden = false;
+
+                //c7.classList.remove("hidden");
+                //c8.classList.remove("hidden");
+                //h4.classList.remove("hidden");
+                v4.hidden = false;
+
+                //$('#Jetski').show();
+                //v4.classList.add("hidden");
             }
             if (option == "Multi") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                cTypeDrop.classList.remove("hidden");
-                cType.classList.add("hidden");
+                cTypeDrop.hidden = false;
+
+                //$('#CraftTypeDrop').show();
+
+                cType.hidden = true;
+
+                //$('#CraftType').hide();
+
+                //cTypeDrop.classList.remove("hidden");
+                //cType.classList.add("hidden");
             }
         }
 
@@ -1010,45 +1162,97 @@
             var t = document.getElementById("hastrfgroup");
             var banner = document.getElementById("banner");
 
-
-
             if (option == "Roadtrailer") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                m.classList.add("hidden");
-                t.classList.add("hidden");
-                v5.classList.add("hidden");
-                c7.classList.add("hidden");
-                c8.classList.add("hidden");
-                h4.classList.add("hidden");
+                //$('#mtypefgroup').hide();
+                //$('#hastrfgroup').hide();
+                //$('#VOther').hide();
+                //$('#Cement').hide();
+                //$('#COther').hide();
+                //$('#HOther').hide();
+
+                m.hidden = true;
+                t.hidden = true;
+                v5.hidden = true;
+                c7.hidden = true;
+                c8.hidden = true;
+                h4.hidden = true;
+                //m.classList.add("hidden");
+                //t.classList.add("hidden");
+                //v5.classList.add("hidden");
+                //c7.classList.add("hidden");
+                //c8.classList.add("hidden");
+                //h4.classList.add("hidden");
             }
             if (option == "Stored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                m.classList.add("hidden");
+                m.hidden = true;
+                //$('#mtypefgroup').hide();
+                //m.classList.add("hidden");
             }
             if (option == "Berthed") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                m.classList.add("hidden");
-                t.classList.add("hidden");
-                v5.classList.add("hidden");
-                m2.classList.add("hidden");
-                v4.classList.add("hidden");
+                //$('#mtypefgroup').hide();
+                //$('#hastrfgroup').hide();
+                //$('#VOther').hide();
+                //$('#Marina').hide();
+                //$('#Jetski').hide();
+
+                m.hidden = true;
+                t.hidden = true;
+                v5.hidden = true;
+                m2.hidden = true;
+                v4.hidden = true;
+                //m.classList.add("hidden");
+                //t.classList.add("hidden");
+                //v5.classList.add("hidden");
+                //m2.classList.add("hidden");
+                //v4.classList.add("hidden");
             }
             if (option == "Moored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                t.classList.add("hidden");
-                v4.classList.add("hidden");
-                v5.classList.add("hidden");
+
+                //$('#hastrfgroup').hide();
+                //$('#Jetski').hide();
+                //$('#VOther').hide();
+
+                t.hidden = true;
+                v4.hidden = true;
+                v5.hidden = true;
+                //t.classList.add("hidden");
+                //v4.classList.add("hidden");
+                //v5.classList.add("hidden");
+
             }
             if (option == "Multi") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                cTypeDrop.classList.remove("hidden");
-                cType.classList.add("hidden");
-                v.classList.add("hidden");
-                c.classList.add("hidden");
-                h.classList.add("hidden");
-                m.classList.add("hidden");
-                t.classList.add("hidden");
-                qq.classList.add("hidden");
+
+                $('#CraftTypeDrop').show();
+                //cTypeDrop.classList.remove("hidden");
+
+                //$('#CraftType').hide();
+                //$('#vtypefgroup').hide();
+                //$('#ctypefgroup').hide();
+                //$('#hcfigfgroup').hide();
+                //$('#mtypefgroup').hide();
+                //$('#hastrfgroup').hide();
+                //$('#qquotfgroup').hide();
+
+                cType.hidden = true;
+                v.hidden = true;
+                c.hidden = true;
+                h.hidden = true;
+                m.hidden = true;
+                t.hidden = true;
+                qq.hidden = true;
+
+                //cType.classList.add("hidden");
+                //v.classList.add("hidden");
+                //c.classList.add("hidden");
+                //h.classList.add("hidden");
+                //m.classList.add("hidden");
+                //t.classList.add("hidden");
+                //qq.classList.add("hidden");
             }
         });
 
