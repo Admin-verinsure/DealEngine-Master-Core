@@ -1,5 +1,4 @@
 ﻿@model BaseListViewModel<TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel>
-
 <!-- NEW WIDGET START -->
 <div class="col col-12">
     <!-- Widget ID (each widget will need unique ID)-->
@@ -29,7 +28,7 @@
                     @await Html.PartialAsync("Partials/ViewAgreement", item);
                 }
             </div>
-           
+
             <!-- end widget content -->
         </div>
         <!-- end widget div -->
@@ -37,9 +36,20 @@
     <!-- end widget -->
 </div>
 <!-- WIDGET END -->
+<style>
+
+    #header > :first-child, aside {
+        width: 1500px !important;
+    }
+
+    .container {
+        margin-left: 16% !important;
+        width: 100%;
+    }
+</style>
 
 @section pagespecific {
-<script type="text/javascript">
+    <script type="text/javascript">
 
-</script>
+    </script>
 }
