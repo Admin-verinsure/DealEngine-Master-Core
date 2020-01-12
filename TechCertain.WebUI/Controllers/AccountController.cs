@@ -334,7 +334,7 @@ namespace TechCertain.WebUI.Controllers
                     var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false);
                     if (identityResult.Succeeded)
                     {
-                        if(!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
+                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
                         {
                             var hasRole = await _roleManager.RoleExistsAsync("Client");
                             if (hasRole)
@@ -343,7 +343,7 @@ namespace TechCertain.WebUI.Controllers
                             }
                         }
                     }
-                    
+
                     if (_appSettingService.RequireRSA)
                     {
                         var result = await LoginMarsh(user, viewModel.DevicePrint);
