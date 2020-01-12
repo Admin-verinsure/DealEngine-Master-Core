@@ -185,7 +185,7 @@ namespace TechCertain.WebUI.Controllers
             model.ReferralAmount = agreement.ClientAgreementTerms.FirstOrDefault().ReferralLoadingAmount;
             model.AuthorisationNotes = agreement.ClientAgreementTerms.FirstOrDefault().AuthorisationNotes;
 
-            ViewBag.Title = "Agreement Refferals ";
+            ViewBag.Title = "Agreement Referals ";
 
             return View("AuthoriseReferrals", model);
         }

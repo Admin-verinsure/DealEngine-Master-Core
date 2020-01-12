@@ -38,9 +38,9 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                     .AdoNetBatchSize(10)
                     .Driver<NpgSqlDriver>()
                     .FormatSql()
-                    .ShowSql()
+                    .ShowSql()                    
                  )
-                .CurrentSessionContext("web")
+                .CurrentSessionContext("web")                               
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultAutomappingConfiguration())
                     .Conventions.Add<CascadeConvention>()
@@ -76,7 +76,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                     try
                     {
                         var schemaUpdate = new SchemaUpdate(config);
-                        schemaUpdate.Execute(false, true);
+                        schemaUpdate.ExecuteAsync(false, true);
                         if (schemaUpdate.Exceptions.Count != 0)
                         {
                             foreach(var ex in schemaUpdate.Exceptions)

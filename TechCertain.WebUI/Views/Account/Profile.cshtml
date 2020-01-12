@@ -1,95 +1,106 @@
 ﻿@model TechCertain.WebUI.Models.ProfileViewModel
 <!-- MAIN CONTENT -->
-<div id="content">
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
+    <div id="content" class="container">
+        <!-- widget grid -->
         <div class="row">
-            <article class="container">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2"
-                     data-widget-editbutton="false" data-widget-colorbutton="false">
-                    <header>
-                       
-                        <!--<div class="widget-toolbar">
-                             add: non-hidden - to disable auto hide
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>
+                <a href="~/Home/Index/"> DashBoard</a>
+                > <span>
+                    Profile
+                </span>
+            </h1>
+        </div>
+        <!-- end col -->
+        <div class="row">
+            <span>
+                <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            </span>
+        </div>
+        <!-- new widget -->
+        <div class="row">
+            <div class="jarviswidget container-fluid" id="wid-id-2"
+                 data-widget-editbutton="false" data-widget-colorbutton="false">
+                <header>
+                    Profile
+                </header>
 
-                        </div>-->
-                    </header>
-                    <div>
-                        <!-- widget edit box
-                        <div class="jarviswidget-editbox">
-                        </div>-->
-                        <!-- end widget edit box -->
-                        <!-- content goes here -->
-
-                        <div class="air air-bottom-right padding-10">
-                            @if (Model.ViewingSelf)
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <td>
+                            Name
+                        </td>
+                        <td>
+                            @Model.FirstName <span class="semi-bold">@Model.LastName</span>
+                        </td>
+                    </tr>
+                    <tr class="table-light">
+                        <td>
+                            Organisation
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(Model.PrimaryOrganisationName))
                             {
-                                <a href="~/Account/ProfileEditor" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-edit"></i> Edit</a>
-                                @*<a href="javascript:void(0);" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-edit"></i> Edit</a>*@
-                                @* Change password modal here so only this user can change it *@
-                               
+                                @Model.PrimaryOrganisationName
                             }
-                            else
-                            {
-                                <a href="javascript:void(0);" class="btn txt-color-white bg-color-teal btn-sm"><i class="fa fa-check"></i> Follow</a>
-                                <a href="javascript:void(0);" class="btn txt-color-white bg-color-pinkDark btn-sm"><i class="fa fa-link"></i> Connect</a>
-                            }
-                        </div>
-
-                        <div class="col-sm-6">
-                            <h1>
-                                @Model.FirstName <span class="semi-bold">@Model.LastName</span>
-                                <br>
-                                @if (!string.IsNullOrWhiteSpace(Model.PrimaryOrganisationName))
-                                {
-                                    @*<small>@Model.Title, @Model.PrimaryOrganisationName</small>*@
-                                    <small>@Model.PrimaryOrganisationName</small>
-                                }
-                            </h1>
-
-                            <ul class="list-unstyled">
-                                <li>
-                                    <p class="text-muted">
-                                        <i class="fa fa-phone"></i>&nbsp;&nbsp;<span class="txt-color-darken">@Model.Phone</span>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p class="text-muted">
-                                        <i class="fa fa-envelope"></i>&nbsp;&nbsp;<a href="mailto:@(Model.Email)">@Model.Email</a>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p class="text-muted">
-                                        <i class="fa fa-skype"></i>&nbsp;&nbsp;<span class="txt-color-darken"></span>
-                                    </p>
-                                </li>
-                                @*<li>
-                                        <p class="text-muted">
-                                            <i class="fa fa-calendar"></i>&nbsp;&nbsp;<span class="txt-color-darken">Free after <a href="javascript:void(0);" rel="tooltip" title="" data-placement="top" data-original-title="Create an Appointment">4:30 PM</a></span>
-                                        </p>
-                                    </li>*@
-                            </ul>
-                            <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="text-muted">
+                                <i class="fa fa-phone"></i>&nbsp;&nbsp;<span class="txt-color-darken">@Model.Phone</span>
+                            </p>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr class="table-light">
+                        <td>
+                            <p class="text-muted">
+                                <i class="fa fa-envelope"></i>&nbsp;&nbsp;<a href="mailto:@(Model.Email)">@Model.Email</a>
+                            </p>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="text-muted">
+                                <i class="fa fa-skype"></i>&nbsp;&nbsp;<span class="txt-color-darken"></span>
+                            </p>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr class="table-light">
+                        <td>
                             <p class="font-md">
                                 <i>A little about me...</i>
                             </p>
-                            <p>
-                                @Model.Description
-                            </p>
-                            <br>
-                            <a href="javascript:void(0);" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> Send Message</a>
-                            <br>
-                            <br>
-                        </div>
-                        <!-- end content -->
-                    </div>
-                    <!-- end widget div -->
-                </div>
-                <!-- end widget -->
-            </article>
+                        </td>
+                        <td>
+                            @Model.Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @if (Model.ViewingSelf)
+                            {
+                                <a href="~/Account/ProfileEditor" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Edit</a>
+                            }
+                            else
+                            {
+                                <a href="javascript:void(0);" class="btn btn-primary btn-sm"><i class="fa fa-check"></i> Follow</a>
+                                <a href="javascript:void(0);" class="btn btn-primary btn-sm"><i class="fa fa-link"></i> Connect</a>
+                            }
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </section>
-    <!-- end widget grid -->
-</div>
-<!-- END MAIN CONTENT -->
+    </div>
+
+

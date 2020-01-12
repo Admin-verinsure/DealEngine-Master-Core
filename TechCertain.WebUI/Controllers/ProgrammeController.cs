@@ -15,9 +15,6 @@ using TechCertain.WebUI.Models.Product;
 using System.Threading.Tasks;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using NHibernate.Linq;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Diagnostics;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -609,9 +606,6 @@ namespace TechCertain.WebUI.Controllers
             model.BrokerContactUser = programme.BrokerContactUser;
             model.EGlobalBranchCode = programme.EGlobalBranchCode;
             model.EGlobalClientNumber = programme.EGlobalClientNumber;
-            //model.EGlobalClientStatus = programme.EGlobalClientStatus;
-            //model.HasEGlobalCustomDescription = programme.HasEGlobalCustomDescription;
-            //model.EGlobalCustomDescription = programme.EGlobalCustomDescription;
             model.clientprogramme = programme;
 
             var active = await _httpClientService.GetEglobalStatus();
