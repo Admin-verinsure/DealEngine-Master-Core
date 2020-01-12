@@ -1,556 +1,553 @@
 ﻿@model TechCertain.WebUI.Models.ProgrammeItem
 <!-- MAIN CONTENT -->
-    <section id="widget-grid" class="container center-block">
+<div id="widget-grid" class="container">
 
-        <div class="row">
+    <div class="row">
 
-            <table class="table table-condensed">
-                <tbody>
-                    <tr>
-                        <td>
-                            <span>
-                                <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
-                            </span>
-                        </td>
-                        <td></td>
-                        <td align="right">
-                            <span>
-                                <a class="btn btn-primary btn-xs" href="#IssueUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Issue UIS</a>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <table class="table table-condensed">
+            <tbody>
+                <tr>
+                    <td>
+                        <span>
+                            <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+                        </span>
+                    </td>
+                    <td></td>
+                    <td align="right">
+                        <span>
+                            <a class="btn btn-primary btn-xs" href="#IssueUISModal" aria-hidden="true" style="color:white" data-progname-id="@Model.ProgrammeId" data-toggle="modal"><i class="fa fa-pencil"></i> Issue UIS</a>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-            <!-- NEW WIDGET START -->
-            <!-- Widget ID (each widget will need unique ID)-->
-            <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
-                <!-- widget options:
-        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+        <!-- NEW WIDGET START -->
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
+            <!-- widget options:
+            usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
-        -->
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-                    <h2>Information Sheets for Programme </h2>
+            -->
+            <header>
+                <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                <h2>Information Sheets for Programme </h2>
 
-                </header>
+            </header>
 
-                <!-- widget div-->
-                <div>
+            <!-- widget div-->
+            <div>
 
-                    <!-- widget edit box -->
-                    <div class="jarviswidget-editbox">
-                        <!-- This area used as dropdown edit box -->
+                <!-- widget edit box -->
+                <div class="jarviswidget-editbox">
+                    <!-- This area used as dropdown edit box -->
 
-                    </div>
-                    <!-- end widget edit box -->
-                    <!-- widget content -->
-                    <div class="widget-body no-padding">
+                </div>
+                <!-- end widget edit box -->
+                <!-- widget content -->
+                <div class="widget-body no-padding">
 
-                        <table id="tableProgrammeItems" class="table table-striped table-bordered table-hover" width="100%">
-                            <thead>
+                    <table id="tableProgrammeItems" class="table table-striped table-bordered table-hover" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Deals)
+                            {
                                 <tr>
-                                    <th>Client Name</th>
-                                    <th>Status</th>
-                                    <th></th>
+                                    <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
+                                    <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
+                                    <td>
+                                        <div class="btn-group btn-secondary" role="group" aria-label="Basic example">
+                                            @if (item.Status.StartsWith("Bound"))
+                                            {
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
+                                                <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+                                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                }
+                                                if (item.Status == "Bound and invoiced" && item.ProgrammeAllowUsesChange && item.NextInfoSheet == false)
+                                                {
+                                                    <a href="#myChangeModal" aria-hidden="true" class="btn btn-primary btn-sm" data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Update</a>
+                                                }
+                                                @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
+
+                                            }
+                                            else if (item.Status == "Started")
+                                            {
+                                                <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                            }
+                                            else if (item.Status.StartsWith("Submitted"))
+                                            {
+                                                <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+                                                    <a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
+                                                }
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+                                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                }
+                                            }
+                                            else if (item.Status == "Not Started")
+                                            {
+                                                //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                                <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
+                                            }
+                                            else if (item.Status == "Not Taken Up")
+                                            {
+                                                <a class="btn btn-primary btn-sm" href="/Information/Resume/@item.Id"><i class="fa fa-unlock"></i> Resume</a>
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+                                                    <a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
+                                                }
+                                                if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
+                                                {
+                                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Deals)
-                                {
-                                    <tr>
-                                        <td>@(item.Name + "  (Reference: " + item.ReferenceId + ") ")</td>
-                                        <td>@(item.Status + "  (" + item.GetStatusDisplay() + ") ")</td>
-                                        <td>
-                                            <div class="btn-group btn-secondary" role="group" aria-label="Basic example">
-                                                @if (item.Status.StartsWith("Bound"))
-                                                {
-                                                    @*<a class="btn btn-primary btn-xs" href="/Information/RenewInformation/@item.Id"><i class="fa fa-repea"></i> Renew</a>*@
-                                                    <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-search"></i> View</a>
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                    }
-                                                    if (item.Status == "Bound and invoiced" && item.ProgrammeAllowUsesChange && item.NextInfoSheet == false)
-                                                    {
-                                                        <a href="#myChangeModal" aria-hidden="true" class="btn btn-primary btn-sm"  data-toggle="modal" data-dealitem-id="@item.Id"><i class="fa fa-edit"></i> Update</a>
-                                                    }
-                                                    @*<a class="btn btn-primary btn-xs" href="/Information/UpdateInformation/@item.Id"><i class="fa fa-pencil"></i> Update</a>*@
-
-                                                }
-                                                else if (item.Status == "Started")
-                                                {
-                                                    <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                }
-                                                else if (item.Status.StartsWith("Submitted"))
-                                                {
-                                                    <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
-                                                    }
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                    }
-                                                }
-                                                else if (item.Status == "Not Started")
-                                                {
-                                                    //<a class="btn btn-primary btn-xs" href="/Information/StartInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                    <a class="btn btn-primary btn-sm" href="/Information/EditInformation/@item.Id"><i class="fa fa-arrow-right"></i> Go</a>
-                                                }
-                                                else if (item.Status == "Not Taken Up")
-                                                {
-                                                    <a class="btn btn-primary btn-sm" href="/Information/Resume/@item.Id"><i class="fa fa-unlock"></i> Resume</a>
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-sm" href="/Information/Unlock/@item.Id"><i class="fa fa-unlock"></i> Unlock</a>
-                                                    }
-                                                    if (Model.CurrentUserIsBroker == "True" || Model.CurrentUserIsInsurer == "True" || Model.CurrentUserIsTC == "True")
-                                                    {
-                                                        <a class="btn btn-primary btn-sm" href="/Agreement/ViewAcceptedAgreement/@item.Id"><i class="fa fa-edit"></i> Manage</a>
-                                                    }
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-        <!-- END MAIN CONTENT -->
-        <div id="myChangeModal" class="modal" role="dialog" style="margin-left:600px">
-
-            <!-- Modal content-->
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h3 class="modal-title" style="color:blue; font-size:22px">Change Details</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-
-                        <form id="ProdForm">
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <input class="form-control b hidden" type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
-                            </section>
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label for="changeType" class="required">Change Type</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-
-                                    <div class="form-group">
-                                        <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
-                                            <option selected="selected" value="">-- Select here --</option>
-                                            <option Value="TC_addAmendRiskInfo">Add Amend Risk Information</option>
-                                            <option Value="TC_newCoverable">Add New Coverable</option>
-                                            <option Value="TC_amendExcess">Amend Excess</option>
-                                            <option Value="TC_amendLocation">Amend Location</option>
-                                            <option Value="TC_amendSumInsured">Amend Sum Insured</option>
-                                            <option Value="TC_amendTermsCoverage">Amend Terms/Coverage</option>
-                                            <option Value="TC_amendAddReinsurance">Amend or Add Reinsurance</option>
-                                            <option Value="TC_amendAddInsured">Amend or Add Insured</option>
-                                            <option Value="TC_amendAddCI">Amend or Add Co-insurance</option>
-                                            <option Value="TC_changeOfExpiryDate">Change of Expiry Date</option>
-                                            <option Value="TC_changeOfBroker">Change of Broker</option>
-                                            <option Value="TC_changeOfBizOrOcc">Change of Business or Occupation</option>
-                                            <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
-                                            <option Value="TC_other">Other Amendment</option>
-                                            <option Value="TC_amendOneTimeEvents">One Time Event</option>
-                                        </select>
-                                    </div>
-                                    <p class="validationContainer" id="validateChangeType"></p>
-
-                                </section>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label for="Reason" class="required">Reason</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <div class="form-group">
-                                        <select class="form-control b" id="ChangeReason" name="Reason" title="" required>
-                                            <option selected="selected" value="">-- Select here --</option>
-                                            <option Value="TC_businessSoldOrClosed_lgi">Business Sold or Closed</option>
-                                            <option Value="TC_changeInCoverReq_lgi">Change in cover requirements</option>
-                                            <option Value="TC_changeOfBroker_lgi">Change of Broker</option>
-                                            <option Value="TC_dissatisfiedWithClaims_lgi">Dissatisfied with claims</option>
-                                            <option Value="TC_dissatisfiedWithSvc_lgi">Dissatisfied with service</option>
-                                            <option Value="TC_goneIntoGlobalAcct_lgi">Gone into Global Account</option>
-                                            <option Value="TC_nonpayment">Non payment</option>
-                                            <option Value="TC_policyReplaced_lgi">Policy replaced</option>
-                                            <option Value="TC_tooDear_lgi">Too dear</option>
-
-                                        </select>
-                                    </div>
-                                    <p class="validationContainer" id="validateChangeReason"></p>
-
-                                </section>
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label for="ReasonDesc" class="required">Reason Description</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <div class="form-group">
-                                        <textarea class="form-control b" data-type="TEXTAREA" id="Description" name="ReasonDesc" placeholder="Notes" value=""></textarea>
-                                    </div>
-                                    <p class="validationContainer" id="validateDescription"></p>
-                                </section>
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label for="EffectiveDate" class="required">Effective Date</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <input name="BoatEffectiveDate" placeholder="Effective Date" class=" form-control b" data-dateformat="dd/mm/yy" id="ChangeEffectiveDate" type="text">
-                                    </div>
-                                </section>
-                                <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
-                                    <i class="icon-append fa fa-calendar"></i>
-                                </section>
-                                <p class="validationContainer" id="validateEffectivedate"></p>
-                            </section>
-
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-
-                    <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
-
-                    @*<input type="Reset" value="Submit"  class="btn btn-primary btn-xs" id="btnChangeSubmit">*@
-
-                    @*<a href="#" class="btn btn-danger" data-dismiss="modal">Cancel<i class="fa fa-close"></i></a>*@
-                </div>
-            </div>
-        </div>
-
-
-
-        <div id="IssueUISModal" class="modal" role="dialog" style="margin-left:600px;width:600px">
-
-            <!-- Modal content-->
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h3 class="modal-title" style="color:blue; font-size:22px">Client Details</h3>
-                    <button type="button" class="close" id="IssueUISModalClose" data-dismiss="modal">&times;</button>
-
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-
-                        <form id="ProdForm">
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label class="required">Organisation Type</label>
-                                </section>
-                                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8" style="height: 45px; padding-top: 7.5px; padding-bottom: 7.5px;">
-                                    <label class="radio-inline cgradio" style="width:19%;"> <input type="radio" name="cgradioselect" id="vown1" value="Private" checked="checked" onclick="vesselOwnUpdate()">Private</label>
-                                    <label class="radio-inline cgradio" style="width:24%;"> <input type="radio" name="cgradioselect" id="vown2" value="Company" onclick="vesselOwnUpdate()">Company</label>
-                                    <label class="radio-inline cgradio" style="width:15%;"> <input type="radio" name="cgradioselect" id="vown3" value="Trust" onclick="vesselOwnUpdate()">Trust</label>
-                                    <label class="radio-inline cgradio" style="width:20%;"> <input type="radio" name="cgradioselect" id="vown4" value="Partnership" onclick="vesselOwnUpdate()">Partnership</label>
-                                </div>
-                                <p class="validationContainer" id="validateOrgType"></p>
-
-                            </section>
-
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="UISorgnamesection">
-
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label class="required">Organisation Name</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" placeholder="Enter Organisation Name" type="text" name="fname" id="UISorgname">
-                                </section>
-                                <p class="validationContainer" id="validateOrgName"></p>
-
-
-                            </section>
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label class="required">First Name</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" placeholder="Enter First Name" type="text" name="fname" id="UISfname">
-                                </section>
-                                <p class="validationContainer" id="validateFirstName"></p>
-
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label class="required">Last Name</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="lname" id="UISlname">
-                                </section>
-                                <p class="validationContainer" id="validateLastName"></p>
-
-
-                            </section>
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label class="required">Email</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" placeholder="Enter Email" type="text" name="email" id="UISEmail">
-                                </section>
-                                <p class="validationContainer" id="validateEmail"></p>
-
-
-                            </section>
-
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label>Membership Number</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="memno" id="UISMembershipno">
-                                </section>
-                                <p class="validationContainer" id="validateMembershyipNo"></p>
-
-
-                            </section>
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" type="text" name="ProgId" id="ProgId">
-                                </section>
-
-
-                            </section>
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
-
-                                    <label class="required">Mobile Phone</label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input class="form-control input-lg" placeholder="Enter Mobile Number" type="text" name="mphon" id="UISmphon" aria-required="true" aria-invalid="false" maxlength="14">
-
-                                </section>
-                                <p class="validationContainer" id="validateMobileNo"></p>
-
-                            </section>
-
-
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a onclick="validationCheck();" data-toggle="tab"><button style="float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">Submit</button></a>
-
-                </div>
-            </div>
-        </div>
-
-
-        <style>
-
-            .required:after {
-                content: " *";
-                color: red;
-                font-size: 20px;
-            }
-        </style>
-
-
-        @section pagespecific {
-            <link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-            <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
-            <script src="~/jquery/jquery.js"></script>
-            <script src="~/jqueryui/jquery-ui.js"></script>
-            <script src="~/lib/popper.js/umd/popper.min.js"></script>
-            <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
-
-
-            <script type="text/javascript">
-
-                $('#IssueUISModal').on('show.bs.modal', function (e) {
-                    debugger;
-                    $('.modal').css({ "width": "600px", "margin-left": "600px" });
-                    var PanelPositon = $(e.relatedTarget).data('progname-id');
-                    $(e.currentTarget).find('input[name="ProgId"]').val(PanelPositon);
-                    $('#ProgId').addClass('hidden');
-                });
-
-                function vesselOwnUpdate() {
-                    debugger;
-                    var OrgType = $('input[name=cgradioselect]:checked').val();
-
-                    if (OrgType == "Private") {
-                        $('#UISorgnamesection').addClass('hidden');
-                    } else {
-                        $('#UISorgnamesection').removeClass('hidden');
-                    }
-
-                }
-
-                function ValidateEmail() {
-                    var Email = $('#UISEmail').val();
-                    debugger;
-                    if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(Email)) {
-                        return (true)
-                    } else
-                        return (false)
-                }
-
-                function validationCheck() {
-                    debugger;
-                    var OrgName = $('#UISorgname').val();
-                    var Fname = $('#UISfname').val();
-                    var LastName = $('#UISlname').val();
-                    var MobilePhone = $('#UISmphon').val();
-                    var Email = $('#UISEmail').val();
-                    var OrgType = $('input[name=cgradioselect]:checked').val();
-
-                    var validation = true;
-
-
-                    if (OrgName == "" && OrgType != "Private") {
-                        $('#validateOrgName').html("<font color='red'>Field is required</font>");
-                        if (validation) {
-                            validation = false;
-                        }
-                    } else {
-                        $('#validateOrgName').html("");
-                    }
-
-                    if (Fname == "") {
-                        $('#validateFirstName').html("<font color='red'>Field is required</font>");
-                        if (validation) {
-                            validation = false;
-                        }
-                    } else {
-                        $(validateFirstName).html("");
-                    }
-                    if (LastName == "") {
-                        $('#validateLastName').html("<font color='red'>Field is required</font>");
-                        if (validation) {
-                            validation = false;
-                        }
-                    } else {
-                        $(validateLastName).html("");
-                    } if (MobilePhone == "") {
-                        $('#validateMobileNo').html("<font color='red'>Field is required</font>");
-                        if (validation) {
-                            validation = false;
-                        }
-                    } else {
-                        $('#validateMobileNo').html("");
-                    }
-
-                    if (Email == "") {
-                        $('#validateEmail').html("<font color='red'>Field is required</font>");
-                        if (validation) {
-                            validation = false;
-                        }
-                    } else {
-                        if (ValidateEmail()) {
-                            $('#validateEmail').html("");
-
-                        } else {
-                            if (validation) {
-                                validation = false;
                             }
-                            $('#validateEmail').html("<font color='red'>Email Entered is Invalid</font>");
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        }
+    <!-- END MAIN CONTENT -->
+    <div id="myChangeModal" class="modal" role="dialog" style="margin-left:600px">
+
+        <!-- Modal content-->
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3 class="modal-title" style="color:blue; font-size:22px">Change Details</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form id="ProdForm">
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <input class="form-control b hidden" type="text" data-type="TEXTBOX" data-name="DealId" id="DealId" name="DealId" placeholder="Vessel Name" value="" required>
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label for="changeType" class="required">Change Type</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+
+                                <div class="form-group">
+                                    <select class="form-control b" id="ChangeType" name="ChangeType" title="" required>
+                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option Value="TC_addAmendRiskInfo">Add Amend Risk Information</option>
+                                        <option Value="TC_newCoverable">Add New Coverable</option>
+                                        <option Value="TC_amendExcess">Amend Excess</option>
+                                        <option Value="TC_amendLocation">Amend Location</option>
+                                        <option Value="TC_amendSumInsured">Amend Sum Insured</option>
+                                        <option Value="TC_amendTermsCoverage">Amend Terms/Coverage</option>
+                                        <option Value="TC_amendAddReinsurance">Amend or Add Reinsurance</option>
+                                        <option Value="TC_amendAddInsured">Amend or Add Insured</option>
+                                        <option Value="TC_amendAddCI">Amend or Add Co-insurance</option>
+                                        <option Value="TC_changeOfExpiryDate">Change of Expiry Date</option>
+                                        <option Value="TC_changeOfBroker">Change of Broker</option>
+                                        <option Value="TC_changeOfBizOrOcc">Change of Business or Occupation</option>
+                                        <option Value="TC_deleteCoverable">Delete Existing Coverable</option>
+                                        <option Value="TC_other">Other Amendment</option>
+                                        <option Value="TC_amendOneTimeEvents">One Time Event</option>
+                                    </select>
+                                </div>
+                                <p class="validationContainer" id="validateChangeType"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label for="Reason" class="required">Reason</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <div class="form-group">
+                                    <select class="form-control b" id="ChangeReason" name="Reason" title="" required>
+                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option Value="TC_businessSoldOrClosed_lgi">Business Sold or Closed</option>
+                                        <option Value="TC_changeInCoverReq_lgi">Change in cover requirements</option>
+                                        <option Value="TC_changeOfBroker_lgi">Change of Broker</option>
+                                        <option Value="TC_dissatisfiedWithClaims_lgi">Dissatisfied with claims</option>
+                                        <option Value="TC_dissatisfiedWithSvc_lgi">Dissatisfied with service</option>
+                                        <option Value="TC_goneIntoGlobalAcct_lgi">Gone into Global Account</option>
+                                        <option Value="TC_nonpayment">Non payment</option>
+                                        <option Value="TC_policyReplaced_lgi">Policy replaced</option>
+                                        <option Value="TC_tooDear_lgi">Too dear</option>
+
+                                    </select>
+                                </div>
+                                <p class="validationContainer" id="validateChangeReason"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label for="ReasonDesc" class="required">Reason Description</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <div class="form-group">
+                                    <textarea class="form-control b" data-type="TEXTAREA" id="Description" name="ReasonDesc" placeholder="Notes" value=""></textarea>
+                                </div>
+                                <p class="validationContainer" id="validateDescription"></p>
+                            </section>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label for="EffectiveDate" class="required">Effective Date</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <input name="BoatEffectiveDate" placeholder="Effective Date" class=" form-control b" data-dateformat="dd/mm/yy" id="ChangeEffectiveDate" type="text">
+                                </div>
+                            </section>
+                            <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <i class="icon-append fa fa-calendar"></i>
+                            </section>
+                            <p class="validationContainer" id="validateEffectivedate"></p>
+                        </section>
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary btn-xs" id="btnChangeSubmit">Update</a>
+            </div>
+        </div>
+    </div>
 
 
-                    } if (OrgType == "") {
-                        $('#validateOrgType').html("<font color='red'>Field is required</font>");
-                        if (validation) {
-                            validation = false;
-                        }
-                    } else {
-                        $('#validateOrgType').html("");
-                    }
 
-                    if (validation) {
-                        postCGData();
-                    } else
-                        return validation;
-                };
+    <div id="IssueUISModal" class="modal" role="dialog" style="margin-left:600px;width:600px">
+
+        <!-- Modal content-->
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3 class="modal-title" style="color:blue; font-size:22px">Client Details</h3>
+                <button type="button" class="close" id="IssueUISModalClose" data-dismiss="modal">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form id="ProdForm">
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label class="required">Organisation Type</label>
+                            </section>
+                            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8" style="height: 45px; padding-top: 7.5px; padding-bottom: 7.5px;">
+                                <label class="radio-inline cgradio" style="width:19%;"> <input type="radio" name="cgradioselect" id="vown1" value="Private" checked="checked" onclick="vesselOwnUpdate()">Private</label>
+                                <label class="radio-inline cgradio" style="width:24%;"> <input type="radio" name="cgradioselect" id="vown2" value="Company" onclick="vesselOwnUpdate()">Company</label>
+                                <label class="radio-inline cgradio" style="width:15%;"> <input type="radio" name="cgradioselect" id="vown3" value="Trust" onclick="vesselOwnUpdate()">Trust</label>
+                                <label class="radio-inline cgradio" style="width:20%;"> <input type="radio" name="cgradioselect" id="vown4" value="Partnership" onclick="vesselOwnUpdate()">Partnership</label>
+                            </div>
+                            <p class="validationContainer" id="validateOrgType"></p>
+
+                        </section>
 
 
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="UISorgnamesection">
 
-                function postCGData() {
-                    debugger;
-                    var OrgName = $('#UISorgname').val();
-                    var Fname = $('#UISfname').val();
-                    var LastName = $('#UISlname').val();
-                    var MobilePhone = $('#UISmphon').val();
-                    var Email = $('#UISEmail').val();
-                    var MembershipNumber = $('#UISMembershipno').val();
-                    var OrgType = $('input[name=cgradioselect]:checked').val();
-                    var programmeID = $('#ProgId').val();
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label class="required">Organisation Name</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" placeholder="Enter Organisation Name" type="text" name="fname" id="UISorgname">
+                            </section>
+                            <p class="validationContainer" id="validateOrgName"></p>
 
 
-                    var postData = {
-                        orgName: OrgName,
-                        firstName: Fname,
-                        lastName: LastName,
-                        programmeID: programmeID,
-                        email: Email,
-                        mobilePhone: MobilePhone,
-                        orgType: OrgType,
-                        membershipNumber: MembershipNumber
-                    };
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/Services/IssueUIS",
-                        data: postData,
-                        traditional: true,
-                    })
-                        .done(function (data, textStatus, jQxhr) {
-                            debugger;
-                            $('#IssueUISModal' + " :input").val("");
-                            $('#IssueUISModal').addClass('hidden');
-                            location.reload(true);
-                        })
-                        .fail(function (jqXhr, textStatus, errorThrown) {
-                            debugger;
-                            console.log(errorThrown);
-                        });
-                }
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-            </script>
-            @Html.Partial("_ProgrammeScripts")
+                                <label class="required">First Name</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" placeholder="Enter First Name" type="text" name="fname" id="UISfname">
+                            </section>
+                            <p class="validationContainer" id="validateFirstName"></p>
+
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label class="required">Last Name</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="lname" id="UISlname">
+                            </section>
+                            <p class="validationContainer" id="validateLastName"></p>
+
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label class="required">Email</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" placeholder="Enter Email" type="text" name="email" id="UISEmail">
+                            </section>
+                            <p class="validationContainer" id="validateEmail"></p>
+
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label>Membership Number</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="memno" id="UISMembershipno">
+                            </section>
+                            <p class="validationContainer" id="validateMembershyipNo"></p>
+
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" type="text" name="ProgId" id="ProgId">
+                            </section>
+
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                                <label class="required">Mobile Phone</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <input class="form-control input-lg" placeholder="Enter Mobile Number" type="text" name="mphon" id="UISmphon" aria-required="true" aria-invalid="false" maxlength="14">
+
+                            </section>
+                            <p class="validationContainer" id="validateMobileNo"></p>
+
+                        </section>
+
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a onclick="validationCheck();" data-toggle="tab"><button style="float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">Submit</button></a>
+
+            </div>
+        </div>
+    </div>
+
+
+    <style>
+
+        .required:after {
+            content: " *";
+            color: red;
+            font-size: 20px;
+        }
+    </style>
+
+</div>
+
+
+@section pagespecific {
+    @*<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+        <script src="~/jquery/jquery.js"></script>
+        <script src="~/jqueryui/jquery-ui.js"></script>
+        <script src="~/lib/popper.js/umd/popper.min.js"></script>
+        <script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>*@
+
+
+    <script type="text/javascript">
+
+        $('#IssueUISModal').on('show.bs.modal', function (e) {
+            debugger;
+            $('.modal').css({ "width": "600px", "margin-left": "600px" });
+            var PanelPositon = $(e.relatedTarget).data('progname-id');
+            $(e.currentTarget).find('input[name="ProgId"]').val(PanelPositon);
+            $('#ProgId').addClass('hidden');
+        });
+
+        function vesselOwnUpdate() {
+            debugger;
+            var OrgType = $('input[name=cgradioselect]:checked').val();
+
+            if (OrgType == "Private") {
+                $('#UISorgnamesection').addClass('hidden');
+            } else {
+                $('#UISorgnamesection').removeClass('hidden');
+            }
 
         }
+
+        function ValidateEmail() {
+            var Email = $('#UISEmail').val();
+            debugger;
+            if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(Email)) {
+                return (true)
+            } else
+                return (false)
+        }
+
+        function validationCheck() {
+            debugger;
+            var OrgName = $('#UISorgname').val();
+            var Fname = $('#UISfname').val();
+            var LastName = $('#UISlname').val();
+            var MobilePhone = $('#UISmphon').val();
+            var Email = $('#UISEmail').val();
+            var OrgType = $('input[name=cgradioselect]:checked').val();
+
+            var validation = true;
+
+
+            if (OrgName == "" && OrgType != "Private") {
+                $('#validateOrgName').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateOrgName').html("");
+            }
+
+            if (Fname == "") {
+                $('#validateFirstName').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $(validateFirstName).html("");
+            }
+            if (LastName == "") {
+                $('#validateLastName').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $(validateLastName).html("");
+            } if (MobilePhone == "") {
+                $('#validateMobileNo').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateMobileNo').html("");
+            }
+
+            if (Email == "") {
+                $('#validateEmail').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                if (ValidateEmail()) {
+                    $('#validateEmail').html("");
+
+                } else {
+                    if (validation) {
+                        validation = false;
+                    }
+                    $('#validateEmail').html("<font color='red'>Email Entered is Invalid</font>");
+
+                }
+
+
+            } if (OrgType == "") {
+                $('#validateOrgType').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateOrgType').html("");
+            }
+
+            if (validation) {
+                postCGData();
+            } else
+                return validation;
+        };
+
+
+
+        function postCGData() {
+            debugger;
+            var OrgName = $('#UISorgname').val();
+            var Fname = $('#UISfname').val();
+            var LastName = $('#UISlname').val();
+            var MobilePhone = $('#UISmphon').val();
+            var Email = $('#UISEmail').val();
+            var MembershipNumber = $('#UISMembershipno').val();
+            var OrgType = $('input[name=cgradioselect]:checked').val();
+            var programmeID = $('#ProgId').val();
+
+
+            var postData = {
+                orgName: OrgName,
+                firstName: Fname,
+                lastName: LastName,
+                programmeID: programmeID,
+                email: Email,
+                mobilePhone: MobilePhone,
+                orgType: OrgType,
+                membershipNumber: MembershipNumber
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Services/IssueUIS",
+                data: postData,
+                traditional: true,
+            })
+                .done(function (data, textStatus, jQxhr) {
+                    debugger;
+                    $('#IssueUISModal' + " :input").val("");
+                    $('#IssueUISModal').addClass('hidden');
+                    location.reload(true);
+                })
+                .fail(function (jqXhr, textStatus, errorThrown) {
+                    debugger;
+                    console.log(errorThrown);
+                });
+        }
+
+    </script>
+    @Html.Partial("_ProgrammeScripts")
+
+}
 

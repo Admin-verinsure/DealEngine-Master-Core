@@ -1290,7 +1290,7 @@ namespace TechCertain.WebUI.Controllers
                     emailTemplate.Body = model.Body;
                     emailTemplate.LastModifiedBy = user;
                     emailTemplate.LastModifiedOn = DateTime.UtcNow;
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
             }
             else
@@ -1306,28 +1306,6 @@ namespace TechCertain.WebUI.Controllers
             return RedirectToAction("SendEmailTemplates", new { Id = programme.Id, type = model.Type, description = model.Description });
 
         }
-
-        /*[HttpGet]
-		public async Task<IActionResult> ViewProgramme (Guid id)
-		{
-			ProductViewModel model = new ProductViewModel ();
-			Product product = _productRepository.GetById (id);
-			if (product != null) {
-				model.Description = new ProductDescriptionVM {
-					DateCreated = LocalizeTime (product.DateCreated.GetValueOrDefault ()),
-					Description = product.Description,
-					Name = product.Name,
-					SelectedLanguages = product.Languages.ToArray (),
-					Public = product.Public
-				};
-				model.Risks = new ProductRisksVM ();
-				foreach (RiskCover risk in product.RiskCategoriesCovered)
-					model.Risks.Add (new RiskEntityViewModel { Insured = risk.BaseRisk.Name, CoverAll = risk.CoverAll, CoverLoss = risk.Loss, 
-							CoverInterruption = risk.Interuption, CoverThirdParty = risk.ThirdParty });
-			}
-			return View (model);
-		}*/
-
 
     }
 }
