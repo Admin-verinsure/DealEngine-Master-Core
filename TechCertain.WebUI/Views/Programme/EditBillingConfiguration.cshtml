@@ -14,182 +14,159 @@
 }
 
 <!-- MAIN CONTENT -->
-<div id="content">
-    <!-- Bread crumb is created dynamically -->
-    <!-- row -->
+<div id="content" class="container">
+
     <div class="row">
-        <!-- col -->
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i>
-                <a href="~/Agreement/ViewAcceptedAgreement/@Model.clientprogramme.Id"> Agreement</a>
-                > <span>
-                    Edit Billing Configuration
-                </span>
-            </h1>
-        </div>
-        <!-- end col -->
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.clientprogramme.Id"> Agreement</a>
+            > <span>
+                Edit Billing Configuration
+            </span>
+        </h1>
     </div>
-    <span>
-        <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.clientprogramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-    </span>
+    <!-- end col -->
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.clientprogramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
 
     @Html.HiddenFor(m => m.Id)
 
-    <!-- widget grid -->
-<section id="widget-grid" class="">
-
     <div class="row">
-        <article class="col-sm-12 col-md-12 col-lg-6">
-            <!-- new widget -->
-            <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                    <h2> </h2>
-                </header>
-                @*<div class="row">*@
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-envelope text-light"></i> </span>
+                <h2>Billing Configuration</h2>
+            </header>
 
-                <section>
-                    <table class="table table-bordered table-striped table-hover table-condensed">
-                        <tbody>
-                            <tr>
+            <table class="table table-bordered table-striped table-hover table-condensed">
+                <tbody>
+                    <tr>
 
-                                <td align="left">
-                                    <b>Eglobal status: </b>
-                                </td>
+                        <td align="left">
+                            <b>eGlobal Status: </b>
+                        </td>
 
-                                <td align="left">
-                                    @EGlobalIsActiveOrNot
-                                </td>
+                        <td align="left">
+                            @EGlobalIsActiveOrNot
+                        </td>
 
-                            </tr>
-                            <tr>
+                    </tr>
+                    <tr>
 
-                                <td align="left">
-                                    <b>Client Number:</b>
-                                </td>
+                        <td align="left">
+                            <b>eGlobal Client Branch:</b>
+                        </td>
 
-                                <td align="left">
-                                    <select class="browser-default custom-select custom-select-lg mb-3 col-sm-3" id="branch">
-                                        <option selected="selected" value="">-- Select here --</option>
-                                        <option value="AKL">AKL</option>
-                                        <option value="CHC">CHC</option>
-                                        <option value="DUN">DUN</option>
-                                        <option value="NAP">NAP</option>
-                                        <option value="NPL">NPL</option>
-                                        <option value="TGA">TGA</option>
-                                        <option value="WEL">WEL</option>
-                                    </select>
-                                    <div style="text-align:right" class="col-sm-5">
-                                        <input id="clientId" class="form-control" type="text">
-                                    </div>
-                                </td>
-                            </tr>
+                        <td align="left">
+                            <select class="browser-default custom-select custom-select-sm col-sm-3" id="branch">
+                                <option selected="selected" value="">-- Select here --</option>
+                                <option value="AKL">AKL</option>
+                                <option value="CHC">CHC</option>
+                                <option value="DUN">DUN</option>
+                                <option value="NAP">NAP</option>
+                                <option value="NPL">NPL</option>
+                                <option value="TGA">TGA</option>
+                                <option value="WEL">WEL</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
 
-                            <tr>
+                        <td align="left">
+                            <b>eGlobal Client Number:</b>
+                        </td>
 
-                                <td align="left">
-                                    <b>Contact Broker</b>
-                                </td>
+                        <td align="left">
+                            <input id="clientId" class="form-control col-3" type="text">
+                        </td>
+                    </tr>
+                    <tr>
 
-                                <td align="left">
-                                    @Model.BrokerContactUser.FullName (@Model.BrokerContactUser.SalesPersonUserName)
-                                </td>
+                        <td align="left">
+                            <b>Broker Salesperson User:</b>
+                        </td>
 
-                            </tr>
-                            <tr>
+                        <td align="left">
+                            @Model.BrokerContactUser.FullName (@Model.BrokerContactUser.SalesPersonUserName)
+                        </td>
 
-                                <td align="left">
-                                    <b>Broker Branch</b>
-                                </td>
+                    </tr>
+                    <tr>
 
-                                <td align="left">
-                                    @Model.BrokerContactUser.DefaultOU.Name (@Model.BrokerContactUser.DefaultOU.EbixDepartmentCode)
-                                </td>
+                        <td align="left">
+                            <b>Broker Branch:</b>
+                        </td>
 
-                            </tr>
-                            @*<tr>
+                        <td align="left">
+                            @Model.BrokerContactUser.DefaultOU.Name (@Model.BrokerContactUser.DefaultOU.EbixDepartmentCode)
+                        </td>
 
-            <td align="left">
-                <b>Client Status</b>
-            </td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="2">
+                            <button onclick="ClearForm()" class="btn btn-success btn-sm" id="ClearForm"><i class="fa fa-edit"></i>Clear</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button onclick="SaveBillingConfiguration()" class="btn btn-danger btn-sm" id="SaveBillingConfiguration"><i class="fa fa-trash"></i>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button onclick="SendInvoice()" class="btn btn-success btn-sm" id="SendInvoice"><i class="fa fa-edit"></i>Send Invoice</button>
+                        </td>
 
-            <td style="align-content: center">
-                <div class="form-group drop-down-list">
-                    <div class="col-sm-5" style="text-align: center">
-                        <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="clientStatus">
-                            <option selected="selected" value="">-- Select here --</option>
-                            <option value="New">New</option>
-                            <option value="Renew">Renew</option>
-                        </select>
-                    </div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-
-            <td align="left">
-                <b>Transaction Description</b>
-            </td>
-
-            <td align="left">
-                <div class="custom-control custom-radio">
-                    <select class="browser-default custom-select custom-select-lg mb-3 col-sm-5" id="TransactionRadio">
-                        <option selected="selected" value="">-- Select here --</option>
-                        <option value="True">Yes</option>
-                        <option value="False">No</option>
-                    </select>
-
-                    <label class="custom-control-label" for="defaultUnchecked">Use custom transaction description</label>
-                </div>
-                <div class="form-group">
-                    <textarea class="form-control" placeholder="Custom description" rows="5" id="TransactionComment"></textarea>
-                </div>
-            </td>
-
-        </tr>*@
-                        </tbody>
-                    </table>
-
-                </section>
-            </div>
-        </article>
-
-        <div class="form-group row col-xs-12">
-            <div class="left col-xs-2">
-                @*@Html.Bootstrap().Button().Text("Clear").HtmlAttributes(new { onclick = "ClearForm()" }).Class("btn-sm float-left")*@
-                @*@Html.Bootstrap().Button().Text("Save").HtmlAttributes(new { onclick = "SaveBillingConfiguration()" }).Class("btn-sm float-right")*@
-                <button onclick="ClearForm()" class="btn-sm float-left" id="ClearForm">Clear</button>
-                <button onclick="SaveBillingConfiguration()" class="btn-sm float-right" id="SaveBillingConfiguration">Save</button>
-            </div>
-            <div class="col-sm-offset-5">
-                @*@Html.Bootstrap().Button().Text("Send Invoice").HtmlAttributes(new { onclick = "SendInvoice()" }).Class("btn-sm")*@
-                <button onclick="SendInvoice()" class="btn-sm" id="SendInvoice">Send Invoice</button>
-            </div>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-</section>
 </div>
 
-@section pagespecific {
+@if (Model.EGlobalSubmissions.Count > 0)
+{
+    <div id="content">
+        <form method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+            <header>  Invoice Management</header>
+            <table class="table table-bordered table-responsive-md table-striped text-center" id="eglobaltransactions">
+                <tr>
+                    <th class="text-center" width="60%" style="color:black">Transaction Description</th>
+                    <th class="text-center" width="20%" style="color:black">Transaction Details</th>
+                    <th class="text-center" width="20%" style="color:black"></th>
+                </tr>
 
+                @foreach (var item in Model.EGlobalSubmissions)
+                {
+                    <tr>
+                        <td class="pt-3-half" width="40%" contenteditable="true" id="ReferralName" style="color:black">
+                            @item.DateCreated
+                        </td>
+                        <td class="pt-3-half" width="20%" contenteditable="true" style="color:black">
+                            @item.SubmissionRequestXML
+                        </td>
+                        <td width="20%">
+                            @*<a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
+                                data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>*@
+                        </td>
+                    </tr>
+                }
+            </table>
+        </form>
+
+    </div>
+}
+
+
+
+@section pagespecific {
     <script>
 
         $(window).on("load", function () {
-            debugger;
             $('#branch').val(@Model.EGlobalBranchCode);
-            @*$('#clientStatus').val(@Model.EGlobalClientStatus);*@
             $('#clientId').val(@Model.EGlobalClientNumber);
-            @*$('#TransactionRadio').val(@Model.HasEGlobalCustomDescription);
-            $('TransactionComment').val(@Model.EGlobalCustomDescription);*@
         });
 
         var bcdata = [];
         var programmeId;
 
         function SendInvoice() {
-            //SaveBillingInformation();
             programmeId = $('#Id').val();
 
             $.ajax({
@@ -238,18 +215,12 @@
         function ClearForm() {
             document.getElementById("branch").value = "";
             document.getElementById("clientId").value = "";
-            //document.getElementById("TransactionComment").value = "";
-            //document.getElementById("clientStatus").value = "";
         }
 
         function addBCData() {
             programmeId = $('#Id').val();
             var branch = document.getElementById("branch").value;
             var clientId = document.getElementById("clientId").value;
-            //var clientStatus = document.getElementById("clientStatus").value;
-            //var TransactionComment = document.getElementById("TransactionComment").value;
-            //var TransactionRadio = document.getElementById("TransactionRadio").value;
-            //bcdata = [branch, clientId, clientStatus, TransactionComment,TransactionRadio];
             bcdata = [branch, clientId];
         }
 
@@ -258,16 +229,11 @@
 }
 
 
-<script>
+@*<script>
 
-        $(window).on("load", function () {
-            debugger;
-            $('#branch').val("@Model.EGlobalBranchCode");
-            @*$('#clientStatus').val("@Model.EGlobalClientStatus");*@
-            $('#clientId').val("@Model.EGlobalClientNumber");
-            @*$('#TransactionRadio').val("@Model.HasEGlobalCustomDescription");
-            $('TransactionComment').val("@Model.EGlobalCustomDescription");*@
+            $(window).on("load", function () {
+                $('#branch').val("@Model.EGlobalBranchCode");
+                $('#clientId').val("@Model.EGlobalClientNumber");
+            });
 
-        });
-
-</script>
+    </script>*@

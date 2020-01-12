@@ -608,6 +608,9 @@ namespace TechCertain.WebUI.Controllers
             model.EGlobalClientNumber = programme.EGlobalClientNumber;
             model.clientprogramme = programme;
 
+
+            model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
+
             var active = await _httpClientService.GetEglobalStatus();
             model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
 
