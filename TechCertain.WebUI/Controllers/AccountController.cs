@@ -303,8 +303,7 @@ namespace TechCertain.WebUI.Controllers
 				return await RedirectToLocal();
 
             try
-            {
-                var userimport = await CurrentUser();               
+            {                             
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
@@ -334,7 +333,7 @@ namespace TechCertain.WebUI.Controllers
                     var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, viewModel.RememberMe, lockoutOnFailure: false);
                     if (identityResult.Succeeded)
                     {
-                        if(!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
+                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
                         {
                             var hasRole = await _roleManager.RoleExistsAsync("Client");
                             if (hasRole)
@@ -669,7 +668,12 @@ namespace TechCertain.WebUI.Controllers
 			model.Phone = user.Phone;
             model.JobTitle = user.JobTitle;            
             model.CurrentUser = user;
-            //model.DefaultOU = user.DefaultOU;
+
+            if(user.DefaultOU != null)
+            {
+                model.DefaultOU = user.DefaultOU;
+            }
+            
             model.EmployeeNumber = user.EmployeeNumber;
             model.JobTitle = user.JobTitle;
             model.SalesPersonUserName = user.SalesPersonUserName;
@@ -749,7 +753,7 @@ namespace TechCertain.WebUI.Controllers
             user.JobTitle = model.JobTitle;
             user.SalesPersonUserName = model.SalesPersonUserName;
 
-            _userService.Update(user);
+            await _userService.Update(user);
 
             return Redirect("~/Account/ProfileEditor");
 		}
