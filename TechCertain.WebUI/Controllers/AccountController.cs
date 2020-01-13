@@ -303,7 +303,7 @@ namespace TechCertain.WebUI.Controllers
 				return await RedirectToLocal();
 
             try
-            {                             
+            {                
                 var userName = viewModel.Username.Trim();
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
@@ -348,6 +348,8 @@ namespace TechCertain.WebUI.Controllers
                         var result = await LoginMarsh(user, viewModel.DevicePrint);
                     }
                     
+                    _logger.LogInformation("Authentication succeeded for [" + userName + "]");
+
                     return LocalRedirect("~/Home/Index");
                 }
 
