@@ -357,7 +357,7 @@
                                         <a href="#tab1" data-toggle="tab"><button style="width:100%; background-color:#F04E45 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">BACK</button></a>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" id="nextsec">
                                         <a onclick="validationCheck2(); return false;" id="nextButton" data-toggle="tab"><button style="width:100%; float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">NEXT</button></a>
                                     </div>
 
@@ -784,16 +784,21 @@
         };
 
         function pleaseCallButton() {
+            //var nextbtn = document.getElementById("nextButton");
             if (validationCheck()) {
                 SetCurrentTab('tab2');
                 saveQuickQuote();
-                $('#vownrfgroup').hidden = true;
-                $('#callMeNext').hidden = false;
-                $('#callMeNext').show();
-                $('#callMeNext').hide();
+               
 
+                $('#nextButton').hide();
                 document.getElementById("nextButton").hidden = true;
-                //document.getElementById("nextButton").style.visibility = "hidden";
+
+                 $('#vownrfgroup').hidden = true;
+                $('#callMeNext').hidden = false;
+                $('#vownrfgroup').hide();
+                $('#callMeNext').show();
+                 $('#nextsec').hide();
+                //document.getElementById("nextButton").hide();
             }
         }
 
