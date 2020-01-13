@@ -55,7 +55,7 @@
                                 <option>Berthed</option>
                                 <option>Moored</option>
                             </select>
-                            <div class="text-align-center"><label class="text-align-center" style="font-size: 18px;font-weight: 600;font-family: Arial;text-align: center;color: black;padding-bottom: 15px; padding-top:10px" id="CraftType">Type Placeholder</label></div>
+                            <div><label class="text-align-center" style="margin-left: 50% !important ; font-size: 18px;font-weight: 600;font-family: Arial;color: black;padding-bottom: 15px; padding-top:10px" id="CraftType">Type Placeholder</label></div>
                         </div>
                         <br>
                         <input hidden type="number" id="rate" value=".05" />
@@ -211,7 +211,7 @@
                                     <ul>
                                         <li style="font-size:1em;" class="font-italic">$5,000,000 third party limit</li>
                                         <li style="font-size:1em;" class="font-italic">$20,000 personal effects/fishing gear limit</li>
-                                        <li style="font-size:1em;" class="font-italic">$10,000 personal accident cover as defined</li>
+                                        <li style="font-size: 1em;" class="font-italic">$10,000 personal accident cover as defined</li>
                                         <li style="font-size:1em;" class="font-italic">Dedicated marine loss adjustor</li>
                                         <li style="font-size:1em;" class="font-italic">Social or Corporate Yacht Racing (under 50nm)</li>
                                     </ul>
@@ -221,12 +221,14 @@
                             <div style="margin-bottom:50px;" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div role="group" aria-label="First group">
                                     <!--<a href="#tab2" data-toggle="tab"><button onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</button></a>-->
-                                        <a href="#tab2" data-toggle="tab" onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</a>
-                                        <a href="Coastguardreg" style=" width:100%; background-color:#72BF44 !important;color:white;" id="newQuote" class="btn btn-secondary margin-top-10 w100" hidden>Get A New Quote</a>
-                                    <!--<button type="button" class="btn btn-secondary margin-top-10 w100 hidden">Save for later</button>-->
-                                        <a data-toggle="tab" onclick="pleaseCallButton(); return false;" style="width:100%;background-color:#004280 !important;color:white;" type="submit" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</a>
+                                    <a href="#tab2" data-toggle="tab" onclick="saveQuickQuote(); return false;" style="background-color:#72BF44 !important;color:white;" id="next" type="submit" class="btn btn-secondary margin-top-10 w100 hidden">I LIKE IT - LET'S GO!</a>
+                                    @*<a href="Coastguardreg" style=" width:100%; background-color:#72BF44 !important;color:white;" id="newQuote" class="btn btn-secondary margin-top-10 " hidden>Get A New Quote</a>*@
+                                    <a href="Coastguardreg" style=" width:100%; background-color:#72BF44 !important;color:white;" id="newQuote" class="btn btn-secondary margin-top-10 w100 hidden">Get A New Quote</a>
 
-                                        <a style="width:100%; background-color:#F04E45 !important;color:white;" href="Coastguardreg" class="btn btn-secondary margin-top-10 w100 ">No Thanks, I think I'll leave it</a>
+                                    <!--<button type="button" class="btn btn-secondary margin-top-10 w100 hidden">Save for later</button>-->
+                                    <a data-toggle="tab" onclick="pleaseCallButton(); return false;" style="width:100%;background-color:#004280 !important;color:white;" type="submit" class="btn btn-secondary margin-top-10 w100">Please give me a call to discuss</a>
+
+                                    <a style="width:100%; background-color:#F04E45 !important;color:white;" href="Coastguardreg" class="btn btn-secondary margin-top-10 w100 ">No Thanks, I think I'll leave it</a>
                                     @*<button style="background-color:#004280 !important;color:white;" href="#tab2" type="button" class="btn btn-secondary margin-top-10 w100" onlick="validationCheck()">Please give me a call to discuss</button>*@
                                     <!--<a style="background-color:#F04E45 !important;color:white;" href="Coastguardreg"><button type="button" class="btn btn-secondary margin-top-10 w100">NO THANKS</button>-->
 
@@ -355,7 +357,7 @@
                                         <a href="#tab1" data-toggle="tab"><button style="width:100%; background-color:#F04E45 !important;color:white;" type="button" class="btn btn-secondary margin-top-10 w100">BACK</button></a>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" id="nextsec">
                                         <a onclick="validationCheck2(); return false;" id="nextButton" data-toggle="tab"><button style="width:100%; float:right; background-color:#72BF44 !important;color:white;" id="next" type="button" class="btn btn-secondary margin-top-10 w100">NEXT</button></a>
                                     </div>
 
@@ -616,9 +618,14 @@
                 return true;
             }
             else {
-                indiQuoteSpan.classList.add("hidden");
-                quoteInc.classList.add("hidden");
-                next.classList.add("hidden");
+                indiQuoteSpan.hidden = true;
+                quoteInc.classList.hidden = true;
+                next.classList.hidden = true;
+
+
+                //indiQuoteSpan.classList.add("hidden");
+                //quoteInc.classList.add("hidden");
+                //next.classList.add("hidden");
                 return false;
             }
         }
@@ -758,10 +765,12 @@
                 //h.style.display == "none"
                 c.hidden = true;
                 h.hidden = true;
-                //$('#ctypefgroup').hide();
-                //$('#hcfigfgroup').hide();
+                $('#ctypefgroup').hide();
+                $('#hcfigfgroup').hide();
             }
             else {
+                 c.hidden = false;
+                h.hidden = false;
                 $('#ctypefgroup').show();
                 $('#hcfigfgroup').show();
                 //c.classList.remove("hidden");
@@ -775,13 +784,21 @@
         };
 
         function pleaseCallButton() {
+            //var nextbtn = document.getElementById("nextButton");
             if (validationCheck()) {
                 SetCurrentTab('tab2');
                 saveQuickQuote();
+               
+
+                $('#nextButton').hide();
+                document.getElementById("nextButton").hidden = true;
+
+                 $('#vownrfgroup').hidden = true;
+                $('#callMeNext').hidden = false;
                 $('#vownrfgroup').hide();
                 $('#callMeNext').show();
-                document.getElementById("nextButton").style.display = "none";
-                document.getElementById("nextButton").style.visibility = "hidden";
+                 $('#nextsec').hide();
+                //document.getElementById("nextButton").hide();
             }
         }
 
@@ -839,7 +856,7 @@
             }
             debugger;
             quoteRes.hidden = false;
-            //$('#quoteResult').show();
+            $('#quoteResult').show();
             //quoteRes.classList.remove("hidden");
 
             for (i = 0; i < curTypes.length; i++) {
@@ -879,12 +896,21 @@
                     $('#mtype').attr('disabled', 'true');
                     $('#hastr').attr('readonly', 'readonly');
                     $('#hastr').attr('disabled', 'true');
+
                     $('#newQuote').show();
+                    newQuote.hidden = false;
+
                     //newQuote.classList.remove("hidden");
                     $('#qref').hide();
                     $('#indiQuoteSpan').show();
                     $('#quoteInc').show();
                     $('#next').show();
+
+                    
+                    qref.hidden = true;
+                    indiQuoteSpan.hidden = false;
+                    quoteInc.hidden = false;
+                    next.hidden = false;
 
                     //qref.classList.add("hidden");
                     //indiQuoteSpan.classList.remove("hidden");
@@ -957,10 +983,10 @@
                 c.hidden = false;
                 h.hidden = false;
 
-                    //$('#vtypefgroup').show();
-                    //$('#Jetski').show();
-                    //$('#ctypefgroup').show();
-                    //$('#hcfigfgroup').show();
+                    $('#vtypefgroup').show();
+                    $('#Jetski').show();
+                    $('#ctypefgroup').show();
+                    $('#hcfigfgroup').show();
 
                 //v.classList.remove("hidden");
                 //v4.classList.remove("hidden");
@@ -975,12 +1001,12 @@
                 h4.hidden = true;
 
 
-                    //$('#mtypefgroup').hide();
-                    //$('#hastrfgroup').hide();
-                    //$('#VOther').hide();
-                    //$('#Cement').hide();
-                    //$('#COther').hide();
-                    //$('#HOther').hide();
+                    $('#mtypefgroup').hide();
+                    $('#hastrfgroup').hide();
+                    $('#VOther').hide();
+                    $('#Cement').hide();
+                    $('#COther').hide();
+                    $('#HOther').hide();
 
                 //m.classList.add("hidden");
                 //t.classList.add("hidden");
@@ -992,11 +1018,11 @@
             }
             if (option == "Stored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                //$('#vtypefgroup').show();
-                //$('#Jetski').show();
-                //$('#ctypefgroup').show();
-                //$('#hcfigfgroup').show();
-                //$('#hastrfgroup').show();
+                $('#vtypefgroup').show();
+                $('#Jetski').show();
+                $('#ctypefgroup').show();
+                $('#hcfigfgroup').show();
+                $('#hastrfgroup').show();
 
                 
                 v.hidden = false;
@@ -1012,14 +1038,14 @@
 
                 m.hidden = true;
 
-                //$('#mtypefgroup').hide();
+                $('#mtypefgroup').hide();
 
                 //m.classList.add("hidden");
 
-                //$('#VOther').show();
-                //$('#Cement').show();
-                //$('#COther').show();
-                //$('#HOther').show();
+                $('#VOther').show();
+                $('#Cement').show();
+                $('#COther').show();
+                $('#HOther').show();
 
                 v5.hidden = false;
                 c7.hidden = false;
@@ -1034,27 +1060,28 @@
             if (option == "Berthed") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
                 v.hidden = false;
-                //$('#vtypefgroup').show();
+                $('#vtypefgroup').show();
                 //v.classList.remove("hidden");
 
                 v4.hidden = true;
                 v5.hidden = true;
 
-                //$('#Jetski').hide();
-                //$('#VOther').hide();
+                $('#Jetski').hide();
+                $('#VOther').hide();
 
                 //v4.classList.add("hidden");
                 //v5.classList.add("hidden");
                 c.hidden = false;
                 c7.hidden = false;
+                c8.hidden = false;
                 h.hidden = false;
                 h4.hidden = false;
 
-                //$('#ctypefgroup').show();
-                //$('#Cement').show();
-                //$('#COther').show();
-                //$('#hcfigfgroup').show();
-                //$('#HOther').show();
+                $('#ctypefgroup').show();
+                $('#Cement').show();
+                $('#COther').show();
+                $('#hcfigfgroup').show();
+                $('#HOther').show();
 
                 //c.classList.remove("hidden");
                 //c7.classList.remove("hidden");
@@ -1062,9 +1089,9 @@
                 //h.classList.remove("hidden");
                 //h4.classList.remove("hidden");
 
-                //$('#mtypefgroup').hide();
-                //$('#Marina').hide();
-                //$('#hastrfgroup').hide();
+                $('#mtypefgroup').hide();
+                $('#Marina').hide();
+                $('#hastrfgroup').hide();
 
                 m.hidden = true;
                 m2.hidden = true;
@@ -1077,10 +1104,10 @@
             }
             if (option == "Moored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                //$('#vtypefgroup').show();
-                //$('#ctypefgroup').show();
-                //$('#hcfigfgroup').show();
-                //$('#mtypefgroup').show();
+                $('#vtypefgroup').show();
+                $('#ctypefgroup').show();
+                $('#hcfigfgroup').show();
+                $('#mtypefgroup').show();
 
                 v.hidden = false;
                 c.hidden = false;
@@ -1093,8 +1120,8 @@
                 //h.classList.remove("hidden");
                 //m.classList.remove("hidden");
 
-                //$('#hastrfgroup').hide();
-                //$('#VOther').hide();
+                $('#hastrfgroup').hide();
+                $('#VOther').hide();
 
                 t.hidden = true;
                 v5.hidden = true;
@@ -1102,9 +1129,9 @@
                 //t.classList.add("hidden");
                 //v5.classList.add("hidden");
 
-                //$('#Cement').show();
-                //$('#COther').show();
-                //$('#HOther').show();
+                $('#Cement').show();
+                $('#COther').show();
+                $('#HOther').show();
 
                 c7.hidden = false;
                 c8.hidden = false;
@@ -1115,18 +1142,18 @@
                 //h4.classList.remove("hidden");
                 v4.hidden = false;
 
-                //$('#Jetski').show();
+                $('#Jetski').show();
                 //v4.classList.add("hidden");
             }
             if (option == "Multi") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
                 cTypeDrop.hidden = false;
 
-                //$('#CraftTypeDrop').show();
+                $('#CraftTypeDrop').show();
 
                 cType.hidden = true;
 
-                //$('#CraftType').hide();
+                $('#CraftType').hide();
 
                 //cTypeDrop.classList.remove("hidden");
                 //cType.classList.add("hidden");
@@ -1164,12 +1191,12 @@
 
             if (option == "Roadtrailer") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                //$('#mtypefgroup').hide();
-                //$('#hastrfgroup').hide();
-                //$('#VOther').hide();
-                //$('#Cement').hide();
-                //$('#COther').hide();
-                //$('#HOther').hide();
+                $('#mtypefgroup').hide();
+                $('#hastrfgroup').hide();
+                $('#VOther').hide();
+                $('#Cement').hide();
+                $('#COther').hide();
+                $('#HOther').hide();
 
                 m.hidden = true;
                 t.hidden = true;
@@ -1187,16 +1214,16 @@
             if (option == "Stored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
                 m.hidden = true;
-                //$('#mtypefgroup').hide();
+                $('#mtypefgroup').hide();
                 //m.classList.add("hidden");
             }
             if (option == "Berthed") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
-                //$('#mtypefgroup').hide();
-                //$('#hastrfgroup').hide();
-                //$('#VOther').hide();
-                //$('#Marina').hide();
-                //$('#Jetski').hide();
+                $('#mtypefgroup').hide();
+                $('#hastrfgroup').hide();
+                $('#VOther').hide();
+                $('#Marina').hide();
+                $('#Jetski').hide();
 
                 m.hidden = true;
                 t.hidden = true;
@@ -1212,9 +1239,9 @@
             if (option == "Moored") {
                 banner.src = "https://s3-us-west-1.amazonaws.com/mpak.proposalonline.com/images/CG_Header_MENUNew.jpg";
 
-                //$('#hastrfgroup').hide();
-                //$('#Jetski').hide();
-                //$('#VOther').hide();
+                $('#hastrfgroup').hide();
+                $('#Jetski').hide();
+                $('#VOther').hide();
 
                 t.hidden = true;
                 v4.hidden = true;
@@ -1230,13 +1257,13 @@
                 $('#CraftTypeDrop').show();
                 //cTypeDrop.classList.remove("hidden");
 
-                //$('#CraftType').hide();
-                //$('#vtypefgroup').hide();
-                //$('#ctypefgroup').hide();
-                //$('#hcfigfgroup').hide();
-                //$('#mtypefgroup').hide();
-                //$('#hastrfgroup').hide();
-                //$('#qquotfgroup').hide();
+                $('#CraftType').hide();
+                $('#vtypefgroup').hide();
+                $('#ctypefgroup').hide();
+                $('#hcfigfgroup').hide();
+                $('#mtypefgroup').hide();
+                $('#hastrfgroup').hide();
+                $('#qquotfgroup').hide();
 
                 cType.hidden = true;
                 v.hidden = true;
