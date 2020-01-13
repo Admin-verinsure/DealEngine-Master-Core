@@ -108,8 +108,8 @@
                     </tr>
                     <tr>
                         <td align="left" colspan="2">
-                            <button onclick="ClearForm()" class="btn btn-success btn-sm" id="ClearForm"><i class="fa fa-edit"></i>Clear</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button onclick="SaveBillingConfiguration()" class="btn btn-danger btn-sm" id="SaveBillingConfiguration"><i class="fa fa-trash"></i>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button onclick="SaveBillingConfiguration()" class="btn btn-success btn-sm" id="SaveBillingConfiguration"><i class="fa fa-edit"></i>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button onclick="ClearForm()" class="btn btn-danger btn-sm" id="ClearForm"><i class="fa fa-trash"></i>Clear</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <button onclick="SendInvoice()" class="btn btn-success btn-sm" id="SendInvoice"><i class="fa fa-edit"></i>Send Invoice</button>
                         </td>
 
@@ -120,7 +120,7 @@
     </div>
 </div>
 
-@if (Model.EGlobalSubmissions.Count > 0)
+@*@if (Model.EGlobalSubmissions.Count > 0)
 {
     <div id="content">
         <form method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
@@ -142,8 +142,7 @@
                             @item.SubmissionRequestXML
                         </td>
                         <td width="20%">
-                            @*<a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
-                                data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>*@
+                            
                         </td>
                     </tr>
                 }
@@ -151,7 +150,7 @@
         </form>
 
     </div>
-}
+}*@
 
 
 
