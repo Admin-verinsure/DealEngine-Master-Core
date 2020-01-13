@@ -342,7 +342,7 @@ namespace TechCertain.WebUI.Controllers
                             }
                         }
                     }
-                    
+
                     if (_appSettingService.RequireRSA)
                     {
                         var result = await LoginMarsh(user, viewModel.DevicePrint);
