@@ -1,77 +1,38 @@
 ﻿@model IEnumerable<TechCertain.WebUI.Models.PrivateServerViewModel>
-
 <!-- Header Start-->
 <header>
-    <span class="widget-icon"> <i class="fa fa-desktop txt-color-white"></i> </span>
+    <span class="widget-icon"> <i class="fa fa-desktop text-white"></i> </span>
     <h2> Private Servers </h2>
 </header>
-<!-- Header End -->
-<!-- widget div-->
-<div>
-    <!-- widget edit box -->
-    <div class="jarviswidget-editbox">
-        <div>
-            <label>Title:</label>
-            <input type="text" />
-        </div>
-    </div>
-    <!-- end widget edit box -->
-    <!-- widget content -->
-    <div class="widget-body no-padding">
-        @*<div class="widget-body-toolbar">
-            <div class="row">
-                <div class="col-xs-9 col-sm-5 col-md-5 col-lg-5">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                        <input class="form-control" id="prepend" placeholder="Filter" type="text">
-                    </div>
-                </div>
-                <div class="col-xs-3 col-sm-7 col-md-7 col-lg-7 text-right">
-                    <button id="btnAddServer" class="btn btn-success">
-                        <i class="fa fa-plus"></i> <span class="hidden-mobile">Add Server</span>
-                    </button>
-                </div>
-            </div>
-        </div>*@
-        <div class="table-responsive custom-scroll" style="max-height:290px; overflow-y: auto;">
-            <table id="privateServersTable" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Server Name</th>
-                        <th>Server Address</th>
-                        @*<th><a data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#serverList" href="/Admin/PrivateServerList">Refresh</a></th>*@
-                        <th>@*@Ajax.FixedActionLink("Refresh", "PrivateServerList", new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "serverList"})*@</th>                                                         
-                    </tr>
-                </thead>                                    
-                <tbody id="serverList">
 
-                    @{ Html.RenderPartial("_PrivateServerList", Model); }
+<form action="/Admin/AddPrivateServer" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#serverList"
+      data-ajax-success="ClearForm();" id="form0" method="post">
+    <table id="privateServersTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Server Name</th>
+                <th>Server Address</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="serverList">
+            @{ await Html.RenderPartialAsync("_PrivateServerList", Model); }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>@Html.TextBox("serverName")</td>
+                <td>@Html.TextBox("serverAddress") </td>
+                <td><button type="submit" class="btn btn-success btn-sm">Add</button></td>
+            </tr>
+        </tfoot>
+    </table>
+</form>
 
-                </tbody>  
-                <tfoot>
-					<tr>
-						<form action="/Admin/AddPrivateServer" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#serverList" 
-							data-ajax-success="ClearForm();" id="form0" method="post">
-							<td>@Html.TextBox("serverName")</td>
-							<td>@Html.TextBox("serverAddress") </td>
-						    <td><button type="submit" class="btn btn-success" >Add</button></td>
-						</form>
-						@*using (Ajax.BeginForm("AddPrivateServer", new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "wid-private-servers", OnSuccess = "alert('Success!')" }))
-						{
-						}*@
-					</tr>   
-                </tfoot>                               
-            </table>
-        </div>
-    </div>
-    <!-- end widget content -->
-</div>
-<!-- end widget div -->
 
 <script type="text/javascript">
-function ClearForm() {
-	$("#serverName").val("");
-    $("#serverAddress").val("");
-}
+    function ClearForm() {
+        $("#serverName").val("");
+        $("#serverAddress").val("");
+    }
 </script>
 

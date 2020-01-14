@@ -3,7 +3,7 @@
 
     <!-- Header Start-->
     <header>
-        <span class="widget-icon"> <i class="fa fa-desktop txt-color-white"></i> </span>
+        <span class="widget-icon"> <i class="fa fa-desktop text-white"></i> </span>
         <h2> Payment Merchants </h2>
     </header>
     <!-- Header End -->
@@ -33,7 +33,7 @@
                     </thead>
                     <tbody id="merchantList">
 
-                        @{ Html.RenderPartial("_MerchantList", Model); }
+                        @{ await Html.RenderPartialAsync("_MerchantList", Model); }
 
                     </tbody>
                     <tfoot>
