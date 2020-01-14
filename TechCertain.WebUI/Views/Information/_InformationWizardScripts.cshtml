@@ -57,6 +57,7 @@
 
            if (stepNumber === 0) {
                event.preventDefault();
+               debugger;
                if (stepDirection == "forward") {
                    var claim1 = $('#Claimexp1').val();
                    var claim2 = $('#Claimexp2').val();
@@ -64,8 +65,41 @@
                    var claim4 = $('#Claimexp4').val();
                    var claim5 = $('#Claimexp5').val();
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
+                   var hjfhd = document.querySelector('[aria-describedby="tblBoat_BoatName"]');
+                   var IsboatNamecount = 0;
+                   var value = "";
+                   //$('#tblBoat').find('tr').each(function (i, el) {
+                   //    var $tds = $(this).find('td'),
+                   //        product = $tds.eq(1).text();
+                   //    if (product == "") {
+                   //        IsboatName = false;
+                   //    }
+                   //});
+                   //hjfhd.each(function () {
+                   //    debugger;
+                   //        product = this.text();
+                   //    if (product == "") {
+                   //        IsboatNamecount ++;
+                   //    }
+                   //});
+                   $('#tblBoat tr').each(function () {
+                       debugger;
+                        var $tds = $(this).find('td'),
+                          value = $tds.eq(1).text().toString();
+                      
+                       if (value == false && value != "") {
+                           IsboatNamecount++;
+                       }
 
-                   if (Isboatexist == "false" && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   });
+
+                   if (IsboatNamecount == 1 && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound")) {
+
+                       window.alert("Please complete Vessel Information");
+                       $("#Vessel").trigger("click");
+                       return false;
+
+                   }else if ((Isboatexist == false ||  IsboatNamecount == 1) && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound")) {
 
                        window.alert("Please Add Atleast One Boat to proceed for policy. ");
                        $("#Vessel").trigger("click");
@@ -424,6 +458,12 @@
     $('.ClearBoat').css({ "background-color": "red", "color": "White" });
     $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
     $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
+    //$('.modal-body').css({ " max-height": "100%", "overflow-y": "auto" });
+
+//        .modal-body {
+//    max-height: calc(100vh - 210px);
+//    overflow-y: auto;
+//}
     //$('.multiselect').style({width:20px});
     //$('.multiselect').style({width:20px});
         //$('.multiselect-container.dropdown-menu.li').css({ "width": "248%"});
@@ -1650,7 +1690,7 @@ function UpdateChosen() {
         var sumInsured = $('#MotorSumInsured').val();
         var vehicleLocation = $('#MotorLocation').val();
         var year = $('#MotorYear').val();
-        var effectiveDate = $('#PlantEffectiveDate').val();
+        var effectiveDate = $('#MotorEffectiveDate').val();
         var result = true;
          if (effectiveDate == "") {
             $('#validatePlantEffectiveDate').html("<font color='red'>Field is required</font>")
@@ -1715,20 +1755,26 @@ function UpdateChosen() {
         }
     }
 
-    function ValidateMotorVehicleModal() {
+    function ValidateMotorVehicleModal(event) {
+        debugger;
+        event.preventDefault();
 
         if (!(document.getElementById("YearModal").validity.valueMissing) && !(document.getElementById("MakeModal").validity.valueMissing)
             && !(document.getElementById("ModelModal").validity.valueMissing) && !(document.getElementById("VehicleLocationModal").validity.valueMissing)
-            && !(document.getElementById("SumInsuredModal").validity.valueMissing)) {
+            && !(document.getElementById("SumInsuredModal").validity.valueMissing) && !(document.getElementById("TrailerEffectiveDateModal").validity.valueMissing)) {
 
             AddMotorVehicleModal(event);
             $('#addTrailerModal').hide();
+        } else {
+            txt = "Please provide required values";
+              document.getElementById("trailerdemo").innerHTML = txt;
         }
 
     }
 
 
     function AddMotorVehicleModal(event) {
+        debugger;
                 event.preventDefault();
 
         var informationId = $('#AnswerSheetId').serialize();
@@ -1749,7 +1795,7 @@ function UpdateChosen() {
         var garagelocation_id = $('#VehicleLocationModal').serialize();
         var data = $.grep([registration, validated, vin, vehicleeffectivedate, vehicleceasedate, vehicleceasereason, garagelocation_id, chassisnumber, year, make, model, notes, informationId], Boolean).join("&");
          data = data + "&SumInsured=" + groupsuminsured.replace(/[^0-9\.-]+/g, "");
-
+        debugger;
 
           $('#AddTrailer').show();
         $.ajax({
@@ -3478,7 +3524,7 @@ function EditClaim(claimId, tableId) {
         data = data + "&MotorType=" + Motortype;
         data = data + "&HullConfiguration=" + hullconfig;
         data = data + "&Sum=" + maxSumInsured.replace(/[^0-9\.-]+/g, "");
-
+        debugger;
     $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("AddBoat", "Services")',
@@ -4778,6 +4824,7 @@ async: true
         $('#SubUse.'+classId).val(data.subUse);
         $('#VehicleLocation.' + classId).val(data.vehicleLocation);
         $('#EffectiveDate.' + classId).val(data.effectiveDate);
+        $('#MotorEffectiveDate.' + classId).val(data.effectiveDate);
         $('#CeaseDate.' + classId).val(data.ceaseDate);
         $('#CeaseReason.' + classId).val(data.ceaseReason);
         $('#InterestedParties.'+classId).val(data.interestedParties);
@@ -7117,7 +7164,7 @@ async: true
             $('#RegistrationModal').val('');
             $(vesselTrailerVIN).hide();
             $(vesselTrailerChassis).hide();
-            $(vesselTrailerEffective).hide();
+            $(vesselTrailerEffective).show();
             $(vesselTrailerCease).hide();
             $(vesselTrailerCeaseReason).hide();
             $(vesselTrailerYear).show();
