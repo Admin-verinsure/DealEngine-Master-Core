@@ -1,4 +1,5 @@
-﻿using TechCertain.Domain.Entities.Abstracts;
+﻿using System;
+using TechCertain.Domain.Entities.Abstracts;
 
 namespace TechCertain.Domain.Entities
 {
@@ -17,6 +18,7 @@ namespace TechCertain.Domain.Entities
         public virtual Package EGlobalSubmissionPackage { get; set; }
 
         public virtual string SubmissionRequestXML { get; set; }
-
+        public virtual EGlobalResponse EGlobalResponse { get; set; }
+        public virtual Guid TransactionReferenceID { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace TechCertain.Domain.Entities
 
         public virtual string ResponseXML { get; set; }
         public virtual ClientProgramme EGlobalSubmissionClientProgramme { get; set; }
-        //public virtual EGlobalSubmission EGlobalSubmission { get; set; }
+        public virtual EGlobalSubmission EGlobalSubmission { get; set; }
         public virtual string MasterAgreementReferenceID { get; set; }
         public virtual string ResponseType { get; set; }
         public virtual string ExtSysKey { get; set; }

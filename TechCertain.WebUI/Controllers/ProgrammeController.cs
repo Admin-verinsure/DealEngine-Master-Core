@@ -38,12 +38,13 @@ namespace TechCertain.WebUI.Controllers
         IRuleService _RuleService;
         IMapper _mapper;
         IHttpClientService _httpClientService;
+        IEGlobalSubmissionService _eGlobalSubmissionService;
 
         public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<User> userRepo,
                                  IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
                                  IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRuleService ruleService, IMapperSession<Document> documentRepository,
                                  IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService, ISharedDataRoleService sharedDataRoleService,
-                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IHttpClientService httpClientService)
+                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IHttpClientService httpClientService, IEGlobalSubmissionService eGlobalSubmissionService)
             : base (userRepository)
         {
             _sharedDataRoleService = sharedDataRoleService;
@@ -64,6 +65,7 @@ namespace TechCertain.WebUI.Controllers
             _emailService = emailService;
             _mapper = mapper;
             _httpClientService = httpClientService;
+            _eGlobalSubmissionService = eGlobalSubmissionService;
         }
 
         [HttpGet]
@@ -461,12 +463,16 @@ namespace TechCertain.WebUI.Controllers
             {
                 throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
-
-            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
+            
+            Guid transactionreferenceid = Guid.NewGuid();
+            
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid);
 
             var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
-            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
+            EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
+            
+            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
 
             if (programme.ClientAgreementEGlobalResponses.Count > 0)
             {

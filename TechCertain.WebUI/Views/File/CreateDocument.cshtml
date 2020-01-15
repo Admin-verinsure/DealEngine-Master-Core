@@ -40,27 +40,30 @@
                                                 <br />
                                                 <h3><strong>Setup </strong></h3>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-8 col-lg-8 ">
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.TextBoxFor(m => m.Name)
+
+                                                                @Html.TextBoxFor(m => m.Name, new { style="Width:25%" , @placeholder = Model.Name + "Name" })
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-8 col-lg-8">
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.TextAreaFor(m => m.Description)
+                                                                @*@Html.TextAreaFor(m => m.UserTask.Description, new { name = "content", cols = "100", rows = "2", @placeholder = "Task Description" })*@
+
+                                                                @Html.TextAreaFor(m => m.Description , new {style="Width:25%" , @placeholder = Model.Description + "Description"})
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-8 col-lg-8">
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
@@ -111,7 +114,11 @@
         </div>
     </section>
 </div>
-
+@*<style>
+    .input-group{
+        width:80%;
+    }
+</style>*@
 @section pagespecific {
 
     <script src="~/jquery/jquery.js"></script>
@@ -222,6 +229,24 @@ $(document).ready(function () {
      });
 });
 
+
+        $(window).on("load", function () {
+            debugger;
+            if ("@Model.Name" == "First Mate Cover Policy Wording") {
+              $("#documentType").val("0");
+            } else  if ("@Model.Name" == "First Mate Cover Policy Schedule") {
+                $("#documentType").val("2");
+            }else  if ("@Model.Name" == "First Mate Cover Insurance Certificate") {
+                $("#documentType").val("1");
+            }else  if ("@Model.Name" == "First Mate Cover Payment Confirmation") {
+                $("#documentType").val("3");
+            }else  if ("@Model.Name" == "First Mate Cover Invoice") {
+                $("#documentType").val("4");
+            }
+
+
+          
+        });
 
 
     </script>

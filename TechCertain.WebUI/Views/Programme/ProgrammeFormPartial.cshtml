@@ -47,38 +47,37 @@
                 </tr>
                 <tr class="table-light">
                     <td>
+                    </td>
+                    <td>
                         <label class="checkbox">
                             @Html.CheckBoxFor(m => m.UsesEGlobal)
                             <i></i>I want this programme to use EGlobal API.
                         </label>
                     </td>
-                    <td>
-
-                    </td>
                 </tr>
                 <tr>
+                    <td>
+                    </td>
                     <td>
                         <label class="checkbox">
                             @Html.CheckBoxFor(m => m.IsPublic)
                             <i></i>I want this programme to be publicly available.
                         </label>
                     </td>
-                    <td>
-
-                    </td>
                 </tr>
                 <tr class="table-light">
+                    <td>
+                    </td>
                     <td>
                         <label class="checkbox">
                             @Html.CheckBoxFor(m => m.StopAgreement)
                             <i></i>I want this programme to suspend all agreements.
                         </label>
                     </td>
-                    <td>
-
-                    </td>
                 </tr>
                 <tr>
+                    <td>
+                    </td>      
                     <td>
                         @if (User.HasClaim("EditProgramme", "EditProgramme"))
                         {
@@ -86,9 +85,6 @@
                                 <button type="submit" class="btn btn-success"> Save</button>
                             </div>
                         }
-                    </td>      
-                    <td>
-
                     </td>
                 </tr>
             </tbody>

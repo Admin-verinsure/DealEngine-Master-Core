@@ -32,7 +32,7 @@ namespace TechCertain.Services.Impl
 
         public async Task<List<EGlobalSubmission>> GetAllEGlobalSubmissions()
         {
-            return await _eGlobalSubmissionRepository.FindAll().Where(egs => egs.DateDeleted != null).ToListAsync();
+            return await _eGlobalSubmissionRepository.FindAll().Where(egs => egs.DateDeleted == null).ToListAsync();
         }
 
         public async Task<EGlobalSubmission> GetEGlobalSubmission(Guid eGlobalSubmissionId)
@@ -46,6 +46,17 @@ namespace TechCertain.Services.Impl
                 return eGlobalSubmission;
             }
             throw new Exception("EGlobalSubmission with id [" + eGlobalSubmissionId + "] does not exist in the system");
+        }
+
+        public async Task<EGlobalSubmission> GetEGlobalSubmissionByTransaction(Guid transactionreferenceid)
+        {
+            EGlobalSubmission eGlobalSubmission = await _eGlobalSubmissionRepository.FindAll().FirstOrDefaultAsync(egbt => egbt.DateDeleted == null && egbt.TransactionReferenceID == transactionreferenceid);
+            if (eGlobalSubmission != null) {
+                return eGlobalSubmission;
+            } else
+            {
+                throw new Exception("EGlobalSubmission with Transaction ID [" + transactionreferenceid + "] does not exist in the system");
+            }
         }
 
         public async Task<bool> UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission)
