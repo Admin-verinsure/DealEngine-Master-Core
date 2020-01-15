@@ -1,11 +1,11 @@
-﻿using System;
+﻿
+using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Microsoft.Extensions.Logging;
 using TechCertain.Services.Interfaces;
 
 namespace DealEngine.Infrastructure.AuthorizationRSA

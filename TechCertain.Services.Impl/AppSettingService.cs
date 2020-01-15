@@ -66,5 +66,13 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetValue<string>("GetCompanyTitle");
             }
         }
+
+        public string GetConnectionString
+        {
+            get
+            {
+                return _configuration.GetConnectionString("TechCertainConnection");
+            }
+        }
     }
 }
