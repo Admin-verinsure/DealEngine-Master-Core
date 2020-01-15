@@ -28,7 +28,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
         /// </summary>
         /// <param name="objPolicy">Object policy.</param>
-        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
+        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, Guid transactionreferenceid)
         {
             string xml = "Failed to Serialize programme ";
             EGlobalAPI = new EGlobalAPI();
@@ -50,6 +50,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
+                            eGlobalSubmission.TransactionReferenceID = transactionreferenceid;
                             eGlobalSubmission.SubmissionRequestXML = xml;
                             eGlobalSubmission.EGlobalSubmissionPackage = package;
                             programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
@@ -71,23 +72,12 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return xml;
         }
 
-        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
+        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, EGlobalSubmission eglobalsubmission)
         {
             string xml = "Failed to Deserialize programme";            
             try
             {
-                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, CurrentUser, _unitOfWork);
-
-                ////Save the response transaction
-                //using (var uow = _unitOfWork.BeginUnitOfWork())
-                //{
-                //    EGlobalResponse eGlobalResponse = new EGlobalResponse(CurrentUser());
-                //    eGlobalResponse.ResponseXML = xml;
-                //    programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
-
-                //    uow.Commit();
-
-                //}
+                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, CurrentUser, _unitOfWork, eglobalsubmission);
             }
             catch (Exception ex)
             {

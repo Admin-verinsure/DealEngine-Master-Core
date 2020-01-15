@@ -1867,13 +1867,16 @@ namespace TechCertain.WebUI.Controllers
             {
                 throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
             }
-
-            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
+            
+            Guid transactionreferenceid = Guid.NewGuid();
+            
+            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid);
 
             var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
-            Console.WriteLine(byteResponse);
-
-            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
+            
+            EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
+            
+            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
 
             if (programme.ClientAgreementEGlobalResponses.Count > 0)
             {
