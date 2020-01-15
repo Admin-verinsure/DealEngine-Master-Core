@@ -445,7 +445,15 @@
         </div>
     </article>
 </div>
-
+<div class="modal" id="getQuoteModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p><img src="/img/loading.gif" /> Saving your Quote. Please wait...</p>
+            </div>
+        </div>
+    </div>
+</div>
 <style>
     .coastguardformtd{
         width: 1100px;
@@ -668,6 +676,7 @@
             if (z == 0 && type == 'pleaseCall') {
                 addCGData();
                 t2.classList.remove("active");
+
                 $.ajax({
                     type: "POST",
                     url: "/Services/CoastGuardSelfRegCall",
@@ -697,6 +706,8 @@
 
         function postCGData() {
             debugger;
+              $('#getQuoteModal').show();
+
             $.ajax({
                 type: "POST",
                 url: "/Services/CoastGuardSelfReg",
@@ -704,6 +715,8 @@
                 traditional: true,
             })
                 .done(function (data, textStatus, jQxhr) {
+                    $('#getQuoteModal').hide();
+
                     if (data) {
                         t3.classList.add("active");
                         $('#response pre').html(data);

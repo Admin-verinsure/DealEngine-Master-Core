@@ -43,12 +43,11 @@
                     </tr>
                 </thead>
 
-                <tr>
+                <tr class="table-light">
                     <td align="left">
                         Manage UIS Issue Notification Users
                     </td>
                     <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-
                 </tr>
 
                 <tr>
@@ -56,7 +55,13 @@
                         Manage UIS Submission Notification Users
                     </td>
                     <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                </tr>
 
+                <tr class="table-light">
+                    <td align="left">
+                        Manage Agreement Refer Notification Users
+                    </td>
+                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
                 </tr>
 
                 <tr>
@@ -64,24 +69,13 @@
                         Manage Agreement Refer Notification Users
                     </td>
                     <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-
                 </tr>
 
-                <tr>
-                    <td align="left">
-                        Manage Agreement Refer Notification Users
-                    </td>
-                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-
-                </tr>
-
-                <tr>
+                <tr class="table-light">
                     <td align="left">
                         Manage Agreement Bound Notification Users
                     </td>
-
                     <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-
                 </tr>
 
                 @foreach (var product in Model.Product)

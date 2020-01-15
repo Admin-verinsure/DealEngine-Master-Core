@@ -1,8 +1,7 @@
 ﻿@model IEnumerable<TechCertain.WebUI.Models.PaymentGatewayViewModel>
-
 <!-- Header Start-->
 <header>
-    <span class="widget-icon"> <i class="fa fa-desktop txt-color-white"></i> </span>
+    <span class="widget-icon"> <i class="fa fa-desktop text-white"></i> </span>
     <h2> Payment Gateways </h2>
 </header>
 <!-- Header End -->
@@ -15,40 +14,36 @@
             <input type="text" />
         </div>
     </div>
-    <!-- end widget edit box -->
-    <!-- widget content -->
-    <div class="widget-body no-padding">
-        <div class="table-responsive custom-scroll" style="max-height:290px; overflow-y: auto;">
-            <table id="paymentGatwaysTable" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Payment Gateway Name</th>
-                        <th>Payment Gateway Web Service URL</th>
-                        <th>Payment Gateway Response Page URL</th>
-                        <th>Payment Gateway Type</th>
-                        <th>@*@Ajax.FixedActionLink("Refresh", "PaymentGatewayList", new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "paymentGatewayList" })*@</th>
-                    </tr>
-                </thead>
-                <tbody id="paymentGatewayList">
 
-                    @{ Html.RenderPartial("_PaymentGatewayList", Model); }
+    <form action="/Admin/AddPaymentGateway" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#paymentGatewayList"
+          data-ajax-success="ClearPaymentGatewayForm();" id="paymentgatewayform" method="post">
+        <table id="paymentGatwaysTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Payment Gateway Name</th>
+                    <th>Payment Gateway Web Service URL</th>
+                    <th>Payment Gateway Response Page URL</th>
+                    <th>Payment Gateway Type</th>
+                    <th>@*@Ajax.FixedActionLink("Refresh", "PaymentGatewayList", new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "paymentGatewayList" })*@</th>
+                </tr>
+            </thead>
+            <tbody id="paymentGatewayList">
 
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <form action="/Admin/AddPaymentGateway" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#paymentGatewayList"
-                              data-ajax-success="ClearPaymentGatewayForm();" id="paymentgatewayform" method="post">
-                            <td>@Html.TextBox("paymentGatewayName") </td>
-                            <td>@Html.TextBox("paymentGatewayWebServiceURL")</td>
-                            <td>@Html.TextBox("paymentGatewayResponsePageURL") </td>
-                            <td>@Html.TextBox("paymentGatewayType") </td>
-                            <td><button type="submit" class="btn btn-success" >Add</button></td>
-                        </form>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
+                @{ await Html.RenderPartialAsync("_PaymentGatewayList", Model); }
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>@Html.TextBox("paymentGatewayName") </td>
+                    <td>@Html.TextBox("paymentGatewayWebServiceURL")</td>
+                    <td>@Html.TextBox("paymentGatewayResponsePageURL") </td>
+                    <td>@Html.TextBox("paymentGatewayType") </td>
+                    <td><button type="submit" class="btn btn-success">Add</button></td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </form>
     <!-- end widget content -->
 </div>
 <!-- end widget div -->
