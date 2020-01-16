@@ -149,7 +149,7 @@
 
 
                                 <td width="9%">
-                                    <a class="btnView" data-prop="@submission.SubmissionRequestXML">Show xml transaction</a>
+                                    <a class="btnView" data-prop="@submission.SubmissionRequestXML">View xml transaction</a>
                                     @*<a onclick="ShowXML(this)" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-prop="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
 
                                     @*<a onclick="ShowXML(@submission.SubmissionRequestXML)"  aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
@@ -262,9 +262,11 @@
 
         $('.btnView').click(function () {
             debugger;
-           var prop = $(this).data('prop');
-           alert(prop);
-         });
+            var prop = $(this).data('prop');
+            var w = window.open();
+             //var html =  $(this).data('prop').html();
+            $(w.document.body).val(prop);
+        });
 
 
 
