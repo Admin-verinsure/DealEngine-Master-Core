@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Domain.Exceptions;
 using TechCertain.Infrastructure.FluentNHibernate;
@@ -78,13 +79,13 @@ namespace TechCertain.Services.Impl
 			return _singleTokenRepository.GetByIdAsync(token).Result;
 		}
 
-		public bool ValidSingleUseToken(Guid token)
+		public async Task<bool> ValidSingleUseToken(Guid token)
 		{
-			SingleUseToken request = _singleTokenRepository.GetByIdAsync(token).Result;
+			SingleUseToken request = await _singleTokenRepository.GetByIdAsync(token);
 			if (request == null)
 				return false;
 
-			User user = _userService.GetUser (request.UserID).Result;
+			User user = await _userService.GetUserById(request.UserID);
 			if (user == null)
 				return false;
 
@@ -92,14 +93,14 @@ namespace TechCertain.Services.Impl
 			return request.TokenIsValid(user, "password");
 		}
 
-		public bool UseSingleUseToken(Guid token)
+		public async Task<bool> UseSingleUseToken(Guid token)
 		{
-			SingleUseToken request = _singleTokenRepository.GetByIdAsync(token).Result;
+			SingleUseToken request = await _singleTokenRepository.GetByIdAsync(token);
 			if (request == null)
 				return false;
 
 			request.SetUsed ();
-            _singleTokenRepository.AddAsync(request);            
+            await _singleTokenRepository.AddAsync(request);            
 
 			return true;
 		}

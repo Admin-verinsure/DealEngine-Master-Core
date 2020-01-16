@@ -18,9 +18,9 @@ namespace TechCertain.Services.Impl
             _ProductRepository = ProductRepository;
         }
 
-        public  Product GetAllProducts()
+        public async Task<List<Product>> GetAllProducts()
         {
-            return _ProductRepository.FindAll().FirstOrDefault();
+            return await _ProductRepository.FindAll().ToListAsync();
         }
 
     }

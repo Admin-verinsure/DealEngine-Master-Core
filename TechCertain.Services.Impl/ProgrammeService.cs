@@ -158,6 +158,11 @@ namespace TechCertain.Services.Impl
             clientProgramme.InformationSheet.BusinessContracts.Add(businessContract);
             await _clientProgrammeRepository.UpdateAsync(clientProgramme);
         }
+
+        public async Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID)
+        {
+            return await _clientProgrammeRepository.GetByIdAsync(clientProgrammeID);
+        }
     }
 }
 

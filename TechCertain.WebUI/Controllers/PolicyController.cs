@@ -204,7 +204,7 @@ namespace TechCertain.WebUI.Controllers
 
                 foreach (PolicyTermSection doc in sections)
 				{
-                    var docCreator = await _userService.GetUser(doc.Creator);
+                    var docCreator = await _userService.GetUserById(doc.Creator);
                     try
 					{
 						JqGridRow row = new JqGridRow(doc.Id);
@@ -417,7 +417,7 @@ namespace TechCertain.WebUI.Controllers
 
 			Guid termId = new Guid (id);
 			PolicyTermSection section = await _termBuilderService.GetTerm(termId);
-            var sectionCreator = await _userService.GetUser(section.Creator);
+            var sectionCreator = await _userService.GetUserById(section.Creator);
             PolicySectionVM model = new PolicySectionVM ();
 			model.Description = new DescriptionSectionVM () {
 				Creator = section.Creator,
@@ -471,7 +471,7 @@ namespace TechCertain.WebUI.Controllers
 			Guid termId = new Guid (id);
             PolicyTermSection section = await _termBuilderService.GetTerm(termId);
 
-            var sectionCreator = await _userService.GetUser(section.Creator);
+            var sectionCreator = await _userService.GetUserById(section.Creator);
             PolicySectionVM model = new PolicySectionVM ();
 			model.Description = new DescriptionSectionVM () {
 				Creator = section.Creator,

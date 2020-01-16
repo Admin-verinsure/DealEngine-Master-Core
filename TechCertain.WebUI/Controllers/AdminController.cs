@@ -81,13 +81,13 @@ namespace TechCertain.WebUI.Controllers
                 model.PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers);
                 model.PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways);
                 model.Merchants = _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants);
+                return View(model);
             }
             catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            }
-
-            return View(model);
+                return RedirectToAction("Error500", "Error");
+            }            
         }
         
         [HttpGet]

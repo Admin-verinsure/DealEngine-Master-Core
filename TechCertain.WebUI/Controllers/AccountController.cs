@@ -126,7 +126,7 @@ namespace TechCertain.WebUI.Controllers
                     //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
-                    user = await _userService.GetUser(token.UserID);
+                    user = await _userService.GetUserById(token.UserID);
                     if (user != null)
                     {
                         //change the users password to an intermediate
@@ -185,7 +185,8 @@ namespace TechCertain.WebUI.Controllers
         {
             if (id != Guid.Empty && _authenticationService.GetToken(id) != null)
             {
-                if (_authenticationService.ValidSingleUseToken(id))
+                var result = await _authenticationService.ValidSingleUseToken(id);
+                if (result)
                     return View();
                 // invalid token? display an error
                 return Redirect("~/Error/InvalidPasswordReset");
@@ -211,7 +212,7 @@ namespace TechCertain.WebUI.Controllers
 					return View ();
 				}
                 SingleUseToken st = _authenticationService.GetToken(id);
-                User user = await _userService.GetUser(st.UserID);
+                User user = await _userService.GetUserById(st.UserID);
                 if (user == null)
                     // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
                     throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
@@ -717,7 +718,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                
             }
             return Redirect("~/Account/ProfileEditor");
         }
@@ -780,7 +781,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ManageUser (Guid Id)
 		{
-            var user = await _userService.GetUser(Id);
+            var user = await _userService.GetUserById(Id);
             var accountModel = new ManageUserViewModel(user);
             //accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
 

@@ -153,7 +153,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveRoleToUser(Guid UserId, string[] RoleIds)
         {
-            var user = await _userService.GetUser(UserId);
+            var user = await _userService.GetUserById(UserId);
             var identityUser = await _userManager.FindByNameAsync(user.UserName);
             if(identityUser == null)
             {
