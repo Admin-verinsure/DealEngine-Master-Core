@@ -6,6 +6,10 @@ using TechCertain.WebUI.Models.Image;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.Infrastructure.FluentNHibernate;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+
+
 
 
 namespace TechCertain.WebUI.Controllers
@@ -14,14 +18,15 @@ namespace TechCertain.WebUI.Controllers
     {
         IMapperSession<CKImage> _ckimageRepository;
         private readonly ICKImageService _ckimageService;
-
+        private readonly IWebHostEnvironment _hostingEnv;
         IMapperSession<User> _userRepository;
 
-        public CKImageController(IUserService userRepository, IMapperSession<CKImage> ckimageRepository, ICKImageService ckimageService)
+        public CKImageController(IUserService userRepository, IMapperSession<CKImage> ckimageRepository, ICKImageService ckimageService, IWebHostEnvironment hostingEnv)
             : base(userRepository)
         {
             _ckimageRepository = ckimageRepository;
             _ckimageService = ckimageService;
+            _hostingEnv = hostingEnv;
         }
 
 
@@ -47,18 +52,15 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(CKImageUploadViewModel model)
         {
-            var contents = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-            
-   
+
             if (model != null)
             {
                 if (model.Image != null)
                 {
-                    // Convert to Byte Array 
-                     using (var memstream = new MemoryStream())
+                    using (var memstream = new MemoryStream())
                     {
                         model.Image.CopyTo(memstream);
-                        contents = memstream.ToArray();
+                        // contents = memstream.ToArray();
                         // contents = Convert.ToBase64String(ImageBytes); // if you want a string use this.
                     }
                 }
@@ -66,18 +68,78 @@ namespace TechCertain.WebUI.Controllers
                 CKImage newCKImage = new CKImage
                 {
                     Name = model.Name,
-                    Contents = contents,
                 };
 
                 await _ckimageRepository.AddAsync(newCKImage);
 
                 return Redirect("~/CKImage/CKImageHome");
             }
+
             return Redirect("~/CKImage/CKImageHome");
         }
 
+        public async Task<IActionResult> CKUpload()
+        {
+            IFormFileCollection files = HttpContext.Request.Form.Files;
+            int fileCount = files.Count;
+            IFormFile file = null;
+
+            if (fileCount == 0){
+                return BadRequest();
+            }
+
+            else if (fileCount == 1){
+                foreach (var x in files)
+                {
+                    file = x;
+                }
+            }
+            else {
+                 return BadRequest();
+            }           
+
+            if (file != null && file.Length > 0){
+                var name = file.FileName;
+                var path = Path.Combine(_hostingEnv.WebRootPath, "images", name);
+                var json = Json(new{path});
+                string url = "";
+
+                try
+                {
+
+                    using (var fileStream = new FileStream(path, FileMode.Create)){ 
+                        await file.CopyToAsync(fileStream);
+                        url = "../images/" + name;
+                        json = Json(new {url });
+                    }
+
+                    CKImage newCKImage = new CKImage
+                    {
+                        Name = name,
+                        Path = url,
+                        FullPath = path
+                    };
+
+                    await _ckimageRepository.AddAsync(newCKImage);
+
+                    return json;
+                }
+
+                catch (Exception Ex)
+                {
+                    Console.WriteLine(Ex.ToString());
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            return BadRequest();
+        }
+
         [HttpPost]
-        public IActionResult Delete(CKImageUploadViewModel model)
+        public IActionResult Delete()
         {
             //_ckimageRepository.AddAsync(newCKImage);           
             return View("~/Views/CKImage/CKImageHome.cshtml");

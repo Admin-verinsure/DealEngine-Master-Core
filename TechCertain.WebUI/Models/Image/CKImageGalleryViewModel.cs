@@ -17,5 +17,6 @@ namespace TechCertain.WebUI.Models.Image
         public string ImagePath { get; set; }
 
 
+
     }
 }
