@@ -11,34 +11,39 @@ using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.ControlModels;
 using TechCertain.WebUI.Models.Policy;
-using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class PolicyController : BaseController
     {
 		IDocumentService _policyDocumentService;
-		ITermBuilderService _termBuilderService;
-		IMapperSession<RiskCategory> _riskRepository;
-        IMapperSession<Product> _productRepository;
-        IUnitOfWork _unitOfWork;
+		ITermBuilderService _termBuilderService;		
+		IRiskCategoryService _riskCategoryService;
+		IProductService _productService;
 		IMapper _mapper;
+		IApplicationLoggingService _applicationLoggingService;
+		ILogger<PolicyController> _logger;
 
-		public PolicyController(IUserService userRepository,
-                                IDocumentService policyDocumentService,
-								ITermBuilderService termBuilderService,
-                                IMapperSession<Product> productRepository,
-                                IMapperSession<RiskCategory> riskRepository,
-								IUnitOfWork unitOfWork,
-								IMapper mapper)
+		public PolicyController(
+			ILogger<PolicyController> logger,
+			IApplicationLoggingService applicationLoggingService,
+			IRiskCategoryService riskCategoryService,
+			IProductService productService,
+			IUserService userRepository,
+			IDocumentService policyDocumentService,
+			ITermBuilderService termBuilderService,						
+			IMapper mapper
+			)
 			: base (userRepository)
 		{
-			_policyDocumentService = policyDocumentService;
-            _productRepository = productRepository;
+			_logger = logger;
+			_applicationLoggingService = applicationLoggingService;
+			_riskCategoryService = riskCategoryService;
+			_productService = productService;
+			_policyDocumentService = policyDocumentService;            
             _termBuilderService = termBuilderService;
-			_riskRepository = riskRepository;
-			_unitOfWork = unitOfWork;
 			_mapper = mapper;
 
 		}
@@ -47,41 +52,45 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> PolicyIndex()
         {
 			PolicyDocumentListViewModel documents = new PolicyDocumentListViewModel ();
-
 			documents.Documents = new List<PolicyDocumentViewModel> ();
+			User user = null;
 
-            var documentTemplateList = await _policyDocumentService.GetDocumentTemplates();
-            foreach (Old_PolicyDocumentTemplate doc in documentTemplateList)
+			try
 			{
-				PolicyDocumentViewModel model = new PolicyDocumentViewModel ();
-				model.Creator = doc.Creator;
-				model.CustomJurisdiction = doc.CustomJurisdiction;
-				model.CustomTerritory = doc.CustomTerritory;
-				model.Jurisdiction = doc.Jurisdiction;
-				model.Owner = doc.Owner;
-				model.Revision = doc.Revision;
-				model.Territory = doc.Territory;
-				model.Text = doc.Text;
-				model.Title = doc.Title;
-				model.DocumentType = doc.DocumentType;
-				model.Version = doc.Version;
+				user = await CurrentUser();
+				var documentTemplateList = await _policyDocumentService.GetDocumentTemplates();
+				foreach (Old_PolicyDocumentTemplate doc in documentTemplateList)
+				{
+					PolicyDocumentViewModel model = new PolicyDocumentViewModel();
+					model.Creator = doc.Creator;
+					model.CustomJurisdiction = doc.CustomJurisdiction;
+					model.CustomTerritory = doc.CustomTerritory;
+					model.Jurisdiction = doc.Jurisdiction;
+					model.Owner = doc.Owner;
+					model.Revision = doc.Revision;
+					model.Territory = doc.Territory;
+					model.Text = doc.Text;
+					model.Title = doc.Title;
+					model.DocumentType = doc.DocumentType;
+					model.Version = doc.Version;
 
-				documents.Documents.Add (model);
+					documents.Documents.Add(model);
+				}
+
+				return View(documents);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
 			}
 
-			return View(documents);
 		}
 
 		[Obsolete]
 		[HttpGet]
 		public async Task<IActionResult> DocumentBuilder()
 		{
-//			List<PolicyDocumentViewModel> documents = new List<PolicyDocumentViewModel> () {
-//				new PolicyDocumentViewModel() { Title = "Wording",  Type = "Wording 1",  Owner = "Broker A", Creator = "Broker A" },
-//				new PolicyDocumentViewModel() { Title = "Policy",   Type = "Policy 1",   Owner = "Broker B", Creator = "Broker B" },
-//				new PolicyDocumentViewModel() { Title = "Schedule", Type = "Schedule 1", Owner = "Broker C", Creator = "Broker C" }
-//			};
-
 			PolicyDocumentViewModel policyDocument = new PolicyDocumentViewModel ();
 
 			return View(policyDocument);
@@ -135,61 +144,59 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Risks ()
 		{
-			IQueryable<RiskCategory> risks = _riskRepository.FindAll();
+			User user = null;
 
-			IList<InsuranceRiskCategory> riskCategories = _mapper.Map<IList<InsuranceRiskCategory>> (risks);
-			IList<SelectListItem> selectList = new List<SelectListItem> ();
-			foreach (RiskCategory risk in risks)
-				selectList.Add (new SelectListItem { Text = risk.Name, Value = risk.Name });
+			try
+			{
+				user = await CurrentUser();
+				var riskCategoryList = await _riskCategoryService.GetAllRiskCategories();
+				IList<InsuranceRiskCategory> riskCategories = _mapper.Map<IList<InsuranceRiskCategory>>(riskCategoryList);
+				IList<SelectListItem> selectList = new List<SelectListItem>();
+				foreach (RiskCategory risk in riskCategoryList)
+					selectList.Add(new SelectListItem { Text = risk.Name, Value = risk.Name });
 
-			InsuranceRiskCategories model = new InsuranceRiskCategories {
-				CategoriesList = riskCategories,
-				CategoryItems = selectList
-			};
+				InsuranceRiskCategories model = new InsuranceRiskCategories
+				{
+					CategoriesList = riskCategories,
+					CategoryItems = selectList
+				};
 
-			// TODO - load from service
-			//InsuranceRiskCategories riskCategories = new InsuranceRiskCategories () {
-			//	new InsuranceRiskCategory ("People", ""),
-			//	new InsuranceRiskCategory ("Assets", ""),
-			//	new InsuranceRiskCategory ("Liabilities", ""),
-			//	new InsuranceRiskCategory ("Accidents", ""),
-			//	new InsuranceRiskCategory ("Credit", ""),
-			//	new InsuranceRiskCategory ("Transport", ""),
-			//	new InsuranceRiskCategory ("Animal", ""),
-			//	new InsuranceRiskCategory ("Crop", ""),
-			//	new InsuranceRiskCategory ("Gap", ""),
-			//	new InsuranceRiskCategory ("Income Protection", ""),
-			//	new InsuranceRiskCategory ("Bailman", "")
-			//};
-
-			return View (model);
+				return View(model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		public async Task<IActionResult> Risks (InsuranceRiskCategory category)
 		{
-            var user = await CurrentUser();
-			if (_riskRepository.FindAll().FirstOrDefault (r => r.Name == category.Name) != null)
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				var riskCategoryList = await _riskCategoryService.GetAllRiskCategories();
+				if (riskCategoryList.FirstOrDefault(r => r.Name == category.Name) != null)
+					return await Risks();
+
+				RiskCategory risk = new RiskCategory(user, category.Name, category.Description);
+				await _riskCategoryService.AddRiskCategory(risk);
+
 				return await Risks();
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
+		}
 
-			RiskCategory risk = new RiskCategory (user, category.Name, category.Description);
-            await _riskRepository.AddAsync(risk);
-
-            return await Risks();
-        }
-
-		/// <summary>
-		/// Gets the documents.
-		/// </summary>
-		/// <returns>The documents.</returns>
-		/// <param name="_search">Search.</param>
-		/// <param name="nd">Nd.</param>
-		/// <param name="rows">Number of rows per page.</param>
-		/// <param name="page">Number of pages.</param>
-		/// <param name="sidx">Field to order by.</param>
-		/// <param name="sord">Direction to order in (asc or desc).</param>
 		[HttpGet]
 		public async Task<IActionResult> GetDocuments(string _search, string nd, string rows, string page, string sidx, string sord)
 		{
+			User user = null;
 			XDocument document = null;
 			try 
 			{
@@ -227,92 +234,133 @@ namespace TechCertain.WebUI.Controllers
 				}
 				// convert model to XDocument for rendering.
 				document = model.ToXml ();
+				return this.Xml(document);
 			}
-			catch (Exception ex) {
-				// log stuff here
-				ElmahExtensions.RiseError(new Exception("Unable to load Policy Document Templates.", ex));
-			}
-			//Console.WriteLine (document.ToString ());
-			return this.Xml (document);
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}						
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> ViewDocumentTemplate(string id)
 		{
-			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate (documentId);
+			User user = null;
 
-			//Mapper.CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
+			try
+			{
+				user = await CurrentUser();
+				Guid documentId = new Guid(id);
+				Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate(documentId);
+				PolicyDocumentViewModel model = _mapper.Map<PolicyDocumentViewModel>(document);
 
-			PolicyDocumentViewModel model = _mapper.Map<PolicyDocumentViewModel>(document);			
-
-			return View(model);
+				return View(model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> EditDocument(string id)
 		{
-			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate (documentId);
-			// increment revision
-			document.SetRevision(document.Revision + 1);
+			User user = null;
 
-			//Mapper.CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
+			try
+			{
+				user = await CurrentUser();
+				Guid documentId = new Guid(id);
+				Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate(documentId);
+				document.SetRevision(document.Revision + 1);
+				PolicyDocumentViewModel model = _mapper.Map<PolicyDocumentViewModel>(document);
 
-			PolicyDocumentViewModel model = _mapper.Map<PolicyDocumentViewModel>(document);
-
-			return View ("DocumentBuilder", model);
+				return View("DocumentBuilder", model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpPost]
 		public async Task<bool> DeprecateDocument(string id)
 		{
-			Guid documentId = new Guid (id);
-			Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate (documentId);
-			document.SetDeprecated (true);
-			await _policyDocumentService.SaveDocumentTemplate (document);
-			return true;
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				Guid documentId = new Guid(id);
+				Old_PolicyDocumentTemplate document = await _policyDocumentService.GetDocumentTemplate(documentId);
+				document.SetDeprecated(true);
+				await _policyDocumentService.SaveDocumentTemplate(document);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return false;
+			}
 		}
 
 		[HttpGet]
 		public async Task<string> RenderDocument()
 		{
-			// TODO - just renders a pre selected document. Finish later when not pressed for time to finish the demo.
+			User user = null;
 
-			// Get Proposal Information here
-			List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-			// Demo stuff here
-			mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", 			"TestClientName"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", 			"1 April 2016"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", 				"1 April 2017"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate_MedMal]]", 	"Unlimited excluding claims and circumstances/Policy Inception for New Business"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate_SL]]", 		"Unlimited excluding claims and circumstances/Policy Inception for New Business"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate_PL]]", 		"N/A"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundLimit_MedMal]]", 		"$500,000"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundLimit_SL]]", 			"$500,000"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundLimit_PL]]", 			"$1,000,000"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundExcess_MedMal]]", 		"$2,000"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundExcess_SL]]", 			"$500"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundExcess_PL]]", 			"$500"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[NameOfInsured]]", 			"TestClientName"));
-			mergeFields.Add(new KeyValuePair<string, string>("[[TableStart:Endorsements]]", ""));
-			mergeFields.Add(new KeyValuePair<string, string>("[[Endorsement]]", 			""));
-			mergeFields.Add(new KeyValuePair<string, string>("[[EndorsementText]]", 		""));
-			mergeFields.Add(new KeyValuePair<string, string>("[[TableEnd:Endorsements]]", 	""));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BrokerSignature]]", 		""));
-			mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", 		"18 Febuary 2016"));
+			try
+			{
+				user = await CurrentUser();
+				// TODO - just renders a pre selected document. Finish later when not pressed for time to finish the demo.
 
-			// gets the most recent revision of the specified document and produces a complete version based off the merge fields
-			string document = await _policyDocumentService.RenderDocument ("WAHAP Certificate", mergeFields);
+				// Get Proposal Information here
+				List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
+				// Demo stuff here
+				mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", "TestClientName"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", "1 April 2016"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", "1 April 2017"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate_MedMal]]", "Unlimited excluding claims and circumstances/Policy Inception for New Business"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate_SL]]", "Unlimited excluding claims and circumstances/Policy Inception for New Business"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[RetroactiveDate_PL]]", "N/A"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundLimit_MedMal]]", "$500,000"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundLimit_SL]]", "$500,000"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundLimit_PL]]", "$1,000,000"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundExcess_MedMal]]", "$2,000"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundExcess_SL]]", "$500"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundExcess_PL]]", "$500"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[NameOfInsured]]", "TestClientName"));
+				mergeFields.Add(new KeyValuePair<string, string>("[[TableStart:Endorsements]]", ""));
+				mergeFields.Add(new KeyValuePair<string, string>("[[Endorsement]]", ""));
+				mergeFields.Add(new KeyValuePair<string, string>("[[EndorsementText]]", ""));
+				mergeFields.Add(new KeyValuePair<string, string>("[[TableEnd:Endorsements]]", ""));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BrokerSignature]]", ""));
+				mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", "18 Febuary 2016"));
 
-			return document;
+				// gets the most recent revision of the specified document and produces a complete version based off the merge fields
+				string document = await _policyDocumentService.RenderDocument("WAHAP Certificate", mergeFields);
+
+				return document;
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return "";
+			}
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> SectionBuilder()
 		{
-            var user = await CurrentUser();
-			string[] locales = new string[] {
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				string[] locales = new string[] {
 				"Worldwide",
 				"Worldwide ex USA/Canada",
 				"New Zealand",
@@ -324,77 +372,103 @@ namespace TechCertain.WebUI.Controllers
 				"NZ, Pacific Islands including American Samoa",
 				"Let me add a custom Territory"
 			};
-			IEnumerable<SelectListItem> localeList = locales.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
-			string[] clauses = new string[] {
+				IEnumerable<SelectListItem> localeList = locales.Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
+				string[] clauses = new string[] {
 				"Entire Policy Clause",
 				"Optional Inclusion Clause",
 				"Optional Exclusion Clause",
 				"Individual Clause"
 			};
-			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
+				IEnumerable<SelectListItem> clauseList = clauses.Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
 
-            List<SelectListItem> productlist = new List<SelectListItem>();
-            foreach (Product product in _productRepository.FindAll().Where(p => p.Public == true || user.PrimaryOrganisation.Name == "TC" || p.OwnerCompany == user.PrimaryOrganisation.Id))
-            {
-                productlist.Add(new SelectListItem
-                {
-                    Selected = false,
-                    Text = product.Name,
-                    Value = product.Id.ToString(),
-                });
+				List<SelectListItem> productlist = new List<SelectListItem>();
+				var productList = await _productService.GetAllProducts();
+				foreach (Product product in productList.Where(p => p.Public == true || user.PrimaryOrganisation.Name == "TC" || p.OwnerCompany == user.PrimaryOrganisation.Id))
+				{
+					productlist.Add(new SelectListItem
+					{
+						Selected = false,
+						Text = product.Name,
+						Value = product.Id.ToString(),
+					});
 
-            }
+				}
 
-            PolicySectionVM model = new PolicySectionVM () {
-				Content = new ContentSectionVM () {
-					//Content = "Insert some text here"
-				},
-				Description = new DescriptionSectionVM () {
-					Creator = user.Id,
-					//Description = "A sample description",
-					Owner = user.Id,
-					//Revision = 0,
-					//Name = "Sample Policy Section (Term)",
-					//Version = "1"
-				},
-				Draft = true,
-				Options = new OptionsSectionVM () {
-					//Clause = "2",
-					Clauses = clauseList,
-					CustomJurisdiction = "",
-					CustomTerritory = "",
-					//Jurisdiction = "3",
-					Jurisdictions = localeList,
-					Territories = localeList,
-                    Products = productlist
-                }
-            };
+				PolicySectionVM model = new PolicySectionVM()
+				{
+					Content = new ContentSectionVM()
+					{
+						//Content = "Insert some text here"
+					},
+					Description = new DescriptionSectionVM()
+					{
+						Creator = user.Id,
+						//Description = "A sample description",
+						Owner = user.Id,
+						//Revision = 0,
+						//Name = "Sample Policy Section (Term)",
+						//Version = "1"
+					},
+					Draft = true,
+					Options = new OptionsSectionVM()
+					{
+						//Clause = "2",
+						Clauses = clauseList,
+						CustomJurisdiction = "",
+						CustomTerritory = "",
+						//Jurisdiction = "3",
+						Jurisdictions = localeList,
+						Territories = localeList,
+						Products = productlist
+					}
+				};
 
-			return View (model);
+				return View(model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> SubmitTermSection(PolicySectionVM model)
 		{
-            var user = await CurrentUser();
-			await _termBuilderService.Create (
-                user,
-				model.Description.Name,
-				model.Description.Description,
-				model.Description.Version,
-				model.Description.Revision,
-				model.Content.Content,
-				model.Description.Creator,
-				Guid.Empty,		//model.Options.Territory,
-				Guid.Empty);	//model.Options.Jurisdiction);
+			User user = null;
 
-			return null;
+			try
+			{
+				user = await CurrentUser();
+				await _termBuilderService.Create(
+					user,
+					model.Description.Name,
+					model.Description.Description,
+					model.Description.Version,
+					model.Description.Revision,
+					model.Content.Content,
+					model.Description.Creator,
+					Guid.Empty,     //model.Options.Territory,
+					Guid.Empty);    //model.Options.Jurisdiction);
+
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> ViewSectionTemplate(string id)
 		{
-			string[] locales = new string[] {
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				string[] locales = new string[] {
 				"Worldwide",
 				"Worldwide ex USA/Canada",
 				"New Zealand",
@@ -406,48 +480,62 @@ namespace TechCertain.WebUI.Controllers
 				"NZ, Pacific Islands including American Samoa",
 				"Let me add a custom Territory"
 			};
-			IEnumerable<SelectListItem> localeList = locales.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
-			string[] clauses = new string[] {
+				IEnumerable<SelectListItem> localeList = locales.Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
+				string[] clauses = new string[] {
 				"Entire Policy Clause",
 				"Optional Inclusion Clause",
 				"Optional Exclusion Clause",
 				"Individual Clause"
 			};
-			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
+				IEnumerable<SelectListItem> clauseList = clauses.Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
 
-			Guid termId = new Guid (id);
-			PolicyTermSection section = await _termBuilderService.GetTerm(termId);
-            var sectionCreator = await _userService.GetUserById(section.Creator);
-            PolicySectionVM model = new PolicySectionVM ();
-			model.Description = new DescriptionSectionVM () {
-				Creator = section.Creator,
-				CreatorName = sectionCreator.FullName,
-				Description = section.Description,
-				Name = section.Name,
-				Owner = section.Owner,
-				OwnerName = sectionCreator.FullName,
-				Revision = section.Revision,
-				Version = section.Version
-			};
-			model.Content = new ContentSectionVM () {
-				Content = section.Content
-			};
-			model.Options = new OptionsSectionVM () {
-				Clause = "0",
-				Clauses = clauseList,
-				Jurisdiction = "0",
-				Territory = "0",
-				Jurisdictions = localeList,
-				Territories = localeList
-			};
+				Guid termId = new Guid(id);
+				PolicyTermSection section = await _termBuilderService.GetTerm(termId);
+				var sectionCreator = await _userService.GetUserById(section.Creator);
+				PolicySectionVM model = new PolicySectionVM();
+				model.Description = new DescriptionSectionVM()
+				{
+					Creator = section.Creator,
+					CreatorName = sectionCreator.FullName,
+					Description = section.Description,
+					Name = section.Name,
+					Owner = section.Owner,
+					OwnerName = sectionCreator.FullName,
+					Revision = section.Revision,
+					Version = section.Version
+				};
+				model.Content = new ContentSectionVM()
+				{
+					Content = section.Content
+				};
+				model.Options = new OptionsSectionVM()
+				{
+					Clause = "0",
+					Clauses = clauseList,
+					Jurisdiction = "0",
+					Territory = "0",
+					Jurisdictions = localeList,
+					Territories = localeList
+				};
 
-			return View (model);
+				return View(model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> EditSection(string id)
 		{
-			string[] locales = new string[] {
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				string[] locales = new string[] {
 				"Worldwide",
 				"Worldwide ex USA/Canada",
 				"New Zealand",
@@ -459,52 +547,72 @@ namespace TechCertain.WebUI.Controllers
 				"NZ, Pacific Islands including American Samoa",
 				"Let me add a custom Territory"
 			};
-			IEnumerable<SelectListItem> localeList = locales.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
-			string[] clauses = new string[] {
+				IEnumerable<SelectListItem> localeList = locales.Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
+				string[] clauses = new string[] {
 				"Entire Policy Clause",
 				"Optional Inclusion Clause",
 				"Optional Exclusion Clause",
 				"Individual Clause"
 			};
-			IEnumerable<SelectListItem> clauseList = clauses.Select((r,index) => new SelectListItem{Text = r, Value = index.ToString()});
+				IEnumerable<SelectListItem> clauseList = clauses.Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
 
-			Guid termId = new Guid (id);
-            PolicyTermSection section = await _termBuilderService.GetTerm(termId);
+				Guid termId = new Guid(id);
+				PolicyTermSection section = await _termBuilderService.GetTerm(termId);
 
-            var sectionCreator = await _userService.GetUserById(section.Creator);
-            PolicySectionVM model = new PolicySectionVM ();
-			model.Description = new DescriptionSectionVM () {
-				Creator = section.Creator,
-				CreatorName = sectionCreator.FullName,
-				Description = section.Description,
-				Name = section.Name,
-				Owner = section.Owner,
-				OwnerName = sectionCreator.FullName,
-				Revision = section.Revision + 1,
-				Version = section.Version
-			};
-			model.Content = new ContentSectionVM () {
-				Content = section.Content
-			};
-			model.Options = new OptionsSectionVM () {
-				Clause = "0",
-				Clauses = clauseList,
-				Jurisdiction = "0",
-				Territory = "0",
-				Jurisdictions = localeList,
-				Territories = localeList
-			};
+				var sectionCreator = await _userService.GetUserById(section.Creator);
+				PolicySectionVM model = new PolicySectionVM();
+				model.Description = new DescriptionSectionVM()
+				{
+					Creator = section.Creator,
+					CreatorName = sectionCreator.FullName,
+					Description = section.Description,
+					Name = section.Name,
+					Owner = section.Owner,
+					OwnerName = sectionCreator.FullName,
+					Revision = section.Revision + 1,
+					Version = section.Version
+				};
+				model.Content = new ContentSectionVM()
+				{
+					Content = section.Content
+				};
+				model.Options = new OptionsSectionVM()
+				{
+					Clause = "0",
+					Clauses = clauseList,
+					Jurisdiction = "0",
+					Territory = "0",
+					Jurisdictions = localeList,
+					Territories = localeList
+				};
 
-			return View ("SectionBuilder", model);
+				return View("SectionBuilder", model);
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpGet]
 		public async Task<bool> DeprecateSection(string id)
 		{
-            var user = await CurrentUser();
-			Guid termId = new Guid (id);
-			await _termBuilderService.Deprecate (user, termId);
-			return true;
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				Guid termId = new Guid(id);
+				await _termBuilderService.Deprecate(user, termId);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return false;
+			}
+
 		}
     }
 }
