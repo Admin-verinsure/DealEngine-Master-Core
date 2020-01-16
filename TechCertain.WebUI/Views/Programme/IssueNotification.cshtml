@@ -48,25 +48,30 @@
                             </label>
                         </td>
                     </tr>
+                    <tr id="OrgUserSection">
+
+                        <td>
+                            <div id="div1"></div>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <button type="submit" class="btn btn-success btn-sm" onclick='addselectorgUser("@Model.Name")'>save</button>
                         </td>
                         <td>
-
                         </td>
                     </tr>
-                </table>                    
+                </table>
 
             </form>
         </div>
-        
+
     </div>
-            </div>
+</div>
 
 
 @section pagespecific {
-
+  
     @await Html.PartialAsync("_ProgrammeScripts")
 
 }

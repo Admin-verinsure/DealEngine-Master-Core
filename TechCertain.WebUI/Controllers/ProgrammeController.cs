@@ -1086,6 +1086,22 @@ namespace TechCertain.WebUI.Controllers
 
 
         [HttpPost]
+        public async Task<IActionResult> getselectedParty(Guid informationId)
+        {
+            //PartyUserViewModel model = new PartyUserViewModel();
+            PartyUserViewModel model = new PartyUserViewModel();
+
+            Programme programme = await _programmeRepository.GetByIdAsync(informationId);
+            List<String> userEmail = new List<String>();
+            foreach(var email in programme.UISIssueNotifyUsers)
+            {
+                userEmail.Add(email.Email);
+            }
+            return Json(userEmail);
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> selectedParty(Guid selectedParty, Guid informationId)
         {
             //PartyUserViewModel model = new PartyUserViewModel();

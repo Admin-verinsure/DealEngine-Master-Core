@@ -66,9 +66,28 @@
     //    }
     //   // selectedWaterLoc = "";
     //}
+    
+     function getseletedorgUser() {
+        debugger;
+        var InformationId = $('#Id').val();
+        var postdata = { informationId: InformationId};
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("getselectedParty", "Programme")',
+	    type: "Post",
+        data: postdata
+	})
+            .done(function (data) {
+                debugger;
 
+                $.each(data, function (i, item) {
+                    $('#User[value = "Warren.J.Blomquist@marsh.com"]').prop('checked', true);
+             });
+	});
+    };
 
     function selectorgUser() {
+        debugger;
         var SelectedParty = $('#selectParty').val();
         var InformationId = $('#Id').val();
         var postdata = {selectedParty : SelectedParty , informationId: InformationId};
@@ -78,7 +97,8 @@
 	    type: "Post",
         data: postdata
 	})
-        .done(function (data) {
+            .done(function (data) {
+                debugger;
             if (data.length > 0) {
                 $('#div1').empty();
                 $('#div1').append("<label class=\"label\" id=\"User\">Select User:</label><br>");
@@ -91,7 +111,9 @@
 
             $.each(data, function (i, item) {
                   $('#div1').append("<input type=\"checkbox\" class=\"PartyOrg\" name=\"PartyOrg\" value=" + item.email + ">" + item.name + "(" + item.email + ")"+"<br>");
-                    });
+            });
+
+                getseletedorgUser();
 	});
     };
 
