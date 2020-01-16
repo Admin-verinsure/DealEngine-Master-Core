@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -20,7 +14,7 @@ namespace TechCertain.Services.Impl
             _changeReason = changeReason;
         }
 
-        public ChangeReason CreateChangeReason(User createdBy, ChangeReason changeReason)
+        public async Task CreateChangeReason(User createdBy, ChangeReason changeReason)
         {
             ChangeReason change = new ChangeReason(createdBy);
             change.DealId = changeReason.DealId;
@@ -28,8 +22,7 @@ namespace TechCertain.Services.Impl
             change.Reason = changeReason.Reason;
             change.ReasonDesc = changeReason.ReasonDesc;
             //change.EffectiveDate = changeReason.EffectiveDate;
-            _changeReason.AddAsync(change);
-            return change;
+            await _changeReason.AddAsync(change);            
         }
     }
 }

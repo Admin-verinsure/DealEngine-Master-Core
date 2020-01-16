@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
@@ -14,27 +15,26 @@ namespace TechCertain.WebUI.Controllers
 {
     public class InformationBuilderController : BaseController
     {
-        private IInformationBuilderService _informationBuilderService;
-		IMapper _mapper;
-		IMapperSession<InformationTemplate> _templateRepository;
-        IMapperSession<InformationItem> _informationItemRepository;
-        IMapperSession<InformationSection> _informationSectionRepository;
-        IUnitOfWork _unitOfWork;
+        IInformationBuilderService _informationBuilderService;
+		IMapper _mapper;		
+        IInformationTemplateService _informationTemplateService;
+        ILogger _logger;
+        IApplicationLoggingService _applicationLoggingService;
 
-        //public InformationBuilderController(IInformationBuilderService informationBuilderService)
-		public InformationBuilderController(IUserService userService,
-            IMapper mapper, 
-            IMapperSession<InformationSection> informationSectionRepository, 
-            IMapperSession<InformationItem> informationItemRepository, 
-            IMapperSession<InformationTemplate> templateRepository, IUnitOfWork unitOfWork)
+		public InformationBuilderController(
+            IInformationTemplateService informationTemplateService,
+            IUserService userService,
+            IMapper mapper,
+            ILogger logger,
+            IApplicationLoggingService applicationLoggingService
+            )
 			: base (userService)
         {
+            _applicationLoggingService = applicationLoggingService;
+            _logger = logger;
+            _informationTemplateService = informationTemplateService;
             _informationBuilderService = new InformationBuilderService(new InformationBuilderFactory());
-			_mapper = mapper;
-			_templateRepository = templateRepository;
-            _informationItemRepository = informationItemRepository;
-            _informationSectionRepository = informationSectionRepository;
-            _unitOfWork = unitOfWork;
+			_mapper = mapper;			
         }
 
         // GET: InformationBuilder
@@ -52,29 +52,32 @@ namespace TechCertain.WebUI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateInformationSheet(InformationBuilderViewModel model)
-        {
-            // Should be abstracted to a service
-
+        {            
             InformationBuilder builder;
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                if (!model.Id.HasValue)
+                    builder = _informationBuilderService.CreateNewInformation(model.Name);
+                else
+                    throw new Exception("The Id contained a value should have been null");
 
-            if (!model.Id.HasValue)
-                builder = _informationBuilderService.CreateNewInformation(model.Name);
-            else
-                throw new Exception("The Id contained a value should have been null");
+                model = _mapper.Map<InformationBuilder, InformationBuilderViewModel>(builder);
 
-            //Mapper.CreateMap<InformationBuilder, InformationBuilderViewModel>();
-            //Mapper.CreateMap<InformationBuilderViewModel, InformationBuilder>();
-
-            model = _mapper.Map<InformationBuilder, InformationBuilderViewModel>(builder);
-
-            return PartialView("_QuestionsPartialView", model);
+                return PartialView("_QuestionsPartialView", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 		[HttpGet]
 		public async Task<IActionResult> StagingBuilder ()
 		{
-			await _templateRepository.GetByIdAsync(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
-
+			await _informationTemplateService.GetTemplate(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
 
 			return View (new ExperimentalInfoBuilderViewModel());
 		}
@@ -106,34 +109,10 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> StagingBuilder(ExperimentalInfoBuilderViewModel model)
         {
-            //Console.WriteLine ("Title: " + model.Title);
-            //Console.WriteLine ("Description: " + model.Description);
-            //Console.WriteLine ("Pages: " + model.Pages.Count ());
-            //foreach (var page in model.Pages) {
-            //	Console.WriteLine ("  Questions: " + page.Questions.Count ());
-            //	foreach (var question in page.Questions) {
-            //		Console.WriteLine ("    QuestionType: " + question.QuestionType);
-            //		Console.WriteLine ("    EditorId: " + question.EditorId);
-            //		Console.WriteLine ("    Required: " + question.Required);
-            //		Console.WriteLine ("    ReferUnderWriting: " + question.ReferUnderWriting);
-            //		Console.WriteLine ("    NeedsReview: " + question.NeedsReview);
-            //		Console.WriteLine ("    Question: " + question.QuestionTitle);
-            //		Console.WriteLine ("    HorizontalLayout: " + question.HorizontalLayout);
-            //		Console.WriteLine ("    Options: " + question.OptionsArray);
-            //		Console.WriteLine ("    ----------");
-            //	}
-            //}
-            //Console.WriteLine ("Conditionals: " + model.Conditionals.Count ());
-            //foreach (var conditional in model.Conditionals) {
-            //	Console.WriteLine ("  Conditional for: " + conditional.QuestionId);
-            //	Console.WriteLine ("  Triggers on value: " + conditional.TriggerValue);
-            //	Console.WriteLine ("  Show/Hide: " + (conditional.Visibility == 1 ? "Show" : "Hide"));
-            //	Console.WriteLine ("  Targets: " + string.Join (", ", conditional.Controls));
-            //}
+            User user = null;
             try
             {
-
-                var user = await CurrentUser();
+                user = await CurrentUser();
                 InformationTemplate informationTemplate = new InformationTemplate(user, model.Title, null);
 
                 foreach (var page in model.Pages)
@@ -184,34 +163,20 @@ namespace TechCertain.WebUI.Controllers
                         }
 
                         section.AddItem(item);
+                        
                     }
                     informationTemplate.AddSection(section);
                 }
 
-                //var items = informationTemplate.Sections.SelectMany (s => s.Items);
-                //foreach (var item in items) {
-                //	var editorConditional = model.Conditionals.FirstOrDefault (a => a.QuestionId.EndsWith(item.EditorId, StringComparison.CurrentCulture));
-                //	if (editorConditional != null) {
-                //		item.Conditional = new InformationItemConditional {
-                //			TriggerValue = editorConditional.TriggerValue,
-                //			VisibilityOnTrigger = editorConditional.Visibility,
-                //			Targets = items.Where (c => editorConditional.Controls.Contains (c.EditorId)).ToList ()
-                //		};
-                //	}
-                //}
-
-
-             await _templateRepository.AddAsync(informationTemplate);
+                await _informationTemplateService.CreateInformationTemplate(user, informationTemplate.Name, informationTemplate.Sections);
+                return Json(new { Result = true });
 
             }
             catch (Exception ex)
             {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return Json(new { Result = true });
-
-            }
-
-
-            return Json(new { Result = true });
+            }            
         }
     }
 
