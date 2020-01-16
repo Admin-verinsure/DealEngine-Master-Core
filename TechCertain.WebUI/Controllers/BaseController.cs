@@ -4,10 +4,8 @@ using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
-using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
@@ -18,7 +16,9 @@ namespace TechCertain.WebUI.Controllers
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
         
-        public BaseController(IUserService userService)
+        public BaseController(
+            IUserService userService
+            )
         {
             _userService = userService;
         }

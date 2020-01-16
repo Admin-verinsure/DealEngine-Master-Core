@@ -54,8 +54,10 @@ namespace TechCertain.WebUI.Controllers
             IHttpClientService httpClientService,
             ILdapService ldapService,
             IUserService userService,
-			IEmailService emailService, IFileService fileService,   
-            IOrganisationalUnitService organisationalUnitService, IAppSettingService appSettingService) : base (userService)
+			IEmailService emailService, 
+            IFileService fileService,   
+            IOrganisationalUnitService organisationalUnitService, 
+            IAppSettingService appSettingService) : base (userService)
 		{
             _applicationLoggingService = applicationLoggingService;
             _authenticationService = authenticationService;
