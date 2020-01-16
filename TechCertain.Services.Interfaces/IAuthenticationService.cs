@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -26,9 +27,9 @@ namespace TechCertain.Services.Interfaces
 
 		SingleUseToken GetToken(Guid token);
 
-		bool ValidSingleUseToken(Guid token);
+		Task<bool> ValidSingleUseToken(Guid token);
 
-		bool UseSingleUseToken(Guid token);
+		Task<bool> UseSingleUseToken(Guid token);
 
 		IEnumerable<SingleUseToken> GetTokensFor (Guid userId);
 

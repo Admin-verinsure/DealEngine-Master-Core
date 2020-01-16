@@ -16,6 +16,8 @@ namespace TechCertain.Services.Interfaces
 
         Task<EGlobalSubmission> GetEGlobalSubmission(Guid eGlobalSubmissionId);
 
+        Task<EGlobalSubmission> GetEGlobalSubmissionByTransaction(Guid transactionreferenceid);
+
         Task<bool> UpdateEGlobalSubmission(EGlobalSubmission eGlobalSubmission);
 
     }

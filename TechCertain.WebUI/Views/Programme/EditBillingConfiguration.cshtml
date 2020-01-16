@@ -284,8 +284,8 @@
 
 
         $(window).on("load", function () {
-            $('#branch').val(@Model.EGlobalBranchCode);
             $('#clientId').val(@Model.EGlobalClientNumber);
+            $('#branch').val("@Model.EGlobalBranchCode");
         });
 
         var bcdata = [];
@@ -353,12 +353,3 @@
 
 }
 
-
-@*<script>
-
-            $(window).on("load", function () {
-                $('#branch').val("@Model.EGlobalBranchCode");
-                $('#clientId').val("@Model.EGlobalClientNumber");
-            });
-
-    </script>*@

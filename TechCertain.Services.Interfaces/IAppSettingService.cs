@@ -13,6 +13,7 @@ namespace TechCertain.Services.Interfaces
         bool RequireRSA { get; }
         string GetMarineInsuranceSpecialistEmail { get; }
         string GetCompanyTitle { get; }
+        string GetConnectionString { get; }
     }
 }
 

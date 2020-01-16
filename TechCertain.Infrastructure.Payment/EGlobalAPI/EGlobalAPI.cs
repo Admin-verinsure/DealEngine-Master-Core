@@ -17,7 +17,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Processes the Async result.
         /// </summary>
         /// <param name="result">The Async result.</param>
-        public string ProcessAsyncResult(string res, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
+        public string ProcessAsyncResult(string res, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, EGlobalSubmission eglobalsubmission)
         {
             // adjust the response
             Envelope processingxml = GetPreResponseClass(res);
@@ -27,7 +27,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
             // process response
             EGlobalXmlResponse xo = GetResponseClass(ASyncInvoice);
-            ProcessResponse(xo, programme, CurrentUser, _unitOfWork, ASyncInvoice);
+            ProcessResponse(xo, programme, CurrentUser, _unitOfWork, ASyncInvoice, eglobalsubmission);
 
             // indicate we have received a response
             ASyncInvoiceRecieved = true;
@@ -70,7 +70,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         #endregion
 
-        private void ProcessResponse(EGlobalXmlResponse xo, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, string xmltext)
+        private void ProcessResponse(EGlobalXmlResponse xo, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, string xmltext, EGlobalSubmission eglobalsubmission)
         {
 
             try
@@ -92,7 +92,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
                 // save the response
                 Guid responseID;
-                SaveInvoiceData(xo, masterAgreementReferenceID, programme, CurrentUser, _unitOfWork, xmltext, out responseID);
+                SaveInvoiceData(xo, masterAgreementReferenceID, programme, CurrentUser, _unitOfWork, xmltext, eglobalsubmission, out responseID);
                 //// determine the original transaction
                 //Guid invoiceID = Base_EGlobalPolicy.GetInvoiceID(sysKeys[1], TC_Shared.CNullInt(sysKeys[2], 0));
                 //Base_EGlobalPolicy.SetResponseID(responseID, invoiceID);
@@ -336,7 +336,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         //            return GetInvoiceDataByAttribute(quoteID, "quoteID", true);
         //        }
 
-        public bool SaveInvoiceData(EGlobalXmlResponse xo, string masterAgreementReferenceID, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, string xmltext, out Guid responseID)
+        public bool SaveInvoiceData(EGlobalXmlResponse xo, string masterAgreementReferenceID, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, string xmltext, EGlobalSubmission eglobalsubmission, out Guid responseID)
         {
             bool success = false;
 
@@ -364,7 +364,12 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                     eGlobalResponse.ResponseText = xo.Text;
                     eGlobalResponse.ResponseXML = xmltext;
                     eGlobalResponse.MasterAgreementReferenceID = masterAgreementReferenceID;
+                    if (eglobalsubmission != null)
+                    {
+                        eGlobalResponse.EGlobalSubmission = eglobalsubmission;
+                    }
                     programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
+                    eglobalsubmission.EGlobalResponse = eGlobalResponse;
 
                     uow.Commit();
 
@@ -393,7 +398,12 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                     eGlobalResponse.VersionNumber = xo.Update.VersionNo;
                     eGlobalResponse.Tranident = xo.Update.Tranident;
                     eGlobalResponse.InvoiceNumber = xo.Update.InvoiceNo;
+                    if (eglobalsubmission != null)
+                    {
+                        eGlobalResponse.EGlobalSubmission = eglobalsubmission;
+                    }
                     programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
+                    eglobalsubmission.EGlobalResponse = eGlobalResponse;
 
                     uow.Commit();
 

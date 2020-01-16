@@ -15,14 +15,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using TechCertain.Infrastructure.Ldap.Interfaces;
 using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
-using Microsoft.Extensions.Logging;
 using DealEngine.Infrastructure.AuthorizationRSA;
 using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Identity;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
-
+using Microsoft.Extensions.Logging;
 #endregion
 
 namespace TechCertain.WebUI.Controllers
@@ -38,15 +37,14 @@ namespace TechCertain.WebUI.Controllers
         RoleManager<IdentityRole> _roleManager;
         ILdapService _ldapService;
         IOrganisationalUnitService _organisationalUnitService;
-        IOrganisationService _organisationService;
         ILogger<AccountController> _logger;
+        IApplicationLoggingService _applicationLoggingService;
         IMapperSession<User> _userRepository;
         IHttpClientService _httpClientService;
         IAppSettingService _appSettingService;
-        IImportService _importService;
 
         public AccountController(
-            IImportService importService,
+            IApplicationLoggingService applicationLoggingService,
             IAuthenticationService authenticationService,
 			SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
@@ -54,13 +52,14 @@ namespace TechCertain.WebUI.Controllers
             ILogger<AccountController> logger,
             IMapperSession<User> userRepository,
             IHttpClientService httpClientService,
-            IOrganisationService organisationService,
             ILdapService ldapService,
             IUserService userService,
-			IEmailService emailService, IFileService fileService,   
-            IOrganisationalUnitService organisationalUnitService, IAppSettingService appSettingService) : base (userService)
+			IEmailService emailService, 
+            IFileService fileService,   
+            IOrganisationalUnitService organisationalUnitService, 
+            IAppSettingService appSettingService) : base (userService)
 		{
-            _importService = importService;
+            _applicationLoggingService = applicationLoggingService;
             _authenticationService = authenticationService;
             _ldapService = ldapService;
             _userManager = userManager;
@@ -68,7 +67,6 @@ namespace TechCertain.WebUI.Controllers
             _roleManager = roleManager;
             _userRepository = userRepository;
 			_httpClientService = httpClientService;
-            _organisationService = organisationService;
 			_logger = logger;
 			_userService = userService;
             _emailService = emailService;
@@ -112,6 +110,7 @@ namespace TechCertain.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ResetPassword(AccountResetPasswordModel viewModel)
 		{
+            User user = null;
 			string errorMessage = @"We have sent you an email to the email address we have recorded in the system, that email address is different from the one you supplied. 
 				Please check the other email addresses you may have used. If you cannot locate our email, 
 				please email support@techcertain.com with your contact details, we can re-establish your account with your broker.";
@@ -127,7 +126,7 @@ namespace TechCertain.WebUI.Controllers
                     //_emailService.SendSystemEmailLogin("support@techcertain.com");
 
                     SingleUseToken token = _authenticationService.GenerateSingleUseToken(viewModel.Email);
-                    User user = await _userService.GetUser(token.UserID);
+                    user = await _userService.GetUserById(token.UserID);
                     if (user != null)
                     {
                         //change the users password to an intermediate
@@ -153,20 +152,19 @@ namespace TechCertain.WebUI.Controllers
                 }
             }
             catch (System.Net.Mail.SmtpFailedRecipientsException exception) {
-                ElmahExtensions.RiseError(exception);
-               
-
+                await _applicationLoggingService.LogWarning(_logger, exception, user, HttpContext);
                 ModelState.AddModelError ("FailureMessage", errorMessage);
                 return View(viewModel);
             }
-            catch (MailKit.Net.Smtp.SmtpCommandException ex) {               
-
+            catch (MailKit.Net.Smtp.SmtpCommandException ex) {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 ModelState.AddModelError ("FailureMessage", "Oops, Email services are currently unavailable. The technical support staff have also been notified, and your password reset email will be sent once services have been restored.");
 				return View (viewModel);
 			}
 			catch (Exception ex)
 			{
-				Exception exception = ex;
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                Exception exception = ex;
 				while (exception.InnerException != null) exception = exception.InnerException;
 
 				await _emailService.ContactSupport (_emailService.DefaultSender, exception.GetType().Name + ": " + exception.Message, "");
@@ -187,7 +185,8 @@ namespace TechCertain.WebUI.Controllers
         {
             if (id != Guid.Empty && _authenticationService.GetToken(id) != null)
             {
-                if (_authenticationService.ValidSingleUseToken(id))
+                var result = await _authenticationService.ValidSingleUseToken(id);
+                if (result)
                     return View();
                 // invalid token? display an error
                 return Redirect("~/Error/InvalidPasswordReset");
@@ -204,7 +203,6 @@ namespace TechCertain.WebUI.Controllers
 		{
 			try
 			{
-
                 if (id == Guid.Empty)
 					// if we get here - either invalid guid or invalid token - 404
 					return PageNotFound ();
@@ -214,7 +212,7 @@ namespace TechCertain.WebUI.Controllers
 					return View ();
 				}
                 SingleUseToken st = _authenticationService.GetToken(id);
-                User user = await _userService.GetUser(st.UserID);
+                User user = await _userService.GetUserById(st.UserID);
                 if (user == null)
                     // in theory, we should never get here. Reason being is that a reset request should not be created without a valid user
                     throw new Exception(string.Format("Could not find user with ID {0}", st.UserID));
@@ -253,13 +251,14 @@ namespace TechCertain.WebUI.Controllers
                 }
 
             }
-			catch (AuthenticationException ex) {
-				ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");
-				
+			catch (AuthenticationException ex) 
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);
+                ModelState.AddModelError ("passwordConfirm", "Your chosen password does not meet the requirements of our password policy. Please refer to the policy above to assist with creating an appropriate password.");				
 			}
 			catch (Exception ex) {
-				ModelState.AddModelError ("passwordConfirm", "There was an error while trying to change your password.");
-				
+                await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);
+                ModelState.AddModelError ("passwordConfirm", "There was an error while trying to change your password.");				
 			}
 
 			return View ();
@@ -302,9 +301,10 @@ namespace TechCertain.WebUI.Controllers
 			if (User.Identity.IsAuthenticated)
 				return await RedirectToLocal();
 
+            var userName = viewModel.Username.Trim();
+
             try
-            {                
-                var userName = viewModel.Username.Trim();
+            {                                
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                 int resultCode = -1;
@@ -347,9 +347,8 @@ namespace TechCertain.WebUI.Controllers
                     {
                         var result = await LoginMarsh(user, viewModel.DevicePrint);
                     }
-                    
-                    _logger.LogInformation("Authentication succeeded for [" + userName + "]");
 
+                    await _applicationLoggingService.LogInformation(_logger, new Exception("User [" + userName + "] has logged in"), user, HttpContext);
                     return LocalRedirect("~/Home/Index");
                 }
 
@@ -359,36 +358,32 @@ namespace TechCertain.WebUI.Controllers
             }
 			catch (UserImportException ex)
 			{
-				ElmahExtensions.RiseError(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);                
 				//await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2019 - User Import Error", ex.Message);
 				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. Proposalonline has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}
 			catch(Exception ex)
             {
-                ElmahExtensions.RiseError(ex);
-                HttpContext.RiseError(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);                
                 throw new Exception(ex.Message + " "+ ex.StackTrace);
             }
         }
 
         public async Task<IdentityResult> LoginMarsh (User user, string devicePrint)
 		{
-            MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService);
-            MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
-
-            rsaUser.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-            rsaUser.DevicePrint = devicePrint;
-            //for testing purposes
-            rsaUser.Email = user.Email;
-            //rsaUser.Username = rsaAuth.GetHashedId (username + "@dealengine.com");
-            rsaUser.Username = user.Email; //try as Marsh RSA team advised
-            rsaUser.HttpReferer = Url.ToString();
-            //rsaUser.OrgName = System.Web.Configuration.WebConfigurationManager.AppSettings ["RsaOrg"];
-            rsaUser.OrgName = "Marsh_Model";
-
             try
             {
+                MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService);
+                MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
+                
+                rsaUser.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+                rsaUser.DevicePrint = devicePrint;            
+                rsaUser.Email = user.Email;            
+                rsaUser.Username = user.Email; //try as Marsh RSA team advised
+                rsaUser.HttpReferer = Url.ToString();            
+                rsaUser.OrgName = "Marsh_Model";
+
                 Console.WriteLine("Analzying RSA User");
                 RsaStatus rsaStatus = await rsaAuth.Analyze(rsaUser, true);
                 if (rsaStatus == RsaStatus.Allow)
@@ -410,7 +405,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);
             }
 
             return IdentityResult.Success;
@@ -482,53 +477,6 @@ namespace TechCertain.WebUI.Controllers
 				return View(model);
 
 			return await RedirectToLocal();
-
-//			// Disable for now
-//			var user = new TechCertain.Domain.Entities.User (Guid.NewGuid(), model.Username);
-//			user.Email = model.Email;
-//			user.FirstName = model.FirstName;
-//			user.LastName = model.LastName;
-//			user.FullName = user.FirstName + " " + user.LastName;
-//			user.Password = model.Password;
-//
-//			if (_userRepository.Create (user))
-//				_logger.Error ("Unable to create user for " + model.Username);
-//
-//			if (Membership.ValidateUser(user.UserName, user.Password))
-//				FormsAuthentication.SetAuthCookie(user.UserName, true);
-
-            // Prepare the identity with the provided information
-            //var user = new IdentityUser
-            //{
-            //    UserName = viewModel.Username ?? viewModel.Email,
-            //    Email = viewModel.Email
-            //};
-
-            // Try to create a user with the given identity
-            //try
-            //{
-            //    var result = await _manager.CreateAsync(user, viewModel.Password);
-
-            //    // If the user could not be created
-            //    if (!result.Succeeded) {
-            //        // Add all errors to the page so they can be used to display what went wrong
-            //        AddErrors(result);
-
-            //        return View(viewModel);
-            //    }
-
-            //    // If the user was able to be created we can sign it in immediately
-            //    // Note: Consider using the email verification proces
-            //    await SignInAsync(user, false);
-
-            //}
-            //catch (DbEntityValidationException ex)
-            //{
-            //    // Add all errors to the page so they can be used to display what went wrong
-            //    AddErrors(ex);
-
-            //    return View(viewModel);
-            //
         }
 
         // GET: /account/coastguardreg
@@ -581,15 +529,12 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CoastguardForm(AccountRegistrationModel model)
         {
             // Ensure we have a valid viewModel to work with
-            //if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View(model);
 
-            //return RedirectToLocal();
+            return await RedirectToLocal();
         }
 
-        // POST: /account/Logout
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -601,10 +546,6 @@ namespace TechCertain.WebUI.Controllers
 
         async Task<IActionResult> RedirectToLocal(string returnUrl = "")
         {
-            // If the return url starts with a slash "/" we assume it belongs to our site
-            // so we will redirect to this "action"
-            //            if (!returnUrl.IsNullOrWhiteSpace() && Url.IsLocalUrl(returnUrl))
-            //                return Redirect(returnUrl);
 
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
 				&& !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
@@ -630,26 +571,34 @@ namespace TechCertain.WebUI.Controllers
 			if (user == null)
 				return PageNotFound ();
 
-			ProfileViewModel model = new ProfileViewModel();
-			model.FirstName = user.FirstName;
-			model.LastName = user.LastName;
-			model.Email = user.Email;
-			model.Phone = user.Phone;
-            model.CurrentUser = currentUser;
-            model.DefaultOU = user.DefaultOU;
-            model.EmployeeNumber = user.EmployeeNumber;
-            model.JobTitle = user.JobTitle;
-            model.SalesPersonUserName = user.SalesPersonUserName;
+            ProfileViewModel model = new ProfileViewModel();
 
-            if (user.PrimaryOrganisation != null)
-				model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
-			//if (user.Organisations.Count() > 0 && user.Organisations.ElementAt(0).OrganisationType.Name != "personal")
-			//	model.PrimaryOrganisationName = user.Organisations.ElementAt(0).Name;
-			model.Description = user.Description;
-			if (user.ProfilePicture != null)
-				model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
+            try
+            {
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.Email = user.Email;
+                model.Phone = user.Phone;
+                model.CurrentUser = currentUser;
+                model.DefaultOU = user.DefaultOU;
+                model.EmployeeNumber = user.EmployeeNumber;
+                model.JobTitle = user.JobTitle;
+                model.SalesPersonUserName = user.SalesPersonUserName;
 
-			model.ViewingSelf = string.IsNullOrEmpty(id) || (currentUser.UserName == id);
+                if (user.PrimaryOrganisation != null)
+                    model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
+                //if (user.Organisations.Count() > 0 && user.Organisations.ElementAt(0).OrganisationType.Name != "personal")
+                //	model.PrimaryOrganisationName = user.Organisations.ElementAt(0).Name;
+                model.Description = user.Description;
+                if (user.ProfilePicture != null)
+                    model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
+
+                model.ViewingSelf = string.IsNullOrEmpty(id) || (currentUser.UserName == id);
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            }			
 
 			return View(model);
 		}
@@ -664,41 +613,49 @@ namespace TechCertain.WebUI.Controllers
 			ProfileViewModel model = new ProfileViewModel();
             var organisationalUnits = new List<OrganisationalUnitViewModel>();
 
-            model.FirstName = user.FirstName;
-			model.LastName = user.LastName;
-			model.Email = user.Email;
-			model.Phone = user.Phone;
-            model.JobTitle = user.JobTitle;            
-            model.CurrentUser = user;
-
-            if(user.DefaultOU != null)
+            try
             {
-                model.DefaultOU = user.DefaultOU;
-            }
-            
-            model.EmployeeNumber = user.EmployeeNumber;
-            model.JobTitle = user.JobTitle;
-            model.SalesPersonUserName = user.SalesPersonUserName;
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.Email = user.Email;
+                model.Phone = user.Phone;
+                model.JobTitle = user.JobTitle;
+                model.CurrentUser = user;
 
-            var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnitsByOrg(user.PrimaryOrganisation);
-            OrgUnitList.GroupBy(o => o.Name);
-            foreach (OrganisationalUnit ou in OrgUnitList)
-            {
+                if (user.DefaultOU != null)
+                {
+                    model.DefaultOU = user.DefaultOU;
+                }
+
+                model.EmployeeNumber = user.EmployeeNumber;
+                model.JobTitle = user.JobTitle;
+                model.SalesPersonUserName = user.SalesPersonUserName;
+
+                var OrgUnitList = await _organisationalUnitService.GetAllOrganisationalUnitsByOrg(user.PrimaryOrganisation);
+                OrgUnitList.GroupBy(o => o.Name);
+                foreach (OrganisationalUnit ou in OrgUnitList)
+                {
                     organisationalUnits.Add(new OrganisationalUnitViewModel
                     {
                         OrganisationalUnitId = ou.Id,
                         Name = ou.Name
                     });
+                }
+
+                if (user.PrimaryOrganisation != null)
+                    model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
+                model.Description = user.Description;
+                if (user.ProfilePicture != null)
+                    model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
+
+                model.ViewingSelf = true;
+                model.OrganisationalUnitsVM = organisationalUnits;
             }
-
-            if (user.PrimaryOrganisation != null)
-                model.PrimaryOrganisationName = user.PrimaryOrganisation.Name;
-            model.Description = user.Description;
-			if (user.ProfilePicture != null)
-				model.ProfilePicture = user.ProfilePicture.Name;    // TODO - remap this
-
-			model.ViewingSelf = true;
-            model.OrganisationalUnitsVM = organisationalUnits;
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            }
+            
 
             return View(model);
 		}
@@ -707,58 +664,64 @@ namespace TechCertain.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ProfileEditor(ProfileViewModel model)
 		{
-
 			var user = await CurrentUser();
 			if (user == null)
 				return PageNotFound ();
             Guid defaultOU = Guid.Empty;
 
-            //if we've added a new avatar, upload it. Otherwise don't change
-            if (Request.Form.Files.Count > 0)
+            try 
             {
-                //Console.WriteLine ("{0} files uploaded", Request.Files.Count);
-                var file = Request.Form.Files[0];
-                if (file != null && file.Length > 0)
+                //if we've added a new avatar, upload it. Otherwise don't change
+                if (Request.Form.Files.Count > 0)
                 {
-                    byte[] buffer = new byte[file.Length];
-                    file.OpenReadStream().Read(buffer, 0, buffer.Length);
-                    if (_fileService.IsImageFile(buffer, file.ContentType, file.FileName))
+                    //Console.WriteLine ("{0} files uploaded", Request.Files.Count);
+                    var file = Request.Form.Files[0];
+                    if (file != null && file.Length > 0)
                     {
-                        //_fileService.UploadFile (buffer, file.ContentType, file.FileName);
-                        Image img = new Image(user, file.FileName, file.ContentType);
-                        img.Contents = buffer;
-                        await _fileService.UploadFile(img);
-                        model.ProfilePicture = file.FileName;
-                        user.ProfilePicture = img;
+                        byte[] buffer = new byte[file.Length];
+                        file.OpenReadStream().Read(buffer, 0, buffer.Length);
+                        if (_fileService.IsImageFile(buffer, file.ContentType, file.FileName))
+                        {
+                            //_fileService.UploadFile (buffer, file.ContentType, file.FileName);
+                            Image img = new Image(user, file.FileName, file.ContentType);
+                            img.Contents = buffer;
+                            await _fileService.UploadFile(img);
+                            model.ProfilePicture = file.FileName;
+                            user.ProfilePicture = img;
+                        }
+                        else
+                            ModelState.AddModelError("", "Unable to upload profile picture - invalid image file");
                     }
-                    else
-                        ModelState.AddModelError("", "Unable to upload profile picture - invalid image file");
                 }
+
+                Microsoft.Extensions.Primitives.StringValues branchId;
+                Request.Form.TryGetValue("branch", out branchId);
+
+                if (branchId.Count == 1 && branchId != "Branch:")
+                {
+                    defaultOU = Guid.Parse(branchId);
+                    OrganisationalUnit DefaultOU = await _organisationalUnitService.GetOrganisationalUnit(defaultOU);
+                    user.DefaultOU = DefaultOU;
+                }
+
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.Phone = model.Phone;
+                user.Description = model.Description;
+                user.EmployeeNumber = model.EmployeeNumber;
+                user.JobTitle = model.JobTitle;
+                user.SalesPersonUserName = model.SalesPersonUserName;
+
+                await _userService.Update(user);
+                
             }
-
-            Microsoft.Extensions.Primitives.StringValues branchId;
-            Request.Form.TryGetValue("branch", out branchId);
-
-            if (branchId.Count == 1 && branchId != "Branch:")
+            catch (Exception ex)
             {
-                defaultOU = Guid.Parse(branchId);
-                OrganisationalUnit DefaultOU = await _organisationalUnitService.GetOrganisationalUnit(defaultOU);
-                user.DefaultOU = DefaultOU;
+                
             }
-
-            user.FirstName = model.FirstName;
-			user.LastName = model.LastName;
-			user.Email = model.Email;
-			user.Phone = model.Phone;
-			user.Description = model.Description;
-            user.EmployeeNumber = model.EmployeeNumber;
-            user.JobTitle = model.JobTitle;
-            user.SalesPersonUserName = model.SalesPersonUserName;
-
-            await _userService.Update(user);
-
             return Redirect("~/Account/ProfileEditor");
-		}
+        }
 
 		[HttpGet]
 		public async Task<IActionResult> ChangeOwnPassword()
@@ -818,7 +781,7 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ManageUser (Guid Id)
 		{
-            var user = await _userService.GetUser(Id);
+            var user = await _userService.GetUserById(Id);
             var accountModel = new ManageUserViewModel(user);
             //accountModel.UserGroups = new SelectUserGroupsViewModel(user, _permissionsService.GetAllGroups());
 

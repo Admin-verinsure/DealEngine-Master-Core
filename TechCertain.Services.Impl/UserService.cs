@@ -61,7 +61,7 @@ namespace TechCertain.Services.Impl
 			throw new Exception ("User with username '" + username + "' does not exist in the system");
 		}
 
-		public async Task<User> GetUser (Guid userId)
+		public async Task<User> GetUserById (Guid userId)
 		{
 			User user = await _userRepository.GetByIdAsync(userId);
 			// have a repo user? Return them

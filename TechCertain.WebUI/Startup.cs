@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -11,6 +12,8 @@ using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace TechCertain.WebUI
 {
@@ -18,29 +21,42 @@ namespace TechCertain.WebUI
     {
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        private IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public static void ConfigureServices(IServiceCollection services)
-        {            
+        {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.AddServices();
             services.AddControllersWithViews();
             services.AddRouting();
-            services.AddMvc();
             services.AddRazorPages();
             services.AddNHibernate();
             services.AddIdentityExtentions();
             services.AddSingleton(MapperConfig.ConfigureMaps());
-            services.AddLogging();
+            services.AddLogging(loggingBuilder =>
+            {
+                // configure Logging with NLog
+                loggingBuilder.ClearProviders();
+                loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+                loggingBuilder.AddNLog();
+            });
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddElmah(options =>
-            {
+            {                
                 //options.CheckPermissionAction = context => context.User.Identity.IsAuthenticated;
                 options.Path = @"elmah";
             });
             services.AddBaseLdapPackage();
-            services.AddResponseCaching();            
+            services.AddResponseCaching();
+            services.AddMvc();
+            //services.AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

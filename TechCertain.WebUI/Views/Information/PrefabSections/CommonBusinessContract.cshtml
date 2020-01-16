@@ -16,7 +16,7 @@
 
                 <fieldset>
                     <div class="row">
-                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                        <section class="col col-xs-12">
                             <script type="text/javascript">
 
                                 $(window).on('load',function () {
@@ -259,7 +259,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject)
-                                        { return '<button onclick="SetBusinessContractRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBusinessContract\', \'#tblBusinessContract\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                        { return '<button onclick="SetBusinessContractRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBusinessContract\', \'#tblBusinessContract\'); SetCurrentTab(\'businessContractTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
                                     },
                                     { name: "Year", align: 'center', key: 'true' },
                                     { name: "Contract Title", align: 'center' },
