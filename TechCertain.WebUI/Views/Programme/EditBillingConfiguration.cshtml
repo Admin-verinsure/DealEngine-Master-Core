@@ -152,7 +152,7 @@
                                     <a class="btnView" data-prop="@submission.SubmissionRequestXML">View xml transaction</a>
                                     @*<a onclick="ShowXML(this)" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-prop="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
 
-                                    @*<a onclick="ShowXML(@submission.SubmissionRequestXML)"  aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
+                                    <a href="#TransactionXMl" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>
                                 </td>
                                 @*<h4>@submission.SubmissionRequestXML</h4>*@
 
@@ -255,7 +255,7 @@
             $('.modal').css({ "position": "absolute", "float": "left", "left": "25%", "width": "50%", "transform": "translate(-50 %, -50 %)" });
             var transxml = $(e.relatedTarget).data('trans-xml');
             
-            $(e.currentTarget).find('input[name="transxml"]').val(transxml);
+            $(e.currentTarget).find('input[name="transxml"]').text(transxml);
 
 
          });
