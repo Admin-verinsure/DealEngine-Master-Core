@@ -14,24 +14,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TechCertain.WebUI.Models.Product;
 using System.Threading.Tasks;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
-using NHibernate.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
     //[Authorize]
     public class ProgrammeController : BaseController
     {
+        ILogger<ProgrammeController> _logger;
         IInformationTemplateService _informationService;
         IUnitOfWork _unitOfWork;
-        IMapperSession<Programme> _programmeRepository;
-        IMapperSession<Product> _productRepository;
-        IMapperSession<RiskCategory> _riskRepository;
-        IMapperSession<RiskCover> _riskCoverRepository;
-        IMapperSession<Organisation> _organisationRepository;
+        IApplicationLoggingService _applicationLoggingService;
+        IProductService _productService;
+        IOrganisationService _organisationService;
+        IRiskCategoryService _riskCategoryService;
+        IRiskCoverService _riskCoverService;
         IBusinessActivityService _busActivityService;
         IMapperSession<Document> _documentRepository;
         IProgrammeService _programmeService;
-        IMapperSession<User> _userRepository;
         ISharedDataRoleService _sharedDataRoleService;
         IFileService _fileService;
         IEmailService _emailService;
@@ -40,24 +40,40 @@ namespace TechCertain.WebUI.Controllers
         IHttpClientService _httpClientService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
 
-        public ProgrammeController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<User> userRepo,
-                                 IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, IMapperSession<RiskCategory> riskRepository,
-                                 IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository, IRuleService ruleService, IMapperSession<Document> documentRepository,
-                                 IMapperSession<Programme> programmeRepository, IBusinessActivityService busActivityService, ISharedDataRoleService sharedDataRoleService,
-                                 IProgrammeService programmeService, IFileService fileService, IEmailService emailService, IMapper mapper, IHttpClientService httpClientService, IEGlobalSubmissionService eGlobalSubmissionService)
+        public ProgrammeController(
+            IOrganisationService organisationService,
+            IRiskCoverService riskCoverService,
+            IRiskCategoryService riskCategoryService,
+            IProductService productService,
+            IApplicationLoggingService applicationLoggingService,
+            ILogger<ProgrammeController> logger,
+            IUserService userRepository, 
+            IInformationTemplateService informationService, 
+            IUnitOfWork unitOfWork, 
+            IRuleService ruleService, 
+            IMapperSession<Document> documentRepository,            
+            IBusinessActivityService busActivityService, 
+            ISharedDataRoleService sharedDataRoleService,
+            IProgrammeService programmeService, 
+            IFileService fileService, 
+            IEmailService emailService, 
+            IMapper mapper, 
+            IHttpClientService httpClientService, 
+            IEGlobalSubmissionService eGlobalSubmissionService
+            )
             : base (userRepository)
         {
+            _applicationLoggingService = applicationLoggingService;
+            _productService = productService;
+            _logger = logger;
             _sharedDataRoleService = sharedDataRoleService;
             _informationService = informationService;
             _unitOfWork = unitOfWork;
-            _productRepository = productRepository;
-            _riskRepository = riskRepository;
-            _riskCoverRepository = riskCoverRepository;
-            _organisationRepository = organisationRepository;
+            _riskCoverService = riskCoverService;
+            _riskCategoryService = riskCategoryService;
+            _organisationService = organisationService;
             _busActivityService = busActivityService;
-            _documentRepository = documentRepository;
-            _programmeRepository = programmeRepository;
-            _userRepository = userRepo;
+            _documentRepository = documentRepository;            
             _programmeService = programmeService;
             _unitOfWork = unitOfWork;
             _RuleService = ruleService;
@@ -71,11 +87,16 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> MyProgrammes()
         {
-            try {
-                var user = await CurrentUser();
-                var programmes = _programmeRepository.FindAll().Where(p => p.Owner == user.PrimaryOrganisation);
-                BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
-                foreach (Programme programme in programmes) 
+            BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                var programmeList = await _programmeService.GetAllProgrammes();
+                var programmes = programmeList.Where(p => p.Owner == user.PrimaryOrganisation);
+
+                foreach (Programme programme in programmes)
                 {
                     ProgrammeInfoViewModel model = new ProgrammeInfoViewModel
                     {
@@ -88,18 +109,23 @@ namespace TechCertain.WebUI.Controllers
 
                 }
                 return View("AllProgrammes", models);
-            } catch (Exception ex) {
-                Console.WriteLine(ex);
             }
-
-            return View("AllProgrammes");
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return View("AllProgrammes");
+            }            
         }
 
         [HttpGet]
         public async Task<IActionResult> AllProgrammes()
         {
+            User user = null;
+
             try {
-                var programmes = _programmeRepository.FindAll().Where(p => p.DateDeleted == null);
+                user = await CurrentUser();
+                var programmeList = await _programmeService.GetAllProgrammes();
+                var programmes = programmeList.Where(p => p.DateDeleted == null);
                 BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
                 foreach (Programme p in programmes) {
                     ProgrammeInfoViewModel model = new ProgrammeInfoViewModel
@@ -115,26 +141,25 @@ namespace TechCertain.WebUI.Controllers
                 }
                 return View(models);
             }
-            catch (Exception ex) {
-                Console.WriteLine(ex);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return View();
             }
-
-            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> ManageClient(Guid Id)
-        {
-            //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
+        {            
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-
+            User user = null;
             List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
             List<Organisation> Owners = new List<Organisation>();
             List<Organisation> Ownerlist = new List<Organisation>();
 
             try
             {
-                // ClientProgramme programme = _programmeService.GetClientProgrammesForProgramme(Id);
+                user = await CurrentUser();
                 var clientProgrammeList = await _programmeService.GetClientProgrammesForProgramme(Id);
                 foreach (var programme in clientProgrammeList)
                 {
@@ -154,231 +179,271 @@ namespace TechCertain.WebUI.Controllers
                 model.Owner = Owners;
                 model.clientProgrammes = clientProgrammes;
 
+                ViewBag.Title = "Term Sheet Template ";
+                return View(model);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Term Sheet Template ";
-            return View(model);
-
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateProgrammeActivities(string ProgrammeId, bool IsPublic, string[] Activities)
         {
-
+            User user = null;
             try
             {
+                user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProgrammeId));
                 foreach (string str in Activities)
                 {
                     BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(str));                    
                     await _programmeService.AttachProgrammeToActivities(programme, businessActivityTemplate);
                 }
-          
-                //return Redirect("~/Programme/ActivityBuilder");
+                
                 return Ok(); 
             }
             catch (Exception ex)
             {
-                ElmahExtensions.RiseError(ex);
-                Response.StatusCode = 500;
-                return Content(ex.Message);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
         }
 
         [HttpGet]
         public async Task<IActionResult> ActivityBuilder(Guid Id)
         {
-            var user = await CurrentUser();            
-            var busActivityList = await _busActivityService.GetBusinessActivitiesTemplate();
-            if (busActivityList.Count == 0)
-            {
-                return Redirect("~/Error/Error404");                               
-            }
+            User user = null;
 
-            var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
-            var actClassTwo = await _busActivityService.GetBusinessActivitiesByClassification(2);
-            var actClassThree= await _busActivityService.GetBusinessActivitiesByClassification(3);
-            var actClassFour = await _busActivityService.GetBusinessActivitiesByClassification(4);
-
-            ActivityViewModel model = new ActivityViewModel
+            try
             {
-                Builder = new ActivityBuilderVM
+                user = await CurrentUser();
+                var busActivityList = await _busActivityService.GetBusinessActivitiesTemplate();
+                if (busActivityList.Count == 0)
                 {
-                    Ispublic = false,            
-                    Activities = new List <SelectListItem>(),
-                    Level1Classifications = actClassOne,
-                    Level2Classifications = actClassTwo,
-                    Level3Classifications = actClassThree,
-                    Level4Classifications = actClassFour,
-                },
-                ActivityCreate = new ActivityModal()
-            };
+                    return Redirect("~/Error/Error404");
+                }
 
-            model.Id = Id;
-          
-            foreach (var item in busActivityList)
-            {
-                model.Builder.Activities.Add(new SelectListItem
+                var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
+                var actClassTwo = await _busActivityService.GetBusinessActivitiesByClassification(2);
+                var actClassThree = await _busActivityService.GetBusinessActivitiesByClassification(3);
+                var actClassFour = await _busActivityService.GetBusinessActivitiesByClassification(4);
+
+                ActivityViewModel model = new ActivityViewModel
                 {
-                    Value = item.Id.ToString(),
-                    Text = item.AnzsciCode + " --- " + item.Description,
-                });
-            }
+                    Builder = new ActivityBuilderVM
+                    {
+                        Ispublic = false,
+                        Activities = new List<SelectListItem>(),
+                        Level1Classifications = actClassOne,
+                        Level2Classifications = actClassTwo,
+                        Level3Classifications = actClassThree,
+                        Level4Classifications = actClassFour,
+                    },
+                    ActivityCreate = new ActivityModal()
+                };
 
-            List<SelectListItem> proglist = new List<SelectListItem>();
-            foreach (Programme prog in _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
-            {
-                proglist.Add(new SelectListItem
+                model.Id = Id;
+
+                foreach (var item in busActivityList)
                 {
-                    Selected = false,
-                    Text = prog.Name,
-                    Value = prog.Id.ToString(),
-                });
+                    model.Builder.Activities.Add(new SelectListItem
+                    {
+                        Value = item.Id.ToString(),
+                        Text = item.AnzsciCode + " --- " + item.Description,
+                    });
+                }
 
+                List<SelectListItem> proglist = new List<SelectListItem>();
+                var programmeList = await _programmeService.GetAllProgrammes();
+                foreach (Programme prog in programmeList.Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
+                {
+                    proglist.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Text = prog.Name,
+                        Value = prog.Id.ToString(),
+                    });
+
+                }
+
+                model.ActivityAttach = new ActivityAttachVM()
+                {
+                    BaseProgList = proglist
+                };
+
+                ActivityListViewModel almodel = new ActivityListViewModel();
+                almodel.ProgrammeList = new List<Programme>();
+                almodel.BusinessActivityList = new List<BusinessActivityTemplate>();
+
+                var programmeList1 = await _programmeService.GetAllProgrammes();
+                var progList = programmeList1.Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToList();
+                if (user.PrimaryOrganisation.IsTC)
+                {
+                    progList = programmeList1.Where(d => !d.DateDeleted.HasValue).ToList();
+                }
+
+                var busActList = await _busActivityService.GetBusinessActivitiesTemplate();
+                if (progList.Count != 0)
+                {
+                    almodel.ProgrammeList = progList;
+                }
+
+                if (busActList.Count != 0)
+                {
+                    almodel.BusinessActivityList = busActList;
+                }
+
+                model.ActivityListViewModel = almodel;
+
+                return View(model);
             }
-           
-            model.ActivityAttach = new ActivityAttachVM()
+            catch (Exception ex)
             {
-                BaseProgList = proglist
-            };
-
-            ActivityListViewModel almodel = new ActivityListViewModel();
-            almodel.ProgrammeList = new List<Programme>();
-            almodel.BusinessActivityList = new List<BusinessActivityTemplate>();
-
-            var progList = await _programmeRepository.FindAll().Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToListAsync();
-            if (user.PrimaryOrganisation.IsTC)
-            {
-                progList = await _programmeRepository.FindAll().Where(d => !d.DateDeleted.HasValue).ToListAsync();
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-
-            var busActList = await _busActivityService.GetBusinessActivitiesTemplate();
-            if (progList.Count != 0)
-            {
-                almodel.ProgrammeList = progList;
-            }
-
-            if (busActList.Count != 0)
-            {
-                almodel.BusinessActivityList = busActList;
-            }
-
-            model.ActivityListViewModel = almodel;
-
-            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBusinessActivity(ActivityModal model)
         {
-            //TODO: tidy up code use a list to loop through model 
-            var user = await CurrentUser();
+            User user = null;
             IList<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
-            if (model.ClassOne != null)
+
+            try
             {
-                BusinessActivityTemplate ba1 = new BusinessActivityTemplate(user)
+                user = await CurrentUser();
+
+                if (model.ClassOne != null)
                 {
-                    AnzsciCode = model.ClassOne.AnzsciCode,
-                    Description = model.ClassOne.Description,
-                    Classification = model.ClassOne.Classification
-                };
-                BAList.Add(ba1);
-            }
+                    BusinessActivityTemplate ba1 = new BusinessActivityTemplate(user)
+                    {
+                        AnzsciCode = model.ClassOne.AnzsciCode,
+                        Description = model.ClassOne.Description,
+                        Classification = model.ClassOne.Classification
+                    };
+                    BAList.Add(ba1);
+                }
 
-            if (model.ClassTwo != null)
-            {
-                BusinessActivityTemplate ba2 = new BusinessActivityTemplate(user)
+                if (model.ClassTwo != null)
                 {
-                    AnzsciCode = model.ClassTwo.AnzsciCode,
-                    Description = model.ClassTwo.Description,
-                    Classification = model.ClassTwo.Classification
-                };
-                BAList.Add(ba2);
-            }
+                    BusinessActivityTemplate ba2 = new BusinessActivityTemplate(user)
+                    {
+                        AnzsciCode = model.ClassTwo.AnzsciCode,
+                        Description = model.ClassTwo.Description,
+                        Classification = model.ClassTwo.Classification
+                    };
+                    BAList.Add(ba2);
+                }
 
-            if (model.ClassThree != null)
-            {
-                BusinessActivityTemplate ba3 = new BusinessActivityTemplate(user)
+                if (model.ClassThree != null)
                 {
-                    AnzsciCode = model.ClassThree.AnzsciCode,
-                    Description = model.ClassThree.Description,
-                    Classification = model.ClassThree.Classification
-                };
-                BAList.Add(ba3);
-            }
+                    BusinessActivityTemplate ba3 = new BusinessActivityTemplate(user)
+                    {
+                        AnzsciCode = model.ClassThree.AnzsciCode,
+                        Description = model.ClassThree.Description,
+                        Classification = model.ClassThree.Classification
+                    };
+                    BAList.Add(ba3);
+                }
 
-            if (model.ClassFour != null)
-            {
-                BusinessActivityTemplate ba4 = new BusinessActivityTemplate(user)
+                if (model.ClassFour != null)
                 {
-                    AnzsciCode = model.ClassFour.AnzsciCode,
-                    Description = model.ClassFour.Description,
-                    Classification = model.ClassFour.Classification
-                };
-                BAList.Add(ba4);
-            }
+                    BusinessActivityTemplate ba4 = new BusinessActivityTemplate(user)
+                    {
+                        AnzsciCode = model.ClassFour.AnzsciCode,
+                        Description = model.ClassFour.Description,
+                        Classification = model.ClassFour.Classification
+                    };
+                    BAList.Add(ba4);
+                }
 
-            foreach (BusinessActivityTemplate businessActivity in BAList)
+                foreach (BusinessActivityTemplate businessActivity in BAList)
+                {
+                    await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
+                }
+
+                return Redirect("/Programme/ActivityBuilder");
+            }
+            catch (Exception ex)
             {
-               await _busActivityService.CreateBusinessActivityTemplate(businessActivity);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-
-            return Redirect("/Programme/ActivityBuilder");
         }
 
         [HttpGet]
         public async Task<IActionResult> SharedDataRoleBuilder()
         {
-            var user = await CurrentUser();
-            var programmeList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
-            var sharedRoleList = await _sharedDataRoleService.GetRolesByOwner(user.PrimaryOrganisation.Id);
             SharedRoleTemplateViewModel model = new SharedRoleTemplateViewModel();
             model.Roles = new List<SelectListItem>();
             model.BaseProgList = new List<SelectListItem>();
-            if(programmeList.Count != 0)
-            {
-                foreach (var programme in programmeList)
-                {
-                    model.BaseProgList.Add(new SelectListItem
-                    {
-                        Text = programme.Name,
-                        Value = programme.Id.ToString()
-                    });
-                }
-            }
+            User user = null;
 
-            if (sharedRoleList.Count != 0)
+            try
             {
-                foreach (var template in sharedRoleList)
-                {
-                    model.Roles.Add(new SelectListItem
-                    {
-                        Text = template.Name,
-                        Value = template.Id.ToString()
-                    });
-                }
-            }
-            
+                user = await CurrentUser();
+                var programmeList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
+                var sharedRoleList = await _sharedDataRoleService.GetRolesByOwner(user.PrimaryOrganisation.Id);
 
-            return View(model);
+                if (programmeList.Count != 0)
+                {
+                    foreach (var programme in programmeList)
+                    {
+                        model.BaseProgList.Add(new SelectListItem
+                        {
+                            Text = programme.Name,
+                            Value = programme.Id.ToString()
+                        });
+                    }
+                }
+
+                if (sharedRoleList.Count != 0)
+                {
+                    foreach (var template in sharedRoleList)
+                    {
+                        model.Roles.Add(new SelectListItem
+                        {
+                            Text = template.Name,
+                            Value = template.Id.ToString()
+                        });
+                    }
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSharedDataRoleTemplate(string TemplateName, bool IsPublic)
         {
-            var user = await CurrentUser();
+            User user = null;
             var newSharedRole = new SharedDataRoleTemplate();
             newSharedRole.IsPublic = IsPublic;
             newSharedRole.Name = TemplateName;
-            newSharedRole.Organisation = user.PrimaryOrganisation;
 
-            await _sharedDataRoleService.CreateSharedDataRoleTemplate(newSharedRole);
+            try
+            {
+                user = await CurrentUser();
+                newSharedRole.Organisation = user.PrimaryOrganisation;
+                user = await CurrentUser();
+                await _sharedDataRoleService.CreateSharedDataRoleTemplate(newSharedRole);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
@@ -390,8 +455,10 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("Form has not been completed");
             }
 
+            User user = null;
             try
             {
+                user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProgrammeId));
                 foreach (string str in TemplateNames)
                 {
@@ -404,146 +471,120 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ElmahExtensions.RiseError(ex);
-                Response.StatusCode = 500;
-                return Content(ex.Message);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
         }       
 
         [HttpPost]
         public async Task<IActionResult> SendInvoice(Guid programmeId)
         {
-            ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-            if (programme.EGlobalClientNumber == null)
+            User user = null;
+
+            try
             {
-                throw new NullReferenceException("Client number is null");
-            }
-            var user = await CurrentUser();
-
-            var status = "Bound and invoiced";
-
-            //EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
-            //if (emailTemplate == null)
-            //{
-            //    throw new NullReferenceException("send policy documents template email not set up");
-            //}
-
-            //foreach (ClientAgreement agreement in programme.Agreements)
-            //{
-            //    using (var uow = _unitOfWork.BeginUnitOfWork())
-            //    {
-            //        if (agreement.Status != status)
-            //        {
-            //            agreement.Status = status;
-            //            await uow.Commit();
-            //        }
-            //    }
-
-            //    var documents = new List<SystemDocument>();
-
-            //    var invoiceDoc = agreement.Documents.FirstOrDefault(d => d.DateDeleted == null && d.DocumentType == 4);
-            //    if (invoiceDoc != null)
-            //    {
-
-            //        SystemDocument renderedDoc = _fileService.RenderDocument(user, invoiceDoc, agreement).Result;
-            //        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-            //        documents.Add(renderedDoc);
-            //        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
-            //        await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
-            //    }
-            //    else
-            //        throw new NullReferenceException("No Invoice file");
-
-            //}
-
-            var eGlobalSerializer = new EGlobalSerializerAPI();
-
-            //check Eglobal parameters
-            if (string.IsNullOrEmpty(programme.EGlobalClientNumber))
-            {
-                throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
-            }
-            
-            Guid transactionreferenceid = Guid.NewGuid();
-            
-            var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid);
-
-            var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
-
-            EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
-            
-            eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
-
-            if (programme.ClientAgreementEGlobalResponses.Count > 0)
-            {
-                EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
-                if (eGlobalResponse != null)
+                user = await CurrentUser();
+                ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
+                if (programme.EGlobalClientNumber == null)
                 {
-                    var documents = new List<SystemDocument>();
-                    foreach (ClientAgreement agreement in programme.Agreements)
+                    throw new NullReferenceException("Client number is null");
+                }
+
+
+                var status = "Bound and invoiced";
+
+                var eGlobalSerializer = new EGlobalSerializerAPI();
+
+                //check Eglobal parameters
+                if (string.IsNullOrEmpty(programme.EGlobalClientNumber))
+                {
+                    throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
+                }
+
+                Guid transactionreferenceid = Guid.NewGuid();
+
+                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid);
+
+                var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
+
+                EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
+
+                eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
+
+                if (programme.ClientAgreementEGlobalResponses.Count > 0)
+                {
+                    EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                    if (eGlobalResponse != null)
                     {
-                        if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+                        var documents = new List<SystemDocument>();
+                        foreach (ClientAgreement agreement in programme.Agreements)
                         {
-                            foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
+                            if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
                             {
-                                doc.Delete(user);
-                            }
-                            foreach (SystemDocument template in agreement.Product.Documents)
-                            {
-                                //render docs invoice
-                                if (template.DocumentType == 4)
+                                foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
                                 {
-                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
-                                    renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                                    agreement.Documents.Add(renderedDoc);
-                                    documents.Add(renderedDoc);
-                                    await _fileService.UploadFile(renderedDoc);
+                                    doc.Delete(user);
+                                }
+                                foreach (SystemDocument template in agreement.Product.Documents)
+                                {
+                                    //render docs invoice
+                                    if (template.DocumentType == 4)
+                                    {
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                        agreement.Documents.Add(renderedDoc);
+                                        documents.Add(renderedDoc);
+                                        await _fileService.UploadFile(renderedDoc);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    foreach (ClientAgreement agreement in programme.Agreements)
-                    {
+                        foreach (ClientAgreement agreement in programme.Agreements)
+                        {
+                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                if (agreement.Status != status)
+                                {
+                                    agreement.Status = status;
+                                    await uow.Commit();
+                                }
+                            }
+                            agreement.Status = status;
+                        }
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
-                            if (agreement.Status != status)
+                            if (programme.InformationSheet.Status != status)
                             {
-                                agreement.Status = status;
+                                programme.InformationSheet.Status = status;
                                 await uow.Commit();
                             }
                         }
-                        agreement.Status = status;
                     }
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        if (programme.InformationSheet.Status != status)
-                        {
-                            programme.InformationSheet.Status = status;
-                            await uow.Commit();
-                        }
-                    }
+
                 }
-
+                
+                var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
+                return Json(new { url });
             }
-
-            //return Redirect("/EditBillingConfiguration" + programmeId);
-            var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
-            return Json(new { url });
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> OwnerProgrammes(Guid ownerId, Guid Id)
         {
-            //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
+            User user = null;
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-
-            //ClientProgramme clientprogramme = new ClientProgramme();
             List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
             List<Organisation> Owners = new List<Organisation>();
 
             try
             {
+                user = await CurrentUser();
                 var programeListByOwner = await _programmeService.GetClientProgrammesByOwner(ownerId);
                 foreach (var programme in programeListByOwner)
                 {
@@ -554,111 +595,115 @@ namespace TechCertain.WebUI.Controllers
                 model.OwnerId = ownerId;
                 model.Id = Id;
                 model.clientProgrammes = clientProgrammes;
+                ViewBag.Title = "Term Sheet Template ";
+                return View(model);
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Term Sheet Template ";
-            return View(model);
-
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> ClientProgrammeDetails(Guid programmeId, Guid Id,Guid ownerId)
         {
-            //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
-          //  ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             ClientProgrammeInfoViewModel clientviewmodel = new ClientProgrammeInfoViewModel();
-            //ClientProgramme clientprogramme = new ClientProgramme();
             List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
-            //List<Organisation> Owners = new List<Organisation>();ProgramId
-            clientviewmodel.Id = Id;
-            clientviewmodel.OwnerId = ownerId;
-            clientviewmodel.ProgramId = programmeId;
+            User user = null;
 
             try
             {
+                user = await CurrentUser();
                 ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-                //foreach (var owner in programme)
-                //{
+                clientviewmodel.Id = Id;
+                clientviewmodel.OwnerId = ownerId;
+                clientviewmodel.ProgramId = programmeId;
                 clientviewmodel.Name = programme.Owner.Name;
                 clientviewmodel.Phone = programme.Owner.Phone;
                 clientviewmodel.Email = programme.Owner.Email;
                 clientviewmodel.DateCreated = (DateTime)programme.Owner.DateCreated;
                 clientviewmodel.Status = programme.InformationSheet.Status;
-                
+
+                ViewBag.Title = "Term Sheet Template ";
+                return View(clientviewmodel);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Term Sheet Template ";
-            return View(clientviewmodel);
-
         }
 
         [HttpGet]
         public async Task<IActionResult> EditBillingConfiguration(Guid programmeId)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-            model.Id = programme.Id;
-            model.BrokerContactUser = programme.BrokerContactUser;
-            model.EGlobalBranchCode = programme.EGlobalBranchCode;
-            model.EGlobalClientNumber = programme.EGlobalClientNumber;
-            model.clientprogramme = programme;
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
+                model.Id = programme.Id;
+                model.BrokerContactUser = programme.BrokerContactUser;
+                model.EGlobalBranchCode = programme.EGlobalBranchCode;
+                model.EGlobalClientNumber = programme.EGlobalClientNumber;
+                model.clientprogramme = programme;
 
 
-            model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
+                model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
 
-            var active = await _httpClientService.GetEglobalStatus();
-            model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
+                var active = await _httpClientService.GetEglobalStatus();
+                model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
 
-            return View(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {
-            ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                programme.EGlobalBranchCode = billingConfig[0];
-                programme.EGlobalClientNumber = billingConfig[1];
-                //programme.EGlobalClientStatus = billingConfig[2];
-                //if (string.IsNullOrEmpty(billingConfig[3]))
-                //{
-                //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True"? true:false; 
-                //    programme.EGlobalCustomDescription = billingConfig[3];
-                //}
-                //else
-                //{
-                //    programme.HasEGlobalCustomDescription = billingConfig[4] == "True" ? true : false;
-                //    programme.EGlobalCustomDescription = billingConfig[3]; 
-                //}
-                await uow.Commit();
+            User user = null;
 
+            try
+            {
+                user = await CurrentUser();
+                ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    programme.EGlobalBranchCode = billingConfig[0];
+                    programme.EGlobalClientNumber = billingConfig[1];
+
+                    await uow.Commit();
+
+                }
+
+                return Redirect("EditBillingConfiguration" + programmeId);
             }
-            //await _programmeService.Update(programme).ConfigureAwait(false);
-            return Redirect("EditBillingConfiguration" + programmeId);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> EditClientProgrammeDetails(Guid programmeId, Guid Id, Guid OwnerId)
         {
             ClientProgrammeInfoViewModel clientviewmodel = new ClientProgrammeInfoViewModel();
+            User user = null;
 
             try
             {
+                user = await CurrentUser();
                 ClientProgramme programme = await _programmeService.GetClientProgramme(programmeId);
-                //foreach (var owner in programme)
-                //{
                 clientviewmodel.Name = programme.Owner.Name;
                 clientviewmodel.Email = programme.Owner.Email;
                 clientviewmodel.Phone = programme.Owner.Phone;
@@ -666,267 +711,250 @@ namespace TechCertain.WebUI.Controllers
                 clientviewmodel.ProgramId = programmeId;
                 clientviewmodel.Id = Id;
 
+                ViewBag.Title = "Term Sheet Template ";
+                return View(clientviewmodel);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Term Sheet Template ";
-            return View(clientviewmodel);
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveClientProgrammeDetails(Guid programme_id, ClientProgrammeInfoViewModel clientviewmodel, Guid id)
         {
-            ClientProgramme programme = await _programmeService.GetClientProgramme(programme_id);
-
-            //clientviewmodel.Id = id;
+            User user = null;
+            ClientProgramme programme = await _programmeService.GetClientProgramme(programme_id);            
             Guid ownerid = clientviewmodel.OwnerId;
+
             try
             {
-
+                user = await CurrentUser();
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-
                 {
-                    var owner = programme.Owner;
-                    //owner.Name = clientviewmodel.Name;
+                    var owner = programme.Owner;                    
                     owner.Phone = clientviewmodel.Phone;
                     owner.Email = clientviewmodel.Email;
                     await uow.Commit().ConfigureAwait(false);
-
                 }
+                ViewBag.Title = "Term Sheet Template ";
 
-
-
+                return RedirectToAction("ClientProgrammeDetails", new { programmeId = programme_id, Id = id, ownerId = ownerid });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
-            }
-            ViewBag.Title = "Term Sheet Template ";
-
-            return RedirectToAction("ClientProgrammeDetails", new { programmeId = programme_id, Id= id , ownerId = ownerid});
-
-            //return View("ClientProgrammeDetails",clientviewmodel);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }            
         }
      
-        //[HttpGet]
-
-        //               using (var uow = _unitOfWork.BeginUnitOfWork())
-        //            {
-        //                //TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone);
-        //                bvTerm.TermLimit = clientAgreementBVTerm.TermLimit;
-        //                bvTerm.Excess = clientAgreementBVTerm.Excess;
-        //                bvTerm.Premium = clientAgreementBVTerm.Premium;
-        //                bvTerm.FSL = clientAgreementBVTerm.FSL;
-        //                NewMethod(uow);
-        //}
-        //            return RedirectToAction("EditTerms", new { id = clientAgreementId });
-        //public async Task<IActionResult> OwnerDetails(List<Organisation> ownerlist, Guid Id)
-        //{
-        //    //BaseListViewModel<ProgrammeInfoViewModel> model = new BaseListViewModel<ProgrammeInfoViewModel>();
-        //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-
-        //    //ClientProgramme clientprogramme = new ClientProgramme();
-        //    //List<ClientProgramme> clientProgrammes = new List<ClientProgramme>();
-        //    List<Organisation> Owners = new List<Organisation>();
-
-        //    try
-        //    {
-        //        // ClientProgramme programme = _programmeService.GetClientProgrammesForProgramme(Id);
-        //        foreach (var owner in ownerlist)
-        //        {
-        //            //Owners.Add(owner.ownerlist);
-        //            //model.clientProgrammes.
-        //            //clientProgrammes.Add(programme);
-        //            //Organisation owner = programme.Owner;
-        //        }
-        //        model.Id = Id;
-        //        model.Owner = Owners;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex);
-
-        //    }
-        //    ViewBag.Title = "Proposalonline - Term Sheet Template ";
-        //    return View(model);
-
-        //}
-
-       
-
-
-
         [HttpGet]
         public async Task<IActionResult> EmailTemplate(Guid Id)
         {
             //BaseListViewModel<ProgrammeInfoViewModel> models = new BaseListViewModel<ProgrammeInfoViewModel>();
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-
+            User user = null;
 
             try
             {
-
+                user = await CurrentUser();
                 model.Id = Id;
-
+                ViewBag.Title = "Programme Email Template ";
+                return View(model);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Programme Email Template ";
-            return View(model);
-
         }
 
         [HttpGet]
         public async Task<IActionResult> TermSheetTemplate(Guid Id)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            User user = null;
+
             try
             {
-                model.Id = Id;                
+                user = await CurrentUser();
+                model.Id = Id;
+                ViewBag.Title = "Term Sheet Template ";
+                return View(model);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Term Sheet Template " ;
-            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> TermSheetConfirguration(Guid Id)
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            Programme programme = await _programmeRepository.GetByIdAsync(Id);
+            User user = null;
+            
             try
             {
+                Programme programme = await _programmeService.GetProgramme(Id);
                 model.Id = Id;
                 model.programmeName = programme.Name;
+                ViewBag.Title = "Term Sheet Template ";
+                return View(model);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-            ViewBag.Title = "Term Sheet Template ";
-            return View(model);
+
         }
 
         [HttpGet]
         public async Task<IActionResult> ProductRules(Guid Id, Guid productId)
         {
-            Programme programme = await _programmeRepository.GetByIdAsync(Id);
-
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var rules = new List<Rule>();
-            model.Id = Id;
-            model.ProductId = productId;
+            User user = null;
 
-            foreach(var programmeProduct in programme.Products)
+            try
             {
-                var product = await _productRepository.GetByIdAsync(programmeProduct.Id);
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgramme(Id);
+                model.Id = Id;
+                model.ProductId = productId;
 
-                foreach (var rule in product.Rules)
+                foreach (var programmeProduct in programme.Products)
                 {
-                    rules.Add(rule);
+                    var product = await _productService.GetProductById(programmeProduct.Id);
+
+                    foreach (var rule in product.Rules)
+                    {
+                        rules.Add(rule);
+                    }
                 }
+
+                model.Rules = rules;
+
+                ViewBag.Title = "Manage Product Rules";
+
+                return View("ProductRules", model);
             }
-
-            model.Rules = rules;
-
-            ViewBag.Title = "Manage Product Rules";
-
-            return View("ProductRules", model);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> EditRule(ClientAgreementRuleViewModel rule )
         {
-            //Programme programme = _programmeRepository.GetById(programmeId);
-
+            User user = null;
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var rules = new List<Rule>();
-            //model.Id = Id;
-            Rule Rule = await _RuleService.GetRuleByID(rule.ClientAgreementRuleID);
-            if(Rule != null)
+
+            try
             {
-                try
+                user = await CurrentUser();
+                Rule Rule = await _RuleService.GetRuleByID(rule.ClientAgreementRuleID);
+                if (Rule != null)
                 {
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    try
                     {
-                        Rule.Name = rule.Name;
-                        Rule.Description = rule.Description;
-                        Rule.OrderNumber = rule.OrderNumber;
-                        Rule.Value = rule.Value;
-                        await uow.Commit();
+                        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            Rule.Name = rule.Name;
+                            Rule.Description = rule.Description;
+                            Rule.OrderNumber = rule.OrderNumber;
+                            Rule.Value = rule.Value;
+                            await uow.Commit();
+                        }
+
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                model.Rules = rules;
 
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                ViewBag.Title = "Manage Product Rules";
+                return Json(true);
             }
-            model.Rules = rules;
-
-            ViewBag.Title = "Manage Product Rules";
-            return Json(true);
-            //return RedirectToAction("EditTerms", new { id = Id , productId = ProductId });
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 
         [HttpGet]
         public async Task<IActionResult> ManageRules(Guid Id)
         {
-            Programme programme = await _programmeRepository.GetByIdAsync(Id);
-
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             var product = new List<ProductInfoViewModel>();
-            model.BrokerContactUser = programme.BrokerContactUser;
-            model.Id = Id;
-            if(programme.Products != null)
+            User user = null;
+
+            try
             {
-                foreach (var prod in programme.Products)
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(Id);
+                model.BrokerContactUser = programme.BrokerContactUser;
+                model.Id = Id;
+                if (programme.Products != null)
                 {
-                    product.Add(new ProductInfoViewModel()
+                    foreach (var prod in programme.Products)
                     {
-                        Id = prod.Id,
-                        Name = prod.Name
-                        
-                    });
+                        product.Add(new ProductInfoViewModel()
+                        {
+                            Id = prod.Id,
+                            Name = prod.Name
 
+                        });
+
+                    }
                 }
-            }
-            model.Product= product;
-           
-            ViewBag.Title = "Add/Edit Programme Email Template";
+                model.Product = product;
 
-            return View("ProgrammeRules", model);
+                ViewBag.Title = "Add/Edit Programme Email Template";
+
+                return View("ProgrammeRules", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> EditProgramme(Guid Id)
         {
-            Programme programme = await _programmeRepository.GetByIdAsync(Id);
-
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            User user = null;
 
-            model.Id = Id;
-            model.programmeName = programme.Name;
-            model.IsPublic = programme.IsPublic;
-            model.TaxRate = programme.TaxRate;
-            model.UsesEGlobal = programme.UsesEGlobal;
-            model.StopAgreement = programme.StopAgreement;
-            model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
+            try
+            {
+                Programme programme = await _programmeService.GetProgrammeById(Id);
+                model.Id = Id;
+                model.programmeName = programme.Name;
+                model.IsPublic = programme.IsPublic;
+                model.TaxRate = programme.TaxRate;
+                model.UsesEGlobal = programme.UsesEGlobal;
+                model.StopAgreement = programme.StopAgreement;
+                model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
 
-            return View("EditProgramme", model);
-
+                return View("EditProgramme", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpGet]
@@ -945,69 +973,71 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> ViewProgrammes()
         {
             ProgrammeListModel model = new ProgrammeListModel();
-            var user = await CurrentUser();
-            var programmes = await _programmeService.GetAllProgrammes();
-            programmes.Where(p => p.IsPublic || p.Owner == user.PrimaryOrganisation);
-            model.Programmes = programmes;
-            return View(model);
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                var programmes = await _programmeService.GetAllProgrammes();
+                programmes.Where(p => p.IsPublic || p.Owner == user.PrimaryOrganisation);
+                model.Programmes = programmes;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> EditProgramme(ProgrammeInfoViewModel model)
         {
-            Programme programme = await _programmeRepository.GetByIdAsync(model.Id);
-            var user = await CurrentUser();
-            using (var uow = _unitOfWork.BeginUnitOfWork())
+            User user = null;
+
+            try
             {
-                programme.Name = model.programmeName;
-                programme.IsPublic = model.IsPublic;
-                programme.UsesEGlobal = model.UsesEGlobal;
-                programme.TaxRate = model.TaxRate;
-                programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
-                programme.StopAgreement = model.StopAgreement;
-                if (model.StopAgreement)
+                Programme programme = await _programmeService.GetProgrammeById(model.Id);
+                user = await CurrentUser();
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    programme.StopAgreementDateTime = DateTime.UtcNow;
+                    programme.Name = model.programmeName;
+                    programme.IsPublic = model.IsPublic;
+                    programme.UsesEGlobal = model.UsesEGlobal;
+                    programme.TaxRate = model.TaxRate;
+                    programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
+                    programme.StopAgreement = model.StopAgreement;
+                    if (model.StopAgreement)
+                    {
+                        programme.StopAgreementDateTime = DateTime.UtcNow;
+                    }
+                    programme.LastModifiedBy = user;
+                    programme.LastModifiedOn = DateTime.UtcNow;
+
+                    await uow.Commit();
                 }
-                programme.LastModifiedBy = user;
-                programme.LastModifiedOn = DateTime.UtcNow;
 
-                await uow.Commit();
+                return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
             }
-
-            return Redirect("/Programme/TermSheetConfirguration/" + programme.Id);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddselectedParty(Guid Id)
-        //{
-        //    var orguser = new List<string>();
-        //    Programme programme = _programmeRepository.GetById(Id);
-        //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-        //    model.Id = Id;
-        //    model.Parties = programme.Parties;
-
-        //    //model.OrgUser = _organisationRepository.GetById(programme.Parties.);
-        //    //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
-
-        //    ViewBag.Title = "Add/Edit Programme Email Template";
-
-        //    return View("IssueNotification", model);
-        //    return View("IssueNotification", model);
-        //}
-
 
         [HttpPost]
         public async Task<IActionResult> AddselectedParty(string[] selectedParty,Guid informationId, String title)
         {
             PartyUserViewModel model = new PartyUserViewModel();
-            Programme programme = await _programmeRepository.GetByIdAsync(informationId);
-            //model.Id = informationId;
-            //model.Parties = programme.Parties;
-             String userType = "";
-            if (programme != null)
+            User user = null;
+
+            try
             {
-                try
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(informationId);
+                string userType = "";
+                if (programme != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
@@ -1018,7 +1048,7 @@ namespace TechCertain.WebUI.Controllers
                         else if (title == "Manage UIS Submission Notification Users")
                         {
                             programme.UISSubmissionNotifyUsers.Clear();
-                         }
+                        }
                         else if (title == "Manage Agreement Refer Notification Users")
                         {
                             programme.AgreementReferNotifyUsers.Clear();
@@ -1029,303 +1059,295 @@ namespace TechCertain.WebUI.Controllers
                         }
                         else if (title == "Manage Agreement Bound Notification Users")
                         {
-                            programme.AgreementBoundNotifyUsers.Clear();                          
+                            programme.AgreementBoundNotifyUsers.Clear();
                         }
 
                         foreach (var party in selectedParty)
                         {
-                            var user = await _userService.GetUserByEmail(party);
-                            if( title== "Manage UIS Issue Notification Users")
+                            var userParty = await _userService.GetUserByEmail(party);
+                            if (title == "Manage UIS Issue Notification Users")
                             {
-                                if (!programme.UISIssueNotifyUsers.Contains(user))
+                                if (!programme.UISIssueNotifyUsers.Contains(userParty))
                                 {
-                                    programme.UISIssueNotifyUsers.Add(user);
+                                    programme.UISIssueNotifyUsers.Add(userParty);
                                 }
-                            }else if (title == "Manage UIS Submission Notification Users")
+                            }
+                            else if (title == "Manage UIS Submission Notification Users")
                             {
-                                if (!programme.UISSubmissionNotifyUsers.Contains(user))
+                                if (!programme.UISSubmissionNotifyUsers.Contains(userParty))
                                 {
-                                    programme.UISSubmissionNotifyUsers.Add(user);
+                                    programme.UISSubmissionNotifyUsers.Add(userParty);
                                 }
                             }
                             else if (title == "Manage Agreement Refer Notification Users")
                             {
-                                if (!programme.AgreementReferNotifyUsers.Contains(user))
+                                if (!programme.AgreementReferNotifyUsers.Contains(userParty))
                                 {
-                                    programme.AgreementReferNotifyUsers.Add(user);
+                                    programme.AgreementReferNotifyUsers.Add(userParty);
                                 }
                             }
                             else if (title == "Manage Agreement Issue Notification Users")
                             {
-                                if (!programme.AgreementIssueNotifyUsers.Contains(user))
+                                if (!programme.AgreementIssueNotifyUsers.Contains(userParty))
                                 {
-                                    programme.AgreementIssueNotifyUsers.Add(user);
+                                    programme.AgreementIssueNotifyUsers.Add(userParty);
                                 }
 
                             }
                             else if (title == "Manage Agreement Bound Notification Users")
                             {
-                                if (!programme.AgreementBoundNotifyUsers.Contains(user))
+                                if (!programme.AgreementBoundNotifyUsers.Contains(userParty))
                                 {
-                                    programme.AgreementBoundNotifyUsers.Add(user);
+                                    programme.AgreementBoundNotifyUsers.Add(userParty);
                                 }
                             }
-                         
+
                         }
                         await uow.Commit();
+
                     }
                     
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                return Json(model);
             }
-            return Json(model);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 
         [HttpPost]
         public async Task<IActionResult> getselectedParty(Guid informationId)
         {
-            //PartyUserViewModel model = new PartyUserViewModel();
+            List<string> userEmail = new List<string>();
             PartyUserViewModel model = new PartyUserViewModel();
+            User user = null;
 
-            Programme programme = await _programmeRepository.GetByIdAsync(informationId);
-            List<String> userEmail = new List<String>();
-            foreach(var email in programme.UISIssueNotifyUsers)
+            try
             {
-                userEmail.Add(email.Email);
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(informationId);
+
+                foreach (var email in programme.UISIssueNotifyUsers)
+                {
+                    userEmail.Add(email.Email);
+                }
+
+                return Json(userEmail);
             }
-            return Json(userEmail);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 
         [HttpPost]
         public async Task<IActionResult> selectedParty(Guid selectedParty, Guid informationId)
         {
-            //PartyUserViewModel model = new PartyUserViewModel();
+            List<PartyUserViewModel> userPartyList = new List<PartyUserViewModel>();
             PartyUserViewModel model = new PartyUserViewModel();
+            User user = null;
 
-            Programme programme = await _programmeRepository.GetByIdAsync(informationId);
-            //model.Id = informationId;
-            //model.Parties = programme.Parties;
-            Organisation organisation = await _organisationRepository.GetByIdAsync(selectedParty);
-            List<PartyUserViewModel> userList = new List<PartyUserViewModel>();
-            if ("organisation" != null)
+            try
             {
-                try
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(informationId);
+                Organisation organisation = await _organisationService.GetOrganisation(selectedParty);
+
+                if ("organisation" != null)
                 {
-                    foreach (var user in _userRepository.FindAll().Where(p => p.PrimaryOrganisation == organisation))
+                    var userList = await _userService.GetAllUsers();
+                    foreach (var userOrg in userList.Where(p => p.PrimaryOrganisation == organisation))
                     {
-                        userList.Add(new PartyUserViewModel()
+                        userPartyList.Add(new PartyUserViewModel()
                         {
-                            Name = user.FirstName,
-                            Id = user.Id.ToString(),
-                            Email = user.Email,
+                            Name = userOrg.FirstName,
+                            Id = userOrg.Id.ToString(),
+                            Email = userOrg.Email,
                         });
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+
+                return Json(userPartyList);
             }
-            return Json(userList);
-        }
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddselectedParty(Guid selectedParty, Guid informationId)
-        //{
-        //    Programme programme = _programmeRepository.GetById(informationId);
-        //    ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-        //    model.Id = informationId;
-        //    model.Parties = programme.Parties;
-        //    Organisation organisation = _organisationRepository.GetById(selectedParty);
-            
-        //    List<SelectListItem> selectedorg = new List<SelectListItem>();
-        //    try
-        //    {
-        //        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-
-        //        {
-        //          //  foreach (var ip in organisation.OrganisationalUnits)
-        //          //{
-        //          //  foreach (var org in ip.Users)
-        //          //  {
-        //          //      selectedorg.Add(new SelectListItem
-        //          //      {
-        //          //          Selected = false,
-        //          //          Text = org.FirstName,
-        //          //          Value = org.Id.ToString(),
-        //          //      });
-        //          //  }
-        //          //}
-        //          //   model.OrgUser = selectedorg;
-                    
-        //            NewMethod(uow);
-
-        //        }
-
-
-        //        ////model.OrgUser = _organisationRepository.GetById(programme.Parties.);
-        //        ////var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
-        //        //using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //        //{
-        //        //    uow.Commit();
-        //        //}
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-            
-        //    return Json(model);
-        //}
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }                 
 
 
         [HttpGet]
         public async Task<IActionResult> IssueNotification(Guid Id, String Title)
         {
             var orguser = new List<string>();
-            Programme programme = await _programmeRepository.GetByIdAsync(Id);
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
-            model.Id = Id;
-            model.Name = Title;
-            model.Parties = programme.Parties;
+            User user = null;
 
-            //model.OrgUser = _organisationRepository.GetById(programme.Parties.);
-            //var programmes = _programmeRepository.FindAll().Where(p => p.Owner == CurrentUser().PrimaryOrganisation);
-            //model.OrgUser =   _userRepository.FindAll().FirstOrDefault(user => user.PrimaryOrganisation.Name = ")
-            ViewBag.Title = "Add/Edit Programme Email Template";
+            try
+            {
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(Id);
 
-            return View("IssueNotification", model);
+                model.Id = Id;
+                model.Name = Title;
+                model.Parties = programme.Parties;
+                ViewBag.Title = "Add/Edit Programme Email Template";
+
+                return View("IssueNotification", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> SendEmailTemplates(Guid Id, String type,String description)
+        public async Task<IActionResult> SendEmailTemplates(Guid Id, string type, string description)
         {
-            Programme programme = await _programmeRepository.GetByIdAsync(Id);
-           
-            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == type);
-            
             EmailTemplateViewModel model = new EmailTemplateViewModel();
+            User user = null;
 
-            model.Description = description;
-            model.BaseProgrammeID = Id;
-            model.Type = type;
-
-            if (emailTemplate != null)
+            try
             {
-                model.Name = emailTemplate.Name;
-                model.Subject = emailTemplate.Subject;
-                model.Body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
-                
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(Id);
+                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == type);
+
+                model.Description = description;
+                model.BaseProgrammeID = Id;
+                model.Type = type;
+
+                if (emailTemplate != null)
+                {
+                    model.Name = emailTemplate.Name;
+                    model.Subject = emailTemplate.Subject;
+                    model.Body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
+
+                }
+                else
+                {
+                    model.Name = "";
+                    model.Subject = "";
+                    model.Body = "";
+                }
+
+                ViewBag.Title = "Add/Edit Programme Email Template";
+
+                return View("SendEmailTemplates", model);
             }
-            else
+            catch (Exception ex)
             {
-                model.Name = "";
-                model.Subject = "";
-                model.Body = "";
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-
-            ViewBag.Title = "Add/Edit Programme Email Template";
-
-            return View("SendEmailTemplates", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> SendEmailTemplates(EmailTemplateViewModel model)
         {
-            Programme programme = await _programmeRepository.GetByIdAsync(model.BaseProgrammeID);
+            User user = null;
 
-            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == model.Type);
-
-            string emailtemplatename = null;
-            var user = await CurrentUser();
-            switch (model.Type)
+            try
             {
-                case "SendSchemeEmail":
-                    {
-                        emailtemplatename = "Scheme Email";
-                        break;
-                    }
-                case "SendInformationSheetInstruction":
-                    {
-                        emailtemplatename = "Information Sheet Instruction";
-                        break;
-                    }
-                case "SendInformationSheetReminder":
-                    {
-                        emailtemplatename = "Information Sheet Reminder";
-                        break;
-                    }
-                case "SendInformationSheetRenewalInstruction":
-                    {
-                        emailtemplatename = "Information Sheet Instructions For Renewals";
-                        break;
-                    }
-                case "SendPolicyDocuments":
-                    {
-                        emailtemplatename = "Agreement Policy Documents Covering Text";
-                        break;
-                    }
-                case "SendQuoteDocuments":
-                    {
-                        emailtemplatename = "Agreement Quote Documents Covering Text";
-                        break;
-                    }
-                case "SendAgreementOnlineAcceptanceInstructions":
-                    {
-                        emailtemplatename = "Agreement Online Acceptance Instructions";
-                        break;
-                    }
-                case "ResendPolicyDocuments":
-                    {
-                        emailtemplatename = "Agreement Policy Documents Resend Covering Text";
-                        break;
-                    }
-                case "SendAgreementAcceptanceConfirmation":
-                    {
-                        emailtemplatename = "Agreement Acceptance Confirmation";
-                        break;
-                    }
-                case "SendOnlinePaymentInstructions":
-                    {
-                        emailtemplatename = "Online Payment Instructions";
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception(string.Format("Invalid Email Template Type for Programme ID: ", model.BaseProgrammeID));
-                    }
-            }
+                user = await CurrentUser();
+                Programme programme = await _programmeService.GetProgrammeById(model.BaseProgrammeID);
+                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == model.Type);
+                string emailtemplatename = null;
 
-            if (emailTemplate != null)
-            {
-                using (var uow = _unitOfWork.BeginUnitOfWork())
+                switch (model.Type)
                 {
-                    emailTemplate.Subject = model.Subject;
-                    emailTemplate.Body = model.Body;
-                    emailTemplate.LastModifiedBy = user;
-                    emailTemplate.LastModifiedOn = DateTime.UtcNow;
-                    await uow.Commit();
+                    case "SendSchemeEmail":
+                        {
+                            emailtemplatename = "Scheme Email";
+                            break;
+                        }
+                    case "SendInformationSheetInstruction":
+                        {
+                            emailtemplatename = "Information Sheet Instruction";
+                            break;
+                        }
+                    case "SendInformationSheetReminder":
+                        {
+                            emailtemplatename = "Information Sheet Reminder";
+                            break;
+                        }
+                    case "SendInformationSheetRenewalInstruction":
+                        {
+                            emailtemplatename = "Information Sheet Instructions For Renewals";
+                            break;
+                        }
+                    case "SendPolicyDocuments":
+                        {
+                            emailtemplatename = "Agreement Policy Documents Covering Text";
+                            break;
+                        }
+                    case "SendQuoteDocuments":
+                        {
+                            emailtemplatename = "Agreement Quote Documents Covering Text";
+                            break;
+                        }
+                    case "SendAgreementOnlineAcceptanceInstructions":
+                        {
+                            emailtemplatename = "Agreement Online Acceptance Instructions";
+                            break;
+                        }
+                    case "ResendPolicyDocuments":
+                        {
+                            emailtemplatename = "Agreement Policy Documents Resend Covering Text";
+                            break;
+                        }
+                    case "SendAgreementAcceptanceConfirmation":
+                        {
+                            emailtemplatename = "Agreement Acceptance Confirmation";
+                            break;
+                        }
+                    case "SendOnlinePaymentInstructions":
+                        {
+                            emailtemplatename = "Online Payment Instructions";
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Invalid Email Template Type for Programme ID: ", model.BaseProgrammeID));
+                        }
                 }
-            }
-            else
-            {
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    emailTemplate = new EmailTemplate(user, emailtemplatename, model.Type, model.Subject, model.Body, null, programme);
-                    programme.EmailTemplates.Add(emailTemplate);
-                    await uow.Commit();
-                }
-            }
 
-            return RedirectToAction("SendEmailTemplates", new { Id = programme.Id, type = model.Type, description = model.Description });
+                if (emailTemplate != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        emailTemplate.Subject = model.Subject;
+                        emailTemplate.Body = model.Body;
+                        emailTemplate.LastModifiedBy = user;
+                        emailTemplate.LastModifiedOn = DateTime.UtcNow;
+                        await uow.Commit();
+                    }
+                }
+                else
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        emailTemplate = new EmailTemplate(user, emailtemplatename, model.Type, model.Subject, model.Body, null, programme);
+                        programme.EmailTemplates.Add(emailTemplate);
+                        await uow.Commit();
+                    }
+                }
+
+                return RedirectToAction("SendEmailTemplates", new { Id = programme.Id, type = model.Type, description = model.Description });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
 
         }
 
