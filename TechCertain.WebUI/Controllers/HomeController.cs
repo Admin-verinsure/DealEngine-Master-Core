@@ -31,13 +31,13 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
         IProgrammeService _programmeService;
         IProductService _productService;
-        ILogger _logger;
+        ILogger<HomeController> _logger;
         IApplicationLoggingService _applicationLoggingService;
 
         public HomeController(
             IMapper mapper,
             IApplicationLoggingService applicationLoggingService,
-            ILogger logger,
+            ILogger<HomeController> logger,
             IProductService productService,
             IProgrammeService programmeService,
             IUserService userRepository, 

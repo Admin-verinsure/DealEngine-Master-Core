@@ -10,46 +10,47 @@ using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.Product;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
 	//[Authorize]
 	public class ProductController : BaseController
 	{		
-		IInformationTemplateService _informationService;
-        IUnitOfWork _unitOfWork;
-		IMapperSession<Product> _productRepository;
+		IInformationTemplateService _informationService;        		
+		IProductService _productService;
         ITerritoryService _territoryService;
-        IMapperSession<RevenueByActivity> _revenueByActivityRepository;
-        IMapperSession<RiskCategory> _riskRepository;
-		IMapperSession<RiskCover> _riskCoverRepository;
-		IMapperSession<Organisation> _organisationRepository;
+		IRiskCategoryService _riskCategoryService;
+		IRiskCoverService _riskCoverService;		
+		IOrganisationService _organisationService;
 		IMapperSession<Document> _documentRepository;
         IProgrammeService _programmeService;
+		IApplicationLoggingService _applicationLoggingService;
+		ILogger<ProductController> _logger;
 
         public ProductController(
+			ILogger<ProductController> logger,
+			IApplicationLoggingService applicationLoggingService,
+			IRiskCategoryService riskCategoryService,
+			IRiskCoverService riskCoverService,
+			IProductService productService,
 			IUserService userRepository, 
-			IInformationTemplateService informationService, 
-			IMapperSession<RevenueByActivity> revenueByActivityRepository,
-			IUnitOfWork unitOfWork, 
-			IMapperSession<Product> productRepository, 
-			ITerritoryService territoryService, 
-			IMapperSession<RiskCategory> riskRepository,
-			IMapperSession<RiskCover> riskCoverRepository, 
-			IMapperSession<Organisation> organisationRepository,
+			IInformationTemplateService informationService, 							
+			ITerritoryService territoryService, 						
+			IOrganisationService organisationService,
 			IMapperSession<Document> documentRepository, 
 			IProgrammeService programmeService
 			)
 			: base (userRepository)
 		{
-            _revenueByActivityRepository = revenueByActivityRepository;
-            _informationService = informationService;
-			_unitOfWork = unitOfWork;
-			_productRepository = productRepository;
-            _territoryService = territoryService;
-            _riskRepository = riskRepository;
-			_riskCoverRepository = riskCoverRepository;
-			_organisationRepository = organisationRepository;
+			_logger = logger;
+			_applicationLoggingService = applicationLoggingService;
+			_riskCoverService = riskCoverService;
+			_riskCategoryService = riskCategoryService;
+			_informationService = informationService;
+			_productService = productService;
+            _territoryService = territoryService;            			
+			_organisationService = organisationService;
 			_documentRepository = documentRepository;
             _programmeService = programmeService;
 		}
@@ -57,37 +58,47 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
         public async Task<IActionResult> MyProducts()
         {
-			try {
-                var user = await CurrentUser();
-				var products = _productRepository.FindAll().Where (p => p.OwnerCompany == user.PrimaryOrganisation.Id);
-				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
-				foreach (Product p in products) {
-                    var company = await _organisationRepository.GetByIdAsync(p.CreatorCompany);
-                    ProductInfoViewModel model = new ProductInfoViewModel {
-						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault()),
+			User user = null;
+			try
+			{
+				user = await CurrentUser();
+				var productList = await _productService.GetAllProducts();
+				var products = productList.Where(p => p.OwnerCompany == user.PrimaryOrganisation.Id);
+				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel>();
+				foreach (Product p in products)
+				{
+					var company = await _organisationService.GetOrganisation(p.CreatorCompany);
+					ProductInfoViewModel model = new ProductInfoViewModel
+					{
+						DateCreated = LocalizeTime(p.DateCreated.GetValueOrDefault()),
 						Id = p.Id,
 						Name = p.Name,
 						OwnerCompany = company.Name,
 						SelectedLanguages = p.Languages
 					};
-					models.Add (model);
+					models.Add(model);
 				}
-				return View ("AllProducts", models);
-			} catch (Exception ex) {
-				Console.WriteLine (ex);
+				return View("AllProducts", models);
 			}
-
-			return View ("AllProducts");
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return View("AllProducts");
+			}			
         }
 
 		[HttpGet]
 		public async Task<IActionResult> AllProducts ()
 		{
-			try {
-				var products = _productRepository.FindAll().Where(p => p.Public);
+			User user = null;
+			try
+			{
+				user = await CurrentUser();
+				var productList = await _productService.GetAllProducts();
+				var products = productList.Where(p => p.Public);
 				BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
 				foreach (Product p in products) {
-                    var creatorCompany = await _organisationRepository.GetByIdAsync(p.CreatorCompany);
+                    var creatorCompany = await _organisationService.GetOrganisation(p.CreatorCompany);
                     ProductInfoViewModel model = new ProductInfoViewModel {
 						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault ()),
 						Id = p.Id,
@@ -99,11 +110,11 @@ namespace TechCertain.WebUI.Controllers
 				}
 				return View (models);
 			}
-			catch (Exception ex) {
-				Console.WriteLine (ex);
-			}
-
-			return View ();
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return View();
+			}			
 		}
 
 		// Proposal Element,
@@ -120,13 +131,17 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> CreateNew()
 		{
-            var user = await CurrentUser();
-			ProductViewModel model = new ProductViewModel ();
-			model.Description = new ProductDescriptionVM {
-				CreatorOrganisation = user.PrimaryOrganisation.Id,
-				OwnerOrganisation = user.PrimaryOrganisation.Id,
-				// TODO - load this from db
-				Languages = new List<SelectListItem> {
+			User user = null;
+			try
+			{
+				user = await CurrentUser();
+				ProductViewModel model = new ProductViewModel();
+				model.Description = new ProductDescriptionVM
+				{
+					CreatorOrganisation = user.PrimaryOrganisation.Id,
+					OwnerOrganisation = user.PrimaryOrganisation.Id,
+					// TODO - load this from db
+					Languages = new List<SelectListItem> {
 					new SelectListItem { Text = "English (NZ)", Value = "nz" },
 					new SelectListItem { Text = "English (US)", Value = "uk" },
 					new SelectListItem { Text = "English (UK)", Value = "us" },
@@ -134,59 +149,72 @@ namespace TechCertain.WebUI.Controllers
 					new SelectListItem { Text = "French", Value = "fr" },
 					new SelectListItem { Text = "Chinese", Value = "cn" }
 				},
-				BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
-			};
+					BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
+				};
 
-			//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
-				model.Description.BaseProducts.Add (new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString () });
+				//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
+				model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
 
-			foreach (Product product in _productRepository.FindAll().Where (p => p.IsBaseProduct)) {
-				model.Description.BaseProducts.Add (new SelectListItem { Text = product.Name, Value = product.Id.ToString () });
+				var productList = await _productService.GetAllProducts();
+				foreach (Product product in productList.Where(p => p.IsBaseProduct))
+				{
+					model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
+				}
+
+				var riskList = await _riskCategoryService.GetAllRiskCategories();
+				foreach (RiskCategory risk in riskList)
+					model.Risks.Add(new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
+
+				// set product settings
+				foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
+					model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
+
+				model.Settings.InformationSheets = new List<SelectListItem>();
+				model.Settings.InformationSheets.Add(new SelectListItem { Text = "Select Information Sheet", Value = "" });
+				var templates = await _informationService.GetAllTemplates();
+				foreach (var template in templates)
+					model.Settings.InformationSheets.Add(
+						new SelectListItem
+						{
+							Text = template.Name,
+							Value = template.Id.ToString()
+						}
+					);
+
+				model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
+				model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
+				// loop over all non personal organisations and add them, excluding our own since its already added
+				var orgList = await _organisationService.GetAllOrganisations();
+				foreach (Organisation org in orgList.Where(org => org.OrganisationType.Name != "personal").OrderBy(o => o.Name))
+					if (org.Id.ToString() != model.Settings.PossibleOwnerOrganisations[1].Value)
+						model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = org.Name, Value = org.Id.ToString() });
+
+				var programmes = new List<Programme>();
+				var programmeList = await _programmeService.GetAllProgrammes();
+				//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
+				foreach (Programme programme in programmeList)
+					model.Settings.InsuranceProgrammes.Add(
+						new SelectListItem
+						{
+							Text = programme.Name,
+							Value = programme.Id.ToString()
+						}
+					);
+
+				model.Parties = new ProductPartiesVM
+				{
+					Brokers = new List<SelectListItem>(),
+					Insurers = new List<SelectListItem>()
+				};
+
+
+				return View(model);
 			}
-
-			foreach (RiskCategory risk in _riskRepository.FindAll())
-				model.Risks.Add (new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
-
-			// set product settings
-			foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == user.PrimaryOrganisation))
-				model.Settings.Documents.Add (new SelectListItem { Text = doc.Name, Value = doc.Id.ToString () });
-
-			model.Settings.InformationSheets = new List<SelectListItem> ();
-			model.Settings.InformationSheets.Add (new SelectListItem { Text = "Select Information Sheet", Value = "" });
-			var templates = await _informationService.GetAllTemplates();
-			foreach (var template in templates)
-				model.Settings.InformationSheets.Add (
-					new SelectListItem {
-						Text = template.Name,
-						Value = template.Id.ToString ()
-					}
-				);
-
-			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = "Select Product Owner", Value = "" });
-			model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString () });
-			// loop over all non personal organisations and add them, excluding our own since its already added
-			foreach (Organisation org in _organisationRepository.FindAll().Where (org => org.OrganisationType.Name != "personal").OrderBy (o => o.Name))
-				if (org.Id.ToString () != model.Settings.PossibleOwnerOrganisations [1].Value)
-					model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = org.Name, Value = org.Id.ToString () });
-
-			var programmes = new List<Programme>();
-            var programmeList = await _programmeService.GetAllProgrammes();
-			//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
-			foreach (Programme programme in programmeList)
-				model.Settings.InsuranceProgrammes.Add (
-					new SelectListItem {
-						Text = programme.Name,
-						Value = programme.Id.ToString ()
-					}
-				);
-
-			model.Parties = new ProductPartiesVM {
-				Brokers = new List<SelectListItem>(),
-				Insurers = new List<SelectListItem>()
-			};
-
-
-			return View (model);
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 
@@ -196,40 +224,50 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CreateTerritory()
         {
             TerritoryViewModel model = new TerritoryViewModel();
-            var user = await CurrentUser();
-            model.Builder = new TerritoryBuilderVM
-            {
-                Location = "",
-                Zoneorder = 0,
-                Ispublic = false,
-                // TODO - load this from db
-                BaseExclIncl = new List<SelectListItem> {
-                    new SelectListItem { Text = "Inclusion", Value = "Incl" },
-                    new SelectListItem { Text = "Exclusion", Value = "Excl" },
-                   
-                }
-            };
+			User user = null;
 
-            List<SelectListItem> proglist = new List<SelectListItem>();
-            var progList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
-            foreach (Programme programme in progList)
-            {
-                 proglist.Add(new SelectListItem
-                 {
-                        Selected = false,
-                        Text = programme.Name,
-                        Value = programme.Id.ToString(),
-                 });
-                
-            }
-         
-            model.TerritoryAttach = new TerritoryAttachVM
-            {
-                BaseProgList = proglist
-            };
+			try
+			{
+				user = await CurrentUser();
+				model.Builder = new TerritoryBuilderVM
+				{
+					Location = "",
+					Zoneorder = 0,
+					Ispublic = false,
+					// TODO - load this from db
+					BaseExclIncl = new List<SelectListItem> {
+					new SelectListItem { Text = "Inclusion", Value = "Incl" },
+					new SelectListItem { Text = "Exclusion", Value = "Excl" },
 
-            return View("TerritoryBuilder",model);
-        }
+				}
+				};
+
+				List<SelectListItem> proglist = new List<SelectListItem>();
+				var progList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
+				foreach (Programme programme in progList)
+				{
+					proglist.Add(new SelectListItem
+					{
+						Selected = false,
+						Text = programme.Name,
+						Value = programme.Id.ToString(),
+					});
+
+				}
+
+				model.TerritoryAttach = new TerritoryAttachVM
+				{
+					BaseProgList = proglist
+				};
+
+				return View("TerritoryBuilder", model);
+			}
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
+		}
 
 
         [HttpPost]
@@ -241,9 +279,10 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("Form has not been completed");
             }
 
+			User user = null;
             try
             {
-                var user = await CurrentUser();
+                user = await CurrentUser();
                 var programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
 
                 TerritoryTemplate territoryTemplate = new TerritoryTemplate(user, Location)
@@ -259,12 +298,12 @@ namespace TechCertain.WebUI.Controllers
 
                 return Redirect("~/Product/MyProducts");
             }
-            catch (Exception ex)
-            {
-                Response.StatusCode = 500;
-                return Content(ex.Message);
-            }
-        }
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
+		}
 
 
         [HttpPost]
@@ -276,12 +315,13 @@ namespace TechCertain.WebUI.Controllers
 				throw new Exception ("Form has not been completed");
 			}
 
+			User user = null;
 			try {
-                var user = await CurrentUser();
+                user = await CurrentUser();
 				Product baseProduct = null;
 				Guid baseProductId = Guid.Empty;
 				if (Guid.TryParse (model.Description.SelectedBaseProduct, out baseProductId))
-					baseProduct = await _productRepository.GetByIdAsync(baseProductId);
+					baseProduct = await _productService.GetProductById(baseProductId);
 
 				Guid ownerCompanyGuid = Guid.Empty;
 				if (!Guid.TryParse (model.Settings.SelectedOwnerOrganisation, out ownerCompanyGuid))
@@ -298,7 +338,7 @@ namespace TechCertain.WebUI.Controllers
 
 				foreach (RiskEntityViewModel risk in model.Risks) {
 					RiskCover cover = new RiskCover (user) {
-						BaseRisk = await _riskRepository.GetByIdAsync(risk.Id),
+						BaseRisk = await _riskCategoryService.GetRiskCategoryById(risk.Id),
 						CoverAll = risk.CoverAll,
 						Interuption = risk.CoverInterruption,
 						Loss = risk.CoverLoss,
@@ -341,16 +381,16 @@ namespace TechCertain.WebUI.Controllers
                 if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                await _productRepository.AddAsync(product);
+                await _productService.CreateProduct(product);
 
 
                 return Redirect ("~/Product/MyProducts");
 				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
 			}
-			catch (Exception ex) {
-				ElmahExtensions.RiseError(ex);
-				Response.StatusCode = 500;
-				return Content (ex.Message);
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
 			}
 		}
 
@@ -358,39 +398,64 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> ViewProduct (Guid id)
 		{
 			ProductViewModel model = new ProductViewModel ();
-			Product product = await _productRepository.GetByIdAsync(id);
-			if (product != null) {
-				model.Description = new ProductDescriptionVM {
-					DateCreated = LocalizeTime (product.DateCreated.GetValueOrDefault ()),
-					Description = product.Description,
-					Name = product.Name,
-					SelectedLanguages = product.Languages.ToArray (),
-					Public = product.Public
-				};
-				model.Risks = new ProductRisksVM ();
-				foreach (RiskCover risk in product.RiskCategoriesCovered)
-					model.Risks.Add (new RiskEntityViewModel { Insured = risk.BaseRisk.Name, CoverAll = risk.CoverAll, CoverLoss = risk.Loss, 
-							CoverInterruption = risk.Interuption, CoverThirdParty = risk.ThirdParty });
+			User user = null;
+
+			try
+			{
+				user = await CurrentUser();
+				Product product = await _productService.GetProductById(id);
+				if (product != null)
+				{
+					model.Description = new ProductDescriptionVM
+					{
+						DateCreated = LocalizeTime(product.DateCreated.GetValueOrDefault()),
+						Description = product.Description,
+						Name = product.Name,
+						SelectedLanguages = product.Languages.ToArray(),
+						Public = product.Public
+					};
+					model.Risks = new ProductRisksVM();
+					foreach (RiskCover risk in product.RiskCategoriesCovered)
+						model.Risks.Add(new RiskEntityViewModel
+						{
+							Insured = risk.BaseRisk.Name,
+							CoverAll = risk.CoverAll,
+							CoverLoss = risk.Loss,
+							CoverInterruption = risk.Interuption,
+							CoverThirdParty = risk.ThirdParty
+						});
+				}
+				return View(model);
 			}
-			return View (model);
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> CloneProduct (Guid id)
 		{
-            var user = await CurrentUser();
-			ProductViewModel model = new ProductViewModel ();
-			Product originalProduct = await _productRepository.GetByIdAsync(id);
-			if (originalProduct != null) {
-				model.Description = new ProductDescriptionVM {
-					OriginalProductId = originalProduct.Id,
-					CreatorOrganisation = user.PrimaryOrganisation.Id,
-					OwnerOrganisation = user.PrimaryOrganisation.Id,
-					Name = originalProduct.Name,
-					Description = originalProduct.Description,
-					SelectedLanguages = originalProduct.Languages.ToArray(),
-					// TODO - load this from db
-					Languages = new List<SelectListItem> {
+			User user = null;
+			ProductViewModel model = new ProductViewModel();
+
+			try
+			{
+				user = await CurrentUser();
+				Product originalProduct = await _productService.GetProductById(id);
+				if (originalProduct != null)
+				{
+					model.Description = new ProductDescriptionVM
+					{
+						OriginalProductId = originalProduct.Id,
+						CreatorOrganisation = user.PrimaryOrganisation.Id,
+						OwnerOrganisation = user.PrimaryOrganisation.Id,
+						Name = originalProduct.Name,
+						Description = originalProduct.Description,
+						SelectedLanguages = originalProduct.Languages.ToArray(),
+						// TODO - load this from db
+						Languages = new List<SelectListItem> {
 						new SelectListItem { Text = "English (NZ)", Value = "nz" },
 						new SelectListItem { Text = "English (US)", Value = "uk" },
 						new SelectListItem { Text = "English (UK)", Value = "us" },
@@ -398,67 +463,72 @@ namespace TechCertain.WebUI.Controllers
 						new SelectListItem { Text = "French", Value = "fr" },
 						new SelectListItem { Text = "Chinese", Value = "cn" }
 					},
-					BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } },
-					SelectedBaseProduct = id.ToString (),
-					IsBaseProduct = originalProduct.IsBaseProduct
-				};
-                
-				foreach (Product product in _productRepository.FindAll().Where (p => p.IsBaseProduct)) {
-					model.Description.BaseProducts.Add (new SelectListItem { Text = product.Name, Value = product.Id.ToString () });
+						BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } },
+						SelectedBaseProduct = id.ToString(),
+						IsBaseProduct = originalProduct.IsBaseProduct
+					};
+
+					var productList = await _productService.GetAllProducts();
+					foreach (Product product in productList.Where(p => p.IsBaseProduct))
+					{
+						model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
+					}
+
+					model.Risks = new ProductRisksVM();
+					var riskCategoryList = await _riskCategoryService.GetAllRiskCategories();
+					foreach (RiskCategory risk in riskCategoryList)
+					{
+						RiskCover productRisk = originalProduct.RiskCategoriesCovered.FirstOrDefault(r => r.BaseRisk == risk);
+						if (productRisk == null)
+							productRisk = new RiskCover(user) { CoverAll = false, Loss = false, Interuption = false, ThirdParty = false };
+						model.Risks.Add(
+							new RiskEntityViewModel
+							{
+								Insured = risk.Name,
+								Id = risk.Id,
+								CoverAll = productRisk.CoverAll,
+								CoverLoss = productRisk.Loss,
+								CoverInterruption = productRisk.Interuption,
+								CoverThirdParty = productRisk.ThirdParty
+							});
+					}
+
+					model.Settings = new ProductSettingsVM();
+					model.Settings.Documents = new List<SelectListItem>();
+					foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
+						model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
+
+					model.Settings.InformationSheets = new List<SelectListItem>();
+					var templates = await _informationService.GetAllTemplates();
+					foreach (var template in templates)
+						model.Settings.InformationSheets.Add(
+							new SelectListItem
+							{
+								Text = template.Name,
+								Value = template.Id.ToString()
+							}
+						);
+
+					model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
+					// loop over all non personal organisations and add them, excluding our own since its already added
+					var orgList = await _organisationService.GetAllOrganisations();
+					foreach (Organisation org in orgList.Where(org => org.OrganisationType.Name != "personal").OrderByDescending(o => o.Name))
+						if (org.Id.ToString() != model.Settings.PossibleOwnerOrganisations[0].Value)
+							model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = org.Name, Value = org.Id.ToString() });
+
+					model.Parties = new ProductPartiesVM
+					{
+						Brokers = new List<SelectListItem>(),
+						Insurers = new List<SelectListItem>()
+					};
 				}
-
-				model.Risks = new ProductRisksVM ();
-				foreach (RiskCategory risk in _riskRepository.FindAll()) {
-					RiskCover productRisk = originalProduct.RiskCategoriesCovered.FirstOrDefault (r => r.BaseRisk == risk);
-					if (productRisk == null)
-						productRisk = new RiskCover (user) { CoverAll = false, Loss = false, Interuption = false, ThirdParty = false };
-					model.Risks.Add (
-						new RiskEntityViewModel {
-							Insured = risk.Name,
-							Id = risk.Id,
-							CoverAll = productRisk.CoverAll,
-							CoverLoss = productRisk.Loss,
-							CoverInterruption = productRisk.Interuption,
-							CoverThirdParty = productRisk.ThirdParty
-						});
-				}
-				//model.InformationSheet = new ProductInformationSheetVM ();
-				//var templates = _informationService.GetAllTemplates ();
-				//foreach (var template in templates)
-				//	((IList<SelectListItem>)model.InformationSheet.InformationSheets).Add (
-				//		new SelectListItem {
-				//			Text = template.Name,
-				//			Value = template.Id.ToString ()
-				//		}
-				//	);
-
-				model.Settings = new ProductSettingsVM ();
-				model.Settings.Documents = new List<SelectListItem> ();
-				foreach (Document doc in _documentRepository.FindAll().Where (d => d.OwnerOrganisation == user.PrimaryOrganisation))
-					model.Settings.Documents.Add (new SelectListItem { Text = doc.Name, Value = doc.Id.ToString () });
-
-				model.Settings.InformationSheets = new List<SelectListItem> ();
-				var templates = await _informationService.GetAllTemplates();
-				foreach (var template in templates)
-					model.Settings.InformationSheets.Add (
-						new SelectListItem {
-							Text = template.Name,
-							Value = template.Id.ToString ()
-						}
-					);
-
-				model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString () });
-				// loop over all non personal organisations and add them, excluding our own since its already added
-				foreach (Organisation org in _organisationRepository.FindAll().Where (org => org.OrganisationType.Name != "personal").OrderByDescending (o => o.Name))
-					if (org.Id.ToString () != model.Settings.PossibleOwnerOrganisations [0].Value)
-						model.Settings.PossibleOwnerOrganisations.Add (new SelectListItem { Text = org.Name, Value = org.Id.ToString () });
-
-				model.Parties = new ProductPartiesVM {
-					Brokers = new List<SelectListItem> (),
-					Insurers = new List<SelectListItem> ()
-				};
+				return View("CreateNew", model);
 			}
-			return View ("CreateNew", model);
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpPost]
@@ -471,40 +541,66 @@ namespace TechCertain.WebUI.Controllers
 		public async Task<IActionResult> FindProducts ()
 		{
 			ProductRisksVM model = new ProductRisksVM ();
-			foreach (RiskCategory risk in _riskRepository.FindAll())
-				model.Add (new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
+			User user = null;
 
-			return View (model);
+			try
+			{
+				user = await CurrentUser();
+				var riskCategoryList = await _riskCategoryService.GetAllRiskCategories();
+				foreach (RiskCategory risk in riskCategoryList)
+					model.Add(new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
+
+				return View(model);
+			}
+			catch(Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> FindProducts (ProductRisksVM model)
 		{
 			BaseListViewModel<ProductInfoViewModel> models = new BaseListViewModel<ProductInfoViewModel> ();
-			var riskCovers = _riskCoverRepository.FindAll();
-			foreach (var m in model) {
-				var covers = riskCovers.Where(rc => rc.BaseRisk.Id == m.Id &&
-				                              		rc.CoverAll == m.CoverAll &&
-				                              		rc.Interuption == m.CoverInterruption &&
-				                              		rc.Loss == m.CoverLoss &&
-				                              		rc.ThirdParty == m.CoverThirdParty);
-				Console.WriteLine (covers.Count ());
-				foreach (var r in covers) {
-					Console.WriteLine (r.ToString ());                   
-                    Product p = r.Product;
-                    var creatorCompany = await _organisationRepository.GetByIdAsync(p.CreatorCompany);
-                    ProductInfoViewModel vm = new ProductInfoViewModel {
-						DateCreated = LocalizeTime (p.DateCreated.GetValueOrDefault ()),
-						Id = p.Id,
-						Name = p.Name,
-						OwnerCompany = creatorCompany.Name,
-						SelectedLanguages = p.Languages
-					};
-					models.Add (vm);
-				}
-			}
+			User user = null;
 
-			return View ("AllProducts", models);
+			try
+			{
+				user = await CurrentUser();
+				var riskCoverList = await _riskCoverService.GetAllRiskCovers();
+				foreach (var m in model)
+				{
+					var covers = riskCoverList.Where(rc => rc.BaseRisk.Id == m.Id &&
+														  rc.CoverAll == m.CoverAll &&
+														  rc.Interuption == m.CoverInterruption &&
+														  rc.Loss == m.CoverLoss &&
+														  rc.ThirdParty == m.CoverThirdParty);
+
+					foreach (var r in covers)
+					{
+						Product p = r.Product;
+						var creatorCompany = await _organisationService.GetOrganisation(p.CreatorCompany);
+						ProductInfoViewModel vm = new ProductInfoViewModel
+						{
+							DateCreated = LocalizeTime(p.DateCreated.GetValueOrDefault()),
+							Id = p.Id,
+							Name = p.Name,
+							OwnerCompany = creatorCompany.Name,
+							SelectedLanguages = p.Languages
+						};
+						models.Add(vm);
+					}
+				}
+
+				return View("AllProducts", models);
+
+			}
+			catch (Exception ex)
+			{
+				await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+				return RedirectToAction("Error500", "Error");
+			}
 		}
 	}
 }

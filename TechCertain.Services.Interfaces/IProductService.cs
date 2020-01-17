@@ -9,5 +9,7 @@ namespace TechCertain.Services.Interfaces
     public interface IProductService
     {
         Task<List<Product>> GetAllProducts();
+        Task<Product> GetProductById(Guid Id);
+        Task CreateProduct(Product product);
     }
 }

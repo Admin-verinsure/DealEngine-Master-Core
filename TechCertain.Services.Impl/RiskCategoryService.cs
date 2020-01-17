@@ -4,6 +4,7 @@ using TechCertain.Domain.Entities;
 using System.Threading.Tasks;
 using NHibernate.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace TechCertain.Services.Impl
 {
@@ -24,6 +25,11 @@ namespace TechCertain.Services.Impl
         public async Task<List<RiskCategory>> GetAllRiskCategories()
         {
             return await _riskCategoryRepository.FindAll().ToListAsync();
+        }
+
+        public async Task<RiskCategory> GetRiskCategoryById(Guid Id)
+        {
+            return await _riskCategoryRepository.GetByIdAsync(Id);
         }
     }
 }
