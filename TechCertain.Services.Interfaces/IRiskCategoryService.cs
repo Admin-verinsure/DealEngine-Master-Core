@@ -9,5 +9,6 @@ namespace TechCertain.Services.Interfaces
     {
         Task<List<RiskCategory>> GetAllRiskCategories();
         Task AddRiskCategory(RiskCategory risk);
+        Task<RiskCategory> GetRiskCategoryById(Guid Id);
     }
 }
