@@ -68,5 +68,10 @@ namespace TechCertain.Services.Impl
             return await _clientAgreementTermRepository.FindAll().Where(cagt => cagt.ClientAgreement == clientAgreement &&
                                                                               cagt.DateDeleted == null).ToListAsync();            
         }
+
+        public async Task<List<ClientAgreementTerm>> GetAllClientAgreementTerm()
+        {
+            return await _clientAgreementTermRepository.FindAll().ToListAsync();
+        }
     }
 }

@@ -16,7 +16,6 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading;
 using System.Net;
 using TechCertain.Infrastructure.Tasking;
 using Microsoft.Extensions.Logging;

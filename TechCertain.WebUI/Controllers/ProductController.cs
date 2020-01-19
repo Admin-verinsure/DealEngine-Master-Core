@@ -27,10 +27,19 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<Document> _documentRepository;
         IProgrammeService _programmeService;
 
-        public ProductController(IUserService userRepository, IInformationTemplateService informationService, IMapperSession<RevenueByActivity> revenueByActivityRepository,
-                                 IUnitOfWork unitOfWork, IMapperSession<Product> productRepository, ITerritoryService territoryService, IMapperSession<RiskCategory> riskRepository,
-		                         IMapperSession<RiskCover> riskCoverRepository, IMapperSession<Organisation> organisationRepository,
-								 IMapperSession<Document> documentRepository, IProgrammeService programmeService)
+        public ProductController(
+			IUserService userRepository, 
+			IInformationTemplateService informationService, 
+			IMapperSession<RevenueByActivity> revenueByActivityRepository,
+			IUnitOfWork unitOfWork, 
+			IMapperSession<Product> productRepository, 
+			ITerritoryService territoryService, 
+			IMapperSession<RiskCategory> riskRepository,
+			IMapperSession<RiskCover> riskCoverRepository, 
+			IMapperSession<Organisation> organisationRepository,
+			IMapperSession<Document> documentRepository, 
+			IProgrammeService programmeService
+			)
 			: base (userRepository)
 		{
             _revenueByActivityRepository = revenueByActivityRepository;

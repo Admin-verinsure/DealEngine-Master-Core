@@ -56,6 +56,7 @@
 
 
            if (stepNumber === 0) {
+
                event.preventDefault();
                debugger;
                if (stepDirection == "forward") {
@@ -64,6 +65,7 @@
                    var claim3 = $('#Claimexp3').val();
                    var claim4 = $('#Claimexp4').val();
                    var claim5 = $('#Claimexp5').val();
+                   var vesselExists = document.getElementById("Vessel");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
                    var hjfhd = document.querySelector('[aria-describedby="tblBoat_BoatName"]');
                    var IsboatNamecount = 0;
@@ -93,19 +95,19 @@
 
                    });
 
-                   if (IsboatNamecount == 1 && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound")) {
+                   if ((Isboatexist == false ||  IsboatNamecount == 1) && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") && vesselExists != null) {
+
+                       window.alert("Please Add Atleast One Boat with complete information to proceed for policy  ");
+                       $("#Vessel").trigger("click");
+                       return false;
+
+                   } else  if (IsboatNamecount == 1 && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") || Isboatexist == false && vesselExists != null ) {
 
                        window.alert("Please complete Vessel Information");
                        $("#Vessel").trigger("click");
                        return false;
 
-                   }else if ((Isboatexist == false ||  IsboatNamecount == 1) && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound")) {
-
-                       window.alert("Please Add Atleast One Boat to proceed for policy. ");
-                       $("#Vessel").trigger("click");
-                       return false;
-
-                   } else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   }else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
                        window.alert("Please Add Claims Experience to proceed for policy. ");
 

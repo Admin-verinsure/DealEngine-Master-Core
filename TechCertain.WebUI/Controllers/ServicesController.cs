@@ -52,11 +52,37 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
 
 
-        public ServicesController(IUserService userService, IClientAgreementService clientAgreementService, IAppSettingService appSettingService, IMapperSession<User> userRepository, IClientInformationService clientInformationService, IMapperSession<Vehicle> vehicleRepository, IMapperSession<BoatUse> boatUseRepository,
-            IMapperSession<OrganisationalUnit> organisationalUnitRepository, IMapperSession<InsuranceAttribute> insuranceAttributesRepository, IMapperSession<Location> locationRepository, IMapperSession<WaterLocation> waterLocationRepository, IMapperSession<Building> buildingRepository, IMapperSession<BusinessInterruption> businessInterruptionRepository,
-            IMapperSession<MaterialDamage> materialDamageRepository, IMapperSession<ClaimNotification> claimRepository, IMapperSession<Product> productRepository, IVehicleService vehicleService, IMapperSession<Boat> boatRepository,
-            IOrganisationService organisationService, IBoatUseService boatUseService, IProgrammeService programeService, IOrganisationTypeService organisationTypeService, IMapperSession<BusinessContract> businessContractRepository,
-            IMapperSession<Organisation> OrganisationRepository, IEmailService emailService, IMapper mapper, IUnitOfWork unitOfWork, IInsuranceAttributeService insuranceAttributeService, IReferenceService referenceService)
+        public ServicesController(
+            IUserService userService, 
+            IClientAgreementService clientAgreementService, 
+            IAppSettingService appSettingService, 
+            IMapperSession<User> userRepository, 
+            IClientInformationService clientInformationService, 
+            IMapperSession<Vehicle> vehicleRepository, 
+            IMapperSession<BoatUse> boatUseRepository,
+            IMapperSession<OrganisationalUnit> organisationalUnitRepository, 
+            IMapperSession<InsuranceAttribute> insuranceAttributesRepository, 
+            IMapperSession<Location> locationRepository, 
+            IMapperSession<WaterLocation> waterLocationRepository, 
+            IMapperSession<Building> buildingRepository, 
+            IMapperSession<BusinessInterruption> businessInterruptionRepository,
+            IMapperSession<MaterialDamage> materialDamageRepository, 
+            IMapperSession<ClaimNotification> claimRepository, 
+            IMapperSession<Product> productRepository, 
+            IVehicleService vehicleService, 
+            IMapperSession<Boat> boatRepository,
+            IOrganisationService organisationService, 
+            IBoatUseService boatUseService, 
+            IProgrammeService programeService, 
+            IOrganisationTypeService organisationTypeService, 
+            IMapperSession<BusinessContract> businessContractRepository,
+            IMapperSession<Organisation> OrganisationRepository, 
+            IEmailService emailService, 
+            IMapper mapper, 
+            IUnitOfWork unitOfWork, 
+            IInsuranceAttributeService insuranceAttributeService, 
+            IReferenceService referenceService
+            )
 
             : base(userService)
         {
@@ -79,7 +105,6 @@ namespace TechCertain.WebUI.Controllers
             _materialDamageRepository = materialDamageRepository;
             _claimRepository = claimRepository;
             _productRepository = productRepository;
-            // _operatorRepository = operatorRepository;
             _programmeService = programeService;
             _organisationTypeService = organisationTypeService;
             _unitOfWork = unitOfWork;
@@ -87,7 +112,6 @@ namespace TechCertain.WebUI.Controllers
             _referenceService = referenceService;
             _emailService = emailService;
             _mapper = mapper;
-
             _insuranceAttributeService = insuranceAttributeService;
             _businessContractRepository = businessContractRepository;
 

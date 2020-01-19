@@ -17,5 +17,6 @@ namespace TechCertain.Services.Interfaces
         Task UpdateAgreementTerm(ClientAgreementTerm clientAgreementTerm);
 
         Task DeleteAgreementTerm(User deletedBy, ClientAgreementTerm clientAgreementTerm);
+        Task<List<ClientAgreementTerm>> GetAllClientAgreementTerm();
     }
 }

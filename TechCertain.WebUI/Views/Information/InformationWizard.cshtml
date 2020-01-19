@@ -1125,6 +1125,9 @@
     <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     <script>
         $(window).on("load", function () {
+            debugger;
+                           $("#getDetailsModal").modal('show');
+
             if ("@Model.Status" == "Submitted") {
                 if (document.getElementById('fieldset') != null) {
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
@@ -1162,8 +1165,12 @@
                             }
                         }
                     };
+                                           $("#getDetailsModal").modal('hide');
+
                 })
                 .fail(function (a, s, d) {
+                                           $("#getDetailsModal").modal('hide');
+
                     alert("Unable to save.");
                 });
         });

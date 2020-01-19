@@ -5,6 +5,7 @@ using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using System.Collections.Generic;
 
 namespace TechCertain.Services.Impl
 {
@@ -30,6 +31,11 @@ namespace TechCertain.Services.Impl
         public async Task<InsuranceAttribute> GetInsuranceAttributeByName(string InsuranceAttributeName)
         {
             return await _InsuranceAttributeRepository.FindAll().FirstOrDefaultAsync(ot => ot.InsuranceAttributeName == InsuranceAttributeName);
+        }
+
+        public async Task<List<InsuranceAttribute>> GetInsuranceAttributes()
+        {
+            return await _InsuranceAttributeRepository.FindAll().ToListAsync();
         }
 
         #endregion
