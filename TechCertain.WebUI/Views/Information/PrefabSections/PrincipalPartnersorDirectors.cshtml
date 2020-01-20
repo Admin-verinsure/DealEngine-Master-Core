@@ -11,8 +11,8 @@
         <div id="Principaltabs">
             <ul id="tab" class="nav nav-tabs">
                 <li class="nav nav-tabs active"> <a href="#Principaltabs1"> List All </a> </li>
-                <li class="nav nav-tabs disabled"> <a href="#Principaltabs2"> Edit </a> </li>
-                <li class="nav nav-tabs"> <a href="#Principaltabs3"> Add </a> </li>
+                <li class="nav nav-tabs" id="EditPrincipal"> <a href="#Principaltabs2" class="disabled"> Edidsft </a> </li>
+                <li class="nav nav-tabs disabledTab"> <a href="#Principaltabs3"> Add </a> </li>
                 <li class="nav nav-tabs PrincipalRemoved"> <a href="#Principaltabs4"> Removed </a> </li>
 
             </ul>
@@ -92,7 +92,7 @@
                                     <option value="Subsidiary">Subsidiary</option>
                                     <option value="SubContracters">Sub Contracters</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
-                                    <option value="Megers">Mergers</option>
+                                    <option value="Mergers">Mergers</option>
                                     <option value="JointVenture">Joint Venture</option>
 
                                 </select>
@@ -129,7 +129,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditDateofRetirementSec">
-                            <label class="label required">Date of Retirement</label>
+                            <label class="label ">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="EditPrincial15" type="text">
@@ -137,7 +137,7 @@
                         </section>
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditDateofDeceasedSec">
-                            <label class="label required">Date of Deceased</label>
+                            <label class="label ">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="EditPrincial16" type="text">
@@ -311,7 +311,7 @@
                                     <option value="Principal">Principal</option>
                                     <option value="Subsidiary">Subsidiary</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
-                                    <option value="Megers">Mergers</option>
+                                    <option value="Mergers">Mergers</option>
                                     <option value="JointVenture">Joint Venture</option>
 
                                 </select>
@@ -349,7 +349,7 @@
 
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddDateofRetirementSec">
-                            <label class="label required">Date of Retirement</label>
+                            <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial15" type="text">
@@ -357,7 +357,7 @@
                         </section>
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddDateofDeceasedSec">
-                            <label class="label required">Date of Deceased</label>
+                            <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial16" type="text">
@@ -526,7 +526,7 @@
                             <script type="text/javascript">
                                  $(".PrincipalRemoved").click(function () {
                                $("#tblRemovedPrincipalDirectors").jqGrid({
-                                url: "/Services/GetDeletedPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
+                                url: "/Services/GetDeletedPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
                                 datatype: "xml",
                                    mtype: "GET",
                                 async: true,
@@ -596,8 +596,18 @@
      function Principal14Selected(PrincipalSelected) {
          var principalSelected = document.getElementById(PrincipalSelected);
          var ghg = principalSelected.options[principalSelected.selectedIndex].value;
-        if (principalSelected.options[principalSelected.selectedIndex].value != "Person - Individual") {
-            $('#Orgnamesec').removeClass('hidden');
+        if (principalSelected.options[principalSelected.selectedIndex].value == "Person - Individual" && $("#AddPrincial14").val() == "Principal") {
+            $('#AddPrincial17').val('');
+            $('#AddPrincial18').val('');
+           
+            $('#Orgnamesec').addClass('hidden');
+            $('#AddPrincial19sec').removeClass('hidden');
+            $('#AddIndividual1').removeClass('hidden');
+            $('#AddIndividual2').removeClass('hidden');
+            $('#AddIndividual3').removeClass('hidden');
+        } else {
+
+             $('#Orgnamesec').removeClass('hidden');
              $('#AddPrincial1').val('');
             $('#AddPrincial2').val('');
             $('#AddPrincial3').val('');
@@ -608,16 +618,6 @@
              $('#AditPrincial15').val('');
             $('#AditPrincial16').val('');
 
-        } else {
-            
-            $('#AddPrincial17').val('');
-            $('#AddPrincial18').val('');
-           
-            $('#Orgnamesec').addClass('hidden');
-            $('#AddPrincial19sec').removeClass('hidden');
-            $('#AddIndividual1').removeClass('hidden');
-            $('#AddIndividual2').removeClass('hidden');
-            $('#AddIndividual3').removeClass('hidden');
         }
      }
      function Principal13Selected(PrincipalSelected) {
@@ -708,20 +708,7 @@
     function EditPrincipal14Selected(PrincipalSelected) {
         debugger;
         var principalSelected = document.getElementById(PrincipalSelected);
-        if (principalSelected.options[principalSelected.selectedIndex].value != "Person - Individual") {
-            $('#EditOrgnamesec').removeClass('hidden');
-             $('#EditPrincial1').val('');
-            $('#EditPrincial2').val('');
-            $('#EditPrincial3').val('');
-            $('#EditIndividual1').addClass('hidden');
-            $('#EditIndividual2').addClass('hidden');
-            $('#EditIndividual3').addClass('hidden');
-            $('#EditPrincial19sec').addClass('hidden');
-            $('#EditPrincial15').val('');
-            $('#EditPrincial16').val('');
-
-
-        } else {
+        if (principalSelected.options[principalSelected.selectedIndex].value == "Person - Individual" && $("#EditPrincial14").val() == "Principal") {
             
             $('#EditPrincial17').val('');
             $('#EditPrincial18').val('');
@@ -731,6 +718,20 @@
             $('#EditIndividual3').removeClass('hidden');
             $('#EditPrincial19sec').removeClass('hidden');
 
+
+        } else {
+
+            $('#EditOrgnamesec').removeClass('hidden');
+            $('#EditPrincial1').val('');
+            $('#EditPrincial2').val('');
+            $('#EditPrincial3').val('');
+            $('#EditIndividual1').addClass('hidden');
+            $('#EditIndividual2').addClass('hidden');
+            $('#EditIndividual3').addClass('hidden');
+            $('#EditPrincial19sec').addClass('hidden');
+            $('#EditPrincial15').val('');
+            $('#EditPrincial16').val('');
+           
         }
      }
     function EditPrincipal13Selected(PrincipalSelected) {
@@ -766,7 +767,6 @@
             $('#EditPrincial19sec').addClass('hidden');
             $('#EditIndividual2').addClass('hidden');
             $('#EditIndividual3').addClass('hidden');
-            $('#EditPrincial19sec').addClass('hidden');
             $('#EditPrincial15').val('');
             $('#EditPrincial16').val('');
 
@@ -1100,6 +1100,12 @@
                 $('#EditPrincial6Sec').addClass('hidden');
                 $('#EditPrincial8Sec').addClass('hidden');
                 $('#EditPrincial12Sec').addClass('hidden');
+                $('#EditPrincial19sec').addClass('hidden');
+                $('#EditDateofRetirementSec').addClass('hidden');
+                $('#EditDateofDeceasedSec').addClass('hidden');
+                $('#EditOrgnamesec').addClass('hidden');
+
+
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 alert("There was an error while trying to save the Vehicle.");
@@ -1265,6 +1271,11 @@
                 $('#Princial6Sec').addClass('hidden');
                 $('#Princial8Sec').addClass('hidden');
                 $('#Princial12Sec').addClass('hidden');
+                $('#AddPrincial19sec').addClass('hidden');
+                $('#AddDateofRetirementSec').addClass('hidden');
+                $('#AddDateofDeceasedSec').addClass('hidden');
+                $('#Orgnamesec').addClass('hidden');
+
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 alert("There was an error while trying to save the Vehicle.");

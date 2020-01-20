@@ -153,6 +153,11 @@ namespace TechCertain.Domain.Entities
         {
             get { return _organisationType; }
         }
+        public virtual bool Removed
+        {
+            get;
+            set;
+        }
 
         public virtual Location Location { get; set; }
 

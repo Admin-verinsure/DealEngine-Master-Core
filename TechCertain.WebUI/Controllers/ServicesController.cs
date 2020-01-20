@@ -375,11 +375,11 @@ namespace TechCertain.WebUI.Controllers
             var organisations = new List<Organisation>();
             foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
                                                                                                 || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
-                                                                                                || ia.InsuranceAttributeName == "Megers"))
+                                                                                                || ia.InsuranceAttributeName == "Mergers"))
             {
                 foreach (var org in IA.IAOrganisations)
                 {
-                    foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id))
+                    foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id && o.Removed != true))
                     {
                         organisations.Add(organisation);
                     }
@@ -445,8 +445,8 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDeletedPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                        string searchField, string searchString, string searchOper, string filters)
+        public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                       string searchField, string searchString, string searchOper, string filters)
         {
             ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
             XDocument document = null;
@@ -457,43 +457,15 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("No valid information for id " + informationId);
 
             var organisations = new List<Organisation>();
-            Boolean exist = true;
-            foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
-                                                                                                || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
-                                                                                                || ia.InsuranceAttributeName == "Megers"))
-            {
-                foreach (var org in IA.IAOrganisations)
-                {
-                    foreach (var userorg in userdb.Organisations.Where(o => o.Id == org.Id))
-                    {
-
-                        if (!sheet.Organisation.Where(o => o.Id == org.Id).Contains(userorg))
+           
+                        foreach ( var org in sheet.Organisation.Where(o => o.Removed == true))
                         {
-                            organisations.Add(userorg);
+                            organisations.Add(org);
                         }
-                    }
-                }
+                  
 
-            }
-
-            //foreach(var org in userdb.Organisations)
-            //{
-            //    foreach(var sheetorg in sheet.Organisation)
-            //    {
-            //        if(org == sheetorg)
-            //        {
-            //            organisations.Add(org);
-
-            //        }
-            //    }
-            //}
-
-            //for (var i = 0; i < sheet.Organisation.Where(o => o.OrganisationType.Name == "Principal").Count(); i++)
-            //{
-            //    organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
-            //}
-
-
+           
+           
             try
             {
 
@@ -542,6 +514,7 @@ namespace TechCertain.WebUI.Controllers
                 return Xml(document);
             }
         }
+
 
 
         [HttpGet]
@@ -1035,15 +1008,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 if (org != null && answersheetId != null)
                 {
-                    if (status)
-                    {
-                        sheet.Organisation.Remove(org);
-                    }
-                    else
-                    {
-                        sheet.Organisation.Add(org);
-
-                    }
+                    org.Removed = status;
                 }
                 await uow.Commit();
             }
