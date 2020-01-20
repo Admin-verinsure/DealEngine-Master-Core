@@ -2,9 +2,11 @@
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using ServiceStack;
 using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Services.Interfaces;
 
 namespace TechCertain.Services.Impl
@@ -15,10 +17,13 @@ namespace TechCertain.Services.Impl
         string _apiEndpoint;
 		string _apiKey;
         IAppSettingService _appSettingService;
+		IMapperSession<Vehicle> _vehicleRepository;
 
-        public VehicleService (IAppSettingService appSettingService)
+
+		public VehicleService (IAppSettingService appSettingService, IMapperSession<Vehicle> vehicleRepository)
 		{
-            _appSettingService = appSettingService;
+			_vehicleRepository = vehicleRepository;
+			_appSettingService = appSettingService;
             _apiEndpoint = _appSettingService.CarJamEndpoint;
             _apiKey = _appSettingService.CarJamApiKey;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -57,6 +62,11 @@ namespace TechCertain.Services.Impl
 			ServicePointManager.ServerCertificateValidationCallback -= MyRemoteCertificateValidationCallback;
 
 			return vehicle;
+		}
+
+		public async Task<Vehicle> GetVehicleById(Guid vehicleId)
+		{
+			return await _vehicleRepository.GetByIdAsync(vehicleId);
 		}
 
 		public bool MyRemoteCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

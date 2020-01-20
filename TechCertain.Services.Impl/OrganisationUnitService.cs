@@ -13,13 +13,12 @@ namespace TechCertain.Services.Impl
     {
 		IMapperSession<OrganisationalUnit> _organisationUnitRepository;
 
-
         public OrganisationalUnitService(IMapperSession<OrganisationalUnit> organisationUnitRepository)
         {
             _organisationUnitRepository = organisationUnitRepository;
         }
 
-        public async Task<List<OrganisationalUnit>> GetAllOrganisationalUnits()
+        public async Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsNames()
         {
             return await _organisationUnitRepository.FindAll().ToListAsync();
         }
@@ -41,6 +40,11 @@ namespace TechCertain.Services.Impl
         public async Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsByOrg(Organisation org)
         {
             return await _organisationUnitRepository.FindAll().Where(o => o.Company == org).ToListAsync();
+        }
+
+        public async Task<List<string>> GetAllOrganisationalUnitsName()
+        {
+            return await _organisationUnitRepository.FindAll().Select(ou => ou.Name).ToListAsync();
         }
     }
 }

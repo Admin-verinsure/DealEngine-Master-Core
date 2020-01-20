@@ -12,6 +12,6 @@ namespace TechCertain.Services.Interfaces
         Task<User> GetUserByEmail (string email);
         Task<List<User>> GetAllUsers ();
         Task Create(User user);
-        Task Update(User user);        
+        Task Update(User user);
     }
 }

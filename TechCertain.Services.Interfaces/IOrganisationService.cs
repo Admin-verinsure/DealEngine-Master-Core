@@ -15,7 +15,7 @@ namespace TechCertain.Services.Interfaces
         Task<Organisation> GetOrganisation(Guid organisationId);
         Task<Organisation> GetOrganisationByName(string organisationName);
         Task<Organisation> GetOrganisationByEmail(string organisationEmail);
-        Task UpdateOrganisation(Organisation organisation);
+        Task UpdateOrganisation(Organisation organisation);        
     }
 }
 
