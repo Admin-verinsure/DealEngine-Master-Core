@@ -667,6 +667,16 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
+        
+        [HttpPost]
+        public async Task<IActionResult> ReverseTransaction(Guid transId)
+        {
+           ///To Be written by Ray
+            
+            //await _programmeService.Update(programme).ConfigureAwait(false);
+            return Redirect("EditBillingConfiguration" );
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveBillingConfiguration(string[] billingConfig, Guid programmeId)
         {

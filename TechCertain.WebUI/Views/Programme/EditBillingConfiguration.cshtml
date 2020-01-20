@@ -125,7 +125,7 @@
                     <tbody>
                         <tr>
 
-                            <td colspan="2">
+                            <td colspan="3">
                                 <b>Transactions </b>
                             </td>
                         </tr>
@@ -141,31 +141,27 @@
 
                         @foreach (var submission in Model.EGlobalSubmissions)
                         {
-                            <tr>
-
-                                <td width="12%">
-                                    <h4>@submission.EGlobalSubmissionClientProgramme.EGlobalCustomDescription</h4>
-                                </td>
-
-
-                                <td width="9%">
-                                    <a class="btnView" data-prop="@submission.SubmissionRequestXML">View xml transaction</a>
-                                    @*<a onclick="ShowXML(this)" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-prop="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
-
-                                    @*<a onclick="ShowXML(@submission.SubmissionRequestXML)"  aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
-                                </td>
-                                @*<h4>@submission.SubmissionRequestXML</h4>*@
-
-                            </tr>
-
-                            <tr>
+                    <tr>
+ 
+                        <td width="12%">
+                            <h4>@submission.EGlobalSubmissionClientProgramme.EGlobalCustomDescription</h4>
+                        </td>
 
 
-                                <td width="12%">
-                                    <button onclick="ReverseTransaction()" class="btn btn-success btn-sm" id="ReverseTransaction"><i class="fa fa-edit"></i>Reverse Transaction</button>
-                                </td>
+                            <td width="9%">
+                            @*<a class="btnView" data-prop="@submission.SubmissionRequestXML">View xml transaction</a>*@
+                            @*<a onclick="ShowXML(this)" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-prop="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
 
-                            </tr>
+                               <a href="#TransactionXMl" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>
+                            </td>
+
+                        <td width="12%">
+                            <button data-rev-trans="@submission.TransactionReferenceID" class="btn btn-success btn-sm" id="ReverseTransaction"><i class="fa fa-edit"></i>Reverse Transaction</button>
+                        </td>
+
+                    </tr>
+
+                         
                         }
                     </tbody>
                 </table>
@@ -178,15 +174,17 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Transaction XML title</h4>
-                <button onclick="$('#TransactionXMl').hide()" type="button" class="close">&times;</button>
+                <h4 class="modal-title">Transaction Detail</h4>
+                <button data-dismiss="modal" data-backdrop="false" type="button" class="close">&times;</button>
             </div>
             <div class="modal-body">
-                <textarea id="textareaID" name="transxml" class="form-control"></textarea>
+                <textarea id="textareaID" class="form-control" cols="1" rows="20" name="transxml"></textarea>
             </div>
         </div>
     </div>
 </div>
+
+
 
 @*<div id="toNewWindow">
     <p>open new window testykdhjkf fdgredg</p>
@@ -252,13 +250,22 @@
 
          $('#TransactionXMl').on('show.bs.modal', function (e) {
              debugger;
-            $('.modal').css({ "position": "absolute", "float": "left", "left": "25%", "width": "50%", "transform": "translate(-50 %, -50 %)" });
-            var transxml = $(e.relatedTarget).data('trans-xml');
-            
-            $(e.currentTarget).find('input[name="transxml"]').val(transxml);
+             //$('.modal').css('width', '70%');
+                                     $('.modal').css({ "width": "600px", "margin-left": "600px"  });
+             //$('.modal-content').css({ "height": "700px" });
 
+            //$('.modal').css({ "position": "absolute", "height":"400px" , "max-height" : "100%"});
+            var transxml = $(e.relatedTarget).data('trans-xml');
+             $('#textareaID').text(transxml);
+            //$(e.currentTarget).find('input[name="transxml"]').text("heelo");
 
          });
+
+        $('#TransactionXMl').on('hidden.bs.modal', function () {
+            debugger;
+            $(".modal-fade").modal("hide");
+            $(".modal-backdrop").remove();
+        })
 
         $('.btnView').click(function () {
             debugger;
@@ -268,6 +275,23 @@
             $(w.document.body).val(prop);
         });
 
+        $('.ReverseTransaction').click(function () {
+            debugger;
+            var transID = $(this).data('rev-trans');
+             //var html =  $(this).data('prop').html();
+           $.ajax({
+            type: "POST",
+            url: "@Url.Action("ReverseTransaction", "Programme")",
+            data: { TransId : transID },
+            traditional: true,
+            })
+                .done(function (data) {
+                
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("There was an error while trying to send your invoice.");
+                });
+        });
 
 
 
