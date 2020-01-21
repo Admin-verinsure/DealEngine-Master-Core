@@ -2159,10 +2159,10 @@ namespace TechCertain.WebUI.Controllers
                 {
                     throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
                 }
-
+                string paymentType = "Credit";
                 Guid transactionreferenceid = Guid.NewGuid();
 
-                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid);
+                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, null);
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
