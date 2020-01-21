@@ -84,7 +84,7 @@ namespace TechCertain.Services.Impl
                             user.Organisations.Add(organisation);
 
                         user.SetPrimaryOrganisation(organisation);
-                        await _userService.GetUser(user.UserName);
+                        await _userService.GetUser(user.UserName);                        
 
                         var programme = await _programmeService.GetProgramme(programmeID);
                         var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
@@ -127,7 +127,7 @@ namespace TechCertain.Services.Impl
         {
             var currentUser = CreatedUser;
             StreamReader reader;
-            User user;
+            User user = null;
             Organisation organisation;
             bool readFirstLine = false;
             string line;
@@ -149,13 +149,13 @@ namespace TechCertain.Services.Impl
                     }
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
-                    
+
                     organisation = new Organisation(currentUser, Guid.Parse(parts[0]), parts[2], organisationType);
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     organisation.NZIAmembership = parts[1];
                     organisation.Email = parts[5];
                     organisation.Phone = "12345";
-                    
+
                     if (!string.IsNullOrEmpty(parts[6]))
                     {
                         organisation.Qualifications = parts[6];
@@ -189,21 +189,40 @@ namespace TechCertain.Services.Impl
                             organisation.IsOtherdirectorship = false;
                     }
 
-                    using(var uom = _unitOfWork.BeginUnitOfWork())
+                    using (var uom = _unitOfWork.BeginUnitOfWork())
                     {
                         insuranceAttribute.IAOrganisations.Add(organisation);
                         try
                         {
                             await uom.Commit();
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             await uom.Rollback();
                         }
                     }
-                    
-                        await _organisationService.CreateNewOrganisation(organisation);
-                        await _programmeService.AddOrganisationByMembership(organisation);                                            
+
+                    await _organisationService.CreateNewOrganisation(organisation);
+                    await _programmeService.AddOrganisationByMembership(organisation);
+
+                    user = await _userService.GetUserByEmail(parts[5]);
+                    if (user == null)
+                    {
+                        string userName = parts[4] + "_" + parts[3];
+                        user = new User(currentUser, Guid.NewGuid(), userName);
+                        user.FirstName = parts[4];
+                        user.LastName = parts[3];
+                        user.FullName = parts[4] + " " + parts[3];
+                        user.Email = parts[5];
+                        user.Address = "Import Address";
+                        user.Phone = "12345";
+                    }
+
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
+
+                    user.SetPrimaryOrganisation(organisation);
+                    await _userService.Create(user);
                 }
             }
         }
@@ -247,26 +266,33 @@ namespace TechCertain.Services.Impl
             bool readFirstLine = false;
             string line;
             var contractFileName = "C:\\tmp\\NZACS Contractors Principals Demo.csv";
-            using (reader = new StreamReader(contractFileName))
+            try
             {
-                while (!reader.EndOfStream)
+                using (reader = new StreamReader(contractFileName))
                 {
-                    if (!readFirstLine)
+                    while (!reader.EndOfStream)
                     {
+                        if (!readFirstLine)
+                        {
+                            line = reader.ReadLine();
+                            readFirstLine = true;
+                        }
                         line = reader.ReadLine();
-                        readFirstLine = true;
-                    }
-                    line = reader.ReadLine();
-                    string[] parts = line.Split(',');
-                    businessContract = new BusinessContract(currentUser);
-                    businessContract.MembershipNumber = parts[4];
-                    businessContract.ContractTitle = parts[1];
-                    businessContract.Year = parts[0];
-                    businessContract.ConstructionValue = parts[2];
-                    businessContract.Fees = parts[3];
+                        string[] parts = line.Split(',');
+                        businessContract = new BusinessContract(currentUser);
+                        businessContract.MembershipNumber = parts[4];
+                        businessContract.ContractTitle = parts[1];
+                        businessContract.Year = parts[0];
+                        businessContract.ConstructionValue = parts[2];
+                        businessContract.Fees = parts[3];
 
-                    await _programmeService.AddBusinessContractByMembership(businessContract);
+                        await _programmeService.AddBusinessContractByMembership(businessContract);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 

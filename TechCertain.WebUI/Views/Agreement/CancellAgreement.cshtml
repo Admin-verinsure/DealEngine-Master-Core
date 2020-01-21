@@ -1,72 +1,160 @@
 ﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
-<!-- NEW WIDGET START -->
-    <div id="content" style="background-color: #A6E2EF">
-        <!-- widget grid -->
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i>
-                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
-                > <span>Authorise Referrals</span>
-            </h1>
-        </div>
+<div class="container">
+
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
+            > <span>Cancel Agreement</span>
+        </h1>
+    </div>
+    <div class="row">
         <span>
             <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
-
-        <secion id="widget-grid" class="">
-            <!-- row -->
-            <div class="row">
-                <!-- NEW WIDGET START -->
-                <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <!-- Widget ID (each widget will need unique ID)-->
-                    <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
-                         data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
-
-                        <header>
-                            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-                            <h2 style="color:black">@ViewBag.Title </h2>
-                        </header>
-                        <div role="content">
-
-                            @Html.HiddenFor(m => m.InformationSheetId)
-                            @Html.HiddenFor(m => m.ClientAgreementId)
-                            @Html.HiddenFor(m => m.ClientProgrammeId)
-
-                            <form action="~/Agreement/CancellAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-
-                                <label class="label"><strong>Cancel Effective Date: </strong></label>
-                                <label class="input ">
-                                    <i class="icon-append fa fa-calendar"></i>
-                                    <input name="CancellEffectiveDate" placeholder="Cancel Effective Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="CancellEffectiveDate" type="text" required>
-                                </label>
-                                <br />
-                                <label class="label"><strong>Cancel notes: </strong></label>
-                                <label class="textarea">
-                                    @Html.TextAreaFor(m => m.CancellNotes)
-                                </label>
-                                <br />
-                                <div align="right">
-                                    <button onclick="Cancell()" type="button" class="btn btn-success btn-sm">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
-                                </div>
-                                <div>
-
-                                </div>
-
-                            </form>
-
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-        </secion>
     </div>
 
 
+    <div class="row">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget container-fluid" id="wid-id-10"
+             data="false"
+             data-widget-editbutton="false"
+             data-widget-togglebutton="false"
+             data-widget-deletebutton="false"
+             data-widget-custombutton="false"
+             data-widget-sortable="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                <h2>@ViewBag.Title </h2>
+            </header>
+            @Html.HiddenFor(m => m.InformationSheetId)
+            @Html.HiddenFor(m => m.ClientAgreementId)
+            @Html.HiddenFor(m => m.ClientProgrammeId)
+
+            <form action="~/Agreement/CancellAgreement/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+
+                <table class="table table-bordered table-responsive-md table-striped text-center" id="CancelAgreementTable">
+                    <tr>
+
+                        @foreach (var item in Model.InsuranceRoles)
+                        {
+                            <td>
+                                @item.RoleName:
+                            </td>
+                            <td>
+                                @item.Name
+                            </td>
+                        }
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Inception Date: </label>
+                        </td>
+                        <td>
+                            @Model.StartDate
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Expiry Date: </label>
+                        </td>
+                        <td>
+                            @Model.EndDate
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Reason:</label>
+                        </td>
+                        <td>
+                            <label class="input form-group">
+                                <select class="form-control b" id="CancelAgreementReason" name="CancelAgreementReason" title="" required>
+                                    <option selected="selected" value="">-- Select here --</option>
+                                    <option value="TC_businessSoldOrClosed_lgi">Business Sold or Closed</option>
+                                    <option value="TC_changeInCoverReq_lgi">Change in cover requirements</option>
+                                    <option value="TC_changeOfBroker_lgi">Change of Broker</option>
+                                    <option value="TC_dissatisfiedWithClaims_lgi">Dissatisfied with claims</option>
+                                    <option value="TC_dissatisfiedWithSvc_lgi">Dissatisfied with service</option>
+                                    <option value="TC_goneIntoGlobalAcct_lgi">Gone into Global Account </option>
+                                    <option value="TC_issuedInError_lgi">Issued in error</option>
+                                    <option value="TC_nonpayment">Non payment</option>
+                                    <option value="TC_policyReplaced_lgi">Policy replaced</option>
+                                    <option value="TC_tooDear_lgi">Too dear</option>
+
+                                </select>
+
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Effective Date: </label>
+                        </td>
+                        <td>
+                            <label class="input ">
+                                @*<i class="icon-append fa fa-calendar"></i>*@
+                                <input name="CancellEffectiveDate" placeholder="Cancel Effective Date" class="Startdate form-control b" data-dateformat="dd/mm/yy" id="CancellEffectiveDate" type="text" required>
+                            </label>
+                            @*<label class="input ">
+                                    <input name="CancellEffectiveDate" placeholder="Cancel Effective Date" class="Startdate form-control b" data-dateformat="dd/mm/yy" id="CancellEffectiveDate" type="text" required> <i class="icon-append fa fa-calendar"></i>
+                                </label>*@
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label>Cancel notes: </label>
+                        </td>
+                        <td>
+                            <label class="textarea">
+                                @Html.TextAreaFor(m => m.CancellNotes)
+                            </label>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label>Cancellation Action: </label>
+                        </td>
+                        <td>
+                            <button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Request Cancel </i></button>
+                            <button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Confirm Cancel </i></button>
+                        </td>
+                    </tr>
+
+
+                    @*<tr>
+                            <td>
+                            </td>
+                            <td>
+                                <button onclick="Cancell()" type="button" class="btn btn-success btn-sm">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                            </td>
+                        </tr>*@
+
+                </table>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
 @section pagespecific {
+    <link href="~/jqueryui/jquery-ui.css" rel="stylesheet" />
+    <script src="~/jquery/jquery.min.js"></script>
+    <script src="~/jqueryui/jquery-ui.js"></script>
+
+    <script>
+
+        $('.Startdate').datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+
+    </script>
 
     @Html.Partial("_AgreementScripts")
 }

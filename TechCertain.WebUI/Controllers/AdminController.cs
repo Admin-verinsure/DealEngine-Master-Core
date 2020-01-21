@@ -30,8 +30,10 @@ namespace TechCertain.WebUI.Controllers
         IMapper _mapper;
         ILogger<AdminController> _logger;
         IApplicationLoggingService _applicationLoggingService;
+        IImportService _importService;
 
 		public AdminController (    
+            IImportService importService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<AdminController> logger,
             IUserService userRepository, 
@@ -50,6 +52,7 @@ namespace TechCertain.WebUI.Controllers
             IReferenceService referenceService)
 			: base (userRepository)
 		{
+            _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
 			_privateServerService = privateServerService;
@@ -90,6 +93,24 @@ namespace TechCertain.WebUI.Controllers
             }            
         }
         
+        [HttpGet]
+        public async Task<IActionResult> AONImport()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportAOEService(user);
+
+                return RedirectToAction("Index", "Admin");
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> PrivateServerList()
         {
