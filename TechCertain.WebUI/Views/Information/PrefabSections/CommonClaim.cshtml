@@ -45,7 +45,7 @@
 							            { name: "Claimant", align: 'center' },
 							            { name: "update", align: 'center', search: false, formatter: function(cellvalue, options, rowobject)
                                         {
-                                            return ('<button onclick="SetClaimRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblClaim\', \'#tblRemovedClaim\');" type="button"class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>');
+                                            return ('<button onclick="SetClaimRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblClaim\', \'#tblRemovedClaim\');" type="button"class=" btn btn-danger btn-sm"><span class="fa fa-trash" id="span"></span></button>');
 							            }
 										}
 									],
@@ -380,7 +380,7 @@
                             <label class="label required">Approx Date of Loss</label>
                             <label class="input">
                                 <i class="icon-append fa fa-calendar"></i>
-                                <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="AddClaimDateOfLoss" type="text">
+                                <input name="ClaimDateOfLoss" placeholder="Date of Loss" class="Startdate form-control cl" data-dateformat="dd/mm/yy" id="AddClaimDateOfLoss" type="text">
                             </label>
                             <p class="validationContainer" id="AddvalidateClaimDateOfLoss"></p>
 
@@ -389,7 +389,7 @@
                             <label class="label required">Notification Date</label>
                             <label class="input">
                                 <i class="icon-append fa fa-calendar"></i>
-                                <input name="ClaimNotifiedDate" placeholder="Notification Date" class="datepicker form-control cl" data-dateformat="dd/mm/yy" id="AddClaimNotifiedDate" type="text">
+                                <input name="ClaimNotifiedDate" placeholder="Notification Date" class=" Startdate form-control cl" data-dateformat="dd/mm/yy" id="AddClaimNotifiedDate" type="text">
                             </label>
                             <p class="validationContainer" id="AddvalidateClaimNotifiedDate"></p>
 

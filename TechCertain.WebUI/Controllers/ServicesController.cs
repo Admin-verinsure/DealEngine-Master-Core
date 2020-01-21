@@ -320,58 +320,60 @@ namespace TechCertain.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
 
-                var organisations = new List<Organisation>();
-                var insuranceAttributeList = await _insuranceAttributeService.GetInsuranceAttributes();
-                foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
+            var organisations = new List<Organisation>();
+                var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
+                foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
                                                                                                     || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
-                                                                                                    || ia.InsuranceAttributeName == "Megers"))
+                                                                                                    || ia.InsuranceAttributeName == "Mergers"))
                 {
                     foreach (var org in IA.IAOrganisations)
                     {
-                        foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id))
+                        foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id && o.Removed != true))
+
                         {
+
                             organisations.Add(organisation);
+
+
                         }
-
                     }
                 }
-
-                if (_search)
-                {
-                    switch (searchOper)
+                    if (_search)
                     {
-                        case "eq":
-                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                            break;
-                        case "bw":
-                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                            break;
-                        case "cn":
-                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                            break;
+                        switch (searchOper)
+                        {
+                            case "eq":
+                                organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                                break;
+                            case "bw":
+                                organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                                break;
+                            case "cn":
+                                organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                                break;
+                        }
                     }
-                }
-                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
-                model.Page = page;
-                model.TotalRecords = organisations.Count;
-                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
-                model.AddRow(row1);
-                int offset = rows * (page - 1);
-                for (int i = offset; i < offset + rows; i++)
-                {
-                    if (i == model.TotalRecords)
-                        break;
-                    Organisation organisation = organisations[i];
-                    JqGridRow row = new JqGridRow(organisation.Id);
-
-                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                    model.Page = page;
+                    model.TotalRecords = organisations.Count;
+                    model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                    JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
+                    model.AddRow(row1);
+                    int offset = rows * (page - 1);
+                    for (int i = offset; i < offset + rows; i++)
                     {
-                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
+                        if (i == model.TotalRecords)
+                            break;
+                        Organisation organisation = organisations[i];
+                        JqGridRow row = new JqGridRow(organisation.Id);
+
+                        for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                        {
+                            row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
+                        }
+                        model.AddRow(row);
                     }
-                    model.AddRow(row);
-                }
 
 
                 //// convert model to XDocument for rendering.
@@ -386,15 +388,15 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDeletedPrincipalPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
-                                        string searchField, string searchString, string searchOper, string filters)
+        public async Task<IActionResult> GetDeletedPartners(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                       string searchField, string searchString, string searchOper, string filters)
         {
-            XDocument document = null;
-            JqGridViewModel model = new JqGridViewModel();
             User user = null;
 
             try
             {
+                XDocument document = null;
+                JqGridViewModel model = new JqGridViewModel();
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
 
@@ -404,25 +406,10 @@ namespace TechCertain.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = new List<Organisation>();
-                bool exist = true;
-                var insuranceAttributeList = await _insuranceAttributeService.GetInsuranceAttributes();
-                foreach (InsuranceAttribute IA in insuranceAttributeList.Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
-                                                                                                    || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
-                                                                                                    || ia.InsuranceAttributeName == "Megers"))
-                {
-                    foreach (var org in IA.IAOrganisations)
-                    {
-                        foreach (var userorg in userdb.Organisations.Where(o => o.Id == org.Id))
+                 foreach ( var org in sheet.Organisation.Where(o => o.Removed == true))
                         {
-
-                            if (!sheet.Organisation.Where(o => o.Id == org.Id).Contains(userorg))
-                            {
-                                organisations.Add(userorg);
-                            }
+                            organisations.Add(org);
                         }
-                    }
-
-                }
 
                 if (_search)
                 {
@@ -469,6 +456,7 @@ namespace TechCertain.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }            
         }
+
 
 
         [HttpGet]
@@ -1126,18 +1114,8 @@ namespace TechCertain.WebUI.Controllers
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    if (org != null && answersheetId != null)
-                    {
-                        if (status)
-                        {
-                            sheet.Organisation.Remove(org);
-                        }
-                        else
-                        {
-                            sheet.Organisation.Add(org);
-
-                        }
-                    }
+                    org.Removed = status;
+                  
                     await uow.Commit();
                 }
 
@@ -2618,14 +2596,17 @@ namespace TechCertain.WebUI.Controllers
 
                     User userdb = null;
                     Organisation organisation = null;
+                    if(model.ID != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                    {
+                        organisation = await _organisationService.GetOrganisation(model.ID);
 
-                    organisation = await _organisationService.GetOrganisation(model.ID);
+                    }
                     try
                     {
                         if (orgTypeName == "Person - Individual")
                         {
                             userdb = await _userService.GetUserByEmail(organisation.Email);
-                            if (userdb != null)
+                            if (userdb == null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
@@ -2637,10 +2618,13 @@ namespace TechCertain.WebUI.Controllers
                                 }
                             }
 
-                        }
+                        }else {
 
-                    }
-                    catch (Exception ex)
+                        var userList = await _userService.GetAllUsers();
+                        userdb = userList.FirstOrDefault(user => user.PrimaryOrganisation == sheet.Owner);
+                         }
+
+                    }catch (Exception ex)
                     {
 
                         if (orgTypeName == "Person - Individual")
@@ -2672,26 +2656,62 @@ namespace TechCertain.WebUI.Controllers
 
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                     {
-                        organisation.ChangeOrganisationName(organisationName);
-                        organisation.Qualifications = model.Qualifications;
-                        organisation.IsNZIAmember = model.IsNZIAmember;
-                        organisation.NZIAmembership = model.NZIAmembership;
-                        organisation.IsADNZmember = model.IsADNZmember;
-                        organisation.IsLPBCategory3 = model.IsLPBCategory3;
-                        organisation.YearofPractice = model.YearofPractice;
-                        organisation.PrevPractice = model.prevPractice;
-                        organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                        organisation.Othercompanyname = model.Othercompanyname;
-                        organisation.Activities = model.Activities;
-                        organisation.Email = userdb.Email;
-                        organisation.Type = model.Type;
-                        if (model.DateofRetirement != null)
+                        if (organisation != null)
                         {
-                            organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            organisation.ChangeOrganisationName(organisationName);
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.IsNZIAmember = model.IsNZIAmember;
+                            organisation.NZIAmembership = model.NZIAmembership;
+                            organisation.IsADNZmember = model.IsADNZmember;
+                            organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                            organisation.YearofPractice = model.YearofPractice;
+                            organisation.PrevPractice = model.prevPractice;
+                            organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                            organisation.Othercompanyname = model.Othercompanyname;
+                            organisation.Activities = model.Activities;
+                            organisation.Email = userdb.Email;
+                            organisation.Type = model.Type;
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                            }
                         }
-                        if (model.DateofDeceased != null)
+                        else
                         {
-                            organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                          
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
+                            organisation.Qualifications = model.Qualifications;
+                            organisation.IsNZIAmember = model.IsNZIAmember;
+                            organisation.NZIAmembership = model.NZIAmembership;
+                            organisation.IsADNZmember = model.IsADNZmember;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                            organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                            organisation.YearofPractice = model.YearofPractice;
+                            organisation.PrevPractice = model.prevPractice;
+                            organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                            organisation.Othercompanyname = model.Othercompanyname;
+                            organisation.Activities = model.Activities;
+                            organisation.Email = userdb.Email;
+                            organisation.Type = model.Type;
+                            if (model.DateofRetirement != null)
+                            {
+                                organisation.DateofRetirement = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofRetirement), "d"));
+                            }
+                            if (model.DateofDeceased != null)
+                            {
+                                organisation.DateofDeceased = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofDeceased), "d"));
+                            }
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            insuranceAttribute.IAOrganisations.Add(organisation);
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            userdb.Organisations.Add(organisation);
+                            sheet.Organisation.Add(organisation);
+                            model.ID = organisation.Id;
+                                
                         }
                         await uow.Commit();
                     }

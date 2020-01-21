@@ -15,6 +15,7 @@ using TechCertain.WebUI.Models.Product;
 using System.Threading.Tasks;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using Microsoft.Extensions.Logging;
+using TechCertain.WebUI.Helpers;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -651,9 +652,36 @@ namespace TechCertain.WebUI.Controllers
                 model.EGlobalBranchCode = programme.EGlobalBranchCode;
                 model.EGlobalClientNumber = programme.EGlobalClientNumber;
                 model.clientprogramme = programme;
-
-
                 model.EGlobalSubmissions = programme.ClientAgreementEGlobalSubmissions;
+
+                foreach (EGlobalSubmission esubmission in programme.ClientAgreementEGlobalSubmissions)
+                {
+                    string submissiondiscription = esubmission.DateCreated.Value.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"));
+
+                    if (esubmission.EGlobalResponse != null)
+                    {
+                        submissiondiscription += " - response received";
+                        if (esubmission.EGlobalResponse.ResponseType == "update")
+                        {
+                            submissiondiscription += "(success) - " + esubmission.EGlobalResponse.TranCode + " - invoice #:" + esubmission.EGlobalResponse.InvoiceNumber;
+                        }
+                        else
+                        {
+                            submissiondiscription += "(error)";
+                        }
+                    }
+                    else
+                    {
+                        submissiondiscription += " - no response";
+                    }
+
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        esubmission.SubmissionDesc = submissiondiscription;
+                        await uow.Commit();
+                    }
+                    
+                }
 
                 var active = await _httpClientService.GetEglobalStatus();
                 model.EGlobalIsActiveOrNot = (active == "ACTIVE") ? true : false;
@@ -671,7 +699,7 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ReverseTransaction(Guid transId)
         {
-           ///To Be written by Ray
+            EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transId);
             
             //await _programmeService.Update(programme).ConfigureAwait(false);
             return Redirect("EditBillingConfiguration" );

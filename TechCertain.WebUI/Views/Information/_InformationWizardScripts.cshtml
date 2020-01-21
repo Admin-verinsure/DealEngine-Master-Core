@@ -2740,7 +2740,8 @@ function showAccordionPanel(id, panelNo) {
     }
 
 
-    function ValidateAddClaim(tabId, tableId, currenttab) {
+    function ValidateAddClaim(event, tabId, tableId, currenttab) {
+         event.preventDefault();
         var claimTitle = $('#AddClaimTitle').val();
         var claimDescription = $('#AddClaimDescription').val();
         var claimStatus = $('#AddClaimStatus').val();
@@ -2753,6 +2754,7 @@ function showAccordionPanel(id, panelNo) {
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var claimEstimateInsuredLiability = $('#AddClaimEstimateInsuredLiability').val();
         var result = true;
+        debugger;
         if (claimEstimateInsuredLiability == "") {
             $('#AddvalidateClaimEstimateInsuredLiability').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2853,7 +2855,7 @@ function showAccordionPanel(id, panelNo) {
             AddClaim(event,tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
-            $('#validateClaimEstimateInsuredLiability').html("<font color='red'>Please enter the number.</font>")
+            $('#AddvalidateClaimEstimateInsuredLiability').html("<font color='red'>Please enter the number.</font>")
             return result1;
         }
     }
@@ -3497,6 +3499,7 @@ function EditClaim(claimId, tableId) {
     function ClearBoats(event, tabId, currentTab) {
         debugger;
         event.preventDefault();
+        $(tabId + " :input").val(""); //Clears form
 
         if (confirm("I don't want to add.")) {
             //$(tabId + " :input").val(""); //Clears form
