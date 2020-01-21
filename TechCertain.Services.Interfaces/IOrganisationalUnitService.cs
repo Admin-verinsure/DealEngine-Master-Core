@@ -8,13 +8,13 @@ namespace TechCertain.Services.Interfaces
 {
     public interface IOrganisationalUnitService
     {
-        Task<List<OrganisationalUnit>> GetAllOrganisationalUnits();
+        Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsNames();
 
         Task<OrganisationalUnit> GetOrganisationalUnit(Guid organisationalUnitId);
 
         Task<OrganisationalUnit> GetOrganisationalUnitByName (string organisationalUnitName);
         Task<List<OrganisationalUnit>> GetAllOrganisationalUnitsByOrg(Organisation org);
-
+        Task<List<string>> GetAllOrganisationalUnitsName();
     }
 }
 

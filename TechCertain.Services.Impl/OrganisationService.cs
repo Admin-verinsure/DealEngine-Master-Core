@@ -94,6 +94,6 @@ namespace TechCertain.Services.Impl
         {
             return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
         }
-    }
+	}
 }
 

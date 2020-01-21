@@ -3498,6 +3498,7 @@ function EditClaim(claimId, tableId) {
     function ClearBoats(event, tabId, currentTab) {
         debugger;
         event.preventDefault();
+        $(tabId + " :input").val(""); //Clears form
 
         if (confirm("I don't want to add.")) {
             //$(tabId + " :input").val(""); //Clears form
