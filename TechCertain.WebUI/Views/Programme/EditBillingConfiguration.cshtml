@@ -117,10 +117,8 @@
                 </tbody>
             </table>
 
-            @if (Model.EGlobalSubmissions != null)
+            @if (Model.EGlobalSubmissions.Count > 0)
             {
-
-
                 <table class="table table-bordered table-striped table-hover table-condensed">
                     <tbody>
                         <tr>
@@ -139,23 +137,19 @@
                             </td>
                         </tr>
 
-                        @foreach (var submission in Model.EGlobalSubmissions)
+                        @foreach (var submission in Model.EGlobalSubmissions.OrderByDescending(esub => esub.DateCreated))
                         {
                     <tr>
  
-                        <td width="12%">
-                            <h4>@submission.EGlobalSubmissionClientProgramme.EGlobalCustomDescription</h4>
+                        <td width="40%">
+                            @submission.SubmissionDesc
                         </td>
 
-
-                            <td width="9%">
-                            @*<a class="btnView" data-prop="@submission.SubmissionRequestXML">View xml transaction</a>*@
-                            @*<a onclick="ShowXML(this)" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-prop="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>*@
-
+                            <td width="20%">
                                <a href="#TransactionXMl" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>
                             </td>
 
-                        <td width="12%">
+                        <td width="15%">
                             <button data-rev-trans="@submission.TransactionReferenceID" class="btn btn-success btn-sm" id="ReverseTransaction"><i class="fa fa-edit"></i>Reverse Transaction</button>
                         </td>
 
@@ -267,15 +261,7 @@
             $(".modal-backdrop").remove();
         })
 
-        $('.btnView').click(function () {
-            debugger;
-            var prop = $(this).data('prop');
-            var w = window.open();
-             //var html =  $(this).data('prop').html();
-            $(w.document.body).val(prop);
-        });
-
-        $('.ReverseTransaction').click(function () {
+        $('#ReverseTransaction').click(function () {
             debugger;
             var transID = $(this).data('rev-trans');
              //var html =  $(this).data('prop').html();
@@ -289,7 +275,7 @@
                 
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                    alert("There was an error while trying to send your invoice.");
+                    alert("There was an error while trying to reverse your invoice.");
                 });
         });
 
