@@ -71,23 +71,18 @@
                                 </td>
                             </tr>
 
-                            <tr class="table-light" id="trOrganisationMarinaOrgMooredType" hidden>
+                            <tr class="table-light">
                                 <td align="center">
-                                    <b>Marina Moored Type</b>
+                                    <b id="trOrganisationMarinaOrgMooredTypeTitle">Marina Moored Type</b>
                                 </td>
 
                                 <td align="center">
-                                    <label class="input">
-                                        <select name="OrganisationMarinaOrgMooredType" multiple class="chosen-select form-control">
-
-                                            @foreach (var selectListItem in Model.OrgMooredType)
-                                            {
-                                                <option value=@selectListItem.Value> @selectListItem.Text</option>
-                                            }
-
-                                        </select>
-
-                                    </label>
+                                    <select name="OrganisationMarinaOrgMooredType" multiple class="chosen-select form-control b" id="trOrganisationMarinaOrgMooredType">
+                                        @foreach (var selectListItem in Model.OrgMooredType)
+                                        {
+                                            <option value=@selectListItem.Value> @selectListItem.Text</option>
+                                        }
+                                    </select>
                                 </td>
                             </tr>
 
@@ -251,18 +246,17 @@
     <script type="text/javascript">
      $(".chosen-select").chosen({ width: "95%" });
 
-        function IASelected() {
-            debugger;
+        function IASelected() {            
             var mooredtype =  document.getElementById("InsuranceAttributeName");
-
             var Mooredtype = mooredtype.options[mooredtype.selectedIndex].value;
-            if (Mooredtype == 'Marina' || Mooredtype == 'Other Marina') {
-                $('#trOrganisationMarinaOrgMooredType').removeClass('hidden');
-            } else {
-                                $('#trOrganisationMarinaOrgMooredType').addClass('hidden');
 
+            if (Mooredtype == 'Marina' || Mooredtype == 'Other Marina') {                
+                document.getElementById("trOrganisationMarinaOrgMooredType_chosen").style.display = "block";                  
+                document.getElementById("trOrganisationMarinaOrgMooredTypeTitle").style.display = "block";                
+            } else {                 
+                document.getElementById("trOrganisationMarinaOrgMooredType_chosen").style.display = "none";  
+                document.getElementById("trOrganisationMarinaOrgMooredTypeTitle").style.display = "none";          
             }
-
         };
 
     function CreateOrganisation() {
@@ -287,13 +281,5 @@
         });
 
     }
-
-    function OrganisationUserOnChange() {
-        //if condition for tcadminuser
-    document.getElementById("wid-id-2").hidden = hidden;
-    hidden = !(hidden);
-    }
-
-
     </script>
 }

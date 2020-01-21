@@ -203,7 +203,7 @@ namespace TechCertain.WebUI.Controllers
                     await uow.Commit();
                 }
 
-                return Redirect("~/Organisation/AddNewOrganisation");
+                return Ok();
             }
             catch (Exception ex)
             {

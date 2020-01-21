@@ -375,7 +375,7 @@ namespace TechCertain.WebUI.Controllers
 
 
                 //// convert model to XDocument for rendering.
-                //document = model.ToXml();
+                document = model.ToXml();
                 return Xml(document);
             }
             catch (Exception ex)
@@ -460,7 +460,7 @@ namespace TechCertain.WebUI.Controllers
 
 
                 //// convert model to XDocument for rendering.
-                //document = model.ToXml();
+                document = model.ToXml();
                 return Xml(document);
             }
             catch (Exception ex)
@@ -529,6 +529,7 @@ namespace TechCertain.WebUI.Controllers
                     model.AddRow(row);
                 }
 
+                document = model.ToXml();
                 return Xml(document);
             }
             catch (Exception ex)

@@ -39,13 +39,14 @@ namespace TechCertain.WebUI
             services.AddNHibernate();
             services.AddIdentityExtentions();
             services.AddSingleton(MapperConfig.ConfigureMaps());
-            services.AddLogging(loggingBuilder =>
-            {
-                // configure Logging with NLog
-                loggingBuilder.ClearProviders();
-                loggingBuilder.SetMinimumLevel(LogLevel.Trace);
-                loggingBuilder.AddNLog();
-            });
+            services.AddLogging();
+            //services.AddLogging(loggingBuilder =>
+            //{
+            //    // configure Logging with NLog
+            //    loggingBuilder.ClearProviders();
+            //    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+            //    loggingBuilder.AddNLog();
+            //});
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddElmah(options =>

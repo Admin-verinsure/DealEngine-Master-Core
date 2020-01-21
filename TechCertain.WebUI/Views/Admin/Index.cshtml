@@ -1,281 +1,291 @@
 ﻿@model TechCertain.WebUI.Models.AdminViewModel
 <!-- START MAIN CONTENT -->
-<div id="content" class="container">
-    <div class="row">
-        <h1 class="page-title txt-color-blueDark">
-            <i class="fa-fw fa fa-home"></i>
+    <div id="content" class="container">
+        <div class="row">
+            <h1 class="page-title txt-color-blueDark">
+                <i class="fa-fw fa fa-home"></i>
+                <span>
+                    <a href="~/Home/Index">Dashboard</a>
+                    > Administrator Panel
+                </span>
+            </h1>
+        </div>
+
+        <div class="row">
             <span>
-                <a href="~/Home/Index">Dashboard</a>
-                > Administrator Panel
+                <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
             </span>
-        </h1>
-    </div>
-
-    <div class="row">
-        <span>
-            <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
-    </div>
-
-    <!-- widget grid -->
-    <div class="row">
-        <!-- Start Private Servers Widget -->
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-private-servers" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-            @{ await Html.RenderPartialAsync("_PrivateServerControl", Model.PrivateServers); }
         </div>
-    </div>
 
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-system-emails" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-            <header>
-                <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
-                <h2> System Email Templates </h2>
-            </header>
+        <!-- widget grid -->
+        <div class="row">
+            <!-- Start Private Servers Widget -->
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-private-servers" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+                @{ await Html.RenderPartialAsync("_PrivateServerControl", Model.PrivateServers); }
+            </div>
+        </div>
 
-            <form class="client-form">
-                <!-- content goes here -->
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-dark">
+        <div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-system-emails" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
+                    <h2> System Email Templates </h2>
+                </header>
+
+                <form class="client-form">
+                    <!-- content goes here -->
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" width="30%">System Email Template</th>
+                                <th scope="col" width="70%">Description</th>
+                            </tr>
+                        </thead>
+
                         <tr>
-                            <th scope="col" width="30%">System Email Template</th>
-                            <th scope="col" width="70%">Description</th>
+                            <td align="left">
+                                @Html.ActionLink("Login Instruction Email", "SysEmailTemplate", "Admin", new { systemEmailType = "LoginEmail", internalNotes = "System Login Instruction Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Login Instruction Email.
+                            </td>
                         </tr>
-                    </thead>
-
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Login Instruction Email", "SysEmailTemplate", "Admin", new { systemEmailType = "LoginEmail", internalNotes = "System Login Instruction Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Login Instruction Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Information Sheet Issue Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISIssueNotificationEmail", internalNotes = "System Information Sheet Issue Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Information Sheet Issue Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Payment Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentSuccessConfig", internalNotes = "Payment Success Configuration Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            Payment Configuration Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Payment Failed Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentFailConfig", internalNotes = "Payment Failed Configuration Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            Payment Failed Configuration Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Invoice Success Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceSuccessConfig", internalNotes = "Invoice Sucess Configuration Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            Invoice Success Configuration Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Invoice Fail Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceFailConfig", internalNotes = "Invoice Fail Configuration Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            Invoice Fail Configuration Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Information Sheet Submission Confirmation Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionConfirmationEmail", internalNotes = "System Information Sheet Submission Confirmation Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Information Sheet Submission Confirmation Email to Insured.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Information Sheet Submission Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionNotificationEmail", internalNotes = "System Information Sheet Submission Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Information Sheet Submission Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Agreement Referral Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementReferralNotificationEmail", internalNotes = "System Agreement Referral Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Agreement Referral Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Agreement Issue Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementIssueNotificationEmail", internalNotes = "System Agreement Issue Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Agreement Issue Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Agreement Bound Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementBoundNotificationEmail", internalNotes = "System Agreement Bound Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            System Agreement Bound Notification Email.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            @Html.ActionLink("Create Other Marina Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "OtherMarinaTCNotifyEmail", internalNotes = "Create Other Marina Notification Email" }, null)
-                        </td>
-                        <td align="left" style="word-wrap: break-word">
-                            Create Other Marina Notification Email.
-                        </td>
-                    </tr>
-                </table>
-            </form>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Information Sheet Issue Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISIssueNotificationEmail", internalNotes = "System Information Sheet Issue Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Information Sheet Issue Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Payment Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentSuccessConfig", internalNotes = "Payment Success Configuration Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Payment Configuration Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Payment Failed Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentFailConfig", internalNotes = "Payment Failed Configuration Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Payment Failed Configuration Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Invoice Success Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceSuccessConfig", internalNotes = "Invoice Sucess Configuration Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Invoice Success Configuration Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Invoice Fail Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceFailConfig", internalNotes = "Invoice Fail Configuration Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Invoice Fail Configuration Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Information Sheet Submission Confirmation Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionConfirmationEmail", internalNotes = "System Information Sheet Submission Confirmation Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Information Sheet Submission Confirmation Email to Insured.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Information Sheet Submission Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionNotificationEmail", internalNotes = "System Information Sheet Submission Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Information Sheet Submission Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Agreement Referral Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementReferralNotificationEmail", internalNotes = "System Agreement Referral Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Agreement Referral Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Agreement Issue Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementIssueNotificationEmail", internalNotes = "System Agreement Issue Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Agreement Issue Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Agreement Bound Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementBoundNotificationEmail", internalNotes = "System Agreement Bound Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                System Agreement Bound Notification Email.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                @Html.ActionLink("Create Other Marina Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "OtherMarinaTCNotifyEmail", internalNotes = "Create Other Marina Notification Email" }, null)
+                            </td>
+                            <td align="left" style="word-wrap: break-word">
+                                Create Other Marina Notification Email.
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <!-- end widget div -->
         </div>
-        <!-- end widget div -->
-    </div>
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-unlock-user" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-            <!-- Header Start-->
-            <header>
-                <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
-                <h2> Unlock User </h2>
-            </header>
-            <!-- Header End -->
-            <!-- widget div-->
-            <form id="unlockUser" class="client-form" action="/Admin/UnlockUser" method="post" novalidate="novalidate">
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <td>
-                            <label class="label">Enter username of user to be unlocked</label>
-                        </td>
-                        <td>
-                            <label class="input">
-                                <input name="username" type="text" class="form-control">
-                            </label>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">
-                                Unlock
-                            </button>
-                        </td>
-                    </tr>
-                </table>
-            </form>
+        <div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-unlock-user" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+                <!-- Header Start-->
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
+                    <h2> Unlock User </h2>
+                </header>
+                <!-- Header End -->
+                <!-- widget div-->
+                <form id="unlockUser" class="client-form" action="/Admin/UnlockUser" method="post" novalidate="novalidate">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <td>
+                                <label class="label">Enter username of user to be unlocked</label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    <input name="username" type="text" class="form-control">
+                                </label>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">
+                                    Unlock
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-payment-gateways" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+        <div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-payment-gateways" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
 
-            @{ await Html.RenderPartialAsync("_PaymentGatewayControl", Model.PaymentGateways); }
+                @{ await Html.RenderPartialAsync("_PaymentGatewayControl", Model.PaymentGateways); }
 
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-merchants" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+        <div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-merchants" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
 
-            @{ await Html.RenderPartialAsync("_MerchantControl", Model.Merchants); }
+                @{ await Html.RenderPartialAsync("_MerchantControl", Model.Merchants); }
 
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-data-upload" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-            <!-- Header Start-->
-            <header>
-                <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
-                <h2> Data Upload </h2>
-            </header>
-            <!-- content goes here -->
-            <form id="dataUploadForm" class="client-form" action="/Admin/UploadDataFiles" method="post" enctype="multipart/form-data" novalidate="novalidate">
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadUserData" aria-describedby="uploadIPOrganisationData">
-                                <label class="custom-file-label" for="uploadUserData">Upload organisation and user data here</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadedLocationData" aria-describedby="uploadedLocationData">
-                                <label class="custom-file-label" for="uploadedLocationData">Upload organisational unit and location data here</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadOrgUISData" aria-describedby="uploadOrgUISData">
-                                <label class="custom-file-label" for="uploadOrgUISData">Upload organisation data here for creating UIS</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadVehicleData" aria-describedby="uploadVehicleData">
-                                <label class="custom-file-label" for="uploadVehicleData">Upload vehicle data here</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadedBoatData" aria-describedby="uploadedBoatData">
-                                <label class="custom-file-label" for="uploadedBoatData">Upload vessel data here</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadIPOrganisationData" aria-describedby="uploadIPOrganisationData">
-                                <label class="custom-file-label" for="uploadIPOrganisationData">Upload interest party organisation data here</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input form-control" id="uploadMarinaOrganisationData" aria-describedby="uploadMarinaOrganisationData">
-                                <label class="custom-file-label" for="uploadMarinaOrganisationData">Upload marina organisation data here</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button type="submit" class="btn btn-success btn-sm">
-                                Upload
-                            </button>
-                        </td>
-                    </tr>
-                </table>
-            </form>
+
+        <div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-payment-gateways" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+
+                @{ await Html.RenderPartialAsync("_DataUploadControl"); }
+
+            </div>
         </div>
-    </div>
-    <!-- End data upload Widget -->
-    @*<div class="row">
+
+        <!-- review file upload later 1/21/2020-->
+        @*<div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-data-upload" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+                 Header Start
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
+                    <h2> Data Upload </h2>
+                </header>
+                 content goes here 
+                <form id="dataUploadForm" class="client-form" action="/Admin/UploadDataFiles" method="post" enctype="multipart/form-data" novalidate="novalidate">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadUserData" aria-describedby="uploadIPOrganisationData">
+                                    <label class="custom-file-label" for="uploadUserData">Upload organisation and user data here</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadedLocationData" aria-describedby="uploadedLocationData">
+                                    <label class="custom-file-label" for="uploadedLocationData">Upload organisational unit and location data here</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadOrgUISData" aria-describedby="uploadOrgUISData">
+                                    <label class="custom-file-label" for="uploadOrgUISData">Upload organisation data here for creating UIS</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadVehicleData" aria-describedby="uploadVehicleData">
+                                    <label class="custom-file-label" for="uploadVehicleData">Upload vehicle data here</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadedBoatData" aria-describedby="uploadedBoatData">
+                                    <label class="custom-file-label" for="uploadedBoatData">Upload vessel data here</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadIPOrganisationData" aria-describedby="uploadIPOrganisationData">
+                                    <label class="custom-file-label" for="uploadIPOrganisationData">Upload interest party organisation data here</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input form-control" id="uploadMarinaOrganisationData" aria-describedby="uploadMarinaOrganisationData">
+                                    <label class="custom-file-label" for="uploadMarinaOrganisationData">Upload marina organisation data here</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    Upload
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>*@
+        <!-- End data upload Widget -->
+        @*<div class="row">
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-server-exchange" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
                  Header Start
                 <header>
@@ -302,7 +312,7 @@
                 </div>
             </div>
         </div>*@
-</div>
+    </div>
 
 
 
