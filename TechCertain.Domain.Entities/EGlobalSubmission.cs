@@ -14,11 +14,11 @@ namespace TechCertain.Domain.Entities
         }
 
         public virtual ClientProgramme EGlobalSubmissionClientProgramme { get; set; }
-
         public virtual Package EGlobalSubmissionPackage { get; set; }
-
         public virtual string SubmissionRequestXML { get; set; }
         public virtual EGlobalResponse EGlobalResponse { get; set; }
         public virtual Guid TransactionReferenceID { get; set; }
+
+        public virtual string SubmissionDesc { get; set; }
     }
 }

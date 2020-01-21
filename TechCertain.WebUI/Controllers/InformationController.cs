@@ -1695,7 +1695,8 @@ namespace TechCertain.WebUI.Controllers
 
                     foreach (var org in IA.IAOrganisations)
                     {
-                        if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability")
+                        if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                            org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
                         {
                             OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
                             ovm.OrganisationName = org.Name;

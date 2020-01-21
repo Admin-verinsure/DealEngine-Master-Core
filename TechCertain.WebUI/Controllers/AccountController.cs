@@ -146,7 +146,7 @@ namespace TechCertain.WebUI.Controllers
                         //get local domain
                         string domain = "https://" + _appSettingService.domainQueryString; //HttpContext.Request.Url.GetLeftPart(UriPartial.Authority);
                         await _emailService.SendPasswordResetEmail(viewModel.Email, token.Id, domain);
-
+                        ViewBag.EmailSent = true;
                     }
                     
                 }

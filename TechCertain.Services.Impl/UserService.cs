@@ -8,6 +8,7 @@ using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
 using NHibernate.Linq;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.Services.Impl
 {
@@ -17,15 +18,24 @@ namespace TechCertain.Services.Impl
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
         IOrganisationTypeService _organisationTypeService;
+		ILogger<UserService> _logger;
 
 
-        public UserService(IMapperSession<User> userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService)
+        public UserService(
+			IMapperSession<User> userRepository, 
+			ILdapService ldapService, 
+			ILegacyLdapService legacyLdapService, 
+			IOrganisationTypeService organisationTypeService,
+			ILogger<UserService> logger
+			)
         {
 			_userRepository = userRepository;
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
             _organisationTypeService = organisationTypeService;
-        }
+			_logger = logger;
+
+		}
 
         public async Task<User> GetUser (string username)
 		{
@@ -127,14 +137,21 @@ namespace TechCertain.Services.Impl
 
 		public async Task Update (User user)
 		{
-		    await _userRepository.UpdateAsync(user);
-			_ldapService.Update (user);
+			try
+			{
+				_ldapService.Update(user);
+			}
+			catch(Exception ex)
+			{
+				_logger.LogWarning(ex.Message);
+			}
+		    await _userRepository.UpdateAsync(user);			
 		}
 
         public async Task Delete (User user, User authorizingUser)
 		{
             user.Delete(authorizingUser, DateTime.UtcNow);
-            await _userRepository.RemoveAsync(user);
+            await _userRepository.UpdateAsync(user);
         }
 
 		public void SetPasswordPolicyFor (User user, string passwordPolicyName)

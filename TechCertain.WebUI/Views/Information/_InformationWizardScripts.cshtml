@@ -2,7 +2,6 @@
 <script src="~/Scripts/plugin/jqgrid/grid.locale-en.js"></script>
 <script src="/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
 <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js"></script>
-
 <script src="~/smartwizard/js/jquery.smartWizard.min.js"></script>
 <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
 
@@ -1834,6 +1833,21 @@ function UpdateChosen() {
 
 
                 $('#addTrailerModal' + " :input").val("");
+
+                 $("#trailerModalHairline, #trailerModalHairline2, #trailerModalHairline3, #trailerModalHairline4").hide();
+                $(vesselTrailerChassis).hide();
+                $(vesselTrailerEffective).hide();
+                $(vesselTrailerCease).hide();
+                $(vesselTrailerCeaseReason).hide();
+                $(vesselTrailerYear).hide();
+                $(vesselTrailerMake).hide();
+                $(vesselTrailerModel).hide();
+                $(vesselTrailerMV).hide();
+                $(vesselTrailerLoc).hide();
+                $(vesselTrailerNotes).hide();
+                $('#VesselTrailerSearch').hide();
+                $("#addSection").addClass('hidden');
+
                  var trailer = document.getElementsByName('TrailerSelection');
                    for (var i = 0; i < trailer.length; i++) {
                        (trailer[i]).checked = false;

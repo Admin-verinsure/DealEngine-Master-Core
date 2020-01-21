@@ -202,8 +202,8 @@ namespace TechCertain.WebUI.Controllers
                     ou.Locations.Add(location);
                     await uow.Commit();
                 }
-
-                return Redirect("~/Organisation/AddNewOrganisation");
+                
+                return RedirectToAction("AddNewOrganisation", "Organisation");
             }
             catch (Exception ex)
             {

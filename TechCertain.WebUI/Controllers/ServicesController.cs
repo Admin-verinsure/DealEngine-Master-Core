@@ -376,10 +376,9 @@ namespace TechCertain.WebUI.Controllers
                     }
 
 
-                     //// convert model to XDocument for rendering.
-                     document = model.ToXml();
-                     return Xml(document);
-
+                //// convert model to XDocument for rendering.
+                document = model.ToXml();
+                return Xml(document);
             }
             catch (Exception ex)
             {
@@ -448,7 +447,7 @@ namespace TechCertain.WebUI.Controllers
 
 
                 //// convert model to XDocument for rendering.
-                //document = model.ToXml();
+                document = model.ToXml();
                 return Xml(document);
             }
             catch (Exception ex)
@@ -518,6 +517,7 @@ namespace TechCertain.WebUI.Controllers
                     model.AddRow(row);
                 }
 
+                document = model.ToXml();
                 return Xml(document);
             }
             catch (Exception ex)
@@ -1972,7 +1972,7 @@ namespace TechCertain.WebUI.Controllers
                     boat.OtherMarina = false;
 
                 }
-                if (model.SelectedBoatUse != null || model.SelectedBoatUse != "null")
+                if (model.SelectedBoatUse != null )
                 {
 
                     List<string> boatuselist = new List<string>();
@@ -1990,7 +1990,7 @@ namespace TechCertain.WebUI.Controllers
                     }
                 }
 
-                if (model.SelectedInterestedParty != null || model.SelectedInterestedParty != "null")
+                if (model.SelectedInterestedParty != null )
                 {
 
                     List<string> interestedpartylist = new List<string>();
@@ -2329,7 +2329,7 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AddBoatUse(BoatUseViewModel model)
         {
             User user = null;
-
+            BoatUse boatUse = null;
             try
             {
                 user = await CurrentUser();
@@ -2341,12 +2341,20 @@ namespace TechCertain.WebUI.Controllers
                     throw new Exception("Unable to save Boat Use - No Client information for " + model.AnswerSheetId);
 
                 // get existing boat (if any)
-                BoatUse boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
-                // no boatUse, so create new
-
-                if (boatUse == null)
+                if (model.BoatUseId != Guid.Parse("00000000-0000-0000-0000-000000000000")) //to use Edit mode to add new org
+                {
+                     boatUse = await _boatUseService.GetBoatUse(model.BoatUseId);
+                    if (boatUse == null)
+                        boatUse = model.ToEntity(user);
+                }
+                else
+                {
                     boatUse = model.ToEntity(user);
+                }
+
                 model.UpdateEntity(boatUse);
+
+               
                 //if (model.BoatUseBoat != Guid.Empty)
                 //    boatUse.BoatUseBoat = _boatRepository.GetById(model.BoatUseBoat);
 
