@@ -261,6 +261,14 @@
             $(".modal-backdrop").remove();
         })
 
+        $('.btnView').click(function () {
+            debugger;
+            var prop = $(this).data('prop');
+            var w = window.open();
+             //var html =  $(this).data('prop').html();
+            $(w.document.body).val(prop);
+        });
+
         $('#ReverseTransaction').click(function () {
             debugger;
             var transID = $(this).data('rev-trans');
