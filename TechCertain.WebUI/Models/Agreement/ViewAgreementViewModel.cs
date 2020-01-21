@@ -64,6 +64,9 @@ namespace TechCertain.WebUI.Models.Agreement
         public string ProgrammeStopAgreementMessage { get; set; }
         public bool RequirePayment { get; set; }
         public string NoPaymentRequiredMessage { get; set; }
+        public string CancelAgreementReason { get; set; }
+
+
     }
 
     public class InsuranceInclusion

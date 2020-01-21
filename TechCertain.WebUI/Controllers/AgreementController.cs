@@ -336,12 +336,16 @@ namespace TechCertain.WebUI.Controllers
                 ClientInformationSheet answerSheet = agreement.ClientInformationSheet;
                 Organisation insured = answerSheet.Owner;
                 ClientProgramme programme = answerSheet.Programme;
+                var insuranceRoles = new List<InsuranceRoleViewModel>();
+                insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
 
                 model.InformationSheetId = answerSheet.Id;
                 model.ClientAgreementId = agreement.Id;
                 model.ClientProgrammeId = programme.Id;
-
+                model.InsuranceRoles = insuranceRoles;
                 model.CancellNotes = agreement.CancelledNote;
+                model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
+                model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
 
                 ViewBag.Title = "Cancel Agreement ";
