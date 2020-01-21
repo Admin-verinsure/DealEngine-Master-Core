@@ -48,6 +48,12 @@ namespace TechCertain.WebUI.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> CKGetAllImages()
+        {
+            var model = await _ckimageService.GetAllImages();
+            return Json(model);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Upload(CKImageUploadViewModel model)

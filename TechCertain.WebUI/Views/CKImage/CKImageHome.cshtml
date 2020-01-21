@@ -141,8 +141,37 @@
                 <div style="padding-bottom:30px;">
                     <button id="toggleCK" type="button" class="float-right">Toggle CK</button>
                 </div>
-                <div id="CK" style="display:none;">
-                    <textarea id="Content"></textarea>
+                <div id="CK">
+                    <textarea id="editor">
+
+                    </textarea>
+                </div>
+
+                <div class="modal" id="ckmodal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Select an Image</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div id="images" class="modal-body col-sm-12">
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Select</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="editor">
+
                 </div>
             </article>
         </div>
@@ -150,7 +179,6 @@
 </div>
 
 @section pagespecific {
-    <link src="~/css/blurred-box.css" rel="stylesheet" />
     <script src="~/jquery/jquery.js"></script>
     <script src="~/jqueryui/jquery-ui.js"></script>
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
@@ -161,21 +189,19 @@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
+    <link href="~/css/ckeditor.css" rel="stylesheet"/>
+    <script src="~/lib/nailthumb/jquery.nailthumb.1.1.min.js"></script>
+    <link href="~/lib/nailthumb/jquery.nailthumb.1.1.min.css" rel="stylesheet"/>
+    <script>  
+           function selectImg(img) {
+                console.log(img);
+               // update a new element you create next to the Select button which tells you your selected filename
 
+            }
+    </script>
     <script type="text/javascript">
-
-        //// DO NOT REMOVE : GLOBAL FUNCTIONS!
-        let editor;
-        ClassicEditor
-            .create(document.querySelector('#Content'))
-            .then(newEditor => {
-                editor = newEditor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
         $(document).ready(function () {
+            $('.nailthumb-container').nailthumb();
 
             $("#toggleCK").click(function () {
                 if ($("#CK").is(":visible")) {
@@ -191,6 +217,7 @@
                 $(this).next('#custom-file-label').html(fileName);
                 $("#custom-file-label").html(fileName);
             });
+
         });
     </script>
 }
