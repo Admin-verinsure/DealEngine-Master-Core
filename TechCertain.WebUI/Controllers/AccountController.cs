@@ -308,7 +308,7 @@ namespace TechCertain.WebUI.Controllers
 				string password = viewModel.Password.Trim();
                 var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
                 int resultCode = -1;
-                string resultMessage = "";
+                string resultMessage = "";                
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
@@ -347,7 +347,7 @@ namespace TechCertain.WebUI.Controllers
                     {
                         var result = await LoginMarsh(user, viewModel.DevicePrint);
                     }
-
+                    
                     await _applicationLoggingService.LogInformation(_logger, new Exception("User [" + userName + "] has logged in"), user, HttpContext);
                     return LocalRedirect("~/Home/Index");
                 }
