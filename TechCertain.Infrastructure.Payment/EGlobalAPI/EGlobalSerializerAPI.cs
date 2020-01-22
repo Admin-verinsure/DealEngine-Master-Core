@@ -28,7 +28,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
         /// </summary>
         /// <param name="objPolicy">Object policy.</param>
-        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, Guid transactionreferenceid)
+        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, Guid transactionreferenceid, string paymentType, bool reversetran, 
+            EGlobalSubmission originaleglobalsubmission)
         {
             string xml = "Failed to Serialize programme ";
             EGlobalAPI = new EGlobalAPI();
@@ -37,11 +38,17 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 foreach (Package package in programme.BaseProgramme.Packages)
                 {
                     EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
-                    EGlobalPolicyAPI.CreatePolicyInvoice();
-
+                    if (reversetran && originaleglobalsubmission!= null)
+                    {
+                        EGlobalPolicyAPI.CreateReversePolicyInvoice(originaleglobalsubmission);
+                    } else
+                    {
+                        EGlobalPolicyAPI.CreatePolicyInvoice();
+                    }
+                    
                     if (EGlobalPolicy != null)
                     {
-                        EGlobalPolicy.PaymentType = "INVOICE";
+                        EGlobalPolicy.PaymentType = paymentType; //Credit, Hunter, Invoice
                         xml = EGlobalPolicy.Serialize();
                         //removed for testing
                         //SaveXml(xml, EGlobalPolicy.FTPFolder);
@@ -54,6 +61,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                             eGlobalSubmission.SubmissionRequestXML = xml;
                             eGlobalSubmission.EGlobalSubmissionPackage = package;
                             programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+                            //save eglobal submission term
+                            EGlobalPolicyAPI.SaveTransactionTerms(eGlobalSubmission, _unitOfWork);
 
                             uow.Commit();
 

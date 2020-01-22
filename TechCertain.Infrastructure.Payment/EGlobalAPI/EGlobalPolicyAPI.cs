@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
@@ -23,6 +25,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         private int gv_transactionType;
         private string gv_strUISReference;
         private string gv_strMasterAgreementReference;
+        private decimal gv_decPaymentDirection = 1;
 
         public static bool IsLinux
         {
@@ -89,10 +92,14 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         #region Reverse Invoice
 
-        public void CreateReversePolicyInvoice(Guid invoiceID)
+        public void CreateReversePolicyInvoice(EGlobalSubmission eglobalsubmission)
         {
             //SetTransactionType(TransactionType.Reverse);
-            LoadTransaction(invoiceID);
+
+            gv_decPaymentDirection = -1;
+            gv_transactionType = 2; //endorse
+
+            LoadTransaction(eglobalsubmission);
             //CreateReversePolicyInvoice(GetReversePolicyRisks());
 
             ReversePolicy();
@@ -322,9 +329,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// </summary>
         /// <returns><c>true</c>, if transaction was loaded, <c>false</c> otherwise.</returns>
         /// <param name="invoiceID">ID of the invoice.</param>
-        public bool LoadTransaction(Guid invoiceID)
+        public bool LoadTransaction(EGlobalSubmission eglobalsubmission)
         {
-            return LoadTransaction(invoiceID, true);
+            return LoadTransaction(eglobalsubmission, true);
         }
 
         /// <summary>
@@ -333,7 +340,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// <returns><c>true</c>, if transaction was loaded, <c>false</c> otherwise.</returns>
         /// <param name="invoiceID">ID of the invoice.</param>
         /// <param name="view">If set to <c>true</c> view.</param>
-        public bool LoadTransaction(Guid invoiceID, bool view)
+        public bool LoadTransaction(EGlobalSubmission eglobalsubmission, bool view)
         {
             throw new Exception("LoadTransaction - Not yet implemented");
             /*bool result = false;
@@ -548,9 +555,41 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return id;*/
         }
 
-        void SaveTransactionTerms(Guid transactionID)
+        public void SaveTransactionTerms(EGlobalSubmission eglobalSubmission, IUnitOfWork _unitOfWork)
         {
-            throw new Exception("SaveTransactionTerms - Not yet implemented");
+            foreach (EBixPolicyRisk pr in EGlobalPolicy.PolicyRisks)
+            {
+                try
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        EGlobalSubmissionTerm eGlobalSubmissionTerm = new EGlobalSubmissionTerm(CurrentUser);
+                        eGlobalSubmissionTerm.ESTEGlobalSubmission = eglobalSubmission;
+                        eGlobalSubmissionTerm.ESTPremium = pr.CoyPremium;
+                        eGlobalSubmissionTerm.ESTNDPremium = pr.CEQuake;
+                        eGlobalSubmissionTerm.ESTBrokerage = pr.BrokerAmountDue;
+                        eGlobalSubmissionTerm.ESTNDBrokerage = pr.BrokerCeqDue;
+                        eGlobalSubmissionTerm.ESTEQC = pr.LeviesA;
+                        eGlobalSubmissionTerm.ESTFSL = pr.LeviesB;
+                        eGlobalSubmissionTerm.ESTEGlobalSubmissionPackage = eglobalSubmission.EGlobalSubmissionPackage;
+                        eglobalSubmission.EGlobalSubmissionTerms.Add(eGlobalSubmissionTerm);
+
+                        if (EGlobalPolicy.SubAgents != null && EGlobalPolicy.SubAgents.Count > 0)
+                            SaveTransactionSubAgents(pr, eglobalSubmission, _unitOfWork, eGlobalSubmissionTerm);
+
+                        uow.Commit();
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    //TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction Terms", ex.ToString());
+                } 
+                
+            }
+
+            //throw new Exception("SaveTransactionTerms - Not yet implemented");
             /*using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
             {
                 string strCmd = "INSERT INTO tbleglobalinvoicesubmissionterm (termID, invoiceID, classOfBusinessID, " +
@@ -592,9 +631,33 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             }*/
         }
 
-        void SaveTransactionSubAgents(EBixPolicyRisk risk, Guid invoiceID)
+        void SaveTransactionSubAgents(EBixPolicyRisk risk, EGlobalSubmission eglobalSubmission, IUnitOfWork _unitOfWork, EGlobalSubmissionTerm eglobalSubmissionTerm)
         {
-            throw new Exception("SaveTransactionSubAgents - Not yet implemented");
+            foreach (EBixSubAgent agent in EGlobalPolicy.SubAgents.Where(suba => suba.SubCover == risk.SubCover))
+            {
+                try
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        EGlobalSubmissionSubagentTerm eGlobalSubmissionSubagentTerm = new EGlobalSubmissionSubagentTerm(CurrentUser);
+                        eGlobalSubmissionSubagentTerm.ESSubagentTEGlobalSubmission = eglobalSubmission;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTSubCode = agent.SubAgent;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTEGlobalSubmissionTerm = eglobalSubmissionTerm;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTGSTRegistered = agent.GSTFlag;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTSubPercentComm = agent.Percent;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTSubAmount = agent.AmountCeded; //CalcAmount
+                        eglobalSubmission.EGlobalSubmissionSubagentTerms.Add(eGlobalSubmissionSubagentTerm);
+                        uow.Commit();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction Subagent", ex.ToString());
+                }
+            }
+
+            //throw new Exception("SaveTransactionSubAgents - Not yet implemented");
             /*string strCmd = "INSERT INTO tbleglobalinvoicesubmissionsubagentterm (subagenttermid, subcode, invoiceid, " +
                             "risktermid, gstregistered, subpercentcomm, subamount) VALUES (@ID, @SubCode, @InvoiceID, @RiskID, @GSTFlag, " +
                 "@PercentComm, @SubAmount);";

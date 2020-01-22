@@ -244,6 +244,18 @@
 @section pagespecific {
     <!-- PAGE RELATED PLUGIN(S)-->
     <script type="text/javascript">
+
+        $('form').submit(function(e){
+            debugger;
+            if (!(window.confirm("Please confirm to create new organisation"))) {
+                return false;
+            }
+           
+
+    
+        });
+
+
      $(".chosen-select").chosen({ width: "95%" });
 
         function IASelected() {            
@@ -259,7 +271,8 @@
             }
         };
 
-    function CreateOrganisation() {
+        function CreateOrganisation() {
+            debugger;
     $.ajax({
     // change back once mono decides to fix
         url: '@Url.Action("CreateOrganisation", "Organisation")',
