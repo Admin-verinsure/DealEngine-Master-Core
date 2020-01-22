@@ -162,8 +162,10 @@
                             </div>
 
                             <!-- Modal footer -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Select</button>
+                            <div class="modal-footer" style="display:flex;">
+                                <label for="selImg" style="float:left;">Selected Image: </label>
+                                <input type="text" id="selImg" name="selImg" style="float:left;width:52%;margin-left:2rem;margin-right:2rem;">
+                                <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg();">Import</button>
                             </div>
 
                         </div>
@@ -189,15 +191,18 @@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
-    <link href="~/css/ckeditor.css" rel="stylesheet"/>
+    <link href="~/css/ckeditor.css" rel="stylesheet" />
     <script src="~/lib/nailthumb/jquery.nailthumb.1.1.min.js"></script>
-    <link href="~/lib/nailthumb/jquery.nailthumb.1.1.min.css" rel="stylesheet"/>
-    <script>  
-           function selectImg(img) {
-                console.log(img);
-               // update a new element you create next to the Select button which tells you your selected filename
-
-            }
+    <link href="~/lib/nailthumb/jquery.nailthumb.1.1.min.css" rel="stylesheet" />
+    <script>
+        function selectImg(img) {
+            var filename = img.name;
+            $('#selImg').val(filename);
+        }
+        function importImg() {
+            var filename = $('#selImg').val();
+            $('#importImg').val(filename);
+        }
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
