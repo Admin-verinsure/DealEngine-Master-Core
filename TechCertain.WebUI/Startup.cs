@@ -50,7 +50,7 @@ namespace TechCertain.WebUI
             services.AddElmah(options =>
             {
                 //options.CheckPermissionAction = context => context.User.Identity.IsAuthenticated;
-                options.Path = @"Elmah";
+                options.Path = @"test";
             });
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
