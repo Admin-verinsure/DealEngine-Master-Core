@@ -23,5 +23,7 @@ namespace TechCertain.Domain.Entities
         public virtual string SubmissionDesc { get; set; }
         public virtual IList<EGlobalSubmissionTerm> EGlobalSubmissionTerms { get; set; }
         public virtual IList<EGlobalSubmissionSubagentTerm> EGlobalSubmissionSubagentTerms { get; set; }
+        public virtual string EGlobalPaymentType { get; set; }
+
     }
 }

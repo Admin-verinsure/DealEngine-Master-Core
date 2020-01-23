@@ -36,8 +36,14 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
             EBixSubAgent subAgent = new EBixSubAgent();
             subAgent.AmountCeded = EGlobalDefaultSubAgent_SubAmount;
             subAgent.CoverNumber = 0;
-            subAgent.GSTCeded = EGlobalDefaultSubAgent_SubAmountGST;
             subAgent.GSTFlag = EGlobalDefaultSubAgent_RegistedGST;
+            if (subAgent.GSTFlag == -1)
+            {
+                subAgent.GSTCeded = EGlobalDefaultSubAgent_SubAmountGST;
+            } else
+            {
+                subAgent.GSTCeded = 0M;
+            }
             subAgent.Percent = EGlobalDefaultSubAgent_PercentComm;
             subAgent.SubAgent = EGlobalDefaultSubAgent_SubCode;
             subAgent.SubCover = risk.SubCover;
