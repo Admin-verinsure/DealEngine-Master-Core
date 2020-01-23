@@ -84,13 +84,13 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 xDoc.LoadXml(analyzeResponseXmlStr);
 
                 var test = xDoc.DocumentElement.LastChild.LastChild.LastChild;
-                var test2 = xDoc.GetElementsByTagName("analyzeReturn");
+                //var test2 = xDoc.GetElementsByTagName("analyzeReturn");
 
                 //serializer = new XmlSerializer(typeof(AnalyzeResponse));
                 //rdr = new StringReader(xDoc.DocumentElement.LastChild.LastChild.LastChild);
                 //analyzeResponse = (AnalyzeResponse)serializer.Deserialize(rdr);
-                //userStatus = xDoc.GetElementsByTagName("userStatus").ToString();
-                //actionCode = xDoc.GetElementsByTagName("userStatus").ToString();
+                userStatus = "UNVERIFIED";
+                actionCode = "CHALLENGE";
 
             }
             catch(Exception ex)
@@ -109,11 +109,23 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				UpdateUserResponse updateUserResponse = null;
 				if (userStatus == UserStatus.UNVERIFIED.ToString())
 				{
-					// TODO - call updateUser here with analyzeResponse
-					//UpdateRsaUserFromResponse(analyzeResponse, rsaUser);
+                    // TODO - call updateUser here with analyzeResponse
+                    //UpdateRsaUserFromResponse(analyzeResponse, rsaUser);
+                    TestUpdateRsaUserFromResponse(rsaUser);
 					UpdateUserRequest updateUserRequest = GetUpdateUserRequest(rsaUser);
-					//updateUserResponse = binding.updateUser(updateUserRequest);
-				}
+                    serxml = new XmlSerializer(typeof(UpdateUserRequest));
+                    
+                    using (var sww = new StringWriter())
+                    {
+                        using (XmlWriter writer = XmlWriter.Create(sww))
+                        {
+                            serxml.Serialize(writer, updateUserRequest);
+                            xml = sww.ToString(); // Your XML
+                        }
+                    }
+
+                    var respose = await _httpClientService.updateUser(xml);
+                }
 				if (actionCode == ActionCode.CHALLENGE.ToString())
 				{
 					if (userStatus == UserStatus.UNVERIFIED.ToString())
@@ -177,6 +189,12 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         //	}
         //	return false;
         //}
+        void TestUpdateRsaUserFromResponse(MarshRsaUser rsaUser)
+        {
+            rsaUser.CurrentSessionId = "0299162495417203861-04-ksat-reganam-krow||1579737980091";
+            rsaUser.CurrentTransactionId = "TRX_work-manager-task-40-7220888428990651703";
+            rsaUser.DeviceTokenCookie = "PMV61tt6BerP61CegqhtnJYyseWD0Hv24BrD4jDdygirmrUXqebmv%2FhYznl66UbzZITQ4loeyk6ExNT7kIGAi8Z1lfA9KDkhKGd%2FLVKgVXAlunPek%3D";
+        }
 
         void UpdateRsaUserFromResponse (GenericResponse response, MarshRsaUser rsaUser)
 		{
