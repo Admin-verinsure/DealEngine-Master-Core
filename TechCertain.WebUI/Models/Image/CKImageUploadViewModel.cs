@@ -14,9 +14,9 @@ namespace TechCertain.WebUI.Models.Image
 
         public IFormFile Image { get; set; }
 
-        public byte[] Contents { get; set; }
+        // public byte[] Contents { get; set; }
 
-        public string ImagePath { get; set; }
+        public string Path { get; set; }
 
         public IFormFile Thumbnail { get; set; }
 
