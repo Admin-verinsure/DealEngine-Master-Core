@@ -348,6 +348,72 @@ namespace TechCertain.WebUI.Controllers
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
 
+
+
+                foreach (var terms in agreement.ClientAgreementTerms)
+                {
+                    if (terms.BoatTerms.Where(bvt => bvt.DateDeleted == null).Count() > 0)
+                    {
+                        var boats = new List<EditTermsViewModel>();
+                        foreach (var boat in terms.BoatTerms)
+                        {
+                            boats.Add(new EditTermsViewModel
+                            {
+                                VesselId = boat.Id,
+                                BoatName = boat.BoatName,
+                                BoatMake = boat.BoatMake,
+                                BoatModel = boat.BoatModel,
+                                TermLimit = boat.TermLimit,
+                                Excess = Convert.ToInt32(boat.Excess),
+                                Premium = boat.Premium,
+                                FSL = boat.FSL
+                            });
+                        }
+                        model.BVTerms = boats;
+                    }
+
+                    if (terms.MotorTerms.Where(mvt => mvt.DateDeleted == null).Count() > 0)
+                    {
+                        var motors = new List<EditTermsViewModel>();
+                        foreach (var motor in terms.MotorTerms)
+                        {
+                            motors.Add(new EditTermsViewModel
+                            {
+                                VesselId = motor.Id,
+                                Registration = motor.Registration,
+                                Make = motor.Make,
+                                Model = motor.Model,
+                                TermLimit = motor.TermLimit,
+                                Excess = Convert.ToInt32(motor.Excess),
+                                Premium = motor.Premium,
+                                FSL = motor.FSL
+                            });
+                        }
+                        model.MVTerms = motors;
+                    }
+
+                    if (terms.MotorTerms.Where(mvt => mvt.DateDeleted == null).Count() > 0)
+                    {
+                        var motors = new List<EditTermsViewModel>();
+                        foreach (var motor in terms.MotorTerms)
+                        {
+                            motors.Add(new EditTermsViewModel
+                            {
+                                VesselId = motor.Id,
+                                Registration = motor.Registration,
+                                Make = motor.Make,
+                                Model = motor.Model,
+                                TermLimit = motor.TermLimit,
+                                Excess = Convert.ToInt32(motor.Excess),
+                                Premium = motor.Premium,
+                                FSL = motor.FSL
+                            });
+                        }
+                        model.MVTerms = motors;
+                    }
+                }
+
+
                 ViewBag.Title = "Cancel Agreement ";
 
                 return View("CancellAgreement", model);
@@ -949,7 +1015,6 @@ namespace TechCertain.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(id);
                 Organisation insured = clientProgramme.Owner;
                 ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
-
                 var insuranceRoles = new List<InsuranceRoleViewModel>();
 
                 NumberFormatInfo currencyFormat = new CultureInfo(CultureInfo.CurrentCulture.ToString()).NumberFormat;
@@ -1107,6 +1172,8 @@ namespace TechCertain.WebUI.Controllers
                     model.Exclusions = insuranceExclusion;
                     model.RiskPremiums = riskPremiums;
                     model.MultiCoverOptions = multiCoverOptions;
+                    model.Status = answerSheet.Status;
+
                     // Status
                     model.ProductName = agreement.Product.Name;
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;
@@ -1241,7 +1308,7 @@ namespace TechCertain.WebUI.Controllers
                 }
 
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
-
+                ViewBag.Status = answerSheet.Status;
                 ClientAgreement masterclientagreement = clientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault();
                 if (clientProgramme.BaseProgramme.StopAgreement && masterclientagreement.DateCreated >= clientProgramme.BaseProgramme.StopAgreementDateTime)
                 {

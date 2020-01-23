@@ -59,7 +59,7 @@
                             <a href="~/Agreement/EditTerms/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
                             <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                             @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
-                    item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
+                   item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
                             {
                                 <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
                             }
@@ -68,7 +68,7 @@
                                 <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Undecline Agreement</a>
                             }
                             @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                       (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                             {
                                 <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Agreement</a>
                             }
@@ -87,7 +87,7 @@
 
                         <div class="form-group">
                             @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
-                     item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
+                    item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
                             {
                                 <a href="~/Agreement/DeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Decline Agreement</a>
                             }
@@ -96,7 +96,7 @@
                                 <a href="~/Agreement/UndeclineAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Undecline Agreement</a>
                             }
                             @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-                        (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                       (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                             {
                                 <a href="~/Agreement/CancellAgreement/@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Cancel Agreement</a>
                             }
@@ -109,7 +109,7 @@
 
                     <div class="form-group">
                         @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-            (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+           (item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
                         {
                             <h3><strong>Documents </strong></h3>
                             @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
@@ -130,12 +130,14 @@
 
                 }
 
-                @if (@multiCoverOptionsStatus)
+
+                @if (@multiCoverOptionsStatus && !(@ViewBag.Status.Contains("Bound")))
                 {
                     <div class="form-group">
                         <div> <button class="btn btn-success btn-sm" onclick="SaveCoveroptions();">Save All Cover Options</button></div>
                     </div>
                 }
+
 
 
             </form>
@@ -193,38 +195,53 @@
                         alert("There was an error getting ProductName.");
                     });
 
-        };
+          };
 
-          $(window).on("load", function () {
-        debugger;
-              if ($("#Sheetstatus").val() != "Started") {
-            var progId = "@ViewBag.Id";
-            //var progId = $('#ClientProgrammeId').val();
-            var postData = { ProgrammeId: progId };
-
-            $.ajax({
-                url: '@Url.Action("GetCoverOptions", "Information")',
-                type: "POST",
-                data: postData
-            }).done(function (data) {
+        $(window).on("load", function () {
+            debugger;
+            if ($("#Sheetstatus").val() != "Started") {
                 debugger;
-                if (data != "") {
-                    for (var item = 0; item < data.length; item++) {
-                        var arr = data[item];
-                        var count = 0;
-                        //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
-                        var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+                var progId = "@ViewBag.Id";
+                //var progId = $('#ClientProgrammeId').val();
+                var postData = { ProgrammeId: progId };
 
-                        $(queryselector).attr('checked', true);
-                        //$("#"+Arr[count]).
-                        //$('#' + arr[count+1]).val(arr[count + 1]);
+                $.ajax({
+                    url: '@Url.Action("GetCoverOptions", "Information")',
+                    type: "POST",
+                    data: postData
+                }).done(function (data) {
+                    debugger;
+                    if (data != "") {
+                        for (var item = 0; item < data.length; item++) {
+                            var arr = data[item];
+                            var count = 0;
+                            //var element = 'input[name=\\"' + arr[count] + '"][value=\\"' + arr[count + 1] + '"]';
+                            var queryselector = "" + "input[name=\'" + arr[count] + "\'][value=\'" + arr[count + 1] + "\']";
+
+                            $(queryselector).attr('checked', true);
+                            //$("#"+Arr[count]).
+                            //$('#' + arr[count+1]).val(arr[count + 1]);
+                        }
                     }
-                };
-            }).fail(function (a, s, d) {
+                }).fail(function (a, s, d) {
+                    debugger;
+                });
+
+
+
+            }
+            debugger;
+
+            if ("@ViewBag.Status.Contains("Bound")" == "True") {
                 debugger;
-            });
-        }
-    });
+                //var coveroptiontable = document.querySelector('[type="radio"]');
+                $("#Coveroptionssec :input").prop("disabled", true);
+            } else {
+                $("#Coveroptionssec :input").prop("disabled", false);
+            }
+        
+
+        });
 
     </script>
 }
