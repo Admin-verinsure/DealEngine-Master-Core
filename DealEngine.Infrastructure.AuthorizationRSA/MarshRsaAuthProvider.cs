@@ -5,6 +5,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using TechCertain.Services.Interfaces;
 
@@ -60,36 +62,48 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			 * This should only be controlling access to organisational content, and rejecting unauthorized access based
 			 * on what RSA says.
 			 */
-
+			var userStatus = "";
+			var actionCode = "";
 			XmlSerializer serializer;
 			StringReader rdr;
-            Envelope analyzeResponse = new Envelope();
-            AnalyzeRequest analyzeRequest = GetAnalyzeRequest (rsaUser, hasCookies);
-            Console.WriteLine ("XmlSerializer");
-			var serxml = new XmlSerializer (analyzeRequest.GetType ());
+            XmlDocument xDoc = new XmlDocument();
+            AnalyzeResponse analyzeResponse;
+			AnalyzeRequest analyzeRequest = GetAnalyzeRequest (rsaUser, hasCookies);
+            
+			var serxml = new XmlSerializer (analyzeRequest.GetType());
             var ms = new MemoryStream ();
 			serxml.Serialize (ms, analyzeRequest);
-            string xml = Encoding.UTF8.GetString (ms.ToArray ());
-
-            //Console.WriteLine (xml);
-            _logger.LogDebug(xml);
-            _logger.LogDebug(analyzeRequest.ToString());
-            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);
-            serializer = new XmlSerializer(typeof(Envelope));
-			rdr = new StringReader(analyzeResponseXmlStr);
+            string xml = Encoding.UTF8.GetString (ms.ToArray());
+            
+            var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
+   //         serializer = new XmlSerializer(typeof(Envelope));
+			//rdr = new StringReader(analyzeResponseXmlStr);
+   //         analyzeResponse = (Envelope)serializer.Deserialize(rdr);
             try
             {
-                analyzeResponse = (Envelope)serializer.Deserialize(rdr);
+                xDoc.LoadXml(analyzeResponseXmlStr);
+
+                var test = xDoc.DocumentElement.LastChild.LastChild.LastChild;
+                var test2 = xDoc.GetElementsByTagName("analyzeReturn");
+
+                //serializer = new XmlSerializer(typeof(AnalyzeResponse));
+                //rdr = new StringReader(xDoc.DocumentElement.LastChild.LastChild.LastChild);
+                //analyzeResponse = (AnalyzeResponse)serializer.Deserialize(rdr);
+                //userStatus = xDoc.GetElementsByTagName("userStatus").ToString();
+                //actionCode = xDoc.GetElementsByTagName("userStatus").ToString();
+
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
-			var userStatus = analyzeResponse.Body.analyzeResponse.analyzeReturn.identificationData.userStatus;
-			var actionCode = analyzeResponse.Body.analyzeResponse.analyzeReturn.riskResult.triggeredRule.actionCode;
+            //var userStatus = analyzeResponse.Body.analyzeResponse.analyzeReturn.identificationData.userStatus;
+            //var actionCode = analyzeResponse.Body.analyzeResponse.analyzeReturn.riskResult.triggeredRule.actionCode;
+            //var userStatus = analyzeResponse.identificationData.userStatus;
+            //var actionCode = analyzeResponse.riskResult.triggeredRule.actionCode;
 
-			if (userStatus != UserStatus.LOCKOUT.ToString() || userStatus != UserStatus.DELETE.ToString())
+            if (userStatus != UserStatus.LOCKOUT.ToString() || userStatus != UserStatus.DELETE.ToString())
 			{
 
 				UpdateUserResponse updateUserResponse = null;
@@ -350,8 +364,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		}
 
         #endregion
-        #region serialiseObject
 
+        #region
 
         // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
         /// <remarks/>
@@ -359,30 +373,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
         [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.xmlsoap.org/soap/envelope/", IsNullable = false)]
-        public partial class Envelope
-        {
-
-            private EnvelopeBody bodyField;
-
-            /// <remarks/>
-            public EnvelopeBody Body
-            {
-                get
-                {
-                    return this.bodyField;
-                }
-                set
-                {
-                    this.bodyField = value;
-                }
-            }
-        }
-
-        /// <remarks/>
-        [System.SerializableAttribute()]
-        [System.ComponentModel.DesignerCategoryAttribute("code")]
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
-        public partial class EnvelopeBody
+        public partial class Body
         {
 
             private analyzeResponse analyzeResponseField;
@@ -1211,6 +1202,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 }
             }
         }
+
+
         #endregion
     }
 } 
