@@ -12,8 +12,6 @@ using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
-using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 
 namespace TechCertain.WebUI
 {
@@ -50,14 +48,13 @@ namespace TechCertain.WebUI
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddElmah(options =>
-            {                
+            {
                 //options.CheckPermissionAction = context => context.User.Identity.IsAuthenticated;
-                options.Path = @"elmah";
+                options.Path = @"test";
             });
             services.AddBaseLdapPackage();
             services.AddResponseCaching();
-            services.AddMvc();
-            //services.AddNewtonsoftJson();
+            services.AddMvc();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

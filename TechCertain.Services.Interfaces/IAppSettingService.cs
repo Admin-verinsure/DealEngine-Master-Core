@@ -14,6 +14,7 @@ namespace TechCertain.Services.Interfaces
         string GetMarineInsuranceSpecialistEmail { get; }
         string GetCompanyTitle { get; }
         string GetConnectionString { get; }
+        string GetSuperUser { get; }
     }
 }
 

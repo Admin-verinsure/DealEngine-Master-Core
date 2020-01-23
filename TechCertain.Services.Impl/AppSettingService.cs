@@ -74,5 +74,13 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetConnectionString("TechCertainConnection");
             }
         }
+
+        public string GetSuperUser
+        {
+            get
+            {
+                return _configuration.GetValue<string>("SuperUsers");
+            }
+        }
     }
 }
