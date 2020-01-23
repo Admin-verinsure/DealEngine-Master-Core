@@ -298,5 +298,29 @@ namespace TechCertain.Domain.Entities
 
         public virtual string AuthorisationNotes { get; set; }
 
+        public virtual decimal BrokerageDiffer
+        {
+            get;
+            set;
+        }
+
+        public virtual decimal BrokeragePre
+        {
+            get;
+            set;
+        }
+
+        public virtual decimal NDBrokeragePre
+        {
+            get;
+            set;
+        }
+
+        public virtual decimal NDBrokerageDiffer
+        {
+            get;
+            set;
+        }
+
     }
 }

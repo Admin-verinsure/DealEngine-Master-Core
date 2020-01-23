@@ -220,5 +220,17 @@ namespace TechCertain.Domain.Entities
             get;
             set;
         }
+
+        public virtual decimal BrokerageDiffer
+        {
+            get;
+            set;
+        }
+
+        public virtual decimal BrokeragePre
+        {
+            get;
+            set;
+        }
     }
 }
