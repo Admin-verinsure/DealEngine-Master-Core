@@ -35,9 +35,9 @@
                         </div>
                         @foreach (var item in Model)
                         {
-                            @Html.Partial("Partials/ViewAgreement", item)
+                            @await Html.PartialAsync("Partials/ViewAgreement", item)
                             <h3><strong>Documents </strong></h3>
-                            @Html.Partial("Partials/ViewAgreementDocs", item.Documents)
+                            @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
                             
                             //<h3><strong>Options </strong></h3>
                             //<div class="widget-body widget-hide-overflow">
@@ -64,6 +64,7 @@
 
 
 @section pagespecific {
+    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     <script type="text/javascript">
 
     </script>

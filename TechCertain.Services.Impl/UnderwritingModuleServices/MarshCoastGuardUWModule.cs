@@ -96,6 +96,13 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             int totalBoatTermLimitPre = 0;
             int totalBoatTermLimitDiffer = 0;
 
+            decimal totalVehicleFslPre = 0m;
+            decimal totalVehicleFslDiffer = 0m;
+            decimal totalVehiclePremiumPre = 0m;
+            decimal totalVehiclePremiumDiffer = 0m;
+            int totalVehicleTermLimitPre = 0;
+            int totalVehicleTermLimitDiffer = 0;
+
             bool bolNewBoatAdded = false;
             bool bolNewVehicleAdded = false;
 
@@ -105,7 +112,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             foreach (var boat in informationSheet.Boats.Where(v => (!v.Removed || (v.Removed && v.BoatCeaseDate > DateTime.MinValue && v.BoatCeaseReason > 0)) && v.DateDeleted == null))
             {
 
-                //Pre-rate premiums based on the vehicle effectiove date and cease date
+                //Pre-rate premiums based on the vessel effectiove date and cease date
                 DateTime boatinceptiondate;
                 DateTime boatexpirydate;
                 DateTime boateffectivedate;
@@ -245,7 +252,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     bvTerm.AnnualBrokerage = boatBrokerage;
                 }
 
-                //===========
+                //===========================
                 //For Change Agreement
                 decimal boatFslPre = 0m;
                 decimal boatFslDiffer = 0m;
@@ -440,18 +447,50 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
 
 
             //calculate trailer premium and FSL (MV Term)
-            foreach (var vehicle in informationSheet.Vehicles.Where(v => !v.Removed && v.DateDeleted == null))
+            foreach (var vehicle in informationSheet.Vehicles.Where(v => (!v.Removed || (v.Removed && v.VehicleCeaseDate > DateTime.MinValue && v.VehicleCeaseReason > 0)) && v.DateDeleted == null))
             {
+
+                //Pre-rate premiums based on the vehicle effectiove date and cease date
+                DateTime vehicleinceptiondate;
+                DateTime vehicleexpirydate;
+                DateTime vehicleeffectivedate;
+                int vehicleperiodindays = 0;
+
                 if (vehicle.VehicleEffectiveDate < agreement.InceptionDate || vehicle.VehicleEffectiveDate > agreement.InceptionDate.AddDays(30))
                 {
                     vehicle.VehicleEffectiveDate = agreement.InceptionDate;
                 }
 
-                vehicle.VehicleInceptionDate = vehicle.VehicleEffectiveDate;
-                vehicle.VehicleExpireDate = agreement.ExpiryDate;
+                //default for new boat
+                vehicleeffectivedate = (vehicle.VehicleEffectiveDate > DateTime.MinValue) ? vehicle.VehicleEffectiveDate : agreement.InceptionDate;
+                vehicleexpirydate = (vehicle.VehicleCeaseDate > DateTime.MinValue) ? vehicle.VehicleCeaseDate : agreement.ExpiryDate;
+                vehicleinceptiondate = vehicleeffectivedate;
 
-                int vehicleperiodindays = 0;
-                vehicleperiodindays = (vehicle.VehicleExpireDate - vehicle.VehicleInceptionDate).Days;
+                if (vehicle.OriginalVehicle != null) //exsiting vehicle
+                {
+                    vehicleinceptiondate = vehicle.OriginalVehicle.VehicleInceptionDate;
+                    vehicleexpirydate = vehicle.OriginalVehicle.VehicleExpireDate;
+                    vehicleeffectivedate = (vehicle.VehicleEffectiveDate > DateTime.MinValue) ? vehicle.VehicleEffectiveDate : vehicle.OriginalVehicle.VehicleInceptionDate;
+
+                    if (vehicle.OriginalVehicle.VehicleCeaseDate == DateTime.MinValue && vehicle.VehicleCeaseDate > DateTime.MinValue)
+                    {
+                        vehicleexpirydate = vehicle.VehicleCeaseDate;
+                    }
+                    else if (vehicle.OriginalVehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.VehicleCeaseDate == DateTime.MinValue)
+                    {
+                        vehicleinceptiondate = (vehicle.VehicleEffectiveDate > DateTime.MinValue) ? vehicle.VehicleEffectiveDate : vehicle.OriginalVehicle.VehicleInceptionDate;
+                        vehicleexpirydate = agreement.ExpiryDate;
+                    }
+                }
+                else
+                {
+                    bolNewVehicleAdded = true;
+                }
+
+                vehicle.VehicleInceptionDate = vehicleinceptiondate;
+                vehicle.VehicleExpireDate = vehicleexpirydate;
+
+                vehicleperiodindays = (vehicleexpirydate - vehicleeffectivedate).Days;
 
                 string vehicleCategory = null;
                 decimal vehicleFsl = 0m;
@@ -523,6 +562,156 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     mvTerm.AnnualFSL = vehicleFsl;
                     mvTerm.AnnualBrokerage = vehicleBrokerage;
                 }
+
+                //===========
+                //For Change Agreement
+                decimal vehicleFslPre = 0m;
+                decimal vehicleFslDiffer = 0m;
+                decimal vehiclePremiumPre = 0m;
+                decimal vehiclePremiumDiffer = 0m;
+                decimal vehicleExcessPre = 0m;
+                decimal vehicleExcessDiffer = 0m;
+                int vehicleTermLimitPre = 0;
+                int vehicleTermLimitDiffer = 0;
+                int prevehicleperiodindays = 0;
+
+                if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null && vehicle.OriginalVehicle != null)
+                {
+                    ClientAgreementTerm termPre = agreement.ClientInformationSheet.PreviousInformationSheet.Programme.Agreements.FirstOrDefault().ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == "MV" && t.DateDeleted == null);
+                    if (termPre != null)
+                    {
+                        ClientAgreementMVTerm mvTermPre = termPre.MotorTerms.FirstOrDefault(mvpret => mvpret.Vehicle == vehicle.OriginalVehicle && mvpret.DateDeleted == null);
+
+                        if (mvTermPre != null)
+                        {
+                            if (vehicle.OriginalVehicle.VehicleEffectiveDate > DateTime.MinValue)
+                            {
+                                prevehicleperiodindays = (vehicle.OriginalVehicle.VehicleExpireDate - vehicle.OriginalVehicle.VehicleEffectiveDate).Days;
+                            }
+                            else
+                            {
+                                prevehicleperiodindays = (vehicle.OriginalVehicle.VehicleExpireDate - vehicle.OriginalVehicle.VehicleInceptionDate).Days;
+                            }
+
+                            if (vehicle.OriginalVehicle.VehicleCeaseDate == DateTime.MinValue && vehicle.VehicleCeaseDate > DateTime.MinValue)
+                            {
+                                prevehicleperiodindays = (vehicle.VehicleExpireDate - vehicle.VehicleInceptionDate).Days;
+                            }
+                            if (vehicle.OriginalVehicle.VehicleEffectiveDate > DateTime.MinValue && vehicle.VehicleEffectiveDate > DateTime.MinValue)
+                            {
+                                if (vehicle.OriginalVehicle.VehicleCeaseDate == DateTime.MinValue && vehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.OriginalVehicle.VehicleEffectiveDate == vehicle.VehicleEffectiveDate)
+                                {
+                                    prevehicleperiodindays = (vehicle.VehicleExpireDate - vehicle.VehicleEffectiveDate).Days;
+                                }
+                            }
+
+                            if (vehicle.OriginalVehicle.VehicleEffectiveDate > DateTime.MinValue && vehicle.VehicleEffectiveDate > DateTime.MinValue)
+                            {
+                                if (vehicle.OriginalVehicle.VehicleCeaseDate == DateTime.MinValue && vehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.OriginalVehicle.VehicleEffectiveDate == vehicle.VehicleEffectiveDate)
+                                {
+                                    prevehicleperiodindays = (vehicle.VehicleExpireDate - vehicle.VehicleEffectiveDate).Days;
+                                }
+                            }
+
+                            vehicleFslPre = mvTermPre.FSL;
+                            vehiclePremiumPre = mvTermPre.Premium;
+                            vehicleExcessPre = mvTermPre.Excess;
+                            vehicleTermLimitPre = mvTermPre.TermLimit;
+
+                            totalVehicleFslPre += mvTermPre.FSL;
+                            totalVehiclePremiumPre += mvTermPre.Premium;
+                            totalVehicleTermLimitPre += mvTermPre.TermLimit;
+
+                            if ((vehicle.GroupSumInsured == vehicle.OriginalVehicle.GroupSumInsured && vehicle.VehicleEffectiveDate == vehicle.OriginalVehicle.VehicleEffectiveDate &&
+                                vehicle.VehicleCeaseDate == vehicle.OriginalVehicle.VehicleCeaseDate) ||
+                                (vehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.VehicleCeaseReason == 3))
+                            {
+                                vehicleFslDiffer = 0m;
+                                vehiclePremiumDiffer = 0m;
+                                vehicleExcessDiffer = 0;
+                                vehicleTermLimitDiffer = 0;
+
+                                totalVehicleFslDiffer += 0m;
+                                totalVehiclePremiumDiffer += 0m;
+                                totalVehicleTermLimitDiffer += 0;
+
+                            }
+                            else
+                            {
+                                if (vehicle.OriginalVehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.VehicleCeaseDate == DateTime.MinValue)
+                                {
+                                    vehicleFslDiffer = vehicleproratedFsl;
+                                    vehiclePremiumDiffer = vehicleproratedPremium;
+                                    vehicleExcessDiffer = vehicleExcess;
+                                    vehicleTermLimitDiffer = vehicle.GroupSumInsured;
+
+                                    totalVehicleFslDiffer += vehicleproratedFsl;
+                                    totalVehiclePremiumDiffer += vehicleproratedPremium;
+                                    totalVehicleTermLimitDiffer += vehicle.GroupSumInsured;
+                                }
+                                else if (prevehicleperiodindays == 0)
+                                {
+                                    vehicleFslDiffer = vehicleproratedFsl - mvTermPre.FSL;
+                                    vehiclePremiumDiffer = vehicleproratedPremium - mvTermPre.Premium;
+                                    vehicleExcessDiffer = vehicleExcess - mvTermPre.Excess;
+                                    vehicleTermLimitDiffer = vehicle.GroupSumInsured - mvTermPre.TermLimit;
+
+                                    totalVehicleFslDiffer += vehicleproratedFsl - mvTermPre.FSL;
+                                    totalVehiclePremiumDiffer += vehicleproratedPremium - mvTermPre.Premium;
+                                    totalVehicleTermLimitDiffer += (vehicle.OriginalVehicle.VehicleCeaseDate > DateTime.MinValue) ? (vehicle.GroupSumInsured) : (vehicle.GroupSumInsured - mvTermPre.TermLimit);
+                                }
+                                else
+                                {
+                                    vehicleFslDiffer = vehicleproratedFsl - (mvTermPre.FSL * vehicleperiodindays / prevehicleperiodindays);
+                                    vehiclePremiumDiffer = vehicleproratedPremium - (mvTermPre.Premium * vehicleperiodindays / prevehicleperiodindays);
+                                    vehicleExcessDiffer = vehicleExcess - mvTermPre.Excess;
+                                    vehicleTermLimitDiffer = vehicle.GroupSumInsured - mvTermPre.TermLimit;
+
+                                    totalVehicleFslDiffer += vehicleproratedFsl - (mvTermPre.FSL * vehicleperiodindays / prevehicleperiodindays);
+                                    totalVehiclePremiumDiffer += vehicleproratedPremium - (mvTermPre.Premium * vehicleperiodindays / prevehicleperiodindays);
+                                    totalVehicleTermLimitDiffer += (vehicle.OriginalVehicle.VehicleCeaseDate > DateTime.MinValue) ? (vehicle.GroupSumInsured) : (vehicle.GroupSumInsured - mvTermPre.TermLimit);
+                                }
+                            }
+
+
+                        }
+                    }
+
+                }
+                else
+                {
+                    vehicleFslDiffer = vehicleproratedFsl;
+                    vehiclePremiumDiffer = vehicleproratedPremium;
+                    vehicleExcessDiffer = vehicleExcess;
+                    vehicleTermLimitDiffer = vehicle.GroupSumInsured;
+
+                    totalVehicleFslDiffer += vehicleproratedFsl;
+                    totalVehiclePremiumDiffer += vehicleproratedPremium;
+                    totalVehicleTermLimitDiffer += vehicle.GroupSumInsured;
+                }
+
+                mvTerm.FSLPre = vehicleFslPre;
+                mvTerm.FSLDiffer = vehicleFslDiffer;
+                mvTerm.PremiumPre = vehiclePremiumPre;
+                mvTerm.PremiumDiffer = vehiclePremiumDiffer;
+                mvTerm.ExcessPre = vehicleExcessPre;
+                mvTerm.ExcessDiffer = vehicleExcessDiffer;
+                mvTerm.TermLimitPre = vehicleTermLimitPre;
+                mvTerm.TermLimitDiffer = vehicleTermLimitDiffer;
+
+                if (vehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.VehicleCeaseReason == 4)
+                {
+                    mvTerm.TermCategory = "transfered";
+                }
+                else if (vehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.VehicleCeaseReason != 4)
+                {
+                    mvTerm.TermCategory = "ceased";
+                }
+                else
+                {
+                    mvTerm.TermCategory = "active";
+                }
+                //===========
 
                 totalTermLimit += vehicle.GroupSumInsured;
                 totalTermFsl += vehicleproratedFsl;
@@ -604,7 +793,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
-
+            }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
             }
             return clientAgreement;
         }

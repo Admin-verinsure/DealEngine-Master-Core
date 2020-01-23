@@ -6,9 +6,9 @@
         <!-- row -->
         <div class="row">
             <!-- NEW WIDGET START -->
-            <article class="col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
+            <article class="container">
                 <!-- Widget ID (each widget will need unique ID)-->
-                <div id="container">
+                <div id="container" class="container-fluid">
                     <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
                          data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 
@@ -22,7 +22,7 @@
                         @Html.HiddenFor(m => m.Id)
                         @Html.HiddenFor(m => m.MilestoneId)
                         @Html.HiddenFor(m => m.MilestoneStatus)
-
+                        @Html.HiddenFor(m => m.ListProductName)
                         <div role="content">
                             <!-- widget content -->
                             @if (Model.Status == "Submitted")
@@ -34,7 +34,10 @@
 
                             }
                             <div class="widget-body">
-                                <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
+                                <!--add all forms here-->
+                                <form id="addtionalActivityInformationContainer" action="#" class="client-form"></form>
+                                <form class="client-form" action="#" id="addtionalRoleInformationContainer"></form>
+                                <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="novalidate">
 
                                     <!-- SmartWizard html -->
                                     <div id="smartwizard" class="sw-main sw-theme-circles">
@@ -51,6 +54,26 @@
                                                 <h3><strong> Details </strong> - Complete Information</h3>
                                                 <div id="form-step-0" role="form" data-toggle="validator">
                                                     <div class="form-group">
+
+                                                        @if (Model.Advisory != "")
+                                                        {
+                                                            <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Advisory</h5>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            @Html.Raw(Model.Advisory)
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            @*<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Close</button>*@
+                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
 
                                                         <div class="row">
                                                             @{ await Html.RenderPartialAsync("_ViewInformation"); }
@@ -90,7 +113,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="validateOperatorModal('#OperatorFirstNameModal', '#OperatorLastNameModal','locTabs1', '#OperatorYearsOfExpModal','#organisationEmail')" class="btn-sm ">Add</button>
+                                                                                <button onclick="validateOperatorModal('#OperatorFirstNameModal', '#OperatorLastNameModal','locTabs1', '#OperatorYearsOfExpModal','#organisationEmail')" class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -169,7 +192,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="AddWaterLocModal('#WaterLocationNameModal','#WaterLocationLatitudeModal', '#WaterLocationLongitudeModal', '#WaterLocationLocationModal', '#WaterLocationMarinaLocationModal', '#MooredTypeModal','#OrgUnitModal'); $('#addWaterLocModal').modal('hide');" class="btn-sm ">Add</button>
+                                                                                <button onclick="AddWaterLocModal('#WaterLocationNameModal','#WaterLocationLatitudeModal', '#WaterLocationLongitudeModal', '#WaterLocationLocationModal', '#WaterLocationMarinaLocationModal', '#MooredTypeModal','#OrgUnitModal'); $('#addWaterLocModal').modal('hide');" class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -220,7 +243,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="ValidateAddLandLocModal('#BuildingCategoryModal','#BuildingNameModal', '#BuildingLocationModal');" class="btn-sm ">Add</button>
+                                                                                <button onclick="ValidateAddLandLocModal('#BuildingCategoryModal','#BuildingNameModal', '#BuildingLocationModal');" class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -255,7 +278,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').hide();" class="btn-sm ">Add</button>
+                                                                                <button onclick="AddMarinaLocModal('#marinaName'); $('#addMarinaModal').hide();" class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -437,7 +460,7 @@
 
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="validateIP()" class="btn-sm ">Add</button>
+                                                                                <button onclick="validateIP()" class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -530,7 +553,7 @@
 
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="ValidateBoatUseModal()" class="btn-sm ">Add</button>
+                                                                                <button onclick="ValidateBoatUseModal()" class="btn btn-success">Add</button>
 
 
                                                                             </section>
@@ -539,7 +562,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="modal" id="addTrailerModal" tabindex="-1" role="dialog" data-backdrop="static">
-                                                                <div class="modal-dialog">
+                                                                <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 20px; margin-bottom:50px;">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <button type="button" class="close" onclick="$('#addTrailerModal').hide()">&times;</button>
@@ -570,7 +593,7 @@
                                                                                             </label>
                                                                                         </section>
                                                                                         <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3" style="margin-top:25px;">
-                                                                                            <button onclick="GetRegisteredMVDetails('#RegistrationModal')" class="btn-sm w100">Search</button>
+                                                                                            <button onclick="GetRegisteredMVDetails('#RegistrationModal')" class="btn btn-success">Search</button>
 
 
                                                                                         </section>
@@ -578,7 +601,7 @@
                                                                                 </div>
                                                                                 <hr id="trailerModalHairline2" style="display:none;" />
 
-                                                                                <div class="row">
+                                                                                <div class="row" >
                                                                                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselTrailerYear" style="display:none;">
                                                                                         <label class="label cgmodalLabel required">Year</label>
                                                                                         <label class="input cgmodalInput">
@@ -645,10 +668,10 @@
                                                                                         </label>
                                                                                     </section>
                                                                                     <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 smart-form cgmodalDatePickerOverride" id="VesselTrailerEffective" style="display:none;">
-                                                                                        <label class="label cgmodalLabel">Effective Date</label>
+                                                                                        <label class="label cgmodalLabel required">Effective Date</label>
                                                                                         <label class="input cgmodalInput">
                                                                                             <i class="icon-append fa fa-calendar"></i>
-                                                                                            <input name="EffectiveDate" placeholder="Effective Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="TrailerEffectiveDateModal" type="text">
+                                                                                            <input name="EffectiveDate" placeholder="Effective Date" class="Effectivedate form-control b" data-dateformat="dd/mm/yy" id="TrailerEffectiveDateModal" type="text" required>
                                                                                         </label>
                                                                                     </section>
                                                                                 </div>
@@ -681,8 +704,10 @@
                                                                         </div>
 
                                                                         <div class="modal-footer" id="addSection">
+
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="ValidateMotorVehicleModal()" class="btn-sm ">Add</button>
+                                                                                <p id="trailerdemo" style="color:red"></p>
+                                                                                <button onclick="ValidateMotorVehicleModal(event)" class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -760,11 +785,11 @@
                                                                         </div>
                                                                     </div>
 
-                                                                        <div class="modal-footer">
+                                                                    <div class="modal-footer">
 
-                                                                            <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
-                                                                        </div>
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnVehicleRemoveSubmit">
                                                                     </div>
+                                                                </div>
                                                             </div>
 
                                                             <div id="BoatRemoveModal" class="modal" role="dialog">
@@ -838,13 +863,13 @@
                                                                             </section>
                                                                         </div>
 
-                                                                     </div>
-
-                                                                        <div class="modal-footer">
-
-                                                                            <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
-                                                                        </div>
                                                                     </div>
+
+                                                                    <div class="modal-footer">
+
+                                                                        <input type="Reset" value="Submit" class="btn btn-success" id="btnRemoveSubmit">
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
 
@@ -920,7 +945,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <section class="col col-xs-12">
-                                                                                <button onclick="validateLocModal('#StreetModal','#SuburbModal','#PostcodeModal','#CityModal','#CountryModal','#CommonNameModal','#LocationTypeModal','#SelectedOrganisationalUnitsModal'); " class="btn-sm ">Add</button>
+                                                                                <button onclick="validateLocModal('#StreetModal','#SuburbModal','#PostcodeModal','#CityModal','#CountryModal','#CommonNameModal','#LocationTypeModal','#SelectedOrganisationalUnitsModal'); " class="btn btn-success">Add</button>
                                                                             </section>
                                                                         </div>
                                                                     </div>
@@ -972,7 +997,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Updating your Agreement. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Updating your Agreement. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -981,7 +1006,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Loading your Agreement Declaration. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Loading your Agreement Declaration. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -990,7 +1015,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Loading your Payment Options. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Loading your Payment Options. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -999,7 +1024,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Loading Information. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Loading Information. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1008,7 +1033,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Skipper. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Skipper. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1017,7 +1042,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Trailer. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Trailer. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1026,7 +1051,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Location. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Location. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1035,7 +1060,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Interested Party. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Interested Party. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1044,7 +1069,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Moored Type. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Moored Type. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1053,7 +1078,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Boat Use. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Boat Use. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1062,7 +1087,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Adding Boat. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Adding Boat. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1071,7 +1096,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Searching Information. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Searching Information. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1080,12 +1105,12 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <p><img src="/Content/img/loading.gif" /> Updating your Agreement Documents. Please wait...</p>
+                                            <p><img src="/img/loading.gif" /> Updating your Agreement Documents. Please wait...</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -1094,93 +1119,68 @@
     </section>
 </div>
 
+
+
 @section pagespecific {
+    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
     <script>
         $(window).on("load", function () {
             debugger;
+                           $("#getDetailsModal").modal('show');
+
             if ("@Model.Status" == "Submitted") {
-                debugger;
                 if (document.getElementById('fieldset') != null) {
-                    //document.getElementById("fieldset").disabled = true;
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {
-                document.getElementById('btn1').removeAttribute("disabled");
-                 }
-
-              
+                    document.getElementById('btn1').removeAttribute("disabled");
+                }
                 $('.btn-sm').addClass("hidden");
-                 $('.btn').addClass("hidden");
-
-                //var trashbutton = document.getElementsByClassName("fa fa-trash");
-                //$(trashbutton).addClass("hidden");
-                //$(trashbutton).hide();
-
-                //var tbutton = document.getElementsByClassName("btn-danger");
-                //$(tbutton).addClass("hidden");
-                //$(tbutton).hide();
-
-                //var trash = document.getElementById("trash");
-                //$(trash).addClass("hidden");
-                //$(trash).hide();
-
-                //var t = document.getElementById("span");
-                //$(t).addClass("hidden");
-                //$(t).hide();
-
-                //var t = document.getElementById("ClearBoat");
-                //$(t).addClass("hidden");
-                //$(t).hide();
-
-                //var tr = document.getElementsByClassName("btn-default  btn btn-sm");
-                //$(tr).addClass("hidden");
-                //$(tr).hide();
+                //$('.btn').addClass("hidden");
             }
 
-           var clientInformationSheet = $('#AnswerSheetId').val();
-
-           var postData = {ClientInformationSheet : clientInformationSheet};
-
+            var clientInformationSheet = $('#AnswerSheetId').val();
+            var postData = { ClientInformationSheet: clientInformationSheet };
 
             $.ajax({
-     	// change back once mono decides to fix
-        url: '@Url.Action("GetClaimHistory", "Information")',
-        type: "POST",
-        data: postData
-    })
+                // change back once mono decides to fix
+                url: '@Url.Action("GetClaimHistory", "Information")',
+                type: "POST",
+                data: postData
+            })
                 .done(function (data) {
-                    debugger;
-            if (data != "") {
-                for (var item = 0; item < data.length; item++){
-
-                var arr = data[item];
-                var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if (arr[count + 1] == "true") {
-                        $('#' + arr[count] + 'Details').val(arr[count + 2]);
-
-                        $('#' + arr[count] + 'Sec').removeClass('hidden');
-                    } else {
-                         $('#' + arr[count] + 'Details').val("");
-
-                        $('#' + arr[count] + 'Sec').addClass('hidden');
-                    }
-            }
-
+                    if (data != "" &&
+                        (data[0] != null && data[1] != null && data[2] != null && data[3] != null && data[4] != null)
+                    ){
+                        for (var item = 0; item < data.length; item++){
+                            var arr = data[item];
+                            var count = 0;
+                            debugger;
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if (arr[count + 1] == "true") {
+                                $('#' + arr[count] + 'Details').val(arr[count + 2]);
+                                $('#' + arr[count] + 'Sec').removeClass('hidden');
+                            } else {
+                                $('#' + arr[count] + 'Details').val("");
+                                $('#' + arr[count] + 'Sec').addClass('hidden');
+                            }
+                        }
                     };
+                                           $("#getDetailsModal").modal('hide');
 
-    })
+                })
                 .fail(function (a, s, d) {
-                    debugger;
-        alert("Unable to save.");
+                                           $("#getDetailsModal").modal('hide');
+
+                    alert("Unable to save.");
+                });
         });
 
+        function CloseAdvisory() {
+            $('#modal').modal('hide');
+        }
 
-
-          });
     </script>
-
-
     @await Html.PartialAsync("_InformationWizardScripts")
-}
 
+}
 

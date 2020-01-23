@@ -11,6 +11,7 @@ namespace TechCertain.Domain.Entities
         public virtual int Classification {get; set; }
         public virtual decimal Pecentage { get; set; }
         public virtual IList<RevenueByActivity> RevenueByActivities { get; set; }
+        public virtual Guid BusinessActivityTemplate { get; set; }
 
         protected BusinessActivity () : this (null) { }
 

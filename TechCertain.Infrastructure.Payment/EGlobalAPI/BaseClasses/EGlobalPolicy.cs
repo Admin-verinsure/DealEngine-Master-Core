@@ -86,25 +86,20 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                 get
                 {
                     var description ="";
-                    if (ClientProgramme.InformationSheet.IsRenewawl)
-                    {
-                        if (ClientProgramme.HasEGlobalCustomDescription)
-                        {
-                            description = ClientProgramme.EGlobalCustomDescription;
-                        } else
-                            description = Package.DescriptionRenew;
-                    }
-
-                else
+                if (ClientProgramme.InformationSheet.IsRenewawl && ClientProgramme.InformationSheet.PreviousInformationSheet != null)
                 {
-                    if (ClientProgramme.HasEGlobalCustomDescription)
-                    {
-                        description = ClientProgramme.EGlobalCustomDescription;
-                    }
-                    else
-                        description = Package.DescriptionNew;
+                    description = Package.DescriptionRenew;
+                } else if (ClientProgramme.InformationSheet.IsChange && ClientProgramme.InformationSheet.PreviousInformationSheet != null)
+                {
+                    description = Package.DescriptionChange;
+                } else
+                {
+                    description = Package.DescriptionNew;
                 }
-
+                if (ClientProgramme.HasEGlobalCustomDescription)
+                {
+                    description = ClientProgramme.EGlobalCustomDescription;
+                }
 
 
                 /*if (gv_transactionType == TransactionType.Lapse)
@@ -122,11 +117,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                     }
                 }
 
-
                 Description1 = string.Format(description,
-                            //objClientAgreement.InceptionDate.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")),
-                            objClientAgreement.InceptionDate.ToString("dd MMMM yyyy"),
-                            objClientAgreement.ExpiryDate.ToString("dd MMMM yyyy"));
+                            TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")),
+                            TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")));
 
                     return Description1;
                 }

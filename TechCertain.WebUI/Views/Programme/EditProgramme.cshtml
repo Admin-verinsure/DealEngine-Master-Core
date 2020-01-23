@@ -1,0 +1,25 @@
+﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
+<!-- MAIN CONTENT -->
+<div id="content" class="container">
+
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>  <span>
+                <a href="~/Programme/TermSheetConfirguration/@Model.Id"> Package Term Sheet</a>
+                > Edit Programme
+            </span>
+        </h1>
+    </div>
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
+
+    <!-- end col -->
+    <div class="row">
+        @await Html.PartialAsync("ProgrammeFormPartial", Model)
+    </div>
+</div>
+

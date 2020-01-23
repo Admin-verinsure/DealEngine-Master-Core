@@ -123,7 +123,7 @@
 
 
                             @*
-            </div>*@
+                                </div>*@
 
 
 
@@ -165,19 +165,13 @@
 
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="Please select the option that best represents the status of the vessel when it is not being used">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
-                                        @*<i id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-toggle="popover"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>*@
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>
                                     </section>
 
                                 </div>
@@ -205,101 +199,78 @@
                                     </div>
 
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        @*<a href="#" data-toggle="popover"
-                                               data-trigger="hover"
-                                               data-placement="bottom"
-                                               data-content="Please select the option that best represents the status of the vessel when it is not being used">
-                                                hint
-                                            </a>*@
 
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           title="" data-content="Please enter the details for the primary skipper of the vessel">
-                                            hover on
-                                        </a>
-
-                                        @*<i id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-toggle="popover"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="Please enter the details for the primary skipper of the vessel"></i>*@
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Please enter the details for the primary skipper of the vessel"></i>
                                     </section>
-
                                 </div>
+                            </section>
 
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="RegistrationSection" style="display:none">
+
+                                <label class="label required">Personal Watercraft Registration Area</label>
+
+                                <label class="input form-group">
+                                    <select class="form-control b" id="VesselArea" name="VesselArea" title="" required>
+                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option value="Auckland">Auckland</option>
+                                        <option value="Bay Of Plenty">Bay Of Plenty</option>
+                                        <option value="Gisborne">Gisborne</option>
+                                        <option id="Hawke's Bay">Hawke's Bay</option>
+                                        <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
+                                        <option value="NorthLand">Northland</option>
+                                        <option value="Taranaki">Taranaki</option>
+                                        <option value="Waikato">Waikato</option>
+                                        <option id="Wellington">Wellington</option>
+                                        <option value="Canterbury">Canterbury</option>
+                                        <option value="Central Otag">Central Otago</option>
+                                        <option value="Grey">Grey</option>
+                                        <option id="Marlborough">Marlborough</option>
+                                        <option value="Nelson">Nelson</option>
+                                        <option value="Otago">Otago</option>
+                                        <option value="Queenstown Lakes">Queenstown Lakes</option>
+                                        <option id="Southland">Southland</option>
+                                        <option value="Tasman">Tasman</option>
+                                        <option value="West Coast">West Coast</option>
+                                    </select>
+
+                                </label>
+                                <p class="validationContainer" id="validateVesselArea"></p>
 
                             </section>
 
-                            <div class="row">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="aucklandRegoSection">
+                                <label class="label ">Personal Watercraft (PWC) Registration</label>
+                                <div class="row">
 
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="RegistrationSection" hidden>
-
-                                    <label class="label required">Personal Watercraft Registration Area</label>
-
-                                    <label class="input form-group">
-                                        <select class="form-control b" id="VesselArea" name="VesselArea" title="" required>
-                                            <option selected="selected" value="">-- Select here --</option>
-                                            <option value="Auckland">Auckland</option>
-                                            <option value="Bay Of Plenty">Bay Of Plenty</option>
-                                            <option value="Gisborne">Gisborne</option>
-                                            <option id="Hawke's Bay">Hawke's Bay</option>
-                                            <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
-                                            <option value="NorthLand">Northland</option>
-                                            <option value="Taranaki">Taranaki</option>
-                                            <option value="Waikato">Waikato</option>
-                                            <option id="Wellington">Wellington</option>
-                                            <option value="Canterbury">Canterbury</option>
-                                            <option value="Central Otag">Central Otago</option>
-                                            <option value="Grey">Grey</option>
-                                            <option id="Marlborough">Marlborough</option>
-                                            <option value="Nelson">Nelson</option>
-                                            <option value="Otago">Otago</option>
-                                            <option value="Queenstown Lakes">Queenstown Lakes</option>
-                                            <option id="Southland">Southland</option>
-                                            <option value="Tasman">Tasman</option>
-                                            <option value="West Coast">West Coast</option>
-                                        </select>
-
-                                    </label>
-                                    <p class="validationContainer" id="validateVesselArea"></p>
-
-                                </section>
-
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="aucklandRegoSection">
-                                    <label class="label ">Personal Watercraft (PWC) Registration</label>
-                                    <div class="row">
-
-                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
 
-                                            <label class="input form-group">
-                                                <i></i>
-                                                <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
-                                            </label>
-                                            <p class="validationContainer" id="validateAucklandRegistration"></p>
+                                        <label class="input form-group">
+                                            <i></i>
+                                            <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
+                                        </label>
+                                        <p class="validationContainer" id="validateAucklandRegistration"></p>
 
-                                        </section>
-                                        <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                            <a href="#" data-toggle="popover"
-                                               data-trigger="hover"
-                                               data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> ">
-                                                <i class="fa fa-question-circle" style="width:15px"></i>
-                                            </a>
+                                    </section>
+                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
 
-                                            @*<i id="elem" href="#"
-                                                class="fa fa-question-circle"
-                                                data-placement="bottom"
-                                                data-container="body"
-                                                data-html="true"
-                                                rel="popover"
-                                                data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>*@
-                                        </section>
-                                    </div>
-                                </section>
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>
+                                    </section>
+                                </div>
+                            </section>
 
-                            </div>
 
 
                         </div>
@@ -326,20 +297,14 @@
 
                                     </div>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft ">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
-                                        @*<i id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>*@
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>
                                     </section>
-
 
                                 </div>
                             </section>
@@ -403,20 +368,14 @@
 
                                     </div>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="please select the primary construction material of the hull of your vessel">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
-                                        @*<b id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="please select the primary construction material of the hull of your vessel"></b>*@
+                                        <b id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="please select the primary construction material of the hull of your vessel"></b>
                                     </section>
-
                                 </div>
 
                             </section>
@@ -549,19 +508,13 @@
 
                                     </div>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-placement="bottom"
-                                           data-content="please select the primary construction material of the mast of your vessel">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
-                                        @*<i id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="please select the primary construction material of the mast of your vessel"></i>*@
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="please select the primary construction material of the mast of your vessel"></i>
                                     </section>
 
                                 </div>
@@ -704,41 +657,14 @@
 
                             </section>
 
-
-                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
-                                    <label class="label">Vessel Use</label>
-                                    <div class="row">
-
-                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                            <label class="input form-group">
-
-                                                <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select  form-control b" required>
-
-                                                    @foreach (var bwloc in Model.BoatUseslist)
-                                                    {
-                                                        <option value="@bwloc.Value"> @bwloc.Text</option>
-                                                    }
-
-                                                </select>
-                                            </label>
-                                        </section>
-                                        <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                            <i id="addBoatUse" class="fa fa-plus" onclick="addNewBoatUse()" style="color:blue"></i>
-                                        </section>
-                                    </div>
-                                    <p class="validationContainer" id="validateboatuse"></p>
-
-                                </section>tion" >*@
-
-
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" hidden>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselUseSection" style="display:none">
                                 <label class="label">Vessel Use</label>
                                 <div class="row">
 
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input form-group">
 
-                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
+                                            <select data-placeholder="Choose Vessel Use ..." id="SelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" " required>
 
                                                 @foreach (var bwloc in Model.BoatUseslist)
                                                 {
@@ -746,6 +672,15 @@
                                                 }
 
                                             </select>
+
+                                            @*<select data-placeholder="Choose Vessel Use ..." id="AddSelectedBoatUse" name="SelectedBoatUse" multiple class="chosen-select form-control b" required>
+
+                                                    @foreach (var bwloc in Model.BoatUseslist)
+                                                    {
+                                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                                    }
+
+                                                </select>*@
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -773,49 +708,17 @@
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
                                            data-placement="bottom"
-                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
-                                        @*<i id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-html="true"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>*@
+                                           data-html="true"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
                                     </section>
                                 </div>
                                 <p class="validationContainer" id="validateboateffectivedate"></p>
                             </section>
-
-                            @*@if (Model.IsChange)
-                            {
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
-                                    <label class="label">Cease Date</label>
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="BoatCeaseDate" type="text">
-                                    </label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <label class="label">Cease Reason</label>
-                                    <label class="input">
-                                        <select class="form-control b" id="BoatCeaseReason" name="BoatCeaseReason">
-                                            <option selected="selected" value="">-- Select --</option>
-                                            <option value="1">Sold</option>
-                                            <option value="2">Decommision</option>
-                                            <option value="3">Writen off</option>
-                                            <option value="4">Transfered</option>
-                                            <option value="9">Other</option>
-                                        </select>
-                                    </label>
-                                </section>
-                            }*@
-
-
 
                         </div>
                         <hr class="boatAccordianHairline" />
@@ -845,7 +748,7 @@
 
                             </section>
 
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
+                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="ipeffectivedatesection">
                                 <label class="label">Interested Parties Effective Date</label>
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -855,41 +758,16 @@
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
                                            data-placement="bottom"
-                                           data-content="Pick the date from which you require Interested Parties to be added for certificate">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
-
+                                           data-html="true"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
                                 </div>
-                            </section>
-
-                            @*@if (Model.IsChange)
-                            {
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
-                                    <label class="label">Cease Date</label>
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="BoatCeaseDate" type="text">
-                                    </label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <label class="label">Cease Reason</label>
-                                    <label class="input">
-                                        <select class="form-control b" id="BoatCeaseReason" name="BoatCeaseReason">
-                                            <option selected="selected" value="">-- Select --</option>
-                                            <option value="1">Sold</option>
-                                            <option value="2">Decommision</option>
-                                            <option value="3">Writen off</option>
-                                            <option value="4">Transfered</option>
-                                            <option value="9">Other</option>
-                                        </select>
-                                    </label>
-                                </section>
-                            }*@
-
+                            </section>*@
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
                                 <label class="label">It is a condition of the policy that you provide the underwriters with any additional information that may be material in them making the decision to provide you with cover. If there is anything else they think you should know, please provide details here.</label>
@@ -906,16 +784,8 @@
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            @*@Html.Bootstrap().SubmitButton().Text("Update").HtmlAttributes(new { onclick = "ClearBoat('#boatTabs-2', '#tblBoat);" }).Class("btn-sm")*@
-
-
                             <button onclick="ValidateBoatForm(event,'#boatTabs2', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats(event,'#boatTabs2','boatTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
-
-                            @*@Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "ValidateBoatForm('#boatTabs-2', '#tblBoat','boatTabs-1'); " }).Class("btn-sm updateBoat").Id("updateBoat")
-
-                                @Html.Bootstrap().Button().Text("Cancel Update").HtmlAttributes(new { onclick = "ClearBoats('#boatTabs-2','boatTabs-1');" }).Class("btn-sm ClearBoat").Id("ClearBoat")*@
-
                         </section>
 
                         <label style="color:red" hidden id="updaterequired"> Field is Missing.</label>
@@ -929,10 +799,7 @@
                         <input id="openModal" class="b" name="openModal" type="hidden">
                         <!-- 1st group -->
 
-
                         <div class="row ">
-                            @*<div class="form-group">
-                            *@
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Vessel Name</label>
@@ -944,12 +811,6 @@
                                 <p class="validationContainer" id="validateAddBoatName"></p>
 
                             </section>
-
-
-                            @*
-            </div>*@
-
-
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
@@ -990,14 +851,14 @@
                                         <p class="validationContainer" id="validateAddBoatType2"></p>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="Please select the option that best represents the status of the vessel when it is not being used">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
+
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Please select the option that best represents the status of the vessel when it is not being used"></i>
                                     </section>
-
-
                                 </div>
                             </section>
 
@@ -1022,12 +883,13 @@
                                     </div>
 
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="Please enter the details for the primary skipper of the vessel">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Please enter the details for the primary skipper of the vessel"></i>
                                     </section>
 
                                 </div>
@@ -1035,68 +897,64 @@
 
                             </section>
 
-                            <div class="row ">
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddRegistrationSection" hidden>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddRegistrationSection" style="display:none">
 
-                                    <label class="label required">Personal Watercraft Registration Area</label>
+                                <label class="label required">Personal Watercraft Registration Area</label>
 
-                                    <label class="input form-group">
-                                        <select class="form-control b" id="AddVesselArea" name="VesselArea" title="" required>
-                                            <option selected="selected" value="">-- Select here --</option>
-                                            <option value="Auckland">Auckland</option>
-                                            <option value="Bay Of Plenty">Bay Of Plenty</option>
-                                            <option value="Gisborne">Gisborne</option>
-                                            <option id="Hawke's Bay">Hawke's Bay</option>
-                                            <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
-                                            <option value="NorthLand">Northland</option>
-                                            <option value="Taranaki">Taranaki</option>
-                                            <option value="Waikato">Waikato</option>
-                                            <option id="Wellington">Wellington</option>
-                                            <option value="Canterbury">Canterbury</option>
-                                            <option value="Central Otag">Central Otago</option>
-                                            <option value="Grey">Grey</option>
-                                            <option id="Marlborough">Marlborough</option>
-                                            <option value="Nelson">Nelson</option>
-                                            <option value="Otago">Otago</option>
-                                            <option value="Queenstown Lakes">Queenstown Lakes</option>
-                                            <option id="Southland">Southland</option>
-                                            <option value="Tasman">Tasman</option>
-                                            <option value="West Coast">West Coast</option>
-                                        </select>
+                                <label class="input form-group">
+                                    <select class="form-control b" id="AddVesselArea" name="VesselArea" title="" required>
+                                        <option selected="selected" value="">-- Select here --</option>
+                                        <option value="Auckland">Auckland</option>
+                                        <option value="Bay Of Plenty">Bay Of Plenty</option>
+                                        <option value="Gisborne">Gisborne</option>
+                                        <option id="Hawke's Bay">Hawke's Bay</option>
+                                        <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>
+                                        <option value="NorthLand">Northland</option>
+                                        <option value="Taranaki">Taranaki</option>
+                                        <option value="Waikato">Waikato</option>
+                                        <option id="Wellington">Wellington</option>
+                                        <option value="Canterbury">Canterbury</option>
+                                        <option value="Central Otag">Central Otago</option>
+                                        <option value="Grey">Grey</option>
+                                        <option id="Marlborough">Marlborough</option>
+                                        <option value="Nelson">Nelson</option>
+                                        <option value="Otago">Otago</option>
+                                        <option value="Queenstown Lakes">Queenstown Lakes</option>
+                                        <option id="Southland">Southland</option>
+                                        <option value="Tasman">Tasman</option>
+                                        <option value="West Coast">West Coast</option>
+                                    </select>
 
-                                    </label>
-                                    <p class="validationContainer" id="validateAddVesselArea"></p>
+                                </label>
+                                <p class="validationContainer" id="validateAddVesselArea"></p>
 
-                                </section>
+                            </section>
 
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddaucklandRegoSection">
-                                    <label class="label ">Personal Watercraft (PWC) Registration</label>
-                                    <div class="row">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddaucklandRegoSection">
+                                <label class="label ">Personal Watercraft (PWC) Registration</label>
+                                <div class="row">
 
-                                        <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
+                                        <label class="input form-group">
+                                            <i></i>
+                                            <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AddAucklandRegistration" name="AucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
+                                        </label>
+                                        <p class="validationContainer" id="validateAddAucklandRegistration"></p>
 
-                                            <label class="input form-group">
-                                                <i></i>
-                                                <input class="form-control b" data-type="TEXTBOX" data-name="AucklandRegistration" id="AucklandRegistration" name="AddAucklandRegistration" placeholder="Personal Watercraft (PWC) Registration" value="">
-                                            </label>
-                                            <p class="validationContainer" id="validateAddAucklandRegistration"></p>
+                                    </section>
+                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
 
-                                        </section>
-                                        <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                            <a href="#" data-toggle="popover"
-                                               data-trigger="hover"
-                                               data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> ">
-                                                <i class="fa fa-question-circle" style="width:15px"></i>
-                                            </a>
-
-
-                                        </section>
-                                    </div>
-                                </section>
-
-                            </div>
-
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-html="true"
+                                           data-toggle="popover"
+                                           data-content="Registration of PWC including JetSki is required- for more information <a href='https://www.maritimenz.govt.nz/recreational/safety/regional-safety.asp' target='_blank' style='color:blue' title=''> click here </a> "></i>
+                                    </section>
+                                </div>
+                            </section>
 
                         </div>
                         <hr class="boatAccordianHairline" />
@@ -1122,21 +980,14 @@
 
                                     </div>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft ">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
-                                        @*<i id="elem" href="#"
-                                            class="fa fa-question-circle"
-                                            data-placement="bottom"
-                                            data-container="body"
-                                            rel="popover"
-                                            data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>*@
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Professionally built is defined as having been primarily constructed by a person or persons professionally engaged in the construction of watercraft"></i>
                                     </section>
-
-
                                 </div>
                             </section>
 
@@ -1199,13 +1050,15 @@
 
                                     </div>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="please select the primary construction material of the hull of your vessel">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
 
+                                        <b id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="please select the primary construction material of the hull of your vessel"></b>
                                     </section>
+
 
                                 </div>
 
@@ -1344,7 +1197,7 @@
                                            class="fa fa-question-circle"
                                            data-placement="bottom"
                                            data-container="body"
-                                           rel="popover"
+                                           data-toggle="popover"
                                            data-content="please select the primary construction material of the mast of your vessel"></i>
                                     </section>
 
@@ -1387,7 +1240,7 @@
                         <!-- 4th group -->
 
                         <div class="row">
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="VesselTrailer">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddVesselTrailer">
                                 <label class="label required">Does this Vessel have a Trailer?</label>
                                 <label class="input form-group">
                                     <select onchange="AddhasTrailer()" class="form-control b" id="AddBoatIsTrailered" name="BoatIsTrailered" required>
@@ -1400,7 +1253,7 @@
 
                             </section>
 
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddSelectTrailerSection"  style="display:none">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddSelectTrailerSection" style="display:none">
                                 <label class="label required">Vessel Trailer</label>
                                 <label class="input form-group">
                                     <select onchange="AddaddNewTrailer()" class="form-control b" id="AddBoatTrailer" name="BoatTrailer" required>
@@ -1489,7 +1342,7 @@
 
 
 
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddVesselUseSection" hidden>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddVesselUseSection" style="display:none">
                                 <label class="label required">Vessel Use</label>
                                 <div class="row">
 
@@ -1531,61 +1384,46 @@
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <a href="#" data-toggle="popover"
-                                           data-trigger="hover"
-                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>">
-                                            <i class="fa fa-question-circle" style="width:15px"></i>
-                                        </a>
-
+                                        <i id="elem" href="#"
+                                           class="fa fa-question-circle"
+                                           data-placement="bottom"
+                                           data-html="true"
+                                           data-container="body"
+                                           data-toggle="popover"
+                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
                                     </section>
+
+
                                 </div>
                                 <p class="validationContainer" id="validateAddboateffectivedate"></p>
 
                             </section>
 
-                            @if (Model.IsChange)
-                            {
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
-                                    <label class="label">Cease Date</label>
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
-                                    </label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <label class="label">Cease Reason</label>
-                                    <label class="input">
-                                        <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
-                                            <option selected="selected" value="">-- Select --</option>
-                                            <option value="1">Sold</option>
-                                            <option value="2">Decommision</option>
-                                            <option value="3">Writen off</option>
-                                            <option value="4">Transfered</option>
-                                            <option value="9">Other</option>
-                                        </select>
-                                    </label>
-                                </section>
-                            }
-                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <div class="row">
-                    <div class="form-group" id="InterestedParties3">
-                        <label class="label required">Interested Parties </label>
-                        <div class="row">
-                            <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
-                                <div class="input" style="width:400px">
 
-                                    @Html.Bootstrap().ListBoxFor(m => m.SelectedInterestedParty, Model.InterestedPartyList).Class("cselect").Data(new { placeholder = "Add Vessel Use" }).Id("interestedParty")
-                                </div>
-                            </section>
-                            <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                <i id="addinterestedparties" class="fa fa-plus" onclick="addNewParty()" style="color:blue"></i>
-                            </section>
-
-                        </div>
-                    </div>
-                </div>
-            </section>*@
+                            @*@if (Model.IsChange)
+                                {
+                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+                                        <label class="label">Cease Date</label>
+                                        <label class="input">
+                                            <i class="icon-append fa fa-calendar"></i>
+                                            <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
+                                        </label>
+                                    </section>
+                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label class="label">Cease Reason</label>
+                                        <label class="input">
+                                            <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
+                                                <option selected="selected" value="">-- Select --</option>
+                                                <option value="1">Sold</option>
+                                                <option value="2">Decommision</option>
+                                                <option value="3">Writen off</option>
+                                                <option value="4">Transfered</option>
+                                                <option value="9">Other</option>
+                                            </select>
+                                        </label>
+                                    </section>
+                                }*@
 
                         </div>
                         <hr class="boatAccordianHairline" />
@@ -1615,7 +1453,7 @@
 
                             </section>
 
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Addipeffectivedatesection">
+                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Addipeffectivedatesection">
                                 <label class="label">Interested Parties Effective Date</label>
                                 <div class="row">
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
@@ -1630,35 +1468,35 @@
                                            data-placement="bottom"
                                            data-html="true"
                                            data-container="body"
-                                           rel="popover"
+                                           data-toggle="popover"
                                            data-content="Pick the date from which you require Interested Parties to be added for certificate"></i>
                                     </section>
                                 </div>
-                            </section>
+                            </section>*@
 
-                            @if (Model.IsChange)
-                            {
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
-                                    <label class="label">Cease Date</label>
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
-                                    </label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <label class="label">Cease Reason</label>
-                                    <label class="input">
-                                        <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
-                                            <option selected="selected" value="">-- Select --</option>
-                                            <option value="1">Sold</option>
-                                            <option value="2">Decommision</option>
-                                            <option value="3">Writen off</option>
-                                            <option value="4">Transfered</option>
-                                            <option value="9">Other</option>
-                                        </select>
-                                    </label>
-                                </section>
-                            }
+                            @*@if (Model.IsChange)
+                                {
+                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+                                        <label class="label">Cease Date</label>
+                                        <label class="input">
+                                            <i class="icon-append fa fa-calendar"></i>
+                                            <input name="BoatCeaseDate" placeholder="Cease Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="AddBoatCeaseDate" type="text">
+                                        </label>
+                                    </section>
+                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label class="label">Cease Reason</label>
+                                        <label class="input">
+                                            <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
+                                                <option selected="selected" value="">-- Select --</option>
+                                                <option value="1">Sold</option>
+                                                <option value="2">Decommision</option>
+                                                <option value="3">Writen off</option>
+                                                <option value="4">Transfered</option>
+                                                <option value="9">Other</option>
+                                            </select>
+                                        </label>
+                                    </section>
+                                }*@
 
 
                             <section class="col col-xs-12 col-md-12 col-lg-12">
@@ -1676,15 +1514,8 @@
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            @*@Html.Bootstrap().SubmitButton().Text("Update").HtmlAttributes(new { onclick = "ClearBoat('#boatTabs-2', '#tblBoat);" }).Class("btn-sm")*@
-
                             <button onclick="ValidateAddBoatForm('#boatTabs3', '#tblBoat','boatTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
                             <button onclick="ClearBoats(event,'#boatTabs3','boatTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
-
-                            @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "ValidateAddBoatForm('#boatTabs-3', '#tblBoat','boatTabs-1'); " }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")
-
-                                @Html.Bootstrap().Button().Text("Clear and Cancel").HtmlAttributes(new { onclick = "ClearBoats('#boatTabs-3','boatTabs-1');" }).Class("btn-sm AddClearBoat").Id("AddClearBoat")*@
-
                         </section>
 
                         <label style="color:red" hidden id="updaterequired"> Field is Missing.</label>
@@ -1696,8 +1527,6 @@
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
-                            @*<script src="~/jquery/jquery.js"></script>*@
-                            @*<script src="~/jquery/jquery.min.js"></script>*@
 
                             <script type="text/javascript">
                                 $(".BoatRemoved").click(function () {
@@ -1711,7 +1540,7 @@
 
                                     {
                                         name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
-                                            return '<button onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                            return '<button onclick="SetBoatRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBoat\', \'#tblBoat\');SetCurrentTab(\'boatTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
                                         }
                                     },
                                     { name: "BoatName", align: 'center', key: 'true' },
@@ -1750,128 +1579,10 @@
                     </div>
                 </fieldset>
             </div>
-            @*<div id="boatTabs5" class="tab-content">
-
-                    <fieldset>
-                        <div class="row">
-                            <section class="col col-xs-12">
-                                <script src="~/jquery/jquery.min.js"></script>
-                                <script type="text/javascript">
-                                $(document).ready(function () {
-                                    $("#tblCeasedBoat").jqGrid({
-                                        url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=true&transfered=false",
-                                        datatype: "xml",
-                                        mtype: "GET",
-                                        colNames: ["Boat Name", "Year", "Sum Insured", ""],
-                                        colModel: [
-                                            { name: "BoatName", align: 'center', key: 'true' },
-                                            { name: "YearOfManufacture", align: 'center' },
-                                            { name: "MaxSumInsured", align: 'center' },
-                                            {
-                                                name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetBoatCeasedStatus(\'' + cellvalue + '\', \'false\', \'#tblCeasedBoat\', \'#tblBoat\');" type="button">Restore</button>'; }
-                                            }
-                                        ],
-                                        autowidth: true,
-                                        pager: "#pagerCeasedBoat",
-                                        rowNum: 10,
-                                        rowList: [10, 20, 30],
-                                        sortname: "BoatName",
-                                        sortorder: "desc",
-                                        viewrecords: true,
-                                        gridview: true,
-                                        autoencode: true
-                                    });
-                                    $("#tblCeasedBoat").jqGrid('navGrid',
-                                        '#pagerCeasedBoat',
-                                        { edit: false, add: false, del: false },
-                                        //options
-                                        { height: 280, reloadAfterSubmit: false },
-                                        // edit options
-                                        { height: 280, reloadAfterSubmit: false },
-                                        // add options
-                                        { reloadAfterSubmit: false },
-                                        // del options
-                                        { sopt: ['eq', 'bw', 'cn'] }
-                                        // search options
-                                    );
-                                });
-                                </script>
-                                <table id="tblCeasedBoat"><tr><td></td></tr></table>
-                                <div id="pagerCeasedBoat"></div>
-                            </section>
-                        </div>
-                    </fieldset>
-                </div>
-                <div id="boatTabs6" class="tab-content">
-
-                    <fieldset>
-                        <div class="row">
-                            <section class="col col-xs-12">
-                                <script src="~/jquery/jquery.min.js"></script>
-                                <script type="text/javascript">
-                                $(document).ready(function () {
-                                    $("#tblTransferedBoat").jqGrid({
-                                        url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false&transfered=true",
-                                        datatype: "xml",
-                                        mtype: "GET",
-                                        colNames: ["Boat Name", "Year", "Sum Insured", ""],
-                                        colModel: [
-                                            { name: "BoatName", align: 'center', key: 'true' },
-                                            { name: "YearOfManufacture", align: 'center' },
-                                            { name: "MaxSumInsured", align: 'center' },
-                                            {
-                                                name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetBoatTransferedStatus(\'' + cellvalue + '\', \'false\', \'#tblTransferedBoat\', \'#tblBoat\');" type="button">Restore</button>'; }
-                                            }
-                                        ],
-                                        autowidth: true,
-                                        pager: "#pagerTransferedBoat",
-                                        rowNum: 10,
-                                        rowList: [10, 20, 30],
-                                        sortname: "BoatName",
-                                        sortorder: "desc",
-                                        viewrecords: true,
-                                        gridview: true,
-                                        autoencode: true
-                                    });
-                                    $("#tblTransferedBoat").jqGrid('navGrid',
-                                        '#pagerTransferedBoat',
-                                        { edit: false, add: false, del: false },
-                                        //options
-                                        { height: 280, reloadAfterSubmit: false },
-                                        // edit options
-                                        { height: 280, reloadAfterSubmit: false },
-                                        // add options
-                                        { reloadAfterSubmit: false },
-                                        // del options
-                                        { sopt: ['eq', 'bw', 'cn'] }
-                                        // search options
-                                    );
-                                });
-                                </script>
-                                <table id="tblTransferedBoat"><tr><td></td></tr></table>
-                                <div id="pagerTransferedBoat"></div>
-                            </section>
-                        </div>
-                    </fieldset>
-
-                    <fieldset>
-                        <div class="row">
-                            <section class="col col-6">
-                                <label class="label">Enter Boat Name</label>
-                                <label class="input">
-                                    <input autocomplete="off" class="form-control" data-provide="typeahead" data-url="/Services/GetBoatName" id="BoatName" name="BoatName" type="text" placeholder="Boat Name" value="">
-                                </label>
-                                @Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { onclick = "GetBoatDetails('#BoatName'); SetCurrentTab('boatTabs-2');" }).Class("btn-sm").
-                            </section>
-                        </div>
-                    </fieldset>
-
-                </div>*@
 
         </div>
     </div>
 </div>
-
 
 <style>
 
@@ -1885,4 +1596,5 @@
         background-color: white;
     }
 </style>
+
 

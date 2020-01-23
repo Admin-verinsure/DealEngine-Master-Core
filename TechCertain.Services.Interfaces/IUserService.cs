@@ -8,7 +8,7 @@ namespace TechCertain.Services.Interfaces
     public interface IUserService
     {
         Task<User> GetUser (string username);
-        Task<User> GetUser (Guid userId);
+        Task<User> GetUserById (Guid userId);
         Task<User> GetUserByEmail (string email);
         Task<List<User>> GetAllUsers ();
         Task Create(User user);

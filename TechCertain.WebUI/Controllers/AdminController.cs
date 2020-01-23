@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Elmah;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,10 +6,10 @@ using System.Linq;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using TechCertain.WebUI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
+using ElmahCore;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -28,15 +27,34 @@ namespace TechCertain.WebUI.Controllers
 		IVehicleService _vehicleService;
         ISystemEmailService _systemEmailService;
         IReferenceService _referenceService;
-
         IMapper _mapper;
+        ILogger<AdminController> _logger;
+        IApplicationLoggingService _applicationLoggingService;
+        IImportService _importService;
 
-		public AdminController (IUserService userRepository, IPrivateServerService privateServerService, IFileService fileService,
-			IOrganisationService organisationService, IUnitOfWork unitOfWork, IInformationTemplateService informationTemplateService,
-            IClientInformationService clientInformationService, IProgrammeService programeService, IVehicleService vehicleService, IMapper mapper, IPaymentGatewayService paymentGatewayService,
-            IMerchantService merchantService, ISystemEmailService systemEmailService, IReferenceService referenceService)
+		public AdminController (    
+            IImportService importService,
+            IApplicationLoggingService applicationLoggingService,
+            ILogger<AdminController> logger,
+            IUserService userRepository, 
+            IPrivateServerService privateServerService, 
+            IFileService fileService,
+			IOrganisationService organisationService, 
+            IUnitOfWork unitOfWork, 
+            IInformationTemplateService informationTemplateService,
+            IClientInformationService clientInformationService, 
+            IProgrammeService programeService, 
+            IVehicleService vehicleService, 
+            IMapper mapper, 
+            IPaymentGatewayService paymentGatewayService,
+            IMerchantService merchantService, 
+            ISystemEmailService systemEmailService, 
+            IReferenceService referenceService)
 			: base (userRepository)
-		{		
+		{
+            _importService = importService;
+            _applicationLoggingService = applicationLoggingService;
+            _logger = logger;
 			_privateServerService = privateServerService;
 			_fileService = fileService;
 			_organisationService = organisationService;
@@ -55,18 +73,44 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Index ()
 		{
+            AdminViewModel model = new AdminViewModel();
+            var user = await CurrentUser();
+            try
+            {
+                var privateServers = await _privateServerService.GetAllPrivateServers();
+                var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
+                var merchants = await _merchantService.GetAllMerchants();
 
-            var privateServers = await _privateServerService.GetAllPrivateServers();
-            var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
-            var merchants = await _merchantService.GetAllMerchants();
-            return View (new AdminViewModel() {
-				PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers),
-                PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways),
-                Merchants = _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants)
-            });
-
+                model.PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers);
+                model.PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways);
+                model.Merchants = _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants);
+                return View(model);
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }            
         }
         
+        [HttpGet]
+        public async Task<IActionResult> AONImport()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportAOEService(user);
+
+                return RedirectToAction("Index", "Admin");
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> PrivateServerList()
         {
@@ -80,10 +124,10 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AddPrivateServer(PrivateServerViewModel privateServer)
         {
 			var privateServers = await _privateServerService.GetAllPrivateServers();
-				
+            User user = null;
             try
             {
-                var user = await CurrentUser();
+                user = await CurrentUser();
                 // check to see if we are updating a private server
                 if (privateServers.Any(ps => ps.ServerAddress == privateServer.ServerAddress))
 					await _privateServerService.RemoveServer(user, privateServer.ServerAddress);  
@@ -95,7 +139,7 @@ namespace TechCertain.WebUI.Controllers
             }
 			catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);                
                 return RedirectToAction("Error500", "Error");
             }
         }
@@ -134,7 +178,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
         }
@@ -149,17 +193,28 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> MerchantList()
         {
-            var merchants = await _merchantService.GetAllMerchants();
+            
             MerchantViewModel merchantModel = new MerchantViewModel();
             var allPaymentGateways = new List<PaymentGatewayViewModel>();
-            var dbPaymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
-            foreach (PaymentGateway pg in dbPaymentGateways)
+            var user = await CurrentUser();
+            try
             {
-                allPaymentGateways.Add(PaymentGatewayViewModel.FromEntity(pg));
-            }
-            merchantModel.AllPaymentGateways = allPaymentGateways;
+                var merchants = await _merchantService.GetAllMerchants();
+                var dbPaymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
+                foreach (PaymentGateway pg in dbPaymentGateways)
+                {
+                    allPaymentGateways.Add(PaymentGatewayViewModel.FromEntity(pg));
+                }
+                merchantModel.AllPaymentGateways = allPaymentGateways;
 
-            return PartialView("_MerchantList", _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants));
+                return PartialView("_MerchantList", _mapper.Map<IList<Merchant>, IList<MerchantViewModel>>(merchants));
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+
         }
 
         [HttpPost]
@@ -180,7 +235,7 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                ErrorSignal.FromCurrentContext().Raise(ex);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
         }
@@ -506,125 +561,143 @@ namespace TechCertain.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> SysEmailTemplate(String systemEmailType, String internalNotes)
         {
-            SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(systemEmailType);
+            
              
             SystemEmailTemplateViewModel model = new SystemEmailTemplateViewModel();
-
-            model.InternalNotes = internalNotes;
-            model.SystemEmailType = systemEmailType;
-
-            if (systemEmailTemplate != null)
+            var user = await CurrentUser();
+            try
             {
-                model.SystemEmailName = systemEmailTemplate.SystemEmailName;
-                model.Subject = systemEmailTemplate.Subject;
-                model.Body = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
+                SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(systemEmailType);
+                model.InternalNotes = internalNotes;
+                model.SystemEmailType = systemEmailType;
 
+                if (systemEmailTemplate != null)
+                {
+                    model.SystemEmailName = systemEmailTemplate.SystemEmailName;
+                    model.Subject = systemEmailTemplate.Subject;
+                    model.Body = System.Net.WebUtility.HtmlDecode(systemEmailTemplate.Body);
+
+                }
+                else
+                {
+                    model.SystemEmailName = "";
+                    model.Subject = "";
+                    model.Body = "";
+                }
+
+                ViewBag.Title = "Add/Edit System Email Template";
+
+                return View("SysEmailTemplate", model);
             }
-            else
+            catch(Exception ex)
             {
-                model.SystemEmailName = "";
-                model.Subject = "";
-                model.Body = "";
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-
-            ViewBag.Title = "Add/Edit System Email Template";
-
-            return View("SysEmailTemplate", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> SysEmailTemplate(SystemEmailTemplateViewModel model)
         {
-            SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(model.SystemEmailType);
-
-            string systememailtemplatename = null;
-
-            switch (model.SystemEmailType)
+            var user = await CurrentUser();
+            try
             {
-                case "LoginEmail":
-                    {
-                        systememailtemplatename = "Login Instruction Email";
-                        break;
-                    }
-                case "UISIssueNotificationEmail":
-                    {
-                        systememailtemplatename = "Information Sheet Issue Notification Email";
-                        break;
-                    }
-                case "InvoiceSuccessConfig":
-                    {
-                        systememailtemplatename = "Invoice Success Configuration Notification Email";
-                        break;
-                    }
-                case "InvoiceFailConfig":
-                    {
-                        systememailtemplatename = "Invoice Fail Configuration Notification Email";
-                        break;
-                    }
-                case "PaymentSuccessConfig":
-                    {
-                        systememailtemplatename = "Payment Success Configuration Notification Email";
-                        break;
-                    }
-                case "PaymentFailConfig":
-                    {
-                        systememailtemplatename = "Payment Fail Configuration Notification Email";
-                        break;
-                    }
-                case "UISSubmissionConfirmationEmail":
-                    {
-                        systememailtemplatename = "Information Sheet Submission Confirmation Email";
-                        break;
-                    }
-                case "UISSubmissionNotificationEmail":
-                    {
-                        systememailtemplatename = "Information Sheet Submission Notification Email";
-                        break;
-                    }
-                case "AgreementReferralNotificationEmail":
-                    {
-                        systememailtemplatename = "Agreement Referral Notification Email";
-                        break;
-                    }
-                case "AgreementIssueNotificationEmail":
-                    {
-                        systememailtemplatename = "Agreement Issue Notification Email";
-                        break;
-                    }
-                case "AgreementBoundNotificationEmail":
-                    {
-                        systememailtemplatename = "Agreement Bound Notification Email";
-                        break;
-                    }
-                case "OtherMarinaTCNotifyEmail":
-                    {
-                        systememailtemplatename = "Create Other Marina Notification Email";
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception(string.Format("Invalid System Email Template Type for ", model.SystemEmailType));
-                    }
-            }
+                SystemEmail systemEmailTemplate = await _systemEmailService.GetSystemEmailByType(model.SystemEmailType);
+                string systememailtemplatename = null;
 
-            if (systemEmailTemplate != null)
-            {
-                using (var uow = _unitOfWork.BeginUnitOfWork())
+                switch (model.SystemEmailType)
                 {
-                    systemEmailTemplate.Subject = model.Subject;
-                    systemEmailTemplate.Body = model.Body;
-                    systemEmailTemplate.LastModifiedBy = await CurrentUser();
-                    systemEmailTemplate.LastModifiedOn = DateTime.UtcNow;
-
-                    await uow.Commit();
+                    case "LoginEmail":
+                        {
+                            systememailtemplatename = "Login Instruction Email";
+                            break;
+                        }
+                    case "UISIssueNotificationEmail":
+                        {
+                            systememailtemplatename = "Information Sheet Issue Notification Email";
+                            break;
+                        }
+                    case "InvoiceSuccessConfig":
+                        {
+                            systememailtemplatename = "Invoice Success Configuration Notification Email";
+                            break;
+                        }
+                    case "InvoiceFailConfig":
+                        {
+                            systememailtemplatename = "Invoice Fail Configuration Notification Email";
+                            break;
+                        }
+                    case "PaymentSuccessConfig":
+                        {
+                            systememailtemplatename = "Payment Success Configuration Notification Email";
+                            break;
+                        }
+                    case "PaymentFailConfig":
+                        {
+                            systememailtemplatename = "Payment Fail Configuration Notification Email";
+                            break;
+                        }
+                    case "UISSubmissionConfirmationEmail":
+                        {
+                            systememailtemplatename = "Information Sheet Submission Confirmation Email";
+                            break;
+                        }
+                    case "UISSubmissionNotificationEmail":
+                        {
+                            systememailtemplatename = "Information Sheet Submission Notification Email";
+                            break;
+                        }
+                    case "AgreementReferralNotificationEmail":
+                        {
+                            systememailtemplatename = "Agreement Referral Notification Email";
+                            break;
+                        }
+                    case "AgreementIssueNotificationEmail":
+                        {
+                            systememailtemplatename = "Agreement Issue Notification Email";
+                            break;
+                        }
+                    case "AgreementBoundNotificationEmail":
+                        {
+                            systememailtemplatename = "Agreement Bound Notification Email";
+                            break;
+                        }
+                    case "OtherMarinaTCNotifyEmail":
+                        {
+                            systememailtemplatename = "Create Other Marina Notification Email";
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Invalid System Email Template Type for ", model.SystemEmailType));
+                        }
                 }
+
+                if (systemEmailTemplate != null)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        systemEmailTemplate.Subject = model.Subject;
+                        systemEmailTemplate.Body = model.Body;
+                        systemEmailTemplate.LastModifiedBy = await CurrentUser();
+                        systemEmailTemplate.LastModifiedOn = DateTime.UtcNow;
+
+                        await uow.Commit();
+                    }
+                }
+                else
+                {
+                    await _systemEmailService.AddNewSystemEmail(await CurrentUser(), systememailtemplatename, model.InternalNotes, model.Subject, model.Body, model.SystemEmailType);
+                }
+
+                return Redirect("~/Admin/Index");
             }
-            else
+            catch(Exception ex)
             {
-               await _systemEmailService.AddNewSystemEmail(await CurrentUser(), systememailtemplatename, model.InternalNotes, model.Subject, model.Body, model.SystemEmailType);
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-           
-            return Redirect("~/Admin/Index");
+            
 
         }
 

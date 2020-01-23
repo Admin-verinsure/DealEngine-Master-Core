@@ -1,0 +1,47 @@
+﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
+
+<div class="widget-body widget-hide-overflow">
+
+    <div class="row">
+        <section class="col col-sm-1"></section>
+        <section class="col col-10">
+            @Html.Raw(Model.ProgrammeStopAgreementMessage)
+        </section>
+    </div>
+
+    <div class="row">
+        <section class="col col-sm-1"></section>
+        <section class="col col-10">
+            <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+        </section>
+    </div>
+
+
+</div>
+
+
+@if (Model.ProgrammeStopAgreement == true)
+{
+
+    <script type="text/javascript">
+        var nextbutton1 = document.getElementsByClassName("sw-btn-next");
+                $(nextbutton1).addClass("hidden");
+                $(nextbutton1).hide();
+                var prevbutton = document.getElementsByClassName("sw-btn-prev");
+                $(prevbutton).addClass("hidden");
+                $(prevbutton).hide();
+    </script>
+}
+else
+{
+
+    <script type="text/javascript">
+             var nextbutton1 = document.getElementsByClassName("sw-btn-next");
+                $(nextbutton1).removeClass("hidden");
+                var prevbutton = document.getElementsByClassName("sw-btn-prev");
+                $(prevbutton).removeClass("hidden");
+    </script>
+
+}
+
+          

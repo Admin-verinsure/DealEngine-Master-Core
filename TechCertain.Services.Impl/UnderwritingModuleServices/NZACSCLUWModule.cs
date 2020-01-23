@@ -25,8 +25,6 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             ClientAgreement agreement = GetClientAgreement(underwritingUser, informationSheet, informationSheet.Programme, product, reference);
             Guid id = agreement.Id;
 
-            ClientAgreementTerm term = GetAgreementTerm(underwritingUser, agreement, "CL");
-
             if (agreement.ClientAgreementRules.Count == 0)
                 foreach (var rule in product.Rules.Where(r => !string.IsNullOrWhiteSpace(r.Name)))
                     agreement.ClientAgreementRules.Add(new ClientAgreementRule(underwritingUser, rule, agreement));
@@ -35,7 +33,18 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 foreach (var endorsement in product.Endorsements.Where(e => !string.IsNullOrWhiteSpace(e.Name)))
                     agreement.ClientAgreementEndorsements.Add(new ClientAgreementEndorsement(underwritingUser, endorsement, agreement));
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "tcunder50kexcess250rate", "tcunder50kexcess500rate", "tcunder50kminpremium");
+            if (agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "CL" && ct.DateDeleted == null) != null)
+            {
+                foreach (ClientAgreementTerm clterm in agreement.ClientAgreementTerms.Where(ct => ct.SubTermType == "CL" && ct.DateDeleted == null))
+                {
+                    clterm.Delete(underwritingUser);
+                }
+            }
+
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl100klimitincomeunder2milpremium", "cl100klimitincome2milto5milpremium", "cl100klimitincomeover5milpremium",
+                "cl250klimitincomeunder2milpremium", "cl250klimitincome2milto5milpremium", "cl250klimitincomeover5milpremium",
+                "cl500klimitincomeunder2milpremium", "cl500klimitincome2milto5milpremium", "cl500klimitincomeover5milpremium",
+                "cl1millimitincomeunder2milpremium", "cl1millimitincome2milto5milpremium", "cl1millimitincomeover5milpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -52,27 +61,82 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             int agreementperiodindays = 0;
             agreementperiodindays = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
-
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit = 0;
-            decimal TermPremium = 0m;
-            int TermExcess = 0;
-            decimal TermBrokerage = 0m;
+            int TermLimit100k = 100000;
+            decimal TermPremium100k = 0m;
+            decimal TermBrokerage100k = 0m;
+            int TermLimit250k = 250000;
+            decimal TermPremium250k = 0m;
+            decimal TermBrokerage250k = 0m;
+            int TermLimit500k = 500000;
+            decimal TermPremium500k = 0m;
+            decimal TermBrokerage500k = 0m;
+            int TermLimit1mil = 1000000;
+            decimal TermPremium1mil = 0m;
+            decimal TermBrokerage1mil = 0m;
 
+            int TermExcess = 0;
+            decimal feeincome = 0;
             //Calculation
-            TermLimit = 1000000;
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
+                {
+                    if (uISTerritory.Location == "NZ") //NZ income only
+                    {
+                        feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
+                    }
+                }
+            }
+
+            //Return terms based on the limit options
+
             TermExcess = 2500;
 
-            term.TermLimit = TermLimit;
-            term.Premium = TermPremium;
-            term.Excess = TermExcess;
-            term.BrokerageRate = agreement.Brokerage;
-            term.Brokerage = TermBrokerage;
+            //TermPremium100k = GetPremiumFor(rates, feeincome, TermLimit100k);
+            //ClientAgreementTerm termsl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
+            //termsl100klimitoption.TermLimit = TermLimit100k;
+            //termsl100klimitoption.Premium = TermPremium100k;
+            //termsl100klimitoption.Excess = TermExcess;
+            //termsl100klimitoption.BrokerageRate = agreement.Brokerage;
+            //termsl100klimitoption.Brokerage = TermBrokerage100k;
+            //termsl100klimitoption.DateDeleted = null;
+            //termsl100klimitoption.DeletedBy = null;
+
+            TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
+            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
+            termsl250klimitoption.TermLimit = TermLimit250k;
+            termsl250klimitoption.Premium = TermPremium250k;
+            termsl250klimitoption.Excess = TermExcess;
+            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl250klimitoption.Brokerage = TermBrokerage250k;
+            termsl250klimitoption.DateDeleted = null;
+            termsl250klimitoption.DeletedBy = null;
+
+            TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k);
+            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit500k, TermExcess);
+            termsl500klimitoption.TermLimit = TermLimit500k;
+            termsl500klimitoption.Premium = TermPremium500k;
+            termsl500klimitoption.Excess = TermExcess;
+            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl500klimitoption.Brokerage = TermBrokerage500k;
+            termsl500klimitoption.DateDeleted = null;
+            termsl500klimitoption.DeletedBy = null;
+
+            TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
+            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit1mil, TermExcess);
+            termsl1millimitoption.TermLimit = TermLimit1mil;
+            termsl1millimitoption.Premium = TermPremium1mil;
+            termsl1millimitoption.Excess = TermExcess;
+            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1millimitoption.Brokerage = TermBrokerage1mil;
+            termsl1millimitoption.DateDeleted = null;
+            termsl1millimitoption.DeletedBy = null;
+
 
             //Referral points per agreement
-            //Prior insurance
-            uwrfpriorinsurance(underwritingUser, agreement);
+
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -85,7 +149,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             }
 
 
-            string auditLogDetail = "NZACS PI UW created/modified";
+            string auditLogDetail = "NZACS CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
             agreement.ClientAgreementAuditLogs.Add(auditLog);
 
@@ -115,7 +179,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     }
                 }
                 clientAgreement = new ClientAgreement(currentUser, informationSheet.Owner.Name, inceptionDate, expiryDate, product.DefaultBrokerage, product.DefaultBrokerFee, informationSheet, product, reference);
-                if (clientAgreement.Product.IsMasterProduct)
+                if (product.IsMasterProduct)
                 {
                     clientAgreement.MasterAgreement = true;
                 }
@@ -126,14 +190,19 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 clientAgreement.PreviousAgreement = previousClientAgreement;
                 programme.Agreements.Add(clientAgreement);
                 clientAgreement.Status = "Quoted";
-
+            }
+            else
+            {
+                clientAgreement.DeletedBy = null;
+                clientAgreement.DateDeleted = null;
             }
             return clientAgreement;
         }
 
-        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm)
+        ClientAgreementTerm GetAgreementTerm(User CurrentUser, ClientAgreement agreement, string subTerm, int limitoption, decimal excessoption)
         {
-            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted == null);
+            ClientAgreementTerm term = agreement.ClientAgreementTerms.FirstOrDefault(t => t.SubTermType == subTerm && t.DateDeleted != null && t.TermLimit == limitoption && t.Excess == excessoption);
+
             if (term == null)
             {
                 term = new ClientAgreementTerm(CurrentUser, 0, 0m, 0m, 0m, 0m, 0m, agreement, subTerm);
@@ -153,40 +222,86 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-
-
-        void uwrfpriorinsurance(User underwritingUser, ClientAgreement agreement)
+        decimal GetPremiumFor(IDictionary<string, decimal> rates, decimal feeincome, int limitoption)
         {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfpriorinsurance").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp2").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp3").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp4").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp5").First().Value == "true")
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfpriorinsurance" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
+            decimal premiumoption = 0M;
 
+            switch (limitoption)
+            {
+                case 100000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 2000000)
+                        {
+                            premiumoption = rates["cl100klimitincomeunder2milpremium"];
+                        }
+                        else if (feeincome > 2000000 && feeincome <= 5000000)
+                        {
+                            premiumoption = rates["cl100klimitincome2milto5milpremium"];
+                        }
+                        else if (feeincome > 5000000)
+                        {
+                            premiumoption = rates["cl100klimitincomeover5milpremium"];
+                        }
+                        break;
+                    }
+                case 250000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 2000000)
+                        {
+                            premiumoption = rates["cl250klimitincomeunder2milpremium"];
+                        }
+                        else if (feeincome > 2000000 && feeincome <= 5000000)
+                        {
+                            premiumoption = rates["cl250klimitincome2milto5milpremium"];
+                        }
+                        else if (feeincome > 5000000)
+                        {
+                            premiumoption = rates["cl250klimitincomeover5milpremium"];
+                        }
+                        break;
+                    }
+                case 500000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 2000000)
+                        {
+                            premiumoption = rates["cl500klimitincomeunder2milpremium"];
+                        }
+                        else if (feeincome > 2000000 && feeincome <= 5000000)
+                        {
+                            premiumoption = rates["cl500klimitincome2milto5milpremium"];
+                        }
+                        else if (feeincome > 5000000)
+                        {
+                            premiumoption = rates["cl500klimitincomeover5milpremium"];
+                        }
+                        break;
+                    }
+                case 1000000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 2000000)
+                        {
+                            premiumoption = rates["cl1millimitincomeunder2milpremium"];
+                        }
+                        else if (feeincome > 2000000 && feeincome <= 5000000)
+                        {
+                            premiumoption = rates["cl1millimitincome2milto5milpremium"];
+                        }
+                        else if (feeincome > 5000000)
+                        {
+                            premiumoption = rates["cl1millimitincomeover5milpremium"];
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception(string.Format("Can not calculate premium for CL"));
+                    }
+            }
+
+            return premiumoption;
+        }
 
 
 
     }
 }
-
-
-

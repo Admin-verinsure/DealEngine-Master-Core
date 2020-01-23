@@ -6,7 +6,7 @@ namespace TechCertain.WebUI
 {
     public class ErrorController : Controller
     {
-        IClientInformationService _clientInformationService;
+        
         // GET: Error
         [ActionName ("Error403")]
 		[HttpGet]

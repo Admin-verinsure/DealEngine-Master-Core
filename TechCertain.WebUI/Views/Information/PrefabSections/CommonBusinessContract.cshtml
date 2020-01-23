@@ -16,7 +16,7 @@
 
                 <fieldset>
                     <div class="row">
-                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                        <section class="col col-xs-12">
                             <script type="text/javascript">
 
                                 $(window).on('load',function () {
@@ -154,8 +154,10 @@
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateBusinessContract(event,'#businessContractTabs2', '#tblBusinessContract','businessContractTabs1')" class="btn-sm AddupdateBusinessContract" id="updateBusinessContract">Update</button>
-                            <button onclick="ClearBusinessContracts(event,'#businessContractTabs2','businessContractTabs1')" class="btn-sm AddClearBusinessContract" id="ClearBusinessContract">Cancel Update</button>
+                            <button onclick="ValidateBusinessContract(event,'#businessContractTabs2', '#tblBusinessContract','businessContractTabs1')" class="btn-sm updateBoat" id="updateBusinessContract">Update</button>
+                            @*<button onclick="ClearBoats(event,'#businessContractTabs2','businessContractTabs1')" class="btn-sm AddClearBusinessContract" id="ClearBusinessContract">Cancel Update</button>*@
+                            <button onclick="ClearBoats(event,'#businessContractTabs2','businessContractTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+
                         </section>
                     </div>
                 </fieldset>
@@ -233,8 +235,10 @@
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateAddBusinessContract(event,'#businessContractTabs3', '#tblBusinessContract','businessContractTabs1')" class="btn-sm AddupdateBusinessContract" id="updateBusinessContract">Add</button>
-                            <button onclick="ClearBusinessContracts(event,'#businessContractTabs3','businessContractTabs1')" class="btn-sm AddClearBusinessContract" id="ClearBusinessContract">Clear and Cancel</button>
+                            <button onclick="ValidateAddBusinessContract(event,'#businessContractTabs3', '#tblBusinessContract','businessContractTabs1')" class="btn-sm AddupdateBoat" id="updateBusinessContract">Add</button>
+                            @*<button onclick="ClearBoats(event,'#businessContractTabs3','businessContractTabs1')" class="btn-sm AddClearBusinessContract" id="ClearBusinessContract">Clear and Cancel</button>*@
+                            <button onclick="ClearBoats(event,'#businessContractTabs3','businessContractTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+
                         </section>
                     </div>
                 </fieldset>
@@ -255,7 +259,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject)
-                                        { return '<button onclick="SetBusinessContractRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBusinessContract\', \'#tblBusinessContract\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                        { return '<button onclick="SetBusinessContractRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBusinessContract\', \'#tblBusinessContract\'); SetCurrentTab(\'businessContractTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
                                     },
                                     { name: "Year", align: 'center', key: 'true' },
                                     { name: "Contract Title", align: 'center' },

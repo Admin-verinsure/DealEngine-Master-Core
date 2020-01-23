@@ -14,9 +14,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
 using HtmlToOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -28,15 +27,27 @@ namespace TechCertain.WebUI.Controllers
 		IMapperSession<SystemDocument> _documentRepository;
 		IMapperSession<Image> _imageRepository;
         IMapperSession<Product> _productRepository;
+        IApplicationLoggingService _applicationLoggingService;
+        ILogger<FileController> _logger;
 
         string _appData = "~/App_Data/";
 		string _uploadFolder = "uploads";
 
-		public FileController(IUserService userRepository, IUnitOfWork unitOfWork, IFileService fileService,
-		                      IMapperSession<SystemDocument> documentRepository, IMapperSession<Image> imageRepository, IMapperSession<Product> productRepository)
+		public FileController(
+            ILogger<FileController> logger,
+            IApplicationLoggingService applicationLoggingService,
+            IUserService userRepository, 
+            IUnitOfWork unitOfWork, 
+            IFileService fileService,
+            IMapperSession<SystemDocument> documentRepository, 
+            IMapperSession<Image> imageRepository, 
+            IMapperSession<Product> productRepository
+            )
 			: base (userRepository)
-		{			
-			_unitOfWork = unitOfWork;
+		{
+            _logger = logger;
+            _applicationLoggingService = applicationLoggingService;
+            _unitOfWork = unitOfWork;
 			_fileService = fileService;
 			_documentRepository = documentRepository;
 			_imageRepository = imageRepository;
@@ -71,183 +82,193 @@ namespace TechCertain.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetDocument (Guid id, string format)
 		{
-            //throw new Exception("This method needs to be re-written");
-            //if (id == Guid.Empty)
-            //    return new HttpNotFoundResult();
-
-            SystemDocument doc = await _documentRepository.GetByIdAsync(id);
-            string extension = "";
-            if (doc.ContentType == MediaTypeNames.Text.Html)
+            User user = null;
+            try
             {
-                extension = ".html";
-
-                if (format == "docx")
+                SystemDocument doc = await _documentRepository.GetByIdAsync(id);
+                string extension = "";
+                if (doc.ContentType == MediaTypeNames.Text.Html)
                 {
-                    // Testing HtmlToOpenXml
-                    string html = _fileService.FromBytes(doc.Contents);
-                    using (MemoryStream virtualFile = new MemoryStream())
-                    {
-                        using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
-                        {
-                            // Add a main document part. 
-                            MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                            new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+                    extension = ".html";
 
-                            HtmlConverter converter = new HtmlConverter(mainPart);
-                            converter.ImageProcessing = ImageProcessing.AutomaticDownload;
-                            converter.ParseHtml(html);
+                    if (format == "docx")
+                    {
+                        // Testing HtmlToOpenXml
+                        string html = _fileService.FromBytes(doc.Contents);
+                        using (MemoryStream virtualFile = new MemoryStream())
+                        {
+                            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
+                            {
+                                // Add a main document part. 
+                                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                                new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+
+                                HtmlConverter converter = new HtmlConverter(mainPart);
+                                converter.ImageProcessing = ImageProcessing.AutomaticDownload;
+                                converter.ParseHtml(html);
+                            }
+                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
-                        return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                     }
                 }
+                return File(doc.Contents, doc.ContentType, doc.Name + extension);
             }
-            return File(doc.Contents, doc.ContentType, doc.Name + extension);
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
-
-		//void UploadFile(string folder, HttpPostedFile file)
-		//{
-		//	var fileName = Path.GetFileName(file.FileName);
-		//	var serverPath = Path.Combine ("~/App_Data/uploads", fileName);
-		//	var absolutePath = Server.MapPath(serverPath);
-		//	file.SaveAs(absolutePath);
-		//}
-
-		//async Task<IActionResult> DownloadFile(string folder, string fileName, string mediaType)
-		//{
-		//	try
-		//	{
-		//		var serverFile = Path.Combine (_appData, folder, fileName);
-		//		string absolutePath = Server.MapPath(serverFile);
-		//		if (!System.IO.File.Exists(absolutePath))
-		//			return HttpNotFound();
-		//		return File (Server.MapPath (serverFile), mediaType, Path.GetFileName (fileName));
-		//	}
-		//	catch (Exception ex) {
-		//		ErrorSignal.FromCurrentContext().Raise(ex);
-		//		return HttpNotFound();
-		//	}
-		//}
 
 		[HttpGet]
 		public async Task<IActionResult> CreateDocument (string id)
 		{
 			DocumentViewModel model = new DocumentViewModel ();
+            User user = null;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return View(model);
 
-			if (string.IsNullOrWhiteSpace(id))
-				return View (model);
+                Guid documentId = Guid.Empty;
+                if (!Guid.TryParse(id, out documentId))
+                    throw new Exception(id + " is not a valid document Id");
 
-			Guid documentId = Guid.Empty;
-			if (!Guid.TryParse (id, out documentId))
-				throw new Exception (id + " is not a valid document Id");
+                if (documentId == Guid.Empty)
+                    return View(model);
 
-			if (documentId == Guid.Empty)
-				return View (model);
+                SystemDocument document = await _documentRepository.GetByIdAsync(documentId);
+                if (document == null)
+                    throw new Exception("Unable to update document: Could not find document with id " + id);
 
-			SystemDocument document = await _documentRepository.GetByIdAsync(documentId);
-			if (document == null)
-				throw new Exception ("Unable to update document: Could not find document with id " + id);
+                model.DocumentId = document.Id;
+                model.Name = document.Name;
+                model.Description = document.Description;
+                model.DocumentType = document.DocumentType;
+                model.Content = _fileService.FromBytes(document.Contents);
 
-            model.DocumentId = document.Id;
-			model.Name = document.Name;
-			model.Description = document.Description;
-			model.DocumentType = document.DocumentType;
-			model.Content = _fileService.FromBytes (document.Contents);
-
-			return View (model);
-		}
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 		[HttpPost]
 		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
 		{
-            var user = await CurrentUser();
-            if (model.DocumentId != Guid.Empty)
+            User user = null;
+            try
             {
-                SystemDocument document = await _documentRepository.GetByIdAsync(model.DocumentId);
-                if (document != null)
+                user = await CurrentUser();
+                if (model.DocumentId != Guid.Empty)
                 {
-                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    SystemDocument document = await _documentRepository.GetByIdAsync(model.DocumentId);
+                    if (document != null)
                     {
-                        document.Name = model.Name;
-                        document.DocumentType = model.DocumentType;
-                        document.Description = model.Description;
-                        document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
-                        document.LastModifiedBy = user;
-                        document.LastModifiedOn = DateTime.UtcNow;
-                        await uow.Commit();
+                        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            document.Name = model.Name;
+                            document.DocumentType = model.DocumentType;
+                            document.Description = model.Description;
+                            document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
+                            document.LastModifiedBy = user;
+                            document.LastModifiedOn = DateTime.UtcNow;
+                            await uow.Commit();
+                        }
                     }
+
+                }
+                else
+                {
+                    SystemDocument document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
+                    document.Description = model.Description;
+                    document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
+                    document.OwnerOrganisation = user.PrimaryOrganisation;
+                    document.IsTemplate = true;
+                    await _documentRepository.AddAsync(document);
                 }
 
-            } else
-            {
-                SystemDocument document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
-                document.Description = model.Description;
-                document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
-                document.OwnerOrganisation = user.PrimaryOrganisation;
-                document.IsTemplate = true;
-                await _documentRepository.AddAsync(document);
+                return View(model);
             }
-
-			return View (model);
-		}
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 		[HttpGet]
 		public async Task<IActionResult> ManageDocuments ()
 		{
 			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
-            var user = await CurrentUser();
-            var docs = _documentRepository.FindAll().Where(d => user.Organisations.Contains(d.OwnerOrganisation) && !d.DateDeleted.HasValue);
-
-            if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
+            User user = null;
+            try
             {
-                docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
-            }
-            
-			foreach (SystemDocument doc in docs) {
-                string documentType = "";
-                switch (doc.DocumentType)
-                {
-                    case 0:
-                        {
-                            documentType = "Wording";
-                            break;
-                        }
-                    case 1:
-                        {
-                            documentType = "Certificate";
-                            break;
-                        }
-                    case 2:
-                        {
-                            documentType = "Schedule";
-                            break;
-                        }
-                    case 3:
-                        {
-                            documentType = "Payment Confirmation";
-                            break;
-                        }
-                    case 4:
-                        {
-                            documentType = "Invoice";
-                            break;
-                        }
-                    default:
-                        {
-                            throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
-                        }
-                }
-                //var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
-                models.Add(new DocumentInfoViewModel {
-                    DisplayName = doc.Name,
-                    //ProductName = product.Name,
-                    Type = documentType,
-                    Owner = doc.OwnerOrganisation.Name,
-					Id = doc.Id
-				});
-			}
+                user = await CurrentUser();
+                var docs = _documentRepository.FindAll().Where(d => user.Organisations.Contains(d.OwnerOrganisation) && !d.DateDeleted.HasValue);
 
-			return View (models);
-		}
+                if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
+                {
+                    docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
+                }
+
+                foreach (SystemDocument doc in docs)
+                {
+                    string documentType = "";
+                    switch (doc.DocumentType)
+                    {
+                        case 0:
+                            {
+                                documentType = "Wording";
+                                break;
+                            }
+                        case 1:
+                            {
+                                documentType = "Certificate";
+                                break;
+                            }
+                        case 2:
+                            {
+                                documentType = "Schedule";
+                                break;
+                            }
+                        case 3:
+                            {
+                                documentType = "Payment Confirmation";
+                                break;
+                            }
+                        case 4:
+                            {
+                                documentType = "Invoice";
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
+                            }
+                    }
+                    //var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
+                    models.Add(new DocumentInfoViewModel
+                    {
+                        DisplayName = doc.Name,
+                        //ProductName = product.Name,
+                        Type = documentType,
+                        Owner = doc.OwnerOrganisation.Name,
+                        Id = doc.Id
+                    });
+                }
+
+                return View(models);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
 		[HttpGet]
 		public async Task<IActionResult> Render (string id)

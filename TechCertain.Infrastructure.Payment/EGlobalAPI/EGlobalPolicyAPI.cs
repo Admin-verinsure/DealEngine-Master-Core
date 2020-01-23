@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using TechCertain.Domain.Entities;
+using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses;
 
 namespace TechCertain.Infrastructure.Payment.EGlobalAPI
@@ -22,6 +25,27 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         private int gv_transactionType;
         private string gv_strUISReference;
         private string gv_strMasterAgreementReference;
+        private string gv_strOriginalAgreementReference;
+        private decimal gv_decPaymentDirection = 1;
+
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public string UserTimeZone
+        {
+            get { return IsLinux ? "NZ" : "New Zealand Standard Time"; } //Pacific/Auckland
+        }
+
+        public CultureInfo UserCulture
+        {
+            get { return CultureInfo.CreateSpecificCulture("en-NZ"); }
+        }
 
         public EGlobalPolicyAPI(EGlobalPolicy _EGlobalPolicy, User _CurrentUser)
         {
@@ -69,10 +93,15 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         #region Reverse Invoice
 
-        public void CreateReversePolicyInvoice(Guid invoiceID)
+        public void CreateReversePolicyInvoice(EGlobalSubmission eglobalsubmission)
         {
             //SetTransactionType(TransactionType.Reverse);
-            LoadTransaction(invoiceID);
+
+            gv_decPaymentDirection = -1;
+            EGlobalPolicy.PaymentDirection = -1;
+            gv_transactionType = 2; //endorse
+
+            LoadTransaction(eglobalsubmission);
             //CreateReversePolicyInvoice(GetReversePolicyRisks());
 
             ReversePolicy();
@@ -116,6 +145,13 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             EGlobalPolicy.Policy.BscGST *= EGlobalPolicy.PaymentDirection;
             EGlobalPolicy.Policy.DueByClient *= EGlobalPolicy.PaymentDirection;
             EGlobalPolicy.Policy.SPCFee *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.BrokerAmountDue *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.GSTPremium *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.LeviesA *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.LeviesB *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.CoyPremium *= EGlobalPolicy.PaymentDirection;
+            EGlobalPolicy.Policy.GSTBrokerage *= EGlobalPolicy.PaymentDirection;
+
         }
 
         protected virtual void GetReversePolicyRisks()
@@ -302,9 +338,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// </summary>
         /// <returns><c>true</c>, if transaction was loaded, <c>false</c> otherwise.</returns>
         /// <param name="invoiceID">ID of the invoice.</param>
-        public bool LoadTransaction(Guid invoiceID)
+        public bool LoadTransaction(EGlobalSubmission eglobalsubmission)
         {
-            return LoadTransaction(invoiceID, true);
+            return LoadTransaction(eglobalsubmission, true);
         }
 
         /// <summary>
@@ -313,9 +349,24 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// <returns><c>true</c>, if transaction was loaded, <c>false</c> otherwise.</returns>
         /// <param name="invoiceID">ID of the invoice.</param>
         /// <param name="view">If set to <c>true</c> view.</param>
-        public bool LoadTransaction(Guid invoiceID, bool view)
+        public bool LoadTransaction(EGlobalSubmission eglobalsubmission, bool view)
         {
-            throw new Exception("LoadTransaction - Not yet implemented");
+            bool result = false;
+            if (eglobalsubmission != null)
+            {
+                GetPolicyRisks();
+
+                GetPolicy(eglobalsubmission.EGlobalSubmissionClientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault());
+
+                EGlobalPolicy.Policy.PolicyDateTime = eglobalsubmission.DateCreated.Value;
+                EGlobalPolicy.Policy.EffectiveDate = eglobalsubmission.EGlobalSubmissionClientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault().InceptionDate;
+
+                result = LoadTransactionTerms(eglobalsubmission);
+            }
+
+            return result;
+
+            //throw new Exception("LoadTransaction - Not yet implemented");
             /*bool result = false;
             using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
             {
@@ -362,9 +413,57 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return result;*/
         }
 
-        bool LoadTransactionTerms(Guid invoiceID)
+        bool LoadTransactionTerms(EGlobalSubmission eglobalsubmission)
         {
-            throw new Exception("LoadTransactionTerms - Not yet implemented");
+            bool result = false;
+
+            var PolicyRisks = new List<EBixPolicyRisk>();
+            List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
+
+            EBixPolicyRisk risk = new EBixPolicyRisk();
+            // load from db
+            //risk.TCClassOfBusiness = TC_Shared.CNullGuid(dr["classOfBusinessID"]);
+            risk.CoyPremium = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTPremium;
+            risk.CEQuake = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTNDPremium;
+            risk.BrokerAmountDue = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTBrokerage;
+            risk.BrokerAmountRate = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTBrokerageRate;
+            risk.BrokerCeqDue = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTNDBrokerage;
+            risk.BrokerCeqDueRate = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTNDBrokerageRate;
+            risk.LeviesA = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTEQC;
+            risk.LeviesB = eglobalsubmission.EGlobalSubmissionTerms.FirstOrDefault().ESTFSL;
+            // calculate remaining values
+            risk.GSTPremium = (risk.CoyPremium + risk.CEQuake + risk.LeviesA + risk.LeviesB) * EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate;
+            //TCPolicy.Product.TaxRate.GetValueOrDefault();
+            risk.GSTBrokerage = (risk.BrokerAmountDue + risk.BrokerCeqDue) * EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate;
+            //TCPolicy.Product.TaxRate.GetValueOrDefault();
+            risk.BSCAmount = 0m;
+            risk.BscGST = 0m;
+            risk.DueByClient = Math.Round(risk.CoyPremium + risk.GSTPremium + risk.CEQuake + risk.LeviesA + risk.LeviesB, 2);
+            // find subcover and riskcodes
+            //EGlobalPolicyRiskConfig config = EGlobalPolicy.EGlobalPolicyRiskConfig.FirstOrDefault();
+            //gv_objPolicyRisksConfigs.FirstOrDefault(c => c.ClassOfBusinessID == risk.TCClassOfBusiness);
+            risk.RiskCode = eglobalsubmission.EGlobalSubmissionPackage.PackageProducts.FirstOrDefault().PackageProductRiskCode;
+            risk.SubCoverString = eglobalsubmission.EGlobalSubmissionPackage.PackageProducts.FirstOrDefault().PackageProductSubCover;
+
+            PolicyRisks.Add(risk);
+
+            subAgents.AddRange(LoadTransactionSubAgents(eglobalsubmission, risk));
+
+            result = true;
+
+            // Create the Insurers
+            GetInsurers();
+
+            //GetPolicy(eglobalsubmission.EGlobalSubmissionClientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault());
+
+            // Create the SubAgents
+            GetSubAgents();
+
+            EGlobalPolicy.SubAgents = subAgents;
+
+            return result;
+
+            //throw new Exception("LoadTransactionTerms - Not yet implemented");
             /*bool result = false;
 
             using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
@@ -437,9 +536,28 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return result;*/
         }
 
-        List<EBixSubAgent> LoadTransactionSubAgents(Guid riskid, EBixPolicyRisk risk)
+        List<EBixSubAgent> LoadTransactionSubAgents(EGlobalSubmission eglobalsubmission, EBixPolicyRisk risk)
         {
-            throw new Exception("LoadTransactionSubAgents - Not yet implemented");
+
+            List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
+
+            decimal amount = risk.CoyPremium + risk.CEQuake + risk.LeviesA + risk.LeviesB;
+            EBixSubAgent agent = new EBixSubAgent();
+            agent.ID = eglobalsubmission.EGlobalSubmissionSubagentTerms.FirstOrDefault().Id;
+            agent.CoverNumber = 0;
+            agent.VerNo = 0;
+            agent.SubCover = risk.SubCover;
+            agent.Percent = eglobalsubmission.EGlobalSubmissionSubagentTerms.FirstOrDefault().ESSubagentTSubPercentComm;
+            agent.GSTFlag = eglobalsubmission.EGlobalSubmissionSubagentTerms.FirstOrDefault().ESSubagentTGSTRegistered;
+            agent.SubAgent = eglobalsubmission.EGlobalSubmissionSubagentTerms.FirstOrDefault().ESSubagentTSubCode;
+            agent.CalcAmount = eglobalsubmission.EGlobalSubmissionSubagentTerms.FirstOrDefault().ESSubagentTSubAmount / (agent.Percent / 100);
+            agent.AmountCeded = eglobalsubmission.EGlobalSubmissionSubagentTerms.FirstOrDefault().ESSubagentTSubAmount; // agent.CalcAmount * (agent.Percent / 100)
+            if (agent.GSTFlag == -1)
+                agent.GSTCeded = agent.AmountCeded * EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate;
+            subAgents.Add(agent);
+
+            return subAgents;
+            //throw new Exception("LoadTransactionSubAgents - Not yet implemented");
             /*List<EBixSubAgent> subAgents = new List<EBixSubAgent>();
 
             using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
@@ -528,9 +646,41 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return id;*/
         }
 
-        void SaveTransactionTerms(Guid transactionID)
+        public void SaveTransactionTerms(EGlobalSubmission eglobalSubmission, IUnitOfWork _unitOfWork)
         {
-            throw new Exception("SaveTransactionTerms - Not yet implemented");
+            foreach (EBixPolicyRisk pr in EGlobalPolicy.PolicyRisks)
+            {
+                try
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        EGlobalSubmissionTerm eGlobalSubmissionTerm = new EGlobalSubmissionTerm(CurrentUser);
+                        eGlobalSubmissionTerm.ESTEGlobalSubmission = eglobalSubmission;
+                        eGlobalSubmissionTerm.ESTPremium = pr.CoyPremium;
+                        eGlobalSubmissionTerm.ESTNDPremium = pr.CEQuake;
+                        eGlobalSubmissionTerm.ESTBrokerage = pr.BrokerAmountDue;
+                        eGlobalSubmissionTerm.ESTNDBrokerage = pr.BrokerCeqDue;
+                        eGlobalSubmissionTerm.ESTEQC = pr.LeviesA;
+                        eGlobalSubmissionTerm.ESTFSL = pr.LeviesB;
+                        eGlobalSubmissionTerm.ESTEGlobalSubmissionPackage = eglobalSubmission.EGlobalSubmissionPackage;
+                        eglobalSubmission.EGlobalSubmissionTerms.Add(eGlobalSubmissionTerm);
+
+                        if (EGlobalPolicy.SubAgents != null && EGlobalPolicy.SubAgents.Count > 0)
+                            SaveTransactionSubAgents(pr, eglobalSubmission, _unitOfWork, eGlobalSubmissionTerm);
+
+                        uow.Commit();
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    //TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction Terms", ex.ToString());
+                } 
+                
+            }
+
+            //throw new Exception("SaveTransactionTerms - Not yet implemented");
             /*using (NpgsqlConnection conn = TC_Shared.GetSqlConnection())
             {
                 string strCmd = "INSERT INTO tbleglobalinvoicesubmissionterm (termID, invoiceID, classOfBusinessID, " +
@@ -572,9 +722,33 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             }*/
         }
 
-        void SaveTransactionSubAgents(EBixPolicyRisk risk, Guid invoiceID)
+        void SaveTransactionSubAgents(EBixPolicyRisk risk, EGlobalSubmission eglobalSubmission, IUnitOfWork _unitOfWork, EGlobalSubmissionTerm eglobalSubmissionTerm)
         {
-            throw new Exception("SaveTransactionSubAgents - Not yet implemented");
+            foreach (EBixSubAgent agent in EGlobalPolicy.SubAgents.Where(suba => suba.SubCover == risk.SubCover))
+            {
+                try
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        EGlobalSubmissionSubagentTerm eGlobalSubmissionSubagentTerm = new EGlobalSubmissionSubagentTerm(CurrentUser);
+                        eGlobalSubmissionSubagentTerm.ESSubagentTEGlobalSubmission = eglobalSubmission;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTSubCode = agent.SubAgent;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTEGlobalSubmissionTerm = eglobalSubmissionTerm;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTGSTRegistered = agent.GSTFlag;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTSubPercentComm = agent.Percent;
+                        eGlobalSubmissionSubagentTerm.ESSubagentTSubAmount = agent.AmountCeded; //CalcAmount
+                        eglobalSubmission.EGlobalSubmissionSubagentTerms.Add(eGlobalSubmissionSubagentTerm);
+                        uow.Commit();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //TC_Shared.LogEvent(TC_Shared.EventType.Bug, "Error saving EGlobal Transaction Subagent", ex.ToString());
+                }
+            }
+
+            //throw new Exception("SaveTransactionSubAgents - Not yet implemented");
             /*string strCmd = "INSERT INTO tbleglobalinvoicesubmissionsubagentterm (subagenttermid, subcode, invoiceid, " +
                             "risktermid, gstregistered, subpercentcomm, subamount) VALUES (@ID, @SubCode, @InvoiceID, @RiskID, @GSTFlag, " +
                 "@PercentComm, @SubAmount);";
@@ -688,7 +862,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         break;
 
 
-                    if (previousClientUIS.Status != "Bound")
+                    if (previousClientUIS.Status != "Bound and invoiced")
                         break;
 
                     if (!bolTransactionTypeCalculated)
@@ -700,9 +874,11 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
                         bolTransactionTypeCalculated = true;
                     }
-                    // if there is a policy attached the the proposal's parent, set it as the current policy
-                    ClientUIS = previousClientUIS;
 
+                    // get its reference id
+                    gv_strUISReference = ClientUIS.ReferenceId;
+                    gv_strOriginalAgreementReference = previousClientUIS.Programme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault().ReferenceId;
+                    
                     // otherise check to see if there if the current policy is the same as the original policy
                     if (ClientUIS.Id == previousClientUIS.Id)
                     {
@@ -711,9 +887,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         break;
                     }
 
-                    // get its reference id
-                    gv_strUISReference = ClientUIS.ReferenceId;
-
+                    // if there is a policy attached the the proposal's parent, set it as the current policy
+                    ClientUIS = previousClientUIS;
+                    
                 }
                 else
                     ClientUIS = null;
@@ -941,17 +1117,22 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
             // Fill in its fields
             gv_strUISReference = EGlobalPolicy.ClientProgramme.InformationSheet.ReferenceId;
-            gv_strMasterAgreementReference = objClientAgreement.ReferenceId;
-
+            if (objClientAgreement.ClientInformationSheet.IsChange && objClientAgreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                gv_strMasterAgreementReference = gv_strOriginalAgreementReference;
+            } else { 
+                gv_strMasterAgreementReference = objClientAgreement.ReferenceId; 
+            }
+            
             // Dates
             EBixPolicy.PolicyDateTime = DateTime.Now;
-            EBixPolicy.EffectiveDate = DateTime.Now; //Change later 
-            EBixPolicy.ExpiryDate = objClientAgreement.ExpiryDate; 
-            EBixPolicy.InceptionDate = objClientAgreement.InceptionDate; 
-            EBixPolicy.LastRenewalDate = objClientAgreement.InceptionDate; 
-            EBixPolicy.PolicyTime = objClientAgreement.InceptionDate;
-            EBixPolicy.TermsofTradeDate = objClientAgreement.InceptionDate;
-            EBixPolicy.RenewalDate = objClientAgreement.ExpiryDate;
+            EBixPolicy.EffectiveDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.ExpiryDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.InceptionDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)); 
+            EBixPolicy.LastRenewalDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)); 
+            EBixPolicy.PolicyTime = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.TermsofTradeDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            EBixPolicy.RenewalDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
 
             // Set variables
             EBixPolicy.Branch = EGlobalPolicy.ClientProgramme.EGlobalBranchCode;
@@ -991,7 +1172,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 EBixPolicy.BrokerAmountDue += risk.BrokerAmountDue;
                 EBixPolicy.BrokerCeqDue += risk.BrokerCeqDue;
                 EBixPolicy.BSCAmount += risk.BSCAmount;
-                BrokerFeeTotal += EBixPolicy.BSCAmount;
+                //BrokerFeeTotal += EBixPolicy.BSCAmount;
                 EBixPolicy.CEQuake += risk.CEQuake;
                 EBixPolicy.BscGST += risk.BscGST;
                 EBixPolicy.GSTPremium += risk.GSTPremium;
@@ -1000,42 +1181,31 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 EBixPolicy.CoyPremium += risk.CoyPremium;
                 EBixPolicy.GSTBrokerage += risk.GSTBrokerage;
             }
-            //Marsh Real Estate calculate broker fee total
-            /*var BrokerFeeTotal = 0M;
 
-            if (TCPolicy.ProductID == new Guid("d5d29b57-cc40-4122-9515-de93d8f51ccb")) 
-            {
-                foreach (TCQuote quote in gv_objPolicies)
-                {
-                    BrokerFeeTotal += TC_Shared.CNullDec(quote.BrokerFee, 0M);
-                }
-
-                CalculateInvoiceSummary(ep, BrokerFeeTotal);
-            }
-            else
-            {*/
+            BrokerFeeTotal = objClientAgreement.BrokerFee;
             CalculateInvoiceSummary(EBixPolicy, BrokerFeeTotal);
-            //}
+
             EGlobalPolicy.Policy = EBixPolicy;
         }
 
         public void CalculateInvoiceSummary(EBixPolicy ep, decimal brokerFee)
         {
             // Caculate the final few fields, and update where appropriate
-
-            decimal taxRate = EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate; //placeholder
+            EGlobalPolicy.SurchargeRate = EGlobalPolicy.ClientProgramme.BaseProgramme.SurchargeRate;
+            decimal taxRate = EGlobalPolicy.ClientProgramme.BaseProgramme.TaxRate;
             decimal surchargeGST = EGlobalPolicy.SurchargeRate * (1 + taxRate);
 
             ep.BSCAmount = brokerFee;
 
-            ep.BscGST = Math.Round(ep.BSCAmount * taxRate);
-            ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
-            ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate);
+            ep.BscGST = Math.Round(ep.BSCAmount * taxRate, 2);
+            ep.DueByClient = ep.CoyPremium + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            //ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate, 2);
 
-            decimal spcGST = Math.Round(ep.DueByClient * surchargeGST) - ep.SPCFee;
+            decimal spcGST = Math.Round(ep.SPCFee * taxRate, 2);
 
             ep.BscGST += spcGST;
-            ep.DueByClient += (ep.SPCFee + spcGST);
+            ep.DueByClient += ep.SPCFee;
         }
 
         protected virtual EBixPolicyRisk CreatePolicyRisk(PackageProduct packageProduct, ClientAgreementTerm clientAgreementTerm)
@@ -1049,9 +1219,19 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             pr.TCClassOfBusiness = clientAgreementTerm.Id;
             pr.RiskCode = packageProduct.PackageProductRiskCode;
             pr.SubCoverString = packageProduct.PackageProductSubCover;
-            pr.CoyPremium = (clientAgreementTerm.Premium * EGlobalPolicy.DiscountRate);
+            
+            if (clientAgreementTerm.ClientAgreement.ClientInformationSheet.IsChange && clientAgreementTerm.ClientAgreement.ClientInformationSheet.PreviousInformationSheet != null)
+            {
+                pr.CoyPremium = (clientAgreementTerm.PremiumDiffer * EGlobalPolicy.DiscountRate);
+                pr.LeviesB = clientAgreementTerm.FSLDiffer;     //fsl;
+            } else
+            {
+                pr.CoyPremium = (clientAgreementTerm.Premium * EGlobalPolicy.DiscountRate);
+                pr.LeviesB = clientAgreementTerm.FSL;     //fsl;
+            }
+
             pr.GSTPremium = (pr.CoyPremium * packageProduct.PackageProductProduct.TaxRate);
-            pr.BrokerAmountDue = ((clientAgreementTerm.Brokerage / 100m) * pr.CoyPremium);
+            pr.BrokerAmountDue = clientAgreementTerm.Brokerage;
             pr.GSTBrokerage = (pr.BrokerAmountDue * packageProduct.PackageProductProduct.TaxRate);
             pr.DueByClient = (pr.CoyPremium + pr.GSTPremium);
             pr.BrokerCeqDue = 0m;
@@ -1059,9 +1239,9 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             pr.CEQuake = 0m;
             pr.BscGST = 0m;
             pr.LeviesA = 0m;     //eqc;
-            pr.LeviesB = 0m;     //fsl;
             pr.BrokerAmountRate = pr.BrokerCeqDueRate = clientAgreementTerm.Brokerage;
             /************************/
+
             return pr;
         }
 
@@ -1153,11 +1333,11 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             ir.BrokerCEQDue_T = risk.BrokerCeqDue * config.EGlobalInsurerConfig_InsurerProportion;
             ir.CEQuake = 0m;//risk.CEQuake * config.InsurerProportion;
             ir.LeviesA = 0m;//risk.LeviesA * config.InsurerProportion;
-            ir.LeviesB = 0m;//risk.LeviesB * config.InsurerProportion;
+            ir.LeviesB = risk.LeviesB * config.EGlobalInsurerConfig_InsurerProportion;
             ir.BrokerCEQRate = 0m;
-            ir.NetPay = (ir.CoyPremium + ir.CEQuake + ir.LeviesA + ir.LeviesB + ir.GSTPremium) -
-                           (ir.BrokerAmountDue_T + ir.GSTBrokerage + ir.BrokerCEQDue_T);
-                           /************************/
+            ir.NetPay = (ir.CoyPremium + ir.GSTPremium) -
+                           (ir.BrokerAmountDue_T + ir.GSTBrokerage);
+            /************************/
             ir.TermsofTradeCode = "80MF";   // Determine
             ir.InsurerPerson = "Policy";    // Determine
             ir.Broker = EbixUser;

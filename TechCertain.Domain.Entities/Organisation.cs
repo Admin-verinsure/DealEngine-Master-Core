@@ -25,7 +25,7 @@ namespace TechCertain.Domain.Entities
             OrganisationalUnits = new List<OrganisationalUnit>();
             Programmes = new List<Programme>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            marinaorgmooredtype = new List<string>();
+            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, Guid id)
@@ -35,7 +35,7 @@ namespace TechCertain.Domain.Entities
             OrganisationalUnits = new List<OrganisationalUnit>();
             Programmes = new List<Programme>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            marinaorgmooredtype = new List<string>();
+            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, string organisationName)
@@ -48,7 +48,7 @@ namespace TechCertain.Domain.Entities
             OrganisationalUnits = new List<OrganisationalUnit>();
             Programmes = new List<Programme>();
             InsuranceAttributes = new List<InsuranceAttribute>();
-            marinaorgmooredtype = new List<string>();
+            Marinaorgmooredtype = new List<string>();
         }
 
         public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType)
@@ -119,6 +119,12 @@ namespace TechCertain.Domain.Entities
             get; 
             set; 
         }
+
+        public virtual bool IsRetiredorDecieved
+        {
+            get;
+            set;
+        }
         public virtual string Activities 
         { 
             get; 
@@ -137,7 +143,7 @@ namespace TechCertain.Domain.Entities
             set;
         }
 
-        public virtual IList<string> marinaorgmooredtype
+        public virtual IList<string> Marinaorgmooredtype
         {
             get;
             set;
@@ -147,8 +153,7 @@ namespace TechCertain.Domain.Entities
         {
             get { return _organisationType; }
         }
-
-        public virtual IList<Territory> territory
+        public virtual bool Removed
         {
             get;
             set;
@@ -178,7 +183,7 @@ namespace TechCertain.Domain.Entities
         public virtual string NZIAmembership { get; set; }
         public virtual bool IsADNZmember { get; set; }
         public virtual string YearofPractice { get; set; }
-        public virtual string prevPractice { get; set; }
+        public virtual string PrevPractice { get; set; }
         public virtual string Type { get; set; }
         public virtual bool IsLPBCategory3 { get; set; }
         public virtual bool IsOtherdirectorship { get; set; }

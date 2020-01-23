@@ -8,6 +8,7 @@ using TechCertain.Infrastructure.Ldap.Interfaces;
 using TechCertain.Services.Interfaces;
 using NHibernate.Linq;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.Services.Impl
 {
@@ -17,20 +18,24 @@ namespace TechCertain.Services.Impl
 		ILdapService _ldapService;
 		ILegacyLdapService _legacyLdapService;
         IOrganisationTypeService _organisationTypeService;
+		ILogger<UserService> _logger;
 
 
-        public UserService(IMapperSession<User> userRepository, ILdapService ldapService, ILegacyLdapService legacyLdapService, IOrganisationTypeService organisationTypeService)
+        public UserService(
+			IMapperSession<User> userRepository, 
+			ILdapService ldapService, 
+			ILegacyLdapService legacyLdapService, 
+			IOrganisationTypeService organisationTypeService,
+			ILogger<UserService> logger
+			)
         {
 			_userRepository = userRepository;
 			_ldapService = ldapService;
 			_legacyLdapService = legacyLdapService;
             _organisationTypeService = organisationTypeService;
-        }
+			_logger = logger;
 
-        //public async Task<User> GetCurrentUser()Async()
-        //{
-        //    //return await _userRepository.GetByIdAsync(_CurrentUser()Guid);
-        //}
+		}
 
         public async Task<User> GetUser (string username)
 		{
@@ -66,7 +71,7 @@ namespace TechCertain.Services.Impl
 			throw new Exception ("User with username '" + username + "' does not exist in the system");
 		}
 
-		public async Task<User> GetUser (Guid userId)
+		public async Task<User> GetUserById (Guid userId)
 		{
 			User user = await _userRepository.GetByIdAsync(userId);
 			// have a repo user? Return them
@@ -127,20 +132,26 @@ namespace TechCertain.Services.Impl
             await CreateDefaultUserOrganisation (user);
             await _userRepository.AddAsync(user);
             _ldapService.Create (user);
-            Thread.Sleep(2000);
             await Update (user);
 		}
 
 		public async Task Update (User user)
 		{
-		    await _userRepository.UpdateAsync(user);
-			_ldapService.Update (user);
+			try
+			{
+				_ldapService.Update(user);
+			}
+			catch(Exception ex)
+			{
+				_logger.LogWarning(ex.Message);
+			}
+		    await _userRepository.UpdateAsync(user);			
 		}
 
         public async Task Delete (User user, User authorizingUser)
 		{
             user.Delete(authorizingUser, DateTime.UtcNow);
-            await _userRepository.RemoveAsync(user);
+            await _userRepository.UpdateAsync(user);
         }
 
 		public void SetPasswordPolicyFor (User user, string passwordPolicyName)
@@ -191,5 +202,6 @@ namespace TechCertain.Services.Impl
 			Organisation defaultOrganisation = Organisation.CreateDefaultOrganisation (user, user, personalOrganisationType);
 			user.Organisations.Add (defaultOrganisation);
 		}
-    }
+
+	}
 }

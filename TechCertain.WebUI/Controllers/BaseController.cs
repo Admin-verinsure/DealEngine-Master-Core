@@ -4,10 +4,8 @@ using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
-using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 
 namespace TechCertain.WebUI.Controllers
@@ -18,7 +16,9 @@ namespace TechCertain.WebUI.Controllers
         protected string _localTimeZone = "New Zealand Standard Time"; //Pacific/Auckland
         protected CultureInfo _localCulture = CultureInfo.CreateSpecificCulture ("en-NZ");
         
-        public BaseController(IUserService userService)
+        public BaseController(
+            IUserService userService
+            )
         {
             _userService = userService;
         }
@@ -62,23 +62,6 @@ namespace TechCertain.WebUI.Controllers
 			get { return CultureInfo.CreateSpecificCulture ("en-NZ"); }
 		}
 
-		//public string Title {
-		//	get {
-		//		return ViewBag.Title;
-		//	}
-		//	set {
-		//		ViewBag.Title = value;
-		//	}
-		//}
-
-//        public Account CurrentUser()Account
-//        {
-//            get
-//            {
-//                return _accountService.GetAccount(HttpContext.User.Identity.Name);
-//            }
-//        }
-
         public bool DemoEnvironment
         {
             get
@@ -94,48 +77,6 @@ namespace TechCertain.WebUI.Controllers
                 throw new Exception("This method will need to be re-written");
                 //return _appSettingService.IntermediatePassword;
             }
-        }
-
-        //throw new Exception("This method will need to be re-written");
-        //protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
-        //{
-        //    string cultureName = null;
-        //    throw new Exception("This method will need to be re-written");
-        //    //// Attempt to read the culture cookie from Request
-        //    //HttpCookie cultureCookie = Request.Cookies["_culture"];
-        //    //if (cultureCookie != null)
-        //    //    cultureName = cultureCookie.Value;
-        //    //else
-        //    //    cultureName = Request.UserLanguages != null && Request.UserLanguages.Length > 0 ?
-        //    //        Request.UserLanguages[0] : // obtain it from HTTP header AcceptLanguages
-        //    //        null;
-
-        //    //// Validate culture name
-        //    //cultureName = CultureHelper.GetImplementedCulture(cultureName); // This is safe
-
-        //    //// Modify current thread's cultures            
-        //    //Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(cultureName);
-        //    //Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-
-        //    //return base.BeginExecuteCore(callback, state);
-        //}
-
-        //         throw new Exception("This method will need to be re-written");
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
-        {
-            ViewBag.Title = "Proposalonline";
-            User account = CurrentUser().Result;
-            if (account != null)
-            {
-                //ViewBag.Name = account.FullName;
-                ViewBag.Account = account;
-                //ViewBag.Organisations = account.Organisations;
-
-                //if (CurrentUser()Account.Organisations.FirstOrDefault() != null)
-                //    ViewBag.CurrentOrganisation = CurrentUser()Account.Organisations.FirstOrDefault().Name;
-            }
-
-            base.OnActionExecuting(filterContext);
         }
 
         protected ActionResult PageNotFound ()

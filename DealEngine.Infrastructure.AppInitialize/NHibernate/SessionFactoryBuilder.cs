@@ -38,9 +38,9 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                     .AdoNetBatchSize(10)
                     .Driver<NpgSqlDriver>()
                     .FormatSql()
-                    .ShowSql()
+                    .ShowSql()                    
                  )
-                .CurrentSessionContext("web")
+                .CurrentSessionContext("web")                               
                 .ExposeConfiguration(cfg => BuildSchema(cfg, NpgsqlConnectionString))
                 .Mappings(m => m.AutoMappings.Add(AutoMap.AssemblyOf<Organisation>(new DefaultAutomappingConfiguration())
                     .Conventions.Add<CascadeConvention>()
@@ -56,7 +56,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
             /// Build the schema of the database.  
             /// </summary>  
             /// <param name="config">Configuration.</param>  
-        private static void BuildSchema(NHibernate.Cfg.Configuration config, string connectionStringName)
+        private static void BuildSchema(Configuration config, string connectionStringName)
         {
 
             using (var connection = new NpgsqlConnection(connectionStringName))
@@ -81,7 +81,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                         {
                             foreach(var ex in schemaUpdate.Exceptions)
                             {
-                                throw ex;
+                                 throw ex;
                             }
                         }
 

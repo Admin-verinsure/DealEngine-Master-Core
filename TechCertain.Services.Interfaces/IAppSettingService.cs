@@ -10,6 +10,11 @@ namespace TechCertain.Services.Interfaces
         string CarJamApiKey { get; }
         string IntermediatePassword { get; }
         string domainQueryString { get; }
+        bool RequireRSA { get; }
+        string GetMarineInsuranceSpecialistEmail { get; }
+        string GetCompanyTitle { get; }
+        string GetConnectionString { get; }
+        string GetSuperUser { get; }
     }
 }
 

@@ -10,7 +10,8 @@ namespace TechCertain.WebUI.Models.Agreement
     {
         public Guid clientAgreementId { get; set; }
         public Guid VesselId { get; set; }
-
+        public Guid TermId { get; set; }
+        public string TermType { get; set; }
         public string BoatName { get; set; }
         public int TermLimit { get; set; }
 

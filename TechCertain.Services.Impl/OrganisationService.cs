@@ -28,8 +28,19 @@ namespace TechCertain.Services.Impl
 
 		public async Task<Organisation> CreateNewOrganisation (Organisation organisation)
 		{
-			_ldapService.Create (organisation);
-			await UpdateOrganisation(organisation);
+			try
+			{
+				_ldapService.Create(organisation);
+			}
+			catch (Exception ex)
+			{
+				//org exists in LDap but not in application
+				if(ex.HResult == 68)
+				{
+					await UpdateOrganisation(organisation);
+				}				
+			}
+					
 			return organisation;
 		}
 
@@ -83,6 +94,6 @@ namespace TechCertain.Services.Impl
         {
             return await _organisationRepository.FindAll().FirstOrDefaultAsync(o => o.Email == organisationEmail);
         }
-    }
+	}
 }
 

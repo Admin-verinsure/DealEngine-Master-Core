@@ -94,7 +94,8 @@ namespace TechCertain.WebUI.Models
 
 		public string LocalDateSubmitted { get; set; }
         public Boolean NextInfoSheet { get; set; }
-        
+        public Boolean ProgrammeAllowUsesChange { get; set; }
+
         public string GetStatusDisplay ()
 		{
 			List<string> statusDisplay = new List<string> ();

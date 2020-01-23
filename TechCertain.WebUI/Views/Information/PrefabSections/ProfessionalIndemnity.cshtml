@@ -10,19 +10,36 @@
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
                             <label class="label required">
                                 Have you specified Aluminium Composite Panel on any building?
                             </label>
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="input">
-                                <select id="ProfessionalIndemnity1" onchange="ShowAdditionalInfo('ProfessionalIndemnity1')" class="form-control rmv editable" name="ProfessionalIndemnity1">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidateProfessionalIndemnity1"></p>
+                            <div class="row">
+                                <div class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="input">
+
+                                        <select id="ProfessionalIndemnity1" class="form-control rmv editable" name="ProfessionalIndemnity1">
+                                            <option selected="selected" value="">-- Select --</option>
+                                            <option value="true">Yes</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <p class="validationContainer" id="ValidateProfessionalIndemnity1"></p>
+
+
+                                <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle"
+                                       data-placement="bottom"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="This is sample tooltip"></i>
+                                </section>
+                            </div>
 
                         </section>
 
@@ -36,7 +53,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity2"  onchange="ShowAdditionalInfo('ProfessionalIndemnity2')" class="form-control rmv editable" name="ProfessionalIndemnity2">
+                                <select id="ProfessionalIndemnity2" onchange="ShowAdditionalInfo('ProfessionalIndemnity2')" class="form-control rmv editable" name="ProfessionalIndemnity2">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -56,7 +73,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity3"  onchange="ShowAdditionalInfo('ProfessionalIndemnity3')" class="form-control rmv editable" name="ProfessionalIndemnity3">
+                                <select id="ProfessionalIndemnity3" onchange="ShowAdditionalInfo('ProfessionalIndemnity3')" class="form-control rmv editable" name="ProfessionalIndemnity3">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -77,7 +94,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity4"  onchange="ShowAdditionalInfo('ProfessionalIndemnity4')" class="form-control rmv editable" name="ProfessionalIndemnity4">
+                                <select id="ProfessionalIndemnity4" onchange="ShowAdditionalInfo('ProfessionalIndemnity4')" class="form-control rmv editable" name="ProfessionalIndemnity4">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -97,7 +114,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity5"  onchange="ShowAdditionalInfo('ProfessionalIndemnity5')" class="form-control rmv editable" name="ProfessionalIndemnity5">
+                                <select id="ProfessionalIndemnity5" onchange="ShowAdditionalInfo('ProfessionalIndemnity5')" class="form-control rmv editable" name="ProfessionalIndemnity5">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -117,7 +134,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="ProfessionalIndemnity6"  onchange="ShowAdditionalInfo('ProfessionalIndemnity6')" class="form-control rmv editable" name="ProfessionalIndemnity6">
+                                <select id="ProfessionalIndemnity6" onchange="ShowAdditionalInfo('ProfessionalIndemnity6')" class="form-control rmv editable" name="ProfessionalIndemnity6">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -130,11 +147,111 @@
                     </section>
 
 
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">
+                                Is this a renewal of an existing policy placed with NZACS?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <select id="ProfessionalIndemnity7" onchange="ProfessionalIndemnitySelected('ProfessionalIndemnity7')" class="form-control rmv editable" name="ProfessionalIndemnity7">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateProfessionalIndemnity7"></p>
+
+                        </section>
+
+                    </section>
+
+                    <div class="hidden" id="ProfessionalInsuranceSec">
+                        <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                        <br />
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    $ Amount of Cover:
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency"  id="ProfessionalIndemnity8" name="ProfessionalIndemnity8" placeholder="$ Amount of Cover" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateProfessionalIndemnity8"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    When Lapsed:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="ProfessionalIndemnity9" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="ProfessionalIndemnity9" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateProfessionalIndemnity9"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Name of Insurer:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="ProfessionalIndemnity10" name="ProfessionalIndemnity10" placeholder="Insurer Name" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateProfessionalIndemnity10"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Retroactive date:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="ProfessionalIndemnity11" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="ProfessionalIndemnity11" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateProfessionalIndemnity11"></p>
+
+                            </section>
+
+                        </section>
+
+                    </div>
+
 
                 </div>
             </div>
 
-            <button onclick="ValidateProfessionalIndemnity(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="ValidateProfessionalIndemnity(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
             @*<button onclick="$('#StatutoryLiability1').val('');$('#StatutoryLiability2').val(''); event.preventDefault();" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
 
         </fieldset>
@@ -156,7 +273,15 @@
              data: postData
              })
                 .done(function (data) {
-                    if (data != "") {
+                     var valid = "true";
+                    for (var i = 0; i < data.length-4; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
                         debugger;
                 for (var item = 0; item < data.length; item++){
                   var arr = data[item];
@@ -172,14 +297,30 @@
                 });
          });
 
-   
+
     var clientInformationSheet = $('#AnswerSheetId').val();
+
+     function ProfessionalIndemnitySelected(ProfessionalIndemnity) {
+        debugger;
+
+        var professionalIndemnity = document.getElementById(ProfessionalIndemnity);
+        var vhh = professionalIndemnity.options[professionalIndemnity.selectedIndex].value;
+        if (professionalIndemnity.options[professionalIndemnity.selectedIndex].value == "false") {
+            $('#ProfessionalInsuranceSec').removeClass('hidden');
+        } else {
+            $('#ProfessionalIndemnity8').val('');
+            $('#ProfessionalIndemnity9').val('');
+            $('#ProfessionalIndemnity10').val('');
+            $('#ProfessionalIndemnity11').val('');
+            $('#ProfessionalInsuranceSec').addClass('hidden');
+        }
+    }
 
       function ValidateProfessionalIndemnity() {
         event.preventDefault();
           debugger;
           var validity = true;
-             for (var index = 1; index <= 6; index++) {
+             for (var index = 1; index <= 7; index++) {
                      var addPrincial = "#ProfessionalIndemnity" + index;
                  var value = $(addPrincial).val();
                  var validator = "#ValidateProfessionalIndemnity" + index;
@@ -194,9 +335,25 @@
                 }
           }
 
-          if (validity) {
-            SaveProfessionalIndemnity(); 
-          }
+           for (var index = 8; index <= 11; index++) {
+                     var addPrincial = "#ProfessionalIndemnity" + index;
+                 var value = $(addPrincial).val();
+                 var validator = "#ValidateProfessionalIndemnity" + index;
+
+                  if (value == "" && $('#ProfessionalIndemnity7').val() == "false") {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                }
+             }
+
+          return validity;
+          //if (validity) {
+          //  SaveProfessionalIndemnity();
+          //}
 
     };
 
@@ -210,13 +367,13 @@
 
         function SaveProfessionalIndemnity() {
             debugger;
-                   var ProfessionalIndemnity = new Array(6);
+                   var ProfessionalIndemnity = new Array(11);
 
                    for (var i = 0; i < ProfessionalIndemnity.length; i++) {
                        ProfessionalIndemnity[i] = new Array(2);
                    }
 
-            for (var i = 1; i <= 6; i++) {
+            for (var i = 1; i <= 11; i++) {
                 for (var j = 0; j < 2; j++) {
                 ProfessionalIndemnity[i - 1][0] = "ProfessionalIndemnity" + i;
                 var professionalIndemnity = "#ProfessionalIndemnity" + i;
@@ -225,21 +382,36 @@
 
             }
 
-                   var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
+               var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
+              var success = false;
 
-             $.ajax({
+                       $.ajax({
+                           async: false,
                            url: '@Url.Action("UpdateAnswer", "Information")',
                            type: "POST",
                            data: postData
                        })
                            .done(function (data) {
-
+                               debugger;
+                               success = true;
                            })
-                           .fail(function (a, s, d) {
+                           .fail(function (a, s, d) { 
+                               debugger;
+                               success = false;
                                alert("Unable to save.");
                            });
-
+                      return success;
 
         }
+
 </script>
 
+
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+
+</style>

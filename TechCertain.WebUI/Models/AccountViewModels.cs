@@ -10,9 +10,6 @@ namespace TechCertain.WebUI.Models
 {
     public class AccountLoginModel : BaseViewModel
     {
-        //[Required]
-        //[EmailAddress]
-        //public string Email { get; set; }
         
         [Required]
         [DataType(DataType.Text)]
@@ -27,15 +24,6 @@ namespace TechCertain.WebUI.Models
         public string DevicePrint { get; set; }
         public string DomainString { get; set; }
     }
-
-	public class RsaAccountLoginModel : AccountLoginModel
-	{
-		public string UserAgent { get; set; }
-
-		public string IpAddress { get; set; }
-
-		public string DevicePrint { get; set; }
-	}
 
     public class AccountResetPasswordModel : BaseViewModel
     {

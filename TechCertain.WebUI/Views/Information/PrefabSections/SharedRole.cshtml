@@ -1,8 +1,5 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
-
-<form class="smart-form" id="sharedRoleId" formaction="#">
-
     <div id="SharedRole">
 
         <ul id="sharedRoleTabs" class="nav nav-tabs d-sm-flex">
@@ -12,6 +9,9 @@
             <li class="nav nav-item">
                 <a href="#sharedRoleTabs2" data-toggle="tab"> Shared Roles Breakdown </a>
             </li>
+            <li class="nav nav-item">
+                <a href="#sharedRoleTabs3" data-toggle="tab"> Additional Information </a>
+            </li>
         </ul>
 
         <div id="sharedRoleTabs1" class="tab-content">
@@ -19,7 +19,7 @@
                 <div class="container-fluid">
 
                     <div class="input-group mb-3">
-                        <select data-placeholder="Choose Territories" id="sharedRoleTemplates" name="sharedRoleTemplates" multiple class="col-6 chosen-select form-control b" required>
+                        <select data-placeholder="Choose Shared Role" id="sharedRoleTemplates" name="sharedRoleTemplates" multiple class="col-6 chosen-select form-control b" required>
                             @foreach (var role in Model.SharedRoleViewModel.SharedRoles)
                             {
                                 <option selected="@role.Selected" value="@role.Value">@role.Text</option>
@@ -40,22 +40,75 @@
 
                     <div class="input-group mb-3">
                         <table id="sharedRoleTable" class="table">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            </tbody>
+                            @if (Model.SharedRoleViewModel.SharedDataRoles.Count != 0)
+                            {
+                                <thead>
+                                    <tr>
+                                        @foreach (var sharedDataRole in Model.SharedRoleViewModel.SharedDataRoles)
+                                        {
+                                            <th scope="col">@sharedDataRole.Name</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        @foreach (var sharedDataRole in Model.SharedRoleViewModel.SharedDataRoles)
+                                        {
+                                            <th scope="row">
+                                                <input class="form-control" type="text" name="@sharedDataRole.Id" id="@sharedDataRole.Id" maxlength="3" value="@sharedDataRole.Count">
+                                            </th>
+                                        }
+                                    </tr>
+                                </tbody>
+                            }
                         </table>
                     </div>
 
                     <div class="input-group mb-3">
-                        <button class="btn-primary btn" onclick="SaveRoleTabTwo()">  Submit  </button>
+                        <div class="footer" id="submitTab1">
+                            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRoleSubmit" onclick="SaveRoleTabTwo()">
+                        </div>
+                        <div class="footer" id="additionalRoleInfomationBtn" style="display:none">
+                            <button class="btn-primary btn" onclick="SaveRoleTabTwo(true)">Submit To Save</button>
+                        </div>
                     </div>
 
                 </div>
             </fieldset>
         </div>
+        <div id="sharedRoleTabs3" class="tab-content">
+            <fieldset>
+                @if (Model.SharedRoleViewModel.OtherProfessionId != null)
+                {
+                    <div class="container-fluid" id="additionalRoleInfomation">
+                        
+                            <div class="form-group">
+                                <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
+                                <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control" form="addtionalRoleInformationContainer">@Model.SharedRoleViewModel.OtherProfessionId</textarea>
+                            </div>
+
+                        <div class="input-group mb-3">
+                            <button class="btn-success btn" type="submit" onclick="SaveRoleTabThree()">  Submit  </button>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="container-fluid" id="additionalRoleInfomation" style="display:none">
+                            <div class="form-group">
+                                <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
+                                <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control" form="addtionalRoleInformationContainer"></textarea>
+                            </div>
+
+                        <div class="input-group mb-3">
+                            <button class="btn-success btn" type="submit" onclick="SaveRoleTabThree()">  Submit  </button>
+                        </div>
+                    </div>
+                }
+            </fieldset>
+        </div>
     </div>
-</form>
 
 
 

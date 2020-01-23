@@ -443,7 +443,7 @@
 								colNames: ["","Registration", "Make", "Model", "Sum Insured"],
                                 colModel: [
                                     {
-                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetVehicleRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedRegisteredMV\', \'#tblRegisteredMV\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject) { return '<button onclick="SetVehicleRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedRegisteredMV\', \'#tblRegisteredMV\'); SetCurrentTab(\'rmvTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
                                     },
 						            { name: "Registration", align: 'center', key: 'true' },
 						            { name: "Make", align: 'center' },

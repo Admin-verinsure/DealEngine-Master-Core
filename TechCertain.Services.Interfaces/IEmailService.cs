@@ -18,6 +18,7 @@ namespace TechCertain.Services.Interfaces
         string ReplyToEmail { get; }
         Task SendPasswordResetEmail(string recipent, Guid resetToken, string originDomain);
         Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents);
+        Task MarshPleaseCallMe(string sender, string subject, string body);
         Task ContactSupport (string sender, string subject, string body);
         Task SendSystemEmailLogin(string recipent);
         Task SendSystemPaymentSuccessConfigEmailUISIssueNotify(User uISIssuer, Programme programme, ClientInformationSheet sheet, Organisation insuredOrg);

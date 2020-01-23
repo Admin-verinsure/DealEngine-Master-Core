@@ -1,8 +1,7 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
 
-<div class="container">
-    @*<div id="accordion" style="background-color:lightgray">*@
+<div class="container-fluid">
     <div id="accordion">
 
         @Html.HiddenFor(m => m.AnswerSheetId)
@@ -14,11 +13,7 @@
 
             foreach (var informationSection in Model.Sections.OrderBy(s => s.Position).Where(s => s.Position <= 5))
             {
-
-                <div>
-
-
-                    <h4 style="background-color:#00A8C8; color:white" id="@informationSection.Name">@informationSection.Name</h4>
+                <h4 style="background-color:#00A8C8; color:white" id="@informationSection.Name">@informationSection.Name</h4>
                     @if (!string.IsNullOrWhiteSpace(informationSection.CustomView))
                     {
 
@@ -148,24 +143,12 @@
                             </div>
                         </div>
                     }
-
-                </div>
             }
         }
+        
+        <a onclick=" $('#later').removeClass('hidden');$('#less').removeClass('hidden'); $('#more').addClass('hidden');" cursor:"pointer" class="btn btn-lg txt-color-darken" id="more">More </a>
+        <a onclick=" $('#later').addClass('hidden'); $('#more').removeClass('hidden');$('#less').addClass('hidden');" cursor:"pointer" class="btn btn-lg txt-color-darken hidden" id="less">Less </a>
 
-        <div>
-
-            @*<a href="#myPanelModal" aria-hidden="true" style="color:green" data-toggle="modal">Edit Accordion Order</a>*@
-            <div>
-
-            </div>
-
-            <a onclick=" $('#later').removeClass('hidden');$('#less').removeClass('hidden'); $('#more').addClass('hidden');" cursor:"pointer" class="btn btn-lg txt-color-darken" id="more">More </a>
-            <a onclick=" $('#later').addClass('hidden'); $('#more').removeClass('hidden');$('#less').addClass('hidden');" cursor:"pointer" class="btn btn-lg txt-color-darken hidden" id="less">Less </a>
-
-
-
-        </div>
     </div>
 </div>
 
@@ -272,3 +255,14 @@
 </div>
 
 
+<style> 
+
+     #header > :first-child, aside {
+    width: 1500px !important;
+    }
+    .container {
+        margin-left: 16% !important;
+        width: 100%;
+
+    }
+</style>

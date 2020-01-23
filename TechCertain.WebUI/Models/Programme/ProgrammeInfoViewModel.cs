@@ -36,6 +36,11 @@ namespace TechCertain.WebUI.Models.Programme
         public virtual Boolean IsPublic { get; set; }
         public virtual Boolean UsesEGlobal { get; set; }
         public virtual string PolicyNumberPrefixString { get; set; }
+        public virtual Boolean StopAgreement { get; set; }
+        public virtual DateTime StopAgreementDateTime { get; set; }
+        public bool EGlobalIsActiveOrNot { get; set; }
+        public virtual IList<EGlobalSubmission> EGlobalSubmissions { get; set; }
+        public virtual IList<EGlobalResponse> EGlobalResponses { get; set; }
 
         //public IList<EmailTemplates> emailTemplate { get; set; }
 

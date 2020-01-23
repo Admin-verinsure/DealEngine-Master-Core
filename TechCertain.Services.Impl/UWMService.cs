@@ -44,7 +44,24 @@ namespace TechCertain.Services.Impl
             foreach (Product product in sheet.Programme.BaseProgramme.Products.OrderBy(t => t.OrderNumber)) {
 				if (!product.UnderwritingEnabled)
 					continue;
+
+                //Mark the existing agreement for this product deleted
+                ClientAgreement clientAgreement = sheet.Programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
+                if (clientAgreement != null)
+                    clientAgreement.Delete(createdBy);
+
+                //Check if the cover is required
+                try
+                {
+                  if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "true")
+                        continue;
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 
+
                 if (!product.IsMasterProduct)
                 {
                     int.TryParse(referenceId, out int newReference);

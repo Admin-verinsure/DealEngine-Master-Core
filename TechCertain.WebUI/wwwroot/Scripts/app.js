@@ -394,7 +394,7 @@ var calc_navbar_height = function() {
 			 * FIRE TOOLTIPS
 			 */
 			if ($("[rel=tooltip]").length) {
-				$("[rel=tooltip]").tooltip();
+                $("[rel=tooltip]").tooltip({ html: true });
 			}
 		
 			// SHOW & HIDE MOBILE SEARCH FIELD
@@ -1948,7 +1948,7 @@ var calc_navbar_height = function() {
 			// is desktop
 			
 			// activate tooltips
-			$("[rel=tooltip], [data-rel=tooltip]").tooltip();
+            $("[rel=tooltip], [data-rel=tooltip]").tooltip({ html: true });
 		
 			// activate popovers
 			$("[rel=popover], [data-rel=popover]").popover();

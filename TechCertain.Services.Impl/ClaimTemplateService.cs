@@ -50,6 +50,9 @@ namespace TechCertain.Services.Impl
             Claim s12 = new Claim("View", "ViewUnderwritingRules");
             Claim s13 = new Claim("View", "ViewUsers");
             Claim s14 = new Claim("View", "ViewWater");
+            Claim s15 = new Claim("View", "ViewTerritories");
+            Claim s16 = new Claim("View", "ViewEmploymentPrincipals");
+            Claim s17 = new Claim("View", "ViewAddresses");
             await _claimsRepository.AddAsync(s1);
             await _claimsRepository.AddAsync(s2);
             await _claimsRepository.AddAsync(s3);
@@ -64,6 +67,9 @@ namespace TechCertain.Services.Impl
             await _claimsRepository.AddAsync(s12);
             await _claimsRepository.AddAsync(s13);
             await _claimsRepository.AddAsync(s14);
+            await _claimsRepository.AddAsync(s15);
+            await _claimsRepository.AddAsync(s16);
+            await _claimsRepository.AddAsync(s17);
 
             //edit term sheet rules
             Claim e1 = new Claim("Edit", "EditProgramme");
@@ -80,6 +86,9 @@ namespace TechCertain.Services.Impl
             Claim e12 = new Claim("Edit", "EditUnderwritingRules");
             Claim e13 = new Claim("Edit", "EditUsers");
             Claim e14 = new Claim("Edit", "EditWater");
+            Claim e15 = new Claim("Edit", "EditTerritories");
+            Claim e16 = new Claim("Edit", "EditEmploymentPrincipals");
+            Claim e17 = new Claim("Edit", "EditAddresses");
             await _claimsRepository.AddAsync(e1);
             await _claimsRepository.AddAsync(e2);
             await _claimsRepository.AddAsync(e3);
@@ -94,6 +103,9 @@ namespace TechCertain.Services.Impl
             await _claimsRepository.AddAsync(e12);
             await _claimsRepository.AddAsync(e13);
             await _claimsRepository.AddAsync(e14);
+            await _claimsRepository.AddAsync(e15);
+            await _claimsRepository.AddAsync(e16);
+            await _claimsRepository.AddAsync(e17);
         }
     }
 }

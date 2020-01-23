@@ -10,6 +10,7 @@ using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using Claim = System.Security.Claims.Claim;
 using NHibernate.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -21,12 +22,24 @@ namespace TechCertain.WebUI.Controllers
         RoleManager<IdentityRole> _roleManager;
         UserManager<IdentityUser> _userManager;
         IOrganisationService _organisationService;
+        IApplicationLoggingService _applicationLoggingService;
+        ILogger _logger;
 
-        public AuthorizeController(IUserService userService, IClaimService claimService, IClaimTemplateService claimTemplateService, 
-            RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager, IUserRoleService userRoleService, 
-            IOrganisationService organisationService)
+        public AuthorizeController(
+            IUserService userService, 
+            IClaimService claimService, 
+            IClaimTemplateService claimTemplateService, 
+            RoleManager<IdentityRole> roleManager, 
+            UserManager<IdentityUser> userManager, 
+            IUserRoleService userRoleService, 
+            IOrganisationService organisationService,
+            IApplicationLoggingService applicationLoggingService,
+            ILogger logger
+            )
             : base(userService)
         {
+            _logger = logger;
+            _applicationLoggingService = applicationLoggingService;
             _organisationService = organisationService;
             _userRoleService = userRoleService;
             _userManager = userManager;
@@ -39,139 +52,179 @@ namespace TechCertain.WebUI.Controllers
         // GET: Authorize
         public async Task<IActionResult> Index()
         {
-            var user = await CurrentUser();
-            var userRoleList = await _userRoleService.GetRolesByOrganisation(user.PrimaryOrganisation);
-
-            var userList = await _userService.GetAllUsers();
-            var roleList = new List<IdentityRole>();
-            var organisationList = await _organisationService.GetAllOrganisations();
-
-            var claimList = await _claimService.GetClaimsAllClaimsList();
-            if (claimList.Count == 0)
+            User user = null;
+            try
             {
-                await _claimTemplateService.CreateAllClaims();
-                claimList = await _claimService.GetClaimsAllClaimsList();
-            }
+                user = await CurrentUser();
+                var userRoleList = await _userRoleService.GetRolesByOrganisation(user.PrimaryOrganisation);
 
-            AuthorizeViewModel model = new AuthorizeViewModel();
+                var userList = await _userService.GetAllUsers();
+                var roleList = new List<IdentityRole>();
+                var organisationList = await _organisationService.GetAllOrganisations();
 
-            model.RoleList = new List<IdentityRole>();
-            model.UserList = new List<User>();
-            model.ClaimList = claimList;
-            model.Organisations = organisationList;
-
-            if (user.PrimaryOrganisation.IsTC)
-            {
-                roleList = await _roleManager.Roles.ToListAsync();
-            }
-            else
-            {
-                if (userRoleList.Count != 0)
+                var claimList = await _claimService.GetClaimsAllClaimsList();
+                if (claimList.Count == 0)
                 {
-                    foreach (var userRole in userRoleList)
-                    {
-                        var identityRole = await _roleManager.FindByNameAsync(userRole.IdentityRoleName);
-                        roleList.Add(identityRole);
-                    }
-
+                    await _claimTemplateService.CreateAllClaims();
+                    claimList = await _claimService.GetClaimsAllClaimsList();
                 }
+
+                AuthorizeViewModel model = new AuthorizeViewModel();
+
+                model.RoleList = new List<IdentityRole>();
+                model.UserList = new List<User>();
+                model.ClaimList = claimList;
+                model.Organisations = organisationList;
+
+                if (user.PrimaryOrganisation.IsTC)
+                {
+                    roleList = await _roleManager.Roles.ToListAsync();
+                }
+                else
+                {
+                    if (userRoleList.Count != 0)
+                    {
+                        foreach (var userRole in userRoleList)
+                        {
+                            var identityRole = await _roleManager.FindByNameAsync(userRole.IdentityRoleName);
+                            roleList.Add(identityRole);
+                        }
+
+                    }
+                }
+
+                model.RoleList = roleList;
+
+                if (userList.Count != 0)
+                {
+                    model.UserList = userList;
+                }
+
+                return View(model);
             }
-
-            model.RoleList = roleList;
-
-            if (userList.Count != 0)
+            catch (Exception ex)
             {
-                model.UserList = userList;
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-
-            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddRole(string RoleName, string[] Claims, string OrganisationId)
         {
-            var user = await CurrentUser();
-            var isRole = await _roleManager.RoleExistsAsync(RoleName);
-            var organisation = user.PrimaryOrganisation;
-
-            if(OrganisationId != null)
+            User user = null;
+            try
             {
-                organisation = await _organisationService.GetOrganisation(Guid.Parse(OrganisationId));
-            }
+                user = await CurrentUser();
+                var isRole = await _roleManager.RoleExistsAsync(RoleName);
+                var organisation = user.PrimaryOrganisation;
 
-            if (!isRole)
-            {
-                var role = new IdentityRole
+                if (OrganisationId != null)
                 {
-                    Name = RoleName
-                };
-
-                var identityreult = await _roleManager.CreateAsync(role);
-                if (identityreult.Succeeded)
-                {
-                    await _userRoleService.AddUserRole(user, role, organisation);
-
-                    foreach (var cl in Claims)
-                    {
-                        var claim = new Claim(cl, cl);
-                        await _roleManager.AddClaimAsync(role, claim);
-                    }
-                    return Ok();
+                    organisation = await _organisationService.GetOrganisation(Guid.Parse(OrganisationId));
                 }
-            }
 
-            return Ok();           
+                if (!isRole)
+                {
+                    var role = new IdentityRole
+                    {
+                        Name = RoleName
+                    };
+
+                    var identityreult = await _roleManager.CreateAsync(role);
+                    if (identityreult.Succeeded)
+                    {
+                        await _userRoleService.AddUserRole(user, role, organisation);
+
+                        foreach (var cl in Claims)
+                        {
+                            var claim = new Claim(cl, cl);
+                            await _roleManager.AddClaimAsync(role, claim);
+                        }
+                        return Ok();
+                    }
+                }
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+                     
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRole(string RoleName, string[] Claims)
         {
-            var isRole = await _roleManager.RoleExistsAsync(RoleName);
-            if (isRole)
+            User user = null;
+            try
             {
-                var role = await _roleManager.FindByNameAsync(RoleName);
-                var claimList = await _roleManager.GetClaimsAsync(role);
-
-                foreach (var claim in claimList)
+                user = await CurrentUser();
+                var isRole = await _roleManager.RoleExistsAsync(RoleName);
+                if (isRole)
                 {
-                    await _roleManager.RemoveClaimAsync(role, claim);
-                }
+                    var role = await _roleManager.FindByNameAsync(RoleName);
+                    var claimList = await _roleManager.GetClaimsAsync(role);
 
-                foreach (var cl in Claims)
-                {
-                    var template = await _claimService.GetTemplateByName(cl);
-                    var claim = new Claim(template.Type, template.Value);
-                    await _roleManager.AddClaimAsync(role, claim);
+                    foreach (var claim in claimList)
+                    {
+                        await _roleManager.RemoveClaimAsync(role, claim);
+                    }
+
+                    foreach (var cl in Claims)
+                    {
+                        var template = await _claimService.GetTemplateByName(cl);
+                        var claim = new Claim(template.Value, template.Value);
+                        await _roleManager.AddClaimAsync(role, claim);
+                    }
+
+                    return Ok();
                 }
 
                 return Ok();
             }
-
-            return Ok();
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveRoleToUser(Guid UserId, string[] RoleIds)
         {
-            var user = await _userService.GetUser(UserId);
-            var identityUser = await _userManager.FindByNameAsync(user.UserName);
-            if(identityUser == null)
+            User user = null;
+            try
             {
-                identityUser = new IdentityUser();
-                identityUser.UserName = user.UserName;
-                await _userManager.CreateAsync(identityUser);
-            }
-
-            foreach (var id in RoleIds)
-            {
-                var role = await _roleManager.FindByIdAsync(id);
-                if (role != null)
+                user = await _userService.GetUserById(UserId);
+                var identityUser = await _userManager.FindByNameAsync(user.UserName);
+                if (identityUser == null)
                 {
-                    await _userManager.AddToRoleAsync(identityUser, role.Name);
+                    identityUser = new IdentityUser();
+                    identityUser.UserName = user.UserName;
+                    identityUser.Email = user.Email;
+                    await _userManager.CreateAsync(identityUser);
                 }
+
+                foreach (var id in RoleIds)
+                {
+                    var role = await _roleManager.FindByIdAsync(id);
+                    if (role != null)
+                    {
+                        await _userManager.AddToRoleAsync(identityUser, role.Name);
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
 
-            return Ok();
         }
        
     }

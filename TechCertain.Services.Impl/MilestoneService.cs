@@ -64,43 +64,64 @@ namespace TechCertain.Services.Impl
                 systemEmailTemplate = new SystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
                 await _systemEmailService.AddNewSystemEmail(user, activity.Name, "", subject, emailContent, programmeProcess.Name);
             }
+            //else
+            //{
+            //    systemEmailTemplate.DateDeleted = DateTime.Now;
+            //    systemEmailTemplate.DeletedBy = user;
+            //    await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
+            //}
+
 
             systemEmailTemplate.Milestone = milestone;
             systemEmailTemplate.Activity = activity;
             await _systemEmailService.UpdateSystemEmailTemplate(systemEmailTemplate);
         }
 
-        public async Task CreateAdvisory(Milestone milestone, Activity activity, string advisoryString)
+        public async Task CreateAdvisory(User user, Milestone milestone, Activity activity, string advisoryString)
         {
-            Advisory advisory = await _advisoryService.GetAdvisoryByMilestone(milestone, activity);
-            if (advisory == null)
+            var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
+            var advisory = advisoryList.FirstOrDefault(a => a.DateDeleted == null && a.Activity == activity);
+            
+            if (advisory != null)
             {
-                advisory = new Advisory(advisoryString);                
-                await _advisoryService.CreateAdvisory(advisory);
+                advisory.DateDeleted = DateTime.Now;
+                advisory.DeletedBy = user;
+                await _advisoryService.UpdateAdvisory(advisory);
             }
 
-            advisory.Milestone = milestone;
-            advisory.Activity = activity;
-            await _advisoryService.UpdateAdvisory(advisory);
+            advisory = new Advisory(advisoryString)
+            {
+                Milestone = milestone,
+                Activity = activity,
+                Description = advisoryString
+            };
+
+            await _advisoryService.CreateAdvisory(advisory);
         }
 
-        public async Task CreateMilestoneUserTask(User createdBy, Organisation createdFor, DateTime dueDate, 
+        public async Task CreateMilestoneUserTask(User user, Organisation createdFor, DateTime dueDate, 
             Milestone milestone, Activity activity, int priority, string description, string details)
         {
-            var userTask = await _taskingService.GetUserTaskByMilestone(milestone, activity);
-            if(userTask == null)
+            var userTaskList = await _taskingService.GetUserTasksByMilestone(milestone);
+            var userTask = userTaskList.FirstOrDefault(t => t.DateDeleted == null && t.Activity == activity);
+            if (userTask != null)
             {
-                userTask = await _taskingService.CreateTaskForMilestone(createdBy, createdFor, dueDate, milestone);
+                userTask.DateDeleted = DateTime.Now;
+                userTask.DeletedBy = user;
+                await _taskingService.UpdateUserTask(userTask);                
             }
 
-            userTask.Priority = priority;
-            userTask.Description = description;
-            userTask.Details = details;
-            userTask.IsActive = false;
-            userTask.DueDate = dueDate;
-            userTask.Milestone = milestone;
-            userTask.Activity = activity;
-            await _taskingService.UpdateUserTask(userTask);
+            userTask = new UserTask(user, createdFor, dueDate)
+            {
+                Priority = priority,
+                Description = description,
+                Details = details,
+                IsActive = false,
+                Milestone = milestone,
+                Activity = activity
+            };
+
+            await _taskingService.CreateTaskFor(userTask);
         }
 
         public async Task CloseMileTask(Guid id, string method)

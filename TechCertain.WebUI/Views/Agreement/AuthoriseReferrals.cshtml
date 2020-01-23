@@ -1,118 +1,160 @@
 ﻿@model TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel
-<!-- NEW WIDGET START -->
-    <div id="content" style="background-color: #A6E2EF">
-        <!-- widget grid -->
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i>
-                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
-                > <span>Authorise Referrals</span>
-            </h1>
-        </div>
+@{
+    int count = 0;
+}
+<div id="content" class="container">
+
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId"> Agreement</a>
+            >
+            <span>Authorise Referrals</span>
+        </h1>
+    </div>
+
+    <div class="row">
         <span>
             <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeId })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
+    </div>
 
-        <secion id="widget-grid" class="">
-            <!-- row -->
+    <div class="row">
+        <div class="jarviswidget container-fluid" id="wid-id-1"
+             data-widget-colorbutton="false"
+             data-widget-editbutton="false"
+             data-widget-togglebutton="false"
+             data-widget-deletebutton="false"
+             data-widget-custombutton="false"
+             data-widget-sortable="false">
 
-            <div class="row">
-                <!-- NEW WIDGET START -->
-                <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <!-- Widget ID (each widget will need unique ID)-->
-                    <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
-                         data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                <h2 style="color:black">@ViewBag.Title </h2>
+            </header>
 
-                        <header>
-                            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-                            <h2 style="color:black">@ViewBag.Title </h2>
-                        </header>
-                        <div role="content">
+            @Html.HiddenFor(m => m.InformationSheetId)
+            @Html.HiddenFor(m => m.ClientAgreementId)
+            @Html.HiddenFor(m => m.ClientProgrammeId)
 
-                            @Html.HiddenFor(m => m.InformationSheetId)
-                            @Html.HiddenFor(m => m.ClientAgreementId)
-                            @Html.HiddenFor(m => m.ClientProgrammeId)
+            <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <table class="table table-bordered table-responsive-md table-striped text-center" id="refferals">
 
-                            <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+                        <tr>
+                            <th class="text-center" width="25%" style="color:black">Referral</th>
+                            <th class="text-center" width="50%" style="color:black">Description</th>
+                            <th class="text-center" width="25%" style="color:black">Status</th>
+                        </tr>
+                        @foreach (var item in Model.Referrals)
+                        {
+                            @if (count % 2 == 1)
+                            {
+                                <tr class="table-light">
+                                    <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black" align="left">
+                                        @item.Name
 
-                                <table class="table table-bordered table-responsive-md table-striped text-center" style="border: 1px solid black;" id="refferals">
+                                    </td>
+                                    <td class="pt-3-half" width="13%" contenteditable="true" style="color:black" align="left">
+                                        @item.Description
+                                    </td>
+                                    <td class="pt-3-half" width="13%" contenteditable="true" style="color:black" align="left">
+                                        @item.Status
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black" align="left">
+                                        @item.Name
 
-                                    <tr>
-                                        <th class="text-center" width="25%" style="color:black">Referral</th>
-                                        <th class="text-center" width="50%" style="color:black">Description</th>
-                                        <th class="text-center" width="25%" style="color:black">Status</th>
-                                    </tr>
-                                    @foreach (var item in Model.Referrals)
-                                    {
-                                        <tr>
-                                            <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black" align="left">
-                                                @item.Name
+                                    </td>
+                                    <td class="pt-3-half" width="13%" contenteditable="true" style="color:black" align="left">
+                                        @item.Description
+                                    </td>
+                                    <td class="pt-3-half" width="13%" contenteditable="true" style="color:black" align="left">
+                                        @item.Status
+                                    </td>
+                                </tr>
+                            }
 
-                                            </td>
-                                            <td class="pt-3-half" width="13%" contenteditable="true" style="color:black" align="left">
-                                                @item.Description
-                                            </td>
-                                            <td class="pt-3-half" width="13%" contenteditable="true" style="color:black" align="left">
-                                                @item.Status
-                                            </td>
+                            count++;
 
-                                        </tr>
+                        }
+                    </table>
+                </div>
 
-                                    }
-                                </table>
-                                <br />
-                                <label class="label"><strong>Authorise Referral</strong></label>
-                                <table class="table table-responsive-md table-striped text-align-left" style="border: 0px solid black;" id="referrallodingvalue">
-                                    <tr>
-                                        <td width="20%"><strong>Referral Loading Percentage (%): </strong></td>
-                                        <td width="1%"></td>
-                                        <td width="5%"><strong> OR/AND</strong></td>
-                                        <td width="1%"></td>
-                                        <td width="20%"><strong>Referral Loading Amount ($): </strong></td>
-                                        <td width="53%"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.ReferralLoading)
-                                        </td>
-                                        <td align="left">%</td>
-                                        <td></td>
-                                        <td align="right">$</td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.ReferralAmount)
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                </table>
-
+                <div class="form-group">
+                    <table class="table table-responsive-md table-striped table-bordered" id="referrallodingvalue">
+                        <thread class="thead-dark">
+                            <tr>
+                                <th>
+                                    Authorise Referral
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thread>
+                        <tr>
+                            <td width="20%">
+                                <strong>Referral Loading Percentage (%): </strong>
+                            </td>
+                            <td width="1%"></td>
+                            <td width="5%">
+                                <strong> OR/AND</strong>
+                            </td>
+                            <td width="1%"></td>
+                            <td width="20%">
+                                <strong>Referral Loading Amount ($): </strong>
+                            </td>
+                            <td width="53%"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.TextBoxFor(m => m.ReferralLoading)
+                            </td>
+                            <td align="left">%</td>
+                            <td></td>
+                            <td align="right">$</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.ReferralAmount)
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <table class="table table-striped">
+                        <tr>
+                            <td>
                                 <label class="label"><strong>Authorisation notes: </strong></label>
+                            </td>
+                            <td>
                                 <label class="textarea">
                                     @Html.TextAreaFor(m => m.AuthorisationNotes)
                                 </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <button onclick="Authorise()" type="button" class="btn btn-success btn-sm">Authorise</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Cancel</a>
+                </div>
+            </form>
 
-                                <br />
-                                <div align="right">
-                                    <button onclick="Authorise()" type="button" class="btn btn-success btn-sm">Authorise</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
-                                </div>
-                                <div>
-
-                                </div>
-
-                            </form>
-
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-        </secion>
+        </div>
     </div>
+</div>
+
 
 
 @section pagespecific {
-   
-    @Html.Partial("_AgreementScripts")
+
+    @await Html.PartialAsync("_AgreementScripts")
 }

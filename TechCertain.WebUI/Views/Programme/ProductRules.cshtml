@@ -1,46 +1,56 @@
 ﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
-<!-- NEW WIDGET START -->
-<div id="content" style="background-color: #A6E2EF">
-    <!-- widget grid -->
-    <secion id="widget-grid" class="">
-        <!-- row -->
-        <div class="row">
-            <!-- NEW WIDGET START -->
-            <article class="col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
-                <!-- Widget ID (each widget will need unique ID)-->
-                <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
-                     data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-                        <h2 style="color:black">@ViewBag.Title </h2>
-                    </header>
-                    <div role="content">
+@{ 
+    int count = 0;
+}
 
-                        @Html.HiddenFor(m => m.Id)
-                        @Html.HiddenFor(m => m.ProductId)
+<div id="content" class="container">
 
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>  <span>
+                <a href="~/Programme/ManageRules/@Model.Id">Manage Rules</a>
+                > Product Rules
+            </span>
+        </h1>
+    </div>
 
-                        <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ManageRules", "Programme", new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
 
-                            @*<header>  Refferal</header>*@
-                            <table class="table table-bordered table-responsive-md table-striped text-center" style="border: 1px solid black;" id="refferals">
+    <div class="row">
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
+             data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 
-                                <tr>
-                                    <th class="text-center" width="20%" style="color:black">Rule Name</th>
-                                    <th class="text-center" width="28%" style="color:black">Rule Description</th>
-                                    <th class="text-center" width="20%" style="color:black">Rule Order Number</th>
-                                    <th class="text-center" width="20%" style="color:black">Rule Value</th>
-                                    <th class="text-center" width="12%"></th>
+            <header>
+                <span class="widget-icon"> <i class="fa fa-comment text-white"></i> </span>
+                <h2>@ViewBag.Title </h2>
+            </header>
 
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.ProductId)
 
-                                </tr>
-                                @foreach (var item in Model.Rules)
-                                {
-                            <tr>
+            <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+                <table class="table table-bordered table-responsive-md table-striped text-center" id="refferals">
+                    <tr>
+                        <th class="text-center" width="20%" style="color:black">Rule Name</th>
+                        <th class="text-center" width="28%" style="color:black">Rule Description</th>
+                        <th class="text-center" width="20%" style="color:black">Rule Order Number</th>
+                        <th class="text-center" width="20%" style="color:black">Rule Value</th>
+                        <th class="text-center" width="12%"></th>
+                    </tr>
+
+                    @foreach (var item in Model.Rules)
+                    {
+                        @if (count % 2 == 1)
+                        {
+                            <tr class="table-light">
                                 <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black">
                                     @item.Name
-
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
                                     @item.Description
@@ -55,30 +65,46 @@
                                 {
                                     <td width="9%">
                                         <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
-                                           data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>                                        
+                                           data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>
                                     </td>
                                 }
-
-                                @*onclick='$("#myModal").modal("show");'*@
                             </tr>
-
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="pt-3-half" width="13%" contenteditable="true" id="ReferralName" style="color:black">
+                                    @item.Name
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
+                                    @item.Description
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
+                                    @item.OrderNumber
+                                </td>
+                                <td class="pt-3-half" width="13%" contenteditable="true" style="color:black">
+                                    @item.Value
+                                </td>
+                                @if (User.HasClaim("EditRules", "EditRules"))
+                                {
+                                    <td width="9%">
+                                        <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-rule-id="@item.Id" data-rule-name="@item.Name"
+                                           data-rule-desc="@item.Description" data-rule-val="@item.Value" data-rule-order="@item.OrderNumber"><i class="fa fa-edit"> </i></a>
+                                    </td>
                                 }
-                            </table>
+                            </tr>
+                        }
+                        count++;
+                    }
+                </table>
 
+            </form>
 
-                            <div>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-                </div>
-            </article>
         </div>
+    </div>
 
-    </secion>
 </div>
+
 
 
 
@@ -101,29 +127,29 @@
                 <div class="form-group" hidden>
                     <label for="MaxSumInsured">Rule Id</label>
 
-                    <input type="text" class="form-control " id="RuleId" name="Id"  />
+                    <input type="text" class="form-control " id="RuleId" name="Id" />
 
                 </div>
                 <div class="form-group">
                     <label for="MaxSumInsured">Rule Name</label>
 
-                    <input type="text" class="form-control " id="RuleName" name="Name"  />
+                    <input type="text" class="form-control " id="RuleName" name="Name" />
 
                 </div>
                 <div class="form-group">
                     <label for="MaxSumInsured">Rule Description</label>
 
-                    <input type="text" class="form-control " id="RuleDesc" name="Description"  />
+                    <input type="text" class="form-control " id="RuleDesc" name="Description" />
                 </div>
                 <div class="form-group">
                     <label for="MaxSumInsured">Order number</label>
 
-                    <input type="text" class="form-control " id="RuleOrder" name="OrderNumber"  />
+                    <input type="text" class="form-control " id="RuleOrder" name="OrderNumber" />
                 </div>
                 <div class="form-group">
                     <label for="MaxSumInsured">Value</label>
 
-                    <input type="text" class="form-control " id="RuleVal" name="Value"  />
+                    <input type="text" class="form-control " id="RuleVal" name="Value" />
                 </div>
 
             </form>
@@ -139,7 +165,5 @@
 
 
 @section pagespecific {
-
-    @Html.Partial("_ProgrammeScripts")
-
+    @await Html.PartialAsync("_ProgrammeScripts")
 }

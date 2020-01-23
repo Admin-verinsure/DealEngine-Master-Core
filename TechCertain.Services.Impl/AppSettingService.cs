@@ -42,5 +42,45 @@ namespace TechCertain.Services.Impl
                 return _configuration.GetValue<string>("domainQueryString");
             }
         }
+
+        public bool RequireRSA
+        {
+            get
+            {
+                return _configuration.GetValue<bool>("RequireRSA");
+            }
+        }
+
+        public string GetMarineInsuranceSpecialistEmail
+        {
+            get
+            {
+                return _configuration.GetValue<string>("MarineInsuranceSpecialistEmail");
+            }
+        }
+
+        public string GetCompanyTitle
+        {
+            get
+            {
+                return _configuration.GetValue<string>("GetCompanyTitle");
+            }
+        }
+
+        public string GetConnectionString
+        {
+            get
+            {
+                return _configuration.GetConnectionString("TechCertainConnection");
+            }
+        }
+
+        public string GetSuperUser
+        {
+            get
+            {
+                return _configuration.GetValue<string>("SuperUsers");
+            }
+        }
     }
 }

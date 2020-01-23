@@ -10,10 +10,10 @@
             @tabs.Tab("Add")*@
         <div id="Principaltabs">
             <ul id="tab" class="nav nav-tabs">
-                <li class="nav nav-tabs active"> <a href="#Principaltabs1"> List All </a> </li>
-                <li class="nav nav-tabs"> <a href="#Principaltabs2"> Edit </a> </li>
+                <li class="nav nav-tabs active" > <a href="#Principaltabs1"> List All </a> </li>
+                <li class="nav nav-tabs" id="PrincipalEdit"> <a href="#Principaltabs2"> Edit </a> </li>
                 <li class="nav nav-tabs"> <a href="#Principaltabs3"> Add </a> </li>
-                <li class="nav nav-tabs PrincipalRemoved"> <a href="#Principaltabs4"> Removed </a> </li>
+                <li class="nav nav-tabs PrincipalRemoved "> <a href="#Principaltabs4"> Removed </a> </li>
 
             </ul>
 
@@ -29,7 +29,7 @@
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
-                                colNames: ["","Organisation Name","Organisation Type", "Removed"],
+                                colNames: ["","Organisation Name","Organisation Type", "Remove"],
                                 colModel: [
                                     {
                                         name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
@@ -81,16 +81,18 @@
                     <input id="PrincipalPartnersId" class="b" name="ID" type="hidden">
                     <!-- 1st row -->
                     <div class="row">
+                        <input data-type="TEXTBOX" data-name="sharedOrgName" id="OwnerType" class="hidden" placeholder="Organisation Name" value="">
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Type</label>
+                            <label class="label required" id="Type">Type</label>
                             <label class="input">
                                 <select id="EditPrincial13" onchange="EditPrincipal13Selected('EditPrincial13')" class="form-control b" name="Type">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="Principal">Principal</option>
                                     <option value="Subsidiary">Subsidiary</option>
+                                    <option value="SubContracters">Sub Contracters</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
-                                    <option value="Megers">Megers</option>
+                                    <option value="Mergers">Mergers</option>
                                     <option value="JointVenture">Joint Venture</option>
 
                                 </select>
@@ -100,7 +102,7 @@
                         </section>
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Organisation Type</label>
+                            <label class="label required" id="OrgType">Organisation Type</label>
                             <label class="input">
                                 <select id="EditPrincial14" onchange="EditPrincipal14Selected('EditPrincial14')" class="form-control b" name="OrganisationTypeName">
                                     <option selected="selected" value="">-- Select --</option>
@@ -114,22 +116,34 @@
                             <p class="validationContainer" id="ValidateEditPrincial14"></p>
 
                         </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Date of Retirement</label>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditPrincial19sec">
+                            <label class="label required">Has this Person retired or deceased?</label>
+                            <label class="input">
+                                <select id="EditPrincial19" onchange="EditPrincipal19Selected('EditPrincial19')" class="form-control b" name="IsRetiredorDecieved">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial19"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditDateofRetirementSec">
+                            <label class="label ">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="EditPrincial15" type="text">
                             </label>
                         </section>
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Date of Deceased</label>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditDateofDeceasedSec">
+                            <label class="label ">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="EditPrincial16" type="text">
                             </label>
                         </section>
-                        <div id="EditOrgnamesec" class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden">
+                        <div id="EditOrgnamesec" class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden">
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Organisation Name</label>
@@ -141,7 +155,7 @@
                             </section>
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Activities</label>
+                                <label class="label required" id="activities">Activities</label>
                                 <label class="input">
                                     <i></i>
                                     <input data-type="TEXTBOX" data-name="sharedOrgName" id="EditPrincial18" name="Activities" placeholder="Activities" value="">
@@ -203,7 +217,7 @@
                             </section>
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="EditPrincial6Sec">
-                                <label class="label required">If 'Yes'-State the type of NZIA membership held</label>
+                                <label class="label required">If 'Yes'- State the type of NZIA membership held</label>
                                 <label class="input">
                                     <i></i>
                                     <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="EditPrincial6" name="NZIAmembership" placeholder="NZIA Membership Type" value="">
@@ -275,7 +289,7 @@
                             </section>
                         </div>
                         <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                            <button onclick="ValidateEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ValidateEditPrincipalDirectors(event);" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
                             <button onclick="ClearBoats(event,'#Principaltabs2','Principaltabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
 
@@ -297,7 +311,7 @@
                                     <option value="Principal">Principal</option>
                                     <option value="Subsidiary">Subsidiary</option>
                                     <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
-                                    <option value="Megers">Megers</option>
+                                    <option value="Mergers">Mergers</option>
                                     <option value="JointVenture">Joint Venture</option>
 
                                 </select>
@@ -321,22 +335,36 @@
                             <p class="validationContainer" id="ValidatePrincial14"></p>
 
                         </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Date of Retirement</label>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddPrincial19sec">
+                            <label class="label required">This Person has retired or deceased ?</label>
+                            <label class="input">
+                                <select id="AddPrincial19" onchange="Principal19Selected('AddPrincial19')" class="form-control b" name="IsNZIAmember">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateEditPrincial19"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddDateofRetirementSec">
+                            <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial15" type="text">
                             </label>
                         </section>
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Date of Deceased</label>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddDateofDeceasedSec">
+                            <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
                             <label class="input">
                                 <i></i>
                                 <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="AddPrincial16" type="text">
                             </label>
                         </section>
-                        <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden"  id="Orgnamesec">
+
+                        <div class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Orgnamesec">
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Organisation Name</label>
@@ -357,33 +385,33 @@
                             </section>
                         </div>
 
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden"  id="AddIndividual1">
-                                <label class="label required">First Name</label>
-                                <label class="input">
-                                    <i></i>
-                                    <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial1" name="FirstName" placeholder="FirstName" value="">
-                                </label>
-                                <p class="validationContainer" id="ValidatePrincial1"></p>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddIndividual1">
+                            <label class="label required">First Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial1" name="FirstName" placeholder="FirstName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial1"></p>
 
-                            </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden"  id="AddIndividual2">
-                                <label class="label required">Last Name</label>
-                                <label class="input">
-                                    <i></i>
-                                    <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial2" name="LastName" placeholder="LastName" value="">
-                                </label>
-                                <p class="validationContainer" id="ValidatePrincial2"></p>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddIndividual2">
+                            <label class="label required">Last Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial2" name="LastName" placeholder="LastName" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial2"></p>
 
-                            </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden"  id="AddIndividual3">
-                                <label class="label required">Email</label>
-                                <label class="input">
-                                    <i></i>
-                                    <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial3" name="Email" placeholder="Email" value="">
-                                </label>
-                                <p class="validationContainer" id="ValidatePrincial3"></p>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddIndividual3">
+                            <label class="label required">Email</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="sharedOrgName" id="AddPrincial3" name="Email" placeholder="Email" value="">
+                            </label>
+                            <p class="validationContainer" id="ValidatePrincial3"></p>
 
-                            </section>
+                        </section>
                         <div class="hidden" id="AddIndividualPrincipal">
 
 
@@ -410,7 +438,7 @@
                             </section>
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="Princial6Sec">
-                                <label class="label required">If 'Yes'-State the type of NZIA membership held</label>
+                                <label class="label required">If 'Yes'- State the type of NZIA membership held</label>
                                 <label class="input">
                                     <i></i>
                                     <input data-type="TEXTBOX" data-name="sharedOrgPhone" id="AddPrincial6" name="NZIAmembership" placeholder="NZIA Membership Type" value="">
@@ -498,7 +526,7 @@
                             <script type="text/javascript">
                                  $(".PrincipalRemoved").click(function () {
                                $("#tblRemovedPrincipalDirectors").jqGrid({
-                                url: "/Services/GetDeletedPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
+                                url: "/Services/GetDeletedPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
                                 datatype: "xml",
                                    mtype: "GET",
                                 async: true,
@@ -507,7 +535,7 @@
 
                                     {
                                         name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
-                                            return '<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedPrincipalDirectors\', \'#tblRemovedPrincipalDirectors\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                            return '<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedPrincipalDirectors\', \'#PrincipalDirectors\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
 
                                         }
                                     },
@@ -553,26 +581,43 @@
 <script type="text/javascript">
 
 
-    
-     function Principal14Selected(PrincipalSelected) {
+    function Principal19Selected(PrincipalSelected) {
         var principalSelected = document.getElementById(PrincipalSelected);
-        if (principalSelected.options[principalSelected.selectedIndex].value != "Person - Individual") {
-            $('#Orgnamesec').removeClass('hidden');
+        if (principalSelected.options[principalSelected.selectedIndex].value != "true") {
+            $('#AddDateofRetirementSec').addClass('hidden');
+            $('#AddDateofDeceasedSec').addClass('hidden');
+            $('#AddPrincial15').val('');
+            $('#AddPrincial16').val('');
+        } else {
+            $('#AddDateofRetirementSec').removeClass('hidden');
+            $('#AddDateofDeceasedSec').removeClass('hidden');
+        }
+     }
+     function Principal14Selected(PrincipalSelected) {
+         var principalSelected = document.getElementById(PrincipalSelected);
+         var ghg = principalSelected.options[principalSelected.selectedIndex].value;
+        if (principalSelected.options[principalSelected.selectedIndex].value == "Person - Individual" && $("#AddPrincial14").val() == "Principal") {
+            $('#AddPrincial17').val('');
+            $('#AddPrincial18').val('');
+           
+            $('#Orgnamesec').addClass('hidden');
+            $('#AddPrincial19sec').removeClass('hidden');
+            $('#AddIndividual1').removeClass('hidden');
+            $('#AddIndividual2').removeClass('hidden');
+            $('#AddIndividual3').removeClass('hidden');
+        } else {
+
+             $('#Orgnamesec').removeClass('hidden');
              $('#AddPrincial1').val('');
             $('#AddPrincial2').val('');
             $('#AddPrincial3').val('');
             $('#AddIndividual1').addClass('hidden');
             $('#AddIndividual2').addClass('hidden');
             $('#AddIndividual3').addClass('hidden');
+            $('#AddPrincial19sec').addClass('hidden');
+             $('#AditPrincial15').val('');
+            $('#AditPrincial16').val('');
 
-        } else {
-            
-            $('#AddPrincial17').val('');
-            $('#AddPrincial18').val('');
-            $('#Orgnamesec').addClass('hidden');
-            $('#AddIndividual1').removeClass('hidden');
-            $('#AddIndividual2').removeClass('hidden');
-            $('#AddIndividual3').removeClass('hidden');
         }
      }
      function Principal13Selected(PrincipalSelected) {
@@ -582,9 +627,10 @@
             $('#AddIndividual1').removeClass('hidden');
             $('#AddIndividual2').removeClass('hidden');
             $('#AddIndividual3').removeClass('hidden');
-
+            //$('#AddDateofDeceasedSec').removeClass('hidden');
             $('#AddPrincial14').val('Person - Individual');
             $('#AddPrincial14').prop("disabled", true);
+            $('#AddPrincial19sec').removeClass('hidden');
 
         } else {
             $('#AddPrincial1').val('');
@@ -606,6 +652,9 @@
             $('#AddIndividual1').addClass('hidden');
             $('#AddIndividual2').addClass('hidden');
             $('#AddIndividual3').addClass('hidden');
+             $('#AddPrincial19sec').addClass('hidden');
+            $('#AddPrincial15').val('');
+            $('#AddPrincial16').val('');
 
         }
     }
@@ -644,20 +693,22 @@
     }
 
 
-
+     function EditPrincipal19Selected(PrincipalSelected) {
+        var principalSelected = document.getElementById(PrincipalSelected);
+        if (principalSelected.options[principalSelected.selectedIndex].value != "true") {
+            $('#EditDateofRetirementSec').addClass('hidden');
+            $('#EditDateofDeceasedSec').addClass('hidden');
+			$('#EditPrincial15').val('');
+            $('#EditPrincial16').val('');
+        } else {
+            $('#EditDateofRetirementSec').removeClass('hidden');
+            $('#EditDateofDeceasedSec').removeClass('hidden');
+        }
+     }
     function EditPrincipal14Selected(PrincipalSelected) {
         debugger;
         var principalSelected = document.getElementById(PrincipalSelected);
-        if (principalSelected.options[principalSelected.selectedIndex].value != "Person - Individual") {
-            $('#EditOrgnamesec').removeClass('hidden');
-             $('#EditPrincial1').val('');
-            $('#EditPrincial2').val('');
-            $('#EditPrincial3').val('');
-            $('#EditIndividual1').addClass('hidden');
-            $('#EditIndividual2').addClass('hidden');
-            $('#EditIndividual3').addClass('hidden');
-
-        } else {
+        if (principalSelected.options[principalSelected.selectedIndex].value == "Person - Individual" && $("#EditPrincial14").val() == "Principal") {
             
             $('#EditPrincial17').val('');
             $('#EditPrincial18').val('');
@@ -665,20 +716,35 @@
             $('#EditIndividual1').removeClass('hidden');
             $('#EditIndividual2').removeClass('hidden');
             $('#EditIndividual3').removeClass('hidden');
+            $('#EditPrincial19sec').removeClass('hidden');
+
+
+        } else {
+
+            $('#EditOrgnamesec').removeClass('hidden');
+            $('#EditPrincial1').val('');
+            $('#EditPrincial2').val('');
+            $('#EditPrincial3').val('');
+            $('#EditIndividual1').addClass('hidden');
+            $('#EditIndividual2').addClass('hidden');
+            $('#EditIndividual3').addClass('hidden');
+            $('#EditPrincial19sec').addClass('hidden');
+            $('#EditPrincial15').val('');
+            $('#EditPrincial16').val('');
+           
         }
      }
     function EditPrincipal13Selected(PrincipalSelected) {
                  debugger;
-
         var principalSelected = document.getElementById(PrincipalSelected);
         if (principalSelected.options[principalSelected.selectedIndex].value == "Principal") {
             $('#EditIndividualPrincipal').removeClass('hidden');
             $('#EditIndividual1').removeClass('hidden');
             $('#EditIndividual2').removeClass('hidden');
             $('#EditIndividual3').removeClass('hidden');
-
             $('#EditPrincial14').val('Person - Individual');
             $('#EditPrincial14').prop("disabled", true);
+            $('#EditPrincial19sec').removeClass('hidden');
 
         } else {
             $('#EditPrincial1').val('');
@@ -698,8 +764,11 @@
             $('#EditPrincial14').prop("disabled", false);
             $('#EditIndividualPrincipal').addClass('hidden');
             $('#EditIndividual1').addClass('hidden');
+            $('#EditPrincial19sec').addClass('hidden');
             $('#EditIndividual2').addClass('hidden');
             $('#EditIndividual3').addClass('hidden');
+            $('#EditPrincial15').val('');
+            $('#EditPrincial16').val('');
 
         }
     }
@@ -752,92 +821,142 @@
         data: postData,
         async: true
     })
-        .done(function (data) {
-            debugger;
-        $('#PrincipalPartnersId').val(data.id);
+         .done(function (data) {
+             debugger;
+             if (data.type == "Owner") {
+                    $('#OrgType').addClass('hidden');
+                    $('#Type').addClass('hidden');
+                    $('#EditIndividual3').removeClass('hidden');
+                    $('#EditPrincial13').addClass('hidden');
+                    $('#EditPrincial14').addClass('hidden');
+                    $('#EditPrincial19sec').addClass('hidden');
+                    $('#activities').addClass('hidden');
+                    $('#EditOrgnamesec').removeClass('hidden');
+                    $('#EditPrincial17').val(data.organisationName);
+                    $('#EditPrincial3').val(data.email);
+                    $('#EditPrincial18').addClass('hidden');
+                 $('#OwnerType').val(data.type);
+                 
+                  
 
-        $('#EditPrincial13').val(data.type);
-        EditPrincipal13Selected('EditPrincial13');
-        if (data.type != "Principal") {
-            $('#EditPrincial14').val(data.organisationTypeName);
-            EditPrincipal14Selected('EditPrincial14');
-        }
+             } else {
+                    $('#OrgType').removeClass('hidden');
+                    $('#Type').removeClass('hidden');
+                    $('#EditIndividual3').addClass('hidden');
+                    $('#EditPrincial13').removeClass('hidden');
+                    $('#EditPrincial14').removeClass('hidden');
+                    $('#EditPrincial18').removeClass('hidden');
+                    $('#activities').removeClass('hidden');
+                    $('#EditOrgnamesec').addClass('hidden');
+             }
 
-        $('#EditPrincial5').val(""+data.isNZIAmember);
-        EditPrincipal1Selected('EditPrincial5');
-        $('#EditPrincial7').val(""+data.isADNZmember);
-        EditPrincipal2Selected('EditPrincial7');
-        $('#EditPrincial11').val(""+data.isOtherdirectorship);
-        EditPrincipal3Selected('EditPrincial11');
-        $('#EditPrincial1').val(data.firstName);
-        $('#EditPrincial2').val(data.lastName);
-        $('#EditPrincial4').val(data.qualifications);
-        $('#EditPrincial3').val(data.email);
-        //$('#EditPrincial5').val(data.isNZIAmember);
-        $('#EditPrincial6').val(data.nziAmembership);
-        $('#EditPrincial8').val(data.isLPBCategory3);
-        $('#EditPrincial9').val(data.yearofPractice);
-        $('#EditPrincial10').val(data.prevPractice);
-        $('#EditPrincial12').val(data.othercompanyname);
-        $('#EditPrincial15').val(data.dateofRetirement);
-        $('#EditPrincial16').val(data.dateofDeceased);
-        $('#EditPrincial17').val(data.organisationName);
-        $('#EditPrincial18').val(data.activities);
-            UpdateChosen();
+             if (data.type != "Owner") {
+                 $('#PrincipalPartnersId').val(data.id);
 
+                 $('#EditPrincial13').val(data.type);
+                 EditPrincipal13Selected('EditPrincial13');
+                 if (data.type != "Principal") {
+                     $('#EditPrincial14').val(data.organisationTypeName);
+                     EditPrincipal14Selected('EditPrincial14');
+                 } else {
+                     $('#EditPrincial19sec').removeClass('hidden');
+
+                 }
+                 $('#EditPrincial5').val("" + data.isNZIAmember);
+                 EditPrincipal1Selected('EditPrincial5');
+                 $('#EditPrincial7').val("" + data.isADNZmember);
+                 EditPrincipal2Selected('EditPrincial7');
+                 $('#EditPrincial11').val("" + data.isOtherdirectorship);
+                 EditPrincipal3Selected('EditPrincial11');
+                 $('#EditPrincial1').val(data.firstName);
+                 $('#EditPrincial2').val(data.lastName);
+                 $('#EditPrincial4').val(data.qualifications);
+                 $('#EditPrincial3').val(data.email);
+                 $('#EditPrincial6').val(data.nziAmembership);
+                 $('#EditPrincial8').val("" + data.isLPBCategory3);
+                 $('#EditPrincial9').val(data.yearofPractice);
+                 $('#EditPrincial10').val(data.prevPractice);
+                 $('#EditPrincial12').val(data.othercompanyname);
+                 $('#EditPrincial19').val("" + data.isRetiredorDecieved);
+                 if ($('#EditPrincial19').val() == "true") {
+                     $('#EditDateofRetirementSec').removeClass('hidden');
+                     $('#EditDateofDeceasedSec').removeClass('hidden');
+                     $('#EditPrincial15').val(data.dateofRetirement);
+                     $('#EditPrincial16').val(data.dateofDeceased);
+                 }
+                 $('#EditPrincial17').val(data.organisationName);
+                 $('#EditPrincial18').val(data.activities);
+                 UpdateChosen();
+             }
 	});
     };
 
     
 
-     function ValidateEditPrincipalDirectors(event) {
-         debugger;
-         event.preventDefault();
-             var validity = true;
-           if ($('#EditPrincial1').val() == '' && $('#EditPrincial14').val() == "Person - Individual") {
-             $('#ValidateEditPrincial1').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             } else {
-                 $('#ValidateEditPrincial6').html("<i></i>");
-             }
-         }
-           if ($('#EditPrincial2').val() == '' && $('#EditPrincial14').val() == "Person - Individual") {
+    function ValidateEditPrincipalDirectors(event) {
+        debugger;
+        event.preventDefault();
+        var validity = true;
+        if ($('#OwnerType').val() != "Owner") {
+
+        if ($('#EditPrincial1').val() == '' && $('#EditPrincial14').val() == "Person - Individual") {
+                $('#ValidateEditPrincial1').html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                } else {
+                    $('#ValidateEditPrincial1').html("<i></i>");
+                }
+            }
+        if ($('#EditPrincial2').val() == '' && $('#EditPrincial14').val() == "Person - Individual") {
             $('#ValidateEditPrincial2').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
+            } else {
+                $('#ValidateEditPrincial2').html("<i></i>");
             }
-         }if ($('#EditPrincial3').val() == '' && $('#EditPrincial14').val() == "Person - Individual") {
+        } if ($('#EditPrincial3').val() == '' && $('#EditPrincial14').val() == "Person - Individual") {
             $('#ValidateEditPrincial3').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
+            } else {
+                $('#ValidateEditPrincial3').html("<i></i>");
             }
-         }
+        }
+        if ($('#EditPrincial19').val() == 'true' && $('#EditPrincial15').val() == '' && $('#EditPrincial16').val() == '') {
+            $('#ValidateEditPrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
+            $('#ValidateEditPrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $('#ValidateEditPrincial15').html("<i></i>");
+                $('#ValidateEditPrincial16').html("<i></i>");
 
-             for (var index = 4; index <= 5; index++) {
-                     var addPrincial = "#EditPrincial" + index;
-                 var value = $(addPrincial).val();
-                 var validator = "#ValidateEditPrincial" + index;
+            }
+        }
+        for (var index = 4; index <= 5; index++) {
+            var addPrincial = "#EditPrincial" + index;
+            var value = $(addPrincial).val();
+            var validator = "#ValidateEditPrincial" + index;
 
-                  if (value == "" && $('#EditPrincial13').val() == "Principals") {
-              $(validator).html("<font color='red'>Field is required</font>")
+            if (value == "" && $('#EditPrincial13').val() == "Principals") {
+                $(validator).html("<font color='red'>Field is required</font>")
                 if (validity) {
-                  validity = false;
+                    validity = false;
                 }
-                  } else {
-                     $(validator).html("<i></i>");
-                }
+            } else {
+                $(validator).html("<i></i>");
+            }
 
-         };
+        };
 
-         if ($('#EditPrincial6').val() == '' && $('#EditPrincial5').val() == 'true' && $('#EditPrincial13').val() == "Principals") {
-             $('#ValidateEditPrincial6').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             } else {
-                 $('#ValidateEditPrincial6').html("<i></i>");
-             }
-         }
+        if ($('#EditPrincial6').val() == '' && $('#EditPrincial5').val() == 'true' && $('#EditPrincial13').val() == "Principals") {
+            $('#ValidateEditPrincial6').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $('#ValidateEditPrincial6').html("<i></i>");
+            }
+        }
         if ($('#EditPrincial7').val() == '' && $('#EditPrincial13').val() == "Principals") {
             $('#ValidateEditPrincial7').html("<font color='red'>Field is required</font>")
             if (validity) {
@@ -846,78 +965,95 @@
         }
         else {
             $('#ValidateEditPrincial7').html("<font></font>");
-         }
-          if ($('#EditPrincial8').val() == '' && $('#EditPrincial7').val() == 'true' && $('#EditPrincial13').val() == "Principals") {
-             $('#ValidateEditPrincial8').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             } else {
-                 $('#ValidateEditPrincial8').html("<i></i>");
-             }
-         }
-         
-         for (var index = 9; index <= 14 && index !=12 ; index++) {
-                     var addPrincial = "#EditPrincial" + index;
-                 var value = $(addPrincial).val();
-                 var validator = "#ValidateEditPrincial" + index;
+        }
+        if ($('#EditPrincial8').val() == '' && $('#EditPrincial7').val() == 'true' && $('#EditPrincial13').val() == "Principals") {
+            $('#ValidateEditPrincial8').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $('#ValidateEditPrincial8').html("<i></i>");
+            }
+        }
 
-                  if (value == "" && $('#EditPrincial6').val() == "Principals" ) {
-              $(validator).html("<font color='red'>Field is required</font>")
+        for (var index = 9; index <= 14 && index != 12; index++) {
+            var addPrincial = "#EditPrincial" + index;
+            var value = $(addPrincial).val();
+            var validator = "#ValidateEditPrincial" + index;
+
+            if (value == "" && $('#EditPrincial6').val() == "Principals") {
+                $(validator).html("<font color='red'>Field is required</font>")
                 if (validity) {
-                  validity = false;
+                    validity = false;
                 }
-                  } else {
-                     $(validator).html("<i></i>");
+            } else {
+                $(validator).html("<i></i>");
+            }
+
+        };
+
+        if ($('#EditPrincial17').val() == '' && $('#EditPrincial14').val() != "Person - Individual") {
+            $('#ValidateEditPrincial17').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $('#ValidateEditPrincia17').html("<i></i>");
+            }
+        };
+        if ($('#EditPrincial18').val() == '' && $('#EditPrincial14').val() != "Person - Individual") {
+            $('#ValidateEditPrincial18').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $('#ValidateEditPrincia18').html("<i></i>");
+            }
+        };
+
+
+        if ($('#EditPrincial12').val() == '' && $('#EditPrincial11').val() == 'true' && $('#EditPrincial13').val() == "Principals") {
+            $('#ValidateEditPrincial12').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $('#ValidateEditPrincia12').html("<i></i>");
+            }
+        };
+
+        if (validity) {
+            EditPrincipalDirectors(event, '#Principaltabs2', '#PrincipalDirectors', 'Principaltabs1');
+        };
+
+        }else {
+            if ($('#EditPrincial17').val() == '' && $('#OwnerType').val() != "Owner") {
+                $('#ValidateEditPrincial17').html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                } else {
+                    $('#ValidateEditPrincial17').html("<i></i>");
                 }
+            } else if ($('#EditPrincial3').val() == '' && $('#OwnerType').val() != "Owner") {
+                $('#ValidateEditPrincial3').html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                } else {
+                    $('#ValidateEditPrincial3').html("<i></i>");
+                }
+            }
 
-         };
-
-         if ($('#EditPrincial17').val() == '' && $('#EditPrincial14').val() != "Person - Individual") {
-             $('#ValidateEditPrincial17').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             } else {
-                 $('#ValidateEditPrincia17').html("<i></i>");
-             }
-         };
-           if ($('#EditPrincial18').val() == '' && $('#EditPrincial14').val() != "Person - Individual") {
-             $('#ValidateEditPrincial18').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             } else {
-                 $('#ValidateEditPrincia18').html("<i></i>");
-             }
-         };
-
-
-         if ($('#EditPrincial12').val() == '' && $('#EditPrincial11').val() == 'true' && $('#EditPrincial13').val() == "Principals") {
-             $('#ValidateEditPrincial12').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             } else {
-                 $('#ValidateEditPrincia12').html("<i></i>");
-             }
-         };
-
-
-
-
-         if (validity) {
-               EditPrincipalDirectors(event, '#Principaltabs2', '#PrincipalDirectors','Principaltabs1');
-             };
-
-
+           if (validity) {
+            EditPrincipalDirectorsOwner(event, '#Principaltabs2', '#PrincipalDirectors', 'Principaltabs1'); }
+        
+        }
 
     };
-     function EditPrincipalDirectors(event,tabId, tableId,currenttab) {
+     function EditPrincipalDirectorsOwner(event,tabId, tableId,currenttab) {
         debugger;
         event.preventDefault();
-        var informationId = $('#AnswerSheetId').serialize();
-        var orgnisationType = $('#EditPrincial14').val();
+         var informationId = $('#AnswerSheetId').serialize();
+         var Orgname = $('#EditPrincial17').val(); 
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType;
+        var proddata = proddata + "&OrganisationName=" + Orgname;
         $.ajax({
-            url: '@Url.Action("EditPrincipalDirectors", "Services")',
+            url: '@Url.Action("EditPrincipalDirectorsOwner", "Services")',
             type: "POST",
             data: proddata
         })
@@ -938,6 +1074,43 @@
                 alert("There was an error while trying to save the Vehicle.");
             });
     };
+
+    function EditPrincipalDirectors(event,tabId, tableId,currenttab) {
+        debugger;
+        event.preventDefault();
+        var informationId = $('#AnswerSheetId').serialize();
+         var orgnisationType = $('#EditPrincial14').val();
+         var nziaMembership = $('#EditPrincial6').val();
+        var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        var proddata = proddata + "&OrganisationTypeName=" + orgnisationType + "&NZIAmembership="+nziaMembership;
+        $.ajax({
+            url: '@Url.Action("EditPrincipalDirectors", "Services")',
+            type: "POST",
+            data: proddata
+        })
+            .done(function (data) {
+                debugger;
+                SetCurrentTab(currenttab);
+                $(tableId).trigger('reloadGrid');
+                $(tabId + " :input").val("");
+                $('#EditIndividual1').addClass('hidden');
+                $('#EditIndividual2').addClass('hidden');
+                $('#EditIndividual3').addClass('hidden');
+                $('#EditIndividualPrincipal').addClass('hidden');
+                $('#EditPrincial6Sec').addClass('hidden');
+                $('#EditPrincial8Sec').addClass('hidden');
+                $('#EditPrincial12Sec').addClass('hidden');
+                $('#EditPrincial19sec').addClass('hidden');
+                $('#EditDateofRetirementSec').addClass('hidden');
+                $('#EditDateofDeceasedSec').addClass('hidden');
+                $('#EditOrgnamesec').addClass('hidden');
+
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("There was an error while trying to save the Vehicle.");
+            });
+    };
      function ValidatePrincipalDirectors(event) {
          debugger;
          event.preventDefault();
@@ -947,19 +1120,35 @@
              if (validity) {
                  validity = false;
              } else {
-                 $('#ValidatePrincial6').html("<i></i>");
+                 $('#ValidatePrincial1').html("<i></i>");
              }
          }
            if ($('#AddPrincial2').val() == '' && $('#AddPrincial14').val() == "Person - Individual") {
             $('#ValidatePrincial2').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
-            }
+            } else {
+                 $('#ValidatePrincial2').html("<i></i>");
+             }
          }if ($('#AddPrincial3').val() == '' && $('#AddPrincial14').val() == "Person - Individual") {
             $('#ValidatePrincial3').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
-            }
+            } else {
+                 $('#ValidatePrincial3').html("<i></i>");
+             }
+         }
+
+         if ($('#AddPrincial19').val() == 'true' && $('#AddPrincial15').val() == '' && $('#AddPrincial16').val() == '') {
+             $('#ValidatePrincial15').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
+             $('#ValidatePrincial16').html("<font color='red'>Date of Retirement or Date of Deceased is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+            $('#ValidatePrincial15').html("<i></i>");
+            $('#ValidatePrincial16').html("<i></i>");
+
+             }
          }
 
              for (var index = 4; index <= 5; index++) {
@@ -1082,6 +1271,11 @@
                 $('#Princial6Sec').addClass('hidden');
                 $('#Princial8Sec').addClass('hidden');
                 $('#Princial12Sec').addClass('hidden');
+                $('#AddPrincial19sec').addClass('hidden');
+                $('#AddDateofRetirementSec').addClass('hidden');
+                $('#AddDateofDeceasedSec').addClass('hidden');
+                $('#Orgnamesec').addClass('hidden');
+
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 alert("There was an error while trying to save the Vehicle.");
@@ -1114,4 +1308,10 @@
         });
     };
 
+    //jQuery("select.select-chosen").on('change', function (evt, params) {
+    //    debugger;
+    //jQuery(this).trigger('chosen:open');
+    //});
+
 </script>
+

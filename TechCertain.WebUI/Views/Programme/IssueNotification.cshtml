@@ -1,102 +1,77 @@
 ﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
-
-
 <!-- MAIN CONTENT -->
-<div id="content">
-    <!-- Bread crumb is created dynamically -->
-    <!-- row -->
+<div id="content" class="container">
     <div class="row">
-        <!-- col -->
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-file-o"></i>  <span>
-                    <a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-file-o"></i>  <span>
+                <a href="~/Programme/TermSheetConfirguration/@Model.Id">> Package Term Sheet</a>
 
-                    <a href="~/Programme/ManageRules/@Model.Id">> Package Term Sheet</a>
-                    > Manage Issue Notification
-
-                </span>
-
-
-            </h1>
-        </div>
-        <!-- end col -->
+                <a href="~/Programme/ManageRules/@Model.Id">> Manage Rules</a>
+                > @Model.Name
+            </span>
+        </h1>
     </div>
-    <span>
-        <a onclick="location.href='@Url.Action("TermSheetTemplate", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
-    </span>
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="col-sm-12 col-md-12 col-lg-6">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2>Manage Issue Notification Users </h2>
-                    </header>
-                    <!-- widget div-->
-                    <div>
-                        <div class="widget-body no-padding smart-form">
-                            <!-- content goes here -->
-                            @Html.HiddenFor(m => m.Id)
-                            <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="row">
-                                </div>
-                            </section>                   
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
-                               
-                                <div class="row">
 
-                                    <section class="col col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                                        <label class="label required">Select Party:</label>
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ManageRules", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
 
-                                    </section>
-                                    <section class="col col-xs-8 col-sm-8 col-md-8 col-lg-8">
+    <div class="row">
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-envelope text-white"></i> </span>
+                <h2>@Model.Name </h2>
+            </header>
+            <!-- widget div-->
+            <form class="client-form">
+                <!-- content goes here -->
+                @Html.HiddenFor(m => m.Id)
 
-                                        <label class="input form-group">
-                                            <select onchange="selectorgUser()" class="form-control b" id="selectParty" name="selectedparty" required>
-                                                <option selected="selected" value="">-- Select --</option>
-                                                @foreach (var blloc in Model.Parties)
-                                                {
-                                                    <option value="@blloc.Id"> @blloc.Name</option>
-                                                }
-                                            </select>
-                                        </label>
+                <table class="table table-bordered table-striped ">
+                    <tr>
+                        <td>
+                            <label class="label required">Select Party:</label>
+                        </td>
+                        <td>
+                            <label class="input form-group">
+                                <select onchange="selectorgUser()" class="form-control b" id="selectParty" name="selectedparty" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    @foreach (var blloc in Model.Parties)
+                                    {
+                                        <option value="@blloc.Id"> @blloc.Name</option>
+                                    }
+                                </select>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr id="OrgUserSection">
 
-                                    </section>
-                                </div>
+                        <td>
+                            <div id="div1"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="submit" class="btn btn-success btn-sm" onclick='addselectorgUser("@Model.Name")'>save</button>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
 
+            </form>
+        </div>
 
-                                <div class="row">
-
-                                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="OrgUserSection">
-                                        <div id="div1"></div>
-                                    </section>
-                                </div>
-
-                                <div class="row">
-                                    <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1" >
-                                        <div></div>
-                                    </section>
-
-                                    <button type="button" onclick="addselectorgUser()">save</button>
-                                </div>
-                            </section>
-
-
-                        </div>
-                    </div>
-                </div>
-            </article>
-         </div>
-    </section>
+    </div>
 </div>
 
 
 @section pagespecific {
-
-    @Html.Partial("_ProgrammeScripts")
+  
+    @await Html.PartialAsync("_ProgrammeScripts")
 
 }

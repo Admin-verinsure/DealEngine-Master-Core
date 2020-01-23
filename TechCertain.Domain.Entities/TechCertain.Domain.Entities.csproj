@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,10 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.0.0" />
-    <PackageReference Include="NHibernate.AspNetCore.Identity" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.0" />
+    <PackageReference Include="NHibernate.AspNetCore.Identity" Version="3.1.2" />
   </ItemGroup>
 
 </Project>

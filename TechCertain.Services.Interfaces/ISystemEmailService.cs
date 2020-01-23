@@ -20,7 +20,7 @@ namespace TechCertain.Services.Interfaces
 
         Task<SystemEmail> GetSystemEmailByType(string systemEmailType);
         Task UpdateSystemEmailTemplate(SystemEmail systemEmailTemplate);
-        Task<SystemEmail> GetEmailTemplateByMilestone(Milestone milestone, Activity activity);
+        Task<List<SystemEmail>> GetEmailTemplatesByMilestone(Milestone milestone);
     }
 }
 

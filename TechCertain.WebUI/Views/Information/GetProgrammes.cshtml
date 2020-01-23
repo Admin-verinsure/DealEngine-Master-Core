@@ -1,79 +1,85 @@
 ﻿@model TechCertain.WebUI.Models.InformationBuilderViewModel
 
-    <div id="content">
+<div id="content" class="container">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>  <span>
+                <a href="~/Home/Index">Dashboard</a>
+                > Information Templates
 
-
-        <section id="widget-grid" class="">
-            <div class="row">
-                <article class="container">
-                    <!-- new widget -->
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                        <header>
-                            <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
-                            <h2> Information Templates </h2>
-                        </header>
-                        <!-- widget div-->
-                        <div>
-
-                            <table class="table table-striped table-hover table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>InformationTemplate</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-
-
-                                <tbody>
-                                    @foreach (var item in Model.InformationTemplates)
-                                    {
-
-                                       <tr onclick="location.href='@Url.Action("GetProgrammeSections", "Information",new { informationTemplateID =item.Id })'" style="cursor:pointer">
-
-                                            <td>@item.Name</td>
-                                            <td>
-
-                                               <a class="btn btn-primary btn-xs disabled " href="/File/CreateDocument">Edit(In Dev)</a>
-                                            </td>
-
-
-                                       </tr>
-                                      
-                                    }
-                                     <tr>
-                                        <td>
-
-                                        </td>
-                                        <td>
-                                        <a class="btn btn-success btn-xs" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i>Create New Information Template</a>
-
-                                        </td>
-                                     </tr>
-                                </tbody>
-
-                            </table>
-
-
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-
+            </span>
+        </h1>
     </div>
+
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
+
+    <div class="row">
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
+                <h2> Information Templates </h2>
+            </header>
+            <!-- widget div-->
+            <div>
+
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>InformationTemplate</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        @foreach (var item in Model.InformationTemplates)
+                        {
+
+                            <tr onclick="location.href='@Url.Action("GetProgrammeSections", "Information",new { informationTemplateID =item.Id })'" style="cursor:pointer">
+
+                                <td>@item.Name</td>
+                                <td>
+
+                                    <a class="btn btn-primary btn-xs disabled " href="/File/CreateDocument">Edit(In Dev)</a>
+                                </td>
+
+
+                            </tr>
+
+                        }
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a class="btn btn-success btn-sm" href="/InformationBuilder/StagingBuilder"><i class="fa fa-search"></i>Create New Information Template</a>
+
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
 <!-- END MAIN CONTENT -->
 
 @section pagespecific {
-    <script src="/Scripts/datatables"></script>
-  
     <script type="text/javascript">
 
-        
-    function CreateSection(information) {
-        debugger;
-
-         $.ajax({
+        function CreateSection(information) {
+            $.ajax({
         // change back once mono decides to fix
         url: '@Url.Action("GetProgrammeSections", "Information")',
         type: "Post",
@@ -81,7 +87,7 @@
         data: JSON.stringify({ informationTemplateID: information})
     })
              .done(function (data) {
- 
+
                  for (var i = 0; i < data.length; i++) {
                      debugger;
                 var element1 = document.getElementById(data[i].Id);
@@ -125,7 +131,7 @@
                    function fncCreateSelectOption(ele, list) {
                         debugger;
                        var objSelect = ele;
-                       
+
                       for (var i = 0; i < list.length; i++) {
                         var split = list[i].Text.split("\n");
                         for (var j = 0; j < split.length; j++) {

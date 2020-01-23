@@ -1,125 +1,96 @@
 ﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
-
 <!-- MAIN CONTENT -->
-<div id="content">
+<div id="content" class="container">
     <!-- Bread crumb is created dynamically -->
     <!-- row -->
     <div class="row">
-        <!-- col -->
-        <div class="container">
-            <h1 class="page-title txt-color-blueDark">
-                <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i>  <span>
-                    <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet</a>
-                    > Manage Rules
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>  <span>
+                <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet</a>
+                > Manage Rules
 
-                </span>
-            </h1>
-            <span>
-                <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
             </span>
-        </div>
-        <!-- end col -->
+        </h1>
+    </div>
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
     </div>
 
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <div class="row">
-            <article class="container">
-                <!-- new widget -->
-                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-                    <header>
-                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                        <h2>Manage Rules </h2>
-                    </header>
-                    <!-- widget div-->
-                    <div>
-                        <div class="widget-body no-padding smart-form">
-                            <!-- content goes here -->
-                            
-                            <div> </div>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="HullConfigSection">
-                                @if (Model.BrokerContactUser == null)
-                                {
-                                    <label class="label">Broker User: Broker FirstName</label>
+    <div class="row">
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-comment text-white"></i> </span>
+                <h2>Manage Rules </h2>
+            </header>
 
-                                }
-                                else
-                                {
-                                    <label class="label">Broker User: @Model.BrokerContactUser.FirstName</label>
+            <table class="table table-bordered table-striped ">
+                <thead>
+                    <tr>
+                        @if (Model.BrokerContactUser == null)
+                        {
+                            <th>Broker User: Broker FirstName</th>
 
-                                }
+                        }
+                        else
+                        {
+                            <th class="th">Broker User: @Model.BrokerContactUser.FirstName</th>
 
-                            </section>
+                        }
+                    </tr>
+                </thead>
 
-                            <table class="table table-bordered table-striped ">
+                <tr class="table-light">
+                    <td align="left">
+                        Manage UIS Issue Notification Users
+                    </td>
+                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                </tr>
 
-                                <tr>
-                                    <td align="left">
-                                        @Html.ActionLink("Manage UIS Issue Notification Users", "IssueNotification", "Programme", new { Id = @Model.Id }, null)
-                                    </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                <tr>
+                    <td align="left">
+                        Manage UIS Submission Notification Users
+                    </td>
+                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                </tr>
 
-                                </tr>
+                <tr class="table-light">
+                    <td align="left">
+                        Manage Agreement Refer Notification Users
+                    </td>
+                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                </tr>
 
-                                <tr>
-                                    <td align="left">
-                                        @Html.ActionLink("Manage UIS Submission Notification Users", " SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
-                                    </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                <tr>
+                    <td align="left">
+                        Manage Agreement Refer Notification Users
+                    </td>
+                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                </tr>
 
-                                </tr>
+                <tr class="table-light">
+                    <td align="left">
+                        Manage Agreement Bound Notification Users
+                    </td>
+                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                </tr>
 
-                                <tr>
-                                    <td align="left">
-                                        @Html.ActionLink("Manage Agreement Refer Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
-                                    </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                @foreach (var product in Model.Product)
+                {
+                    <tr>
+                        <td align="left">
+                            New Product Rules for @product.Name
+                        </td>
+                        <td><a class="btn btn-success btn-sm " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
 
-                                </tr>
+                    </tr>
+                }
+            </table>
 
-                                <tr>
-                                    <td align="left">
-                                        @Html.ActionLink("Manage Agreement Issue Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
-                                    </td>
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                </tr>
-
-                                <tr>
-                                    <td align="left">
-                                        @Html.ActionLink("Manage Agreement Bound Notification Users", "SendEmailTemplates", "Programme", new { Id = @Model.Id }, null)
-                                    </td>
-                                    
-                                    <td><a class="btn btn-success btn-xs disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
-
-                                </tr>
-
-                                @foreach (var product in Model.Product)
-                                {
-                            <tr>
-                                <td align="left">
-                                    @Html.ActionLink("New Product Rules for " + product.Name, "ProductRules", "Programme", new { Id = @Model.Id, productId = product.Id }, null)
-                                </td>
-                                <td><a class="btn btn-success btn-xs " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
-
-                            </tr>
-                                }
-                                <tr>
-                                    <td align="left"></td>
-                                </tr>
-                            </table>
-                            @*@foreach (var product in Model.ProductName)
-                            {
-                                @Html.ActionLink("Product Rules for "+product, "/ProductRules", "Programme", new { Id = @Model.Id }, null)
-
-                            }*@
-
-                        </div>
-                    </div>
-                </div>
-            </article>
         </div>
-    </section>
+    </div>
 </div>
 

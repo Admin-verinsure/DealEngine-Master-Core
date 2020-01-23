@@ -8,6 +8,7 @@ namespace TechCertain.Services.Interfaces
     {
         Task<Claim> GetTemplateByName(string claimName);
         Task<List<Claim>> GetClaimsAllClaimsList();
+
     }
 }
 

@@ -43,37 +43,90 @@
         }
     });
 
+    //function PartySelected() {
+
+    //    var selectedWaterLoc = boatWaterLoc.options[boatWaterLoc.selectedIndex].value;
+    //    if (selectedWaterLoc == "add") {
+    //        $('#othermarinSection').removeClass('hidden');
+    //        $('#BoatMooredTypeSection').removeClass('hidden');
+
+    //        $("#MooredType").find('option').not(':selected').remove();
+    //         if (!($('#MooredType option:selected'))) {
+    //             $('#MooredType').append("<option selected value=\"\"> --Select-- </option>");
+    //            }
+    //        $('#MooredType').trigger('chosen:updated');
+    //        $('#MooredType').append("<option  value=\"Berthed\"> Berthed </option>")
+    //        $('#MooredType').append("<option  value=\"Pile\"> Pile </option>")
+    //        $('#MooredType').append("<option  value=\"Swing\"> Swing </option>")
+
+    //    } else {
+    //        GetMooredType(selectedWaterLoc);
+    //        $('#othermarinSection').addClass('hidden');
+
+    //    }
+    //   // selectedWaterLoc = "";
+    //}
+    
+     function getseletedorgUser() {
+        debugger;
+        var InformationId = $('#Id').val();
+        var postdata = { informationId: InformationId};
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("getselectedParty", "Programme")',
+	    type: "Post",
+        data: postdata
+	})
+            .done(function (data) {
+                debugger;
+
+                $.each(data, function (i, item) {
+                    $('#User[value = "Warren.J.Blomquist@marsh.com"]').prop('checked', true);
+             });
+	});
+    };
 
     function selectorgUser() {
         debugger;
         var SelectedParty = $('#selectParty').val();
         var InformationId = $('#Id').val();
+        var postdata = {selectedParty : SelectedParty , informationId: InformationId};
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("selectedParty", "Programme")',
 	    type: "Post",
-		contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ selectedParty: SelectedParty, informationId: InformationId })
+        data: postdata
 	})
-        .done(function (data) {
-            debugger;
+            .done(function (data) {
+                debugger;
             if (data.length > 0) {
                 $('#div1').empty();
                 $('#div1').append("<label class=\"label\" id=\"User\">Select User:</label><br>");
-                //$('#div1').append("<input type=\"checkbox\" id=\"checkedAll\" name=\"selectAll\" value=\"\">Select All<br>");
+                $('#div1').append("<input type=\"checkbox\" onclick='boxdisable(this)' name=\"checkbox\" id=\"checkboxall\" /> Select All <br/>");
 
             } else {
                 $('#div1').empty();
-                $('#div1').append("<label class=\"label\" id=\"User\">No User associated with party:</label><br>");
+                //$('#div1').append("<label class=\"label\" id=\"User\">No User associated with party:</label><br>");
             };
 
-              $.each(data, function (i, item) {
-                  $('#div1').append("<input type=\"checkbox\" class=\"PartyOrg\" name=\"PartyOrg\" value=" + item.Email + ">" + item.Name + "(" + item.Email + ")"+"<br>");
-                    });
+            $.each(data, function (i, item) {
+                  $('#div1').append("<input type=\"checkbox\" class=\"PartyOrg\" name=\"PartyOrg\" value=" + item.email + ">" + item.name + "(" + item.email + ")"+"<br>");
+            });
+
+                getseletedorgUser();
 	});
     };
 
-    function addselectorgUser() {
+    function boxdisable(source) {
+       debugger;
+     var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+    }
+    }
+
+    function addselectorgUser(Title) {
         debugger;
         var InformationId = $('#Id').val();
 
@@ -82,21 +135,21 @@
             favorite.push($(this).val());
         });
 
+        var proddata = { selectedParty: favorite, informationId: InformationId,title : Title };
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("AddselectedParty", "Programme")',
 	    type: "Post",
-		contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ selectedParty: favorite, informationId: InformationId })
+        data: proddata
 	})
         .done(function (data) {
             debugger;
-            $.smallBox({
-                title: "Selected Users has been added for notification",
-                color: "#5F895F",
-                iconSmall: "fa fa-check bounce animated",
-                timeout: 4000
-            });
+            //$.smallBox({
+            //    title: "Selected Users has been added for notification",
+            //    color: "#5F895F",
+            //    iconSmall: "fa fa-check bounce animated",
+            //    timeout: 4000
+            //});
 
 	});
     };
@@ -169,7 +222,7 @@
 
     });
 
-     function addselectorgUser() {
+     @*function addselectorgUser() {
         debugger;
         var InformationId = $('#Id').val();
 
@@ -195,7 +248,7 @@
             });
 
 	});
-    };
+    };*@
 
     function RuleSubmit() {
         debugger;

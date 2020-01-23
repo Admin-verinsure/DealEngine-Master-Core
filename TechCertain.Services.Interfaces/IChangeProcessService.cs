@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 
 namespace TechCertain.Services.Interfaces
@@ -7,7 +6,7 @@ namespace TechCertain.Services.Interfaces
 	public interface IChangeProcessService
     {
 
-        ChangeReason CreateChangeReason(User createdBy,ChangeReason changeReason);
+        Task CreateChangeReason(User createdBy,ChangeReason changeReason);
 
 
     }

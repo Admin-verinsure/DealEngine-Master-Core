@@ -18,18 +18,21 @@ namespace TechCertain.WebUI.Models
         public Boolean IsChange { get; set; }
         public Guid MilestoneId { get; set; }
         public string MilestoneStatus { get; set; }
+        public string CompanyName { get; set; }
 
         public string Name { get; set; }
         public string AgreementStatus { get; set; }
 
         public string Status { get; set; }
+        public string SheetStatus { get; set; }
         public string SectionView { get; set; }
         //public string UserRole { get; set; }
         public IEnumerable<String> UserRole { get; set; }
 
         public IEnumerable<InformationItem> SectionItems { get; set; }
-
         public List<InformationSection> Section { get; set; }
+        public List<string> ListProductName { get; set; }
+
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
 
         // TODO - find a better way to pass these in
@@ -254,6 +257,7 @@ namespace TechCertain.WebUI.Models
         public IList<SelectListItem> Activities { get; set; }
         public decimal TotalRevenue { get; set; }
         public RevenueByActivity RevenueData { get; set; }
+        public AdditionalActivityInformation AdditionalInformation { get; set; }
     }
 
     public class SharedRoleViewModel
@@ -261,8 +265,11 @@ namespace TechCertain.WebUI.Models
         public SharedRoleViewModel()
         {
             SharedRoles = new List<SelectListItem>();
+            SharedDataRoles = new List<SharedDataRole>();
         }
+        public string OtherProfessionId { get; set; }
         public IList<SelectListItem> SharedRoles { get; set; }
+        public IList<SharedDataRole> SharedDataRoles { get; set; }
     }
 
     public class BusinessActivityViewModel

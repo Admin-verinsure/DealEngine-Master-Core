@@ -40,27 +40,30 @@
                                                 <br />
                                                 <h3><strong>Setup </strong></h3>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-8 col-lg-8 ">
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.TextBoxFor(m => m.Name)
+
+                                                                @Html.TextBoxFor(m => m.Name, new { style="Width:25%" , @placeholder = Model.Name + "Name" })
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-8 col-lg-8">
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.TextAreaFor(m => m.Description)
+                                                                @*@Html.TextAreaFor(m => m.UserTask.Description, new { name = "content", cols = "100", rows = "2", @placeholder = "Task Description" })*@
+
+                                                                @Html.TextAreaFor(m => m.Description , new {style="Width:25%" , @placeholder = Model.Description + "Description"})
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-8 col-lg-8">
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
@@ -90,7 +93,7 @@
                                                     <div class="page-body">
                                                         <div class="head">
                                                             <h3 style="align-content:center">Document Has Been Saved</h3>
-                                                            <a class="btn btn-success btn-xs" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
+                                                            <a class="btn btn-success btn-sm" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
                                                         </div>
                                                     </div>
 
@@ -99,6 +102,7 @@
                                             </div>
 
                                         </div>
+                                    </div>
 
                                 </form>
                             </div>
@@ -110,19 +114,12 @@
         </div>
     </section>
 </div>
-
+@*<style>
+    .input-group{
+        width:80%;
+    }
+</style>*@
 @section pagespecific {
-    @*<script src="/Scripts/plugin/bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-        <script src="~/Scripts/plugin/bootstrap-progressbar/bootstrap-progressbar.js" defer></script>
-        <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-        <script src="~/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="~/lib/popper.js/umd/popper.js"></script>*@
-
-    @*<script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
-        <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
-        <script src="~/lib/popper.js/umd/popper.js"></script>*@
-
 
     <script src="~/jquery/jquery.js"></script>
     <script src="~/jqueryui/jquery-ui.js"></script>
@@ -134,25 +131,7 @@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
-    @*<script src="https ://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ ckeditor.js"></script>*@
-    @*<script type="module" >
-        import Alignment from './@@ckeditor/ckeditor5-alignment/src/alignment';
 
-
-         let editor;// <--- ADDED
-        ClassicEditor
-    .create( document.querySelector( '#Content' ), {
-        plugins: [ Essentials, Paragraph, Bold, Italic, Alignment ],     // <--- MODIFIED
-        toolbar: [ 'bold', 'italic', 'alignment' ]                       // <--- MODIFIED
-    } )
-    .then( editor => {
-        console.log( 'Editor was initialized', editor );
-    } )
-    .catch( error => {
-        console.error( error.stack );
-    } );
-
-    </script>*@
     <script type="text/javascript">
 
 //// DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -248,36 +227,26 @@ $(document).ready(function () {
              }
          }
      });
-
-        @*$('#Submit').on('click', function () {
-        debugger;
-    	if (confirm("Are you sure you want to submit this document?"))
-    	{
-	        console.log("submitted!");
-
-			$.ajax({
-				type: "POST",
-				url: '@Url.Action("CreateDocument", "File")',
-				data: $("#wizard-1").serialize() // serializes the form's elements.
-			})
-	        .done(function (json) {
-	        	//var model = JSON.parse(json);
-                debugger;
-				$("#productAutoReview")
-				console.log(json);
-	        })
-                .fail(function (err, ajaxOptions, thrownError) {
-                    debugger;
-				alert("Unable to save." + err.responseText );
-				console.log(err);
-				console.log(ajaxOptions);
-				console.log(thrownError);
-	        });
-        }
-    });*@
-
 });
 
+
+        $(window).on("load", function () {
+            debugger;
+            if ("@Model.Name" == "First Mate Cover Policy Wording") {
+              $("#documentType").val("0");
+            } else  if ("@Model.Name" == "First Mate Cover Policy Schedule") {
+                $("#documentType").val("2");
+            }else  if ("@Model.Name" == "First Mate Cover Insurance Certificate") {
+                $("#documentType").val("1");
+            }else  if ("@Model.Name" == "First Mate Cover Payment Confirmation") {
+                $("#documentType").val("3");
+            }else  if ("@Model.Name" == "First Mate Cover Invoice") {
+                $("#documentType").val("4");
+            }
+
+
+          
+        });
 
 
     </script>

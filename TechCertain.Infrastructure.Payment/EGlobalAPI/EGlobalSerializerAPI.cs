@@ -28,7 +28,8 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
         /// </summary>
         /// <param name="objPolicy">Object policy.</param>
-        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
+        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, Guid transactionreferenceid, string paymentType, bool reversetran, 
+            EGlobalSubmission originaleglobalsubmission)
         {
             string xml = "Failed to Serialize programme ";
             EGlobalAPI = new EGlobalAPI();
@@ -37,11 +38,17 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 foreach (Package package in programme.BaseProgramme.Packages)
                 {
                     EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
-                    EGlobalPolicyAPI.CreatePolicyInvoice();
-
+                    if (reversetran && originaleglobalsubmission!= null)
+                    {
+                        EGlobalPolicyAPI.CreateReversePolicyInvoice(originaleglobalsubmission);
+                    } else
+                    {
+                        EGlobalPolicyAPI.CreatePolicyInvoice();
+                    }
+                    
                     if (EGlobalPolicy != null)
                     {
-                        EGlobalPolicy.PaymentType = "INVOICE";
+                        EGlobalPolicy.PaymentType = paymentType; //Credit, Hunter, Invoice
                         xml = EGlobalPolicy.Serialize();
                         //removed for testing
                         //SaveXml(xml, EGlobalPolicy.FTPFolder);
@@ -50,9 +57,13 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                         using (var uow = _unitOfWork.BeginUnitOfWork())
                         {
                             EGlobalSubmission eGlobalSubmission = new EGlobalSubmission(CurrentUser);
+                            eGlobalSubmission.TransactionReferenceID = transactionreferenceid;
                             eGlobalSubmission.SubmissionRequestXML = xml;
                             eGlobalSubmission.EGlobalSubmissionPackage = package;
+                            eGlobalSubmission.EGlobalPaymentType = paymentType;
                             programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
+                            //save eglobal submission term
+                            EGlobalPolicyAPI.SaveTransactionTerms(eGlobalSubmission, _unitOfWork);
 
                             uow.Commit();
 
@@ -71,23 +82,12 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             return xml;
         }
 
-        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork)
+        public string DeSerializeResponse(string byteResponse, ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, EGlobalSubmission eglobalsubmission)
         {
             string xml = "Failed to Deserialize programme";            
             try
             {
-                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, CurrentUser, _unitOfWork);
-
-                ////Save the response transaction
-                //using (var uow = _unitOfWork.BeginUnitOfWork())
-                //{
-                //    EGlobalResponse eGlobalResponse = new EGlobalResponse(CurrentUser());
-                //    eGlobalResponse.ResponseXML = xml;
-                //    programme.ClientAgreementEGlobalResponses.Add(eGlobalResponse);
-
-                //    uow.Commit();
-
-                //}
+                xml = EGlobalAPI.ProcessAsyncResult(byteResponse, programme, CurrentUser, _unitOfWork, eglobalsubmission);
             }
             catch (Exception ex)
             {

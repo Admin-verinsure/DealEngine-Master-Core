@@ -23,7 +23,7 @@
 
                 <fieldset>
                     <div class="row">
-                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                        <section class="col col-xs-12">
                             @*<script src="~/jquery/jquery.min.js"></script>*@
                             <script type="text/javascript">
                                // $(document).ready(function () {
@@ -325,7 +325,7 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject)
-                                        { return '<button onclick="SetLocationRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedLocation\', \'#tblLocation\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                        { return '<button onclick="SetLocationRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedLocation\', \'#tblLocation\');SetCurrentTab(\'locTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
                                     },
                                     { name: "LocationType", align: 'center', key: 'true' },
 						            { name: "CommonName", align: 'center' },

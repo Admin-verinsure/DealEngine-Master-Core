@@ -1,7 +1,6 @@
 ﻿using NHibernate.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
@@ -11,17 +10,26 @@ namespace TechCertain.Services.Impl
 {
     public class ProductService : IProductService
     {        
-        public IMapperSession<Product> _ProductRepository;
+        public IMapperSession<Product> _productRepository;
 
-        public ProductService(IMapperSession<Product> ProductRepository)
+        public ProductService(IMapperSession<Product> productRepository)
         {
-            _ProductRepository = ProductRepository;
+            _productRepository = productRepository;
         }
 
-        public  Product GetAllProducts()
+        public async Task CreateProduct(Product product)
         {
-            return _ProductRepository.FindAll().FirstOrDefault();
+            await _productRepository.AddAsync(product);
         }
 
+        public async Task<List<Product>> GetAllProducts()
+        {
+            return await _productRepository.FindAll().ToListAsync();
+        }
+
+        public async Task<Product> GetProductById(Guid Id)
+        {
+            return await _productRepository.GetByIdAsync(Id);
+        }
     }
 }

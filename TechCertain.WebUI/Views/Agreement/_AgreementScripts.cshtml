@@ -1,13 +1,8 @@
-﻿<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-<script src="~/jquery/jquery.min.js"></script>
-<script src="~/lib/popper.js/umd/popper.min.js"></script>
-<script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
+﻿<script type="text/javascript">
 
-<script type="text/javascript">
-
-    $('#boatTable').on('click', '.clickable-row', function (event) {
-        $(this).addClass('active').siblings().removeClass('active');
-    });
+     $('#boatTable').on('click', '.clickable-row', function (event) {
+       $(this).addClass('active').siblings().removeClass('active');
+     });
 
 
     $('#hiddenInput').on('click', function () {
@@ -20,20 +15,8 @@
   picker.open();
     });
 
-
-
-
- //   $('#button').datepicker()
-	//.on('changeDate', function(ev){
- //       $('#button').datepicker('hide');
- //       alert(ev.date.valueOf());
- //   });
-
-
-
-
     $('#myModal').on('show.bs.modal', function (e) {
-        $('.modal').css('width', '600px');
+        $('.modal').css({"position": "absolute", "float": "left", "left": "25%", "width": "50%", "transform": "translate(-50 %, -50 %)"});
         var BoatPremium = $(e.relatedTarget).data('boat-premium');
         var BoatName = $(e.relatedTarget).data('boat-name');
 
@@ -73,6 +56,22 @@
 
     });
 
+     $('#SubTermModal').on('show.bs.modal', function (e) {
+        $('.modal').css('width', '600px');
+        debugger;
+        var subSumInsured = $(e.relatedTarget).data('sub-sum');
+        var subPremium = $(e.relatedTarget).data('sub-premium');
+        var subExcess = $(e.relatedTarget).data('sub-excess');
+        var subType = $(e.relatedTarget).data('sub-type');
+        var subId = $(e.relatedTarget).data('sub-id');
+        $(e.currentTarget).find('input[name="Id"]').val(subId);
+        $(e.currentTarget).find('input[name="TermType"]').val(subType);
+        $(e.currentTarget).find('input[name="SumInsured"]').val(subSumInsured);
+        $(e.currentTarget).find('input[name="Excess"]').val(subExcess);
+        $(e.currentTarget).find('input[name="Premium"]').val(subPremium);
+     });
+
+
     $('#LoadModal').on('show.bs.modal', function (e) {
 
         //clientAgreementId = @Model.ClientAgreementId
@@ -86,6 +85,12 @@
         $('.modal .modal-body').css('height', 'auto');
         var MotorId = $(e.relatedTarget).data('motor-id');
         $(e.currentTarget).find('input[name="MotorId"]').val(MotorId);
+     });
+
+     $('#confirmTermDelete').on('show.bs.modal', function (e) {
+        $('.modal .modal-body').css('height', 'auto');
+        var termId = $(e.relatedTarget).data('term-id');
+        $(e.currentTarget).find('input[name="TermId"]').val(termId);
     });
 
         $("#btnSubmit").click(function () {
@@ -125,6 +130,14 @@
 
         });
 
+         $("#btnTermSubmit").click(function () {
+            var valid = ValidateSubTerm();
+            if (valid) {
+                termSubmit();
+            }
+
+        });
+
         $("#btnMotorDelete").click(function () {
             debugger;
             var agreement = $("#ClientAgreementId").val();
@@ -145,6 +158,27 @@
                 }
             });
         });
+
+           $("#btnTermDelete").click(function () {
+            debugger;
+            var agreement = $("#ClientAgreementId").val();
+            var termId = $("#Term_Id").val();
+            var prodData = {
+                "clientAgreementId":agreement,
+                "TermId": termId
+            };
+            $.ajax({
+                type: "Post",
+                data: prodData,
+                url: "/Agreement/DeleteSubTerm",
+                success: function () {
+                    $("#myModal").modal("hide");
+                    location.reload(true);
+                    alert("Deleted Successfully!");
+
+                }
+            });
+           });
 
         $("#btnDelete").click(function () {
             debugger;
@@ -251,6 +285,40 @@
                 }
             } else {
                 $('#validateBoatFSL').html("");
+            }
+            return validation;
+    }
+
+     function ValidateSubTerm() {
+            debugger;
+            var termExcess = $("#TermExcess").val();
+            var termPremium = $("#TermPremium").val();
+            var termSum = $("#TermSumInsured").val();
+
+            var validation = true;
+            if (termExcess == "") {
+                $('#validateTermExcess').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateTermExcess').html("");
+            }
+            if (termPremium == "") {
+                $('#validateTermPremium').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            } else {
+                $('#validateTermPremium').html("");
+            }
+            if (termSum == "") {
+                $('#validateTermSum').html("<font color='red'>Field is required</font>");
+                if (validation) {
+                    validation = false;
+                }
+            }else {
+                $('#validateTermSum').html("");
             }
             return validation;
         }
@@ -530,6 +598,38 @@
                 type: "Post",
                 //data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
                 url: "/Agreement/EditMotorTerm",
+                //contentType: "application/json; charset=utf-8",
+                data: postData,
+                async: true,
+                success: function () {
+                    $("#myModal").modal("hide");
+                    alert("Saved Successfully!");
+                    location.reload(true);
+
+                }
+            });
+        }
+
+     function termSubmit() {
+            debugger;
+            var agreement = $("#ClientAgreementId").val();
+            var termType = $("#TermType").val();
+            var SumInsured = $("#TermSumInsured").val().replace("$", " ");
+            var Excess = $("#TermExcess").val().replace("$", " ");
+            var Premium = $("#TermPremium").val().replace("$", " ");
+            var id = $("#TermId").val();
+            var postData = {
+                "TermLimit": SumInsured.replace(/,/g, '').trim(),
+                "Excess": Excess.replace(/,/g, '').trim(),
+                "Premium": Premium.replace(/,/g, '').trim(),
+                "TermId": id,
+                "TermType": termType,
+                clientAgreementId : agreement
+            };
+            $.ajax({
+                type: "Post",
+                //data: JSON.stringify({ clientAgreementId: agreement, clientAgreementMVTerm: prodData }),
+                url: "/Agreement/EditSubTerm",
                 //contentType: "application/json; charset=utf-8",
                 data: postData,
                 async: true,

@@ -1297,11 +1297,11 @@ var initApp = (function(app) {
 		/**
 		 * Start bootstrap tooltips
 		 **/
-		if( typeof($.fn.tooltip) !== 'undefined' && $('[data-toggle="tooltip"]').length ){
-			$('[data-toggle="tooltip"]').tooltip(); /*{html: true}*/
-		} else {
-			console.log("OOPS! bs.tooltip is not loaded");
-		}
+		//if( typeof($.fn.tooltip) !== 'undefined' && $('[data-toggle="tooltip"]').length ){
+  //          $('[data-toggle="tooltip"]').tooltip(); /*{html: true}*/
+		//} else {
+		//	console.log("OOPS! bs.tooltip is not loaded");
+		//}
 
 		/**
 		 * Start bootstrap popovers

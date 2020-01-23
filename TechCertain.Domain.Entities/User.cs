@@ -113,6 +113,7 @@ namespace TechCertain.Domain.Entities
         public virtual IList<Programme> PaymentConfigNotifyProgrammes { get; set; }
 
         public virtual IList<Programme> InvoiceConfigNotifyProgrammes { get; set; }
+        
 
         public User(User createdBy, string strUsername)
 			: this (createdBy)

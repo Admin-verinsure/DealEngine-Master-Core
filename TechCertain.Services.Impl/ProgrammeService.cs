@@ -132,10 +132,36 @@ namespace TechCertain.Services.Impl
             return await _programmeRepository.GetByIdAsync(ProgrammeId);
         }
 
-        public async Task AttachProgrammeToharedRole(Programme programme, SharedDataRoleTemplate sharedRole)
+        public async Task AttachProgrammeToSharedRole(Programme programme, SharedDataRoleTemplate sharedRole)
         {
             programme.SharedDataRoleTemplates.Add(sharedRole);
             await _programmeRepository.UpdateAsync(programme);
+        }
+
+        public async Task AddOrganisationByMembership(Organisation organisation)
+        {
+            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == organisation.NZIAmembership);
+            clientProgramme.InformationSheet.Organisation.Add(organisation);
+            await _clientProgrammeRepository.UpdateAsync(clientProgramme);
+        }
+
+        public async Task AddClaimNotificationByMembership(ClaimNotification claimNotification)
+        {
+            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == claimNotification.ClaimMembershipNumber);
+            clientProgramme.InformationSheet.ClaimNotifications.Add(claimNotification);
+            await _clientProgrammeRepository.UpdateAsync(clientProgramme);
+        }
+
+        public async Task AddBusinessContractByMembership(BusinessContract businessContract)
+        {
+            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == businessContract.MembershipNumber);
+            clientProgramme.InformationSheet.BusinessContracts.Add(businessContract);
+            await _clientProgrammeRepository.UpdateAsync(clientProgramme);
+        }
+
+        public async Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID)
+        {
+            return await _clientProgrammeRepository.GetByIdAsync(clientProgrammeID);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
@@ -9,84 +8,103 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
     public class OrganisationController : BaseController
     {
-        private readonly IOrganisationService _organisationService;
-        private readonly IOrganisationTypeService _organisationTypeService;
-        IInsuranceAttributeService _insuranceAttributeService;
-        IMapperSession<InsuranceAttribute> _InsuranceAttributesRepository;
-        IMapper _mapper;
+        IOrganisationService _organisationService;
+        IOrganisationTypeService _organisationTypeService;
+        IInsuranceAttributeService _insuranceAttributeService;               
         IUnitOfWork _unitOfWork;
+        IApplicationLoggingService _applicationLoggingService;
+        ILogger<OrganisationController> _logger;
 
-        //private readonly ICompanyService _companyService;
-
-        public OrganisationController(IOrganisationService organisationService,
+        public OrganisationController(
+            ILogger<OrganisationController> logger,
+            IApplicationLoggingService applicationLoggingService,
+            IOrganisationService organisationService,
             IOrganisationTypeService organisationTypeService, 
             IUnitOfWork unitOfWork, 
-            IInsuranceAttributeService insuranceAttributeService,
-            IMapper mapper,
-            IMapperSession<InsuranceAttribute> insuranceAttributesRepository,
-            IUserService userRepository)
+            IInsuranceAttributeService insuranceAttributeService,            
+            IUserService userRepository
+            )
             : base (userRepository)
         {
-            _organisationService = organisationService;
-            _InsuranceAttributesRepository = insuranceAttributesRepository;
+            _logger = logger;
+            _applicationLoggingService = applicationLoggingService;
+            _organisationService = organisationService;            
             _organisationTypeService = organisationTypeService;
             _insuranceAttributeService = insuranceAttributeService;
             _unitOfWork = unitOfWork;
-            _insuranceAttributeService = insuranceAttributeService;
-            //_companyService = companyService;
+            _insuranceAttributeService = insuranceAttributeService;            
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             BaseListViewModel<OrganisationViewModel> organisations = new BaseListViewModel<OrganisationViewModel>();
+            User user = null;
 
-            User user = await CurrentUser();
-            foreach (Organisation org in user.Organisations)
+            try
             {
-                OrganisationViewModel model = new OrganisationViewModel
+                user = await CurrentUser();
+                foreach (Organisation org in user.Organisations)
                 {
-                    ID = org.Id,
-                    OrganisationName = org.Name,
-                    OrganisationTypeName = org.OrganisationType != null ? org.OrganisationType.Name : string.Empty,
-                    Website = org.Domain,
-                    Phone = org.Phone,
-                    Email = org.Email,
-                    IsPrimary = org.Id == user.PrimaryOrganisation.Id
-                };
-                organisations.Add(model);
-            }
+                    OrganisationViewModel model = new OrganisationViewModel
+                    {
+                        ID = org.Id,
+                        OrganisationName = org.Name,
+                        OrganisationTypeName = org.OrganisationType != null ? org.OrganisationType.Name : string.Empty,
+                        Website = org.Domain,
+                        Phone = org.Phone,
+                        Email = org.Email,
+                        IsPrimary = org.Id == user.PrimaryOrganisation.Id
+                    };
+                    organisations.Add(model);
+                }
 
-            return View(organisations);
+                return View(organisations);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(OrganisationViewModel model)
         {
-            var user = await CurrentUser();
-            Organisation org = user.Organisations.FirstOrDefault(o => o.Id == model.ID);
-            if (org != null)
+            User user = null;
+
+            try
             {
-                org.ChangeOrganisationName(model.OrganisationName);
-                // Org type here
-                org.Domain = (model.Website != "Empty") ? model.Website : "";
-                org.Email = (model.Email != "Empty") ? model.Email : "";
-                org.Phone = (model.Phone != "Empty") ? model.Phone : "";
-
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                user = await CurrentUser();
+                Organisation org = user.Organisations.FirstOrDefault(o => o.Id == model.ID);
+                if (org != null)
                 {
-                    await _organisationService.UpdateOrganisation(org);
-                    await uow.Commit();
-                }
-                return Content("success");
-            }
+                    org.ChangeOrganisationName(model.OrganisationName);
+                    // Org type here
+                    org.Domain = (model.Website != "Empty") ? model.Website : "";
+                    org.Email = (model.Email != "Empty") ? model.Email : "";
+                    org.Phone = (model.Phone != "Empty") ? model.Phone : "";
 
-            throw new Exception("No organisation found with Id '" + model.ID + "'");
+                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        await _organisationService.UpdateOrganisation(org);
+                        await uow.Commit();
+                    }
+                    return Content("success");
+                }
+                throw new Exception("No organisation found with Id '" + model.ID + "'");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpGet]
@@ -99,231 +117,192 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> AddNewOrganisation(Guid programmeId)
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
-            organisationViewModel.ProgrammeId = programmeId;
-            //var insuranceAttributes = new List<InsuranceAttribute>();
-            //try
-            //{
-            //    foreach (InsuranceAttribute IA in _InsuranceAttributesRepository.FindAll().Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Marina" || ia.InsuranceAttributeName == "Other Marina"))
-            //    {
+            User user = null;
 
-            //        foreach (var org in IA.IAOrganisations)
-            //        {
-            //            if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Limited liability")
-            //            {
-            //                foreach(var ia in org.InsuranceAttributes)
-            //                {
-            //                    insuranceAttributes.Add(ia);
-
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-
-            //organisationViewModel.InsuranceAttributes = new List<SelectListItem>
-            //   {
-            //    new SelectListItem {Text = "Select", Value = "Select"},
-            //    new SelectListItem {Text = "Marina", Value = "Marina"},
-            //   new SelectListItem {Text = "Other Marina", Value = "Other Marina"},
-            //   new SelectListItem {Text = "Financial", Value = "Financial"},
-            //   };
-
-
-
-
-            //InsuranceAttribute insuranceAttribute = new InsuranceAttribute();
-            organisationViewModel.OrgMooredType = new List<SelectListItem>
+            try
             {
-                new SelectListItem {Text = "Berthed", Value = "Berthed"},
-                new SelectListItem {Text = "Pile", Value = "Pile"},
-                new SelectListItem {Text = "Swing", Value = "Swing"},
-            };
+                organisationViewModel.ProgrammeId = programmeId;
 
-            return View("AddNewOrganisation", organisationViewModel);
+                organisationViewModel.OrgMooredType = new List<SelectListItem>()
+                {
+                    new SelectListItem {Text = "Berthed", Value = "Berthed"},
+                    new SelectListItem {Text = "Pile", Value = "Pile"},
+                    new SelectListItem {Text = "Swing", Value = "Swing"},
+                };
+
+                return View("AddNewOrganisation", organisationViewModel);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateOrganisation()
         {
-            var user = await _userService.GetUser("TCMarinaAdmin1");
-            var orgType = Request.Form["OrganisationType"];
-            var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');          
+            User user = null;
 
-            OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgType);
-            if (organisationType == null)
+            try
             {
-                organisationType = await _organisationTypeService.CreateNewOrganisationType(user, orgType);
-            }
+                user = await CurrentUser();
+                var orgUser = await _userService.GetUser("TCMarinaAdmin1");
+                var orgType = Request.Form["OrganisationType"];
+                var selectedMooredType = Request.Form["OrganisationMarinaOrgMooredType"].ToString().Split(',');
 
-            var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
-            InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
-            if (insuranceAttribute == null)
-            {
-                insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
-            }
-
-            Organisation organisation = await _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
-            if (organisation == null)
-            {
-                organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
-                organisation.Phone = Request.Form["OrganisationPhone"];
-                organisation.Email = Request.Form["OrganisationEmail"];
-                organisation.Domain = Request.Form["OrganisationWebsite"];
-                organisation.InsuranceAttributes.Add(insuranceAttribute);
-                organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
-
-                foreach (string MooredType in selectedMooredType)
+                OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgType);
+                if (organisationType == null)
                 {
-                    organisation.marinaorgmooredtype.Add(MooredType);
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(user, orgType);
                 }
 
-                organisation.InsuranceAttributes.Add(insuranceAttribute);
-                insuranceAttribute.IAOrganisations.Add(organisation);
-                await _organisationService.CreateNewOrganisation(organisation);
+                var insuranceAttributeName = Request.Form["InsuranceAttributeName"];
+                InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(insuranceAttributeName);
+                if (insuranceAttribute == null)
+                {
+                    insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(user, insuranceAttributeName);
+                }
+
+                Organisation organisation = await _organisationService.GetOrganisationByEmail(Request.Form["OrganisationEmail"]);
+                if (organisation == null)
+                {
+                    organisation = new Organisation(user, Guid.NewGuid(), Request.Form["OrganisationName"], organisationType);
+                    organisation.Phone = Request.Form["OrganisationPhone"];
+                    organisation.Email = Request.Form["OrganisationEmail"];
+                    organisation.Domain = Request.Form["OrganisationWebsite"];
+                    organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    organisation.IsApproved = insuranceAttributeName == "Marina" ? true : false;
+
+                    foreach (string MooredType in selectedMooredType)
+                    {
+                        organisation.Marinaorgmooredtype.Add(MooredType);
+                    }
+
+                    organisation.InsuranceAttributes.Add(insuranceAttribute);
+                    insuranceAttribute.IAOrganisations.Add(organisation);
+                    await _organisationService.CreateNewOrganisation(organisation);
+                }
+
+                Location location = new Location(user)
+                {
+                    CommonName = Request.Form["LocationCommonName"],
+                    Country = Request.Form["LocationCountry"],
+                    Suburb = Request.Form["LocationSuburb"],
+                    Street = Request.Form["LocationStreetAddress"],
+                    City = Request.Form["LocationCity"],
+                    Postcode = Request.Form["LocationPostCode"]
+                };
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    OrganisationalUnit ou = new OrganisationalUnit(user, "Main Entrance");
+                    organisation.OrganisationalUnits.Add(ou);
+                    location.OrganisationalUnits.Add(ou);
+                    ou.Locations.Add(location);
+                    await uow.Commit();
+                }
+                
+                return RedirectToAction("AddNewOrganisation", "Organisation");
             }
-
-            Location location = new Location(user)
+            catch (Exception ex)
             {
-                CommonName = Request.Form["LocationCommonName"],
-                Country = Request.Form["LocationCountry"],
-                Suburb = Request.Form["LocationSuburb"],
-                Street = Request.Form["LocationStreetAddress"],
-                City = Request.Form["LocationCity"],
-                Postcode = Request.Form["LocationPostCode"]
-            };
-
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            {
-                OrganisationalUnit ou = new OrganisationalUnit(user, "Main Entrance");
-                organisation.OrganisationalUnits.Add(ou);                
-                location.OrganisationalUnits.Add(ou);
-                ou.Locations.Add(location);                
-                await uow.Commit();
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
-
-            return Redirect("~/Organisation/AddNewOrganisation");            
         }
 
 
         public async Task<IActionResult> SetPrimary(Guid id)
         {
-            var user = await CurrentUser();
-            Organisation org = user.Organisations.FirstOrDefault(o => o.Id == id);
-            if (org != null)
-            {
-                //CurrentUser().Organisations.Remove (org);
-                //CurrentUser().Organisations.Insert (0, org);
-                user.SetPrimaryOrganisation(org);
+            User user = null;
 
-                await _userService.Update(user);
+            try
+            {
+                user = await CurrentUser();
+                Organisation org = user.Organisations.FirstOrDefault(o => o.Id == id);
+                if (org != null)
+                {
+                    user.SetPrimaryOrganisation(org);
+                    await _userService.Update(user);
+                }
+
+                return Redirect("~/Organisation/Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
             }
 
-            return Redirect("~/Organisation/Index");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Editing_Popup()
-        {
-            return View();
-        }
-
-        //public async Task<IActionResult> EditingPopup_Read ([DataSourceRequest] DataSourceRequest request)
-        //{
-        //IEnumerable<OrganisationViewModel> items = _companyService.GetCompanies ()
-        //	.Select (x => new OrganisationViewModel {
-        //	Name = x.Name,
-        //	ID = x.Id				
-        //});
-
-        //return Json (items.ToDataSourceResult (request));
-
-        //}
-
-        //[AcceptVerbs (HttpVerbs.Post)]
-        //public async Task<IActionResult> EditingPopup_Create ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
-        //{
-        //    if (company != null && ModelState.IsValid) {
-
-        //        //_companyService.CreateNewCompany (new Company () {
-        //        //    ID = company.ID,
-        //        //    Name = company.Name
-        //        //});
-        //    }
-
-        //    return Json (new[] { company }.ToDataSourceResult (request, ModelState));
-        //}
-
-        //[AcceptVerbs (HttpVerbs.Post)]
-        //public async Task<IActionResult> EditingPopup_Update ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
-        //{
-        //    if (company != null && ModelState.IsValid) {
-
-        //        //Organisation updateCompany = _companyService.GetCompany (company.ID);
-
-        //        //updateCompany.Name = company.Name;
-
-        //        //_companyService.UpdateExistingCompany (updateCompany);
-        //    }
-
-        //    return Json (new[] { company }.ToDataSourceResult (request, ModelState));
-        //}
-
-        //[AcceptVerbs (HttpVerbs.Post)]
-        //public async Task<IActionResult> EditingPopup_Destroy ([DataSourceRequest] DataSourceRequest request, OrganisationViewModel company)
-        //{
-        //    if (company != null) {
-
-        //        //Organisation updateCompany = _companyService.GetCompany (company.ID);
-
-        //        //updateCompany.DeletedDate = DateTime.UtcNow;
-
-        //        //_companyService.UpdateExistingCompany (updateCompany);
-        //    }
-
-        //    return Json (new[] { company }.ToDataSourceResult (request, ModelState));
-        //}
+        }    
 
         [HttpGet]
         public async Task<IActionResult> Register()
         {
             OrganisationViewModel organisationViewModel = new OrganisationViewModel();
+            User user = null;
 
-            organisationViewModel.OrganisationTypes = _organisationTypeService.GetOrganisationTypes().Select(x => x.Name);
-
-            return View(organisationViewModel);
+            try
+            {
+                user = await CurrentUser();
+                organisationViewModel.OrganisationTypes = _organisationTypeService.GetOrganisationTypes().Select(x => x.Name);
+                return View(organisationViewModel);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(OrganisationViewModel organisationViewModel)
         {
-            var user = await CurrentUser();
-            _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
-                                                       new OrganisationType(user, organisationViewModel.OrganisationTypeName),
-                                                       organisationViewModel.FirstName,
-                                                       organisationViewModel.LastName,
-                                                       organisationViewModel.Email);
+            User user = null;
 
-            return View();
+            try
+            {
+                user = await CurrentUser();
+                _organisationService.CreateNewOrganisation(organisationViewModel.OrganisationName,
+                                                           new OrganisationType(user, organisationViewModel.OrganisationTypeName),
+                                                           organisationViewModel.FirstName,
+                                                           organisationViewModel.LastName,
+                                                           organisationViewModel.Email);
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         public async Task<IActionResult> CreateDefault()
         {
-            var user = await CurrentUser();
-            OrganisationType ot = new OrganisationType(user, "financial");
-            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            User user = null;
+
+            try
             {
-                await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ANZ Bank", ot));
-                await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ASB Bank", ot));
-                await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "BNZ Bank", ot));
+                user = await CurrentUser();
+                OrganisationType ot = new OrganisationType(user, "financial");
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ANZ Bank", ot));
+                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "ASB Bank", ot));
+                    await _organisationService.UpdateOrganisation(new Organisation(user, Guid.NewGuid(), "BNZ Bank", ot));
 
-                await uow.Commit();
+                    await uow.Commit();
+                }
+
+                return Redirect("~/Home/Index");
             }
-
-            return Redirect("~/Home/Index");
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
     }
 }

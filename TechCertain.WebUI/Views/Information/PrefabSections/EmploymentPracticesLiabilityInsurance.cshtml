@@ -38,7 +38,7 @@
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="input">
-                                <select id="EmployerPracticesLiability2" class="form-control rmv editable" name="EmployerPracticesLiability2">
+                                <select id="EmployerPracticesLiability2" onchange="EmployerPracticesLiabilityInsurance2Selected('EmployerPracticesLiability2')" class="form-control rmv editable" name="EmployerPracticesLiability2">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -50,12 +50,89 @@
 
                     </section>
 
+                    <div class="hidden" id="LiabilityInsuranceSec">
+                        <h3 style="font-size:15px;font-weight:bold;color:black">Details of Previous Insurance</h3>
+                        <br />
 
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    $ Amount of Cover:
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="EmployerPracticesLiability3" name="EmployerPracticesLiability3" placeholder="$ Amount of Cover" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerPractices3"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    When Lapsed:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="EmployerPracticesLiability4" placeholder="Lapsed Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="EmployerPracticesLiability4" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerPractices4"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Name of Insurer:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b form-group" type="text" data-type="TEXTBOX" id="EmployerPracticesLiability5" name="EmployerPracticesLiability5" placeholder="Insurer Name" value="" required>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerPractices5"></p>
+
+                            </section>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">
+                                    Retroactive date:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input form-group">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="EmployerPracticesLiability6" placeholder="Retroactive Date" class="datepicker form-control b" data-dateformat="dd/mm/yy" id="EmployerPracticesLiability6" type="text">
+                                    </label>
+                                </label>
+                                <p class="validationContainer" id="ValidateEmployerPractices6"></p>
+
+                            </section>
+
+                        </section>
+
+                    </div>
 
                 </div>
             </div>
 
-            <button onclick="ValidatePractice(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            @*<button onclick="ValidatePractice(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>*@
             @*<button onclick="SaveEmployerLiability(event,'#DNOForm')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
 
         </fieldset>
@@ -66,7 +143,6 @@
 <script type="text/javascript">
 
          $(window).on("load", function () {
-            debugger;
 
            var clientInformationSheet = $('#AnswerSheetId').val();
            var postData = {ClientInformationSheet : clientInformationSheet};
@@ -79,8 +155,15 @@
              data: postData
              })
                 .done(function (data) {
-                    debugger;
-             if (data != "") {
+                    var valid = "true";
+                    for (var i = 0; i < data.length-5; i++) {
+                        if (data[i] == null) {
+                            if (valid) {
+                                valid = "false";
+                            }
+                        }
+                    }
+             if (data != "" && valid == "true") {
                 for (var item = 0; item < data.length; item++){
 
                   var arr = data[item];
@@ -92,15 +175,21 @@
                     } else {
                         $('#EmployerPracticesLiability2Sec').addClass('hidden');
                     }
+                     if ($('#EmployerPracticesLiability2').val() == 'false') {
+                        $('#LiabilityInsuranceSec').removeClass('hidden');
+
+                    } else {
+                        $('#LiabilityInsuranceSec').addClass('hidden');
+                    }
                 }
              };
 
                 })
                 .fail(function (a, s, d) {
-                    debugger;
                   alert("Unable to save.");
                 });
          });
+
 
     function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {
         debugger;
@@ -110,9 +199,31 @@
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "true") {
             $('#EmployerPracticesLiability2Sec').removeClass('hidden');
         } else {
+            $('#EmployerPracticesLiability2').val('');
+            $('#EmployerPracticesLiability3').val('');
+            $('#EmployerPracticesLiability4').val('');
+            $('#EmployerPracticesLiability5').val('');
+            $('#EmployerPracticesLiability6').val('');
             $('#EmployerPracticesLiability2Sec').addClass('hidden');
         }
     };
+
+    
+    function EmployerPracticesLiabilityInsurance2Selected(EmployerPracticesLiability) {
+        debugger;
+        var employerPracticesLiability = document.getElementById(EmployerPracticesLiability);
+
+        if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "false") {
+            $('#LiabilityInsuranceSec').removeClass('hidden');
+        } else {
+              $('#EmployerPracticesLiability3').val('');
+              $('#EmployerPracticesLiability4').val('');
+              $('#EmployerPracticesLiability5').val('');
+              $('#EmployerPracticesLiability6').val('');
+              $('#LiabilityInsuranceSec').addClass('hidden');
+        }
+    };
+    
 
      function ValidatePractice() {
         event.preventDefault();
@@ -137,22 +248,35 @@
             $('#ValidateEmployerPractices2').html("<i></i>");
         }
 
-        if (validity) {
-            SaveEmployerPracticesLiability(); 
-        }
+           for (var index = 3; index <=6; index++) {
+                     var employerLiabilityInsurance = "#EmployerPracticesLiability" + index;
+                 var value = $(employerLiabilityInsurance).val();
+                 var validator = "#ValidateEmployerPractices" + index;
+
+                  if (value == "" && ($('#EmployerPracticesLiability2').val()=='false')) {
+              $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                  validity = false;
+                }
+                  } else {
+                     $(validator).html("<i></i>");
+                  }
+         }
+         return validity;
+        //if (validity) {
+        //    SaveEmployerPracticesLiability(); 
+        // }
     };
 
 
 
        function SaveEmployerPracticesLiability() {
-            debugger;
-                   var EmployerPracticesLiability = new Array(2);
-
+                   var EmployerPracticesLiability = new Array(6);
                    for (var i = 0; i < EmployerPracticesLiability.length; i++) {
                        EmployerPracticesLiability[i] = new Array(2);
                    }
 
-            for (var i = 1; i <= 2; i++) {
+            for (var i = 1; i <= 6; i++) {
                 for (var j = 0; j < 2; j++) {
                     EmployerPracticesLiability[i-1][0] = "EmployerLiabilityInsurance" + i;
                 var employerPracticesLiability = "#EmployerLiabilityInsurance" + i;
@@ -169,7 +293,7 @@
                            data: postData
                        })
                            .done(function (data) {
-
+                                  return true;
                            })
                            .fail(function (a, s, d) {
                                alert("Unable to save.");
@@ -178,4 +302,10 @@
 
         }
 </script>
-
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>
