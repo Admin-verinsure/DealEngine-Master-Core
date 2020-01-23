@@ -81,7 +81,18 @@
                 debugger;
 
                 $.each(data, function (i, item) {
-                    $('#SelectedUser[value = "Warren.J.Blomquist@marsh.com"]').attr('selected', true);
+                    //$('#SelectedUser[value = "Warren.J.Blomquist@marsh.com"]').attr('checked', 'checked');
+                    //.prop('checked', true);
+                    $("input[value = '"+item+"']").attr('checked', 'checked');
+
+                   // $('SelectedUser[value = "Liam.Quann@marsh.com"]').val(true);
+                   // $('#SelectedUser[value = "Liam.Quann@marsh.com"]').val(true);
+                   //                    $('#SelectedUser[value = "marsh@techcertain.com"]').prop('selected','selected');
+
+                   //$('#SelectedUser[value = "marshtest1@techcertain.com"]').prop('selected','true');
+
+                    
+                    
                 });
             }).fail(function (a, s, d) {
                        debugger;
