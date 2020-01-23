@@ -47,16 +47,7 @@ namespace TechCertain.Services.Impl
             _httpRequestMessage.Headers.Add("SOAPAction", SOAPAction);
 
             try
-            {
-                var logInfo = new LogInfo();
-                logInfo.AnalyzeXMLRSA = "test save";
-                //_logInfoMapperSession.AddAsync(logInfo);
-
-                Console.WriteLine("Content: ");
-                Console.WriteLine(HardCodedRSABody());
-                Console.WriteLine("Timestamp: ");
-                Console.WriteLine(DateTime.UtcNow.ToString());
-
+            {               
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();

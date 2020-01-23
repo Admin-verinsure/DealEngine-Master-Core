@@ -501,10 +501,10 @@ namespace TechCertain.WebUI.Controllers
                 {
                     throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
                 }
-
+                string paymentType = "Credit";
                 Guid transactionreferenceid = Guid.NewGuid();
 
-                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid);
+                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, null);
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
@@ -699,9 +699,23 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ReverseTransaction(Guid transId)
         {
-            EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transId);
-            
-            //await _programmeService.Update(programme).ConfigureAwait(false);
+            EGlobalSubmission originalEglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmission(transId);
+            User user = null;
+            user = await CurrentUser();
+            var eGlobalSerializer = new EGlobalSerializerAPI();
+            string paymentType = "Credit";
+            Guid transactionreferenceid = Guid.NewGuid();
+
+            var xmlPayload = eGlobalSerializer.SerializePolicy(originalEglobalsubmission.EGlobalSubmissionClientProgramme, user, _unitOfWork, transactionreferenceid, paymentType, true, originalEglobalsubmission);
+
+            var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
+
+            EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
+
+            eGlobalSerializer.DeSerializeResponse(byteResponse, originalEglobalsubmission.EGlobalSubmissionClientProgramme, user, _unitOfWork, eglobalsubmission);
+
+            await _programmeService.Update(originalEglobalsubmission.EGlobalSubmissionClientProgramme).ConfigureAwait(false);
+
             return Redirect("EditBillingConfiguration" );
         }
 

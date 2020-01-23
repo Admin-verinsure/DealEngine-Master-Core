@@ -1210,8 +1210,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                     this.ruleNameField = value;
                 }
             }
-            #endregion
         }
-    } 
-}
+        #endregion
+    }
+} 
+
 
