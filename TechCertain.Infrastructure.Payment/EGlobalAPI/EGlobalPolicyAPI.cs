@@ -1224,14 +1224,15 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             {
                 pr.CoyPremium = (clientAgreementTerm.PremiumDiffer * EGlobalPolicy.DiscountRate);
                 pr.LeviesB = clientAgreementTerm.FSLDiffer;     //fsl;
+                pr.BrokerAmountDue = clientAgreementTerm.BrokerageDiffer;
             } else
             {
                 pr.CoyPremium = (clientAgreementTerm.Premium * EGlobalPolicy.DiscountRate);
                 pr.LeviesB = clientAgreementTerm.FSL;     //fsl;
+                pr.BrokerAmountDue = clientAgreementTerm.Brokerage;
             }
 
             pr.GSTPremium = (pr.CoyPremium * packageProduct.PackageProductProduct.TaxRate);
-            pr.BrokerAmountDue = clientAgreementTerm.Brokerage;
             pr.GSTBrokerage = (pr.BrokerAmountDue * packageProduct.PackageProductProduct.TaxRate);
             pr.DueByClient = (pr.CoyPremium + pr.GSTPremium);
             pr.BrokerCeqDue = 0m;

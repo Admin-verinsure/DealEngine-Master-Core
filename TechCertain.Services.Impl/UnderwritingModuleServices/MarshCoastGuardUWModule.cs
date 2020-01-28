@@ -95,6 +95,8 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             decimal totalBoatPremiumDiffer = 0m;
             int totalBoatTermLimitPre = 0;
             int totalBoatTermLimitDiffer = 0;
+            decimal totalBoatBrokeragePre = 0m;
+            decimal totalBoatBrokerageDiffer = 0m;
 
             decimal totalVehicleFslPre = 0m;
             decimal totalVehicleFslDiffer = 0m;
@@ -102,6 +104,8 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             decimal totalVehiclePremiumDiffer = 0m;
             int totalVehicleTermLimitPre = 0;
             int totalVehicleTermLimitDiffer = 0;
+            decimal totalVehicleBrokeragePre = 0m;
+            decimal totalVehicleBrokerageDiffer = 0m;
 
             bool bolNewBoatAdded = false;
             bool bolNewVehicleAdded = false;
@@ -260,6 +264,8 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 decimal boatPremiumDiffer = 0m;
                 decimal boatExcessPre = 0m;
                 decimal boatExcessDiffer = 0m;
+                decimal boatBrokeragePre = 0m;
+                decimal boatBrokerageDiffer = 0m;
                 int boatTermLimitPre = 0;
                 int boatTermLimitDiffer = 0;
                 int preboatperiodindays = 0;
@@ -306,10 +312,12 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                             boatPremiumPre = bvTermPre.Premium;
                             boatExcessPre = bvTermPre.Excess;
                             boatTermLimitPre = bvTermPre.TermLimit;
+                            boatBrokeragePre = bvTermPre.Brokerage;
 
-                            totalBoatFslPre += bvTermPre.FSL;
+                            totalBoatBrokeragePre += bvTermPre.Brokerage;
                             totalBoatPremiumPre += bvTermPre.Premium;
                             totalBoatTermLimitPre += bvTermPre.TermLimit;
+                            totalBoatFslPre += bvTermPre.FSL;
 
                             if ((boat.MaxSumInsured == boat.OriginalBoat.MaxSumInsured && boat.BoatEffectiveDate == boat.OriginalBoat.BoatEffectiveDate &&
                                 boat.BoatCeaseDate == boat.OriginalBoat.BoatCeaseDate) ||
@@ -377,7 +385,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     totalBoatFslDiffer += boatproratedFsl;
                     totalBoatPremiumDiffer += boatproratedPremium;
                     totalBoatTermLimitDiffer += boat.MaxSumInsured;
+                   
                 }
+
+                boatBrokerageDiffer = boatPremiumDiffer * boatBrokerageRate / 100;
+                totalBoatBrokerageDiffer += boatBrokerageDiffer;
 
                 bvTerm.FSLPre = boatFslPre;
                 bvTerm.FSLDiffer = boatFslDiffer;
@@ -387,6 +399,8 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 bvTerm.ExcessDiffer = boatExcessDiffer;
                 bvTerm.TermLimitPre = boatTermLimitPre;
                 bvTerm.TermLimitDiffer = boatTermLimitDiffer;
+                bvTerm.BrokeragePre = boatBrokeragePre;
+                bvTerm.BrokerageDiffer = boatBrokerageDiffer;
 
                 if (boat.BoatCeaseDate > DateTime.MinValue && boat.BoatCeaseReason == 4)
                 {
@@ -574,6 +588,8 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 int vehicleTermLimitPre = 0;
                 int vehicleTermLimitDiffer = 0;
                 int prevehicleperiodindays = 0;
+                decimal vehicleBrokeragePre = 0m;
+                decimal vehicleBrokerageDiffer = 0m;
 
                 if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null && vehicle.OriginalVehicle != null)
                 {
@@ -617,10 +633,12 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                             vehiclePremiumPre = mvTermPre.Premium;
                             vehicleExcessPre = mvTermPre.Excess;
                             vehicleTermLimitPre = mvTermPre.TermLimit;
+                            vehicleBrokeragePre = mvTermPre.Brokerage;
 
                             totalVehicleFslPre += mvTermPre.FSL;
                             totalVehiclePremiumPre += mvTermPre.Premium;
                             totalVehicleTermLimitPre += mvTermPre.TermLimit;
+                            totalVehicleBrokeragePre += mvTermPre.Brokerage;
 
                             if ((vehicle.GroupSumInsured == vehicle.OriginalVehicle.GroupSumInsured && vehicle.VehicleEffectiveDate == vehicle.OriginalVehicle.VehicleEffectiveDate &&
                                 vehicle.VehicleCeaseDate == vehicle.OriginalVehicle.VehicleCeaseDate) ||
@@ -690,6 +708,9 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                     totalVehicleTermLimitDiffer += vehicle.GroupSumInsured;
                 }
 
+                vehicleBrokerageDiffer = vehiclePremiumDiffer * vehicleBrokerageRate / 100;
+                totalVehicleBrokerageDiffer += vehicleBrokerageDiffer;
+
                 mvTerm.FSLPre = vehicleFslPre;
                 mvTerm.FSLDiffer = vehicleFslDiffer;
                 mvTerm.PremiumPre = vehiclePremiumPre;
@@ -698,6 +719,8 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                 mvTerm.ExcessDiffer = vehicleExcessDiffer;
                 mvTerm.TermLimitPre = vehicleTermLimitPre;
                 mvTerm.TermLimitDiffer = vehicleTermLimitDiffer;
+                mvTerm.BrokeragePre = vehicleBrokeragePre;
+                mvTerm.BrokerageDiffer = vehicleBrokerageDiffer;
 
                 if (vehicle.VehicleCeaseDate > DateTime.MinValue && vehicle.VehicleCeaseReason == 4)
                 {
@@ -725,12 +748,14 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             term.BrokerageRate = agreement.Brokerage;
             term.Brokerage = totalTermBrokerage;
 
-            term.TermLimitPre = totalBoatTermLimitPre;
-            term.TermLimitDiffer = totalBoatTermLimitDiffer;
-            term.PremiumPre = totalBoatPremiumPre;
-            term.PremiumDiffer = totalBoatPremiumDiffer;
-            term.FSLPre = totalBoatFslPre;
-            term.FSLDiffer = totalBoatFslDiffer;
+            term.TermLimitPre = totalBoatTermLimitPre + totalVehicleTermLimitPre;
+            term.TermLimitDiffer = totalBoatTermLimitDiffer + totalVehicleTermLimitDiffer;
+            term.PremiumPre = totalBoatPremiumPre + totalVehiclePremiumPre;
+            term.PremiumDiffer = totalBoatPremiumDiffer + totalVehiclePremiumDiffer;
+            term.FSLPre = totalBoatFslPre + totalVehicleFslPre;
+            term.FSLDiffer = totalBoatFslDiffer + totalVehicleFslDiffer;
+            term.BrokeragePre = totalBoatBrokeragePre + totalVehicleBrokeragePre;
+            term.BrokerageDiffer = totalBoatBrokerageDiffer + totalVehicleBrokerageDiffer;
 
             //Referral points per agreement
             //Claim over $5k of losses

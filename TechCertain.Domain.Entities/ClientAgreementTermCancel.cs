@@ -7,11 +7,11 @@ using TechCertain.Domain.Entities.Abstracts;
 
 namespace TechCertain.Domain.Entities
 {
-    public class ClientAgreementTerm : EntityBase, IAggregateRoot
+    public class ClientAgreementTermCancel : EntityBase, IAggregateRoot
     {
-        public ClientAgreementTerm() : base (null) { }
+        public ClientAgreementTermCancel() : base (null) { }
 
-        public ClientAgreementTerm(User createdBy, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreement clientAgreement, string subTermType)
+        public ClientAgreementTermCancel(User createdBy, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreement clientAgreement, string subTermType)
 			: base (createdBy)
         {
             if (string.IsNullOrWhiteSpace(termLimit.ToString()))
@@ -29,298 +29,283 @@ namespace TechCertain.Domain.Entities
             if (clientAgreement == null)
                 throw new ArgumentNullException(nameof(clientAgreement));
 
-            TermLimit = termLimit;
-            Excess = excess;
-            Premium = premium;
-            FSL = fSL;
-            BrokerageRate = brokerageRate;
-            Brokerage = brokerage;
-            ClientAgreement = clientAgreement;
-            SubTermType = subTermType;
+            TermLimitCan = termLimit;
+            ExcessCan = excess;
+            PremiumCan = premium;
+            FSLCan = fSL;
+            BrokerageRateCan = brokerageRate;
+            BrokerageCan = brokerage;
+            ClientAgreementCan = clientAgreement;
+            SubTermTypeCan = subTermType;
         }
 
-        public virtual int TermLimit
+        public virtual int TermLimitCan
         {
             get;
             set;
         }
 
-        public virtual int AggregateLimit
+        public virtual int AggregateLimitCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal Excess
+        public virtual decimal ExcessCan
         {
             get;
             set;
         }
 
-        public virtual int HigherExcess
+        public virtual int HigherExcessCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal Premium
+        public virtual decimal PremiumCan
         {
             get;
             set;
         }
 
-        public virtual string Reference
+        public virtual string ReferenceCan
         {
             get;
             protected set;
         }
 
-        public virtual bool DefaultTerm
+        public virtual bool DefaultTermCan
         {
             get;
             protected set;
         }
 
-        public virtual int OrderNumber
+        public virtual int OrderNumberCan
         {
             get;
             protected set;
         }
 
-        public virtual bool Bound
+        public virtual bool BoundCan
         {
             get;
             set;
         }
 
-        public virtual decimal BrokerageRate
+        public virtual decimal BrokerageRateCan
         {
             get;
             set;
         }
 
-        public virtual decimal Brokerage
+        public virtual decimal BrokerageCan
         {
             get;
             set;
         }
 
-        public virtual decimal NDBrokerageRate
+        public virtual decimal NDBrokerageRateCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal NDBrokerage
+        public virtual decimal NDBrokerageCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal ReferralLoading
+        public virtual decimal ReferralLoadingCan
         {
             get;
             set;
         }
 
-        public virtual decimal ReferralLoadingAmount
+        public virtual decimal ReferralLoadingAmountCan
         {
             get;
             set;
         }
 
-        public virtual decimal ND
+        public virtual decimal NDCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal FSL
+        public virtual decimal FSLCan
         {
             get;
             set;
         }
 
-        public virtual decimal EQC
+        public virtual decimal EQCCan
         {
             get;
             protected set;
         }
 
-        public virtual Product Product
+        public virtual Product ProductCan
         {
             get;
             protected set;
         }
 
-        public virtual ClientAgreement ClientAgreement
+        public virtual ClientAgreement ClientAgreementCan
         {
             get;
             protected set;
         }
 
-        public virtual string SubTermType
+        public virtual string SubTermTypeCan
         {
             get;
             protected set;
         }
 
-        public virtual int TermLimitPre
+        public virtual int TermLimitPreCan
         {
             get;
             set;
         }
 
-        public virtual int AggregateLimitPre
+        public virtual int AggregateLimitPreCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal ExcessPre
+        public virtual decimal ExcessPreCan
         {
             get;
             protected set;
         }
 
-        public virtual int HigherExcessPre
+        public virtual int HigherExcessPreCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal PremiumPre
+        public virtual decimal PremiumPreCan
         {
             get;
             set;
         }
 
-        public virtual int TermLimitDiffer
+        public virtual int TermLimitDifferCan
         {
             get;
             set;
         }
 
-        public virtual int AggregateLimitDiffer
+        public virtual int AggregateLimitDifferCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal ExcessDiffer
+        public virtual decimal ExcessDifferCan
         {
             get;
             protected set;
         }
 
-        public virtual int HigherExcessDiffer
+        public virtual int HigherExcessDifferCan
         {
             get;
             protected set;
         }
 
-        public virtual decimal PremiumDiffer
+        public virtual decimal PremiumDifferCan
         {
             get;
             set;
         }
 
-		public virtual IList<ClientAgreementMVTerm> MotorTerms
-		{
+		public virtual IList<ClientAgreementMVTerm> MotorTermsCan
+        {
 			get;
 			set;
 		}
 
-        public virtual IList<ClientAgreementBVTerm> BoatTerms
+        public virtual IList<ClientAgreementBVTerm> BoatTermsCan
         {
             get;
             set;
         }
 
-        public virtual decimal BurnerPremium {
+        public virtual decimal BurnerPremiumCan
+        {
 			get;
 			set;
 		}
 
-		public virtual decimal BurnerPremiumPre {
+		public virtual decimal BurnerPremiumPreCan
+        {
 			get;
 			set;
 		}
 
-		public virtual decimal BurnerPremiumDiffer {
+		public virtual decimal BurnerPremiumDifferCan
+        {
 			get;
 			set;
 		}
 
-		public virtual decimal NDPre {
+		public virtual decimal NDPreCan
+        {
 			get;
 			protected set;
 		}
 
-		public virtual decimal FSLPre {
+		public virtual decimal FSLPreCan
+        {
 			get;
 			set;
 		}
 
-		public virtual decimal EQCPre {
+		public virtual decimal EQCPreCan
+        {
 			get;
 			protected set;
 		}
 
-		public virtual decimal NDDiffer {
+		public virtual decimal NDDifferCan
+        {
 			get;
 			protected set;
 		}
 
-		public virtual decimal FSLDiffer {
+		public virtual decimal FSLDifferCan
+        {
 			get;
 			set;
 		}
 
-		public virtual decimal EQCDiffer {
+		public virtual decimal EQCDifferCan
+        {
 			get;
 			protected set;
 		}
 
-        public virtual string MergeCode
+        public virtual string MergeCodeCan
         {
             get;
             protected set;
         }
 
-        public virtual string RiskCode
+        public virtual string RiskCodeCan
         {
             get;
             protected set;
         }
 
-        public virtual string SubCoverString { get; set; }
+        public virtual string SubCoverStringCan { get; set; }
 
-        public virtual string AuthorisationNotes { get; set; }
-
-        public virtual decimal BrokerageDiffer
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal BrokeragePre
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal NDBrokeragePre
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal NDBrokerageDiffer
-        {
-            get;
-            set;
-        }
+        public virtual string AuthorisationNotesCan { get; set; }
 
     }
 }
