@@ -14,11 +14,9 @@ namespace TechCertain.Domain.Entities
 
         public virtual string Name { get; set; }
 
-        // public virtual IFormFile Image { get; set; } // kill
-
-		public virtual byte [] Contents { get; set; }
  		public virtual string Path { get; set; }    
- 		public virtual string FullPath { get; set; }       
+        
+ 		public virtual string ThumbPath { get; set; }       
 
         public virtual Organisation CopyrightOwner { get; set; }
 

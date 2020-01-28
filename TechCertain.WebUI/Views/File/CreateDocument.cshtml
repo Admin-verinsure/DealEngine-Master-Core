@@ -45,7 +45,7 @@
                                                             <div class="input-group">
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
 
-                                                                @Html.TextBoxFor(m => m.Name, new { style="Width:25%" , @placeholder = Model.Name + "Name" })
+                                                                @Html.TextBoxFor(m => m.Name, new { style = "Width:25%", @placeholder = Model.Name + "Name" })
                                                             </div>
                                                         </div>
                                                     </div>
@@ -57,7 +57,7 @@
                                                                 <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
                                                                 @*@Html.TextAreaFor(m => m.UserTask.Description, new { name = "content", cols = "100", rows = "2", @placeholder = "Task Description" })*@
 
-                                                                @Html.TextAreaFor(m => m.Description , new {style="Width:25%" , @placeholder = Model.Description + "Description"})
+                                                                @Html.TextAreaFor(m => m.Description, new { style = "Width:25%", @placeholder = Model.Description + "Description" })
                                                             </div>
                                                         </div>
                                                     </div>
@@ -96,17 +96,35 @@
                                                             <a class="btn btn-success btn-sm" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
                                                         </div>
                                                     </div>
-
                                                 </div>
-
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </form>
-                            </div>
+                                <div class="modal" id="ckmodal">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
 
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Select an Image</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer" style="display:flex;">
+                                                <label for="selImg" style="float:left;">Selected Image: </label>
+                                                <input type="text" id="selImg" name="selImg" style="float:left;width:52%;margin-left:2rem;margin-right:2rem;">
+                                                <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -115,10 +133,10 @@
     </section>
 </div>
 @*<style>
-    .input-group{
-        width:80%;
-    }
-</style>*@
+        .input-group{
+            width:80%;
+        }
+    </style>*@
 @section pagespecific {
 
     <script src="~/jquery/jquery.js"></script>
@@ -131,20 +149,14 @@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
+    <link href="~/css/ckeditor.css" rel="stylesheet" />
+
 
     <script type="text/javascript">
 
 //// DO NOT REMOVE : GLOBAL FUNCTIONS!
-                                                            let editor;
-                                                   ClassicEditor
-                                                               .create( document.querySelector( '#Content' ) )
-                                                               .then( newEditor => {
-                                                                editor = newEditor;
-                                                               } )
-                                                                 .catch( error => {
-                                                                 console.error( error );
-                                                                  } );
-$(document).ready(function () {
+
+        $(document).ready(function () {
 
            $('#CreateDocsmartwizard').smartWizard({
             selected: 0,  // Initial selected step, 0 = first step
@@ -183,26 +195,18 @@ $(document).ready(function () {
            var informationsheetstatus = $('#Status').val();
            var clientInformationSheet = $('#AnswerSheetId').val();
 
-
         if (stepNumber === 1) {
                           debugger;
 
              if (confirm("Are you sure you want to submit this document?")) {
                  console.log("submitted!");
-
-
                       const body = editor.getData();
                  var bodyElement = $("#@Html.IdFor(m => m.Content)");
 			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
 			// using hack because escape(...) was deprecated
 
                  bodyElement.text(bodyElement.text(body).html());
-
-
-
-
                  var content = document.getElementById("editor");
-
 
                  $.ajax({
                      type: "POST",
@@ -227,8 +231,19 @@ $(document).ready(function () {
              }
          }
      });
-});
 
+            $("#ckuploadbtn").click(function () {
+                $("#uploadmodal").modal({
+                    backdrop: true
+                });
+            });
+
+            $("#fileUpload").change(function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('#custom-file-label').html(fileName);
+                $("#custom-file-label").html(fileName);
+            });
+});
 
         $(window).on("load", function () {
             debugger;
@@ -243,12 +258,16 @@ $(document).ready(function () {
             }else  if ("@Model.Name" == "First Mate Cover Invoice") {
                 $("#documentType").val("4");
             }
-
-
-          
         });
-
-
     </script>
-
+    <script>
+        function selectImg(img) {
+            var filename = img.name;
+            $('#selImg').val(filename);
+        }
+        function importImg() {
+            var filename = $('#selImg').val();
+            $('#importImg').val(filename);
+        }
+    </script>
 }
