@@ -1,4 +1,7 @@
-﻿<script type="text/javascript">
+﻿<link href="~/jqueryui/jquery-ui.css" rel="stylesheet" />
+<script src="~/jquery/jquery.min.js"></script>
+<script src="~/jqueryui/jquery-ui.js"></script>
+<script type="text/javascript">
 
    // $(document).ready(function(){
    //$("#myModal").modal();
@@ -17,7 +20,7 @@
         }
     });
 
-  
+
     $(".PartyOrg").click(function () {
         debugger;
 
@@ -222,7 +225,7 @@
                     alert("success");
                     //$("#myModal").modal("hide");
                     $("#myModalId").click();
-                    
+
                     location.reload(true);
 
                     //$.smallBox({
@@ -240,22 +243,13 @@
 
     }
 
-    
-       $('#ChangeEffectiveDate').datepicker({
-        maxDate: "+30d",
-        dateFormat: "dd/mm/yy" ,
-        minDate:0
-       });
-    
-    
-          $('#myChangeModal').on('show.bs.modal', function (e) {
-        debugger;
-        $('.modal').css('width', '600px');
-              var dealId = $(e.relatedTarget).data('dealitem-id');
-        $(e.currentTarget).find('input[name="DealId"]').val(dealId);
-     
-          });
 
+       $('#ChangeEffectiveDate').datepicker({
+        dateFormat: "dd/mm/yy" 
+       });
+
+
+        
          $("#btnChangeSubmit").click(function () {
             debugger;
             var valid = ValidateReason();
@@ -310,7 +304,7 @@
             }
             return validation;
         }
-		
+
 		 function ReasonSubmit() {
             debugger;
 			var dealId = $("#DealId").val();
@@ -331,7 +325,7 @@
                 url: "/Information/UpdateInformation",
                 success: function (data) {
                     debugger;
-                    $("#myModal").modal("hide");
+                    $("#myChangeModal").hide();;
                     alert("Saved Successfully!");
                     window.location.href = data.url;
 

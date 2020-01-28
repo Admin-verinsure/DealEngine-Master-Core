@@ -7,17 +7,17 @@ using TechCertain.Domain.Entities.Abstracts;
 
 namespace TechCertain.Domain.Entities
 {
-	public class ClientAgreementMVTerm : EntityBase, IAggregateRoot
+	public class ClientAgreementMVTermCancel : EntityBase, IAggregateRoot
 	{
-        protected ClientAgreementMVTerm() : base(null) { }
+        protected ClientAgreementMVTermCancel() : base(null) { }
 
-        public ClientAgreementMVTerm(User createdBy, Vehicle vehicle, ClientAgreementTerm clientAgreementTerm, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, decimal burnerpremium)
+        public ClientAgreementMVTermCancel(User createdBy, Vehicle vehicle, ClientAgreementTerm clientAgreementTerm, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, decimal burnerpremium)
             : this(createdBy, vehicle.Registration, vehicle.Year, vehicle.Make, vehicle.Model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, vehicle.FleetNumber, clientAgreementTerm, vehicle, burnerpremium)
         {
 
         }
 
-        public ClientAgreementMVTerm(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
+        public ClientAgreementMVTermCancel(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
             : base(createdBy)
         {
             if (string.IsNullOrWhiteSpace(year))
@@ -46,240 +46,228 @@ namespace TechCertain.Domain.Entities
             if (vehicle == null)
                 throw new ArgumentNullException(nameof(vehicle));
 
-            Registration = registration;
-            Year = year;
-            Make = make;
-            Model = model;
-            TermLimit = termLimit;
-            Excess = excess;
-            Premium = premium;
-            FSL = fSL;
-            BrokerageRate = brokerageRate;
-            Brokerage = brokerage;
-            VehicleCategory = vehicleCategory;
-            FleetNumber = fleetNumber;
-            ClientAgreementTerm = clientAgreementTerm;
-            Vehicle = vehicle;
-            BurnerPremium = burnerpremium;
+            RegistrationCan = registration;
+            YearCan = year;
+            MakeCan = make;
+            ModelCan = model;
+            TermLimitCan = termLimit;
+            ExcessCan = excess;
+            PremiumCan = premium;
+            FSLCan = fSL;
+            BrokerageRateCan = brokerageRate;
+            BrokerageCan = brokerage;
+            VehicleCategoryCan = vehicleCategory;
+            FleetNumberCan = fleetNumber;
+            ClientAgreementTermCan = clientAgreementTerm;
+            VehicleCan = vehicle;
+            BurnerPremiumCan = burnerpremium;
         }
 
-        public virtual int TermLimit
+        public virtual int TermLimitCan
         {
             get;
             set;
         }
 
-        public virtual decimal Excess
+        public virtual decimal ExcessCan
         {
             get;
             set;
         }
 
-        public virtual decimal Premium
+        public virtual decimal PremiumCan
         {
             get;
             set;
         }
 
-        public virtual string Reference
+        public virtual string ReferenceCan
         {
             get;
             set;
         }
 
-        public virtual int VesionNumber
+        public virtual int VesionNumberCan
         {
             get;
             set;
         }
 
-        public virtual bool Bound
+        public virtual bool BoundCan
         {
             get;
             set;
         }
 
-        public virtual decimal BrokerageRate
+        public virtual decimal BrokerageRateCan
         {
             get;
             set;
         }
 
-        public virtual decimal Brokerage
+        public virtual decimal BrokerageCan
         {
             get;
             set;
         }
 
-        public virtual decimal ReferralLoading
+        public virtual decimal ReferralLoadingCan
         {
             get;
             set;
         }
 
-        public virtual decimal ReferralLoadingAmount
+        public virtual decimal ReferralLoadingAmountCan
         {
             get;
             set;
         }
 
-        public virtual decimal FSL
+        public virtual decimal FSLCan
         {
             get;
             set;
         }
 
-        public virtual Product Product
+        public virtual Product ProductCan
         {
             get;
             protected set;
         }
 
-        public virtual ClientAgreementTerm ClientAgreementTerm
+        public virtual ClientAgreementTerm ClientAgreementTermCan
         {
             get;
             protected set;
         }
 
-        public virtual Vehicle Vehicle
+        public virtual Vehicle VehicleCan
         {
             get;
             protected set;
         }
 
-        public virtual string Make
+        public virtual string MakeCan
         {
             get;
             set;
         }
 
-        public virtual string Model
+        public virtual string ModelCan
         {
             get;
             set;
         }
 
-        public virtual string Registration
+        public virtual string RegistrationCan
         {
             get;
             set;
         }
 
-        public virtual string Year
+        public virtual string YearCan
         {
             get;
             set;
         }
 
-        public virtual string VehicleCategory
+        public virtual string VehicleCategoryCan
         {
             get;
             set;
         }
 
-        public virtual string FleetNumber
+        public virtual string FleetNumberCan
         {
             get;
             set;
         }
 
-        public virtual int TermLimitPre
+        public virtual int TermLimitPreCan
         {
             get;
             set;
         }
 
-        public virtual decimal ExcessPre
+        public virtual decimal ExcessPreCan
         {
             get;
             set;
         }
 
-        public virtual decimal PremiumPre
+        public virtual decimal PremiumPreCan
         {
             get;
             set;
         }
 
-        public virtual int TermLimitDiffer
+        public virtual int TermLimitDifferCan
         {
             get;
             set;
         }
 
-        public virtual decimal ExcessDiffer
+        public virtual decimal ExcessDifferCan
         {
             get;
             set;
         }
 
-        public virtual decimal PremiumDiffer
+        public virtual decimal PremiumDifferCan
         {
             get;
             set;
         }
 
-        public virtual decimal BurnerPremium
+        public virtual decimal BurnerPremiumCan
         {
             get;
             set;
         }
 
-        public virtual decimal FSLPre
+        public virtual decimal FSLPreCan
         {
             get;
             set;
         }
 
-        public virtual decimal FSLDiffer
+        public virtual decimal FSLDifferCan
         {
             get;
             set;
         }
 
-        public virtual decimal BurnerPremiumPre
+        public virtual decimal BurnerPremiumPreCan
         {
             get;
             set;
         }
 
-        public virtual decimal BurnerPremiumDiffer
+        public virtual decimal BurnerPremiumDifferCan
         {
             get;
             set;
         }
 
-        public virtual string TermCategory
+        public virtual string TermCategoryCan
         {
             get;
             set;
         }
 
-        public virtual decimal AnnualPremium
+        public virtual decimal AnnualPremiumCan
         {
             get;
             set;
         }
 
-        public virtual decimal AnnualFSL
+        public virtual decimal AnnualFSLCan
         {
             get;
             set;
         }
 
-        public virtual decimal AnnualBrokerage
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal BrokerageDiffer
-        {
-            get;
-            set;
-        }
-
-        public virtual decimal BrokeragePre
+        public virtual decimal AnnualBrokerageCan
         {
             get;
             set;

@@ -76,15 +76,28 @@
 	    url: '@Url.Action("getselectedParty", "Programme")',
 	    type: "Post",
         data: postdata
-	})
+	     })
             .done(function (data) {
                 debugger;
 
                 $.each(data, function (i, item) {
-                    $('#User[value = "Warren.J.Blomquist@marsh.com"]').prop('checked', true);
-             });
-	});
-    };
+                    //$('#SelectedUser[value = "Warren.J.Blomquist@marsh.com"]').attr('checked', 'checked');
+                    //.prop('checked', true);
+                    $("input[value = '"+item+"']").attr('checked', 'checked');
+
+                   // $('SelectedUser[value = "Liam.Quann@marsh.com"]').val(true);
+                   // $('#SelectedUser[value = "Liam.Quann@marsh.com"]').val(true);
+                   //                    $('#SelectedUser[value = "marsh@techcertain.com"]').prop('selected','selected');
+
+                   //$('#SelectedUser[value = "marshtest1@techcertain.com"]').prop('selected','true');
+
+                    
+                    
+                });
+            }).fail(function (a, s, d) {
+                       debugger;
+                   });
+     };
 
     function selectorgUser() {
         debugger;
@@ -101,7 +114,7 @@
                 debugger;
             if (data.length > 0) {
                 $('#div1').empty();
-                $('#div1').append("<label class=\"label\" id=\"User\">Select User:</label><br>");
+                $('#div1').append("<label class=\"label\" id=\"SelectedUser\">Select User:</label><br>");
                 $('#div1').append("<input type=\"checkbox\" onclick='boxdisable(this)' name=\"checkbox\" id=\"checkboxall\" /> Select All <br/>");
 
             } else {
@@ -151,7 +164,9 @@
             //    timeout: 4000
             //});
 
-	});
+	     }) .fail(function (a, s, d) {
+                       debugger;
+                   });
     };
     @*function selectorgUser() {
         debugger;

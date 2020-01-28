@@ -234,6 +234,8 @@
                     <div class="modal-body">
                         <form id="ProdForm">
                             @Html.HiddenFor(m => m.ProgrammeId)
+                            <input class="form-control" hidden type="text" data-type="TEXTBOX" id="ProgId" name="ProgId"  >
+
                             <table class="table table-striped">
                                 <tr>
                                     <td>
@@ -357,6 +359,14 @@
 
 
             <script type="text/javascript">
+
+                  $('#myChangeModal').on('show.bs.modal', function (e) {
+                       debugger;
+                    $('.modal').css({ "width": "50%", "margin-left": "25%" });
+                       var dealId = $(e.relatedTarget).data('dealitem-id');
+                  $(e.currentTarget).find('input[name="DealId"]').val(dealId);
+
+                  });
 
                 $('#IssueUISModal').on('show.bs.modal', function (e) {
                     debugger;
