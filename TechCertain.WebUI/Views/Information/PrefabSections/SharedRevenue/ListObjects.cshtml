@@ -1,0 +1,12 @@
+﻿@model TechCertain.WebUI.Models.RevenueByActivityViewModel
+
+@if (Model.RevenueData.AdditionalActivityInformation.InspectionReportBoolId == 1)
+{
+    <option value=2> No </option>
+    <option selected value=1>Yes</option>
+}
+else
+{
+    <option selected value=2> No </option>
+    <option value=1>Yes</option>
+}

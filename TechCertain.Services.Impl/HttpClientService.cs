@@ -30,8 +30,6 @@ namespace TechCertain.Services.Impl
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
             HttpResponseMessage response;
-            XmlSerializer serializer;
-            StringReader rdr;
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
@@ -52,7 +50,7 @@ namespace TechCertain.Services.Impl
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
-                //responseMessage = ResposeMessage();
+                //responseMessage = UpdateUserResponse();
 
                 client.Dispose();
             }
@@ -79,8 +77,6 @@ namespace TechCertain.Services.Impl
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
             HttpResponseMessage response;
-            XmlSerializer serializer;
-            StringReader rdr;
 
             _socketsHttpHandler = new SocketsHttpHandler()
             {
@@ -101,7 +97,7 @@ namespace TechCertain.Services.Impl
                 response = await client.SendAsync(_httpRequestMessage);
                 response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
-                //responseMessage = ResposeMessage();
+                //responseMessage = UpdateUserResponse();
 
                 client.Dispose();
             }
@@ -254,9 +250,7 @@ namespace TechCertain.Services.Impl
                         <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
                         <wsse:UsernameToken wsu:Id=""UsernameToken-bd15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
                         <wsse:Username>MarshNZSOAPUser</wsse:Username>              
-                        <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                     
-                        <wsse:Nonce EncodingType = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"">ufoWBVGZ+MgRHRcw5j0EQQ==</wsse:Nonce>                              
-                        <wsu:Created>" + DateTime.UtcNow.ToString() + @"</wsu:Created>                                        
+                        <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                                                        
                         </wsse:UsernameToken>                                         
                         </wsse:Security>                                          
                         </soap:Header> 
@@ -317,6 +311,15 @@ namespace TechCertain.Services.Impl
             return @"<soapenv:Envelope xmlns:soapenv = ""http://schemas.xmlsoap.org/soap/envelope/""><soapenv:Body><ns1:analyzeResponse xmlns:ns1=""http://ws.csd.rsa.com""><ns1:analyzeReturn xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:type=""ns1:AnalyzeResponse""><ns1:deviceResult><ns1:authenticationResult><ns1:authStatusCode>FAIL</ns1:authStatusCode><ns1:risk>0</ns1:risk></ns1:authenticationResult><ns1:callStatus><ns1:statusCode>SUCCESS</ns1:statusCode></ns1:callStatus><ns1:deviceData><ns1:bindingType>NONE</ns1:bindingType><ns1:deviceTokenCookie>PMV61pYQVSs1ggLnIxiqnJ4QWBmDrFX40bSP7yLHfUlDTrm7QS6XL5cgBPhG5LEqJ%2BSrUupdmaC%2BXoqzAFcglUWK0Sm02ONa297xBLee9YamXtzBk%3D</ns1:deviceTokenCookie><ns1:deviceTokenFSO>PMV61pYQVSs1ggLnIxiqnJ4QWBmDrFX40bSP7yLHfUlDTrm7QS6XL5cgBPhG5LEqJ%2BSrUupdmaC%2BXoqzAFcglUWK0Sm02ONa297xBLee9YamXtzBk%3D</ns1:deviceTokenFSO></ns1:deviceData></ns1:deviceResult><ns1:identificationData><ns1:delegated>false</ns1:delegated><ns1:groupName>Clients</ns1:groupName><ns1:orgName>Marsh_Model</ns1:orgName><ns1:sessionId>812834347167267526393-ksat-reganam-krow||1576541731958</ns1:sessionId><ns1:transactionId>TRX_work-manager-task-39-6652711369631216351</ns1:transactionId><ns1:userName>ray@techcertain.com</ns1:userName><ns1:userStatus>UNVERIFIED</ns1:userStatus><ns1:userType>PERSISTENT</ns1:userType></ns1:identificationData><ns1:messageHeader><ns1:apiType>DIRECT_SOAP_API</ns1:apiType><ns1:requestType>ANALYZE</ns1:requestType><ns1:timeStamp>2019-12-17T00:05:31.958Z</ns1:timeStamp><ns1:version>7.0</ns1:version></ns1:messageHeader><ns1:statusHeader><ns1:reasonCode>0</ns1:reasonCode><ns1:reasonDescription>Operations were completed successfully\n\n</ns1:reasonDescription><ns1:statusCode>200</ns1:statusCode></ns1:statusHeader><ns1:requiredCredentialList><ns1:requiredCredential><ns1:credentialType>USER_DEFINED</ns1:credentialType><ns1:genericCredentialType>OTP</ns1:genericCredentialType><ns1:groupName>DEFAULT</ns1:groupName><ns1:preference>0</ns1:preference><ns1:required>true</ns1:required></ns1:requiredCredential></ns1:requiredCredentialList><ns1:riskResult><ns1:riskScore>345</ns1:riskScore><ns1:riskScoreBand>SCORE_BAND_1</ns1:riskScoreBand><ns1:triggeredRule><ns1:actionCode>CHALLENGE</ns1:actionCode><ns1:actionName>User_Device_Not_Bound</ns1:actionName><ns1:actionType>STRICT</ns1:actionType><ns1:clientFactList/><ns1:ruleId>User_Device_Not_Bound</ns1:ruleId><ns1:ruleName>User_Device_Not_Bound</ns1:ruleName></ns1:triggeredRule><ns1:deviceAssuranceLevel>LOW</ns1:deviceAssuranceLevel></ns1:riskResult></ns1:analyzeReturn></ns1:analyzeResponse></soapenv:Body></soapenv:Envelope>";
         }
         #region RSA
+
+        private string UpdateUserResponse()
+        {
+            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"">< soapenv:Body >< ns1:analyzeResponse xmlns:ns1 = ""http://ws.csd.rsa.com"" >< ns1:analyzeReturn xsi:type = ""ns1:AnalyzeResponse"" xmlns: xsi = ""http://www.w3.org/2001/XMLSchema-instance"" >< ns1:deviceResult >< ns1:authenticationResult >< ns1:authStatusCode > FAIL </ ns1:authStatusCode >< ns1:risk > 0 </ ns1:risk ></ ns1:authenticationResult >< ns1:callStatus >< ns1:statusCode > SUCCESS </ ns1:statusCode ></ ns1:callStatus >< ns1:deviceData >< ns1:bindingType > NONE </ ns1:bindingType >< ns1:deviceTokenCookie >PMV61tcCID % 2BvSQHIIEhXtlnC % 2BSLW % 2B % 2Bbz0Yi3msEW7V1N4CjRMjxddCY % 2BcOa0y3JxJCp3O97pj6nf9UWTrgeuom4AWZx8u9tWJ5CEcHZYHtMk52TX0 % 3D</ ns1:deviceTokenCookie >                                            
+                                                        < ns1:deviceTokenFSO >PMV61tcCID % 2BvSQHIIEhXtlnC % 2BSLW % 2B % 2Bbz0Yi3msEW7V1N4CjRMjxddCY % 2BcOa0y3JxJCp3O97pj6nf9UWTrgeuom4AWZx8u9tWJ5CEcHZYHtMk52TX0 % 3D</ ns1:deviceTokenFSO ></ ns1:deviceData ></ ns1:deviceResult >< ns1:identificationData >< ns1:delegated > false </ ns1:delegated >< ns1:groupName > Clients </ ns1:groupName >< ns1:orgName > Marsh_Model </ ns1:orgName >< ns1:sessionId > 0884406525426845405 - 93 - ksat - reganam - krow || 1579824480683 </ ns1:sessionId >< ns1:transactionId > TRX_work - manager - task - 397844653012300404850 </ ns1:transactionId >< ns1:userName > ray@techcertain.com </ ns1:userName >< ns1:userStatus > UNVERIFIED </ ns1:userStatus >< ns1:userType > PERSISTENT </ ns1:userType ></ ns1:identificationData >                                                                                                                    
+                                                                                                                            < ns1:messageHeader >< ns1:apiType > DIRECT_SOAP_API </ ns1:apiType >< ns1:requestType > ANALYZE </ ns1:requestType >< ns1:timeStamp > 2020 - 01 - 23T23: 58:00.681Z </ ns1:timeStamp >< ns1:version > 7.0 </ ns1:version ></ ns1:messageHeader >< ns1:statusHeader >< ns1:reasonCode > 0 </ ns1:reasonCode >< ns1:reasonDescription > Operations were completed successfully</ ns1:reasonDescription >< ns1:statusCode > 200 </ ns1:statusCode ></ ns1:statusHeader >< ns1:requiredCredentialList >< ns1:requiredCredential >< ns1:credentialType > USER_DEFINED </ ns1:credentialType >< ns1:genericCredentialType > OTP </ ns1:genericCredentialType >< ns1:groupName > DEFAULT </ ns1:groupName >                                                                                                                                                                                
+                                                                                                                                                                                            < ns1:preference > 0 </ ns1:preference >< ns1:required > true </ ns1:required ></ ns1:requiredCredential ></ ns1:requiredCredentialList >< ns1:riskResult >< ns1:riskScore > 605 </ ns1:riskScore >< ns1:riskScoreBand > SCORE_BAND_3 </ ns1:riskScoreBand >< ns1:triggeredRule >< ns1:actionCode > CHALLENGE </ ns1:actionCode >< ns1:actionName > User_Device_Not_Bound </ ns1:actionName >< ns1:actionType > STRICT </ ns1:actionType >< ns1:clientFactList />< ns1:ruleId > User_Device_Not_Bound </ ns1:ruleId >< ns1:ruleName > User_Device_Not_Bound </ ns1:ruleName ></ ns1:triggeredRule >< ns1:deviceAssuranceLevel > LOW </ ns1:deviceAssuranceLevel >                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                </ ns1:riskResult ></ ns1:analyzeReturn ></ ns1:analyzeResponse ></ soapenv:Body ></soap:Envelope>";
+        }
         private string UpdateUserMessage()
         {
             return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -324,13 +327,41 @@ namespace TechCertain.Services.Impl
                         <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
                         <wsse:UsernameToken wsu:Id=""UsernameToken-bd15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
                         <wsse:Username>MarshNZSOAPUser</wsse:Username>              
-                        <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                     
-                        <wsse:Nonce EncodingType = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"">ufoWBVGZ+MgRHRcw5j0EQQ==</wsse:Nonce>                              
-                        <wsu:Created>" + DateTime.UtcNow.ToString() + @"</wsu:Created>                                        
+                        <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                                                           
                         </wsse:UsernameToken>                                         
                         </wsse:Security>                                          
                         </soap:Header> 
-                        <soap:Body><UpdateUserRequest xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><actionTypeList xmlns=""http://ws.csd.rsa.com""><genericActionTypes>SET_USER_STATUS</genericActionTypes><genericActionTypes>SET_USER_GROUP</genericActionTypes></actionTypeList><deviceRequest xmlns=""http://ws.csd.rsa.com""><deviceTokenCookie>PMV61tt6BerP61CegqhtnJYyseWD0Hv24BrD4jDdygirmrUXqebmv%2FhYznl66UbzZITQ4loeyk6ExNT7kIGAi8Z1lfA9KDkhKGd%2FLVKgVXAlunPek%3D</deviceTokenCookie><httpAccept /><httpAcceptEncoding /><httpAcceptLanguage /><httpReferrer>Microsoft.AspNetCore.Mvc.Routing.EndpointRoutingUrlHelper</httpReferrer><ipAddress>192.168.1.145</ipAddress></deviceRequest><identificationData xmlns=""http://ws.csd.rsa.com""><delegated>false</delegated><groupName>Clients</groupName><orgName>Marsh_Model</orgName><userName>ray@techcertain.com</userName><userStatus>VERIFIED</userStatus><userType>PERSISTENT</userType></identificationData><messageHeader xmlns=""http://ws.csd.rsa.com""><apiType>DIRECT_SOAP_API</apiType><requestType>UPDATEUSER</requestType><version>7.0</version></messageHeader></UpdateUserRequest></soap:Body></soap:Envelope>";
+                        <soap:Body><UpdateUser xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+                                <request>
+                                    <actionTypeList xmlns=""http://ws.csd.rsa.com"">
+                                        <genericActionTypes>SET_USER_STATUS</genericActionTypes>
+                                        <genericActionTypes>SET_USER_GROUP</genericActionTypes>
+                                    </actionTypeList>
+                                    <deviceRequest xmlns=""http://ws.csd.rsa.com"">
+                                        <deviceTokenCookie>PMV61tt6BerP61CegqhtnJYyseWD0Hv24BrD4jDdygirmrUXqebmv%2FhYznl66UbzZITQ4loeyk6ExNT7kIGAi8Z1lfA9KDkhKGd%2FLVKgVXAlunPek%3D</deviceTokenCookie>
+                                        <httpAccept />
+                                        <httpAcceptEncoding />
+                                        <httpAcceptLanguage />
+                                        <httpReferrer>Microsoft.AspNetCore.Mvc.Routing.EndpointRoutingUrlHelper</httpReferrer>
+                                        <ipAddress>192.168.1.145</ipAddress>
+                                    </deviceRequest>
+                                    <identificationData xmlns=""http://ws.csd.rsa.com"">
+                                        <delegated>false</delegated>
+                                        <groupName>Clients</groupName>
+                                        <orgName>Marsh_Model</orgName>
+                                        <userName>ray@techcertain.com</userName>
+                                        <userStatus>VERIFIED</userStatus>
+                                        <userType>PERSISTENT</userType>
+                                    </identificationData>
+                                    <messageHeader xmlns=""http://ws.csd.rsa.com"">
+                                        <apiType>DIRECT_SOAP_API</apiType>
+                                        <requestType>UPDATEUSER</requestType>
+                                        <version>7.0</version>
+                                    </messageHeader>
+                                </request>
+                              </UpdateUser>
+                        </soap:Body>
+                    </soap:Envelope>";
         }
        
         #endregion

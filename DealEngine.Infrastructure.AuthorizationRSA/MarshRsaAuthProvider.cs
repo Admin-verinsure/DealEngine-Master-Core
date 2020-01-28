@@ -67,7 +67,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			XmlSerializer serializer;
 			StringReader rdr;
             XmlDocument xDoc = new XmlDocument();
-            AnalyzeResponse analyzeResponse;
+            analyzeReturn analyzeResponse = new analyzeReturn();
 			AnalyzeRequest analyzeRequest = GetAnalyzeRequest (rsaUser, hasCookies);
             
 			var serxml = new XmlSerializer (analyzeRequest.GetType());
@@ -76,32 +76,62 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             string xml = Encoding.UTF8.GetString (ms.ToArray());
             
             var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
-   //         serializer = new XmlSerializer(typeof(Envelope));
-			//rdr = new StringReader(analyzeResponseXmlStr);
-   //         analyzeResponse = (Envelope)serializer.Deserialize(rdr);
+
             try
-            {
+            {                
                 xDoc.LoadXml(analyzeResponseXmlStr);
+                analyzeReturnRiskResult riskResult = new analyzeReturnRiskResult();
+                var riskResults = xDoc.GetElementsByTagName("riskResult", "http://ws.csd.rsa.com");
+                var riskResultsArray = riskResults[0];                
 
-                var test = xDoc.DocumentElement.LastChild.LastChild.LastChild;
-                //var test2 = xDoc.GetElementsByTagName("analyzeReturn");
+                var listRisk = riskResultsArray.ChildNodes;
+                riskResult.riskScore = int.Parse(listRisk.Item(0).InnerText);
+                riskResult.riskScoreBand = listRisk.Item(1).InnerText;
+                riskResult.deviceAssuranceLevel = listRisk.Item(3).InnerText;
 
-                //serializer = new XmlSerializer(typeof(AnalyzeResponse));
-                //rdr = new StringReader(xDoc.DocumentElement.LastChild.LastChild.LastChild);
-                //analyzeResponse = (AnalyzeResponse)serializer.Deserialize(rdr);
-                userStatus = "UNVERIFIED";
-                actionCode = "CHALLENGE";
+                riskResult.triggeredRule = new analyzeReturnRiskResultTriggeredRule(); 
+                
+                var listTrigger = listRisk.Item(2).ChildNodes;
+                riskResult.triggeredRule.actionCode = listTrigger.Item(0).InnerText;
+                riskResult.triggeredRule.actionName = listTrigger.Item(1).InnerText;
+                riskResult.triggeredRule.actionType = listTrigger.Item(2).InnerText;
+                riskResult.triggeredRule.clientFactList = listTrigger.Item(3).InnerText;
+                riskResult.triggeredRule.ruleId = listTrigger.Item(4).InnerText;
+                riskResult.triggeredRule.ruleName = listTrigger.Item(5).InnerText;
 
+                analyzeReturnIdentificationData identificationData = new analyzeReturnIdentificationData();
+                var identificationResults = xDoc.GetElementsByTagName("identificationData", "http://ws.csd.rsa.com");
+                var identificationArray = identificationResults[0];
+
+                var listIndentification = identificationArray.ChildNodes;
+                identificationData.delegated = bool.Parse(listIndentification.Item(0).InnerText);
+                identificationData.groupName = listIndentification.Item(1).InnerText;
+                identificationData.orgName = listIndentification.Item(2).InnerText;
+                identificationData.sessionId = listIndentification.Item(3).InnerText;
+                identificationData.transactionId = listIndentification.Item(4).InnerText;
+                identificationData.userName = listIndentification.Item(5).InnerText;
+                identificationData.userStatus = listIndentification.Item(6).InnerText;
+                identificationData.userType = listIndentification.Item(7).InnerText;
+
+                analyzeReturnDeviceResult deviceDataResult = new analyzeReturnDeviceResult();
+                var deviceDataResults = xDoc.GetElementsByTagName("deviceData", "http://ws.csd.rsa.com");
+                var deviceDataArray = deviceDataResults[0];
+
+                var listDeviceData = deviceDataArray.ChildNodes;
+                deviceDataResult.deviceData = new analyzeReturnDeviceResultDeviceData();
+                deviceDataResult.deviceData.deviceTokenCookie = listDeviceData.Item(1).InnerText;
+
+                analyzeResponse.identificationData = identificationData;
+                analyzeResponse.riskResult = riskResult;
+                analyzeResponse.deviceResult = deviceDataResult;
+
+                userStatus = analyzeResponse.identificationData.userStatus;
+                actionCode = analyzeResponse.riskResult.triggeredRule.actionCode; 
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-
-            //var userStatus = analyzeResponse.Body.analyzeResponse.analyzeReturn.identificationData.userStatus;
-            //var actionCode = analyzeResponse.Body.analyzeResponse.analyzeReturn.riskResult.triggeredRule.actionCode;
-            //var userStatus = analyzeResponse.identificationData.userStatus;
-            //var actionCode = analyzeResponse.riskResult.triggeredRule.actionCode;
 
             if (userStatus != UserStatus.LOCKOUT.ToString() || userStatus != UserStatus.DELETE.ToString())
 			{
@@ -110,8 +140,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				if (userStatus == UserStatus.UNVERIFIED.ToString())
 				{
                     // TODO - call updateUser here with analyzeResponse
-                    //UpdateRsaUserFromResponse(analyzeResponse, rsaUser);
-                    TestUpdateRsaUserFromResponse(rsaUser);
+                    UpdateRsaUserFromResponse(analyzeResponse, rsaUser);                    
 					UpdateUserRequest updateUserRequest = GetUpdateUserRequest(rsaUser);
                     serxml = new XmlSerializer(typeof(UpdateUserRequest));
                     
@@ -131,7 +160,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 					if (userStatus == UserStatus.UNVERIFIED.ToString())
 					{
 						// TODO - call challenge here with updateUserResponse
-						UpdateRsaUserFromResponse(updateUserResponse, rsaUser);
+						//UpdateRsaUserFromResponse(updateUserResponse, rsaUser);
 					}
 					else
 					{
@@ -189,16 +218,10 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         //	}
         //	return false;
         //}
-        void TestUpdateRsaUserFromResponse(MarshRsaUser rsaUser)
-        {
-            rsaUser.CurrentSessionId = "0299162495417203861-04-ksat-reganam-krow||1579737980091";
-            rsaUser.CurrentTransactionId = "TRX_work-manager-task-40-7220888428990651703";
-            rsaUser.DeviceTokenCookie = "PMV61tt6BerP61CegqhtnJYyseWD0Hv24BrD4jDdygirmrUXqebmv%2FhYznl66UbzZITQ4loeyk6ExNT7kIGAi8Z1lfA9KDkhKGd%2FLVKgVXAlunPek%3D";
-        }
 
-        void UpdateRsaUserFromResponse (GenericResponse response, MarshRsaUser rsaUser)
+        void UpdateRsaUserFromResponse (analyzeReturn response, MarshRsaUser rsaUser)
 		{
-			rsaUser.CurrentSessionId = response.identificationData.clientSessionId;
+			rsaUser.CurrentSessionId = response.identificationData.sessionId;
 			rsaUser.CurrentTransactionId = response.identificationData.transactionId;
 			rsaUser.DeviceTokenCookie = response.deviceResult.deviceData.deviceTokenCookie;
 		}
@@ -385,77 +408,30 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
         #region
 
+
         // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-        /// <remarks/>
-        [System.SerializableAttribute()]
-        [System.ComponentModel.DesignerCategoryAttribute("code")]
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
-        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.xmlsoap.org/soap/envelope/", IsNullable = false)]
-        public partial class Body
-        {
-
-            private analyzeResponse analyzeResponseField;
-
-            /// <remarks/>
-            [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://ws.csd.rsa.com")]
-            public analyzeResponse analyzeResponse
-            {
-                get
-                {
-                    return this.analyzeResponseField;
-                }
-                set
-                {
-                    this.analyzeResponseField = value;
-                }
-            }
-        }
-
         /// <remarks/>
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
         [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://ws.csd.rsa.com", IsNullable = false)]
-        public partial class analyzeResponse
+        public partial class analyzeReturn
         {
 
-            private analyzeResponseAnalyzeReturn analyzeReturnField;
+            private analyzeReturnDeviceResult deviceResultField;
+
+            private analyzeReturnIdentificationData identificationDataField;
+
+            private analyzeReturnMessageHeader messageHeaderField;
+
+            private analyzeReturnStatusHeader statusHeaderField;
+
+            private analyzeReturnRequiredCredentialList requiredCredentialListField;
+
+            private analyzeReturnRiskResult riskResultField;
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturn analyzeReturn
-            {
-                get
-                {
-                    return this.analyzeReturnField;
-                }
-                set
-                {
-                    this.analyzeReturnField = value;
-                }
-            }
-        }
-
-        /// <remarks/>
-        [System.SerializableAttribute()]
-        [System.ComponentModel.DesignerCategoryAttribute("code")]
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturn
-        {
-
-            private analyzeResponseAnalyzeReturnDeviceResult deviceResultField;
-
-            private analyzeResponseAnalyzeReturnIdentificationData identificationDataField;
-
-            private analyzeResponseAnalyzeReturnMessageHeader messageHeaderField;
-
-            private analyzeResponseAnalyzeReturnStatusHeader statusHeaderField;
-
-            private analyzeResponseAnalyzeReturnRequiredCredentialList requiredCredentialListField;
-
-            private analyzeResponseAnalyzeReturnRiskResult riskResultField;
-
-            /// <remarks/>
-            public analyzeResponseAnalyzeReturnDeviceResult deviceResult
+            public analyzeReturnDeviceResult deviceResult
             {
                 get
                 {
@@ -468,7 +444,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnIdentificationData identificationData
+            public analyzeReturnIdentificationData identificationData
             {
                 get
                 {
@@ -481,7 +457,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnMessageHeader messageHeader
+            public analyzeReturnMessageHeader messageHeader
             {
                 get
                 {
@@ -494,7 +470,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnStatusHeader statusHeader
+            public analyzeReturnStatusHeader statusHeader
             {
                 get
                 {
@@ -507,7 +483,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnRequiredCredentialList requiredCredentialList
+            public analyzeReturnRequiredCredentialList requiredCredentialList
             {
                 get
                 {
@@ -520,7 +496,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnRiskResult riskResult
+            public analyzeReturnRiskResult riskResult
             {
                 get
                 {
@@ -537,17 +513,17 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnDeviceResult
+        public partial class analyzeReturnDeviceResult
         {
 
-            private analyzeResponseAnalyzeReturnDeviceResultAuthenticationResult authenticationResultField;
+            private analyzeReturnDeviceResultAuthenticationResult authenticationResultField;
 
-            private analyzeResponseAnalyzeReturnDeviceResultCallStatus callStatusField;
+            private analyzeReturnDeviceResultCallStatus callStatusField;
 
-            private analyzeResponseAnalyzeReturnDeviceResultDeviceData deviceDataField;
+            private analyzeReturnDeviceResultDeviceData deviceDataField;
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnDeviceResultAuthenticationResult authenticationResult
+            public analyzeReturnDeviceResultAuthenticationResult authenticationResult
             {
                 get
                 {
@@ -560,7 +536,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnDeviceResultCallStatus callStatus
+            public analyzeReturnDeviceResultCallStatus callStatus
             {
                 get
                 {
@@ -573,7 +549,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnDeviceResultDeviceData deviceData
+            public analyzeReturnDeviceResultDeviceData deviceData
             {
                 get
                 {
@@ -590,7 +566,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnDeviceResultAuthenticationResult
+        public partial class analyzeReturnDeviceResultAuthenticationResult
         {
 
             private string authStatusCodeField;
@@ -628,7 +604,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnDeviceResultCallStatus
+        public partial class analyzeReturnDeviceResultCallStatus
         {
 
             private string statusCodeField;
@@ -651,7 +627,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnDeviceResultDeviceData
+        public partial class analyzeReturnDeviceResultDeviceData
         {
 
             private string bindingTypeField;
@@ -704,7 +680,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnIdentificationData
+        public partial class analyzeReturnIdentificationData
         {
 
             private bool delegatedField;
@@ -832,7 +808,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnMessageHeader
+        public partial class analyzeReturnMessageHeader
         {
 
             private string apiTypeField;
@@ -900,7 +876,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnStatusHeader
+        public partial class analyzeReturnStatusHeader
         {
 
             private byte reasonCodeField;
@@ -953,13 +929,13 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnRequiredCredentialList
+        public partial class analyzeReturnRequiredCredentialList
         {
 
-            private analyzeResponseAnalyzeReturnRequiredCredentialListRequiredCredential requiredCredentialField;
+            private analyzeReturnRequiredCredentialListRequiredCredential requiredCredentialField;
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnRequiredCredentialListRequiredCredential requiredCredential
+            public analyzeReturnRequiredCredentialListRequiredCredential requiredCredential
             {
                 get
                 {
@@ -976,7 +952,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnRequiredCredentialListRequiredCredential
+        public partial class analyzeReturnRequiredCredentialListRequiredCredential
         {
 
             private string credentialTypeField;
@@ -1059,19 +1035,19 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnRiskResult
+        public partial class analyzeReturnRiskResult
         {
 
-            private ushort riskScoreField;
+            private int riskScoreField;
 
             private string riskScoreBandField;
 
-            private analyzeResponseAnalyzeReturnRiskResultTriggeredRule triggeredRuleField;
+            private analyzeReturnRiskResultTriggeredRule triggeredRuleField;
 
             private string deviceAssuranceLevelField;
 
             /// <remarks/>
-            public ushort riskScore
+            public int riskScore
             {
                 get
                 {
@@ -1097,7 +1073,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             }
 
             /// <remarks/>
-            public analyzeResponseAnalyzeReturnRiskResultTriggeredRule triggeredRule
+            public analyzeReturnRiskResultTriggeredRule triggeredRule
             {
                 get
                 {
@@ -1127,7 +1103,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        public partial class analyzeResponseAnalyzeReturnRiskResultTriggeredRule
+        public partial class analyzeReturnRiskResultTriggeredRule
         {
 
             private string actionCodeField;
@@ -1220,6 +1196,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 }
             }
         }
+
+
 
 
         #endregion

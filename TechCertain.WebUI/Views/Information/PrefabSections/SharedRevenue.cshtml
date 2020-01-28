@@ -3,10 +3,10 @@
 <div id="SharedRevenue">
     @if (Model.RevenueByActivityViewModel.RevenueData != null)
     {
-        @await Html.PartialAsync("/Views/Information/PrefabSections/ExistingSharedRevenue.cshtml", Model.RevenueByActivityViewModel)
+        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/Existing.cshtml", Model.RevenueByActivityViewModel)
     }
     else
     {
-        @await Html.PartialAsync("/Views/Information/PrefabSections/NewSharedRevenue.cshtml", Model.RevenueByActivityViewModel)
+        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/New.cshtml", Model.RevenueByActivityViewModel)
     }
 </div>
