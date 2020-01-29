@@ -74,6 +74,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\ckeditor\" />
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
 </Project>

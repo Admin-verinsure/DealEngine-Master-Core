@@ -13,7 +13,6 @@
             <i class="fa-fw fa fa-home"></i>  <span>
                 <a href="~/Home/Index">Dashboard</a>
                 > Manage Image
-
             </span>
         </h1>
     </div>
@@ -24,159 +23,95 @@
         </span>
     </div>
 
-    <div id="content" style="height:92vh;">
-        <!-- widget grid -->
-        <section class="">
-            <!-- row -->
-            <div class="row">
-                <article class="col-sm-12">
-                    <div id="container" style="height: 90vh;">
-                        <div class="col-sm-12" style="height:75vh;">
-                            <div class="col-sm-12 mt-3 bg-light" style="height: 12%; border-color: black; border-width: 1px; border-style: solid; border-bottom:none;" name="toolbar">
-                                <div class="col-sm-6 mt-3">
-                                    <h2 style="display: inline-block; margin: 0 !important; padding: 0 !important; vertical-align: top; padding-top: 4px !important;" class="">Manage Image</h2>
-                                </div>
-                                <!--div class="col-sm-6 mt-3">
-                                        <button type="button" class="float-left btn btn-default btn-sm mr-3">
-                                            <span class="glyphicon glyphicon-filter"></span> Sort
-                                        </button>
-                                        <input class="form-control float-left w-75" type="text" placeholder="Search" aria-label="Search">
-                                </div-->
-                            </div>
+    <div class="row">
 
-                            <div class="col-sm-12 bg-light" style="height:60%; border-color: black; border-width: 1px; border-style: solid; border-bottom:none;" name="gallery">
-                                <!-- Page Content -->
-                                <div class="col-sm-12" style="overflow-y:auto; height:44vh; width:inherit;">
-                                    <form enctype="multipart/form-data" asp-controller="Image" asp-action="Upload" method="post" class="mt-3">
-                                        <div>
-                                            @foreach (var img in Model.Item)
-                                            {
-                                                <div class="col-sm-3 float-left">
-                                                    <div class="col-sm-12">
-                                                        <img onclick="selectImgCKHome()" style="max-height:100%; max-width:100%; vertical-align:middle;" src=@img.ThumbPath id=@img.Id name=@img.Name />
-                                                    </div>
-                                                    <label class="ckimporterlabel">@img.Name</label>
-                                                </div>
-                                            }
-                                        </div>
-                                    </form>
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
+                <h2> Manage Image </h2>
+            </header>
+
+            <div class="container-fluid" style="height:60%;" name="gallery">
+                <!-- Page Content -->
+                <form enctype="multipart/form-data" asp-controller="Image" asp-action="Upload" method="post" class="mt-3">
+                    <div>
+                        @foreach (var img in Model.Item)
+                        {
+                            <div class="col-sm-3 float-left">
+                                <div class="col-sm-12">
+                                    <label class="ckimporterlabel">
+                                        <img onclick="selectImgCKHome()" style="max-height:100%; max-width:100%; vertical-align:middle;" src=@img.ThumbPath id=@img.Id name=@img.Name />
+                                        @img.Name
+                                    </label>
                                 </div>
                             </div>
+                        }
+                    </div>
+                </form>
+            </div>
 
-                            <div class="col-sm-12 bg-light" style="height:10%; border-color: black; border-width: 1px; border-style: solid;" name="controls">
-                                <!--div class="form-group col-sm-3 float-left">
-                                    <div class="btn-group float-left" style="margin-top:.75rem;" role="group">
-                                        <button type="button" class="btn btn-danger">Back to Dashboard</button>
-                                    </div>
-                                </div-->
-                                <div class="form-group col-sm-9 float-right" style="height: inherit; margin: 0px !important;">
-                                    <!--div class="col-sm-6 float-left" style="margin-top:.75rem !important;">
-                                        <label style="float:left;">Selected Image: </label>
-                                        <input type="text" style="float:left; width:60%; margin-left:2em; margin-right:2em;">
-                                    </div-->
-                                    <div class="btn-group float-right col-sm-12" role="group">
-                                        <div class="col-sm-12 float-right" style="margin-top:.75rem;">
-                                            <button id="ckuploadbtn" onclick="" type="submit" class="btn btn-primary mr-2 float-right">Upload Image</button>
-                                            <!--button type="button" class="btn btn-primary mr-2">Update Image</button-->
-                                            <!--button onclick="delImg()" type="button" class="btn btn-primary mr-2">Delete Image</button-->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal" id="uploadmodal">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-
-                                        <!-- Modal Header -->
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Select an Image</h4>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                        <form enctype="multipart/form-data" asp-controller="Image" asp-action="Upload" method="post" class="mt-3">
-
-                                            <!-- Modal body -->
-                                            <div class="modal-body col-sm-12">
-                                                <div class="form-group row">
-                                                    <label asp-for="Name" class="col-sm-2 col-form-label"></label>
-                                                    <div class="col-sm-10">
-                                                        <input asp-for="Name" class="form-control" placeholder="Name">
-                                                        <span asp-validation-for="Name" class="text-danger"></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-sm-2 col-form-label">File</label>
-                                                    <div class="col-sm-10">
-                                                        <div class="custom-file">
-                                                            <input asp-for="Image" class="form-control custom-file-input" name="Image" id="fileUpload" />
-                                                            <label class="custom-file-label" id="custom-file-label">Choose File...</label>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row m-1">
-                                                    <p>Please note: Only .jpg and .png file types are accepted.</p>
-                                                </div>
-                                                <div asp-validation-summary="All" class="text-danger"></div>
-                                            </div>
-
-                                            <!-- Modal footer -->
-                                            <div class="modal-footer" style="display:flex; height:75px;">
-                                                <div class="btn-group float-right" role="group">
-                                                    <button id="" onclick="" type="submit" class="btn btn-primary">Upload Image</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="container-fluid" name="controls">
+                <div class="form-group col-sm-9 float-right">
+                    <div class="btn-group float-right col-sm-12" role="group">
+                        <div class="col-sm-12 float-right" style="margin-top:.75rem;">
+                            <button id="ckuploadbtn" onclick="" type="submit" class="btn btn-primary mr-2 float-right">Upload Image</button>
                         </div>
                     </div>
-
-                   @* <!-->div class="mb-3" id="CK">
-                        <div id="Content">
-                        </div>
-                    </div-->
-                    <!--div class="modal" id="ckmodal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Select an Image</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <div id="images" class="modal-body col-sm-12">
-                                </div>
-
-                                <div class="modal-footer" style="display:flex;">
-                                    <label for="selImg" style="float:left;">Selected Image: </label>
-                                    <input type="text" id="selImg" name="selImg" style="float:left;width:52%;margin-left:2rem;margin-right:2rem;">
-                                    <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div-->*@
-                </article>
+                </div>
             </div>
-        </section>
+
+        </div>
     </div>
 </div>
 
+<div class="modal" id="uploadmodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Select an Image</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" asp-controller="Image" asp-action="Upload" method="post" class="mt-3">
+
+                <!-- Modal body -->
+                <div class="modal-body col-sm-12">
+                    <div class="form-group row">
+                        <label asp-for="Name" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <input asp-for="Name" class="form-control" placeholder="Name">
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">File</label>
+                        <div class="col-sm-10">
+                            <div class="custom-file">
+                                <input asp-for="Image" class="form-control custom-file-input" name="Image" id="fileUpload" />
+                                <label class="custom-file-label" id="custom-file-label">Choose File...</label>
+                                <p>Please note: Only .jpg and .png file types are accepted.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer" style="display:flex;">
+                    <div class="btn-group float-right m-2" role="group">
+                        <button id="" onclick="" type="submit" class="btn btn-primary m-4">Upload Image</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 @section pagespecific {
-    @*<script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
-        <link href="~/css/ckeditor.css" rel="stylesheet" />
-        <script>
-            function selectImg(img) {
-                var filename = img.name;
-                $('#selImg').val(filename);
-            }
-            function importImg() {
-                var filename = $('#selImg').val();
-                $('#importImg').val(filename);
-            }
-        </script>*@
+
     <script type="text/javascript">
         $(document).ready(function () {
 
