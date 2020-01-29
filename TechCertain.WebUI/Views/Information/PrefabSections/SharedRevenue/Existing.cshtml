@@ -1,42 +1,129 @@
 ﻿@model TechCertain.WebUI.Models.RevenueByActivityViewModel
-    <form class="client-form" name="sharedRevenueForm">
-        <ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
-            <li class="nav nav-tabs Summary" style="display:none"> <a href="#RevenueTabs0" data-toggle="tab"> Summary </a> </li>
-            <li class="nav nav-tabs Territory" style="display:none" id="revenueTab1"> <a href="#RevenueTabs1" data-toggle="tab" > Territory </a> </li>
-            <li class="nav nav-tabs Activities" style="display:none" id="revenueTab2"> <a href="#RevenueTabs2" data-toggle="tab" onclick="ValidateSharedRevenueForm(1)"> Activities </a> </li>
-            <li class="nav nav-tabs AdditionalInformation" style="display:none" id="revenueTab3"> <a href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
-        </ul>
+
+<ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
+    <li class="nav nav-tabs Summary" style="display:none"> <a href="#RevenueTabs0" data-toggle="tab"> Summary </a> </li>
+    <li class="nav nav-tabs Territory" style="display:none" id="revenueTab1"> <a href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
+    <li class="nav nav-tabs Activities" style="display:none" id="revenueTab2"> <a href="#RevenueTabs2" data-toggle="tab" onclick="ValidateSharedRevenueForm(1)"> Activities </a> </li>
+    <li class="nav nav-tabs AdditionalInformation" style="display:none" id="revenueTab3"> <a href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
+</ul>
 
 
-        <div id="RevenueTabs0" class="tab-content">
-            <div class="form-group">
-                <label for="SharedTotalRevenue">Fee Income</label>
-                <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="10000" required>
-            </div>
-            <div class="form-group">
-                <table id="ListSharedRevenueTerritories" class="table">
-                    <thead>
-                        <tr>
-                            @foreach (var territoryData in Model.RevenueData.Territories)
-                            {
-                                <th scope="col">@territoryData.Location</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @foreach (var territoryData in Model.RevenueData.Territories)
-                            {
-                                <th scope="row">
-                                    <input class="form-control" readonly type="number" name="@territoryData.Id" id="@territoryData.Id" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
-                                </th>
-                            }
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="form-group">
-                <table id="ListSharedRevenueActivities" class="table">
+<div id="RevenueTabs0" class="tab-content">
+    <div class="form-group">
+        <label for="SharedTotalRevenue">Fee Income</label>
+        <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="10000" required>
+    </div>
+    <div class="form-group">
+        <table id="ListSharedRevenueTerritories" class="table">
+            <thead>
+                <tr>
+                    @foreach (var territoryData in Model.RevenueData.Territories)
+                    {
+                        <th scope="col">@territoryData.Location</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var territoryData in Model.RevenueData.Territories)
+                    {
+                        <th scope="row">
+                            <input class="form-control" readonly type="number" name="@territoryData.Id" id="@territoryData.Id" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                        </th>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group">
+        <table id="ListSharedRevenueActivities" class="table">
+            <thead>
+                <tr>
+                    @foreach (var businessActivityData in Model.RevenueData.Activities)
+                    {
+                        <th scope="col">@businessActivityData.Description</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var businessActivityData in Model.RevenueData.Activities)
+                    {
+                        <th scope="row">
+                            <input class="form-control" type="number" readonly name="@businessActivityData.Id" id="@businessActivityData.Id" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                        </th>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="UpdateSharedActivity" class="form-group">
+        <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+    </div>
+</div>
+<div id="RevenueTabs1" class="tab-content">
+    <div class="container-fluid">
+        <div class="form-group" id="sharedRevenueTerritories" name="sharedRevenueTerritories">
+            <label for="SharedTerritories">Select Territories</label>
+            <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
+                @foreach (var territory in Model.Territories)
+                {
+                    <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <table id="sharedRevenueTerritoriesTable" class="table">
+                <thead>
+                    <tr>
+
+                        @foreach (var territoryData in Model.RevenueData.Territories)
+                        {
+                            <th scope="col">@territoryData.Location</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        @foreach (var territoryData in Model.RevenueData.Territories)
+                        {
+                            <th scope="row">
+                                <input class="form-control" type="number" name="@territoryData.TerritoryTemplateId" id="@territoryData.TerritoryTemplateId" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                            </th>
+                        }
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+        <div id="sharedRevenue1Btn" class="form-group">
+            <button class="btn btn-primary" id="tradingButton" onclick="SaveRevenueTabOne()">Submit To Save</button>
+        </div>
+    </div>
+</div>
+<div id="RevenueTabs2" class="tab-content">
+    <div class="container-fluid">
+        <div class="form-group">
+            <label for="totalRevenue">Enter Fee Income</label>
+            <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+        </div>
+
+        <div class="form-group">
+            <label for="sharedRevenueActivities">Select Activites</label>
+            <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                @foreach (var ou in Model.Activities)
+                {
+                    <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <table id="sharedRevenueActivityTable" class="table">
+                @if (Model.RevenueData != null)
+                {
                     <thead>
                         <tr>
                             @foreach (var businessActivityData in Model.RevenueData.Activities)
@@ -50,116 +137,28 @@
                             @foreach (var businessActivityData in Model.RevenueData.Activities)
                             {
                                 <th scope="row">
-                                    <input class="form-control" type="number" readonly name="@businessActivityData.Id" id="@businessActivityData.Id" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                                    <input class="form-control" type="number" name="@businessActivityData.BusinessActivityTemplate" id="@businessActivityData.BusinessActivityTemplate" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
                                 </th>
                             }
                         </tr>
                     </tbody>
-                </table>
+                }
+            </table>
+        </div>
+        <div class="form-group">
+            <div class="footer" id="submitTab4">
+                <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('oldSummary')">
             </div>
-            <div id="UpdateSharedActivity" class="form-group">
-                <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+            <div class="footer" id="additionalInfomation" style="display:none">
+                <button class="btn btn-primary" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
             </div>
         </div>
-        <div id="RevenueTabs1" class="tab-content">
-            <div class="container-fluid">
-                <div class="form-group" id="sharedRevenueTerritories" name="sharedRevenueTerritories">
-                    <label for="SharedTerritories">Select Territories</label>
-                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
-                        @foreach (var territory in Model.Territories)
-                        {
-                            <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <table id="sharedRevenueTerritoriesTable" class="table">
-                        <thead>
-                            <tr>
-
-                                @foreach (var territoryData in Model.RevenueData.Territories)
-                                {
-                                    <th scope="col">@territoryData.Location</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                @foreach (var territoryData in Model.RevenueData.Territories)
-                                {
-                                    <th scope="row">
-                                        <input class="form-control" type="number" name="@territoryData.TerritoryTemplateId" id="@territoryData.TerritoryTemplateId" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
-                                    </th>
-                                }
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </div>
-
-                <div id="sharedRevenue1Btn" class="form-group">
-                    <button class="btn btn-primary" id="tradingButton" onclick="SaveRevenueTabOne()">Submit To Save</button>
-                </div>
-            </div>
-        </div>
-        <div id="RevenueTabs2" class="tab-content">
-            <div class="container-fluid">
-                <div class="form-group">
-                    <label for="totalRevenue">Enter Fee Income</label>
-                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="sharedRevenueActivities">Select Activites</label>
-                    <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>                        
-                        @foreach (var ou in Model.Activities)
-                        {
-                            <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <table id="sharedRevenueActivityTable" class="table">
-                        @if (Model.RevenueData != null)
-                        {
-                            <thead>
-                                <tr>
-                                    @foreach (var businessActivityData in Model.RevenueData.Activities)
-                                    {
-                                        <th scope="col">@businessActivityData.Description</th>
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    @foreach (var businessActivityData in Model.RevenueData.Activities)
-                                    {
-                                        <th scope="row">
-                                            <input class="form-control" type="number" name="@businessActivityData.BusinessActivityTemplate" id="@businessActivityData.BusinessActivityTemplate" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
-                                        </th>
-                                    }
-                                </tr>
-                            </tbody>
-                        }
-                    </table>
-                </div>
-                <div class="form-group">
-                    <div class="footer" id="submitTab4">
-                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('oldSummary')">
-                    </div>
-                    <div class="footer" id="additionalInfomation" style="display:none">
-                        <button class="btn btn-primary" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="RevenueTabs3" class="tab-content">
-            <div class="container-fluid">
-                @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model)
-            </div>
-        </div>
-    </form>
+    </div>
+</div>
+<div id="RevenueTabs3" class="tab-content">
+    <div class="container-fluid">
+        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model)
+    </div>
+</div>
 
 

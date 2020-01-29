@@ -1,5 +1,7 @@
 ﻿@model TechCertain.WebUI.Models.RevenueByActivityViewModel
 
+@if (Model.RevenueData != null)
+{
 @if (Model.RevenueData.AdditionalActivityInformation != null)
 {
     @if (Model.RevenueData.AdditionalActivityInformation.InspectionReportTextId != "")
@@ -240,6 +242,13 @@
             </div>
         </div>
     }
+
+    <div class="form-group mb-3">
+        <div class="footer" style="display:none" id="additionalActivitySubmit">
+            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive()">
+        </div>
+    </div>
+    }
 }
 else
 {
@@ -330,10 +339,11 @@ else
             <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
         </div>
     </div>
+
+    <div class="form-group mb-3">
+        <div class="footer" style="display:none" id="additionalActivitySubmit">
+            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
+        </div>
+    </div>
 }
 
-<div class="form-group mb-3">
-    <div class="footer" style="display:none" id="additionalActivitySubmit">
-        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
-    </div>
-</div>
