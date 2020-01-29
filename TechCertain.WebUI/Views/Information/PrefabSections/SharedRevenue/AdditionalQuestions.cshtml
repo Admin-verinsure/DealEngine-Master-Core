@@ -13,7 +13,16 @@
             <div class="row-fluid">
                 <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
                 <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
-                    @Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/ExistingSharedRevenue.cshtml", Model)
+                    @if (Model.RevenueData.AdditionalActivityInformation.InspectionReportBoolId == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
                 </select>
             </div>
         </div>
@@ -51,7 +60,7 @@
             <div class="row-fluid">
                 <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
                 <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
-                    @if (Model.RevenueData.AdditionalActivityInformation.InspectionReportBoolId == 1)
+                    @if (Model.RevenueData.AdditionalActivityInformation.ValuationBoolId == 1)
                     {
                         <option value=2> No </option>
                         <option selected value=1>Yes</option>
@@ -96,25 +105,61 @@
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
-                    @Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/ExistingSharedRevenue.cshtml", Model)
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
                 </select>
             </div>
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
-                    @Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/ExistingSharedRevenue.cshtml", Model)
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
                 </select>
             </div>
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools(i.e Not Private, Integrated or Designated Character Schools)? </label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
-                    @Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/ExistingSharedRevenue.cshtml", Model)
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
                 </select>
             </div>
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
-                    @Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/ExistingSharedRevenue.cshtml", Model)
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
                 </select>
             </div>
         </div>
@@ -195,11 +240,6 @@
             </div>
         </div>
     }
-    <div class="form-group mb-3">
-        <div class="footer" style="display:none" id="additionalActivitySubmit">
-            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive()">
-        </div>
-    </div>
 }
 else
 {
