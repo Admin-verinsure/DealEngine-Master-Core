@@ -87,7 +87,7 @@
                        debugger;
                         var $tds = $(this).find('td'),
                           value = $tds.eq(1).text().toString();
-                      
+
                        if (value == false && value != "") {
                            IsboatNamecount++;
                        }
@@ -180,7 +180,7 @@
                        }
 
 
-                       
+
                    }
                    if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
                        if (!ValidateEmployer()) {
@@ -233,11 +233,11 @@
                            return false;
                            } else {
                            ValidateDNO();
-                           
+
                        }
 
                    }
-               
+
                //$('#getAgreementModal').show();
                @*if ($("#Sheetstatus").val() != "Started") {
                    var progId = $('#ClientProgrammeId').val();
@@ -271,7 +271,7 @@
                        });
                    })
                    .fail(function (a, s, d) {
-                       $('#getAgreementModal').hide();                       
+                       $('#getAgreementModal').hide();
                        debugger;
                    });
 
@@ -1988,7 +1988,7 @@ function showAccordionPanel(id, panelNo) {
         $('#sharedRevenue2Btn').show();
         CheckAdditionalInformation();
         BuildRevenuesTable('false');
-                
+
     }
 
     function CheckAdditionalInformation() {
@@ -2006,10 +2006,10 @@ function showAccordionPanel(id, panelNo) {
     }
 
      function ToggleSharedRevenueTab1Button() {
-        $('#sharedRevenue1Btn').show();        
+        $('#sharedRevenue1Btn').show();
         BuildRevenuesTable('true')
     }
-    
+
     function SaveRevenueTabOne() {
         event.preventDefault();
         var territories = GetTerritoriesForRevenue('value');
@@ -2023,11 +2023,11 @@ function showAccordionPanel(id, panelNo) {
                 type: "POST",
                 data: postData
             })
-                .done(function (Data) {                    
-                    if (SaveRevenueTabThree() == true) {                        
+                .done(function (Data) {
+                    if (SaveRevenueTabThree() == true) {
                         SetCurrentTab('RevenueTabs2');
                     }
-                });             
+                });
     }
 
     function SaveRevenueTabTwo(type) {
@@ -2036,7 +2036,7 @@ function showAccordionPanel(id, panelNo) {
             var businessActivities = GetActivitiesForRevenue('value');
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { BusinessActivities: businessActivities, ClientInformationSheetId: clientInformationSheetId }
-        
+
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabTwo", "Information")',
                 type: "POST",
@@ -2048,19 +2048,21 @@ function showAccordionPanel(id, panelNo) {
                     if (type == 'additionalInfo') {
                         $('#SharedRevenueTab3').show();
                         SetCurrentTab('RevenueTabs3');
-                        
+
                     } else if (type == 'newSummary') {
                         SetCurrentTab('RevenueTabs4');
                     } else {
                         SetCurrentTab('RevenueTabs0');
                     }
-                }                
+                }
             });
-        }        
+        }
     }
 
     function SaveRevenueTabThree() {
+        debugger;
         if (ValidateSharedRevenueForm(2)) {
+            debugger;
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
@@ -2166,17 +2168,52 @@ function showAccordionPanel(id, panelNo) {
         $('#additionalActivitySubmit').hide();
     }
 
+    function ValidateSharedRoleForm(tabs) {
+        for (var i = 0; i <= tabs; i++) {
+            if (i == 0) {
+                //do nothing for now
+            }
+            else if (i == 1) {
+                var roles = GetRoles('text');
+                if (roles.length == 0) {
+                    alert("Please select Role");
+                    return false;
+                }
+
+                var arr = ValidateTable("sharedRoleTable");
+                for (var i = 0; i < arr.length; i++) {
+                    
+                    if (!wholeNumberCheck(parseInt(arr[i]))) {
+                        alert("Please enter a whole number");
+                        return false;
+                    }
+                    if (parseInt(arr[i]) < 0) {
+                        alert("Please enter a whole number above '0'");
+                        return false;
+                    }
+                }
+            }
+            else if (i == 2) {
+                if (document.getElementById("OtherProfessionId").value == "") {
+                    alert("Please provide details");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     function ValidateSharedRevenueForm(tabs) {
         for (var i = 0; i <= tabs; i++) {
             if (i == 0) {
                 var activitiesStr = GetActivitiesForRevenue('value');
 
                 if (activitiesStr.length != 0) {
-                    DefaultAdditionalInfo();                    
-                    ShowAdditionalInfomation();                    
+                    DefaultAdditionalInfo();
+                    ShowAdditionalInfomation();
                 }
             }
-            else if (i == 1) {                
+            else if (i == 1) {
                 var territories = GetTerritoriesForRevenue('value');
                 var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
 
@@ -2195,10 +2232,18 @@ function showAccordionPanel(id, panelNo) {
                 }
             }
             else if (i == 2) {
-                if (ValidateTable("sharedRevenueTerritoriesTable")) {
+                var arr = ValidateTable("sharedRevenueTerritoriesTable");
+                var totalSharedRevenue = 0;
+
+                for (var i = 0; i < arr.length; i++) {
+                    totalSharedRevenue += parseInt(arr[i]);
+                }
+
+                if (totalSharedRevenue != 100) {
                     alert("Percentage calculation does not equal to 100%");
                     return false;
                 }
+                debugger;
             }
             else if (i == 3) {
                 var businessActivities = GetActivitiesForRevenue('value');
@@ -2219,11 +2264,18 @@ function showAccordionPanel(id, panelNo) {
                 }
             }
             else if (i == 4) {
-                if (ValidateTable("sharedRevenueActivityTable")) {
-                    debugger;
+                var arr = ValidateTable("sharedRevenueActivityTable");
+                var totalSharedRevenue = 0;
+
+                for (var i = 0; i < arr.length; i++) {
+                    totalSharedRevenue += parseInt(arr[i]);
+                }
+
+                if (totalSharedRevenue != 100) {
                     alert("Percentage calculation does not equal to 100%");
                     return false;
                 }
+
             }
             else if (i == 5) {
                 var activitiesStr = GetActivitiesForRevenue('text');
@@ -2241,12 +2293,12 @@ function showAccordionPanel(id, panelNo) {
                             alert("Please provide details");
                             document.getElementById("InspectionReportTextId").focus();
                             return false;
-                        }                        
-                        if (parseInt(document.getElementById("InspectionReportBoolId").value) == 0) {                            
+                        }
+                        if (parseInt(document.getElementById("InspectionReportBoolId").value) == 0) {
                             alert("Please select an option");
                             document.getElementById("InspectionReportBoolId").focus();
                             return false;
-                        }                        
+                        }
                     }
                     if (item.trim() === "Valuations") {
                         if (document.getElementById("ValuationTextId").value == "") {
@@ -2258,12 +2310,12 @@ function showAccordionPanel(id, panelNo) {
                             alert("Please provide details");
                             document.getElementById("ValuationTextId2").focus();
                             return false;
-                        }                        
+                        }
                         if (parseInt(document.getElementById("ValuationBoolId").value) == 0) {
                             alert("Please select an option");
                             document.getElementById("ValuationBoolId").focus();
                             return false;
-                        }                        
+                        }
                     }
                     if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
                         if (parseInt(document.getElementById("SchoolsDesignWorkBoolId").value) == 0) {
@@ -2285,18 +2337,19 @@ function showAccordionPanel(id, panelNo) {
                             alert("Please select an option");
                             document.getElementById("SchoolsDesignWorkBoolId4").focus();
                             return false;
-                        }                          
+                        }
                     }
                     if (item.trim() === "Canterbury Earthquake Rebuild Work") {
                         if (document.getElementById("CanterburyEarthquakeRebuildWorkId").value == "") {
                             alert("Please provide details");
                             document.addtionalActivityInformationContainer.CanterburyEarthquakeRebuildWorkId.focus();
                             return false;
-                        }                        
+                        }
                     }
                 });
             }
         }
+        debugger;
         return true;
     }
 
@@ -2367,59 +2420,68 @@ function showAccordionPanel(id, panelNo) {
         SetCurrentTab('RevenueTabs1');
     }
 
-    function SaveRoleTabThree(){
+    function SaveRoleTabTwo(){
         event.preventDefault();
-        var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
-        var clientInformationSheetId = $('#AnswerSheetId').val();
+        if (ValidateSharedRoleForm(2)) {
+            var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
+            var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { SerialisedAdditionalRoleInformationTable: serialisedAdditionalRoleInformationTable, ClientInformationSheetId: clientInformationSheetId };
+
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabThree", "Information")',
                 type: "POST",
                 data: postData
             })
+                .done(function (Data) {
+                    SetCurrentTab('sharedRoleTabs1');
+                });
+        }        
     }
 
-    function SaveRoleTabTwo(hasAddInfo) {
-        event.preventDefault();
-        table = document.getElementById("sharedRoleTable");
-        if (validateTableRoles(table)) {
-            var tableSerialised = $("#sharedRoleTable :input").serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
+    function SaveRoleTable() {
+        var tableSerialised = $("#sharedRoleTable :input").serialize();
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+        var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
+
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabTwo", "Information")',
                 type: "POST",
                 data: postData
             })
-            if (hasAddInfo) {
-                $('#additionalRoleInfomation').show();
-                SetCurrentTab('sharedRoleTabs3');
-            }
-        }
     }
 
-    function SaveRoleTabOne() {
-        event.preventDefault();
+    function SharedRoleOnChange() {
         BuildRolesTable();
-        SetCurrentTab('sharedRoleTabs2');
-        var sharedDataRoles = GetRoles('val');
-        var clientInformationSheetId = $('#AnswerSheetId').val();
+        var roles = GetRoles('text');
+        $('#btnSharedRoleSubmit').show();
+        $('#additionalRoleInfomationBtn').hide();
+        roles.forEach(function (item) {
+            if (item.trim() === "Other Professions") {
+                $('#btnSharedRoleSubmit').hide();
+                $('#additionalRoleInfomationBtn').show();
+            }
+        });
+    }
 
-        var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
+    function SaveRoleTabOne(hasAddInfo) {
+        event.preventDefault();
+        if (ValidateSharedRoleForm(1)) {
+            var sharedDataRoles = GetRoles('val');
+            var clientInformationSheetId = $('#AnswerSheetId').val();
+            var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
+
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabOne", "Information")',
                 type: "POST",
                 data: postData
             })
                 .done(function (Data) {
-                    var roles = GetRoles('text');
-                    roles.forEach(function (item, index) {
-                        if (item.trim() === "Other Professions") {
-                            $('#submitTab1').hide();
-                            $('#additionalRoleInfomationBtn').show();
-                        }
-                    });
+                    SaveRoleTable();
+                    if (hasAddInfo) {
+                        SetCurrentTab('sharedRoleTabs2');
+                    }
                 });
+        }
     }
 
     function GetActivitiesForRevenue(type) {
@@ -2493,7 +2555,7 @@ function showAccordionPanel(id, panelNo) {
                     row.append($('<td>').append(
                         $('<section>').append(
                             $('<label>', { class: 'input' }).append(
-                                $('<input>', { type: 'text', class: 'form-control col-4', name: name, id: name, placeholder: 'Number of People' }
+                                $('<input>', { type: 'text', class: 'form-control', name: name, id: name, placeholder: 'Number of People' }
                                 )
                             )
                         )
@@ -2518,7 +2580,7 @@ function showAccordionPanel(id, panelNo) {
              listc = [ 'Revenue Breakdown' ];
              revenueTable = $('#sharedRevenueActivityTable');
         }
-        
+
         if (revenueTable != null) {
         // clear previous table
             if (revenueTable.className != "table") {
@@ -2575,82 +2637,41 @@ function showAccordionPanel(id, panelNo) {
     };
     };
 
-    function GetTableArray(table) {
-        var array = [];
-        row = table.rows[0];
-        for (var j = 1, col; col = row.cells[j]; j++) {
-            array.push(col.innerHTML);
-        }
-        return array;
-    }
-
-    function validateTableRoles(table) {
-        var roleTable = GetTableArray(table);
-        var roles = GetRoles('value')
-        for (var i = 0; i < roleTable.length; i++) {
-            var value = 0;
-            for (var k = 0; k < roles.length; k++) {
-                elementname = roles[k];
-                value = document.getElementById(elementname).value;
-                try {
-                    var isValueInt = wholeNumberCheck(value);
-                    if (!isValueInt) {
-                        throw(elementname);
-                    }
-                } catch (name) {
-                    alert("Please enter a whole number.");
-                    BuildRolesTable();
-                    return false;
-                }
-            }
-
-        }
-        return true;
-    }
-
     function ValidateTable(table) {
         var inputTable = document.getElementById(table);
         var arr = [];
         var tableBody = inputTable.lastElementChild;
-        var totalSharedRevenue = 0;
         var value;
-        debugger;
+
         if (tableBody.childElementCount == 1) {
-            var tableRows = tableBody.lastElementChild;            
+            var tableRows = tableBody.lastElementChild;
             for (var i = 0; i < tableRows.children.length; i++) {
-                debugger;
                 try {
                     value = tableRows.children[i].lastElementChild.value;
-                    arr.push(value);
                 } catch{
-                    debugger;
-                    value = tableRows.children[i].lastElementChild.value;
+                    value = tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value;
+                }
+                debugger;
+                if (typeof value !== 'undefined') {
                     arr.push(value);
                 }
             }
 
         } else {
             for (var i = 0; i < tableBody.children.length; i++) {
-                debugger;
                 try {
-                    value = tableBody.children[i].lastElementChild.value;
-                    arr.push(value);
+                    value = tableBody.children[i].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value;
                 } catch{
-                    debugger;
                     value = tableBody.children[i].lastElementChild.value;
+                }
+                debugger;
+                if (typeof value !== 'undefined') {
                     arr.push(value);
                 }
             }
-        }       
-
-        for (var i = 0; i < arr.length; i++) {
-            totalSharedRevenue += parseInt(arr[i]);
         }
-
-        if (totalSharedRevenue != 100) {
-            return true;
-        }
-        return false;
+        debugger;
+        return arr;
     }
 
     function wholeNumberCheck(n) {

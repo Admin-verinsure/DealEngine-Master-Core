@@ -2691,11 +2691,21 @@ namespace TechCertain.WebUI.Controllers
                     {
                         string[] valueId = str.Split('=');
                         var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(valueId[0]));
-                        if (sharedRoleTemplate.Name == sharedRole.Name)
+                        if(sharedRoleTemplate != null)
                         {
-                            sharedRole.Count = int.Parse(valueId[1]);
-                            await _sharedDataRoleService.UpdateSharedRole(sharedRole);
+                            if (sharedRoleTemplate.Name == sharedRole.Name)
+                            {
+                                sharedRole.Count = int.Parse(valueId[1]);                                
+                            }
                         }
+                        else
+                        {
+                            if (valueId[0] == sharedRole.Id.ToString())
+                            {
+                                sharedRole.Count = int.Parse(valueId[1]);                                
+                            }
+                        }
+                        await _sharedDataRoleService.UpdateSharedRole(sharedRole);
                     }
                 }
 
