@@ -72,7 +72,7 @@ namespace TechCertain.Services.Impl
         {
             var responseMessage = "";            
             string service = "https://ris.us1.qeadaptiveauth.com/AdaptiveAuthentication/services/AdaptiveAuthentication";
-            string SOAPAction = "rsa:udpateuser:UpdateUser";
+            string SOAPAction = "rsa:updateuser:UpdateUser";
 
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
@@ -95,7 +95,7 @@ namespace TechCertain.Services.Impl
             {
                 HttpClient client = new HttpClient(_socketsHttpHandler);
                 response = await client.SendAsync(_httpRequestMessage);
-                response.EnsureSuccessStatusCode();
+                //response.EnsureSuccessStatusCode();
                 responseMessage = await response.Content.ReadAsStringAsync();
                 //responseMessage = UpdateUserResponse();
 
@@ -324,44 +324,45 @@ namespace TechCertain.Services.Impl
         {
             return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
                         <soap:Header>
-                        <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">     
-                        <wsse:UsernameToken wsu:Id=""UsernameToken-bd15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">         
-                        <wsse:Username>MarshNZSOAPUser</wsse:Username>              
-                        <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>                                                           
-                        </wsse:UsernameToken>                                         
-                        </wsse:Security>                                          
-                        </soap:Header> 
-                        <soap:Body><UpdateUser xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                                <request>
-                                    <actionTypeList xmlns=""http://ws.csd.rsa.com"">
-                                        <genericActionTypes>SET_USER_STATUS</genericActionTypes>
-                                        <genericActionTypes>SET_USER_GROUP</genericActionTypes>
-                                    </actionTypeList>
-                                    <deviceRequest xmlns=""http://ws.csd.rsa.com"">
-                                        <deviceTokenCookie>PMV61tt6BerP61CegqhtnJYyseWD0Hv24BrD4jDdygirmrUXqebmv%2FhYznl66UbzZITQ4loeyk6ExNT7kIGAi8Z1lfA9KDkhKGd%2FLVKgVXAlunPek%3D</deviceTokenCookie>
-                                        <httpAccept />
-                                        <httpAcceptEncoding />
-                                        <httpAcceptLanguage />
-                                        <httpReferrer>Microsoft.AspNetCore.Mvc.Routing.EndpointRoutingUrlHelper</httpReferrer>
-                                        <ipAddress>192.168.1.145</ipAddress>
-                                    </deviceRequest>
-                                    <identificationData xmlns=""http://ws.csd.rsa.com"">
-                                        <delegated>false</delegated>
-                                        <groupName>Clients</groupName>
-                                        <orgName>Marsh_Model</orgName>
-                                        <userName>ray@techcertain.com</userName>
-                                        <userStatus>VERIFIED</userStatus>
-                                        <userType>PERSISTENT</userType>
-                                    </identificationData>
-                                    <messageHeader xmlns=""http://ws.csd.rsa.com"">
-                                        <apiType>DIRECT_SOAP_API</apiType>
-                                        <requestType>UPDATEUSER</requestType>
-                                        <version>7.0</version>
-                                    </messageHeader>
-                                </request>
-                              </UpdateUser>
-                        </soap:Body>
-                    </soap:Envelope>";
+                            <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">
+                            <wsse:UsernameToken wsu:Id = ""UsernameToken-bd15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">
+                            <wsse:Username> MarshNZSOAPUser </wsse:Username>
+                            <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"" > MarNZ0sa$0Cap16us </wsse:Password>
+                            </wsse:UsernameToken>                      
+                            </wsse:Security>
+                        </soap:Header>                        
+                           <soap:Body>                         
+                               <updateUser xmlns = ""http://ws.csd.rsa.com"">                          
+                                   <request>                          
+                                      <actionTypeList>                          
+                                         <genericActionTypes> SET_USER_STATUS </genericActionTypes>                          
+                                         <genericActionTypes> SET_USER_GROUP </genericActionTypes>                          
+                                      </actionTypeList>                          
+                                      <deviceRequest>                          
+                                         <deviceTokenCookie> PMV61tt6BerP61CegqhtnJYyseWD0Hv24BrD4jDdygirmrUXqebmv % 2FhYznl66UbzZITQ4loeyk6ExNT7kIGAi8Z1lfA9KDkhKGd % 2FLVKgVXAlunPek % 3D </deviceTokenCookie>                                 
+                                                <httpAccept/>                                 
+                                                <httpAcceptEncoding/>                                 
+                                                <httpAcceptLanguage/>                                 
+                                                <httpReferrer> Microsoft.AspNetCore.Mvc.Routing.EndpointRoutingUrlHelper </httpReferrer>                                 
+                                                <ipAddress> 192.168.1.145 </ipAddress>                                    
+                                                </deviceRequest>                                    
+                                                <identificationData>                                    
+                                                   <delegated> false </delegated>                                    
+                                                   <groupName/>                                    
+                                                   <orgName> org1 </orgName>                                    
+                                                   <userName> ray@techcertain.com </userName>                                       
+                                                      <userStatus> VERIFIED </userStatus>                                       
+                                                      <userType> PERSISTENT </userType>                                       
+                                                   </identificationData>                                       
+                                                   <messageHeader>                                       
+                                                      <apiType> DIRECT_SOAP_API </apiType>                                       
+                                                      <requestType> UPDATEUSER </requestType>                                       
+                                                      <version> 7.0 </version>                                       
+                                                   </messageHeader>                                       
+                                                </request>                                       
+                                             </updateUser>                                       
+                                          </soap:Body>
+                                        </soap:Envelope>";
         }
        
         #endregion
