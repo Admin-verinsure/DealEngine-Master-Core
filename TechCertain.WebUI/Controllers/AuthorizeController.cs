@@ -23,7 +23,8 @@ namespace TechCertain.WebUI.Controllers
         UserManager<IdentityUser> _userManager;
         IOrganisationService _organisationService;
         IApplicationLoggingService _applicationLoggingService;
-        ILogger _logger;
+        ILogger<AuthorizeController> _logger;
+
 
         public AuthorizeController(
             IUserService userService, 
@@ -34,7 +35,7 @@ namespace TechCertain.WebUI.Controllers
             IUserRoleService userRoleService, 
             IOrganisationService organisationService,
             IApplicationLoggingService applicationLoggingService,
-            ILogger logger
+            ILogger<AuthorizeController> logger
             )
             : base(userService)
         {
