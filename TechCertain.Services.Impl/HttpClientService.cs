@@ -72,7 +72,7 @@ namespace TechCertain.Services.Impl
         {
             var responseMessage = "";            
             string service = "https://ris.us1.qeadaptiveauth.com/AdaptiveAuthentication/services/AdaptiveAuthentication";
-            string SOAPAction = "rsa:updateuser:UpdateUser";
+            string SOAPAction = "rsa:udpateuser:UpdateUser";
 
             SocketsHttpHandler _socketsHttpHandler;
             HttpRequestMessage _httpRequestMessage;
@@ -349,7 +349,7 @@ namespace TechCertain.Services.Impl
                                                 <identificationData>                                    
                                                    <delegated> false </delegated>                                    
                                                    <groupName/>                                    
-                                                   <orgName> org1 </orgName>                                    
+                                                   <orgName> Marsh_Model </orgName>                                    
                                                    <userName> ray@techcertain.com </userName>                                       
                                                       <userStatus> VERIFIED </userStatus>                                       
                                                       <userType> PERSISTENT </userType>                                       

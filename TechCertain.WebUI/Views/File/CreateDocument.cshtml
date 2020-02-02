@@ -1,47 +1,47 @@
 ﻿@model TechCertain.WebUI.Models.DocumentViewModel
 
 
-<div id="content" class="container">
-    <!-- widget grid -->
+    <div id="content" class="container">
+        <!-- widget grid -->
 
-    <div class="row">
-        <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
-            <i class="fa-fw fa fa-home"></i>  <span>
-                <a href="~/File/ManageDocuments"> My Documents</a>
-                > Manage Documents
+        <div class="row">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>  <span>
+                    <a href="~/File/ManageDocuments"> My Documents</a>
+                    > Manage Documents
+                </span>
+            </h1>
+        </div>
+        <div class="row">
+            <span>
+                <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
             </span>
-        </h1>
-    </div>
-    <div class="row">
-        <span>
-            <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
-    </div>
+        </div>
 
-                <header style="background-color:#EF4E45; color:white">
-                    <h2>Document</h2>
-                </header>
+        <header style="background-color:#EF4E45; color:white">
+            <h2>Document</h2>
+        </header>
 
-    <div class="row">
-        <!-- widget content -->
-        <form action="#" id="wizard-1" role="form" class="client-form container-fluid" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
+        <div class="row">
+            <!-- widget content -->
+            <form action="#" id="wizard-1" role="form" class="client-form container-fluid" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
 
-            <!-- SmartWizard html -->
-            <div id="CreateDocsmartwizard" class="sw-main sw-theme-circles">
-                <ul class="nav nav-tabs step-anchor">
-                    <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Start</small></a></li>
-                    <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Review</small></a></li>
-                    <li class="nav-item"><a href="#tab3" class="nav-link">3<br><small>Agree</small></a></li>
+                <!-- SmartWizard html -->
+                <div id="CreateDocsmartwizard" class="sw-main sw-theme-circles">
+                    <ul class="nav nav-tabs step-anchor">
+                        <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Start</small></a></li>
+                        <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Review</small></a></li>
+                        <li class="nav-item"><a href="#tab3" class="nav-link">3<br><small>Agree</small></a></li>
 
-                </ul>
+                    </ul>
 
-                <div class="sw-container tab-content">
-                    <div id="tab1" class="tab-pane step-content" style="display: block;">
-                        <h3><strong>Details </strong> - Complete Information</h3>
-                        @Html.HiddenFor(m => m.DocumentId)
-                        <br />
-                        <h3><strong>Setup </strong></h3>
+                    <div class="sw-container tab-content">
+                        <div id="tab1" class="tab-pane step-content" style="display: block;">
+                            <h3><strong>Details </strong> - Complete Information</h3>
+                            @Html.HiddenFor(m => m.DocumentId)
+                            <br />
+                            <h3><strong>Setup </strong></h3>
 
 
                             <div class="form-group">
@@ -58,8 +58,8 @@
                                 </div>
                             </div>
 
-                        @if (Model == null)
-                        {                            
+                            @if (Model == null)
+                            {
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
@@ -73,49 +73,46 @@
                                         </select>
                                     </div>
                                 </div>
-                        }
-                    </div>
-                    <div id="tab2" class="tab-pane step-content">
-                        <h3><strong>Review </strong></h3>
-                        @Html.TextAreaFor(m => m.Content)
-                    </div>
-                    <div id="tab3" class="tab-pane step-content">
-                        <div>
-                            <div class="page-body">
-                                <div class="head">
-                                    <h3 style="align-content:center">Document Has Been Saved</h3>
-                                    <a class="btn btn-success btn-sm" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
+                            }
+                        </div>
+                        <div id="tab2" class="tab-pane step-content">
+                            <h3><strong>Review </strong></h3>
+                            @Html.TextAreaFor(m => m.Content)
+                        </div>
+                        <div id="tab3" class="tab-pane step-content">
+                            <div>
+                                <div class="page-body">
+                                    <div class="head">
+                                        <h3 style="align-content:center">Document Has Been Saved</h3>
+                                        <a class="btn btn-success btn-sm" href="@Url.Action("ManageDocuments", "File")"><i class="fa fa-arrow-circle-left"></i>Back </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                    <div class="modal" id="ckmodal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+            </form>
+            <div class="modal" id="ckmodal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
 
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Select an Image</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <!-- Modal body -->
-                                <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
-                                </div>
-                                <div class="modal-footer" style="display:flex;">
-                                    <label for="selImg" style="float:left;">Selected Image: </label>
-                                    <input type="text" id="selImg" name="selImg" style="float:left;width:52%;margin-left:.5rem;margin-right:1rem;">
-                                    <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
-                                </div>
-                            </div>
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Select an Image</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
 
+                        <!-- Modal body -->
+                        <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+                        </div>
+                        <div class="modal-footer" style="display:flex;">
+                            <label for="selImg" style="float:left;">Selected Image: </label>
+                            <input type="text" id="selImg" name="selImg" style="float:left;width:52%;margin-left:.5rem;margin-right:1rem;">
+                            <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
+                        </div>
                     </div>
-
                 </div>
-        </form>
+
+            </div>
+        </div>
     </div>
-</div>
 
 
 @section pagespecific {

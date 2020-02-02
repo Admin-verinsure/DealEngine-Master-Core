@@ -1958,7 +1958,7 @@ function showAccordionPanel(id, panelNo) {
     }
 
     function SaveRevenueTabTwo(type) {
-        event.preventDefault();
+        event.preventDefault();        
         if (ValidateSharedRevenueForm(3)) {
             var businessActivities = GetActivitiesForRevenue('value');
             var clientInformationSheetId = $('#AnswerSheetId').val();
@@ -2039,13 +2039,12 @@ function showAccordionPanel(id, panelNo) {
             data: postData
         })
             .done(function (Data) {
+                BuildRevenueOverview();
                 if (type == 'newSummary') {
                     SetCurrentTab('RevenueTabs4');
-                }
-                else {
+                } else {
                     SetCurrentTab('RevenueTabs0');
                 }
-                BuildRevenueOverview();
             });
         }
     }
@@ -2159,11 +2158,11 @@ function showAccordionPanel(id, panelNo) {
             if (i == 0) {
                 var activitiesStr = GetActivitiesForRevenue('value');
 
+                $('#submitTab4').show();
+                $('#additionalInfomation').hide();
                 if (activitiesStr.length != 0) {
                     UpdateSharedRevenueView();
-                    ShowAdditionalInfomation();
-                    $('#submitTab4').hide();
-                    $('#additionalInfomation').show();
+                    ShowAdditionalInfomation();                                        
                 }
             }
             else if (i == 1) {
@@ -2330,19 +2329,25 @@ function showAccordionPanel(id, panelNo) {
         if (tableBody.childElementCount == 1) {
             var tableRows = tableBody.lastElementChild;
             for (var i = 0; i < tableRows.children.length; i++) {
+                
                 try {
                     tableRows.children[i].lastElementChild.value = arr[count];
+                    tableRows.children[i].lastElementChild.readOnly = true; 
                     count++;
                 } catch{
                     tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value = arr[i];
+                    tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.readOnly = true;
                 }                
             }
         } else {
             for (var k = 0; k < tableBody.children.length; k++) {
+                
                 try {
                     tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value = arr[k]; 
+                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.readOnly = true;
                 } catch{
                     tableBody.children[k].lastElementChild.value = arr[count];
+                    tableBody.children[k].lastElementChild.readOnly = true;
                     count++;
                 }
             }
