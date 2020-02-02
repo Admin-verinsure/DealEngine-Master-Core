@@ -592,7 +592,6 @@ namespace TechCertain.Services.Impl
 		}
 
 
-
 		public byte [] ToBytes (string contents)
 		{
 			return System.Text.Encoding.UTF8.GetBytes (contents);
