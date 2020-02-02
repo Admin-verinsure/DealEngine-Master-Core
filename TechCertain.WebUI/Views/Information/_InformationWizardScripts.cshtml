@@ -69,25 +69,12 @@
                    var hjfhd = document.querySelector('[aria-describedby="tblBoat_BoatName"]');
                    var IsboatNamecount = 0;
                    var value = "";
-                   //$('#tblBoat').find('tr').each(function (i, el) {
-                   //    var $tds = $(this).find('td'),
-                   //        product = $tds.eq(1).text();
-                   //    if (product == "") {
-                   //        IsboatName = false;
-                   //    }
-                   //});
-                   //hjfhd.each(function () {
-                   //    debugger;
-                   //        product = this.text();
-                   //    if (product == "") {
-                   //        IsboatNamecount ++;
-                   //    }
-                   //});
+
                    $('#tblBoat tr').each(function () {
                        debugger;
                         var $tds = $(this).find('td'),
                           value = $tds.eq(1).text().toString();
-                      
+
                        if (value == false && value != "") {
                            IsboatNamecount++;
                        }
@@ -180,7 +167,7 @@
                        }
 
 
-                       
+
                    }
                    if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
                        if (!ValidateEmployer()) {
@@ -233,32 +220,10 @@
                            return false;
                            } else {
                            ValidateDNO();
-                           
+
                        }
 
                    }
-               
-               //$('#getAgreementModal').show();
-               @*if ($("#Sheetstatus").val() != "Started") {
-                   var progId = $('#ClientProgrammeId').val();
-                   var postData = { ProgrammeId: progId };
-
-                   $.ajax({
-                       url: '@Url.Action("GetCoverOptions", "Information")',
-                       type: "POST",
-                       data: postData
-                   }).done(function (data) {
-                       if (data != "") {
-                           for (var item = 0; item < data.length; item++) {
-                               var arr = data[item];
-                               var count = 0;
-                               $('#' + arr[count]).val(arr[count + 1]);
-                           }
-                       };
-                   }).fail(function (a, s, d) {
-                       debugger;
-                   });
-               }*@
 
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
@@ -271,7 +236,7 @@
                        });
                    })
                    .fail(function (a, s, d) {
-                       $('#getAgreementModal').hide();                       
+                       $('#getAgreementModal').hide();
                        debugger;
                    });
 
@@ -430,107 +395,79 @@
             }, 450);
         });
 
-    $('#Principaltabs').tabs();
-    $(".chosen-select").chosen({ width: "95%" });
+        $('#Principaltabs').tabs();
+        $(".chosen-select").chosen({ width: "95%" });
+        $('#Nonregisteredtabs').tabs();
+        $('#tabs').tabs();
+        $('#Boattabs').tabs();
+        $('#SharedRevenue').tabs();
+        $('#SharedRole').tabs();
+        $('#registeredtrailertabs').tabs();
+        $('#Landtabs').tabs();
+        $('#Claimtabs').tabs();
+        $('#BoatUsetabs').tabs();
+        $('#NamedPartiestabs').tabs();
+        $('#BusinessContracttabs').tabs();
+        $('#updateBoat').css({ "background-color": "#339933", "color": "White" });
+        $('#ClearBoat').css({ "background-color": "red", "color": "White" });
+        $('#AddClearBoat').css({ "background-color": "red", "color": "White" });
+        $('#UpdateNRVehicle').css({ "background-color": "#339933", "color": "White" });
+        $('#AddNRVehicle').css({ "background-color": "#339933", "color": "White" });
+        $('#ClearNRVehicle').css({ "background-color": "red", "color": "White" });
+        $('#CancelNRVehicle').css({ "background-color": "red", "color": "White" });
+        $('#AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
+        $('#AddupdateParty').css({ "background-color": "#339933", "color": "White" });
+        $('.updateBoat').css({ "background-color": "#339933", "color": "White" });
+        $('.ClearBoat').css({ "background-color": "red", "color": "White" });
+        $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
+        $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
+        $('.multiselect-container').css({ "width": "100%" });
+        $('.multiselect').multiselect({
+            includeSelectAllOption: true,
+            buttonWidth: '100%'
+        });
 
-    $('#Nonregisteredtabs').tabs();
-    $('#tabs').tabs();
-    $('#Boattabs').tabs();
-    $('#SharedRevenue').tabs();
-    $('#SharedRole').tabs();
-    $('#registeredtrailertabs').tabs();
-    $('#Landtabs').tabs();
-    $('#Claimtabs').tabs();
-    $('#BoatUsetabs').tabs();
-    $('#NamedPartiestabs').tabs();
-    $('#BusinessContracttabs').tabs();
+        $('.overlay').css({
+            "position": "fixed",
+            "width": "100%",
+            "height": "100%",
+            "z-index": "1000",
+            "top": "0px",
+            "left": "0px",
+            "opacity": "1"
+        });
 
-    $('#updateBoat').css({ "background-color": "#339933" , "color":"White"});
-    $('#ClearBoat').css({ "background-color": "red", "color": "White" });
-    $('#AddClearBoat').css({ "background-color": "red", "color": "White" });
-    $('#UpdateNRVehicle').css({ "background-color": "#339933", "color": "White" });
-    $('#AddNRVehicle').css({ "background-color": "#339933", "color": "White" });
-    $('#ClearNRVehicle').css({ "background-color": "red", "color": "White" });
-    $('#CancelNRVehicle').css({ "background-color": "red", "color": "White" });
-    $('#AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
-    $('#AddupdateParty').css({ "background-color": "#339933", "color": "White" });
+        $('#AddClearBoat').click(function () {
+            var mode = "Edit";
+        });
+        $('.modal').on('hidden.bs.modal', function (e)
+        {
+            $(this).removeData();
+        });
+        $('body').on('hidden.bs.modal', '.modal', function () {
+            $(this).removeData('bs.modal');
+        });
+        $("input[data-type='currency']").on({
+            keyup: function () {
+                formatCurrency($(this));
+            },
+            blur: function () {
+                formatCurrency($(this), "blur");
+            },
+        });
 
-     $('.updateBoat').css({ "background-color": "#339933" , "color":"White"});
-    $('.ClearBoat').css({ "background-color": "red", "color": "White" });
-    $('.AddupdateBoat').css({ "background-color": "#339933", "color": "White" });
-    $('.AddClearBoat').css({ "background-color": "red", "color": "White" });
-    //$('.modal-body').css({ " max-height": "100%", "overflow-y": "auto" });
+        $('.Effectivedate').datepicker({
+            maxDate: "+30d",
+            dateFormat: "dd/mm/yy",
+            minDate: 0
+        });
 
-//        .modal-body {
-//    max-height: calc(100vh - 210px);
-//    overflow-y: auto;
-//}
-    //$('.multiselect').style({width:20px});
-    //$('.multiselect').style({width:20px});
-        //$('.multiselect-container.dropdown-menu.li').css({ "width": "248%"});
-    //$(ul.multiselect-container { width: 100% !important; position: relative !important; }
-          //$('#multi-select-demo').multiselect();
-          $('.multiselect-container').css({ "width": "100%" });
+        $('.Startdate').datepicker({
+            maxDate: "+0d",
+            dateFormat: "dd/mm/yy"
+        });
 
-      $('.multiselect').multiselect({
-        includeSelectAllOption: true,
-          buttonWidth: '100%'
-      });
-    //$('select[multiple]').multiselect({
-    //    includeSelectAllOption: true,
-    //    buttonWidth: '100%',
-    //    placeholder: 'Select Languages'
-    //});
-
-    $('.overlay').css({
-    "position": "fixed",
-    "width": "100%",
-    "height": "100%",
-    "z-index": "1000",
-    "top": "0px",
-     "left": "0px",
-     "opacity": "1"
-
-    });
-
-    //$('[data-toggle="popover"]').popover();
-
-
-    $('#AddClearBoat').click(function () {
-        var mode = "Edit";
-    });
-
-
-      $('.modal').on('hidden.bs.modal', function(e)
-     {
-        $(this).removeData();
-    }) ;
-
-    $('body').on('hidden.bs.modal', '.modal', function () {
-     $(this).removeData('bs.modal');
-    });
-
-    $("input[data-type='currency']").on({
-        keyup: function () {
-            formatCurrency($(this));
-        },
-        blur: function () {
-            formatCurrency($(this), "blur");
-        },
-    });
-
-    $('.Effectivedate').datepicker({
-        maxDate: "+30d",
-        dateFormat: "dd/mm/yy" ,
-        minDate:0
-    });
-
-    $('.Startdate').datepicker({
-       maxDate: "+0d",
-       dateFormat: "dd/mm/yy"
-
-     });
-
+        $('.alert').alert()
 
      function showmore() {
                 var _sheetId = $('#AnswerSheetId').val();
@@ -1981,122 +1918,97 @@ function showAccordionPanel(id, panelNo) {
             $('#sharedRevenueTerritories').show();
         } else {
             $('#sharedRevenueTerritories').hide();
-
         }
     }
 
     function ToggleSharedRevenueTab2Button() {
         $('#sharedRevenue2Btn').show();
-        var activitiesStr = GetActivitiesForRevenue('text');
-        activitiesStr.forEach(function (item, index) {
-            if (item.trim() === "Other Work not listed above" ||
-                item.trim() === "Inspection Reports" ||
-                item.trim() === "Valuations" ||
-                item.trim() === "Architecture - Schools MOE" ||
-                item.trim() === "Architecture - Schools - Non MOE" ||
-                item.trim() === "Canterbury Earthquake Rebuild Work") {
-                $('#submitTab4').hide();
-                $('#additionalInfomation').show();
-            } else {
-                $('#submitTab4').show();
-                $('#additionalInfomation').hide();
-            }
-        });
-
-        BuildRevenuesTable('false')
+        ShowAdditionalInfomation();
+        BuildRevenuesTable('false');
     }
 
      function ToggleSharedRevenueTab1Button() {
-        $('#sharedRevenue1Btn').show();        
+        $('#sharedRevenue1Btn').show();
         BuildRevenuesTable('true')
     }
 
     function SaveRevenueTabOne() {
         event.preventDefault();
+        var isvalid = ValidateSharedRevenueForm(1);
+        if (isvalid) {
         var territories = GetTerritoriesForRevenue('value');
         var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
         var clientInformationSheetId = $('#AnswerSheetId').val();
-
-        if (territories.length == 0 && tradingOutsideNZValue == 'true') {
-            alert("Please select territories.");
-        } else {
-            SetCurrentTab('RevenueTabs2');
-            var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
+        
+        var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabOne", "Information")',
                 type: "POST",
                 data: postData
             })
                 .done(function (Data) {
-                    SaveRevenueTabThree();
-                    $('#SharedRevenueTab2').show();
+                    isvalid = SaveRevenueTabThree();
+                    if (isvalid) {
+                        $('.alert').alert();
+                        SetCurrentTab('RevenueTabs2');
+                    }
                 });
         }
+
     }
 
     function SaveRevenueTabTwo(type) {
-        event.preventDefault();
-        var businessActivities = GetActivitiesForRevenue('value');
-        var clientInformationSheetId = $('#AnswerSheetId').val();
-        var postData = { BusinessActivities: businessActivities, ClientInformationSheetId: clientInformationSheetId }
+        event.preventDefault();        
+        if (ValidateSharedRevenueForm(3)) {
+            var businessActivities = GetActivitiesForRevenue('value');
+            var clientInformationSheetId = $('#AnswerSheetId').val();
+            var postData = { BusinessActivities: businessActivities, ClientInformationSheetId: clientInformationSheetId }
 
-        $.ajax({
-            url: '@Url.Action("SaveRevenueDataTabTwo", "Information")',
-            type: "POST",
-            data: postData
-        })
+            $.ajax({
+                url: '@Url.Action("SaveRevenueDataTabTwo", "Information")',
+                type: "POST",
+                data: postData
+            })
             .done(function (Data) {
                 if (SaveRevenueTabFour()) {
                     BuildRevenueOverview();
                     if (type == 'additionalInfo') {
                         $('#SharedRevenueTab3').show();
                         SetCurrentTab('RevenueTabs3');
-                        $('#additionalActivitySubmit').show();
-                        var activitiesStr = GetActivitiesForRevenue('text');
-                        activitiesStr.forEach(function (item) {
-                            if (item.trim() === "Other Work not listed above") {
-                                $('#OtherActivities').show();
-                            }
-                            if (item.trim() === "Inspection Reports") {
-                                $('#InspectionReport').show();
-                            }
-                            if (item.trim() === "Valuations") {
-                                $('#Valuation').show();
-                            }
-                            if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
-                                $('#SchoolsDesignWork').show();
-                            }
-                            if (item.trim() === "Canterbury Earthquake Rebuild Work") {
-                                $('#CanterburyEarthquakeRebuildWork').show();
-                            }
-                        });
+
                     } else if (type == 'newSummary') {
                         SetCurrentTab('RevenueTabs4');
                     } else {
-                        debugger;
                         SetCurrentTab('RevenueTabs0');
                     }
-                }                
+                }
             });
+        }
     }
 
     function SaveRevenueTabThree() {
-        if (validateTable("sharedRevenueTerritoriesTable")) {
+        debugger;
+        if (ValidateSharedRevenueForm(2)) {
+            debugger;
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
+
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
                 type: "POST",
                 data: postData
             })
-                .done(function (Data) {
-                    $('#SharedRevenueTab2').show();
+                .done(function (Data) {                    
                 });
+
+            return true;
         }
+        return false;
     }
-        function SaveRevenueTabFour() {
-        if (validateTable("sharedRevenueActivityTable")) {
+
+    function SaveRevenueTabFour() {
+        if (ValidateSharedRevenueForm(4)) {
             var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var totalRevenue = $('#totalRevenue').val();
@@ -2115,6 +2027,8 @@ function showAccordionPanel(id, panelNo) {
 
     function SaveRevenueTabFive(type) {
         event.preventDefault();
+        if (ValidateSharedRevenueForm(5)) {
+
         var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
         var clientInformationSheetId = $('#AnswerSheetId').val();
         var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
@@ -2125,51 +2039,317 @@ function showAccordionPanel(id, panelNo) {
             data: postData
         })
             .done(function (Data) {
+                BuildRevenueOverview();
                 if (type == 'newSummary') {
                     SetCurrentTab('RevenueTabs4');
+                } else {
+                    SetCurrentTab('RevenueTabs0');
+                }
+            });
+        }
+    }
+
+    function ShowAdditionalInfomation() {
+        $('#additionalActivitySubmit').show();
+        var activitiesStr = GetActivitiesForRevenue('text');
+
+        activitiesStr.forEach(function (item) {
+            if (item.trim() === "Other Work not listed above") {
+                $('#OtherActivities').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Inspection Reports") {
+                $('#InspectionReport').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Valuations") {
+                $('#Valuation').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
+                $('#SchoolsDesignWork').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Canterbury Earthquake Rebuild Work") {
+                $('#CanterburyEarthquakeRebuildWork').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+        });
+    }
+
+    function UpdateSharedRevenueView() {
+
+        var tabList = document.getElementById("sharedRevenTabs");
+        var showTabs = 0;
+        
+        for (var i = 0; i < tabList.children.length; i++) {
+            tabList.children[i].hidden = true;            
+            var index = tabList.children[i].getAttribute("tabindex");
+            if (index == 0) {
+                showTabs = i;                
+            }            
+        }
+
+        //checks which tab view
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
+        if (typeof tradingOutsideNZValue === 'undefined') {            
+            for (var i = 1; i <= showTabs; i++) {                
+                tabList.children[i].hidden = false;
+            }
+        }
+        else {
+            for (var i = 0; i <= showTabs; i++) {                
+                tabList.children[i].hidden = false;
+            }
+        }
+                
+        $('#submitTab4').show();
+        $('#additionalInfomation').hide();
+        $('#CanterburyEarthquakeRebuildWork').hide();
+        $('#SchoolsDesignWork').hide();
+        $('#InspectionReport').hide();
+        $('#Valuation').hide();
+        $('#OtherActivities').hide();
+        $('#additionalActivitySubmit').hide();
+    }
+
+    function ValidateSharedRoleForm(tabs) {
+        for (var i = 0; i <= tabs; i++) {
+            if (i == 0) {
+                //do nothing for now
+            }
+            else if (i == 1) {
+                var roles = GetRoles('text');
+                if (roles.length == 0) {
+                    alert("Please select Role");
+                    return false;
+                }
+
+                var arr = ValidateTable("sharedRoleTable");
+                for (var i = 0; i < arr.length; i++) {
+                    
+                    if (!wholeNumberCheck(parseInt(arr[i]))) {
+                        alert("Please enter a whole number");
+                        return false;
+                    }
+                    if (parseInt(arr[i]) < 0) {
+                        alert("Please enter a whole number above '0'");
+                        return false;
+                    }
+                }
+            }
+            else if (i == 2) {
+                if (document.getElementById("OtherProfessionId").value == "") {
+                    alert("Please provide details");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function ValidateSharedRevenueForm(tabs) {
+        for (var i = 0; i <= tabs; i++) {
+            if (i == 0) {
+                var activitiesStr = GetActivitiesForRevenue('value');
+
+                $('#submitTab4').show();
+                $('#additionalInfomation').hide();
+                if (activitiesStr.length != 0) {
+                    UpdateSharedRevenueView();
+                    ShowAdditionalInfomation();                                        
+                }
+            }
+            else if (i == 1) {
+                var territories = GetTerritoriesForRevenue('value');
+                var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
+                
+                if (tradingOutsideNZValue == 'true') {
+                    if (territories.length == 0) {
+                        alert("Please select territories.");
+                        window.setTimeout(function () {
+                            document.getElementById('SharedTerritories_chosen').focus();
+                        }, 0);
+                        document.getElementById("sharedRevenueTerritories").focus();
+                        document.getElementById("SharedTerritories").focus();
+                        document.sharedRevenueForm.SharedTerritories_chosen.focus();
+                        document.sharedRevenueForm.sharedRevenueTerritories.focus();
+                        return false;
+                    }
                 }
                 else {
-                    SetCurrentTab('RevenueTabs0');
+                    if (territories.length == 0) {
+                        alert("Please select territories.");
+                        window.setTimeout(function () {
+                            document.getElementById('SharedTerritories_chosen').focus();
+                        }, 0);
+                        document.getElementById("sharedRevenueTerritories").focus();
+                        document.getElementById("SharedTerritories").focus();
+                        document.sharedRevenueForm.SharedTerritories_chosen.focus();
+                        document.sharedRevenueForm.sharedRevenueTerritories.focus();
+                        return false;
+                    }
+                }
+            }
+            else if (i == 2) {
+                var arr = ValidateTable("sharedRevenueTerritoriesTable");
+                var totalSharedRevenue = 0;
+
+                for (var k = 0; k < arr.length; k++) {
+                    totalSharedRevenue += parseInt(arr[k]);
+                }
+
+                if (totalSharedRevenue != 100) {
+                    alert("Percentage calculation does not equal to 100%");
+                    return false;
                 }                
-                BuildRevenueOverview();
-            });
+            }
+            else if (i == 3) {
+                var businessActivities = GetActivitiesForRevenue('value');
+                var revenueTotal = parseInt(document.getElementById("totalRevenue").value);
+
+                if (revenueTotal <= 0) {
+                    alert("Please enter a fee income greater than '0'");
+                    return false;
+                }
+
+                if (revenueTotal % 1 != 0) {
+                    alert("Please enter a fee income with no decimals");
+                    return false;
+                }
+                if (businessActivities.length == 0) {
+                    alert("Please select activities.");
+                    return false;
+                }
+            }
+            else if (i == 4) {
+                var arr = ValidateTable("sharedRevenueActivityTable");
+                var totalSharedRevenue = 0;
+
+                for (var l = 0; l < arr.length; l++) {
+                    totalSharedRevenue += parseInt(arr[l]);
+                }
+
+                if (totalSharedRevenue != 100) {
+                    alert("Percentage calculation does not equal to 100%");
+                    return false;
+                }
+
+            }
+            else if (i == 5) {
+                var activitiesStr = GetActivitiesForRevenue('text');
+
+                activitiesStr.forEach(function (item) {
+                    if (item.trim() === "Other Work not listed above") {
+                        if (document.getElementById("OtherActivitiesTextId").value == "") {
+                            alert("Please provide details");
+                            document.getElementById("OtherActivitiesTextId").focus();
+                            return false;
+                        }
+                    }
+                    if (item.trim() === "Inspection Reports") {
+                        if (document.getElementById("InspectionReportTextId").value == "") {
+                            alert("Please provide details");
+                            document.getElementById("InspectionReportTextId").focus();
+                            return false;
+                        }
+                        if (parseInt(document.getElementById("InspectionReportBoolId").value) == 0) {
+                            alert("Please select an option");
+                            document.getElementById("InspectionReportBoolId").focus();
+                            return false;
+                        }
+                    }
+                    if (item.trim() === "Valuations") {
+                        if (document.getElementById("ValuationTextId").value == "") {
+                            alert("Please provide details");
+                            document.getElementById("ValuationTextId").focus();
+                            return false;
+                        }
+                        if(document.getElementById("ValuationTextId2").value == "") {
+                            alert("Please provide details");
+                            document.getElementById("ValuationTextId2").focus();
+                            return false;
+                        }
+                        if (parseInt(document.getElementById("ValuationBoolId").value) == 0) {
+                            alert("Please select an option");
+                            document.getElementById("ValuationBoolId").focus();
+                            return false;
+                        }
+                    }
+                    if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
+                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId").value) == 0) {
+                            alert("Please select an option");
+                            document.getElementById("SchoolsDesignWorkBoolId").focus();
+                            return false;
+                        }
+                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId2").value) == 0) {
+                            alert("Please select an option");
+                            document.getElementById("SchoolsDesignWorkBoolId2").focus();
+                            return false;
+                        }
+                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId3").value) == 0) {
+                            alert("Please select an option");
+                            document.getElementById("SchoolsDesignWorkBoolId3").focus();
+                            return false;
+                        }
+                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId4").value) == 0) {
+                            alert("Please select an option");
+                            document.getElementById("SchoolsDesignWorkBoolId4").focus();
+                            return false;
+                        }
+                    }
+                    if (item.trim() === "Canterbury Earthquake Rebuild Work") {
+                        if (document.getElementById("CanterburyEarthquakeRebuildWorkId").value == "") {
+                            alert("Please provide details");
+                            document.addtionalActivityInformationContainer.CanterburyEarthquakeRebuildWorkId.focus();
+                            return false;
+                        }
+                    }
+                });
+            }
+        }
+        return true;
     }
 
     function CopyTableValues(currentTable, newTable) {
-        var inputTable = document.getElementById(currentTable);
+        
         var overViewTable = document.getElementById(newTable);
-        var arr = [];
-        var tableRow = inputTable.lastElementChild;
-        var value;
+        var arr = ValidateTable(currentTable);
         var count = 0;
 
-        if (tableRow.childElementCount == 1) {
-            tableRow = tableRow.lastElementChild;
-        }
-
-        for (var i = 0; i < tableRow.children.length; i++) {
-            try {
-                value = tableRow.children[i].lastChild.lastChild.lastChild.lastChild.value;
-                arr.push(value);
-            } catch{
-                value = tableRow.children[i].lastElementChild.value;
-                arr.push(value);
-            }
-        }
-
         overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
-        tableRow = overViewTable.lastElementChild;
+        var tableBody = overViewTable.lastElementChild;           
+        debugger;
 
-        if (tableRow.childElementCount == 1) {
-            tableRow = tableRow.lastElementChild;
-        }
-
-        for (var k = 0; k < tableRow.children.length; k++) {
-            try {
-                tableRow.children[k].lastChild.lastChild.lastChild.lastChild.value = arr[k];
-            } catch{
-                tableRow.children[k].lastElementChild.value = arr[count];
-                count++;
+        if (tableBody.childElementCount == 1) {
+            var tableRows = tableBody.lastElementChild;
+            for (var i = 0; i < tableRows.children.length; i++) {
+                
+                try {
+                    tableRows.children[i].lastElementChild.value = arr[count];
+                    tableRows.children[i].lastElementChild.readOnly = true; 
+                    count++;
+                } catch{
+                    tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value = arr[i];
+                    tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.readOnly = true;
+                }                
+            }
+        } else {
+            for (var k = 0; k < tableBody.children.length; k++) {
+                
+                try {
+                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value = arr[k]; 
+                    tableBody.children[k].lastElementChild.lastElementChild.lastElementChild.lastElementChild.readOnly = true;
+                } catch{
+                    tableBody.children[k].lastElementChild.value = arr[count];
+                    tableBody.children[k].lastElementChild.readOnly = true;
+                    count++;
+                }
             }
         }
     }
@@ -2202,59 +2382,68 @@ function showAccordionPanel(id, panelNo) {
         SetCurrentTab('RevenueTabs1');
     }
 
-    function SaveRoleTabThree(){
+    function SaveRoleTabTwo(){
         event.preventDefault();
-        var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
-        var clientInformationSheetId = $('#AnswerSheetId').val();
+        if (ValidateSharedRoleForm(2)) {
+            var serialisedAdditionalRoleInformationTable = $('#addtionalRoleInformationContainer').serialize();
+            var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { SerialisedAdditionalRoleInformationTable: serialisedAdditionalRoleInformationTable, ClientInformationSheetId: clientInformationSheetId };
+
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabThree", "Information")',
                 type: "POST",
                 data: postData
             })
+                .done(function (Data) {
+                    SetCurrentTab('sharedRoleTabs1');
+                });
+        }        
     }
 
-    function SaveRoleTabTwo(hasAddInfo) {
-        event.preventDefault();
-        table = document.getElementById("sharedRoleTable");
-        if (validateTableRoles(table)) {
-            var tableSerialised = $("#sharedRoleTable :input").serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
+    function SaveRoleTable() {
+        var tableSerialised = $("#sharedRoleTable :input").serialize();
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+        var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId };
+
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabTwo", "Information")',
                 type: "POST",
                 data: postData
             })
-            if (hasAddInfo) {
-                $('#additionalRoleInfomation').show();
-                SetCurrentTab('sharedRoleTabs3');
-            }
-        }
     }
 
-    function SaveRoleTabOne() {
-        event.preventDefault();
+    function SharedRoleOnChange() {
         BuildRolesTable();
-        SetCurrentTab('sharedRoleTabs2');
-        var sharedDataRoles = GetRoles('val');
-        var clientInformationSheetId = $('#AnswerSheetId').val();
+        var roles = GetRoles('text');
+        $('#btnSharedRoleSubmit').show();
+        $('#additionalRoleInfomationBtn').hide();
+        roles.forEach(function (item) {
+            if (item.trim() === "Other Professions") {
+                $('#btnSharedRoleSubmit').hide();
+                $('#additionalRoleInfomationBtn').show();
+            }
+        });
+    }
 
-        var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
+    function SaveRoleTabOne(hasAddInfo) {
+        event.preventDefault();
+        if (ValidateSharedRoleForm(1)) {
+            var sharedDataRoles = GetRoles('val');
+            var clientInformationSheetId = $('#AnswerSheetId').val();
+            var postData = { SharedDataRoles: sharedDataRoles, ClientInformationSheetId: clientInformationSheetId };
+
             $.ajax({
                 url: '@Url.Action("SaveSharedRoleTabOne", "Information")',
                 type: "POST",
                 data: postData
             })
                 .done(function (Data) {
-                    var roles = GetRoles('text');
-                    roles.forEach(function (item, index) {
-                        if (item.trim() === "Other Professions") {
-                            $('#submitTab1').hide();
-                            $('#additionalRoleInfomationBtn').show();
-                        }
-                    });
+                    SaveRoleTable();
+                    if (hasAddInfo) {
+                        SetCurrentTab('sharedRoleTabs2');
+                    }
                 });
+        }
     }
 
     function GetActivitiesForRevenue(type) {
@@ -2328,7 +2517,7 @@ function showAccordionPanel(id, panelNo) {
                     row.append($('<td>').append(
                         $('<section>').append(
                             $('<label>', { class: 'input' }).append(
-                                $('<input>', { type: 'text', class: 'form-control col-4', name: name, id: name, placeholder: 'Number of People' }
+                                $('<input>', { type: 'text', class: 'form-control', name: name, id: name, placeholder: 'Number of People' }
                                 )
                             )
                         )
@@ -2353,7 +2542,7 @@ function showAccordionPanel(id, panelNo) {
              listc = [ 'Revenue Breakdown' ];
              revenueTable = $('#sharedRevenueActivityTable');
         }
-        debugger;
+
         if (revenueTable != null) {
         // clear previous table
             if (revenueTable.className != "table") {
@@ -2410,69 +2599,38 @@ function showAccordionPanel(id, panelNo) {
     };
     };
 
-    function GetTableArray(table) {
-        var array = [];
-        row = table.rows[0];
-        for (var j = 1, col; col = row.cells[j]; j++) {
-            array.push(col.innerHTML);
-        }
-        return array;
-    }
+    function ValidateTable(table) {
+        var inputTable = document.getElementById(table);
+        var arr = [];
+        var tableBody = inputTable.lastElementChild;
+        var value;
 
-    function validateTableRoles(table) {
-        var roleTable = GetTableArray(table);
-        var roles = GetRoles('value')
-        for (var i = 0; i < roleTable.length; i++) {
-            var value = 0;
-            for (var k = 0; k < roles.length; k++) {
-                elementname = roles[k];
-                value = document.getElementById(elementname).value;
+        if (tableBody.childElementCount == 1) {
+            var tableRows = tableBody.lastElementChild;
+            for (var i = 0; i < tableRows.children.length; i++) {
                 try {
-                    var isValueInt = wholeNumberCheck(value);
-                    if (!isValueInt) {
-                        throw(elementname);
-                    }
-                } catch (name) {
-                    alert("Please enter a whole number.");
-                    BuildRolesTable();
-                    return false;
+                    value = tableRows.children[i].lastElementChild.value;
+                } catch{
+                    value = tableRows.children[1].lastElementChild.lastElementChild.lastElementChild.value;
+                }
+                if (typeof value !== 'undefined') {
+                    arr.push(value);
                 }
             }
 
-        }
-        return true;
-    }
-    function validateTable(table) {
-        var inputTable = document.getElementById(table);
-        var arr = [];
-        var tableRow = inputTable.lastElementChild;
-        var totalSharedRevenue = 0;
-        var value;
-
-        if (tableRow.childElementCount == 1) {
-            tableRow = tableRow.lastElementChild;
-        }
-
-        for (var i = 0; i < tableRow.children.length; i++) {
-            try {
-                value = tableRow.childNodes[i].lastChild.lastChild.lastChild.lastChild.value;
-                arr.push(value);
-            } catch{
-                value = tableRow.children[i].lastElementChild.value;
-                arr.push(value);
+        } else {
+            for (var i = 0; i < tableBody.children.length; i++) {
+                try {
+                    value = tableBody.children[i].lastElementChild.lastElementChild.lastElementChild.lastElementChild.value;
+                } catch{
+                    value = tableBody.children[i].lastElementChild.value;
+                }
+                if (typeof value !== 'undefined') {
+                    arr.push(value);
+                }
             }
         }
-
-        for (var i = 0; i < arr.length; i++) {
-            totalSharedRevenue += parseInt(arr[i]);
-        }
-
-        if (totalSharedRevenue != 100) {
-            alert("Percentage calculation does not equal to 100%");
-            return false;
-        }
-        return true;
-
+        return arr;
     }
 
     function wholeNumberCheck(n) {

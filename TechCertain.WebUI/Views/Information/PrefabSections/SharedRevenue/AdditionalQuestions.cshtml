@@ -1,0 +1,349 @@
+﻿@model TechCertain.WebUI.Models.RevenueByActivityViewModel
+
+@if (Model.RevenueData != null)
+{
+@if (Model.RevenueData.AdditionalActivityInformation != null)
+{
+    @if (Model.RevenueData.AdditionalActivityInformation.InspectionReportTextId != "")
+    {
+        <div class="form-group" id="InspectionReport">
+            <div class="row-fluid">
+                <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples.Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+                <textarea id="InspectionReportTextId" name="InspectionReportTextId" class="form-control" form="addtionalActivityInformationContainer" required>@Model.RevenueData.AdditionalActivityInformation.InspectionReportTextId</textarea>
+            </div>
+
+            <div class="row-fluid">
+                <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
+                <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
+                    @if (Model.RevenueData.AdditionalActivityInformation.InspectionReportBoolId == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
+                </select>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group" style="display:none" id="InspectionReport">
+            <div class="row-fluid">
+                <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+                <textarea id="InspectionReportTextId" name="InspectionReportTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+            </div>
+
+            <div class="row-fluid">
+                <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
+                <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
+                </select>
+            </div>
+        </div>
+    }
+    @if (Model.RevenueData.AdditionalActivityInformation.ValuationTextId != "")
+    {
+        <div class="form-group" id="Valuation">
+            <div class="row-fluid">
+                <label for="ValuationTextId">Please state the types of Valuations provided, (examples.Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
+                <textarea id="ValuationTextId" name="ValuationTextId" class="form-control" form="addtionalActivityInformationContainer" required>@Model.RevenueData.AdditionalActivityInformation.ValuationTextId</textarea>
+            </div>
+
+            <div class="row-fluid">
+                <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
+                <textarea id="ValuationTextId2" name="ValuationTextId2" class="form-control" form="addtionalActivityInformationContainer" required>@Model.RevenueData.AdditionalActivityInformation.ValuationTextId2</textarea>
+            </div>
+            <div class="row-fluid">
+                <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
+                <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
+                    @if (Model.RevenueData.AdditionalActivityInformation.ValuationBoolId == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
+                </select>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group" style="display:none" id="Valuation">
+            <div class="row-fluid">
+                <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
+                <textarea id="ValuationTextId" name="ValuationTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+            </div>
+
+            <div class="row-fluid">
+                <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
+                <textarea id="ValuationTextId2" name="ValuationTextId2" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+            </div>
+            <div class="row-fluid">
+                <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
+                <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
+                </select>
+            </div>
+        </div>
+    }
+    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId > 0)
+    {
+        <div class="form-group" id="SchoolsDesignWork">
+            <div class="row-fluid">
+                <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
+                </select>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
+                </select>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools(i.e Not Private, Integrated or Designated Character Schools)? </label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
+                </select>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
+                    @if (Model.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 == 1)
+                    {
+                        <option value=2> No </option>
+                        <option selected value=1>Yes</option>
+                    }
+                    else
+                    {
+                        <option selected value=2> No </option>
+                        <option value=1>Yes</option>
+                    }
+                </select>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group" style="display:none" id="SchoolsDesignWork">
+            <div class="row-fluid">
+                <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
+                </select>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
+                </select>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
+                </select>
+            </div>
+            <div class="row-fluid">
+                <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
+                <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
+                </select>
+            </div>
+        </div>
+    }
+    @if (Model.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId != "")
+    {
+        <div class="form-group" id="OtherActivities">
+            <div class="row-fluid">
+                <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
+                <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" class="form-control" form="addtionalActivityInformationContainer" required>@Model.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId</textarea>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group" style="display:none" id="OtherActivities">
+            <div class="row-fluid">
+                <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
+                <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+            </div>
+        </div>
+    }
+    @if (Model.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId != "")
+    {
+        <div class="form-group" style="display:none" id="CanterburyEarthquakeRebuildWork">
+            <div class="row-fluid">
+                <label for="CanterburyEarthquakeRebuildWorkId"> If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
+                <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" class="form-control" form="addtionalActivityInformationContainer" required>@Model.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId</textarea>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group" style="display:none" id="CanterburyEarthquakeRebuildWork">
+            <div class="row-fluid">
+                <label for="CanterburyEarthquakeRebuildWorkId"> If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
+                <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+            </div>
+        </div>
+    }
+
+    <div class="form-group mb-3">
+        <div class="footer" style="display:none" id="additionalActivitySubmit">
+            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive()">
+        </div>
+    </div>
+    }
+}
+else
+{
+    <div class="form-group" style="display:none" id="InspectionReport">
+        <div class="row-fluid">
+            <label for="InspectionReportTextId">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
+            <textarea id="InspectionReportTextId" name="InspectionReportTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+        </div>
+
+        <div class="row-fluid">
+            <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
+            <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
+                <option selected>-- Please Select --</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" style="display:none" id="Valuation">
+        <div class="row-fluid">
+            <label for="ValuationTextId">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
+            <textarea id="ValuationTextId" name="ValuationTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+        </div>
+
+        <div class="row-fluid">
+            <label for="ValuationTextId2">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
+            <textarea id="ValuationTextId2" name="ValuationTextId2" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+        </div>
+        <div class="row-fluid">
+            <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
+            <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
+                <option selected>-- Please Select --</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" style="display:none" id="SchoolsDesignWork">
+        <div class="row-fluid">
+            <label for="SchoolsDesignWork">Please also advise whether your practice:</label>
+        </div>
+        <div class="row-fluid">
+            <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
+            <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
+                <option selected>-- Please Select --</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+        <div class="row-fluid">
+            <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
+            <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
+                <option selected>-- Please Select --</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+        <div class="row-fluid">
+            <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
+            <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
+                <option selected>-- Please Select --</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+        <div class="row-fluid">
+            <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
+            <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
+                <option selected>-- Please Select --</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" style="display:none" id="OtherActivities">
+        <div class="row-fluid">
+            <label for="OtherActivitiesTextId"> You have specified Other Work not listed above, please provide further details:</label>
+            <textarea id="OtherActivitiesTextId" name="OtherActivitiesTextId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-group" style="display:none" id="CanterburyEarthquakeRebuildWork">
+        <div class="row-fluid">
+            <label for="CanterburyEarthquakeRebuildWorkId"> If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
+            <textarea id="CanterburyEarthquakeRebuildWorkId" name="CanterburyEarthquakeRebuildWorkId" class="form-control" form="addtionalActivityInformationContainer" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-group mb-3">
+        <div class="footer" style="display:none" id="additionalActivitySubmit">
+            <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" form="addtionalActivityInformationContainer" onclick="SaveRevenueTabFive('newSummary')">
+        </div>
+    </div>
+}
+

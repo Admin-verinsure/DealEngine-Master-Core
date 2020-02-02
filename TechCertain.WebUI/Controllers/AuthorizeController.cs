@@ -25,7 +25,6 @@ namespace TechCertain.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         ILogger<AuthorizeController> _logger;
 
-
         public AuthorizeController(
             IUserService userService, 
             IClaimService claimService, 

@@ -2691,11 +2691,21 @@ namespace TechCertain.WebUI.Controllers
                     {
                         string[] valueId = str.Split('=');
                         var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(valueId[0]));
-                        if (sharedRoleTemplate.Name == sharedRole.Name)
+                        if(sharedRoleTemplate != null)
                         {
-                            sharedRole.Count = int.Parse(valueId[1]);
-                            await _sharedDataRoleService.UpdateSharedRole(sharedRole);
+                            if (sharedRoleTemplate.Name == sharedRole.Name)
+                            {
+                                sharedRole.Count = int.Parse(valueId[1]);                                
+                            }
                         }
+                        else
+                        {
+                            if (valueId[0] == sharedRole.Id.ToString())
+                            {
+                                sharedRole.Count = int.Parse(valueId[1]);                                
+                            }
+                        }
+                        await _sharedDataRoleService.UpdateSharedRole(sharedRole);
                     }
                 }
 
@@ -3002,7 +3012,7 @@ namespace TechCertain.WebUI.Controllers
                             additionalInformation.InspectionReportTextId = questionSplit[1];
                             break;
                         case "InspectionReportBoolId":
-                            additionalInformation.InspectionReportBoolId = questionSplit[1];
+                            additionalInformation.InspectionReportBoolId = int.Parse(questionSplit[1]);
                             break;
                         case "ValuationTextId":
                             additionalInformation.ValuationTextId = questionSplit[1];
@@ -3011,19 +3021,19 @@ namespace TechCertain.WebUI.Controllers
                             additionalInformation.ValuationTextId2 = questionSplit[1];
                             break;
                         case "ValuationBoolId":
-                            additionalInformation.ValuationBoolId = questionSplit[1];
+                            additionalInformation.ValuationBoolId = int.Parse(questionSplit[1]);
                             break;
                         case "SchoolsDesignWorkBoolId":
-                            additionalInformation.SchoolsDesignWorkBoolId = questionSplit[1];
+                            additionalInformation.SchoolsDesignWorkBoolId = int.Parse(questionSplit[1]);
                             break;
                         case "SchoolsDesignWorkBoolId2":
-                            additionalInformation.SchoolsDesignWorkBoolId2 = questionSplit[1];
+                            additionalInformation.SchoolsDesignWorkBoolId2 = int.Parse(questionSplit[1]);
                             break;
                         case "SchoolsDesignWorkBoolId3":
-                            additionalInformation.SchoolsDesignWorkBoolId3 = questionSplit[1];
+                            additionalInformation.SchoolsDesignWorkBoolId3 = int.Parse(questionSplit[1]);
                             break;
                         case "SchoolsDesignWorkBoolId4":
-                            additionalInformation.SchoolsDesignWorkBoolId4 = questionSplit[1];
+                            additionalInformation.SchoolsDesignWorkBoolId4 = int.Parse(questionSplit[1]);
                             break;
                         case "OtherActivitiesTextId":
                             additionalInformation.OtherActivitiesTextId = questionSplit[1];
