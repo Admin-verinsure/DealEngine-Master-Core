@@ -61,6 +61,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                             eGlobalSubmission.SubmissionRequestXML = xml;
                             eGlobalSubmission.EGlobalSubmissionPackage = package;
                             eGlobalSubmission.EGlobalPaymentType = paymentType;
+                            eGlobalSubmission.EGlobalSubmissionClientProgramme = programme;
                             programme.ClientAgreementEGlobalSubmissions.Add(eGlobalSubmission);
                             //save eglobal submission term
                             EGlobalPolicyAPI.SaveTransactionTerms(eGlobalSubmission, _unitOfWork);
