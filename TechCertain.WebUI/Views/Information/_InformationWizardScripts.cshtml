@@ -1921,14 +1921,12 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function ToggleSharedRevenueTab2Button() {
-        $('#sharedRevenue2Btn').show();
-        ShowAdditionalInfomation();
+    function ToggleSharedRevenueTab2Button() {        
+        ValidateSharedRevenueForm(0);
         BuildRevenuesTable('false');
     }
 
-     function ToggleSharedRevenueTab1Button() {
-        $('#sharedRevenue1Btn').show();
+     function ToggleSharedRevenueTab1Button() {        
         BuildRevenuesTable('true')
     }
 
@@ -1948,8 +1946,7 @@ function showAccordionPanel(id, panelNo) {
             })
                 .done(function (Data) {
                     isvalid = SaveRevenueTabThree();
-                    if (isvalid) {
-                        $('.alert').alert();
+                    if (isvalid) {                        
                         SetCurrentTab('RevenueTabs2');
                     }
                 });
@@ -1970,15 +1967,14 @@ function showAccordionPanel(id, panelNo) {
                 data: postData
             })
             .done(function (Data) {
-                if (SaveRevenueTabFour()) {
-                    BuildRevenueOverview();
+                if (SaveRevenueTabFour()) {                    
                     if (type == 'additionalInfo') {
-                        $('#SharedRevenueTab3').show();
                         SetCurrentTab('RevenueTabs3');
-
                     } else if (type == 'newSummary') {
+                        BuildRevenueOverview();
                         SetCurrentTab('RevenueTabs4');
                     } else {
+                        BuildRevenueOverview();
                         SetCurrentTab('RevenueTabs0');
                     }
                 }
@@ -1986,10 +1982,8 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function SaveRevenueTabThree() {
-        debugger;
-        if (ValidateSharedRevenueForm(2)) {
-            debugger;
+    function SaveRevenueTabThree() {        
+        if (ValidateSharedRevenueForm(2)) {            
             var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
@@ -2028,24 +2022,23 @@ function showAccordionPanel(id, panelNo) {
     function SaveRevenueTabFive(type) {
         event.preventDefault();
         if (ValidateSharedRevenueForm(5)) {
+            var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
+            var clientInformationSheetId = $('#AnswerSheetId').val();
+            var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
 
-        var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
-        var clientInformationSheetId = $('#AnswerSheetId').val();
-        var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
-
-        $.ajax({
-            url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (Data) {
-                BuildRevenueOverview();
-                if (type == 'newSummary') {
-                    SetCurrentTab('RevenueTabs4');
-                } else {
-                    SetCurrentTab('RevenueTabs0');
-                }
-            });
+            $.ajax({
+                url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
+                type: "POST",
+                data: postData
+            })
+                .done(function (Data) {
+                    //BuildRevenueOverview();
+                    if (type == 'newSummary') {
+                        SetCurrentTab('RevenueTabs4');
+                    } else {
+                        SetCurrentTab('RevenueTabs0');
+                    }
+                });
         }
     }
 
@@ -2103,19 +2096,12 @@ function showAccordionPanel(id, panelNo) {
             }
         }
         else {
-            for (var i = 0; i <= showTabs; i++) {                
+            for (var i = 0; i <= showTabs; i++) {         
+                debugger;
                 tabList.children[i].hidden = false;
             }
         }
                 
-        $('#submitTab4').show();
-        $('#additionalInfomation').hide();
-        $('#CanterburyEarthquakeRebuildWork').hide();
-        $('#SchoolsDesignWork').hide();
-        $('#InspectionReport').hide();
-        $('#Valuation').hide();
-        $('#OtherActivities').hide();
-        $('#additionalActivitySubmit').hide();
     }
 
     function ValidateSharedRoleForm(tabs) {
@@ -2156,12 +2142,19 @@ function showAccordionPanel(id, panelNo) {
     function ValidateSharedRevenueForm(tabs) {
         for (var i = 0; i <= tabs; i++) {
             if (i == 0) {
-                var activitiesStr = GetActivitiesForRevenue('value');
-
+                
+                UpdateSharedRevenueView();
                 $('#submitTab4').show();
                 $('#additionalInfomation').hide();
-                if (activitiesStr.length != 0) {
-                    UpdateSharedRevenueView();
+                $('#CanterburyEarthquakeRebuildWork').hide();
+                $('#SchoolsDesignWork').hide();
+                $('#InspectionReport').hide();
+                $('#Valuation').hide();
+                $('#OtherActivities').hide();
+                $('#additionalActivitySubmit').hide();
+
+                var activitiesStr = GetActivitiesForRevenue('value');
+                if (activitiesStr.length != 0) {                    
                     ShowAdditionalInfomation();                                        
                 }
             }
@@ -2244,7 +2237,7 @@ function showAccordionPanel(id, panelNo) {
             else if (i == 5) {
                 var activitiesStr = GetActivitiesForRevenue('text');
 
-                activitiesStr.forEach(function (item) {
+                activitiesStr.forEach(function (item) {                    
                     if (item.trim() === "Other Work not listed above") {
                         if (document.getElementById("OtherActivitiesTextId").value == "") {
                             alert("Please provide details");
@@ -2258,7 +2251,7 @@ function showAccordionPanel(id, panelNo) {
                             document.getElementById("InspectionReportTextId").focus();
                             return false;
                         }
-                        if (parseInt(document.getElementById("InspectionReportBoolId").value) == 0) {
+                        if (document.getElementById("InspectionReportBoolId").selectedIndex == 0) {
                             alert("Please select an option");
                             document.getElementById("InspectionReportBoolId").focus();
                             return false;
@@ -2275,29 +2268,29 @@ function showAccordionPanel(id, panelNo) {
                             document.getElementById("ValuationTextId2").focus();
                             return false;
                         }
-                        if (parseInt(document.getElementById("ValuationBoolId").value) == 0) {
+                        if (document.getElementById("ValuationBoolId").selectedIndex == 0) {
                             alert("Please select an option");
                             document.getElementById("ValuationBoolId").focus();
                             return false;
                         }
                     }
-                    if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
-                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId").value) == 0) {
+                    if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {                        
+                        if (document.getElementById("SchoolsDesignWorkBoolId").selectedIndex == 0) {
                             alert("Please select an option");
-                            document.getElementById("SchoolsDesignWorkBoolId").focus();
+                            //document.getElementById("SchoolsDesignWorkBoolId").focus();
                             return false;
                         }
-                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId2").value) == 0) {
+                        if (document.getElementById("SchoolsDesignWorkBoolId2").selectedIndex) == 0) {
                             alert("Please select an option");
                             document.getElementById("SchoolsDesignWorkBoolId2").focus();
                             return false;
                         }
-                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId3").value) == 0) {
+                        if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex) == 0) {
                             alert("Please select an option");
                             document.getElementById("SchoolsDesignWorkBoolId3").focus();
                             return false;
                         }
-                        if (parseInt(document.getElementById("SchoolsDesignWorkBoolId4").value) == 0) {
+                        if (document.getElementById("SchoolsDesignWorkBoolId4").selectedIndex) == 0) {
                             alert("Please select an option");
                             document.getElementById("SchoolsDesignWorkBoolId4").focus();
                             return false;
@@ -2323,8 +2316,7 @@ function showAccordionPanel(id, panelNo) {
         var count = 0;
 
         overViewTable.innerHTML = document.getElementById(currentTable).innerHTML;
-        var tableBody = overViewTable.lastElementChild;           
-        debugger;
+        var tableBody = overViewTable.lastElementChild;                   
 
         if (tableBody.childElementCount == 1) {
             var tableRows = tableBody.lastElementChild;

@@ -68,7 +68,7 @@ namespace TechCertain.Services.Impl
             return responseMessage;
         }
 
-        public async Task<string> updateUser(string updateRequest)
+        public async Task<string> UpdateUser(string updateRequest)
         {
             var responseMessage = "";            
             string service = "https://ris.us1.qeadaptiveauth.com/AdaptiveAuthentication/services/AdaptiveAuthentication";
