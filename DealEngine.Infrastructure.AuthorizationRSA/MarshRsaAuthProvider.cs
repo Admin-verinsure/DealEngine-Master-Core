@@ -62,123 +62,86 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			 * This should only be controlling access to organisational content, and rejecting unauthorized access based
 			 * on what RSA says.
 			 */
-			var userStatus = "";
-			var actionCode = "";
 			XmlSerializer serializer;
 			StringReader rdr;
             XmlDocument xDoc = new XmlDocument();
-            //analyzeReturn analyzeResponse = new analyzeReturn();
-			AnalyzeRequest analyzeRequest = GetAnalyzeRequest (rsaUser, hasCookies);
-            
-			var serxml = new XmlSerializer (analyzeRequest.GetType());
+            UserStatus responseUserStatus = UserStatus.UNVERIFIED;
+            ActionCode reponseActionCode = ActionCode.NONE;
+            GenericResponse response = null;
+
+            AnalyzeRequest analyzeRequest = GetAnalyzeRequest (rsaUser, hasCookies);            
+			var serxml = new XmlSerializer(analyzeRequest.GetType());
             var ms = new MemoryStream ();
 			serxml.Serialize (ms, analyzeRequest);
             string xml = Encoding.UTF8.GetString (ms.ToArray());
             
             var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
 
-            //try
-            //{                
-            //    xDoc.LoadXml(analyzeResponseXmlStr);
-            //    analyzeReturnRiskResult riskResult = new analyzeReturnRiskResult();
-            //    var riskResults = xDoc.GetElementsByTagName("riskResult", "http://ws.csd.rsa.com");
-            //    var riskResultsArray = riskResults[0];                
+            try
+            {                
+                xDoc.LoadXml(analyzeResponseXmlStr);
+                var analyseResponse = BuildAnalyzeResponse(xDoc);
+                responseUserStatus = analyseResponse.identificationData.userStatus;
+                reponseActionCode = analyseResponse.riskResult.triggeredRule.actionCode;
+                response = analyseResponse;
 
-            //    var listRisk = riskResultsArray.ChildNodes;
-            //    riskResult.riskScore = int.Parse(listRisk.Item(0).InnerText);
-            //    riskResult.riskScoreBand = listRisk.Item(1).InnerText;
-            //    riskResult.deviceAssuranceLevel = listRisk.Item(3).InnerText;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
-            //    riskResult.triggeredRule = new analyzeReturnRiskResultTriggeredRule(); 
-                
-            //    var listTrigger = listRisk.Item(2).ChildNodes;
-            //    riskResult.triggeredRule.actionCode = listTrigger.Item(0).InnerText;
-            //    riskResult.triggeredRule.actionName = listTrigger.Item(1).InnerText;
-            //    riskResult.triggeredRule.actionType = listTrigger.Item(2).InnerText;
-            //    riskResult.triggeredRule.clientFactList = listTrigger.Item(3).InnerText;
-            //    riskResult.triggeredRule.ruleId = listTrigger.Item(4).InnerText;
-            //    riskResult.triggeredRule.ruleName = listTrigger.Item(5).InnerText;
-
-            //    analyzeReturnIdentificationData identificationData = new analyzeReturnIdentificationData();
-            //    var identificationResults = xDoc.GetElementsByTagName("identificationData", "http://ws.csd.rsa.com");
-            //    var identificationArray = identificationResults[0];
-
-            //    var listIndentification = identificationArray.ChildNodes;
-            //    identificationData.delegated = bool.Parse(listIndentification.Item(0).InnerText);
-            //    identificationData.groupName = listIndentification.Item(1).InnerText;
-            //    identificationData.orgName = listIndentification.Item(2).InnerText;
-            //    identificationData.sessionId = listIndentification.Item(3).InnerText;
-            //    identificationData.transactionId = listIndentification.Item(4).InnerText;
-            //    identificationData.userName = listIndentification.Item(5).InnerText;
-            //    identificationData.userStatus = listIndentification.Item(6).InnerText;
-            //    identificationData.userType = listIndentification.Item(7).InnerText;
-
-            //    analyzeReturnDeviceResult deviceDataResult = new analyzeReturnDeviceResult();
-            //    var deviceDataResults = xDoc.GetElementsByTagName("deviceData", "http://ws.csd.rsa.com");
-            //    var deviceDataArray = deviceDataResults[0];
-
-            //    var listDeviceData = deviceDataArray.ChildNodes;
-            //    deviceDataResult.deviceData = new analyzeReturnDeviceResultDeviceData();
-            //    deviceDataResult.deviceData.deviceTokenCookie = listDeviceData.Item(1).InnerText;
-
-            //    analyzeResponse.identificationData = identificationData;
-            //    analyzeResponse.riskResult = riskResult;
-            //    analyzeResponse.deviceResult = deviceDataResult;
-
-            //    userStatus = analyzeResponse.identificationData.userStatus;
-            //    actionCode = analyzeResponse.riskResult.triggeredRule.actionCode; 
-            //}
-            //catch(Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-
-            if (userStatus != UserStatus.LOCKOUT.ToString() || userStatus != UserStatus.DELETE.ToString())
-			{
-
-				UpdateUserResponse updateUserResponse = null;
-				if (userStatus == UserStatus.UNVERIFIED.ToString())
+            if (responseUserStatus != UserStatus.LOCKOUT || responseUserStatus != UserStatus.DELETE)
+			{				
+				if (responseUserStatus == UserStatus.UNVERIFIED)
 				{
                     // TODO - call updateUser here with analyzeResponse
-                    //UpdateRsaUserFromResponse(analyzeResponse, rsaUser);                    
+                    UpdateRsaUserFromResponse(response, rsaUser);                    
 					UpdateUserRequest updateUserRequest = GetUpdateUserRequest(rsaUser);
-                    //serxml = new XmlSerializer(typeof(UpdateUserRequest));
-                    
-                    //using (var sww = new StringWriter())
-                    //{
-                    //    using (XmlWriter writer = XmlWriter.Create(sww))
-                    //    {
-                    //        serxml.Serialize(writer, updateUserRequest);
-                    //        xml = sww.ToString(); // Your XML
-                    //    }
-                    //}
 
-                    var respose = await _httpClientService.updateUser(xml);
+                    serxml = new XmlSerializer(updateUserRequest.GetType());                    
+                    serxml.Serialize(ms, updateUserRequest);
+                    xml = Encoding.UTF8.GetString(ms.ToArray());
+                    var UpdateUserResponseXmlStr = await _httpClientService.UpdateUser(xml);
+
+                    try
+                    {
+                        xDoc.LoadXml(UpdateUserResponseXmlStr);
+                        var updateUserResponse = BuildUpdateUserResponse(xDoc);
+                        responseUserStatus = updateUserResponse.identificationData.userStatus;
+                        reponseActionCode = updateUserResponse.riskResult.triggeredRule.actionCode;
+                        response = updateUserResponse;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
                 }
-				if (actionCode == ActionCode.CHALLENGE.ToString())
+				if (reponseActionCode == ActionCode.CHALLENGE)
 				{
-					if (userStatus == UserStatus.UNVERIFIED.ToString())
+					if (responseUserStatus == UserStatus.UNVERIFIED)
 					{
 						// TODO - call challenge here with updateUserResponse
-						//UpdateRsaUserFromResponse(updateUserResponse, rsaUser);
+						UpdateRsaUserFromResponse(response, rsaUser);
 					}
 					else
 					{
 						// TODO - call challenge here with analyzeResponse
-						//UpdateRsaUserFromResponse(analyzeResponse, rsaUser);
+						UpdateRsaUserFromResponse(response, rsaUser);
 					}
 					return RsaStatus.RequiresOtp;
 					//GetOneTimePassword (rsaUser);					
 				}
-				if (actionCode == ActionCode.ALLOW.ToString())
+				if (reponseActionCode == ActionCode.ALLOW)
 				{
 					// Need to save the deviceTokenCookie from analyzeReponse
-					//UpdateRsaUserFromResponse(analyzeResponse, rsaUser);
+					UpdateRsaUserFromResponse(response, rsaUser);
 					return RsaStatus.Allow;
 				}
 			}
 
-			if (userStatus == UserStatus.LOCKOUT.ToString() || userStatus == UserStatus.DELETE.ToString())
+			if (responseUserStatus == UserStatus.LOCKOUT || responseUserStatus == UserStatus.DELETE)
 			{
 				_logger.LogInformation("Marsh user failed to login");
 				throw new Exception("unable to login user: "+ rsaUser.Username);
@@ -186,6 +149,76 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			// user not allowed in if we get here.
 			return RsaStatus.Deny;
 		}
+
+        private UpdateUserResponse BuildUpdateUserResponse(XmlDocument xDoc)
+        {
+            throw new NotImplementedException();
+        }
+
+        private AnalyzeResponse BuildAnalyzeResponse(XmlDocument xDoc)
+        {
+            AnalyzeResponse analyzeResponse = new AnalyzeResponse();
+
+            RiskResult riskResult = new RiskResult();
+            var riskResults = xDoc.GetElementsByTagName("riskResult", "http://ws.csd.rsa.com");
+            var riskResultsArray = riskResults[0];
+
+            var listRisk = riskResultsArray.ChildNodes;
+            riskResult.riskScore = int.Parse(listRisk.Item(0).InnerText);
+            riskResult.riskScoreBand = listRisk.Item(1).InnerText;
+
+            DeviceAssuranceLevels resposeDeviceAssuranceLevel;
+            Enum.TryParse(listRisk.Item(3).InnerText, out resposeDeviceAssuranceLevel);
+            riskResult.deviceAssuranceLevel = resposeDeviceAssuranceLevel;
+
+            riskResult.triggeredRule = new TriggeredRule();
+
+            var listTrigger = listRisk.Item(2).ChildNodes;
+            ActionCode responseActionCode;
+            Enum.TryParse(listTrigger.Item(0).InnerText, out responseActionCode);
+            ActionApplyType responseActionApplyType;
+            Enum.TryParse(listTrigger.Item(2).InnerText, out responseActionApplyType);
+            riskResult.triggeredRule.actionType = responseActionApplyType;
+            riskResult.triggeredRule.actionCode = responseActionCode;
+
+            riskResult.triggeredRule.actionName = listTrigger.Item(1).InnerText;
+            //riskResult.triggeredRule.clientFactList = (ClientDefinedFact)listTrigger.Item(3).InnerText.Split(',');
+            riskResult.triggeredRule.ruleId = listTrigger.Item(4).InnerText;
+            riskResult.triggeredRule.ruleName = listTrigger.Item(5).InnerText;
+
+            IdentificationData identificationData = new IdentificationData();
+            var identificationResults = xDoc.GetElementsByTagName("identificationData", "http://ws.csd.rsa.com");
+            var identificationArray = identificationResults[0];
+            var listIndentification = identificationArray.ChildNodes;
+            UserStatus reponseUserStatus;
+            Enum.TryParse(listIndentification.Item(6).InnerText, out reponseUserStatus);
+            WSUserType responseUserType;
+            Enum.TryParse(listIndentification.Item(7).InnerText, out responseUserType);
+
+
+            identificationData.delegated = bool.Parse(listIndentification.Item(0).InnerText);
+            identificationData.groupName = listIndentification.Item(1).InnerText;
+            identificationData.orgName = listIndentification.Item(2).InnerText;
+            identificationData.sessionId = listIndentification.Item(3).InnerText;
+            identificationData.transactionId = listIndentification.Item(4).InnerText;
+            identificationData.userName = listIndentification.Item(5).InnerText;
+            identificationData.userStatus = reponseUserStatus;
+            identificationData.userType = responseUserType;
+
+            DeviceResult deviceData = new DeviceResult();
+            var deviceDataResults = xDoc.GetElementsByTagName("deviceData", "http://ws.csd.rsa.com");
+            var deviceDataArray = deviceDataResults[0];
+
+            var listDeviceData = deviceDataArray.ChildNodes;
+            deviceData.deviceData = new DeviceData();
+            deviceData.deviceData.deviceTokenCookie = listDeviceData.Item(1).InnerText;
+
+            analyzeResponse.riskResult = riskResult;
+            analyzeResponse.identificationData = identificationData;
+            analyzeResponse.deviceResult = deviceData;
+
+            return analyzeResponse;
+        }
 
         public string GetOneTimePassword(MarshRsaUser rsaUser)
         {
@@ -218,16 +251,16 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         //	return false;
         //}
 
-  //      void UpdateRsaUserFromResponse (analyzeReturn response, MarshRsaUser rsaUser)
-		//{
-		//	rsaUser.CurrentSessionId = response.identificationData.sessionId;
-		//	rsaUser.CurrentTransactionId = response.identificationData.transactionId;
-		//	rsaUser.DeviceTokenCookie = response.deviceResult.deviceData.deviceTokenCookie;
-		//}
+        void UpdateRsaUserFromResponse(GenericResponse response, MarshRsaUser rsaUser)
+        {
+            rsaUser.CurrentSessionId = response.identificationData.sessionId;
+            rsaUser.CurrentTransactionId = response.identificationData.transactionId;
+            rsaUser.DeviceTokenCookie = response.deviceResult.deviceData.deviceTokenCookie;
+        }
 
-		#region Create Request Elements
+        #region Create Request Elements
 
-		GenericActionTypeList GetGenericActionTypes ()
+        GenericActionTypeList GetGenericActionTypes ()
 		{
 			return new GenericActionTypeList {
 				genericActionTypes = new GenericActionType [] { GenericActionType.SET_USER_STATUS, GenericActionType.SET_USER_GROUP },
