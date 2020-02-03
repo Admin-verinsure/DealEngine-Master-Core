@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using System.Drawing;
+using Microsoft.Extensions.Logging;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -20,11 +21,21 @@ namespace TechCertain.WebUI.Controllers
         IMapperSession<CKImage> _ckimageRepository;
         private readonly ICKImageService _ckimageService;
         private readonly IWebHostEnvironment _hostingEnv;
-        IMapperSession<User> _userRepository;
+        //IMapperSession<User> _userRepository;
+        IApplicationLoggingService _applicationLoggingService;
+        ILogger<ImageController> _logger;
 
-        public ImageController(IUserService userRepository, IMapperSession<CKImage> ckimageRepository, ICKImageService ckimageService, IWebHostEnvironment hostingEnv)
+        public ImageController(IUserService userRepository, 
+            IMapperSession<CKImage> ckimageRepository, 
+            ICKImageService ckimageService, 
+            IWebHostEnvironment hostingEnv,
+            IApplicationLoggingService applicationLoggingService,
+            ILogger<ImageController> logger
+            )
             : base(userRepository)
         {
+            _applicationLoggingService=applicationLoggingService;
+            _logger=logger;
             _ckimageRepository = ckimageRepository;
             _ckimageService = ckimageService;
             _hostingEnv = hostingEnv;
@@ -59,6 +70,8 @@ namespace TechCertain.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(ImageViewModel model)
         {
+
+            var user = await CurrentUser();
             if (model != null)
             {
                 if (model.Image != null)
@@ -77,19 +90,33 @@ namespace TechCertain.WebUI.Controllers
                     }
                     else
                     {
-                        throw new System.IO.FileFormatException("Invalid File Type");
+                        throw new FileFormatException("Invalid File Type");
                     }
 
                     var filename = model.Name + extension;
                     var path = Path.Combine(_hostingEnv.WebRootPath, "images", filename);
                     var url = "";
                     
-                    // Create Thumbnail and save
-                    Stream stream = model.Image.OpenReadStream();
-                    System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
-                    thumbnail.Save("wwwroot/images/_" + filename, thumbnail.RawFormat);
+                    try
+                    {
+                        Stream stream = model.Image.OpenReadStream();
+                        System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
 
-                    // Save Image and create DB record
+                        if (thumbnail != null)
+                        {
+                               thumbnail.Save("wwwroot/images/_" + filename, thumbnail.RawFormat);
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException("Image is null.");
+                        }
+                    }
+
+                    catch(Exception ex)
+                    {
+                        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                    }
+
                     try
                     {
                         using (var fileStream = new FileStream(path, FileMode.Create))
@@ -151,9 +178,25 @@ namespace TechCertain.WebUI.Controllers
                 var json = Json(new { path });
                 string url = "";
 
-                Stream stream = file.OpenReadStream();
-                System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
-                thumbnail.Save("wwwroot/images/_" + name, thumbnail.RawFormat);
+               try
+                    {
+                        Stream stream = file.OpenReadStream();
+                        System.Drawing.Image thumbnail = GetReducedImage(100,100,stream);
+
+                        if (thumbnail != null)
+                        {
+                               thumbnail.Save("wwwroot/images/_" + name, thumbnail.RawFormat);
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException("Image is null.");
+                        }
+                    }
+                    
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
 
                 try
                 {
