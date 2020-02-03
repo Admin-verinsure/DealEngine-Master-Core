@@ -1,12 +1,14 @@
 ﻿@model TechCertain.WebUI.Models.InformationViewModel
 
 <div id="SharedRevenue">
-    @if (Model.RevenueByActivityViewModel.RevenueData != null)
-    {
-        @await Html.PartialAsync("/Views/Information/PrefabSections/ExistingSharedRevenue.cshtml", Model.RevenueByActivityViewModel)
-    }
-    else
-    {
-        @await Html.PartialAsync("/Views/Information/PrefabSections/NewSharedRevenue.cshtml", Model.RevenueByActivityViewModel)
-    }
+    <form class="client-form" name="sharedRevenueForm">
+        @if (Model.RevenueByActivityViewModel.RevenueData != null)
+        {
+            @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/Existing.cshtml", Model.RevenueByActivityViewModel)
+        }
+        else
+        {
+            @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/New.cshtml", Model.RevenueByActivityViewModel)
+        }
+    </form>
 </div>

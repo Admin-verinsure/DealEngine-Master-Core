@@ -23,16 +23,16 @@ namespace TechCertain.Domain.Entities
     public class AdditionalActivityInformation : EntityBase, IAggregateRoot
     {
         public virtual string InspectionReportTextId { get; set; }
-        public virtual string InspectionReportBoolId { get; set; }
+        public virtual int InspectionReportBoolId { get; set; }
         public virtual string ValuationTextId { get; set; }
         public virtual string ValuationTextId2 { get; set; }
-        public virtual string SchoolsDesignWorkBoolId { get; set; }
-        public virtual string SchoolsDesignWorkBoolId2 { get; set; }
-        public virtual string SchoolsDesignWorkBoolId3 { get; set; }
-        public virtual string SchoolsDesignWorkBoolId4 { get; set; }
+        public virtual int SchoolsDesignWorkBoolId { get; set; }
+        public virtual int SchoolsDesignWorkBoolId2 { get; set; }
+        public virtual int SchoolsDesignWorkBoolId3 { get; set; }
+        public virtual int SchoolsDesignWorkBoolId4 { get; set; }
         public virtual string OtherActivitiesTextId { get; set; }
         public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
-        public virtual string ValuationBoolId { get; set; }
+        public virtual int ValuationBoolId { get; set; }
 
         protected AdditionalActivityInformation() : this(null) { }
 
