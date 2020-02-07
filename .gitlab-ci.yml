@@ -1,0 +1,56 @@
+
+image : microsoft/dotnet:latest
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  - apt-get update -qq && apt-get install                                     #eg. system.drawing libraries
+  - 'dotnet restore'                                                          # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
+  - 'dotnet clean'                                                            # cleans the output of the previous build
+  - cp path/to/tbbackuped
+
+#after_script:
+
+build:
+  stage: build
+  script:
+    - 'dotnet build'                                                          # builds the project and its dependencies into a set of binaries
+    - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'        #compiles the application
+
+#    - 'dotnet /var/www/dealengine/TechCertain.WebUI.dll'
+#    - 'sudo systemctl enable dealengine.service'
+#    - 'sudo systemctl start dealengine.service'
+#    - 'sudo systemctl status dealengine.service'
+#    - 'sudo systemctl stop dealengine.service'
+
+before_script:
+
+deploy_staging:
+  stage: deploy
+  script:
+  - echo "Deploy to staging server"
+  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
+  - 'git push staging HEAD:master' # ???????????  
+  - 'dotnet run --project TechCertain.WebUI'
+  environment:
+    name: staging
+    url: https://devops.techcertain.com
+
+  dependencies:
+    - build
+    
+#deploy_prod:
+#  stage: deploy
+#  script:
+#    - echo "Deploy to production server"
+#  environment:
+#    name: production
+#    url: https://devops.techcertain.com
+#  when: manual
+#  only:
+#  - master
+
+# xcopy takes care of recursively creating required folders
+#   - 'xcopy /y ".\$env:EXE_RELEASE_FOLDER\YourApp.exe" "$deployFolder"'
