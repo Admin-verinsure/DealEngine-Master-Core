@@ -716,7 +716,9 @@ namespace TechCertain.WebUI.Controllers
 
             await _programmeService.Update(originalEglobalsubmission.EGlobalSubmissionClientProgramme).ConfigureAwait(false);
 
-            return Redirect("EditBillingConfiguration" );
+            //return Redirect("EditBillingConfiguration" );
+            var url = "/Agreement/ViewAcceptedAgreement/" + originalEglobalsubmission.EGlobalSubmissionClientProgramme.Id;
+            return Json(new { url });
         }
 
         [HttpPost]

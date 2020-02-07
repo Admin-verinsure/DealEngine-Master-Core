@@ -123,8 +123,9 @@
                             <label>Cancellation Action: </label>
                         </td>
                         <td>
-                            <button onclick='$("#Showterms").show();' type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Request Cancel </i></button>
+                            @*<button onclick='$("#Showterms").show();' type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Request Cancel </i></button>*@
                             @*<button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Confirm Cancel </i></button>*@
+                            <button onclick="Cancell()" type="button" class="btn btn-success btn-sm" id="SendInvoice"><i class="fa fa-edit"></i> Request Cancel </button>
                         </td>
                     </tr>
 
@@ -145,16 +146,16 @@
     </div>
 </div>
 
+@*<div class="container" id="Showterms" style="display:none">*@
+<div class="container" id="Showterms">
 
-<div class="container" id="Showterms" style="display:none">
-
-    @if (Model.BVTerms != null)
+    @if (Model.BVTermsCan != null)
     {
-        if (Model.BVTerms.Any())
+        if (Model.BVTermsCan.Any())
         {
-            <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+            <form id="bvcantermform" class="client-form" enctype="multipart/form-data">
 
-                <header>  Vessel Terms</header>
+                <header>  Vessel Terms - Cancel Terms </header>
                 <table class="table table-bordered table-responsive-md table-striped text-center" id="boatTable">
 
                     <tr>
@@ -168,43 +169,43 @@
                         <th class="text-center" width="11%">Vessel FSL</th>
                         <th class="text-center" width="9%"></th>
                     </tr>
-                    @foreach (var item in Model.BVTerms)
+                    @foreach (var item in Model.BVTermsCan)
                     {
                         @if (count % 2 == 1)
                         {
                             <tr class="table-light">
                                 <td class="pt-3-half" width="12%" contenteditable="true" id="BoatId" hidden>
-                                    @item.VesselId
+                                    @item.VesselCanId
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true" id="BoatName">
-                                    @item.BoatName
+                                    @item.BoatNameCan
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.BoatMake
+                                    @item.BoatMakeCan
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.BoatModel
+                                    @item.BoatModelCan
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td width="9%">
-                                    <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-boat-Sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-boat-make="@item.BoatMake" data-boat-model="@item.BoatModel"
-                                       data-boat-name="@item.BoatName"><i class="fa fa-edit"> </i></a>
-                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatName" data-boat-id="@item.VesselId"><span class="fa fa-trash" id="span"></span></a>
+                                    <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-boat-Sum="@item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-boat-make="@item.BoatMakeCan" data-boat-model="@item.BoatModelCan"
+                                       data-boat-name="@item.BoatNameCan"><i class="fa fa-edit"> </i></a>
+                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatNameCan" data-boat-id="@item.VesselCanId"><span class="fa fa-trash" id="span"></span></a>
                                 </td>
 
                             </tr>
@@ -213,37 +214,37 @@
                         {
                             <tr>
                                 <td class="pt-3-half" width="12%" contenteditable="true" id="BoatId" hidden>
-                                    @item.VesselId
+                                    @item.VesselCanId
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true" id="BoatName">
-                                    @item.BoatName
+                                    @item.BoatNameCan
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.BoatMake
+                                    @item.BoatMakeCan
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.BoatModel
+                                    @item.BoatModelCan
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="11%" contenteditable="true">
-                                    @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td width="9%">
-                                    <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-boat-Sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-boat-make="@item.BoatMake" data-boat-model="@item.BoatModel"
-                                       data-boat-name="@item.BoatName"><i class="fa fa-edit"> </i></a>
-                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatName" data-boat-id="@item.VesselId"><span class="fa fa-trash" id="span"></span></a>
+                                    <a href="#myModal" aria-hidden="true" style="color:green" data-toggle="modal" data-boat-fsl="@item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-boat-Sum="@item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Premium="@item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-boat-Excess="@item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-boat-make="@item.BoatMakeCan" data-boat-model="@item.BoatModelCan"
+                                       data-boat-name="@item.BoatNameCan"><i class="fa fa-edit"> </i></a>
+                                    <a href="#confirmDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-boat-name="@item.BoatNameCan" data-boat-id="@item.VesselCanId"><span class="fa fa-trash" id="span"></span></a>
                                 </td>
 
                             </tr>
@@ -256,13 +257,13 @@
         }
     }
 
-    @if (Model.MVTerms != null)
+    @if (Model.MVTermsCan != null)
     {
         count = 0;
-        if (Model.MVTerms.Any())
+        if (Model.MVTermsCan.Any())
         {
-            <form action="~/Agreement/EditAgreement/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
-                <header>  Vehicle Terms</header>
+            <form id="mvcantermform" class="client-form">
+                <header>  Vehicle Terms - Cancel Terms </header>
 
                 <table class="table table-bordered table-responsive-md table-striped text-center" id="vehicleTable">
                     <tr>
@@ -276,43 +277,43 @@
                         <th class="text-center" width="11%">Vehicle FSL</th>
                         <th class="text-center" width="9%"></th>
                     </tr>
-                    @foreach (var item in Model.MVTerms)
+                    @foreach (var item in Model.MVTermsCan)
                     {
                         @if (count % 2 == 1)
                         {
                             <tr class="table-light">
                                 <td class="pt-3-half" width="12%" contenteditable="true" id="VesselId" hidden>
-                                    @item.VesselId
+                                    @item.VesselCanId
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Registration
+                                    @item.RegistrationCan
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Make
+                                    @item.MakeCan
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Model
+                                    @item.ModelCan
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td width="9%">
                                     <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                       data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-motor-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-motor-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
-                                    <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.Model"><span class="fa fa-trash" id="span"></span></a>
+                                       data-motor-registration="@item.RegistrationCan" data-motor-make="@item.MakeCan" data-motor-motorfsl="@item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-motor-sum="@item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-motor-excess="@item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.ModelCan"><i class="fa fa-edit"> </i></a>
+                                    <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.ModelCan"><span class="fa fa-trash" id="span"></span></a>
                                 </td>
                             </tr>
                         }
@@ -320,37 +321,37 @@
                         {
                             <tr>
                                 <td class="pt-3-half" width="12%" contenteditable="true" id="VesselId" hidden>
-                                    @item.VesselId
+                                    @item.VesselCanId
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Registration
+                                    @item.RegistrationCan
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Make
+                                    @item.MakeCan
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Model
+                                    @item.ModelCan
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
 
                                 </td>
                                 <td class="pt-3-half" width="13%" contenteditable="true">
-                                    @item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
+                                    @item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))
                                 </td>
                                 <td width="9%">
                                     <a href="#VesselModal" aria-hidden="true" style="color:forestgreen" data-toggle="modal"
-                                       data-motor-registration="@item.Registration" data-motor-make="@item.Make" data-motor-motorfsl="@item.FSL.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-motor-sum="@item.TermLimit.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.Premium.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
-                                       data-motor-excess="@item.Excess.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.Model"><i class="fa fa-edit"> </i></a>
-                                    <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.Model"><span class="fa fa-trash" id="span"></span></a>
+                                       data-motor-registration="@item.RegistrationCan" data-motor-make="@item.MakeCan" data-motor-motorfsl="@item.FSLCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-motor-sum="@item.TermLimitCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-premium="@item.PremiumCan.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))"
+                                       data-motor-excess="@item.ExcessCan.ToString("C0", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ"))" data-motor-model="@item.ModelCan"><i class="fa fa-edit"> </i></a>
+                                    <a href="#confirmMotorDelete" aria-hidden="true" style="color:red" data-toggle="modal" data-motor-id="@item.ModelCan"><span class="fa fa-trash" id="span"></span></a>
                                 </td>
                             </tr>
                         }
@@ -363,12 +364,13 @@
         }
 
     }
-<div>
-    @*<button onclick='$("#Showterms").show();' type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Request Cancel </i></button>*@
-    <button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Confirm Cancel </i></button>
-</div>
-       
-</div>
+    @if (Model.BVTermsCan != null || Model.MVTermsCan != null)
+    {
+        <div>
+            <button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Confirm Cancel </i></button>
+        </div>
+    }
+    </div>
 
 @section pagespecific {
     <link href="~/jqueryui/jquery-ui.css" rel="stylesheet" />
@@ -381,7 +383,7 @@
             dateFormat: "dd/mm/yy"
         });
 
-        
+
     </script>
 
     @Html.Partial("_AgreementScripts")

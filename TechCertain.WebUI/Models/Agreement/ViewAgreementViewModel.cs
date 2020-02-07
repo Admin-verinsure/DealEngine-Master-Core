@@ -48,6 +48,8 @@ namespace TechCertain.WebUI.Models.Agreement
         public List<EditTermsViewModel> CLTerms { get; internal set; }
         public List<EditTermsViewModel> SLTerms { get; internal set; }
         public List<EditTermsViewModel> DOTerms { get; internal set; }
+        public List<EditTermsCancelViewModel> BVTermsCan { get; internal set; }
+        public List<EditTermsCancelViewModel> MVTermsCan { get; internal set; }
         public List<ClientAgreementReferral> Referrals { get; set; }
         public User CurrentUser { get; set; }
         public DateTime CancellEffectiveDate { get; set; }

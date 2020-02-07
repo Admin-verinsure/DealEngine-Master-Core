@@ -11,13 +11,13 @@ namespace TechCertain.Domain.Entities
     {
         protected ClientAgreementBVTermCancel() : base(null) { }
 
-        public ClientAgreementBVTermCancel(User createdBy, ClientAgreementTerm clientAgreementTerm, Boat boat, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage)
-            : this(createdBy, boat.BoatName, boat.YearOfManufacture, boat.BoatMake, boat.BoatModel, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreementTerm, boat)
+        public ClientAgreementBVTermCancel(User createdBy, ClientAgreementTermCancel clientAgreementTermCancel, Boat boat, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage)
+            : this(createdBy, boat.BoatName, boat.YearOfManufacture, boat.BoatMake, boat.BoatModel, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreementTermCancel, boat)
         {
 
         }
 
-        public ClientAgreementBVTermCancel(User createdBy, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreementTerm clientAgreementTerm, Boat boat)
+        public ClientAgreementBVTermCancel(User createdBy, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreementTermCancel clientAgreementTermCancel, Boat boat)
             : base(createdBy)
         {
             if (string.IsNullOrWhiteSpace(boatName.ToString()))
@@ -36,8 +36,8 @@ namespace TechCertain.Domain.Entities
                 throw new ArgumentNullException(nameof(brokerageRate));
             if (string.IsNullOrWhiteSpace(brokerage.ToString()))
                 throw new ArgumentNullException(nameof(brokerage));
-            if (clientAgreementTerm == null)
-                throw new ArgumentNullException(nameof(clientAgreementTerm));
+            if (clientAgreementTermCancel == null)
+                throw new ArgumentNullException(nameof(clientAgreementTermCancel));
             if (boat == null)
                 throw new ArgumentNullException(nameof(boat));
 
@@ -51,8 +51,14 @@ namespace TechCertain.Domain.Entities
             FSLCan = fSL;
             BrokerageRateCan = brokerageRate;
             BrokerageCan = brokerage;
-            ClientAgreementTermCan = clientAgreementTerm;
+            ClientAgreementTermCan = clientAgreementTermCancel;
             BoatCan = boat;
+        }
+
+        public virtual ClientAgreementBVTerm exClientAgreementBVTerm
+        {
+            get;
+            set;
         }
 
         public virtual int TermLimitCan
@@ -127,7 +133,7 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
-        public virtual ClientAgreementTerm ClientAgreementTermCan
+        public virtual ClientAgreementTermCancel ClientAgreementTermCan
         {
             get;
             set;
