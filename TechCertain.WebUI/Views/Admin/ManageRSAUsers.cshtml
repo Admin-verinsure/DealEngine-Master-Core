@@ -1,0 +1,80 @@
+﻿@model TechCertain.WebUI.Models.AdminViewModel
+
+<!-- START MAIN CONTENT -->
+    <div id="content" class="container">
+        <div class="row">
+            <h1 class="page-title txt-color-blueDark">
+                <i class="fa-fw fa fa-home"></i>
+                <span>
+                    <a href="~/Home/Index">Dashboard</a>
+                    > Manage Rsa Users
+                </span>
+            </h1>
+        </div>
+
+        <div class="row">
+            <span>
+                <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            </span>
+        </div>
+
+        <!-- widget grid -->
+        <div class="row">
+            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-unlock-user" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+                <!-- Header Start-->
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
+                    <h2> Unlock User </h2>
+                </header>
+                <!-- Header End -->
+                <!-- widget div-->
+                <form id="unlockUser" class="client-form" method="post" novalidate="novalidate">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <td>
+                                <label class="label">Enter username of user to be unlocked</label>
+                            </td>
+                            <td>
+                                <select data-placeholder="Click here to search locked users" id="unlockUser" name="unlockUser" multiple class="col-6 chosen-select form-control b">
+                                    @foreach (var user in Model.LockedUsers)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" onclick="UnlockUser()">
+                                    Unlock
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>      
+    </div>
+
+
+
+@section pagespecific {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(".chosen-select").chosen({ width: "95%" });
+        });
+
+        function UnlockUser() {
+            var id = $('#unlockUser option:selected').val();
+            if (typeof id !== 'undefined') {                
+                postData = { UserId: id };
+                $.ajax({
+                    url: '@Url.Action("UnlockUser", "Admin")',
+                    type: "POST",
+                    data: postData
+                })
+            } else {
+                alert("User undefined");
+            }            
+        }        
+    </script>
+}

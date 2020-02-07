@@ -21,7 +21,7 @@ namespace TechCertain.WebUI.Models.Account
 		}
 	}
 
-	public class RsaOneTimePasswordModel : OneTimePasswordModel
+	public class RsaOneTimePasswordModel 
 	{
 		public string DevicePrint { get; set; }
 
@@ -29,17 +29,11 @@ namespace TechCertain.WebUI.Models.Account
 
 		public string TransactionId { get; set; }
 
-		public RsaOneTimePasswordModel (Guid userId)
-			: base (userId)
-		{
+		public string UserName { get; set; }
 
-		}
+		public string OtpCode { get; set; }
 
-		public RsaOneTimePasswordModel (string userName)
-			: base (userName)
-		{
-
-		}
-	}
+        public string DeviceTokenCookie { get; set; }
+    }
 }
 

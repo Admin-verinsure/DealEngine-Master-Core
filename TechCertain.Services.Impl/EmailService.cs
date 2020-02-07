@@ -163,6 +163,17 @@ namespace TechCertain.Services.Impl
             email.Send();
         }
 
+        public async Task MarshRsaOneTimePassword(string recipient, string subject)
+        {
+            string subjectPrefix = "One Time Password: ";
+
+            EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipient);
+            email.From(DefaultSender);
+            email.WithSubject(subjectPrefix + subject);            
+            email.UseHtmlBody(true);
+            email.Send();
+        }
+
         public async Task SendSystemEmailLogin(string recipent)
         {
             var user = await _userService.GetUserByEmail(recipent);

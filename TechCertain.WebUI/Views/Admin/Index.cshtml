@@ -159,9 +159,12 @@
                                 <label class="label">Enter username of user to be unlocked</label>
                             </td>
                             <td>
-                                <label class="input">
-                                    <input name="username" type="text" class="form-control">
-                                </label>
+                                <select data-placeholder="Click here to search locked users" id="unlockUser" name="unlockUser" multiple class="col-6 chosen-select form-control b">
+                                    @foreach (var user in Model.LockedUsers)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
                             </td>
                             <td>
                                 <button type="submit" class="btn btn-primary">
@@ -197,142 +200,15 @@
             </div>
         </div>
 
-        <!-- review file upload later 1/21/2020-->
-        @*<div class="row">
-            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-data-upload" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-                 Header Start
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
-                    <h2> Data Upload </h2>
-                </header>
-                 content goes here 
-                <form id="dataUploadForm" class="client-form" action="/Admin/UploadDataFiles" method="post" enctype="multipart/form-data" novalidate="novalidate">
-                    <table class="table table-bordered table-striped">
-                        <tr>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadUserData" aria-describedby="uploadIPOrganisationData">
-                                    <label class="custom-file-label" for="uploadUserData">Upload organisation and user data here</label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadedLocationData" aria-describedby="uploadedLocationData">
-                                    <label class="custom-file-label" for="uploadedLocationData">Upload organisational unit and location data here</label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadOrgUISData" aria-describedby="uploadOrgUISData">
-                                    <label class="custom-file-label" for="uploadOrgUISData">Upload organisation data here for creating UIS</label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadVehicleData" aria-describedby="uploadVehicleData">
-                                    <label class="custom-file-label" for="uploadVehicleData">Upload vehicle data here</label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadedBoatData" aria-describedby="uploadedBoatData">
-                                    <label class="custom-file-label" for="uploadedBoatData">Upload vessel data here</label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadIPOrganisationData" aria-describedby="uploadIPOrganisationData">
-                                    <label class="custom-file-label" for="uploadIPOrganisationData">Upload interest party organisation data here</label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input form-control" id="uploadMarinaOrganisationData" aria-describedby="uploadMarinaOrganisationData">
-                                    <label class="custom-file-label" for="uploadMarinaOrganisationData">Upload marina organisation data here</label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    Upload
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-        </div>*@
-        <!-- End data upload Widget -->
-        @*<div class="row">
-            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-server-exchange" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-                 Header Start
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-upload txt-color-white"></i> </span>
-                    <h2> Server Exchange </h2>
-                </header>
-                 Header End
-                 widget div
-                <div>
-                     widget content
-                    <div class="widget-body no-padding">
-                         content goes here
-                        <form id="serverExchange" class="client-form" novalidate="novalidate">
-                            <fieldset>
-                                <section>
-                                    @Html.ActionLink("Add New Organisation", "SysExchange", "Admin", null, null)
-                                </section>
-                                <section>
-                                    @Html.ActionLink("Add New User", "SysExchange", "Admin", null, null)
-                                </section>
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>*@
     </div>
 
 
 
 @section pagespecific {
-    @*@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")*@
     <script type="text/javascript">
 
         $(document).ready(function () {
-
-            //$('#btnAddServer').click(function () {
-            //    $.ajax({
-            //        type: 'POST',
-            //        url: '/Admin/AddPrivateServer',
-            //        data: '{"ServerName":"TestServer", "ServerAddress":"https://TestURL.com"}', // or JSON.stringify ({name: 'jonas'}),
-            //        success: function (data) { alert('data: ' + data); },
-            //        contentType: "application/json",
-            //        dataType: 'json'
-            //    });
-            //});
-
+            $(".chosen-select").chosen({ width: "95%" });
         });
 
     </script>
