@@ -203,5 +203,9 @@ namespace TechCertain.Services.Impl
 			user.Organisations.Add (defaultOrganisation);
 		}
 
+		public async Task<List<User>> GetLockedUsers()
+		{
+			return await _userRepository.FindAll().Where(u => u.Locked == true).ToListAsync();
+		}
 	}
 }

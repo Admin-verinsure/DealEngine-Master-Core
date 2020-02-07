@@ -35,6 +35,8 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		public string CurrentTransactionId { get; set; }
 
+		public RsaStatus RsaStatus { get; set; }
+
 		public MarshRsaUser (string email)
 		{
 			if (string.IsNullOrWhiteSpace (email))

@@ -43,11 +43,11 @@ namespace TechCertain.Services.Impl
             }
         }
 
-        public bool RequireRSA
+        public string RequireRSA
         {
             get
             {
-                return _configuration.GetValue<bool>("RequireRSA");
+                return _configuration.GetValue<string>("RequireRSA");
             }
         }
 
