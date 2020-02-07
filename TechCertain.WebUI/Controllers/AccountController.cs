@@ -38,8 +38,7 @@ namespace TechCertain.WebUI.Controllers
         ILdapService _ldapService;
         IOrganisationalUnitService _organisationalUnitService;
         ILogger<AccountController> _logger;
-        IApplicationLoggingService _applicationLoggingService;
-        IMapperSession<User> _userRepository;
+        IApplicationLoggingService _applicationLoggingService;        
         IHttpClientService _httpClientService;
         IAppSettingService _appSettingService;
 
@@ -49,8 +48,7 @@ namespace TechCertain.WebUI.Controllers
 			SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            ILogger<AccountController> logger,
-            IMapperSession<User> userRepository,
+            ILogger<AccountController> logger,            
             IHttpClientService httpClientService,
             ILdapService ldapService,
             IUserService userService,
@@ -64,8 +62,7 @@ namespace TechCertain.WebUI.Controllers
             _ldapService = ldapService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
-            _userRepository = userRepository;
+            _roleManager = roleManager;            
 			_httpClientService = httpClientService;
 			_logger = logger;
 			_userService = userService;
@@ -282,9 +279,9 @@ namespace TechCertain.WebUI.Controllers
                 DomainString = _appSettingService.domainQueryString,
             };
 
-            string nameExtension = "";// ConfigurationRoot["LoginPageExtension"];
+            string nameExtension = _appSettingService.RequireRSA;
 
-			return View("Login"+nameExtension, viewModel);
+            return View("Login"+nameExtension, viewModel);
         }
 
         // POST: /account/login
@@ -306,7 +303,7 @@ namespace TechCertain.WebUI.Controllers
             try
             {                                
 				string password = viewModel.Password.Trim();
-                var user = _userRepository.FindAll().FirstOrDefault(u => u.UserName == userName);
+                var user = await _userService.GetUser(userName);
                 int resultCode = -1;
                 string resultMessage = "";                
 
@@ -342,11 +339,6 @@ namespace TechCertain.WebUI.Controllers
                             }
                         }
                     }
-
-                    if (_appSettingService.RequireRSA)
-                    {
-                        var result = await LoginMarsh(user, viewModel.DevicePrint);
-                    }
                     
                     await _applicationLoggingService.LogInformation(_logger, new Exception("User [" + userName + "] has logged in"), user, HttpContext);
                     return LocalRedirect("~/Home/Index");
@@ -370,45 +362,57 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-        public async Task<IdentityResult> LoginMarsh (User user, string devicePrint)
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginMarsh(AccountLoginModel viewModel)
 		{
+            var userName = viewModel.Username.Trim();
             try
             {
-                MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService);
-                MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
-                
-                rsaUser.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                rsaUser.DevicePrint = devicePrint;            
-                rsaUser.Email = user.Email;            
-                rsaUser.Username = user.Email; //try as Marsh RSA team advised
-                rsaUser.HttpReferer = Url.ToString();            
-                rsaUser.OrgName = "Marsh_Model";
-
-                Console.WriteLine("Analzying RSA User");
-                RsaStatus rsaStatus = await rsaAuth.Analyze(rsaUser, true);
-                if (rsaStatus == RsaStatus.Allow)
+                string password = viewModel.Password.Trim();
+                var user = await _userService.GetUser(userName);
+                int resultCode = -1;
+                string resultMessage = "";
+                _ldapService.Validate(userName, password, out resultCode, out resultMessage);
+                if(resultCode == 0)
                 {
-                    Console.WriteLine("RSA User allowed, signing in...");
-                    _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
-                }
-                if (rsaStatus == RsaStatus.RequiresOtp)
-                {
-                    Console.WriteLine("RSA User requires otp. Making request");
-                    string otp = rsaAuth.GetOneTimePassword(rsaUser);
+                    MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
+                    MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);                    
+                    rsaUser.DevicePrint = "version%3D3%2E5%2E1%5F4%26pm%5Ffpua%3Dmozilla%2F5%2E0%20%28windows%20nt%2010%2E0%3B%20win64%3B%20x64%3B%20rv%3A68%2E0%29%20gecko%2F20100101%20firefox%2F68%2E0%7C5%2E0%20%28Windows%29%7CWin32%26pm%5Ffpsc%3D24%7C1920%7C1080%7C1050%26pm%5Ffpsw%3D%26pm%5Ffptz%3D12%26pm%5Ffpln%3Dlang%3Den%2DUS%7Csyslang%3D%7Cuserlang%3D%26pm%5Ffpjv%3D0%26pm%5Ffpco%3D1%26pm%5Ffpasw%3Dnpswf64%5F32%5F0%5F0%5F223%26pm%5Ffpan%3DNetscape%26pm%5Ffpacn%3DMozilla%26pm%5Ffpol%3Dtrue%26pm%5Ffposp%3D%26pm%5Ffpup%3D%26pm%5Ffpsaw%3D1920%26pm%5Ffpspd%3D24%26pm%5Ffpsbd%3D%26pm%5Ffpsdx%3D%26pm%5Ffpsdy%3D%26pm%5Ffpslx%3D%26pm%5Ffpsly%3D%26pm%5Ffpsfse%3D%26pm%5Ffpsui%3D%26pm%5Fos%3DWindows%26pm%5Fbrmjv%3D68%26pm%5Fbr%3DFirefox%26pm%5Finpt%3D%26pm%5Fexpt%3D";//viewModel.DevicePrint;
+                    rsaUser.Email = user.Email;
+                    rsaUser.Username = user.UserName; //try as Marsh RSA team advised
+                    rsaUser.HttpReferer = "~Account/LoginMarsh";
+                    rsaUser.OrgName = "Marsh_Model";
+                    rsaUser.RsaStatus = RsaStatus.Deny;
 
-                    Console.WriteLine("One Time Password: " + otp);
-                    _emailService.ContactSupport(_emailService.DefaultSender, "Marsh RSA OTP", otp);
-
-                    Console.WriteLine("Sent otp. Redirecting to Otp page");
-                    // sent otp to user                
-                }
+                    Console.WriteLine("Analzying RSA User");
+                    rsaUser = await rsaAuth.Analyze(rsaUser);
+                    if (rsaUser.RsaStatus == RsaStatus.Allow)
+                    {
+                        Console.WriteLine("RSA User allowed, signing in...");
+                        _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
+                        return LocalRedirect("~/Home/Index");
+                    }
+                    if (rsaUser.RsaStatus == RsaStatus.RequiresOtp)
+                    {
+                        return View("OneTimePasswordMarsh", new RsaOneTimePasswordModel
+                        {
+                            UserName = user.UserName,
+                            DeviceTokenCookie = rsaUser.DeviceTokenCookie,
+                            DevicePrint = rsaUser.DevicePrint,
+                            SessionId = rsaUser.CurrentSessionId,
+                            TransactionId = rsaUser.CurrentTransactionId
+                        });
+                    }
+                }                
             }
             catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);
             }
 
-            return IdentityResult.Success;
+            return await RedirectToLocal();
         }
 
         [HttpPost]
@@ -416,29 +420,31 @@ namespace TechCertain.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
 		{
-            throw new Exception("Method needs to be re-written");
-			//if (ModelState.IsValid) {
-			//	Console.WriteLine ("Creating RSA User for otp entry");
-			//	MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider (_logger);
-			//	string username = viewModel.UserName;
-			//	MarshRsaUser rsaUser = rsaAuth.GetRsaUser (username);
-			//	//rsaUser.IpAddress = Request.UserHostAddress;
-			//	//rsaUser.DevicePrint = viewModel.DevicePrint;
-			//	//rsaUser.Username = rsaAuth.GetHashedId (username + "@dealengine.com");
-			//	//rsaUser.HttpReferer = Request.UrlReferrer.ToString ();
-			//	//rsaUser.Otp = viewModel.OtpCode;
+            if (ModelState.IsValid)
+            {                
+                MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
+                string username = viewModel.UserName;
+                MarshRsaUser rsaUser = rsaAuth.GetRsaUser(username);                
+                rsaUser.DevicePrint = viewModel.DevicePrint;
+                rsaUser.DeviceTokenCookie = viewModel.DeviceTokenCookie;
+                rsaUser.Username = username;
+                rsaUser.HttpReferer = "~Account/LoginMarsh";
+                rsaUser.OrgName = "Marsh_Model";
+                rsaUser.Otp = viewModel.OtpCode;
+                rsaUser.CurrentSessionId = viewModel.SessionId;
+                rsaUser.CurrentTransactionId = viewModel.TransactionId;
 
-			//	Console.WriteLine ("Authenticating RSA User");
-			//	bool isAuthenticated = rsaAuth.Authenticate (rsaUser);
-			//	if (isAuthenticated) {
-			//		Console.WriteLine ("RSA User authenticated, creating mfa cookie");
-			//		SetCookie ("MfaClientGenCookie", rsaUser.DevicePrint, DateTime.MinValue);
+                Console.WriteLine("Authenticating RSA User");
+                bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService);
+                if (isAuthenticated)
+                {
+                    Console.WriteLine("RSA User authenticated, creating mfa cookie");
+                    return LocalRedirect("~/Home/Index");
+                }
+                ViewBag.AccountLocked = "Your account has been locked - Marsh has been notified and will be in contact with you shortly";                
+            }
 
-			//		return RedirectToLocal ("");
-			//	}
-			//}
-
-			return View ();
+            return View ();
 		}
 
 		// GET: /account/error

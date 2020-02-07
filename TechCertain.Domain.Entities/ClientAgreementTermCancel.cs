@@ -39,6 +39,12 @@ namespace TechCertain.Domain.Entities
             SubTermTypeCan = subTermType;
         }
 
+        public virtual ClientAgreementTerm exClientAgreementTerm
+        {
+            get;
+            set;
+        }
+
         public virtual int TermLimitCan
         {
             get;
@@ -225,13 +231,13 @@ namespace TechCertain.Domain.Entities
             set;
         }
 
-		public virtual IList<ClientAgreementMVTerm> MotorTermsCan
+		public virtual IList<ClientAgreementMVTermCancel> MotorTermsCan
         {
 			get;
 			set;
 		}
 
-        public virtual IList<ClientAgreementBVTerm> BoatTermsCan
+        public virtual IList<ClientAgreementBVTermCancel> BoatTermsCan
         {
             get;
             set;

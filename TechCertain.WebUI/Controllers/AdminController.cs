@@ -10,6 +10,7 @@ using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using ElmahCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -79,7 +80,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 var privateServers = await _privateServerService.GetAllPrivateServers();
                 var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
-                var merchants = await _merchantService.GetAllMerchants();
+                var merchants = await _merchantService.GetAllMerchants();                
 
                 model.PrivateServers = _mapper.Map<IList<PrivateServer>, IList<PrivateServerViewModel>>(privateServers);
                 model.PaymentGateways = _mapper.Map<IList<PaymentGateway>, IList<PaymentGatewayViewModel>>(paymentGateways);
@@ -245,318 +246,48 @@ namespace TechCertain.WebUI.Controllers
         {
             await _merchantService.RemoveMerchant(await CurrentUser(), id);                
             return await MerchantList();
-        }
-
-        //[HttpPost]
-        //public async Task<IActionResult> UploadDataFiles(HttpPostedFileWrapper uploadedUserData, HttpPostedFileWrapper uploadedLocationData, HttpPostedFileWrapper uploadedOrgUISData, HttpPostedFileWrapper uploadedVehicleData, HttpPostedFileWrapper uploadedIPOrganisationData)
-        //{
-        //    byte[] buffer;
-        //    // Parse uploaded organisation and user data here
-        //    if (uploadedUserData != null)
-        //    {
-        //        buffer = new byte[uploadedUserData.ContentLength];
-        //        uploadedUserData.InputStream.Read(buffer, 0, buffer.Length);
-        //        string lines = _fileService.FromBytes(buffer);
-        //        using (System.IO.StringReader reader = new System.IO.StringReader(lines))
-        //        {
-        //            string line = string.Empty;
-        //            while ((line = reader.ReadLine()) != null)
-        //            {
-        //                string[] parts = line.Split(',');
-        //                // TODO - parse user data here
-        //                string personalOrganisationName = "Default user organisation for " + parts[0] + " " + parts[1];
-        //                Organisation organisation = null;
-
-        //                organisation = _organisationService.GetOrganisationByName(parts[2]);
-        //                if (organisation == null)
-        //                {
-        //                    organisation = new Organisation(CurrentUser(), Guid.NewGuid(), parts[2]);
-        //                    organisation.Phone = parts[3];
-        //                    _organisationService.CreateNewOrganisation(organisation);
-        //                    Console.WriteLine("Created Organisation " + organisation.Name);
-        //                }
-        //                //else
-        //                //	Console.WriteLine ("Loaded Organisation " + organisation.Name);
-
-        //                User user = null;
-        //                User user2 = null;
-
-        //                try
-        //                {
-        //                    user = _userService.GetUserByEmail(parts[5]);
-        //                    //Console.WriteLine ("Loaded User " + user.FullName + " by email");
-        //                }
-        //                catch (Exception)
-        //                {
-        //                    string username = null;
-        //                    if (parts[6] == "")
-        //                    {
-        //                        username = parts[0] + "_" + parts[1];
-        //                    }
-        //                    else
-        //                    {
-        //                        username = parts[6];
-        //                    }
-
-        //                    try
-        //                    {
-        //                        user2 = _userService.GetUser(username);
-        //                        //Console.WriteLine ("Loaded User " + user.FullName + " by username");
-        //                    }
-        //                    catch (Exception)
-        //                    {
-        //                        // create personal organisation
-        //                        //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
-        //                        //_organisationService.CreateNewOrganisation (personalOrganisation);
-        //                        // create user object
-        //                        user = new User(CurrentUser(), Guid.NewGuid(), username);
-        //                        user.FirstName = parts[0];
-        //                        user.LastName = parts[1];
-        //                        user.FullName = parts[0] + " " + parts[1];
-        //                        user.Email = parts[5];
-        //                        user.Phone = parts[3];
-        //                        user.Password = "";
-        //                        //user.Organisations.Add (personalOrganisation);
-        //                        // save the new user
-        //                        // creates a new user in the system along with a default organisation
-        //                        _userService.Create(user);
-        //                        //Console.WriteLine ("Created User " + user.FullName);
-        //                    }
-        //                    if (user2 != null && user != user2)
-        //                    {
-        //                        Exception ex = new Exception(string.Format("User with email {0} doesn't match user with username {1}", user.Email, user.UserName));
-        //                        throw ex;
-        //                    }
-        //                }
-        //                finally
-        //                {
-        //                    if (!user.Organisations.Contains(organisation))
-        //                        user.Organisations.Add(organisation);
-
-        //                    _userService.Update(user);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    // parse uploaded organisational unit and location data here
-        //    // TODO
-
-        //    if (uploadedLocationData != null)
-        //    {
-        //        buffer = new byte[uploadedLocationData.ContentLength];
-        //        uploadedLocationData.InputStream.Read(buffer, 0, buffer.Length);
-        //        string lines = _fileService.FromBytes(buffer);
-        //        using (System.IO.StringReader reader = new System.IO.StringReader(lines))
-        //        {
-        //            string line = string.Empty;
-        //            while ((line = reader.ReadLine()) != null)
-        //            {
-        //                string[] parts = line.Split(',');
-
-        //                Organisation organisation = null;
-        //                organisation = _organisationService.GetOrganisationByName(parts[0]);
-        //                if (organisation != null)
-        //                {
-        //                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //                    {
-        //                        OrganisationalUnit ou = new OrganisationalUnit(CurrentUser(), parts[2]);
-        //                        organisation.OrganisationalUnits.Add(ou);
-
-        //                        Location location = new Location(CurrentUser())
-        //                        {
-        //                            Street = parts[1],
-        //                            CommonName = parts[2],
-        //                            Country = "New Zealand"
-        //                        };
-
-        //                        location.OrganisationalUnits = new List<OrganisationalUnit>();
-        //                        location.OrganisationalUnits.Add(ou);
-
-        //                        ou.Locations = new List<Location>();
-        //                        ou.Locations.Add(location);
-
-        //                        uow.Commit();
-        //                    }
-
-        //                }
-
-        //            }
-        //        }
-        //    }
-
-
-        //    // parse uploaded organisation data here for creating UIS
-        //    // TODO
-
-        //    if (uploadedOrgUISData != null)
-        //    {
-        //        buffer = new byte[uploadedOrgUISData.ContentLength];
-        //        uploadedOrgUISData.InputStream.Read(buffer, 0, buffer.Length);
-        //        string lines = _fileService.FromBytes(buffer);
-        //        using (System.IO.StringReader reader = new System.IO.StringReader(lines))
-        //        {
-        //            string line = string.Empty;
-        //            while ((line = reader.ReadLine()) != null)
-        //            {
-        //                string[] parts = line.Split(',');
-
-        //                //var template = _informationTemplateService.GetAllTemplates ().FirstOrDefault (t => t.Name == parts [1]);
-
-        //                var programme = _programmeService.GetAllProgrammes().FirstOrDefault(p => p.Name == parts[1]);
-
-        //                Organisation organisation = null;
-        //                organisation = _organisationService.GetOrganisationByName(parts[0]);
-        //                if (organisation != null)
-        //                {
-        //                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //                    {
-        //                        var clientProgramme = _programmeService.CreateClientProgrammeFor(programme.Id, CurrentUser(), organisation);
-        //                        var reference = _referenceService.GetLatestReferenceId();
-        //                        var sheet = _clientInformationService.IssueInformationFor(CurrentUser(), organisation, clientProgramme, reference);
-        //                        _referenceService.CreateClientInformationReference(sheet);
-
-        //                        uow.Commit();
-        //                    }
-
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    // parse uploaded vehicle data here
-        //    // TODO
-
-        //    if (uploadedVehicleData != null)
-        //    {
-        //        buffer = new byte[uploadedVehicleData.ContentLength];
-        //        uploadedVehicleData.InputStream.Read(buffer, 0, buffer.Length);
-        //        string lines = _fileService.FromBytes(buffer);
-        //        using (System.IO.StringReader reader = new System.IO.StringReader(lines))
-        //        {
-        //            string line = string.Empty;
-        //            while ((line = reader.ReadLine()) != null)
-        //            {
-        //                string[] parts = line.Split(',');
-
-        //                Organisation organisation = null;
-        //                organisation = _organisationService.GetOrganisationByName(parts[0]);
-        //                if (organisation != null)
-        //                {
-        //                    ClientInformationSheet sheet = _clientInformationService.GetAllInformationFor(organisation).FirstOrDefault();
-
-        //                    if (sheet != null)
-        //                    {
-        //                        if (parts[3] == "")
-        //                        {
-        //                            using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //                            {
-        //                                Vehicle v = new Vehicle(CurrentUser(), "", "", "")
-        //                                {
-        //                                    GroupSumInsured = Convert.ToInt32(parts[2]),
-        //                                    FleetNumber = parts[1],
-        //                                    Notes = parts[4],
-        //                                    Validated = false
-        //                                };
-
-        //                                sheet.Vehicles.Add(v);
-
-        //                                uow.Commit();
-        //                            }
-        //                        }
-        //                        else
-        //                        {
-
-        //                            try
-        //                            {
-        //                                Vehicle vehicle = _vehicleService.GetValidatedVehicle(parts[3]);
-        //                                if (vehicle != null)
-        //                                {
-        //                                    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //                                    {
-        //                                        Vehicle regv = new Vehicle(CurrentUser(), vehicle.Registration, vehicle.Make, vehicle.Model)
-        //                                        {
-        //                                            GroupSumInsured = Convert.ToInt32(parts[2]),
-        //                                            FleetNumber = parts[1],
-        //                                            Notes = parts[4],
-        //                                            Validated = vehicle.Validated,
-        //                                            VIN = vehicle.VIN,
-        //                                            ChassisNumber = vehicle.ChassisNumber,
-        //                                            EngineNumber = vehicle.EngineNumber,
-        //                                            Year = vehicle.Year,
-        //                                            GrossVehicleMass = vehicle.GrossVehicleMass
-        //                                        };
-
-        //                                        sheet.Vehicles.Add(regv);
-
-        //                                        uow.Commit();
-        //                                    }
-        //                                }
-        //                            }
-        //                            catch (Exception ex)
-        //                            {
-        //                                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-        //                                {
-        //                                    Vehicle v = new Vehicle(CurrentUser(), "", "", "")
-        //                                    {
-        //                                        GroupSumInsured = Convert.ToInt32(parts[2]),
-        //                                        FleetNumber = parts[1],
-        //                                        Notes = parts[4],
-        //                                        Validated = false,
-        //                                        SerialNumber = parts[3]
-        //                                    };
-
-        //                                    sheet.Vehicles.Add(v);
-
-        //                                    uow.Commit();
-        //                                }
-        //                            }
-
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    // Parse uploaded interest party organisation data here
-        //    if (uploadedIPOrganisationData != null)
-        //    {
-        //        buffer = new byte[uploadedIPOrganisationData.ContentLength];
-        //        uploadedIPOrganisationData.InputStream.Read(buffer, 0, buffer.Length);
-        //        string lines = _fileService.FromBytes(buffer);
-        //        using (System.IO.StringReader reader = new System.IO.StringReader(lines))
-        //        {
-        //            string line = string.Empty;
-        //            while ((line = reader.ReadLine()) != null)
-        //            {
-        //                string[] parts = line.Split(',');
-
-        //                Organisation organisation = null;
-        //                string organisationtypename = parts[1];
-
-        //                organisation = _organisationService.GetOrganisationByName(parts[0]);
-        //                if (organisation == null)
-        //                {
-        //                    organisation = new Organisation(CurrentUser(), Guid.NewGuid(), parts[0], new OrganisationType(CurrentUser(), organisationtypename));
-        //                    _organisationService.CreateNewOrganisation(organisation);
-        //                    //Console.WriteLine("Created Organisation " + organisation.Name);
-        //                }
-
-        //            }
-        //        }
-        //    }
-
-        //    return Redirect("/Admin/Index");
-        //}
+        }        
 
         [HttpPost]
-		public async Task<IActionResult> UnlockUser (string username)
-		{
-            throw new Exception("method needs to be implemented in identity");
-			//_userService.RemoveGlobalBan (_userService.GetUser (username), CurrentUser());
-			return Redirect ("/Admin/Index");
-		}
+		public async Task<IActionResult> UnlockUser(string UserId)
+		{            
+            var user = await _userService.GetUserById(Guid.Parse(UserId));
+            user.Unlock();
+            await _userService.Update(user);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageRsaUsers()
+        {
+            AdminViewModel model = new AdminViewModel();
+            var user = await CurrentUser();
+            try
+            {
+                var lockedUsers = await _userService.GetLockedUsers();
+
+                if (lockedUsers.Count != 0)
+                {
+                    model.LockedUsers = new List<SelectListItem>();
+                    foreach (var lockedUser in lockedUsers)
+                    {
+                        model.LockedUsers.Add(new SelectListItem
+                        {
+                            Value = lockedUser.Id.ToString(),
+                            Text = lockedUser.LastName + " username: " + lockedUser.UserName
+                        });
+                    }
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> SysEmailTemplate(String systemEmailType, String internalNotes)

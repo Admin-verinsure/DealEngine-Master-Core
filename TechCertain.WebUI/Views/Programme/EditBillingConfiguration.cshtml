@@ -280,7 +280,7 @@
             traditional: true,
             })
                 .done(function (data) {
-                
+                window.location.href = data.url;
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     alert("There was an error while trying to reverse your invoice.");

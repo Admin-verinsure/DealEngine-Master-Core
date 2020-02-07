@@ -554,7 +554,7 @@
                 "CancellNotes": notes,
                 "CancellEffectiveDate" : cancelleffectivedate
         };
-          $.ajax({
+        $.ajax({
                 url: '@Url.Action("CancellAgreement", "Agreement")',
                 type: "POST",
               //  contentType: "application/json; charset=utf-8",
@@ -572,7 +572,6 @@
                window.location.href = data.url;
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
-            //debugger;
         alert("There was an error while trying to cancel agreement.");
                });
     }

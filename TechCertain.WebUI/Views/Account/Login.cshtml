@@ -3,14 +3,7 @@
     ViewBag.PageId = "extr-page";
     ViewBag.PageClass = "animated fadeInDown";
 }
-@*@section topright{
-        <span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="~/Account/Register" class="btn btn-danger">Create account</a> </span>
-        TODO Change back when mono 4.3 or later is installed
-        <span id="extr-page-header-space"> <span class="hidden-mobile">Need an account?</span> <a href="@Url.Action("register", "account")" class="btn btn-danger">Create account</a> </span>
-    }*@
 
-<style>
-</style>
 <div id="content" class="container col-6">
     <div class="container">
         <h1 class="txt-color-red login-header-big">@Model.DomainString</h1>
@@ -39,16 +32,13 @@
                         </header>
                     </div>
                     <div class="card-body">
-                         @*TODO Change back when mono 4.3 or later is installed*@
-                         @*<form action="@Url.Action("login", "account")" method="POST" id="login-form" class="smart-form client-form">*@
                          @Html.HiddenFor(m => m.ReturnUrl)
                          @Html.AntiForgeryToken()
                          @if (Html.ViewData.ModelState.ErrorCount != 0) { 
                              <div class="alert alert-danger" role="alert">
                                 @Html.ValidationSummary()
                             </div>
-                        }         
-                            @* Dummy username/password fields since password managers don't respect 'autocomplete="off"' *@
+                        }                                     
                             <input style="display:none" type="text" name="fakeusernameremembered" />
                             <input style="display:none" type="password" name="fakepasswordremembered" autocomplete="off" />
 

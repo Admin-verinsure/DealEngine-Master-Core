@@ -23,12 +23,17 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 	{
 		ILogger _logger;
         IHttpClientService _httpClientService;
+        IEmailService _emailService;
 
-		public MarshRsaAuthProvider (ILogger logger, IHttpClientService httpClientService)
+        public MarshRsaAuthProvider (
+            ILogger logger, 
+            IHttpClientService httpClientService,
+            IEmailService emailService
+            )
 		{
 			_logger = logger;
             _httpClientService = httpClientService;
-
+            _emailService = emailService;
         }
 
 		public MarshRsaUser GetRsaUser(string email)
@@ -55,36 +60,30 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			return sha256Str.ToLower ();
 		}
 
-		public async Task<RsaStatus> Analyze (MarshRsaUser rsaUser, bool hasCookies)
+		public async Task<MarshRsaUser> Analyze (MarshRsaUser rsaUser)
 		{
 			/*
 			 * Needs to be called at the server level, so needs to be converted into a Membership type object provider.
 			 * This should only be controlling access to organisational content, and rejecting unauthorized access based
 			 * on what RSA says.
 			 */
-			XmlSerializer serializer;
-			StringReader rdr;
             XmlDocument xDoc = new XmlDocument();
             UserStatus responseUserStatus = UserStatus.UNVERIFIED;
             ActionCode reponseActionCode = ActionCode.NONE;
             GenericResponse response = null;
-
-            AnalyzeRequest analyzeRequest = GetAnalyzeRequest (rsaUser, hasCookies);            
-			var serxml = new XmlSerializer(analyzeRequest.GetType());
-            var ms = new MemoryStream ();
-			serxml.Serialize (ms, analyzeRequest);
-            string xml = Encoding.UTF8.GetString (ms.ToArray());
+            Analyze analyzeRequest = new Analyze();
+            analyzeRequest.request = GetAnalyzeRequest(rsaUser);            
+            string xml = SerializeRSARequest(analyzeRequest, "Analyze");
             
             var analyzeResponseXmlStr = await _httpClientService.Analyze(xml);                        
 
             try
             {                
                 xDoc.LoadXml(analyzeResponseXmlStr);
-                var analyseResponse = BuildAnalyzeResponse(xDoc);
+                var analyseResponse = await BuildAnalyzeResponse(xDoc);
                 responseUserStatus = analyseResponse.identificationData.userStatus;
                 reponseActionCode = analyseResponse.riskResult.triggeredRule.actionCode;
                 response = analyseResponse;
-
             }
             catch (Exception ex)
             {
@@ -96,18 +95,17 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				if (responseUserStatus == UserStatus.UNVERIFIED)
 				{
                     // TODO - call updateUser here with analyzeResponse
-                    UpdateRsaUserFromResponse(response, rsaUser);                    
-					UpdateUserRequest updateUserRequest = GetUpdateUserRequest(rsaUser);
+                    UpdateRsaUserFromResponse(response, rsaUser);
+                    UpdateUser updateUserRequest = new UpdateUser();
+                    updateUserRequest.request = GetUpdateUserRequest(rsaUser);
 
-                    serxml = new XmlSerializer(updateUserRequest.GetType());                    
-                    serxml.Serialize(ms, updateUserRequest);
-                    xml = Encoding.UTF8.GetString(ms.ToArray());
+                    xml = SerializeRSARequest(updateUserRequest, "UpdateUser");
                     var UpdateUserResponseXmlStr = await _httpClientService.UpdateUser(xml);
 
                     try
                     {
                         xDoc.LoadXml(UpdateUserResponseXmlStr);
-                        var updateUserResponse = BuildUpdateUserResponse(xDoc);
+                        var updateUserResponse = await BuildUpdateUserResponse(xDoc);
                         responseUserStatus = updateUserResponse.identificationData.userStatus;
                         reponseActionCode = updateUserResponse.riskResult.triggeredRule.actionCode;
                         response = updateUserResponse;
@@ -120,24 +118,38 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 }
 				if (reponseActionCode == ActionCode.CHALLENGE)
 				{
-					if (responseUserStatus == UserStatus.UNVERIFIED)
-					{
-						// TODO - call challenge here with updateUserResponse
-						UpdateRsaUserFromResponse(response, rsaUser);
-					}
-					else
-					{
-						// TODO - call challenge here with analyzeResponse
-						UpdateRsaUserFromResponse(response, rsaUser);
-					}
-					return RsaStatus.RequiresOtp;
-					//GetOneTimePassword (rsaUser);					
+                    UpdateRsaUserFromResponse(response, rsaUser);
+                    Challenge challengeRequest = new Challenge();
+                    challengeRequest.request = GetChallengeRequest(rsaUser);
+                    xml = SerializeRSARequest(challengeRequest, "Challenge");
+                    var challengeResponseXmlStr = await _httpClientService.Challenge(xml);
+
+                    try
+                    {
+                        xDoc.LoadXml(challengeResponseXmlStr);
+                        var challengeResponse = await BuildChallengeResponse(xDoc);                                               
+                        response = challengeResponse;
+
+                        //Placeholder
+                        rsaUser.Otp = ((OTPChallengeResponse)challengeResponse.credentialChallengeList.acspChallengeResponseData.payload).otp;
+                        _emailService.MarshRsaOneTimePassword(rsaUser.Email, rsaUser.Otp);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }                    
+
+                    rsaUser.RsaStatus = RsaStatus.RequiresOtp;
+
+                    return rsaUser;									
 				}
 				if (reponseActionCode == ActionCode.ALLOW)
 				{
 					// Need to save the deviceTokenCookie from analyzeReponse
 					UpdateRsaUserFromResponse(response, rsaUser);
-					return RsaStatus.Allow;
+                    rsaUser.RsaStatus = RsaStatus.Allow;
+
+                    return rsaUser;
 				}
 			}
 
@@ -147,18 +159,156 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				throw new Exception("unable to login user: "+ rsaUser.Username);
 			}
 			// user not allowed in if we get here.
-			return RsaStatus.Deny;
+
+			return rsaUser;
 		}
 
-        private UpdateUserResponse BuildUpdateUserResponse(XmlDocument xDoc)
+        private async Task<ChallengeResponse> BuildChallengeResponse(XmlDocument xDoc)
         {
-            throw new NotImplementedException();
+            ChallengeResponse response = new ChallengeResponse();
+
+            CredentialChallengeList credentialChallengeList = new CredentialChallengeList();
+            credentialChallengeList.acspChallengeResponseData = new AcspChallengeResponseData();            
+            OTPChallengeResponse oTPChallengeResponse = new OTPChallengeResponse();
+            credentialChallengeList.acspChallengeResponseData.payload = oTPChallengeResponse;
+            var otpResults = xDoc.GetElementsByTagName("credentialChallengeList", "http://ws.csd.rsa.com");
+            var responseData = otpResults[0];
+            var responseNodes = responseData.ChildNodes;
+            var callStatus = responseNodes.Item(0).ChildNodes;
+            oTPChallengeResponse.otp = callStatus.Item(2).InnerText;
+
+            IdentificationData identificationData = GetIdentificationDataResponse(xDoc);
+            DeviceResult deviceData = GetDeviceResultResponse(xDoc);
+
+            response.credentialChallengeList = credentialChallengeList;
+            response.identificationData = identificationData;
+            response.deviceResult = deviceData;
+
+            return response;
         }
 
-        private AnalyzeResponse BuildAnalyzeResponse(XmlDocument xDoc)
+        private async Task<AuthenticateResponse> BuildAuthenticateResponse(XmlDocument xDoc)
         {
-            AnalyzeResponse analyzeResponse = new AnalyzeResponse();
+            AuthenticateResponse authenticateResponse = new AuthenticateResponse();
+            CredentialAuthResultList credentialAuthResultList = new CredentialAuthResultList();
+            credentialAuthResultList.acspAuthenticationResponseData = new AcspAuthenticationResponseData();
+            credentialAuthResultList.acspAuthenticationResponseData.callStatus = new CallStatus();
 
+            var authResults = xDoc.GetElementsByTagName("credentialAuthResultList", "http://ws.csd.rsa.com");
+            var responseData = authResults[0];
+            var responseNodes = responseData.ChildNodes;
+            var callStatus = responseNodes.Item(0).ChildNodes;
+            var callStatusNodes = callStatus.Item(1);
+
+            credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode = callStatusNodes.FirstChild.InnerText;
+
+            IdentificationData identificationData = GetIdentificationDataResponse(xDoc);
+
+            authenticateResponse.identificationData = identificationData;
+            authenticateResponse.credentialAuthResultList = credentialAuthResultList;
+
+            return authenticateResponse;
+        }
+
+        private async Task<UpdateUserResponse> BuildUpdateUserResponse(XmlDocument xDoc)
+        {
+            UpdateUserResponse response = new UpdateUserResponse();
+            
+            RiskResult riskResult = GetRiskResultResponse(xDoc);
+            IdentificationData identificationData = GetIdentificationDataResponse(xDoc);
+            DeviceResult deviceData = GetDeviceResultResponse(xDoc); 
+
+            response.riskResult = riskResult;
+            response.identificationData = identificationData;
+            response.deviceResult = deviceData;
+
+            return response;
+
+        }
+
+        private async Task<AnalyzeResponse> BuildAnalyzeResponse(XmlDocument xDoc)
+        {
+            AnalyzeResponse response = new AnalyzeResponse();
+            
+            RiskResult riskResult = GetRiskResultResponse(xDoc);
+            IdentificationData identificationData = GetIdentificationDataResponse(xDoc);
+            DeviceResult deviceData = GetDeviceResultResponse(xDoc);
+
+            response.riskResult = riskResult;
+            response.identificationData = identificationData;
+            response.deviceResult = deviceData;
+
+            return response;
+        }
+
+        public string SerializeRSARequest(GenericRequest request, string resquestTag)
+        {
+            string REPLACESTRING = @"<[requestTag] xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">";
+            string ACTUALSTRING = @"<[requestTag] xmlns=""http://ws.csd.rsa.com"">";
+
+            var serxml = new XmlSerializer(request.GetType());
+            var ms = new MemoryStream();
+            serxml.Serialize(ms, request);
+            string xml = Encoding.UTF8.GetString(ms.ToArray());
+
+            REPLACESTRING = REPLACESTRING.Replace("[requestTag]", resquestTag);
+            ACTUALSTRING = ACTUALSTRING.Replace("[requestTag]", resquestTag);
+
+            xml = xml.Replace(REPLACESTRING, ACTUALSTRING);
+
+            var stringPayLoad = GetSoapEnvelopeHeaderString() + xml.Remove(0, 21) + GetSoapEnvelopeFooterString();
+
+            return stringPayLoad;
+        }
+
+		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService)
+		{
+            Authenticate authenticateRequest = new Authenticate();
+            AuthenticateResponse authenticateResponse = new AuthenticateResponse();
+            XmlDocument xDoc = new XmlDocument();
+
+            authenticateRequest.request = GetAuthenticateRequest(rsaUser);
+            var xml = SerializeRSARequest(authenticateRequest, "Authenticate");
+            var authenticateResponseXmlStr = await _httpClientService.Authenticate(xml);
+
+            try
+            {
+                xDoc.LoadXml(authenticateResponseXmlStr);
+                authenticateResponse = await BuildAuthenticateResponse(xDoc);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            var userStatus = authenticateResponse.identificationData.userStatus;
+            var statusCode = authenticateResponse.credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode;
+
+            if (userStatus == UserStatus.LOCKOUT || userStatus == UserStatus.DELETE)
+            {
+                var user = await _userService.GetUser(rsaUser.Username);
+                user.Lock();
+                await _userService.Update(user);                
+            }            
+            else if (statusCode == "SUCCESS")
+            {                                
+                return true;
+            }
+            //invalid otp or user locked
+            return false;
+		}
+
+        void UpdateRsaUserFromResponse(GenericResponse response, MarshRsaUser rsaUser)
+        {
+            rsaUser.CurrentSessionId = response.identificationData.sessionId;
+            rsaUser.CurrentTransactionId = response.identificationData.transactionId;
+            rsaUser.DeviceTokenCookie = response.deviceResult.deviceData.deviceTokenCookie;
+        }
+
+        #region Create Request Elements
+
+        RiskResult GetRiskResultResponse(XmlDocument xDoc)
+        {
             RiskResult riskResult = new RiskResult();
             var riskResults = xDoc.GetElementsByTagName("riskResult", "http://ws.csd.rsa.com");
             var riskResultsArray = riskResults[0];
@@ -170,7 +320,6 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             DeviceAssuranceLevels resposeDeviceAssuranceLevel;
             Enum.TryParse(listRisk.Item(3).InnerText, out resposeDeviceAssuranceLevel);
             riskResult.deviceAssuranceLevel = resposeDeviceAssuranceLevel;
-
             riskResult.triggeredRule = new TriggeredRule();
 
             var listTrigger = listRisk.Item(2).ChildNodes;
@@ -178,87 +327,59 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
             Enum.TryParse(listTrigger.Item(0).InnerText, out responseActionCode);
             ActionApplyType responseActionApplyType;
             Enum.TryParse(listTrigger.Item(2).InnerText, out responseActionApplyType);
+
             riskResult.triggeredRule.actionType = responseActionApplyType;
             riskResult.triggeredRule.actionCode = responseActionCode;
-
             riskResult.triggeredRule.actionName = listTrigger.Item(1).InnerText;
-            //riskResult.triggeredRule.clientFactList = (ClientDefinedFact)listTrigger.Item(3).InnerText.Split(',');
             riskResult.triggeredRule.ruleId = listTrigger.Item(4).InnerText;
             riskResult.triggeredRule.ruleName = listTrigger.Item(5).InnerText;
 
-            IdentificationData identificationData = new IdentificationData();
-            var identificationResults = xDoc.GetElementsByTagName("identificationData", "http://ws.csd.rsa.com");
-            var identificationArray = identificationResults[0];
-            var listIndentification = identificationArray.ChildNodes;
-            UserStatus reponseUserStatus;
-            Enum.TryParse(listIndentification.Item(6).InnerText, out reponseUserStatus);
-            WSUserType responseUserType;
-            Enum.TryParse(listIndentification.Item(7).InnerText, out responseUserType);
+            return riskResult;
+        }
 
-
-            identificationData.delegated = bool.Parse(listIndentification.Item(0).InnerText);
-            identificationData.groupName = listIndentification.Item(1).InnerText;
-            identificationData.orgName = listIndentification.Item(2).InnerText;
-            identificationData.sessionId = listIndentification.Item(3).InnerText;
-            identificationData.transactionId = listIndentification.Item(4).InnerText;
-            identificationData.userName = listIndentification.Item(5).InnerText;
-            identificationData.userStatus = reponseUserStatus;
-            identificationData.userType = responseUserType;
-
-            DeviceResult deviceData = new DeviceResult();
+        DeviceResult GetDeviceResultResponse(XmlDocument xDoc)
+        {
+            DeviceResult deviceResult = new DeviceResult();
             var deviceDataResults = xDoc.GetElementsByTagName("deviceData", "http://ws.csd.rsa.com");
             var deviceDataArray = deviceDataResults[0];
 
             var listDeviceData = deviceDataArray.ChildNodes;
-            deviceData.deviceData = new DeviceData();
-            deviceData.deviceData.deviceTokenCookie = listDeviceData.Item(1).InnerText;
+            deviceResult.deviceData = new DeviceData();
+            deviceResult.deviceData.deviceTokenCookie = listDeviceData.Item(1).InnerText;
 
-            analyzeResponse.riskResult = riskResult;
-            analyzeResponse.identificationData = identificationData;
-            analyzeResponse.deviceResult = deviceData;
-
-            return analyzeResponse;
+            return deviceResult;
         }
 
-        public string GetOneTimePassword(MarshRsaUser rsaUser)
+        IdentificationData GetIdentificationDataResponse(XmlDocument xDoc)
         {
-            ChallengeRequest challengeRequest = GetChallengeRequest(rsaUser);
-            //var challengeResponse = binding.challenge(challengeRequest);
-            //UpdateRsaUserFromResponse(challengeResponse, rsaUser);
-            //rsaUser.Otp = ((OTPChallengeResponse)challengeResponse.credentialChallengeList.acspChallengeResponseData.payload).otp;
-            return rsaUser.Otp;
+            IdentificationData identificationData= new IdentificationData();
+            UserStatus reponseUserStatus;
+            WSUserType responseUserType;
+
+            try
+            {
+                var identificationResults = xDoc.GetElementsByTagName("identificationData", "http://ws.csd.rsa.com");
+                var identificationArray = identificationResults[0];
+                var listIndentification = identificationArray.ChildNodes;
+
+                Enum.TryParse(listIndentification.Item(6).InnerText, out reponseUserStatus);
+                identificationData.delegated = bool.Parse(listIndentification.Item(0).InnerText);
+                identificationData.groupName = listIndentification.Item(1).InnerText;
+                identificationData.orgName = listIndentification.Item(2).InnerText;
+                identificationData.sessionId = listIndentification.Item(3).InnerText;
+                identificationData.transactionId = listIndentification.Item(4).InnerText;
+                identificationData.userName = listIndentification.Item(5).InnerText;
+                identificationData.userStatus = reponseUserStatus;
+                Enum.TryParse(listIndentification.Item(7).InnerText, out responseUserType);
+                identificationData.userType = responseUserType;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return identificationData;
         }
-
-        //public bool Authenticate (MarshRsaUser rsaUser)
-        //{
-        //	AuthenticateRequest authenticateRequest = GetAuthenticateRequest (rsaUser);
-        //	var authenticateResponse = binding.authenticate (authenticateRequest);
-
-        //	UserStatus userStatus = authenticateResponse.identificationData.userStatus;
-        //	var statusCode = authenticateResponse.credentialAuthResultList.acspAuthenticationResponseData.callStatus.statusCode;
-
-        //	if (userStatus == UserStatus.LOCKOUT || userStatus == UserStatus.DELETE) {
-        //		// user locked out or deleted
-        //	}
-        //	else if (statusCode == "FAIL") {
-        //		// invalid otp
-        //	}
-        //	else if (statusCode == "SUCCESS") {
-        //		UpdateRsaUserFromResponse (authenticateResponse, rsaUser);
-        //		// invalid otp
-        //		return true;
-        //	}
-        //	return false;
-        //}
-
-        void UpdateRsaUserFromResponse(GenericResponse response, MarshRsaUser rsaUser)
-        {
-            rsaUser.CurrentSessionId = response.identificationData.sessionId;
-            rsaUser.CurrentTransactionId = response.identificationData.transactionId;
-            rsaUser.DeviceTokenCookie = response.deviceResult.deviceData.deviceTokenCookie;
-        }
-
-        #region Create Request Elements
 
         GenericActionTypeList GetGenericActionTypes ()
 		{
@@ -285,9 +406,6 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 				httpAcceptEncoding = "",
 				httpAcceptLanguage = "",
 				httpReferrer = rsaUser.HttpReferer,
-
-                //for testing purposes
-                //ipAddress = rsaUser.IpAddress,
                 ipAddress = GetIP(),
 				userAgent = rsaUser.UserAgent
 			};
@@ -304,9 +422,11 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                 userName = rsaUser.Username,        // see above
                 //userEmailAddress = rsaUser.Email,
                 userStatus = UserStatus.VERIFIED,   // doc default, will need to know how marsh expects these values
-				userStatusSpecified = true,
-				userType = WSUserType.PERSISTENT,   // doc default, will need to know how marsh expects these values
-				userTypeSpecified = true,
+                userStatusSpecified = true,
+                userType = WSUserType.PERSISTENT,   // doc default, will need to know how marsh expects these values
+                userTypeSpecified = true,
+                sessionId = rsaUser.CurrentSessionId,
+                transactionId = rsaUser.CurrentTransactionId
 			};
 		}
 
@@ -371,9 +491,10 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		#region Create Requests
 
-		AnalyzeRequest GetAnalyzeRequest (MarshRsaUser rsaUser, bool hasCookies)
+		AnalyzeRequest GetAnalyzeRequest (MarshRsaUser rsaUser)
 		{
-			return new AnalyzeRequest {
+			return new AnalyzeRequest
+            {
 				actionTypeList = GetGenericActionTypes (),
 				deviceRequest = GetDeviceRequest (rsaUser),
 				identificationData = GetIdentificationData (rsaUser),
@@ -401,10 +522,10 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 		ChallengeRequest GetChallengeRequest (MarshRsaUser rsaUser)
 		{
 			return new ChallengeRequest {
-				deviceRequest = GetDeviceRequest (rsaUser),
-				identificationData = GetIdentificationData (rsaUser),
-				messageHeader = GetMessageHeader (RequestType.CHALLENGE),
-				credentialChallengeRequestList = GetCredentialChallengeRequestList ()
+				deviceRequest = GetDeviceRequest(rsaUser),
+				identificationData = GetIdentificationData(rsaUser),
+				messageHeader = GetMessageHeader(RequestType.CHALLENGE),
+				credentialChallengeRequestList = GetCredentialChallengeRequestList()
 			};
 		}
 
@@ -413,883 +534,35 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 			return new AuthenticateRequest {
 				deviceRequest = GetDeviceRequest (rsaUser),
 				identificationData = GetIdentificationData (rsaUser),
-				messageHeader = GetMessageHeader (RequestType.CHALLENGE),     // this looks obvious
+				messageHeader = GetMessageHeader (RequestType.AUTHENTICATE),     // this looks obvious
 				credentialDataList = GetCredentialDataList (rsaUser)
-			};
-		}
-
-		AuthenticateRequest GetAuthenticateRequest (ChallengeResponse challengeResponse)
-		{
-			return new AuthenticateRequest {
-
-				identificationData = new IdentificationData {
-					sessionId = challengeResponse.identificationData.clientSessionId,
-					transactionId = challengeResponse.identificationData.transactionId,
-				},
-				credentialDataList = new CredentialDataList {
-					acspAuthenticationRequestData = new AcspAuthenticationRequestData {
-						payload = new OTPAuthenticationRequest {
-							otp = ((OTPChallengeResponse)challengeResponse.credentialChallengeList.acspChallengeResponseData.payload).otp
-						}
-					}
-				},
 			};
 		}
 
         #endregion
 
-        //#region
+        #region
+		string GetSoapEnvelopeHeaderString()
+		{
+			return @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+    <soap:Header>
+        <wsse:Security soap:mustUnderstand = ""1"" xmlns:wsse=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"">
+            <wsse:UsernameToken wsu:Id=""UsernameToken-1d15e0d7-37fa-4de8-8bd9-758caa95112c"" xmlns:wsu=""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"">
+                <wsse:Username>MarshNZSOAPUser</wsse:Username>
+                <wsse:Password Type = ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"">MarNZ0sa$0Cap16us</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soap:Header>
+    <soap:Body>";
+		}
+
+		string GetSoapEnvelopeFooterString()
+		{
+			return @"</soap:Body></soap:Envelope>";
+		}
+
+        #endregion
 
-
-
-
-        //// NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-        ///// <remarks/>
-        //[System.Xml.Serialization.XmlIncludeAttribute (typeof (UpdateUserRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(QueryAuthStatusRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(CreateUserRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(ChallengeRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(AuthenticateRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(AnalyzeRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(QueryRequest))]
-        //[System.Xml.Serialization.XmlIncludeAttribute(typeof(NotifyRequest))]
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://ws.csd.rsa.com", IsNullable = false)]
-        //public abstract partial class GenericRequest
-        //{
-
-        //    private DeviceResult deviceResultField;
-
-        //    private IdentificationData identificationDataField;
-
-        //    private MessageHeader messageHeaderField;
-
-        //    private StatusHeader statusHeaderField;
-
-        //    private RequiredCredentialList requiredCredentialListField;
-
-        //    private RiskResult riskResultField;
-
-        //    /// <remarks/>
-        //    public DeviceResult deviceResult
-        //    {
-        //        get
-        //        {
-        //            return this.deviceResultField;
-        //        }
-        //        set
-        //        {
-        //            this.deviceResultField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public IdentificationData identificationData
-        //    {
-        //        get
-        //        {
-        //            return this.identificationDataField;
-        //        }
-        //        set
-        //        {
-        //            this.identificationDataField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public MessageHeader messageHeader
-        //    {
-        //        get
-        //        {
-        //            return this.messageHeaderField;
-        //        }
-        //        set
-        //        {
-        //            this.messageHeaderField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public StatusHeader statusHeader
-        //    {
-        //        get
-        //        {
-        //            return this.statusHeaderField;
-        //        }
-        //        set
-        //        {
-        //            this.statusHeaderField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public RequiredCredentialList requiredCredentialList
-        //    {
-        //        get
-        //        {
-        //            return this.requiredCredentialListField;
-        //        }
-        //        set
-        //        {
-        //            this.requiredCredentialListField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public RiskResult riskResult
-        //    {
-        //        get
-        //        {
-        //            return this.riskResultField;
-        //        }
-        //        set
-        //        {
-        //            this.riskResultField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class DeviceResult
-        //{
-
-        //    private AuthenticationResult authenticationResultField;
-
-        //    private CallStatus callStatusField;
-
-        //    private DeviceData deviceDataField;
-
-        //    /// <remarks/>
-        //    public AuthenticationResult authenticationResult
-        //    {
-        //        get
-        //        {
-        //            return this.authenticationResultField;
-        //        }
-        //        set
-        //        {
-        //            this.authenticationResultField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public CallStatus callStatus
-        //    {
-        //        get
-        //        {
-        //            return this.callStatusField;
-        //        }
-        //        set
-        //        {
-        //            this.callStatusField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public DeviceData deviceData
-        //    {
-        //        get
-        //        {
-        //            return this.deviceDataField;
-        //        }
-        //        set
-        //        {
-        //            this.deviceDataField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class AuthenticationResult
-        //{
-
-        //    private string authStatusCodeField;
-
-        //    private byte riskField;
-
-        //    /// <remarks/>
-        //    public string authStatusCode
-        //    {
-        //        get
-        //        {
-        //            return this.authStatusCodeField;
-        //        }
-        //        set
-        //        {
-        //            this.authStatusCodeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public byte risk
-        //    {
-        //        get
-        //        {
-        //            return this.riskField;
-        //        }
-        //        set
-        //        {
-        //            this.riskField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class CallStatus
-        //{
-
-        //    private string statusCodeField;
-
-        //    /// <remarks/>
-        //    public string statusCode
-        //    {
-        //        get
-        //        {
-        //            return this.statusCodeField;
-        //        }
-        //        set
-        //        {
-        //            this.statusCodeField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class DeviceData
-        //{
-
-        //    private string bindingTypeField;
-
-        //    private string deviceTokenCookieField;
-
-        //    private string deviceTokenFSOField;
-
-        //    /// <remarks/>
-        //    public string bindingType
-        //    {
-        //        get
-        //        {
-        //            return this.bindingTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.bindingTypeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string deviceTokenCookie
-        //    {
-        //        get
-        //        {
-        //            return this.deviceTokenCookieField;
-        //        }
-        //        set
-        //        {
-        //            this.deviceTokenCookieField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string deviceTokenFSO
-        //    {
-        //        get
-        //        {
-        //            return this.deviceTokenFSOField;
-        //        }
-        //        set
-        //        {
-        //            this.deviceTokenFSOField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class IdentificationData
-        //{
-
-        //    private bool delegatedField;
-
-        //    private bool delegatedFieldSpecified;
-
-        //    private string groupNameField;
-
-        //    private string orgNameField;
-
-        //    private string sessionIdField;
-
-        //    private string transactionIdField;
-
-        //    private string userNameField;
-
-        //    private UserStatus userStatusField;
-
-        //    private bool userStatusSpecifiedField;
-
-        //    private WSUserType userTypeField;
-
-        //    private bool userTypeFieldSpecified;
-
-        //    /// <remarks/>
-        //    public bool delegated
-        //    {
-        //        get
-        //        {
-        //            return this.delegatedField;
-        //        }
-        //        set
-        //        {
-        //            this.delegatedField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    [System.Xml.Serialization.XmlIgnoreAttribute()]
-        //    public bool delegatedSpecified
-        //    {
-        //        get
-        //        {
-        //            return this.delegatedFieldSpecified;
-        //        }
-        //        set
-        //        {
-        //            this.delegatedFieldSpecified = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string groupName
-        //    {
-        //        get
-        //        {
-        //            return this.groupNameField;
-        //        }
-        //        set
-        //        {
-        //            this.groupNameField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string orgName
-        //    {
-        //        get
-        //        {
-        //            return this.orgNameField;
-        //        }
-        //        set
-        //        {
-        //            this.orgNameField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string sessionId
-        //    {
-        //        get
-        //        {
-        //            return this.sessionIdField;
-        //        }
-        //        set
-        //        {
-        //            this.sessionIdField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string transactionId
-        //    {
-        //        get
-        //        {
-        //            return this.transactionIdField;
-        //        }
-        //        set
-        //        {
-        //            this.transactionIdField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string userName
-        //    {
-        //        get
-        //        {
-        //            return this.userNameField;
-        //        }
-        //        set
-        //        {
-        //            this.userNameField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public UserStatus userStatus
-        //    {
-        //        get
-        //        {
-        //            return this.userStatusField;
-        //        }
-        //        set
-        //        {
-        //            this.userStatusField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    [System.Xml.Serialization.XmlIgnoreAttribute()]
-        //    public bool userStatusSpecified
-        //    {
-        //        get
-        //        {
-        //            return this.userStatusSpecifiedField;
-        //        }
-        //        set
-        //        {
-        //            this.userStatusSpecifiedField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public WSUserType userType
-        //    {
-        //        get
-        //        {
-        //            return this.userTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.userTypeField = value;
-        //        }
-        //    }
-
-        //    [System.Xml.Serialization.XmlIgnoreAttribute()]
-        //    public bool userTypeSpecified
-        //    {
-        //        get
-        //        {
-        //            return this.userTypeFieldSpecified;
-        //        }
-        //        set
-        //        {
-        //            this.userTypeFieldSpecified = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class MessageHeader
-        //{
-
-        //    private string apiTypeField;
-
-        //    private string requestTypeField;
-
-        //    private System.DateTime timeStampField;
-
-        //    private decimal versionField;
-
-        //    /// <remarks/>
-        //    public string apiType
-        //    {
-        //        get
-        //        {
-        //            return this.apiTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.apiTypeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string requestType
-        //    {
-        //        get
-        //        {
-        //            return this.requestTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.requestTypeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public System.DateTime timeStamp
-        //    {
-        //        get
-        //        {
-        //            return this.timeStampField;
-        //        }
-        //        set
-        //        {
-        //            this.timeStampField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public decimal version
-        //    {
-        //        get
-        //        {
-        //            return this.versionField;
-        //        }
-        //        set
-        //        {
-        //            this.versionField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class StatusHeader
-        //{
-
-        //    private byte reasonCodeField;
-
-        //    private string reasonDescriptionField;
-
-        //    private byte statusCodeField;
-
-        //    /// <remarks/>
-        //    public byte reasonCode
-        //    {
-        //        get
-        //        {
-        //            return this.reasonCodeField;
-        //        }
-        //        set
-        //        {
-        //            this.reasonCodeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string reasonDescription
-        //    {
-        //        get
-        //        {
-        //            return this.reasonDescriptionField;
-        //        }
-        //        set
-        //        {
-        //            this.reasonDescriptionField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public byte statusCode
-        //    {
-        //        get
-        //        {
-        //            return this.statusCodeField;
-        //        }
-        //        set
-        //        {
-        //            this.statusCodeField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class RequiredCredentialList
-        //{
-
-        //    private Credential requiredCredentialField;
-
-        //    /// <remarks/>
-        //    public Credential requiredCredential
-        //    {
-        //        get
-        //        {
-        //            return this.requiredCredentialField;
-        //        }
-        //        set
-        //        {
-        //            this.requiredCredentialField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class RequiredCredential
-        //{
-
-        //    private string credentialTypeField;
-
-        //    private string genericCredentialTypeField;
-
-        //    private string groupNameField;
-
-        //    private byte preferenceField;
-
-        //    private bool requiredField;
-
-        //    /// <remarks/>
-        //    public string credentialType
-        //    {
-        //        get
-        //        {
-        //            return this.credentialTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.credentialTypeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string genericCredentialType
-        //    {
-        //        get
-        //        {
-        //            return this.genericCredentialTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.genericCredentialTypeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string groupName
-        //    {
-        //        get
-        //        {
-        //            return this.groupNameField;
-        //        }
-        //        set
-        //        {
-        //            this.groupNameField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public byte preference
-        //    {
-        //        get
-        //        {
-        //            return this.preferenceField;
-        //        }
-        //        set
-        //        {
-        //            this.preferenceField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public bool required
-        //    {
-        //        get
-        //        {
-        //            return this.requiredField;
-        //        }
-        //        set
-        //        {
-        //            this.requiredField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class RiskResult
-        //{
-
-        //    private int riskScoreField;
-
-        //    private string riskScoreBandField;
-
-        //    private TriggeredRule triggeredRuleField;
-
-        //    private string deviceAssuranceLevelField;
-
-        //    /// <remarks/>
-        //    public int riskScore
-        //    {
-        //        get
-        //        {
-        //            return this.riskScoreField;
-        //        }
-        //        set
-        //        {
-        //            this.riskScoreField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string riskScoreBand
-        //    {
-        //        get
-        //        {
-        //            return this.riskScoreBandField;
-        //        }
-        //        set
-        //        {
-        //            this.riskScoreBandField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public TriggeredRule triggeredRule
-        //    {
-        //        get
-        //        {
-        //            return this.triggeredRuleField;
-        //        }
-        //        set
-        //        {
-        //            this.triggeredRuleField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string deviceAssuranceLevel
-        //    {
-        //        get
-        //        {
-        //            return this.deviceAssuranceLevelField;
-        //        }
-        //        set
-        //        {
-        //            this.deviceAssuranceLevelField = value;
-        //        }
-        //    }
-        //}
-
-        ///// <remarks/>
-        //[System.SerializableAttribute()]
-        //[System.ComponentModel.DesignerCategoryAttribute("code")]
-        //[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://ws.csd.rsa.com")]
-        //public partial class TriggeredRule
-        //{
-
-        //    private string actionCodeField;
-
-        //    private string actionNameField;
-
-        //    private string actionTypeField;
-
-        //    private object clientFactListField;
-
-        //    private string ruleIdField;
-
-        //    private string ruleNameField;
-
-        //    /// <remarks/>
-        //    public string actionCode
-        //    {
-        //        get
-        //        {
-        //            return this.actionCodeField;
-        //        }
-        //        set
-        //        {
-        //            this.actionCodeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string actionName
-        //    {
-        //        get
-        //        {
-        //            return this.actionNameField;
-        //        }
-        //        set
-        //        {
-        //            this.actionNameField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string actionType
-        //    {
-        //        get
-        //        {
-        //            return this.actionTypeField;
-        //        }
-        //        set
-        //        {
-        //            this.actionTypeField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public object clientFactList
-        //    {
-        //        get
-        //        {
-        //            return this.clientFactListField;
-        //        }
-        //        set
-        //        {
-        //            this.clientFactListField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string ruleId
-        //    {
-        //        get
-        //        {
-        //            return this.ruleIdField;
-        //        }
-        //        set
-        //        {
-        //            this.ruleIdField = value;
-        //        }
-        //    }
-
-        //    /// <remarks/>
-        //    public string ruleName
-        //    {
-        //        get
-        //        {
-        //            return this.ruleNameField;
-        //        }
-        //        set
-        //        {
-        //            this.ruleNameField = value;
-        //        }
-        //    }
-        //}
-
-
-
-
-        //#endregion
     }
 } 
 
