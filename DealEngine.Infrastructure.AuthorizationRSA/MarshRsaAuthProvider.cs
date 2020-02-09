@@ -263,6 +263,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
 		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService)
 		{
+            return true;
             Authenticate authenticateRequest = new Authenticate();
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();

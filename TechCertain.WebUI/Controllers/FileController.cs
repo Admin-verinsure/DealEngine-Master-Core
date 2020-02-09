@@ -97,6 +97,7 @@ namespace TechCertain.WebUI.Controllers
                         string html = _fileService.FromBytes(doc.Contents);
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
+                            //using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(virtualFile, false))
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
                                 // Add a main document part. 
