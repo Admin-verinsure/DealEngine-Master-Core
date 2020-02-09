@@ -16,8 +16,8 @@ before_script:
 build:
   stage: build
   script:
-    - 'dotnet build'                                                          # builds the project and its dependencies into a set of binaries
-    - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'        #compiles the application
+    - 'dotnet build -r ubuntu.18.04-x64'                                      # builds the project and its dependencies into a set of binaries
+#    - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'        #compiles the application
 
 #    - 'dotnet /var/www/dealengine/TechCertain.WebUI.dll'
 #    - 'sudo systemctl enable dealengine.service'
