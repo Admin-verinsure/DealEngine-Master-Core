@@ -11,22 +11,19 @@ namespace TechCertain.Domain.Entities
 	{
         protected ClientAgreementMVTermCancel() : base(null) { }
 
-        public ClientAgreementMVTermCancel(User createdBy, Vehicle vehicle, ClientAgreementTerm clientAgreementTerm, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, decimal burnerpremium)
-            : this(createdBy, vehicle.Registration, vehicle.Year, vehicle.Make, vehicle.Model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, vehicle.FleetNumber, clientAgreementTerm, vehicle, burnerpremium)
+        public ClientAgreementMVTermCancel(User createdBy, Vehicle vehicle, ClientAgreementTermCancel clientAgreementTermCancel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, decimal burnerpremium)
+            : this(createdBy, vehicle.Registration, vehicle.Year, vehicle.Make, vehicle.Model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, vehicle.FleetNumber, clientAgreementTermCancel, vehicle, burnerpremium)
         {
 
         }
 
-        public ClientAgreementMVTermCancel(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTerm clientAgreementTerm, Vehicle vehicle, decimal burnerpremium)
+        public ClientAgreementMVTermCancel(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTermCancel clientAgreementTermCancel, Vehicle vehicle, decimal burnerpremium)
             : base(createdBy)
         {
             if (string.IsNullOrWhiteSpace(year))
                 throw new ArgumentNullException(nameof(year));
             if (string.IsNullOrWhiteSpace(make))
                 throw new ArgumentNullException(nameof(make));
-            //Carjam returns null
-            //if (string.IsNullOrWhiteSpace(model))
-            //    throw new ArgumentNullException(nameof(model));
             if (string.IsNullOrWhiteSpace(termLimit.ToString()))
                 throw new ArgumentNullException(nameof(termLimit));
             if (string.IsNullOrWhiteSpace(excess.ToString()))
@@ -39,10 +36,8 @@ namespace TechCertain.Domain.Entities
                 throw new ArgumentNullException(nameof(brokerageRate));
             if (string.IsNullOrWhiteSpace(brokerage.ToString()))
                 throw new ArgumentNullException(nameof(brokerage));
-            //if (string.IsNullOrWhiteSpace(vehicleCategory))
-            //    throw new ArgumentNullException(nameof(vehicleCategory));
-            if (clientAgreementTerm == null)
-                throw new ArgumentNullException(nameof(clientAgreementTerm));
+            if (clientAgreementTermCancel == null)
+                throw new ArgumentNullException(nameof(clientAgreementTermCancel));
             if (vehicle == null)
                 throw new ArgumentNullException(nameof(vehicle));
 
@@ -58,9 +53,15 @@ namespace TechCertain.Domain.Entities
             BrokerageCan = brokerage;
             VehicleCategoryCan = vehicleCategory;
             FleetNumberCan = fleetNumber;
-            ClientAgreementTermCan = clientAgreementTerm;
+            ClientAgreementTermCan = clientAgreementTermCancel;
             VehicleCan = vehicle;
             BurnerPremiumCan = burnerpremium;
+        }
+
+        public virtual ClientAgreementMVTerm exClientAgreementMVTerm
+        {
+            get;
+            set;
         }
 
         public virtual int TermLimitCan
@@ -135,7 +136,7 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
-        public virtual ClientAgreementTerm ClientAgreementTermCan
+        public virtual ClientAgreementTermCancel ClientAgreementTermCan
         {
             get;
             protected set;

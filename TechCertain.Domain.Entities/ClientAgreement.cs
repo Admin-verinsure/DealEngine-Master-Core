@@ -17,6 +17,7 @@ namespace TechCertain.Domain.Entities
             Documents = new List<Document> ();
             ClientAgreementAuditLogs = new List<AuditLog>();
             ClientAgreementReferrals = new List<ClientAgreementReferral>();
+            ClientAgreementTermsCancel = new List<ClientAgreementTermCancel>();
         }
 
 		public ClientAgreement(User createdBy, string insuredName, DateTime inceptionDate, DateTime expiryDate, decimal brokerage, decimal brokerFee, ClientInformationSheet clientInformationSheet, Product product, string reference)
@@ -139,7 +140,7 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
-        //Quoted; Referred; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Declined by Insurer; Declined by Insured; Cancelled
+        //Quoted; Referred; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Declined by Insurer; Declined by Insured; Cancelled; Cancel Pending
         public virtual string Status
         {
             get;
@@ -156,6 +157,8 @@ namespace TechCertain.Domain.Entities
         public virtual bool MasterAgreement { get; set; }
 
         public virtual ClientAgreement PreviousAgreement { get; set; }
+
+        public virtual IList<ClientAgreementTermCancel> ClientAgreementTermsCancel { get; set; }
 
     }
 }

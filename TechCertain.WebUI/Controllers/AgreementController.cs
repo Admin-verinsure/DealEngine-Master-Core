@@ -349,7 +349,6 @@ namespace TechCertain.WebUI.Controllers
                 model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
 
 
-
                 foreach (var terms in agreement.ClientAgreementTerms)
                 {
                     if (terms.BoatTerms.Where(bvt => bvt.DateDeleted == null).Count() > 0)
@@ -391,25 +390,51 @@ namespace TechCertain.WebUI.Controllers
                         }
                         model.MVTerms = motors;
                     }
+                }
 
-                    if (terms.MotorTerms.Where(mvt => mvt.DateDeleted == null).Count() > 0)
+                if (agreement.ClientAgreementTermsCancel != null)
+                {
+                    foreach (var termsCan in agreement.ClientAgreementTermsCancel)
                     {
-                        var motors = new List<EditTermsViewModel>();
-                        foreach (var motor in terms.MotorTerms)
+                        if (termsCan.BoatTermsCan.Where(bvtCan => bvtCan.DateDeleted == null).Count() > 0)
                         {
-                            motors.Add(new EditTermsViewModel
+                            var boatsCan = new List<EditTermsCancelViewModel>();
+                            foreach (var boatCan in termsCan.BoatTermsCan)
                             {
-                                VesselId = motor.Id,
-                                Registration = motor.Registration,
-                                Make = motor.Make,
-                                Model = motor.Model,
-                                TermLimit = motor.TermLimit,
-                                Excess = Convert.ToInt32(motor.Excess),
-                                Premium = motor.Premium,
-                                FSL = motor.FSL
-                            });
+                                boatsCan.Add(new EditTermsCancelViewModel
+                                {
+                                    VesselCanId = boatCan.Id,
+                                    BoatNameCan = boatCan.BoatNameCan,
+                                    BoatMakeCan = boatCan.BoatMakeCan,
+                                    BoatModelCan = boatCan.BoatModelCan,
+                                    TermLimitCan = boatCan.TermLimitCan,
+                                    ExcessCan = Convert.ToInt32(boatCan.ExcessCan),
+                                    PremiumCan = boatCan.PremiumCan,
+                                    FSLCan = boatCan.FSLCan
+                                });
+                            }
+                            model.BVTermsCan = boatsCan;
                         }
-                        model.MVTerms = motors;
+
+                        if (termsCan.MotorTermsCan.Where(mvtCan => mvtCan.DateDeleted == null).Count() > 0)
+                        {
+                            var motorsCan = new List<EditTermsCancelViewModel>();
+                            foreach (var motorCan in termsCan.MotorTermsCan)
+                            {
+                                motorsCan.Add(new EditTermsCancelViewModel
+                                {
+                                    VesselCanId = motorCan.Id,
+                                    RegistrationCan = motorCan.RegistrationCan,
+                                    MakeCan = motorCan.MakeCan,
+                                    ModelCan = motorCan.ModelCan,
+                                    TermLimitCan = motorCan.TermLimitCan,
+                                    ExcessCan = Convert.ToInt32(motorCan.ExcessCan),
+                                    PremiumCan = motorCan.PremiumCan,
+                                    FSLCan = motorCan.FSLCan
+                                });
+                            }
+                            model.MVTermsCan = motorsCan;
+                        }
                     }
                 }
 
@@ -430,32 +455,100 @@ namespace TechCertain.WebUI.Controllers
         public async Task<IActionResult> CancellAgreement(AgreementViewModel clientAgreementModel)
         {
             User user = null;
+            var url = "";
             try
             {
                 ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
                 user = await CurrentUser();
-                using (var uow = _unitOfWork.BeginUnitOfWork())
+
+                if (agreement.ClientInformationSheet.Programme.BaseProgramme.CalculateCancelTerm)
                 {
-                    if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled") &&
-                        (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
+                    ClientAgreementTerm excaterm = agreement.ClientAgreementTerms.FirstOrDefault(cat => cat.SubTermType == "BV" && cat.DateDeleted == null);
+                    if (excaterm != null)
+                    {
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+                            ClientAgreementTermCancel catermcan = new ClientAgreementTermCancel(user, 500, 400, 300, 200, 0.2M, 100, agreement, "BV");
+                            catermcan.exClientAgreementTerm = excaterm;
+                            agreement.ClientAgreementTermsCancel.Add(catermcan);
 
-                        agreement.Status = "Cancelled";
-                    agreement.CancelledNote = clientAgreementModel.CancellNotes;
-                    agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
-                    agreement.Cancelled = true;
-                    agreement.CancelledByUserID = user;
-                    agreement.CancelledDate = DateTime.UtcNow;
+                            await uow.Commit().ConfigureAwait(false);
+                        }
+
+                        var excaBVTerms = excaterm.BoatTerms;
+                        var excaMVTerms = excaterm.MotorTerms;
+                        ClientAgreementTermCancel catermCancel = agreement.ClientAgreementTermsCancel.FirstOrDefault(catCancel => catCancel.SubTermTypeCan == "BV" && catCancel.DateDeleted == null);
+                        if (excaBVTerms != null)
+                        {
+                            foreach (ClientAgreementBVTerm excaBVTerm in excaBVTerms)
+                            {
+                                //Calculate BV cancel term
+                                ClientAgreementBVTermCancel cabvtermcan = new ClientAgreementBVTermCancel(user, catermCancel, excaBVTerm.Boat, excaBVTerm.BoatName, excaBVTerm.YearOfManufacture,
+                                    excaBVTerm.BoatMake, excaBVTerm.BoatModel, excaBVTerm.TermLimit, excaBVTerm.Excess, 900, 800, excaBVTerm.BrokerageRate, 700);
+                                cabvtermcan.exClientAgreementBVTerm = excaBVTerm;
+                                catermCancel.BoatTermsCan.Add(cabvtermcan);
+                            }
+                        }
+
+                        //if (excaMVTerms != null)
+                        //{
+                        //    foreach (ClientAgreementMVTerm excaMVTerm in excaMVTerms)
+                        //    {
+
+                        //    }
+                        //}
+
+                        if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled" || agreement.Status != "Cancel Pending") &&
+                                (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
+                        {
+                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                agreement.Status = "Cancel Pending";
+                                agreement.CancelledNote = clientAgreementModel.CancellNotes;
+                                agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
+                                agreement.CancelledByUserID = user;
+                                agreement.CancelledDate = DateTime.UtcNow;
 
 
-                    string auditLogDetail = "Agreement has been cancelled by " + user.FullName;
-                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
-                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+                                string auditLogDetail = "Agreement has been requested to cancel by " + user.FullName;
+                                AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                                agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                    await uow.Commit().ConfigureAwait(false);
+                                await uow.Commit().ConfigureAwait(false);
+                            }
+                        }
+                        
+                    }
 
+                    url = "/Agreement/CancellAgreement/" + agreement.Id;
+
+
+                } else
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled" || agreement.Status != "Cancel Pending") &&
+                            (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
+
+                            agreement.Status = "Cancelled";
+                        agreement.CancelledNote = clientAgreementModel.CancellNotes;
+                        agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
+                        agreement.Cancelled = true;
+                        agreement.CancelledByUserID = user;
+                        agreement.CancelledDate = DateTime.UtcNow;
+
+
+                        string auditLogDetail = "Agreement has been cancelled by " + user.FullName;
+                        AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                        agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                        await uow.Commit().ConfigureAwait(false);
+
+                    }
+
+                    url = "/Agreement/CancellAgreement/" + agreement.Id;
                 }
 
-                var url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
                 return Json(new { url });
             }
             catch(Exception ex)
