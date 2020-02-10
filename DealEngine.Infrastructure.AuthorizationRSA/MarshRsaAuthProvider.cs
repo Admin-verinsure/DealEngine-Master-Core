@@ -132,7 +132,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
 
                         //Placeholder
                         rsaUser.Otp = ((OTPChallengeResponse)challengeResponse.credentialChallengeList.acspChallengeResponseData.payload).otp;
-                        _emailService.MarshRsaOneTimePassword(rsaUser.Email, rsaUser.Otp);
+                        //_emailService.MarshRsaOneTimePassword(rsaUser.Email, rsaUser.Otp);
                     }
                     catch (Exception ex)
                     {
@@ -262,8 +262,7 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
         }
 
 		public async Task<bool> Authenticate(MarshRsaUser rsaUser, IUserService _userService)
-		{
-            return true;
+		{            
             Authenticate authenticateRequest = new Authenticate();
             AuthenticateResponse authenticateResponse = new AuthenticateResponse();
             XmlDocument xDoc = new XmlDocument();

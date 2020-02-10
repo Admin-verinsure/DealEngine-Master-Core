@@ -9,20 +9,6 @@
         {
             <div class="row padding-10">
                 <div class="col col-12">
-                    <!--<button href="~/Policy/ViewDocumentTemplate?id=09485282-29a6-4dff-88ef-a5b40160eb07" enabled="false" class="btn btn-primary btn-sm">View Terms</button>-->
-                    <!--<a href="~/Information/ViewInformation/@Model.InformationSheetId" class="btn btn-primary btn-sm">View Information</a>-->
-                    <!--<button href="~/Policy/RenderDocument" enabled="false" class="btn btn-primary btn-sm">View Agreement Documents</button>-->
-                    @*@foreach (var roles in Model.UserRoles)
-                    {
-                        if (roles.Equals("CanViewAllInformation") && Model.Status.Equals("Bound"))
-                        {
-                            <a href="~/Agreement/EditAgreement/@Model.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement</a>
-                            <a href="~/Agreement/ViewAgreementRule/@Model.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Rules</a>
-                            <a href="~/Agreement/ViewAgreementEndorsement/@Model.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Agreement Endorsements</a>
-                            <a href="~/Agreement/EditTerms/@Model.ClientAgreementId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Edit Terms</a>
-                            <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @Model.ClientProgrammeId,informationsheet=@Model.InformationSheetId, agreementId = @Model.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
-                        }
-                    }*@
 
                 </div>
             </div>
@@ -69,12 +55,6 @@
                     </section>
 
                 </div>
-                @*<div class="row">
-                    <section class="col col-3"><strong>Managed By: </strong></section>
-                    <section class="col col-3">@Html.Label(item.ManagedBy)</section>
-                    <section class="col col-3"><strong>Email: </strong></section>
-                    <section class="col col-3"><a href="mailto:@item.Email">@item.Email</a></section>
-                </div>*@
             </fieldset>
         }
 
@@ -93,18 +73,12 @@
                 </section>
                 <section class="col col-9">
                     @Html.DisplayFor(m => m.StartDate) 4pm local time
-                    @*@if (Model.InformationSheetStatus != "Submitted" && Model.InformationSheetStatus != "Bound")
-                    {*@
-                    @*<a href="#getStartDate" style="color:green">
-                        <i class="fa fa-edit" aria-hidden="true"></i>
-                    </a>*@
+
                     @if (Model.IsChange == false && !Model.InformationSheetStatus.StartsWith("Bound"))
                     {
                         <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
 
-                    }
-
-                    @*}*@
+                    }                    
 
                 </section>
             </div>
@@ -282,23 +256,7 @@
                                 </td>
                             </tr>
                         }
-                    </table>
-                    @*<section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                        <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
-                            <strong>Total Sum Insured</strong>
-                        </section>
-                        <section class="col col-xs-12 col-sm-2 col-md-2 col-lg-2">
-                            @foreach (var item in Model.Inclusions)
-                            {
-                                <section class="col col-9">
-                                    @Html.Raw(@item.Inclusion)
-                                </section>
-                            }
-                        </section>
-
-                    </section>*@
-
+                    </table>                  
                 </div>
 
             </fieldset>
@@ -323,49 +281,6 @@
                     }
 
                 </div>
-
-                @*<div class="row">
-
-                <section class="col col-3 font-md">
-                    <strong>Terms</strong>
-                </section>*@
-                @*@foreach (var item in Model.Inclusions)
-                {
-                    <section class="col col-9">
-                        @Html.Raw(@item.Inclusion)
-                    </section>
-                }*@
-                @*</div>*@
-
-
-                @*<div class="row">
-                    <section class="col col-12 font-md">
-                        <strong>Exclusions</strong>
-                    </section>
-                </div>
-
-                <div class="row">
-                    <section class="col col-3 font-md">
-                        <strong>Risk</strong>
-                    </section>
-                    <section class="col col-9 font-md">
-                        <strong>Terms</strong>
-                    </section>
-
-                </div>
-                @foreach (var item in Model.Exclusions)
-                {
-                    <div class="row">
-                        <section class="col col-3">
-                            @item.RiskName:
-                        </section>
-                        <section class="col col-9">
-                            @Html.Raw(@item.Exclusion)
-                        </section>
-                    </div>
-
-                }*@
-
             </fieldset>
 
             <fieldset>
@@ -601,13 +516,16 @@
 
                             }
 
-                            <tr>
-                                <td><input type="radio" dirname="" name="@Model.ProductName" value="None"></td>
-                                <td class="pt-4-half" colspan="3" width="15%">
-                                    <label> I don't want this cover</label>
-                                </td>
+                            @if (Model.IsOptionalProduct)
+                            {
+                                <tr>
+                                    <td><input type="radio" dirname="" name="@Model.ProductName" value="None"></td>
+                                    <td class="pt-4-half" colspan="3" width="15%">
+                                        <label> I don't want this cover</label>
+                                    </td>
 
-                            </tr>
+                                </tr>
+                            }
 
                         </table>
                     </div>

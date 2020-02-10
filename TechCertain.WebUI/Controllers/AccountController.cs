@@ -396,15 +396,13 @@ namespace TechCertain.WebUI.Controllers
                         rsaUser.Username = user.UserName; //try as Marsh RSA team advised
                         rsaUser.HttpReferer = "~Account/LoginMarsh";
                         rsaUser.OrgName = "Marsh_Model";
-                        rsaUser.RsaStatus = RsaStatus.Deny;
+                        rsaUser.RsaStatus = RsaStatus.Deny;                        
+                        rsaUser = await rsaAuth.Analyze(rsaUser);                                                
 
-                        Console.WriteLine("Analzying RSA User");
-                        rsaUser = await rsaAuth.Analyze(rsaUser);
                         if (rsaUser.RsaStatus == RsaStatus.Allow)
-                        {
-                            Console.WriteLine("RSA User allowed, signing in...");
+                        {                            
                             _logger.LogInformation("RSA Authentication succeeded for [" + user.UserName + "]");
-                            return LocalRedirect("~/Home/Index");
+                            return RedirectToAction("Index", "Home");
                         }
                         if (rsaUser.RsaStatus == RsaStatus.RequiresOtp)
                         {
@@ -432,7 +430,7 @@ namespace TechCertain.WebUI.Controllers
 
         [HttpPost]
 		[AllowAnonymous]
-		[ValidateAntiForgeryToken]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> OneTimePasswordMarsh (RsaOneTimePasswordModel viewModel)
 		{
             if (ModelState.IsValid)
@@ -443,17 +441,15 @@ namespace TechCertain.WebUI.Controllers
                 rsaUser.DevicePrint = viewModel.DevicePrint;
                 rsaUser.DeviceTokenCookie = viewModel.DeviceTokenCookie;
                 rsaUser.Username = username;
-                rsaUser.HttpReferer = "~Account/LoginMarsh";
+                rsaUser.HttpReferer = "";
                 rsaUser.OrgName = "Marsh_Model";
                 rsaUser.Otp = viewModel.OtpCode;
                 rsaUser.CurrentSessionId = viewModel.SessionId;
                 rsaUser.CurrentTransactionId = viewModel.TransactionId;
-
-                Console.WriteLine("Authenticating RSA User");
+                
                 bool isAuthenticated = await rsaAuth.Authenticate(rsaUser, _userService);                
                 if (isAuthenticated)
-                {
-                    Console.WriteLine("RSA User authenticated, creating mfa cookie");
+                {                    
                     return RedirectToAction("Index", "Home");
                 }
                 ViewBag.AccountLocked = "Your account has been locked - Marsh has been notified and will be in contact with you shortly";                

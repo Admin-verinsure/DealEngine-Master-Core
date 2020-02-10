@@ -108,7 +108,7 @@ namespace TechCertain.WebUI.Controllers
                                 converter.ImageProcessing = ImageProcessing.AutomaticDownload;
                                 converter.ParseHtml(html);
                             }
-                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
+                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".doc");
                         }
                     }
                 }
