@@ -6,8 +6,8 @@ stages:
   - build
   - deploy
 
-before_script:
-  - apt-get update -qq && apt-get install wget                                  # eg. system.drawing libraries
+#before_script:
+# eg. system.drawing libraries
 #  - 'dotnet restore'                                                           # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
 #  - 'dotnet clean'                                                             # cleans the output of the previous build
 #  - cp path/to/tbbackuped
@@ -15,6 +15,7 @@ before_script:
 build:
   stage: build
   script:
+    - apt-get update -qq && apt-get install wget
     - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb 
     - sudo dpkg -i packages-microsoft-prod.deb
     - sudo add-apt-repository universe
