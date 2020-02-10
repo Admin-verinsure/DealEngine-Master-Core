@@ -23,7 +23,7 @@ build:
     - apt-get install -y dotnet-sdk-3.1
 #    - apt-get update
 #    - apt-get install dotnet-sdk-3.1
-#    - sudo apt-get install dotnet-runtime-3.1
+    - apt-get install dotnet-runtime-3.1
 
     - 'dotnet restore'                                                          # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
     - 'dotnet clean'
