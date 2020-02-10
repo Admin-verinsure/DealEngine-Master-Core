@@ -25,8 +25,8 @@ build:
 #    - apt-get install dotnet-sdk-3.1
     - apt-get install dotnet-runtime-3.1
 
-    - 'dotnet restore'                                                          # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
-    - 'dotnet clean'
+#    - 'dotnet restore'                                                          # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
+#    - 'dotnet clean'
     - 'dotnet build -r ubuntu.18.04-x64'                                        # builds the project and its dependencies into a set of binaries
 #    - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'         # compiles the application
 
