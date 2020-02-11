@@ -9,16 +9,17 @@ namespace TechCertain.Domain.Entities
 {
     public class ClientAgreementBVTermCancel : EntityBase, IAggregateRoot
     {
-        protected ClientAgreementBVTermCancel() : base(null) { }
 
-        public ClientAgreementBVTermCancel(User createdBy, ClientAgreementTermCancel clientAgreementTermCancel, Boat boat, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage)
-            : this(createdBy, boat.BoatName, boat.YearOfManufacture, boat.BoatMake, boat.BoatModel, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreementTermCancel, boat)
+        protected ClientAgreementBVTermCancel() : this(null) { }
+
+        protected ClientAgreementBVTermCancel(User createdBy)
+            : base(createdBy)
         {
 
         }
 
         public ClientAgreementBVTermCancel(User createdBy, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreementTermCancel clientAgreementTermCancel, Boat boat)
-            : base(createdBy)
+            : this(createdBy)
         {
             if (string.IsNullOrWhiteSpace(boatName.ToString()))
                 throw new ArgumentNullException(nameof(boatName));
@@ -53,7 +54,56 @@ namespace TechCertain.Domain.Entities
             BrokerageCan = brokerage;
             ClientAgreementTermCan = clientAgreementTermCancel;
             BoatCan = boat;
+
         }
+
+
+
+        //protected ClientAgreementBVTermCancel() : base(null) { }
+
+        //public ClientAgreementBVTermCancel(User createdBy, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreementTermCancel clientAgreementTermCancel, Boat boat)
+        //    : this(createdBy, boat.BoatName, boat.YearOfManufacture, boat.BoatMake, boat.BoatModel, termLimit, excess, premium, fSL, brokerageRate, brokerage, clientAgreementTermCancel, boat)
+        //{
+
+        //}
+
+        //public ClientAgreementBVTermCancel(User createdBy, string boatName, int yearOfManufacture, string boatMake, string boatModel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, ClientAgreementTermCancel clientAgreementTermCancel, Boat boat)
+        //    : base(createdBy)
+        //{
+        //    if (string.IsNullOrWhiteSpace(boatName.ToString()))
+        //        throw new ArgumentNullException(nameof(boatName));
+        //    if (string.IsNullOrWhiteSpace(yearOfManufacture.ToString()))
+        //        throw new ArgumentNullException(nameof(yearOfManufacture));
+        //    if (string.IsNullOrWhiteSpace(termLimit.ToString()))
+        //        throw new ArgumentNullException(nameof(termLimit));
+        //    if (string.IsNullOrWhiteSpace(excess.ToString()))
+        //        throw new ArgumentNullException(nameof(excess));
+        //    if (string.IsNullOrWhiteSpace(premium.ToString()))
+        //        throw new ArgumentNullException(nameof(premium));
+        //    if (string.IsNullOrWhiteSpace(fSL.ToString()))
+        //        throw new ArgumentNullException(nameof(fSL));
+        //    if (string.IsNullOrWhiteSpace(brokerageRate.ToString()))
+        //        throw new ArgumentNullException(nameof(brokerageRate));
+        //    if (string.IsNullOrWhiteSpace(brokerage.ToString()))
+        //        throw new ArgumentNullException(nameof(brokerage));
+        //    if (clientAgreementTermCancel == null)
+        //        throw new ArgumentNullException(nameof(clientAgreementTermCancel));
+        //    if (boat == null)
+        //        throw new ArgumentNullException(nameof(boat));
+
+        //    BoatNameCan = boatName;
+        //    YearOfManufactureCan = yearOfManufacture;
+        //    BoatMakeCan = boatMake;
+        //    BoatModelCan = boatModel;
+        //    TermLimitCan = termLimit;
+        //    ExcessCan = excess;
+        //    PremiumCan = premium;
+        //    FSLCan = fSL;
+        //    BrokerageRateCan = brokerageRate;
+        //    BrokerageCan = brokerage;
+        //    ClientAgreementTermCan = clientAgreementTermCancel;
+        //    BoatCan = boat;
+        //}
 
         public virtual ClientAgreementBVTerm exClientAgreementBVTerm
         {

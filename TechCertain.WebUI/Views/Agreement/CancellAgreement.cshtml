@@ -39,7 +39,7 @@
 
             <form action="~/Agreement/CancellAgreement/item" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
 
-                <table class="table table-bordered table-responsive-md table-striped text-center" id="CancelAgreementTable">
+                <table class="table table-bordered table-responsive-md table-striped text-left" id="CancelAgreementTable">
                     <tr>
 
                         @foreach (var item in Model.InsuranceRoles)
@@ -379,10 +379,14 @@
 
     <script>
 
-        $('.Startdate').datepicker({
-            dateFormat: "dd/mm/yy"
+        $(window).on("load", function () {
+            $('#CancellEffectiveDate').val("@Model.CancellEffectiveDate");
+            $('#CancelAgreementReason').val("@Model.CancelAgreementReason");
         });
 
+        $('.Startdate').datepicker({
+            dateFormat: "dd/mm/yy"
+        });      
 
     </script>
 
