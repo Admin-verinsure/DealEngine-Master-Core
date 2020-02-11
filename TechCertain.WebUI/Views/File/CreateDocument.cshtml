@@ -127,59 +127,56 @@
 
     <script type="text/javascript">
 
-//// DO NOT REMOVE : GLOBAL FUNCTIONS!
+//// DO NOT REMOVE : GLOBAL FUNCTIONS! 
 
-        $(document).ready(function () {
 
-           $('#CreateDocsmartwizard').smartWizard({
-            selected: 0,  // Initial selected step, 0 = first step
-            keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
-            autoAdjustHeight:false, // Automatically adjust content height
-            cycleSteps: false, // Allows to cycle the navigation of steps
-            backButtonSupport: true, // Enable the back button support
-            useURLhash: true, // Enable selection of the step based on url hash
-            lang: {  // Language variables
-                next: 'Next',
-                previous: 'Previous'
-            },
-            toolbarSettings: {
-                toolbarPosition: 'bottom', // none, top, bottom, both
-                toolbarButtonPosition: 'right', // left, right
-                showNextButton: true, // show/hide a Next button
-                showPreviousButton: true, // show/hide a Previous button
+    $(document).ready(function () {
 
-            },
-            anchorSettings: {
-                anchorClickable: true, // Enable/Disable anchor navigation
-                enableAllAnchors: false, // Activates all anchors clickable all times
-                markDoneStep: true, // add done css
-                enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
-            },
-            contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
-            disabledSteps: [],    // Array Steps disabled
-            errorSteps: [],    // Highlight step with errors
-            theme: 'dots',
-            transitionEffect: 'fade', // Effect on navigation, none/slide/fade
-            transitionSpeed: '400'
-           });
+        $('#CreateDocsmartwizard').smartWizard({
+        selected: 0,  // Initial selected step, 0 = first step
+        keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+        autoAdjustHeight:false, // Automatically adjust content height
+        cycleSteps: false, // Allows to cycle the navigation of steps
+        backButtonSupport: true, // Enable the back button support
+        useURLhash: true, // Enable selection of the step based on url hash
+        lang: {  // Language variables
+            next: 'Next',
+            previous: 'Previous'
+        },
+        toolbarSettings: {
+            toolbarPosition: 'bottom', // none, top, bottom, both
+            toolbarButtonPosition: 'right', // left, right
+            showNextButton: true, // show/hide a Next button
+            showPreviousButton: true, // show/hide a Previous button
 
-     $("#CreateDocsmartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+        },
+        anchorSettings: {
+            anchorClickable: true, // Enable/Disable anchor navigation
+            enableAllAnchors: false, // Activates all anchors clickable all times
+            markDoneStep: true, // add done css
+            enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+        },
+        contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+        disabledSteps: [],    // Array Steps disabled
+        errorSteps: [],    // Highlight step with errors
+        theme: 'dots',
+        transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+        transitionSpeed: '400'
+        });
+
+    $("#CreateDocsmartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
            debugger;
            var informationsheetstatus = $('#Status').val();
            var clientInformationSheet = $('#AnswerSheetId').val();
 
         if (stepNumber === 1) {
-                          debugger;
+             debugger;
 
              if (confirm("Are you sure you want to submit this document?")) {
-                 console.log("submitted!");
-                      const body = editor.getData();
+                 console.log("Document has been submitted!");
+                 const body = window.editor.getData();
                  var bodyElement = $("#@Html.IdFor(m => m.Content)");
-			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
-			// using hack because escape(...) was deprecated
-
                  bodyElement.text(bodyElement.text(body).html());
-                 var content = document.getElementById("editor");
 
                  $.ajax({
                      type: "POST",
@@ -187,7 +184,6 @@
                      data: $("#wizard-1").serialize() ,
                  })
                      .done(function (json) {
-                         //var model = JSON.parse(json);
                          debugger;
                          $("#productAutoReview")
                          console.log(json);
@@ -220,5 +216,6 @@
                 $("#documentType").val("4");
             }
         });
+
     </script>
 }
