@@ -850,8 +850,24 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
+                                                        @if (Model.Advisory != "")
+                                                        {
+                                                            <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Advisory</h5>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            @Html.Raw(Model.Advisory)
+                                                                        </div>
+                                                                        <div class="modal-footer">                                                                            
+                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
                                                         <div class="modal" id="addLocModal" tabindex="-1" role="dialog" data-backdrop="static">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
@@ -1088,26 +1104,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        @if (Model.Advisory != "")
-                        {
-                            <div class="modal fade" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Advisory</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            @Html.Raw(Model.Advisory)
-                                        </div>
-                                        <div class="modal-footer">
-                                            @*<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Close</button>*@
-                                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                        </div>                        
                     </div>
                     </div>
                 </div>
@@ -1123,8 +1120,13 @@
     <script>
         $(window).on("load", function () {
             debugger;
-            $("#getDetailsModal").modal('show');
-
+            advisoryModal = document.getElementById('advisoryModal');
+            if (advisoryModal !== null) {
+                $("#advisoryModal").modal('show');
+            } else {
+                $("#getDetailsModal").modal('show');
+            }
+            
             if ("@Model.Status" == "Submitted") {
                 if (document.getElementById('fieldset') != null) {
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
@@ -1162,20 +1164,20 @@
                             }
                         }
                     };
-                                           $("#getDetailsModal").modal('hide');
-
+                    $("#getDetailsModal").modal('hide');
                 })
                 .fail(function (a, s, d) {
-                                           $("#getDetailsModal").modal('hide');
-
+                    $("#getDetailsModal").modal('hide');
                     alert("Unable to save.");
                 });
+
         });
 
         function CloseAdvisory() {
             $('#modal').modal('hide');
         }
 
+              
     </script>
     @await Html.PartialAsync("_InformationWizardScripts")
 

@@ -36,6 +36,7 @@ namespace TechCertain.WebUI.Models.Agreement
 		public IList<AgreementDocumentViewModel> Documents { get; set; }
 		public bool EditEnabled { get; set; }
         public bool IsMultipleOption { get; set; }
+        public bool IsOptionalProduct { get; set; }
         public Guid ClientProgrammeId { get; set; }
         public bool HasBoats { get; set; }
         public IEnumerable<BoatViewModel> Boats { get; set; }

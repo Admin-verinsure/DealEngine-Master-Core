@@ -1313,6 +1313,7 @@ namespace TechCertain.WebUI.Controllers
                     // Status
                     model.ProductName = agreement.Product.Name;
                     model.IsMultipleOption = agreement.Product.IsMultipleOption;
+                    model.IsOptionalProduct = agreement.Product.IsOptionalProduct;
                     model.Status = agreement.Status;
                     if (agreement.Status == "Referred")
                     {

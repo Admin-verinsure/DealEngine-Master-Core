@@ -4,7 +4,7 @@
 {
     @if (Model.RevenueData.AdditionalActivityInformation != null)
     {
-        @if (Model.RevenueData.AdditionalActivityInformation.InspectionReportTextId != "")
+        @if (!string.IsNullOrEmpty(Model.RevenueData.AdditionalActivityInformation.InspectionReportTextId))
         {
             <div class="form-group" id="InspectionReport">
                 <div class="row-fluid">
@@ -47,7 +47,7 @@
                 </div>
             </div>
         }
-        @if (Model.RevenueData.AdditionalActivityInformation.ValuationTextId != "")
+        @if (!string.IsNullOrEmpty(Model.RevenueData.AdditionalActivityInformation.ValuationTextId))
         {
             <div class="form-group" id="Valuation">
                 <div class="row-fluid">
@@ -206,7 +206,7 @@
                 </div>
             </div>
         }
-        @if (Model.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId != "")
+        @if (!string.IsNullOrEmpty(Model.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId))
         {
             <div class="form-group" id="OtherActivities">
                 <div class="row-fluid">
@@ -224,7 +224,7 @@
                 </div>
             </div>
         }
-        @if (Model.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId != "")
+        @if (!string.IsNullOrEmpty(Model.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId))
         {
             <div class="form-group" style="display:none" id="CanterburyEarthquakeRebuildWork">
                 <div class="row-fluid">
@@ -260,9 +260,9 @@
             <div class="row-fluid">
                 <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
                 <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
-                    <option selected>-- Please Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value=0>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
                 </select>
             </div>
         </div>
@@ -280,9 +280,9 @@
             <div class="row-fluid">
                 <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
                 <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
-                    <option selected>-- Please Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
                 </select>
             </div>
         </div>
@@ -294,33 +294,33 @@
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
-                    <option selected>-- Please Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
                 </select>
             </div>
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
-                    <option selected>-- Please Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
                 </select>
             </div>
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
-                    <option selected>-- Please Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
                 </select>
             </div>
             <div class="row-fluid">
                 <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
                 <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
-                    <option selected>-- Please Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value=0 selected>-- Please Select --</option>
+                    <option value=1>Yes</option>
+                    <option value=2>No</option>
                 </select>
             </div>
         </div>
@@ -357,9 +357,9 @@ else
         <div class="row-fluid">
             <label for="InspectionReportBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports/contracts of Engagement? </label>
             <select class="custom-select" id="InspectionReportBoolId" name="InspectionReportBoolId" form="addtionalActivityInformationContainer">
-                <option selected>-- Please Select --</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value=0 selected>-- Please Select --</option>
+                <option value=1>Yes</option>
+                <option value=2>No</option>
             </select>
         </div>
     </div>
@@ -377,9 +377,9 @@ else
         <div class="row-fluid">
             <label for="ValuationBoolId">Do you include limitations of liability clauses and liability disclaimers in your reports? </label>
             <select class="custom-select" id="ValuationBoolId" name="ValuationBoolId" form="addtionalActivityInformationContainer">
-                <option selected>-- Please Select --</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value=0 selected>-- Please Select --</option>
+                <option value=1>Yes</option>
+                <option value=2>No</option>
             </select>
         </div>
     </div>
@@ -391,33 +391,33 @@ else
         <div class="row-fluid">
             <label for="SchoolsDesignWorkBoolId">Was contracted to provide construction management or observation services?</label>
             <select class="custom-select" id="SchoolsDesignWorkBoolId" name="SchoolsDesignWorkBoolId" form="addtionalActivityInformationContainer">
-                <option selected>-- Please Select --</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value=0 selected>-- Please Select --</option>
+                <option value=1>Yes</option>
+                <option value=2>No</option>
             </select>
         </div>
         <div class="row-fluid">
             <label for="SchoolsDesignWorkBoolId2">Recommended the use of any cladding product? </label>
             <select class="custom-select" id="SchoolsDesignWorkBoolId2" name="SchoolsDesignWorkBoolId2" form="addtionalActivityInformationContainer">
-                <option selected>-- Please Select --</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value=0 selected>-- Please Select --</option>
+                <option value=1>Yes</option>
+                <option value=2>No</option>
             </select>
         </div>
         <div class="row-fluid">
             <label for="SchoolsDesignWorkBoolId3">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)? </label>
             <select class="custom-select" id="SchoolsDesignWorkBoolId3" name="SchoolsDesignWorkBoolId3" form="addtionalActivityInformationContainer">
-                <option selected>-- Please Select --</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value=0 selected>-- Please Select --</option>
+                <option value=1>Yes</option>
+                <option value=2>No</option>
             </select>
         </div>
         <div class="row-fluid">
             <label for="SchoolsDesignWorkBoolId4">Issued practical completion certificates? </label>
             <select class="custom-select" id="SchoolsDesignWorkBoolId4" name="SchoolsDesignWorkBoolId4" form="addtionalActivityInformationContainer">
-                <option selected>-- Please Select --</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value=0 selected>-- Please Select --</option>
+                <option value=1>Yes</option>
+                <option value=2>No</option>
             </select>
         </div>
     </div>

@@ -27,6 +27,7 @@ namespace TechCertain.Domain.Entities
     //  Email = 3,
     //  Payment Confirmation = 4,
     //  Invoice = 5,
+	//	Advisory = 6
     //}
 
     public class Document : File

@@ -18,8 +18,8 @@
                     </td>
                     <td>
                         <label class="input">
-                            @*<i class="icon-append fa fa-edit"></i>*@
-                            @Html.TextBoxFor(m => m.programmeName)
+                            @*<i class="icon-append fa fa-edit"></i>*@                            
+                            @Html.TextBoxFor(m => m.programmeName, new { @class="form-control" })
                         </label>
                     </td>
                 </tr>
@@ -30,7 +30,7 @@
                     <td>
                         <label class="input">
                             @*<i class="icon-append fa fa-edit"></i>*@
-                            @Html.TextBoxFor(m => m.TaxRate)
+                            @Html.TextBoxFor(m => m.TaxRate, new { @class="form-control" })
                         </label>
                     </td>
                 </tr>
@@ -41,7 +41,7 @@
                     <td>
                         <label class="input">
                             @*<i class="icon-append fa fa-edit"></i>*@
-                            @Html.TextBoxFor(m => m.PolicyNumberPrefixString)
+                            @Html.TextBoxFor(m => m.PolicyNumberPrefixString, new { @class="form-control" })
                         </label>
                     </td>
                 </tr>

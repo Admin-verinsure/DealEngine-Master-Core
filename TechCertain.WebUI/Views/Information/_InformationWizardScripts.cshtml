@@ -2022,6 +2022,7 @@ function showAccordionPanel(id, panelNo) {
     function SaveRevenueTabFive(type) {
         event.preventDefault();
         if (ValidateSharedRevenueForm(5)) {
+            debugger;
             var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
             var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
@@ -2032,10 +2033,11 @@ function showAccordionPanel(id, panelNo) {
                 data: postData
             })
                 .done(function (Data) {
-                    //BuildRevenueOverview();
+                    BuildRevenueOverview();
                     if (type == 'newSummary') {
                         SetCurrentTab('RevenueTabs4');
                     } else {
+                        debugger;
                         SetCurrentTab('RevenueTabs0');
                     }
                 });
@@ -2345,6 +2347,8 @@ function showAccordionPanel(id, panelNo) {
             }
         }
     }
+
+
 
     function BuildRevenueOverview() {
         $('#SharedRevenueTab1').hide();
