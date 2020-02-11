@@ -1,0 +1,40 @@
+﻿@model IssueUISViewModel
+
+<div class="container">
+    <div class="row">
+        <table>
+            <thread>
+                <tr>
+                    <th>
+                        This page lists the members from this Scheme who are not already in this project and not excluded. If the member you want to add is in the list, select them below and click Add. If you cannot find the member in the list, use the Add new Person or Add new Organisation links above to add them.
+                    </th>
+                </tr>                
+            </thread>
+            <tbody>
+                @foreach(var clientProg in Model.ClientProgrammes)
+                {
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <input type="radio" aria-label="Radio button for following text input">
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Text input with radio button" value="@clientProg.Owner">
+                            </div>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" value="@clientProg.Owner.Email">
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    
+</script>

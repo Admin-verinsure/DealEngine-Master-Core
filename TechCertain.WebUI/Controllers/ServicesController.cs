@@ -3932,22 +3932,28 @@ namespace TechCertain.WebUI.Controllers
         #endregion
 
         #region Advisory
-        //[HttpPost]
-        //public async Task<IActionResult> CloseAdvisory(string ClientInformationSheetId)
-        //{
-        //    User user=
-        //    var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-        //    sheet.Status = "Not Taken Up";
-        //    foreach(var agreement in sheet.Programme.Agreements)
-        //    {
-        //        agreement.Status = "Not Taken Up";
-        //        await _clientAgreementService.UpdateClientAgreement(agreement);
-        //    }
+        [HttpPost]
+        public async Task<IActionResult> CloseAdvisory(string ClientInformationSheetId)
+        {
+            User user = await CurrentUser();
+            try
+            {
+                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+                sheet.Status = "Not Taken Up";
+                foreach (var agreement in sheet.Programme.Agreements)
+                {
+                    agreement.Status = "Not Taken Up";
+                    await _clientAgreementService.UpdateClientAgreement(agreement);
+                }
 
-        //    string domainQueryString = _appSettingService.domainQueryString;
-
-        //    return Ok("https://" + domainQueryString + "/Home/Index/");
-        //}
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
         #endregion
 
         [HttpPost]

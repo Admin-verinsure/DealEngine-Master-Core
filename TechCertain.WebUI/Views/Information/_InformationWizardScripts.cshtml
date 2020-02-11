@@ -913,27 +913,6 @@
             })
     }
 
-    function GetMilestoneContentJson(method) {
-        return {
-            Method: method,
-            Id: $('#MilestoneId').val()
-        };
-    }
-
-    function CloseAdvisory(method) {
-        $('#getMilestoneModal').hide();
-
-        var mergeData = { MilestoneAdvisoryVM: GetMilestoneContentJson(method) };
-        var postData = JSON.stringify(mergeData);
-
-        $.ajax({
-            url: '@Url.Action("CloseAdvisory", "Information")',
-             type: "POST",
-             data: postData,
-            contentType: "application/json; charset=utf-8"
-        })
-    }
-
     function AuthoriseReferrals() {
         var clientAgreementId = $('#ClientAgreementId').val();
          $.ajax({
@@ -4021,26 +4000,6 @@ async: true
                 $(destTable).trigger('reloadGrid');
             }
         });
-    }
-
-    function AdvisoryModelClose(modalId, type) {
-        document.getElementById(modalId).hidden = true;
-        if (type == 'record') {
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = {ClientInformationSheetId : clientInformationSheetId }
-            $.ajax({
-                url: '@Url.Action("CloseAdvisory", "Services")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (data) {
-                    debugger;
-                    window.location = data;
-                })
-                .fail(function (a, b, c) {
-                    debugger;
-                });
-        }
     }
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {

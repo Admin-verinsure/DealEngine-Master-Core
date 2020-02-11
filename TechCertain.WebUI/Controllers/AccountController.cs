@@ -302,8 +302,8 @@ namespace TechCertain.WebUI.Controllers
             var userName = viewModel.Username.Trim();
 
             try
-            {                                
-				string password = viewModel.Password.Trim();
+            {                                                
+                string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
                 string resultMessage = "";                
@@ -327,7 +327,7 @@ namespace TechCertain.WebUI.Controllers
 			catch (UserImportException ex)
 			{
                 await _applicationLoggingService.LogWarning(_logger, ex, null, HttpContext);                
-				//await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2019 - User Import Error", ex.Message);
+				await _emailService.ContactSupport (_emailService.DefaultSender, "TechCertain 2019 - User Import Error", ex.Message);
 				ModelState.AddModelError(string.Empty, "We have encountered an error importing your account. Proposalonline has been notified, and will be in touch shortly to resolve this error.");
 				return View(viewModel);
 			}

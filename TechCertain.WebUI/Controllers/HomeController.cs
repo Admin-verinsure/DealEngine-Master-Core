@@ -458,7 +458,33 @@ namespace TechCertain.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-        
+
+        [HttpGet]
+        public async Task<IActionResult> IssueUIS(string ProgrammeId)
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                IssueUISViewModel model = new IssueUISViewModel();
+                var clientProgrammes = new List<ClientProgramme>();
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(ProgrammeId));
+
+                foreach (var client in programme.ClientProgrammes.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
+                {
+                    clientProgrammes.Add(client);                    
+                }
+                model.ClientProgrammes = clientProgrammes;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }                       
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> ViewTask(Guid Id)
