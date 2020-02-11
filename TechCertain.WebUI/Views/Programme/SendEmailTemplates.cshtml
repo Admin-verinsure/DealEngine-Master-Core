@@ -1,7 +1,6 @@
 ﻿@model TechCertain.WebUI.Models.EmailTemplateViewModel
 
 @using TechCertain.WebUI.Helpers.CustomHtml
-<script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
 
 <!-- MAIN CONTENT -->
 <div id="content">
@@ -92,21 +91,34 @@
                                     @if (User.HasClaim("EditEmails", "EditEmails"))
                                     {
                                         <section class="col col-12">
-                                            <button onclick="SaveEmailTemplate()" class="btn txt-color-white bg-color-green btn-sm" id="SaveEmailTemplate">Save Email Template</button>
+                                            <button onclick="SaveEmailTemplate()" class="btn btn-primary" id="SaveEmailTemplate">Save Email Template</button>
                                         </section>
                                     }
                                 </div>
                             </fieldset>
                         </div>
                     </div>
-                    <!-- end widget content -->
                 </div>
-                <!-- end widget div -->
             </div>
-            <!-- end widget -->
         </div>
-        <!-- WIDGET END -->
     </section>
+    <div class="modal" id="ckmodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Select an Image</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+                </div>
+                <div class="modal-footer" style="display:flex;">
+                    <label for="selImg" style="float:left;">Selected Image: </label>
+                    <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
+                    <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -114,20 +126,14 @@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script src="~/lib/popper.js/umd/popper.js"></script>
+    <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
+    <link href="~/css/ckeditor.css" rel="stylesheet" />
+    <script src="~/js/ckeditorPlugin.js"></script>
+
     <script type="text/javascript">
-        let editor;
-                                                   ClassicEditor
-                                                               .create( document.querySelector( '#Body' ) )
-                                                               .then( newEditor => {
-                                                                editor = newEditor;
-                                                               } )
-                                                                 .catch( error => {
-                                                                 console.error( error );
-                                                                 });
-
-
         function SaveEmailTemplate() {
-            var body = editor.getData();
+
+            var body = window.editor.getData();
 			var bodyElement = $("#@Html.IdFor(m => m.Body)");
 			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
 			// using hack because escape(...) was deprecated

@@ -46,7 +46,7 @@
 
 
 <script type="text/javascript">
-    ClassicEditor
+@*    ClassicEditor
         .create(document.querySelector('#Milestoneeditor'))
         .then(newDetail => {
             editorDetail = newDetail;
@@ -54,6 +54,7 @@
         .catch(error => {
             console.error(error);
         });
+*@
 
     function GetUserTaskContentJson()
     {
@@ -62,10 +63,9 @@
             Priority: $("#Priortylist").val(),
             DueDate: $("#dueDateList").val(),
             Description: $("#@(Html.IdFor(m => m.UserTask.Description))").val(),
-            Details: editorDetail.getData()
+            Details: window.editor.getData()
     	};
     }
-
 
 </script>
 

@@ -21,9 +21,10 @@ namespace TechCertain.WebUI.Models.Agreement
 
         public string AdditionalNotes { get; set; }
         public string Status { get; set; }
-        public string DeclineNotes { get; internal set; }
-        public string CancellNotes { get; internal set; }
-        public DateTime CancellEffectiveDate { get; internal set; }
+        public string DeclineNotes { get; set; }
+        public string CancellNotes { get; set; }
+        public DateTime CancellEffectiveDate { get; set; }
+        public string CancelAgreementReason { get; set; }
     }
 }
 

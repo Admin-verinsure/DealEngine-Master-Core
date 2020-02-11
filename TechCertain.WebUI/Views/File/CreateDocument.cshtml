@@ -106,8 +106,8 @@
                     </div>
                     <div class="modal-footer" style="display:flex;">
                         <label for="selImg" style="float:left;">Selected Image: </label>
-                        <input type="text" id="selImg" name="selImg" style="float:left;width:52%;margin-left:.5rem;margin-right:1rem;">
-                        <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="">Import</button>
+                        <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
+                        <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
                     </div>
                 </div>
             </div>
@@ -124,95 +124,95 @@
     <script src="~/js/ckeditorPlugin.js"></script>
 
     <script type="text/javascript">
-        //// DO NOT REMOVE : GLOBAL FUNCTIONS!
+//// DO NOT REMOVE : GLOBAL FUNCTIONS! 
 
-        $(document).ready(function () {
-            $('#CreateDocsmartwizard').smartWizard({
-                selected: 0,  // Initial selected step, 0 = first step
-                keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
-                autoAdjustHeight: false, // Automatically adjust content height
-                cycleSteps: false, // Allows to cycle the navigation of steps
-                backButtonSupport: true, // Enable the back button support
-                useURLhash: true, // Enable selection of the step based on url hash
-                lang: {  // Language variables
-                    next: 'Next',
-                    previous: 'Previous'
-               },
-               toolbarSettings: {
-                toolbarPosition: 'bottom', // none, top, bottom, both
-                toolbarButtonPosition: 'right', // left, right
-                showNextButton: true, // show/hide a Next button
-                showPreviousButton: true, // show/hide a Previous button
-               },
-               anchorSettings: {
-                anchorClickable: true, // Enable/Disable anchor navigation
-                enableAllAnchors: false, // Activates all anchors clickable all times
-                markDoneStep: true, // add done css
-                enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
-               },
-               contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
-               disabledSteps: [],    // Array Steps disabled
-               errorSteps: [],    // Highlight step with errors
-               theme: 'dots',
-               transitionEffect: 'fade', // Effect on navigation, none/slide/fade
-               transitionSpeed: '400'
-           });
+    $(document).ready(function () {
+        $('#CreateDocsmartwizard').smartWizard({
+        selected: 0,  // Initial selected step, 0 = first step
+        keyNavigation:true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+        autoAdjustHeight:false, // Automatically adjust content height
+        cycleSteps: false, // Allows to cycle the navigation of steps
+        backButtonSupport: true, // Enable the back button support
+        useURLhash: true, // Enable selection of the step based on url hash
+        lang: {  // Language variables
+            next: 'Next',
+            previous: 'Previous'
+        },
+        toolbarSettings: {
+            toolbarPosition: 'bottom', // none, top, bottom, both
+            toolbarButtonPosition: 'right', // left, right
+            showNextButton: true, // show/hide a Next button
+            showPreviousButton: true, // show/hide a Previous button
 
-            $("#CreateDocsmartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-                var informationsheetstatus = $('#Status').val();
-                var clientInformationSheet = $('#AnswerSheetId').val();
-
-                if (stepNumber === 1) {
-
-                    if (confirm("Are you sure you want to submit this document?")) {
-
-                        const body = editor.getData();
-                        var bodyElement = $("#@Html.IdFor(m => m.Content)");
-                        // hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
-                        // using hack because escape(...) was deprecated
-                        bodyElement.text(bodyElement.text(body).html());
-
-                        var content = document.getElementById("editor");
-                        var test = document.getElementById(@Html.IdFor(m => m.Content));
-                        debugger;
-
-                        $.ajax({
-                            type: "POST",
-                            url: '@Url.Action("CreateDocument", "File")',
-                            data: $("#wizard-1").serialize()
-                        })
-                            .done(function (json) {
-                                //var model = JSON.parse(json);
-                                $("#productAutoReview")
-                            })
-                            .fail(function (err, ajaxOptions, thrownError) {
-                                debugger;
-                                alert("Unable to save." + err.responseText);
-                                console.log(err);
-                                console.log(ajaxOptions);
-                                console.log(thrownError);
-                            });
-                    } else {
-                        return false;
-                    }
-                }
-            });
-
-            if ("@Model.Name" == "First Mate Cover Policy Wording") {
-              $("#documentType").val("0");
-            } else  if ("@Model.Name" == "First Mate Cover Policy Schedule") {
-                $("#documentType").val("2");
-            }else  if ("@Model.Name" == "First Mate Cover Insurance Certificate") {
-                $("#documentType").val("1");
-            }else  if ("@Model.Name" == "First Mate Cover Payment Confirmation") {
-                $("#documentType").val("3");
-            }else  if ("@Model.Name" == "First Mate Cover Invoice") {
-                $("#documentType").val("4");
-            }else  if ("@Model.Name" == "First Mate Advisory") {
-                $("#documentType").val("5");
-            }
-
-
+        },
+        anchorSettings: {
+            anchorClickable: true, // Enable/Disable anchor navigation
+            enableAllAnchors: false, // Activates all anchors clickable all times
+            markDoneStep: true, // add done css
+            enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+        },
+        contentURL: null, // content url, Enables Ajax content loading. can set as data data-content-url on anchor
+        disabledSteps: [],    // Array Steps disabled
+        errorSteps: [],    // Highlight step with errors
+        theme: 'dots',
+        transitionEffect: 'fade', // Effect on navigation, none/slide/fade
+        transitionSpeed: '400'
         });
+
+        $("#CreateDocsmartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+               debugger;
+               var informationsheetstatus = $('#Status').val();
+               var clientInformationSheet = $('#AnswerSheetId').val();
+
+            if (stepNumber === 1) {
+                 debugger;
+
+                 if (confirm("Are you sure you want to submit this document?")) {
+                     console.log("Document has been submitted!");
+                     const body = window.editor.getData();
+                     var bodyElement = $("#@Html.IdFor(m => m.Content)");
+                     bodyElement.text(bodyElement.text(body).html());
+
+                     $.ajax({
+                         type: "POST",
+                         url: '@Url.Action("CreateDocument", "File")',
+                         data: $("#wizard-1").serialize() ,
+                     })
+                         .done(function (json) {
+                             debugger;
+                             $("#productAutoReview")
+                             console.log(json);
+                         })
+                         .fail(function (err, ajaxOptions, thrownError) {
+                             debugger;
+                             alert("Unable to save." + err.responseText);
+                             console.log(err);
+                             console.log(ajaxOptions);
+                             console.log(thrownError);
+                         });
+                 } else {
+                     return false;
+                 }
+             }
+         });
+    });
+
+    $(window).on("load", function () {
+        debugger;
+        if ("@Model.Name" == "First Mate Cover Policy Wording") {
+            $("#documentType").val("0");
+        } else  if ("@Model.Name" == "First Mate Cover Policy Schedule") {
+            $("#documentType").val("2");
+        }else  if ("@Model.Name" == "First Mate Cover Insurance Certificate") {
+            $("#documentType").val("1");
+        }else  if ("@Model.Name" == "First Mate Cover Payment Confirmation") {
+            $("#documentType").val("3");
+        }else  if ("@Model.Name" == "First Mate Cover Invoice") {
+            $("#documentType").val("4");
+        }else  if ("@Model.Name" == "First Mate Advisory") {
+            $("#documentType").val("5");
+        }
+    });
+
     </script>
 }

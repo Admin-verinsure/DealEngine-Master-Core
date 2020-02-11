@@ -51,6 +51,8 @@ namespace TechCertain.WebUI.Controllers
         IEGlobalSubmissionService _eGlobalSubmissionService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<AgreementController> _logger;
+        IClientAgreementTermCanService _clientAgreementTermCanService;
+        IClientAgreementBVTermCanService _clientAgreementBVTermCanService;
         //convert to service?
         IMapperSession<Rule> _ruleRepository;
         IMapperSession<SystemDocument> _documentRepository;
@@ -84,7 +86,9 @@ namespace TechCertain.WebUI.Controllers
             IMerchantService merchantService, 
             IClientAgreementTermService clientAgreementTermService, 
             IAppSettingService appSettingService, 
-            IEGlobalSubmissionService eGlobalSubmissionService
+            IEGlobalSubmissionService eGlobalSubmissionService,
+            IClientAgreementTermCanService clientAgreementTermCanService,
+            IClientAgreementBVTermCanService clientAgreementBVTermCanService
             )
             : base (userRepository)
         {
@@ -115,6 +119,8 @@ namespace TechCertain.WebUI.Controllers
             _programmeService = programmeService;
             _appSettingService = appSettingService;
             _eGlobalSubmissionService = eGlobalSubmissionService;
+            _clientAgreementTermCanService = clientAgreementTermCanService;
+            _clientAgreementBVTermCanService = clientAgreementBVTermCanService;
 
             ViewBag.Title = "Wellness and Health Associated Professionals Agreement";
         }
@@ -347,6 +353,7 @@ namespace TechCertain.WebUI.Controllers
                 model.StartDate = LocalizeTimeDate(agreement.InceptionDate, "dd-mm-yyyy");
                 model.EndDate = LocalizeTimeDate(agreement.ExpiryDate, "dd-mm-yyyy");
                 model.CancellEffectiveDate = agreement.CancelledEffectiveDate;
+                model.CancelAgreementReason = agreement.CancelAgreementReason;
 
 
                 foreach (var terms in agreement.ClientAgreementTerms)
@@ -466,28 +473,62 @@ namespace TechCertain.WebUI.Controllers
                     ClientAgreementTerm excaterm = agreement.ClientAgreementTerms.FirstOrDefault(cat => cat.SubTermType == "BV" && cat.DateDeleted == null);
                     if (excaterm != null)
                     {
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
-                        {
-                            ClientAgreementTermCancel catermcan = new ClientAgreementTermCancel(user, 500, 400, 300, 200, 0.2M, 100, agreement, "BV");
-                            catermcan.exClientAgreementTerm = excaterm;
-                            agreement.ClientAgreementTermsCancel.Add(catermcan);
 
-                            await uow.Commit().ConfigureAwait(false);
-                        }
+                        await _clientAgreementTermCanService.AddAgreementTermCan(user, excaterm.TermLimit, excaterm.Excess, 0m, 0m, excaterm.BrokerageRate, 0m, agreement, "BV");
+                        ClientAgreementTermCancel catermcan = agreement.ClientAgreementTermsCancel.FirstOrDefault(catCancel => catCancel.SubTermTypeCan == "BV" && catCancel.DateDeleted == null);
+                        catermcan.exClientAgreementTerm = excaterm;
 
                         var excaBVTerms = excaterm.BoatTerms;
                         var excaMVTerms = excaterm.MotorTerms;
-                        ClientAgreementTermCancel catermCancel = agreement.ClientAgreementTermsCancel.FirstOrDefault(catCancel => catCancel.SubTermTypeCan == "BV" && catCancel.DateDeleted == null);
-                        if (excaBVTerms != null)
+
+                        int expolicyperiodindaysCan = 0;
+                        decimal totalBoatFslCan = 0m;
+                        decimal totalBoatPremiumCan = 0m;
+                        decimal totalBoatBrokerageCan = 0m;
+                        expolicyperiodindaysCan = (agreement.ExpiryDate - agreement.InceptionDate).Days;
+
+                        if (excaBVTerms != null && catermcan != null)
                         {
                             foreach (ClientAgreementBVTerm excaBVTerm in excaBVTerms)
                             {
+                                int boatperiodindaysCan = 0;
+                                decimal boatproratedFslCan = 0m;
+                                decimal boatproratedPremiumCan = 0m;
+                                decimal boatproratedBrokerageCan = 0m;
+
                                 //Calculate BV cancel term
-                                ClientAgreementBVTermCancel cabvtermcan = new ClientAgreementBVTermCancel(user, catermCancel, excaBVTerm.Boat, excaBVTerm.BoatName, excaBVTerm.YearOfManufacture,
-                                    excaBVTerm.BoatMake, excaBVTerm.BoatModel, excaBVTerm.TermLimit, excaBVTerm.Excess, 900, 800, excaBVTerm.BrokerageRate, 700);
-                                cabvtermcan.exClientAgreementBVTerm = excaBVTerm;
-                                catermCancel.BoatTermsCan.Add(cabvtermcan);
+                                if (clientAgreementModel.CancellEffectiveDate != null && excaBVTerm.Boat.BoatInceptionDate != null && 
+                                    clientAgreementModel.CancellEffectiveDate >= excaBVTerm.Boat.BoatInceptionDate)
+                                {
+                                    boatperiodindaysCan = (excaBVTerm.Boat.BoatExpireDate - clientAgreementModel.CancellEffectiveDate).Days;
+                                    boatproratedPremiumCan = excaBVTerm.AnnualPremium * boatperiodindaysCan / expolicyperiodindaysCan - excaBVTerm.Premium;
+                                    boatproratedFslCan = excaBVTerm.AnnualFSL * boatperiodindaysCan / expolicyperiodindaysCan - excaBVTerm.FSL;
+                                    boatproratedBrokerageCan = boatproratedPremiumCan * excaterm.BrokerageRate / 100;
+                                }
+
+                                totalBoatPremiumCan += boatproratedPremiumCan;
+                                totalBoatFslCan += boatproratedFslCan;
+                                totalBoatBrokerageCan += boatproratedBrokerageCan;
+
+                                using (var uow = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    ClientAgreementBVTermCancel cabvtermcan = new ClientAgreementBVTermCancel(user, excaBVTerm.BoatName, excaBVTerm.YearOfManufacture, excaBVTerm.BoatMake, excaBVTerm.BoatModel, 
+                                        excaBVTerm.TermLimit, excaBVTerm.Excess, boatproratedPremiumCan, boatproratedFslCan, excaBVTerm.BrokerageRate, boatproratedBrokerageCan, catermcan, excaBVTerm.Boat);
+                                    cabvtermcan.TermCategoryCan = "active";
+                                    cabvtermcan.AnnualPremiumCan = excaBVTerm.AnnualPremium;
+                                    cabvtermcan.AnnualFSLCan = excaBVTerm.AnnualFSL;
+                                    cabvtermcan.AnnualBrokerageCan = excaBVTerm.AnnualBrokerage;
+                                    catermcan.BoatTermsCan.Add(cabvtermcan);
+                                    cabvtermcan.exClientAgreementBVTerm = excaBVTerm;
+
+                                    await uow.Commit().ConfigureAwait(false);
+                                }
+
                             }
+
+                            catermcan.PremiumCan += totalBoatPremiumCan;
+                            catermcan.FSLCan += totalBoatFslCan;
+                            catermcan.BrokerageCan += totalBoatBrokerageCan;
                         }
 
                         //if (excaMVTerms != null)
@@ -506,6 +547,7 @@ namespace TechCertain.WebUI.Controllers
                                 agreement.Status = "Cancel Pending";
                                 agreement.CancelledNote = clientAgreementModel.CancellNotes;
                                 agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
+                                agreement.CancelAgreementReason = clientAgreementModel.CancelAgreementReason;
                                 agreement.CancelledByUserID = user;
                                 agreement.CancelledDate = DateTime.UtcNow;
 
@@ -533,6 +575,7 @@ namespace TechCertain.WebUI.Controllers
                             agreement.Status = "Cancelled";
                         agreement.CancelledNote = clientAgreementModel.CancellNotes;
                         agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
+                        agreement.CancelAgreementReason = clientAgreementModel.CancelAgreementReason;
                         agreement.Cancelled = true;
                         agreement.CancelledByUserID = user;
                         agreement.CancelledDate = DateTime.UtcNow;
