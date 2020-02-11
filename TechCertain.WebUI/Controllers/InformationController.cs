@@ -3006,44 +3006,86 @@ namespace TechCertain.WebUI.Controllers
                 foreach (var questionFormString in FormString)
                 {
                     var questionSplit = questionFormString.Split("=");
-                    switch (questionSplit[0])
+                    try
                     {
-                        case "InspectionReportTextId":
-                            additionalInformation.InspectionReportTextId = questionSplit[1];
-                            break;
-                        case "InspectionReportBoolId":
-                            additionalInformation.InspectionReportBoolId = int.Parse(questionSplit[1]);
-                            break;
-                        case "ValuationTextId":
-                            additionalInformation.ValuationTextId = questionSplit[1];
-                            break;
-                        case "ValuationTextId2":
-                            additionalInformation.ValuationTextId2 = questionSplit[1];
-                            break;
-                        case "ValuationBoolId":
-                            additionalInformation.ValuationBoolId = int.Parse(questionSplit[1]);
-                            break;
-                        case "SchoolsDesignWorkBoolId":
-                            additionalInformation.SchoolsDesignWorkBoolId = int.Parse(questionSplit[1]);
-                            break;
-                        case "SchoolsDesignWorkBoolId2":
-                            additionalInformation.SchoolsDesignWorkBoolId2 = int.Parse(questionSplit[1]);
-                            break;
-                        case "SchoolsDesignWorkBoolId3":
-                            additionalInformation.SchoolsDesignWorkBoolId3 = int.Parse(questionSplit[1]);
-                            break;
-                        case "SchoolsDesignWorkBoolId4":
-                            additionalInformation.SchoolsDesignWorkBoolId4 = int.Parse(questionSplit[1]);
-                            break;
-                        case "OtherActivitiesTextId":
-                            additionalInformation.OtherActivitiesTextId = questionSplit[1];
-                            break;
-                        case "CanterburyEarthquakeRebuildWorkId":
-                            additionalInformation.CanterburyEarthquakeRebuildWorkId = questionSplit[1];
-                            break;
-                        default:
-                            throw new Exception("Add more form question 'cases'");
-                    }
+                        switch (questionSplit[0])
+                        {
+                            case "InspectionReportTextId":
+                                if(questionSplit[1] != "")
+                                {
+                                    additionalInformation.InspectionReportTextId = questionSplit[1];
+                                }                                
+                                break;
+                            case "InspectionReportBoolId":
+                                if(int.Parse(questionSplit[1]) != 0)
+                                {
+                                    additionalInformation.InspectionReportBoolId = int.Parse(questionSplit[1]);
+                                }                                
+                                break;
+                            case "ValuationTextId":
+                                if(questionSplit[1] != "")
+                                {
+                                    additionalInformation.ValuationTextId = questionSplit[1];
+                                }                                
+                                break;
+                            case "ValuationTextId2":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ValuationTextId2 = questionSplit[1];
+                                }
+                                
+                                break;
+                            case "ValuationBoolId":
+                                if (int.Parse(questionSplit[1]) != 0)
+                                {
+                                    additionalInformation.ValuationBoolId = int.Parse(questionSplit[1]);
+                                }                                
+                                break;
+                            case "SchoolsDesignWorkBoolId":
+                                if(int.Parse(questionSplit[1]) != 0)
+                                {
+                                    additionalInformation.SchoolsDesignWorkBoolId = int.Parse(questionSplit[1]);
+                                }                                
+                                break;
+                            case "SchoolsDesignWorkBoolId2":
+                                if(int.Parse(questionSplit[1]) != 0)
+                                {
+                                    additionalInformation.SchoolsDesignWorkBoolId2 = int.Parse(questionSplit[1]);
+                                }                                
+                                break;
+                            case "SchoolsDesignWorkBoolId3":
+                                if (int.Parse(questionSplit[1]) != 0)
+                                {
+                                    additionalInformation.SchoolsDesignWorkBoolId3 = int.Parse(questionSplit[1]);
+                                }                                
+                                break;
+                            case "SchoolsDesignWorkBoolId4":
+                                if(int.Parse(questionSplit[1]) != 0)
+                                {
+                                    additionalInformation.SchoolsDesignWorkBoolId4 = int.Parse(questionSplit[1]);
+                                }                                
+                                break;
+                            case "OtherActivitiesTextId":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.OtherActivitiesTextId = questionSplit[1];
+                                }                                
+                                break;
+                            case "CanterburyEarthquakeRebuildWorkId":
+                                if(questionSplit[1] != "")
+                                {
+                                    additionalInformation.CanterburyEarthquakeRebuildWorkId = questionSplit[1];
+                                }                                
+                                break;
+                            default:
+                                throw new Exception("Add more form question 'cases'");
+                        }
+                    
+                    }                    
+                    catch (Exception ex) 
+                    {
+                        Console.WriteLine(ex.Message);
+                    }                                            
                 }
 
                 sheet.RevenueData.AdditionalActivityInformation = additionalInformation;

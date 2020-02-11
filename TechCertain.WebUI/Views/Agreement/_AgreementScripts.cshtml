@@ -543,16 +543,19 @@
     }
 
     function Cancell() {
+        debugger;
         var sheetId = $('#InformationSheetId').val();
         var agreementid = $('#ClientAgreementId').val();
         var notes = $('#CancellNotes').val();
         var cancelleffectivedate = $('#CancellEffectiveDate').val();
+        var cancelAgreementReason = $('#CancelAgreementReason').val();
 
          var postData = {
                 "InformationId": sheetId,
                 "AgreementId": agreementid,
                 "CancellNotes": notes,
-                "CancellEffectiveDate" : cancelleffectivedate
+                "CancellEffectiveDate": cancelleffectivedate,
+                "CancelAgreementReason" : cancelAgreementReason
         };
         $.ajax({
                 url: '@Url.Action("CancellAgreement", "Agreement")',
@@ -562,7 +565,8 @@
                 data: postData,
                 async: true
             })
-           .done(function (data) {
+            .done(function (data) {
+               debugger;
                //$.smallBox({
                //    title: "Agreement has been cancelled",
                //    color: "#5F895F",

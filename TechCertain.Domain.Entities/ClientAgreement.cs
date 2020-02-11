@@ -109,7 +109,7 @@ namespace TechCertain.Domain.Entities
         public virtual DateTime CancelledEffectiveDate { get; set; }
 
         public virtual User CancelledByUserID { get; set; }
-
+        public virtual string CancelAgreementReason { get; set; }
         public virtual string PolicyNumber { get; set; }
 
         public virtual int ReferenceNumber { get; protected set; }

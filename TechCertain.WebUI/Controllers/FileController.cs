@@ -97,6 +97,7 @@ namespace TechCertain.WebUI.Controllers
                         string html = _fileService.FromBytes(doc.Contents);
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
+                            //using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(virtualFile, false))
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
                                 // Add a main document part. 
@@ -107,7 +108,7 @@ namespace TechCertain.WebUI.Controllers
                                 converter.ImageProcessing = ImageProcessing.AutomaticDownload;
                                 converter.ParseHtml(html);
                             }
-                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
+                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".doc");
                         }
                     }
                 }
