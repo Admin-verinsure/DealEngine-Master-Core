@@ -23,6 +23,18 @@ namespace TechCertain.WebUI.Controllers
             _userService = userService;
         }
 
+        public async Task<IActionResult> RedirectToLocal(string returnUrl = "")
+        {
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
+                && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
+            {
+                return Redirect(returnUrl);
+            }
+
+            // If we cannot verify if the url is local to our host we redirect to a default location            
+            return Redirect("~/Home/Index");
+        }
 
         public async Task<User> CurrentUser()
         {

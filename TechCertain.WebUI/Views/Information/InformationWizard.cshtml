@@ -1172,22 +1172,25 @@
 
         });
 
-        function CloseAdvisory(clientInformationSheetId) {            
-            $('#modal').modal('hide');
-            
-            if (typeof clientInformationSheetId !== null) {                
+        function CloseAdvisory(clientInformationSheetId) {                                   
+            if (typeof clientInformationSheetId !== null) {
                 var postData = { ClientInformationSheetId: clientInformationSheetId };
                 $.ajax({
                     url: '@Url.Action("CloseAdvisory", "Services")',
-                    type: "POST",
+                    type: "GET",
                     data: postData
                 })
-                    .done(function (data) {
+                    .done(function (data) {                        
+                        console.log(data);
                         debugger;
+                        document.location.href = "/";
                     })
                     .fail(function (a, s, d) {
                         debugger;
                     });
+            }
+            else {
+                $('#advisoryModal').modal('hide');
             }
         }
 

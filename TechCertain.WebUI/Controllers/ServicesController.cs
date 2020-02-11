@@ -3932,7 +3932,7 @@ namespace TechCertain.WebUI.Controllers
         #endregion
 
         #region Advisory
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> CloseAdvisory(string ClientInformationSheetId)
         {
             User user = await CurrentUser();
@@ -3946,7 +3946,7 @@ namespace TechCertain.WebUI.Controllers
                     await _clientAgreementService.UpdateClientAgreement(agreement);
                 }
 
-                return RedirectToAction("Index", "Home");
+                return Ok();
             }
             catch (Exception ex)
             {
