@@ -13,6 +13,7 @@ using TechCertain.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 #endregion
 
@@ -29,12 +30,16 @@ namespace TechCertain.WebUI.Controllers
         IClientAgreementService _clientAgreementService;
         IHttpClientService _httpClientService;
         IMapper _mapper;
+        IEmailService _emailService;
+        IEmailTemplateService _emailTemplateService;
         IProgrammeService _programmeService;
         IProductService _productService;
         ILogger<HomeController> _logger;
         IApplicationLoggingService _applicationLoggingService;
 
         public HomeController(
+            IEmailTemplateService emailTemplateService,
+            IEmailService emailService,
             IMapper mapper,
             IApplicationLoggingService applicationLoggingService,
             ILogger<HomeController> logger,
@@ -51,6 +56,8 @@ namespace TechCertain.WebUI.Controllers
 
             : base (userRepository)
         {
+            _emailTemplateService = emailTemplateService;
+            _emailService = emailService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
             _productService = productService;
@@ -474,7 +481,9 @@ namespace TechCertain.WebUI.Controllers
                 {
                     clientProgrammes.Add(client);                    
                 }
-                model.ClientProgrammes = clientProgrammes;
+
+                model.ClientProgrammes = clientProgrammes;     
+                model.ProgrammeId = ProgrammeId;
 
                 return View(model);
             }
@@ -483,6 +492,43 @@ namespace TechCertain.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }                       
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IssueUIS(IFormCollection formCollection)
+        {
+            User user = null;
+            Programme programme = null;            
+            string email = null;
+
+            try
+            {                
+                user = await CurrentUser();
+                programme = await _programmeService.GetProgramme(Guid.Parse(formCollection["ProgrammeId"]));
+                foreach (var key in formCollection.Keys)
+                {
+                    email = key;
+                    var correctEmail = await _userService.GetUserByEmail(email);
+                    if (correctEmail != null)
+                    {
+                        await _emailService.SendSystemEmailLogin(email);
+                        EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                        if (emailTemplate != null)
+                        {
+                            //UIS AGREEMENT
+                            await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                        }
+                    }
+
+                }
+                                            
+                return await RedirectToLocal();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
 

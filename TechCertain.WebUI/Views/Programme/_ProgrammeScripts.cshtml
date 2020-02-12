@@ -1,9 +1,4 @@
-﻿<link href="~/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-<script src="~/jquery/jquery.min.js"></script>
-<script src="~/lib/popper.js/umd/popper.min.js"></script>
-<script src="~/twitter-bootstrap/js/bootstrap.min.js"></script>
-
-<script type="text/javascript">
+﻿<script type="text/javascript">
 
    // $(document).ready(function(){
    //$("#myModal").modal();
@@ -71,65 +66,50 @@
         debugger;
         var InformationId = $('#Id').val();
         var postdata = { informationId: InformationId};
-        $.ajax({
-		// change back once mono decides to fix
-	    url: '@Url.Action("getselectedParty", "Programme")',
-	    type: "Post",
-        data: postdata
-	     })
+         $.ajax({
+             url: '@Url.Action("getselectedParty", "Programme")',
+             type: "Post",
+             data: postdata
+         })
             .done(function (data) {
                 debugger;
-
                 $.each(data, function (i, item) {
-                    //$('#SelectedUser[value = "Warren.J.Blomquist@marsh.com"]').attr('checked', 'checked');
-                    //.prop('checked', true);
-                    $("input[value = '"+item+"']").attr('checked', 'checked');
-
-                   // $('SelectedUser[value = "Liam.Quann@marsh.com"]').val(true);
-                   // $('#SelectedUser[value = "Liam.Quann@marsh.com"]').val(true);
-                   //                    $('#SelectedUser[value = "marsh@techcertain.com"]').prop('selected','selected');
-
-                   //$('#SelectedUser[value = "marshtest1@techcertain.com"]').prop('selected','true');
-
-                    
-                    
+                    $("input[value = '" + item + "']").attr('checked', 'checked');                    
                 });
             }).fail(function (a, s, d) {
-                       debugger;
-                   });
+                debugger;
+            });
      };
 
-    function selectorgUser() {
-        debugger;
+    function selectorgUser() {        
         var SelectedParty = $('#selectParty').val();
         var InformationId = $('#Id').val();
         var postdata = {selectedParty : SelectedParty , informationId: InformationId};
         $.ajax({
-		// change back once mono decides to fix
-	    url: '@Url.Action("selectedParty", "Programme")',
-	    type: "Post",
-        data: postdata
-	})
+            url: '@Url.Action("selectedParty", "Programme")',
+            type: "Post",
+            data: postdata
+        })
             .done(function (data) {
-                debugger;
-            if (data.length > 0) {
-                $('#div1').empty();
-                $('#div1').append("<label class=\"label\" id=\"SelectedUser\">Select User:</label><br>");
-                $('#div1').append("<input type=\"checkbox\" onclick='boxdisable(this)' name=\"checkbox\" id=\"checkboxall\" /> Select All <br/>");
+                if (data.length > 0) {
+                    $('#div1').empty();
+                    $('#div1').append("<label class=\"label\" id=\"SelectedUser\">Select User:</label><br>");
+                } else {
+                    $('#div1').empty();    
+                };
 
-            } else {
-                $('#div1').empty();
-                //$('#div1').append("<label class=\"label\" id=\"User\">No User associated with party:</label><br>");
-            };
+                $.each(data, function (i, item) {
+                    $('#div1').append("<div class=\"input-group\"><div class=\"input-group-prepend\"> " +
+                        "<div class=\"input-group-text\"><input type=\"checkbox\" name=\"selectedEmail\" value=\"" + item.email + "\"> " +
+                        "</div ></div > <input type=\"text\" class=\"form-control\" name=\"PartyOrg\" value=" + item.email + " - " + item.name + ">" + 
+                            "</div ></div >");        
+                });
 
-            $.each(data, function (i, item) {
-                  $('#div1').append("<input type=\"checkbox\" class=\"PartyOrg\" name=\"PartyOrg\" value=" + item.email + ">" + item.name + "(" + item.email + ")"+"<br>");
-            });
 
                 getseletedorgUser();
-	});
+            });
     };
-
+                       
     function boxdisable(source) {
        debugger;
      var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -140,33 +120,25 @@
     }
 
     function addselectorgUser(Title) {
+        
+        //var InformationId = $('#Id').val();
+        var test = document.getElementById("issueNotifyForm");
         debugger;
-        var InformationId = $('#Id').val();
+        //var favorite = [];
+        //$.each($("input[name='PartyOrg']:checked"), function () {
+        //    favorite.push($(this).val());
+        //});
 
-        var favorite = [];
-        $.each($("input[name='PartyOrg']:checked"), function () {
-            favorite.push($(this).val());
-        });
-
-        var proddata = { selectedParty: favorite, informationId: InformationId,title : Title };
+        //var proddata = { selectedParty: favorite, informationId: InformationId,title : Title };
         $.ajax({
-		// change back once mono decides to fix
-	    url: '@Url.Action("AddselectedParty", "Programme")',
-	    type: "Post",
-        data: proddata
-	})
+            url: '@Url.Action("AddselectedParty", "Programme")',
+            type: "Post"
+        })
         .done(function (data) {
             debugger;
-            //$.smallBox({
-            //    title: "Selected Users has been added for notification",
-            //    color: "#5F895F",
-            //    iconSmall: "fa fa-check bounce animated",
-            //    timeout: 4000
-            //});
-
-	     }) .fail(function (a, s, d) {
-                       debugger;
-                   });
+        }).fail(function (a, s, d) {
+            debugger;
+        });
     };
     @*function selectorgUser() {
         debugger;

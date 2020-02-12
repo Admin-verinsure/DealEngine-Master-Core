@@ -121,15 +121,23 @@ namespace TechCertain.Services.Impl
 			email.Send ();
 		}
 
-        public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents)
+        public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {
-            //string subject = emailTemplate.Subject;
-            string body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
+            var user = await _userService.GetUserByEmail(recipent);
+
+            List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
+            mergeFields.Add(new KeyValuePair<string, string>("[[FirstName]]", user.FirstName));
+
+            string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {                
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }            
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
             email.WithSubject (emailTemplate.Subject);
-			email.WithBody (body);
+			email.WithBody (systememailbody);
 			email.UseHtmlBody (true);
             if(documents != null)
             {
