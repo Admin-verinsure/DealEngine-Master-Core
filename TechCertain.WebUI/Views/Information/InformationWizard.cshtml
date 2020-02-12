@@ -1118,8 +1118,7 @@
 @section pagespecific {    
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     <script>
-        $(window).on("load", function () {
-            debugger;
+        $(window).on("load", function () {            
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');
@@ -1173,8 +1172,26 @@
 
         });
 
-        function CloseAdvisory() {
-            $('#modal').modal('hide');
+        function CloseAdvisory(clientInformationSheetId) {                                   
+            if (typeof clientInformationSheetId !== null) {
+                var postData = { ClientInformationSheetId: clientInformationSheetId };
+                $.ajax({
+                    url: '@Url.Action("CloseAdvisory", "Services")',
+                    type: "GET",
+                    data: postData
+                })
+                    .done(function (data) {                        
+                        console.log(data);
+                        debugger;
+                        document.location.href = "/";
+                    })
+                    .fail(function (a, s, d) {
+                        debugger;
+                    });
+            }
+            else {
+                $('#advisoryModal').modal('hide');
+            }
         }
 
               

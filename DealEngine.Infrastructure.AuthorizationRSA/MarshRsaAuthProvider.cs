@@ -129,10 +129,9 @@ namespace DealEngine.Infrastructure.AuthorizationRSA
                         xDoc.LoadXml(challengeResponseXmlStr);
                         var challengeResponse = await BuildChallengeResponse(xDoc);                                               
                         response = challengeResponse;
-
-                        //Placeholder
+                        
                         rsaUser.Otp = ((OTPChallengeResponse)challengeResponse.credentialChallengeList.acspChallengeResponseData.payload).otp;
-                        //_emailService.MarshRsaOneTimePassword(rsaUser.Email, rsaUser.Otp);
+                        _emailService.MarshRsaOneTimePassword(rsaUser.Email, rsaUser.Otp);
                     }
                     catch (Exception ex)
                     {

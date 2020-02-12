@@ -92,17 +92,7 @@ namespace TechCertain.Domain.Entities
         {
             return Products.SelectMany((arg) => arg.Documents);
         }
-        
-		//public virtual IEnumerable<InformationSection> GetInformationSections ()
-		//{
-		//	List<InformationSection> sections = new List<InformationSection> ();
-
-		//	//sections.AddRange (Products.SelectMany ((arg) => arg.SharedViews));
-		//	// TODO modify to include shared panels
-		//	sections.AddRange (Products.SelectMany ((arg) => arg.UniqueQuestions));
-
-		//	return sections;
-		//}
+       
 	}
 
 }
