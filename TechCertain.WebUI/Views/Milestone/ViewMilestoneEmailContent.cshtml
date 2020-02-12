@@ -20,7 +20,7 @@
 
 
 <script type="text/javascript">
-@*        ClassicEditor
+        ClassicEditor
             .create(document.querySelector('#emailTemplate'))
             .then(newEmailBody => {
                 editorEmail = newEmailBody;
@@ -28,13 +28,13 @@
             .catch(error => {
                 console.error(error);
             });
-*@
+
            function GetEmailContentJson()
            {
                return {
                    EmailAdress: $("#Emailaddress").val(),
                    Subject: $("#@(Html.IdFor(m => m.EmailTemplate.Subject))").val(),
-                   Body: window.editor.getData()
+                   Body: editorEmail.getData()
                };
            }
 

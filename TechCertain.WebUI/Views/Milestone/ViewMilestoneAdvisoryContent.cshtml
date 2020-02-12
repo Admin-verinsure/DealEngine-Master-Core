@@ -6,7 +6,7 @@
 </div>
 
 <script type="text/javascript">
-@*    ClassicEditor
+    ClassicEditor
         .create(document.querySelector('#advisory'))
         .then(newAdvisory => {
             editorAdvisory = newAdvisory;
@@ -14,13 +14,11 @@
         .catch(error => {
             console.error(error);
         });
-*@
 
     function GetAdvisoryContentJson() {
+
         return {
-            // Advisory: editorAdvisory.getData()
-            Advisory: window.editor.getData()
+            Advisory: editorAdvisory.getData()
         };
     }
-
 </script>
