@@ -144,37 +144,45 @@
             <!-- end widget div -->
         </div>
         <div class="row">
-            <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-unlock-user" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
-                <!-- Header Start-->
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
-                    <h2> Unlock User </h2>
-                </header>
-                <!-- Header End -->
-                <!-- widget div-->
-                <form id="unlockUser" class="client-form" action="/Admin/UnlockUser" method="post" novalidate="novalidate">
-                    <table class="table table-bordered table-striped">
-                        <tr>
-                            <td>
-                                <label class="label">Enter username of user to be unlocked</label>
-                            </td>
-                            <td>
-                                <select data-placeholder="Click here to search locked users" id="unlockUser" name="unlockUser" multiple class="col-6 chosen-select form-control b">
-                                    @foreach (var user in Model.LockedUsers)
-                                    {
-                                        <option value="@user.Value">@user.Text</option>
-                                    }
-                                </select>
-                            </td>
-                            <td>
-                                <button type="submit" class="btn btn-primary">
-                                    Unlock
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
+
+            @if (Model.LockedUsers != null)
+            {
+                <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-unlock-user" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
+                    <!-- Header Start-->
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
+                        <h2> Unlock User </h2>
+                    </header>
+                    <!-- Header End -->
+                    <!-- widget div-->
+                    <form id="unlockUser" class="client-form" action="/Admin/UnlockUser" method="post" novalidate="novalidate">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+
+                                <td>
+                                    <label class="label">Enter username of user to be unlocked</label>
+                                </td>
+                                <td>
+
+                                    <select data-placeholder="Click here to search locked users" id="unlockUser" name="unlockUser" multiple class="col-6 chosen-select form-control b">
+                                        @foreach (var user in Model.LockedUsers)
+                                        {
+                                            <option value="@user.Value">@user.Text</option>
+                                        }
+                                    </select>
+
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary">
+                                        Unlock
+                                    </button>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            }
         </div>
 
         <div class="row">

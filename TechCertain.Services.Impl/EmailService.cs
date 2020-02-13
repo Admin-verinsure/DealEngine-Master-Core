@@ -125,8 +125,7 @@ namespace TechCertain.Services.Impl
         {
             var user = await _userService.GetUserByEmail(recipent);
 
-            List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-            mergeFields.Add(new KeyValuePair<string, string>("[[FirstName]]", user.FirstName));
+            List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet);            
 
             string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)

@@ -3,122 +3,79 @@
 @using TechCertain.WebUI.Helpers.CustomHtml
 
 <!-- MAIN CONTENT -->
-<div id="content">
+<div id="content" class="container">
+
     <div class="row">
-        <div class="row">
-            <!-- col -->
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <h1 class="page-title txt-color-blueDark">
-                    <!-- PAGE HEADER -->
-                    <i class="fa-fw fa fa-home"></i>  <span>
-                        <a href="~/Programme/TermSheetConfirguration/@Model.BaseProgrammeID">Package Term Sheet</a>
-                        <a href="~/Programme/EmailTemplate/@Model.BaseProgrammeID">> Programme Email Templates</a>
-                        > Add/Edit Email Template
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-home"></i>  <span>
+                <a href="~/Programme/TermSheetConfirguration/@Model.BaseProgrammeID">Package Term Sheet</a>
+                <a href="~/Programme/EmailTemplate/@Model.BaseProgrammeID">> Programme Email Templates</a>
+                > Add/Edit Email Template
 
-                    </span>
-
-
-                </h1>
-            </div>
-            <!-- end col -->
-        </div>
+            </span>
+        </h1>
+    </div>
+    <div class="row">
         <span>
             <a onclick="location.href='@Url.Action("EmailTemplate", "Programme",new { Id =@Model.BaseProgrammeID })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
-        <section class="col-xs-12"></section>
     </div>
-    <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <!-- NEW WIDGET START -->
-        <div class="col col-12">
-            <!-- Widget ID (each widget will need unique ID)-->
-            <div class="jarviswidget" id="wid-id-10"
-                 data="false"
-                 data-widget-editbutton="false"
-                 data-widget-togglebutton="false"
-                 data-widget-deletebutton="false"
-                 data-widget-custombutton="false"
-                 data-widget-sortable="false">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-                    <h2>@ViewBag.Title </h2>
-                </header>
+    <div class="row">
+        <div class="jarviswidget jarviswidget-color-blue" id="wid-id-10">
+            <header>
+                <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                <h2>@ViewBag.Title </h2>
+            </header>
+            <form action="~/Programme/SendEmailTemplates/@Model.BaseProgrammeID" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
 
-                <!-- widget div-->
-                <div>
-                    <!-- widget content -->
-                    <div class="smart-form no-padding">
-                        <div class="widget-body widget-hide-overflow">
-                            <form action="~/Programme/SendEmailTemplates/@Model.BaseProgrammeID" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                                <div>
-                                    @Html.HiddenFor(m => m.BaseProgrammeID)
-                                    @Html.HiddenFor(m => m.Type)
-                                    @Html.HiddenFor(m => m.Description)
-                                    <!-- widget edit box -->
-                                    <div class="jarviswidget-editbox">
-                                        <!-- This area used as drop downSS edit box -->
-                                    </div>
-                                    <!-- end widget edit box -->
-                                    <!-- widget content -->
+                @Html.HiddenFor(m => m.BaseProgrammeID)
+                @Html.HiddenFor(m => m.Type)
+                @Html.HiddenFor(m => m.Description)
 
-                                    <div class="col col-10">
-                                        <div class="alert alert-info">
-                                            <p>@Model.Description</p>
-                                        </div>
-                                        <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
-                                            Subject:
-                                        </section>
-                                        <section class="col col-xs-12 col-sm-11 col-md-11 col-lg-11">
-                                            @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;" })
-                                        </section>
-                                        <section class="col col-xs-12 col-sm-1 col-md-1 col-lg-1">
-                                            Body:
-                                        </section>
-                                        <section class="col col-xs-12 col-sm-11 col-md-11 col-lg-11">
-                                            @Html.TextAreaFor(m => m.Body)
-                                        </section>
-                                        <br />
-                                       
-                                        <br />
-                                    </div>
-                                    <!-- end widget content -->
-                                </div>
-                            </form>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>@Model.Description</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;", @class = "form-control", @placeholder = "Subject" })
                         </div>
-                        <div class="widget-body widget-hide-overflow">
-                            <fieldset>
-                                <div class="row">
-                                    @if (User.HasClaim("EditEmails", "EditEmails"))
-                                    {
-                                        <section class="col col-12">
-                                            <button onclick="SaveEmailTemplate()" class="btn btn-primary" id="SaveEmailTemplate">Save Email Template</button>
-                                        </section>
-                                    }
-                                </div>
-                            </fieldset>
+                        <div class="form-group">
+                            @Html.TextAreaFor(m => m.Body, new { @class = "form-control", @placeholder = "Body" })
                         </div>
+
+                    </div>
+                    <div class="card-footer">
+                        @if (User.HasClaim("EditEmails", "EditEmails"))
+                        {
+                            <div class="form-group">
+                                <button onclick="SaveEmailTemplate()" class="btn btn-primary" id="SaveEmailTemplate">Save Email Template</button>
+                            </div>
+                        }
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
-    </section>
-    <div class="modal" id="ckmodal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Select an Image</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
-                </div>
-                <div class="modal-footer" style="display:flex;">
-                    <label for="selImg" style="float:left;">Selected Image: </label>
-                    <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
-                    <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
-                </div>
+    </div>
+</div>
+<div class="modal" id="ckmodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select an Image</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+            </div>
+            <div class="modal-footer" style="display:flex;">
+                <label for="selImg" style="float:left;">Selected Image: </label>
+                <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
+                <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 
@@ -135,8 +92,6 @@
 
             var body = window.editor.getData();
 			var bodyElement = $("#@Html.IdFor(m => m.Body)");
-			// hack because jquery will only escape text inside an element, so we'll store the text, & get the escaped text, and then resave that
-			// using hack because escape(...) was deprecated
             bodyElement.text(bodyElement.text(body).html());
 
 			$.ajax({
@@ -145,10 +100,10 @@
 			    data: $("#update-form").serialize() // serializes the form's elements.
 			})
 	        .done(function (json) {
-				console.log(json);
+				debugger
 	        })
 	        .fail(function (err, ajaxOptions, thrownError) {
-				alert("Unable to save." + err.responseText );
+                debugger;
 				console.log(err);
 				console.log(ajaxOptions);
 				console.log(thrownError);

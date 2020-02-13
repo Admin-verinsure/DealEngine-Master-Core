@@ -877,7 +877,7 @@ namespace TechCertain.WebUI.Controllers
                     strrecipentemail = userdb.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
+                //await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
@@ -1437,7 +1437,7 @@ namespace TechCertain.WebUI.Controllers
                             }
 
                         }
-                        _emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
+                        //_emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
                     }
                     model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                     Boolean nextInfoSheet = false;
@@ -2353,7 +2353,7 @@ namespace TechCertain.WebUI.Controllers
                     strrecipentemail = user.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
+                //await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
@@ -2551,7 +2551,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     //Payment failed
                     status = "Bound and pending payment";
-                    _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                    //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                     foreach (ClientAgreement agreement in programme.Agreements)
                     {
                         using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2584,7 +2584,7 @@ namespace TechCertain.WebUI.Controllers
                 {
 
                     //Payment successed
-                    await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                    //await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
 
                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
 
@@ -2657,19 +2657,17 @@ namespace TechCertain.WebUI.Controllers
 
                         }
                         
-                        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
-                        await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                        //send policy twice?
                         //await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
+                        //await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                     }
 
                     if (hasEglobalNo)
                     {
-                        await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                        //await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                     }
                     else
                     {
-                        _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                        //_emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                     }
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2744,6 +2742,7 @@ namespace TechCertain.WebUI.Controllers
                     model.CurrentUser = user;
 
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
+                    model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements)
