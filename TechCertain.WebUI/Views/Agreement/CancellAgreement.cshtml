@@ -98,12 +98,8 @@
                         </td>
                         <td>
                             <label class="input ">
-                                @*<i class="icon-append fa fa-calendar"></i>*@
                                 <input name="CancellEffectiveDate" placeholder="Cancel Effective Date" class="Startdate form-control b" data-dateformat="dd/mm/yy" id="CancellEffectiveDate" type="text" required>
                             </label>
-                            @*<label class="input ">
-                                    <input name="CancellEffectiveDate" placeholder="Cancel Effective Date" class="Startdate form-control b" data-dateformat="dd/mm/yy" id="CancellEffectiveDate" type="text" required> <i class="icon-append fa fa-calendar"></i>
-                                </label>*@
                         </td>
                     </tr>
 
@@ -123,21 +119,9 @@
                             <label>Cancellation Action: </label>
                         </td>
                         <td>
-                            @*<button onclick='$("#Showterms").show();' type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Request Cancel </i></button>*@
-                            @*<button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Confirm Cancel </i></button>*@
-                            <button onclick="Cancell()" type="button" class="btn btn-success btn-sm" id="SendInvoice"><i class="fa fa-edit"></i> Request Cancel </button>
+                            <button onclick="Cancell()" type="button" class="btn btn-success btn-sm" id="RequestCancel"><i class="fa fa-edit"></i> Request Cancel </button>
                         </td>
                     </tr>
-
-
-                    @*<tr>
-                            <td>
-                            </td>
-                            <td>
-                                <button onclick="Cancell()" type="button" class="btn btn-success btn-sm">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeId" class="btn txt-color-white bg-color-yellow btn-sm"><i class="fa fa-trash"></i> Cancel</a>
-                            </td>
-                        </tr>*@
 
                 </table>
             </form>
@@ -146,7 +130,6 @@
     </div>
 </div>
 
-@*<div class="container" id="Showterms" style="display:none">*@
 <div class="container" id="Showterms">
 
     @if (Model.BVTermsCan != null)
@@ -367,7 +350,7 @@
     @if (Model.BVTermsCan != null || Model.MVTermsCan != null)
     {
         <div>
-            <button onclick="EditBoat();" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"> Confirm Cancel </i></button>
+            <button onclick="ConfirmCancel();" type="button" class="btn btn-success btn-sm" id="ConfirmCancel"><i class="fa fa-edit"> Confirm Cancel </i></button>
         </div>
     }
     </div>

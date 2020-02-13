@@ -504,7 +504,7 @@ namespace TechCertain.WebUI.Controllers
                 string paymentType = "Credit";
                 Guid transactionreferenceid = Guid.NewGuid();
 
-                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, null);
+                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, false, null);
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
@@ -706,7 +706,7 @@ namespace TechCertain.WebUI.Controllers
             string paymentType = "Credit";
             Guid transactionreferenceid = Guid.NewGuid();
 
-            var xmlPayload = eGlobalSerializer.SerializePolicy(originalEglobalsubmission.EGlobalSubmissionClientProgramme, user, _unitOfWork, transactionreferenceid, paymentType, true, originalEglobalsubmission);
+            var xmlPayload = eGlobalSerializer.SerializePolicy(originalEglobalsubmission.EGlobalSubmissionClientProgramme, user, _unitOfWork, transactionreferenceid, paymentType, true, false, originalEglobalsubmission);
 
             var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
@@ -716,7 +716,6 @@ namespace TechCertain.WebUI.Controllers
 
             await _programmeService.Update(originalEglobalsubmission.EGlobalSubmissionClientProgramme).ConfigureAwait(false);
 
-            //return Redirect("EditBillingConfiguration" );
             var url = "/Agreement/ViewAcceptedAgreement/" + originalEglobalsubmission.EGlobalSubmissionClientProgramme.Id;
             return Json(new { url });
         }

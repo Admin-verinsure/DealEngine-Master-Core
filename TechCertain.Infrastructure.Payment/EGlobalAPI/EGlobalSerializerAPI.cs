@@ -28,7 +28,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// Serializes the policy into an XML file, sends it to EGlobal, and stores a local copy
         /// </summary>
         /// <param name="objPolicy">Object policy.</param>
-        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, Guid transactionreferenceid, string paymentType, bool reversetran, 
+        public string SerializePolicy(ClientProgramme programme, User CurrentUser, IUnitOfWork _unitOfWork, Guid transactionreferenceid, string paymentType, bool reversetran, bool canceltran, 
             EGlobalSubmission originaleglobalsubmission)
         {
             string xml = "Failed to Serialize programme ";
@@ -38,9 +38,11 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 foreach (Package package in programme.BaseProgramme.Packages)
                 {
                     EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
-                    if (reversetran && originaleglobalsubmission!= null)
+                    if (reversetran && originaleglobalsubmission != null)
                     {
                         EGlobalPolicyAPI.CreateReversePolicyInvoice(originaleglobalsubmission);
+                    } else if (canceltran) {
+                        EGlobalPolicyAPI.CreateCancelPolicyInvoice(package, programme);
                     } else
                     {
                         EGlobalPolicyAPI.CreatePolicyInvoice();
@@ -151,7 +153,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         {
             EGlobalPolicy = GetEGlobalXML(package, programme, CurrentUser);
 
-            EGlobalPolicyAPI.CreateCancelPolicyInvoice();
+            EGlobalPolicyAPI.CreateCancelPolicyInvoice(package, programme);
             EGlobalPolicyAPI.SaveTransaction();
 
             string xml = EGlobalPolicy.Serialize();
