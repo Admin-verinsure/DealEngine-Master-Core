@@ -63,6 +63,7 @@ namespace TechCertain.Domain.Entities
         public virtual DateTime ExpiryDate { get; set; }
 
         public virtual DateTime QuoteDate { get; set; }
+        public virtual bool SentOnlineAcceptance { get; set; }
 
         public virtual decimal Brokerage { get; set; }
 

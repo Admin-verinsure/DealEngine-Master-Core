@@ -30,15 +30,13 @@ namespace TechCertain.WebUI.Controllers
         IClientAgreementService _clientAgreementService;
         IHttpClientService _httpClientService;
         IMapper _mapper;
-        IEmailService _emailService;
-        IEmailTemplateService _emailTemplateService;
+        IEmailService _emailService;        
         IProgrammeService _programmeService;
         IProductService _productService;
         ILogger<HomeController> _logger;
         IApplicationLoggingService _applicationLoggingService;
 
-        public HomeController(
-            IEmailTemplateService emailTemplateService,
+        public HomeController(            
             IEmailService emailService,
             IMapper mapper,
             IApplicationLoggingService applicationLoggingService,
@@ -55,8 +53,7 @@ namespace TechCertain.WebUI.Controllers
             )
 
             : base (userRepository)
-        {
-            _emailTemplateService = emailTemplateService;
+        {            
             _emailService = emailService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;

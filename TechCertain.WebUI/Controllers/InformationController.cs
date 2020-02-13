@@ -20,6 +20,8 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class InformationController : BaseController
     {
+        IProgrammeService _programmeService;
+        IEmailTemplateService _emailTemplateService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<InformationController> _logger;
         ISharedDataRoleService _sharedDataRoleService;
@@ -44,8 +46,7 @@ namespace TechCertain.WebUI.Controllers
         IMilestoneService _milestoneService;
         IAdvisoryService _advisoryService;
         IOrganisationService _organisationService;
-        IInsuranceAttributeService _insuranceAttributeService;        
-        IProgrammeService _programmeService;
+        IInsuranceAttributeService _insuranceAttributeService;                
         IBusinessActivityService _businessActivityService;
         IRevenueActivityService _revenueActivityService;
         IProductService _productService;
@@ -55,6 +56,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         public InformationController(
+            IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<InformationController> logger,
             IInformationSectionService informationSectionService,
@@ -91,6 +93,7 @@ namespace TechCertain.WebUI.Controllers
             )
             : base(userService)
         {
+            _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
             _revenueActivityService = revenueActivityService;
@@ -3180,9 +3183,27 @@ namespace TechCertain.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 throw ex;
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SendOnlineAcceptance(string ClientAgreement)
+        {
+            var clientAgreement = await _clientAgreementService.GetAgreement(Guid.Parse(ClientAgreement));
+            var programme = clientAgreement.ClientInformationSheet.Programme.BaseProgramme;
+            
+
+            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendAgreementOnlineAcceptanceInstructions");
+            if (emailTemplate != null)
+            {
+                await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, null, null, null);
+                clientAgreement.SentOnlineAcceptance = true;
+                await _clientAgreementService.UpdateClientAgreement(clientAgreement);
+            }
+
+            return await RedirectToLocal();
         }
 
         IEnumerable<InformationSectionViewModel> GetCommonPanels()
