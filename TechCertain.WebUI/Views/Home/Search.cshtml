@@ -1,39 +1,30 @@
-﻿@*@model TechCertain.WebUI.Models.InformationViewModel*@
-
-<div class="padding-10">
-    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
-        <fieldset>
-            <div class="row">
-                <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                    <label class="label">Search Option</label>
-                    <label class="input">
-                        <select class="form-control b" id="AddBoatCeaseReason" name="BoatCeaseReason">
-                            <option selected="selected" value="">-- Select --</option>
-                            <option value="Reference">Reference Number</option>
-                            @*<option value="Reference">Decommision</option>*@
-                            @*<option value="3">Writen off</option>
-                    <option value="4">Transfered</option>
-                    <option value="9">Other</option>*@
-                        </select>
-                    </label>
-                </section>
-
-                <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                    <label class="input">
-                        <i></i>
-                        <input data-type="TEXTBOX" id="SearchValue" placeholder="Search Value">
-                    </label>
-                </section>
-                @*<a onclick="location.href='@Url.Action("TermSheetTemplate", "Programme", new { value =  });'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>*@
-
-                <a onclick="Search()" +><i class="fa fa-search" style="font-size:28px;margin-top:13px;"></i></a>
-                @*<a class="btn btn-primary btn-xs" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>*@
-
-
+﻿<div class="container">
+    <form id="proposalcreate-form" class="client-form" novalidate="novalidate" action="ViewProgramme" method="post">        
+            <div class="card">
+                <div class="card-header">
+                    <h5>
+                        Search
+                    </h5>
+                </div>
             </div>
-
-        </fieldset>
-    </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <select class="form-control b" id="SearchTerm" name="SearchTerm">
+                        <option selected="selected" value="">-- Search Option --</option>
+                        <option value="1">Reference Number</option>
+                        <option value="2">Insured First Name</option>
+                        <option value="3">Insured Last Name</option>
+                        <option value="4">Boat Name</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="SearchValue" id="SearchValue" placeholder="Search Value">
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-success" type="submit">Search</button>
+            </div>        
+    </form>
 </div>
 
 <script type="text/javascript">
@@ -53,33 +44,12 @@
                 console.log(json);
 	        })
             .fail(function (err, ajaxOptions, thrownError) {
-                                debugger;
+                debugger;
 
 				alert("Unable to save." + err.responseText );
 				console.log(err);
 				console.log(ajaxOptions);
 				console.log(thrownError);
             });
-
-
-
-            @*$.ajax({
-            // change back once mono decides to fix
-            url: '@Url.Action("ViewProgrammeByFilter", "Home")',
-            type: "Get",
-            data: postData
-             })
-             .done(function (data) {
-                 debugger;
-                 alert("Unabdfle to save.");
-                 //$("#ViewProgramme").load(url, function () {
-                 //          $('#getAgreementModal').hide();
-                 //      });
-                                       location.href='@Url.Action("ViewProgrammeByFilter", "Home",new { Id = val })'
-
-             }).fail(function (a, s, d) {
-                 debugger;
-              alert("Unable to save.");
-             });*@
     };
 </script>
