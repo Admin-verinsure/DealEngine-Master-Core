@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using TechCertain.Infrastructure.Payment.EGlobalAPI;
 using Microsoft.Extensions.Logging;
 using TechCertain.WebUI.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -1080,16 +1081,16 @@ namespace TechCertain.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddselectedParty(string[] selectedParty,Guid informationId, String title)
-        {
-            PartyUserViewModel model = new PartyUserViewModel();
+        public async Task<IActionResult> AddselectedParty(IFormCollection collection)
+        {            
             User user = null;
-
             try
             {
                 user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgrammeById(informationId);
+                Programme programme = await _programmeService.GetProgrammeById(Guid.Parse(collection["Id"]));
                 string userType = "";
+                var title = collection["Name"];
+                var selectedParty = collection["selectedEmail"];
                 if (programme != null)
                 {
                     using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
@@ -1159,9 +1160,9 @@ namespace TechCertain.WebUI.Controllers
                         await uow.Commit();
 
                     }
-                    
+
                 }
-                return Json(model);
+                return await RedirectToLocal();
             }
             catch (Exception ex)
             {

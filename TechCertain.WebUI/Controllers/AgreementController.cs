@@ -877,7 +877,7 @@ namespace TechCertain.WebUI.Controllers
                     strrecipentemail = userdb.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
+                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
@@ -2353,7 +2353,7 @@ namespace TechCertain.WebUI.Controllers
                     strrecipentemail = user.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
+                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
@@ -2576,7 +2576,7 @@ namespace TechCertain.WebUI.Controllers
                             await uow.Commit();
                         }
                     }
-                    //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                    
                     return RedirectToAction("ProcessedAgreements", new { id = Id });
 
                 }
@@ -2656,13 +2656,11 @@ namespace TechCertain.WebUI.Controllers
                             }
 
                         }
-
-                        //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
-
-
+                        
+                        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
                         await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                        //send policy twice?
+                        //await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
                     }
 
                     if (hasEglobalNo)

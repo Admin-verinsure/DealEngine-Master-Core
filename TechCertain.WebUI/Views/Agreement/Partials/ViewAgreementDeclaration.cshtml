@@ -52,19 +52,25 @@
         <section class="col col-10">
             <div class="form-group">
                 <label class="radio">
-                    <input id="agreementAccept" name="radio" type="radio">
-                    <i></i>Yes, I accept the offered Agreement
+                    <a>
+                        <input id="agreementAccept" name="radio" type="radio">
+                        <i></i>Yes, I accept the offered Agreement
+                    </a> 
                 </label>
             </div>
             <div class="form-group">
                 <label class="radio">
-                    <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModal">
-                    <i></i>No, I wish to decline the offered Agreement
+                    <a>
+                        <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModal" >
+                        <i></i>No, I wish to decline the offered Agreement
+                    </a>
                 </label>
             </div>
         </section>
     </div>
 </div>
+
+
 @if (Model.Advisory != null)
 {
     <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true">

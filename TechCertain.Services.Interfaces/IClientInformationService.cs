@@ -18,6 +18,7 @@ namespace TechCertain.Services.Interfaces
         Task<List<ClientInformationSheet>> GetAllInformationFor(String referenceId);
         Task UpdateInformation (ClientInformationSheet sheet);
 		Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
+        Task<List<ClientInformationSheet>> FindByBoatName(string searchValue);
     }
 }
 

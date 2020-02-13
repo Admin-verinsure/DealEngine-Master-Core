@@ -28,6 +28,7 @@ namespace TechCertain.Services.Interfaces
         Task AddClaimNotificationByMembership(ClaimNotification claimNotification);
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
+        Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
     }
 }
 

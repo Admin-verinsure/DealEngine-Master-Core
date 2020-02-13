@@ -17,7 +17,7 @@ namespace TechCertain.Services.Interfaces
         string BCCEmail { get; }
         string ReplyToEmail { get; }
         Task SendPasswordResetEmail(string recipent, Guid resetToken, string originDomain);
-        Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents);
+        Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement);
         Task MarshPleaseCallMe(string sender, string subject, string body);
         Task MarshRsaOneTimePassword(string sender, string subject);
         Task ContactSupport (string sender, string subject, string body);
