@@ -3895,15 +3895,15 @@ namespace TechCertain.WebUI.Controllers
                             }
 
                         }
-                        //send out login email
-                        await _emailService.SendSystemEmailLogin(email);
-                        EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                        if (emailTemplate != null)
-                        {
-                            await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
-                        }
-                        //send out information sheet issue notification email
-                        await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                        ////send out login email
+                        //await _emailService.SendSystemEmailLogin(email);
+                        //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                        //if (emailTemplate != null)
+                        //{
+                        //    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                        //}
+                        ////send out information sheet issue notification email
+                        //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                     }
                 }
                 else
@@ -4113,15 +4113,16 @@ namespace TechCertain.WebUI.Controllers
                                 }
 
                             }
-                            //send out login email
-                            await _emailService.SendSystemEmailLogin(email);
-                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                            if (emailTemplate != null)
-                            {
-                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
-                            }
-                            //send out information sheet issue notification email
-                            await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+
+                            ////send out login email
+                            //await _emailService.SendSystemEmailLogin(email);
+                            //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            //if (emailTemplate != null)
+                            //{
+                            //    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            //}
+                            ////send out information sheet issue notification email
+                            //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                         }
                         catch (Exception ex)
                         {
