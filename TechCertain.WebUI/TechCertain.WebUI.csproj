@@ -4,15 +4,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-TechCertain.WebUI-332DB7AE-7AC6-45DB-8A70-CE31C48F596C</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <RuntimeIdentifiers>ubuntu.18.04-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\images\NewFolder\**" />
-    <Content Remove="wwwroot\images\NewFolder\**" />
-    <EmbeddedResource Remove="wwwroot\images\NewFolder\**" />
-    <None Remove="wwwroot\images\NewFolder\**" />
+    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Compile Remove="Controllers\InformationDemoController.cs" />
   </ItemGroup>
@@ -38,7 +36,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="3.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -74,7 +72,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\ckeditor\" />
-    <Folder Include="wwwroot\Images\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>
