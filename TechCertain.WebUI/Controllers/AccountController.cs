@@ -42,8 +42,10 @@ namespace TechCertain.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;        
         IHttpClientService _httpClientService;
         IAppSettingService _appSettingService;
+        IImportService _importService;
 
         public AccountController(
+            IImportService importService,
             IApplicationLoggingService applicationLoggingService,
             IAuthenticationService authenticationService,
 			SignInManager<IdentityUser> signInManager,
@@ -58,6 +60,7 @@ namespace TechCertain.WebUI.Controllers
             IOrganisationalUnitService organisationalUnitService, 
             IAppSettingService appSettingService) : base (userService)
 		{
+            _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _authenticationService = authenticationService;
             _ldapService = ldapService;
@@ -300,13 +303,15 @@ namespace TechCertain.WebUI.Controllers
 				return await RedirectToLocal();
 
             var userName = viewModel.Username.Trim();
-
+            
             try
             {                                                
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
-                string resultMessage = "";                
+                string resultMessage = "";
+
+                //await _importService.ImportAOEService(user);
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);

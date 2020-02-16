@@ -124,8 +124,17 @@ namespace TechCertain.Services.Impl
         public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {
             var user = await _userService.GetUserByEmail(recipent);
+            List<KeyValuePair<string, string>> mergeFields;
 
-            List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet);            
+            if (clientInformationSheet != null)
+            {
+                mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet);
+            }
+            else
+            {
+                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet);
+            }
+                      
 
             string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
             foreach (KeyValuePair<string, string> field in mergeFields)

@@ -29,21 +29,12 @@
     <!-- NEW WIDGET START -->
     <div class="row">
         <!-- Widget ID (each widget will need unique ID)-->
-        <div class="jarviswidget container-fluid" id="wid-id-10"
-             data="false"
-             data-widget-collapsed="false"
-             data-widget-colorbutton="false"
-             data-widget-custombutton="false"
-             data-widget-deletebutton="false"
-             data-widget-editbutton="false"
-             data-widget-fullscreenbutton="false"
-             data-widget-togglebutton="false"
-             data-widget-sortable="false">
+        <div class="card container-fluid" id="wid-id-10">
 
             <header>
             </header>
 
-            <form class="smart-form">
+            <form class="client-form">
 
                 @foreach (var item in Model)
                 {
@@ -200,7 +191,7 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 @section pagespecific {
     <script src="~/jquery/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
+    @*<link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">*@
 
     <script type="text/javascript">
           function SaveCoveroptions() {

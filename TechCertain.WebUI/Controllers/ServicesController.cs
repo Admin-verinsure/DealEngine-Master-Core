@@ -3858,52 +3858,58 @@ namespace TechCertain.WebUI.Controllers
                         user.SetPrimaryOrganisation(organisation);
                         await _userService.Update(user);
 
-
-
-                        var programme = await _programmeService.GetCoastGuardProgramme();
-                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
-                        var reference = await _referenceService.GetLatestReferenceId();
-                        var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-                        await _referenceService.CreateClientInformationReference(sheet);
-
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        try
                         {
-                            OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
-                            Boat vessel = new Boat(user)
-                            {
-                                BoatType1 = boatType,
-                                BoatType2 = craftType,
-                                HullConstruction = constructionType,
-                                HullConfiguration = hullConfiguration,
-                                BoatIsTrailered = trailered,
-                                MaxSumInsured = Convert.ToInt32(boatInsuredValue),
-                                BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
-                            };
-                            sheet.Boats.Add(vessel);
-                            organisation.OrganisationalUnits.Add(ou);
-                            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                            clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "First Mate Cover Quick Quote Consuming Process Completed"));
-                            try
-                            {
-                                Thread.Sleep(1000);
-                                await uow.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception(ex.Message);
-                            }
+                            var programme = await _programmeService.GetCoastGuardProgramme();
+                            var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+                            var reference = await _referenceService.GetLatestReferenceId();
+                            var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                            await _referenceService.CreateClientInformationReference(sheet);
 
+                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
+                                Boat vessel = new Boat(user)
+                                {
+                                    BoatType1 = boatType,
+                                    BoatType2 = craftType,
+                                    HullConstruction = constructionType,
+                                    HullConfiguration = hullConfiguration,
+                                    BoatIsTrailered = trailered,
+                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue),
+                                    BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
+                                };
+                                sheet.Boats.Add(vessel);
+                                organisation.OrganisationalUnits.Add(ou);
+                                clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "First Mate Cover Quick Quote Consuming Process Completed"));
+                                try
+                                {
+                                    Thread.Sleep(1000);
+                                    await uow.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception(ex.Message);
+                                }
+
+                            }
+                            //send out login email
+                            await _emailService.SendSystemEmailLogin(email);
+                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, sheet, null);
+                            }
+                            //send out information sheet issue notification email
+                            await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                         }
-                        //send out login email
-                        await _emailService.SendSystemEmailLogin(email);
-                        EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                        if (emailTemplate != null)
+                        catch(Exception ex)
                         {
-                            await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);                            
                         }
-                        //send out information sheet issue notification email
-                        await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                        
                     }
                 }
                 else
