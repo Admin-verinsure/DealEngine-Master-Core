@@ -39,6 +39,7 @@ namespace TechCertain.Domain.Entities
             SubTermTypeCan = subTermType;
 
             BoatTermsCan = new List<ClientAgreementBVTermCancel>();
+            MotorTermsCan = new List<ClientAgreementMVTermCancel>();
         }
 
         public virtual ClientAgreementTerm exClientAgreementTerm
