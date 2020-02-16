@@ -485,6 +485,9 @@ namespace TechCertain.WebUI.Controllers
                         decimal totalBoatFslCan = 0m;
                         decimal totalBoatPremiumCan = 0m;
                         decimal totalBoatBrokerageCan = 0m;
+                        decimal totalVehicleFslCan = 0m;
+                        decimal totalVehiclePremiumCan = 0m;
+                        decimal totalVehicleBrokerageCan = 0m;
                         expolicyperiodindaysCan = (agreement.ExpiryDate - agreement.InceptionDate).Days;
 
                         if (excaBVTerms != null && catermcan != null)
@@ -531,18 +534,55 @@ namespace TechCertain.WebUI.Controllers
                             catermcan.BrokerageCan += totalBoatBrokerageCan;
                         }
 
-                        //if (excaMVTerms != null)
-                        //{
-                        //    foreach (ClientAgreementMVTerm excaMVTerm in excaMVTerms)
-                        //    {
+                        if (excaMVTerms != null && catermcan != null)
+                        {
+                            foreach (ClientAgreementMVTerm excaMVTerm in excaMVTerms)
+                            {
+                                int vehicleperiodindaysCan = 0;
+                                decimal vehicleproratedFslCan = 0m;
+                                decimal vehicleproratedPremiumCan = 0m;
+                                decimal vehicleproratedBrokerageCan = 0m;
 
-                        //    }
-                        //}
+                                //Calculate MV cancel term
+                                if (clientAgreementModel.CancellEffectiveDate != null && excaMVTerm.Vehicle.VehicleInceptionDate != null &&
+                                    clientAgreementModel.CancellEffectiveDate >= excaMVTerm.Vehicle.VehicleInceptionDate)
+                                {
+                                    vehicleperiodindaysCan = (excaMVTerm.Vehicle.VehicleExpireDate - clientAgreementModel.CancellEffectiveDate).Days;
+                                    vehicleproratedPremiumCan = excaMVTerm.AnnualPremium * vehicleperiodindaysCan / expolicyperiodindaysCan - excaMVTerm.Premium;
+                                    vehicleproratedFslCan = excaMVTerm.AnnualFSL * vehicleperiodindaysCan / expolicyperiodindaysCan - excaMVTerm.FSL;
+                                    vehicleproratedBrokerageCan = vehicleproratedPremiumCan * excaterm.BrokerageRate / 100;
+                                }
+
+                                totalVehiclePremiumCan += vehicleproratedPremiumCan;
+                                totalVehicleFslCan += vehicleproratedFslCan;
+                                totalVehicleBrokerageCan += vehicleproratedBrokerageCan;
+
+                                using (var uow1 = _unitOfWork.BeginUnitOfWork())
+                                {
+                                    ClientAgreementMVTermCancel camvtermcan = new ClientAgreementMVTermCancel(user, excaMVTerm.Registration, excaMVTerm.Year, excaMVTerm.Make, excaMVTerm.Model, 
+                                        excaMVTerm.TermLimit, excaMVTerm.Excess, vehicleproratedPremiumCan, vehicleproratedFslCan, excaMVTerm.BrokerageRate, vehicleproratedBrokerageCan, 
+                                        excaMVTerm.VehicleCategory, excaMVTerm.FleetNumber, catermcan, excaMVTerm.Vehicle, excaMVTerm.BurnerPremium);
+                                    camvtermcan.TermCategoryCan = "active";
+                                    camvtermcan.AnnualPremiumCan = excaMVTerm.AnnualPremium;
+                                    camvtermcan.AnnualFSLCan = excaMVTerm.AnnualFSL;
+                                    camvtermcan.AnnualBrokerageCan = excaMVTerm.AnnualBrokerage;
+                                    catermcan.MotorTermsCan.Add(camvtermcan);
+                                    camvtermcan.exClientAgreementMVTerm = excaMVTerm;
+
+                                    await uow1.Commit().ConfigureAwait(false);
+                                }
+
+                            }
+
+                            catermcan.PremiumCan += totalVehiclePremiumCan;
+                            catermcan.FSLCan += totalVehicleFslCan;
+                            catermcan.BrokerageCan += totalVehicleBrokerageCan;
+                        }
 
                         if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled" || agreement.Status != "Cancel Pending") &&
                                 (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
                         {
-                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            using (var uow2 = _unitOfWork.BeginUnitOfWork())
                             {
                                 agreement.Status = "Cancel Pending";
                                 agreement.CancelledNote = clientAgreementModel.CancellNotes;
@@ -556,7 +596,7 @@ namespace TechCertain.WebUI.Controllers
                                 AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
                                 agreement.ClientAgreementAuditLogs.Add(auditLog);
 
-                                await uow.Commit().ConfigureAwait(false);
+                                await uow2.Commit().ConfigureAwait(false);
                             }
                         }
                         
@@ -571,15 +611,15 @@ namespace TechCertain.WebUI.Controllers
                     {
                         if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled" || agreement.Status != "Cancel Pending") &&
                             (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced"))
-
+                        {
                             agreement.Status = "Cancelled";
-                        agreement.CancelledNote = clientAgreementModel.CancellNotes;
-                        agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
-                        agreement.CancelAgreementReason = clientAgreementModel.CancelAgreementReason;
-                        agreement.Cancelled = true;
-                        agreement.CancelledByUserID = user;
-                        agreement.CancelledDate = DateTime.UtcNow;
-
+                            agreement.CancelledNote = clientAgreementModel.CancellNotes;
+                            agreement.CancelledEffectiveDate = clientAgreementModel.CancellEffectiveDate;
+                            agreement.CancelAgreementReason = clientAgreementModel.CancelAgreementReason;
+                            agreement.Cancelled = true;
+                            agreement.CancelledByUserID = user;
+                            agreement.CancelledDate = DateTime.UtcNow;
+                        }
 
                         string auditLogDetail = "Agreement has been cancelled by " + user.FullName;
                         AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
@@ -595,6 +635,68 @@ namespace TechCertain.WebUI.Controllers
                 return Json(new { url });
             }
             catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmCancellAgreement(AgreementViewModel clientAgreementModel)
+        {
+            User user = null;
+            var url = "";
+            try
+            {
+                ClientAgreement agreement = await _clientAgreementService.GetAgreement(clientAgreementModel.AgreementId);
+                user = await CurrentUser();
+
+                ClientProgramme programme = agreement.ClientInformationSheet.Programme;
+                var eGlobalSerializer = new EGlobalSerializerAPI();
+
+                //check Eglobal parameters
+                if (string.IsNullOrEmpty(programme.EGlobalClientNumber))
+                {
+                    throw new Exception(nameof(programme.EGlobalClientNumber) + " EGlobal client number");
+                }
+
+                string paymentType = "";
+                Guid transactionreferenceid = Guid.NewGuid();
+
+                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, true, null);
+
+                var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
+
+                EGlobalSubmission eglobalsubmission = await _eGlobalSubmissionService.GetEGlobalSubmissionByTransaction(transactionreferenceid);
+
+                eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork, eglobalsubmission);
+
+
+                using (var uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    if ((agreement.Status != "Declined by Insurer" || agreement.Status != "Declined by Insured" || agreement.Status != "Cancelled") &&
+                        (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced" || agreement.Status == "Cancel Pending"))
+                    {
+                        agreement.Status = "Cancelled";
+                        agreement.Cancelled = true;
+                        agreement.CancelledByUserID = user;
+                        agreement.CancelledDate = DateTime.UtcNow;
+                    }
+
+
+                    string auditLogDetail = "Agreement has been confirmed cancel by " + user.FullName;
+                    AuditLog auditLog = new AuditLog(user, agreement.ClientInformationSheet, agreement, auditLogDetail);
+                    agreement.ClientAgreementAuditLogs.Add(auditLog);
+
+                    await uow.Commit().ConfigureAwait(false);
+
+                }
+
+                url = "/Agreement/ViewAcceptedAgreement/" + agreement.ClientInformationSheet.Programme.Id;
+
+                return Json(new { url });
+            }
+            catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
@@ -775,7 +877,7 @@ namespace TechCertain.WebUI.Controllers
                     strrecipentemail = userdb.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
+                //await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
@@ -1335,7 +1437,7 @@ namespace TechCertain.WebUI.Controllers
                             }
 
                         }
-                        _emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
+                        //_emailService.SendSystemEmailAgreementReferNotify(user, answerSheet.Programme.BaseProgramme, agreement, answerSheet.Owner);
                     }
                     model.InformationSheetStatus = agreement.ClientInformationSheet.Status;
                     Boolean nextInfoSheet = false;
@@ -2251,7 +2353,7 @@ namespace TechCertain.WebUI.Controllers
                     strrecipentemail = user.Email;
                 }
 
-                await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents);
+                //await _emailService.SendEmailViaEmailTemplate(strrecipentemail, emailTemplate, documents, null, null);
 
                 return Redirect("~/Home/Index");
             }
@@ -2370,7 +2472,7 @@ namespace TechCertain.WebUI.Controllers
                 string paymentType = "Credit";
                 Guid transactionreferenceid = Guid.NewGuid();
 
-                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, null);
+                var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork, transactionreferenceid, paymentType, false, false, null);
 
                 var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
 
@@ -2449,7 +2551,7 @@ namespace TechCertain.WebUI.Controllers
                 {
                     //Payment failed
                     status = "Bound and pending payment";
-                    _emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                    //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                     foreach (ClientAgreement agreement in programme.Agreements)
                     {
                         using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2474,7 +2576,7 @@ namespace TechCertain.WebUI.Controllers
                             await uow.Commit();
                         }
                     }
-                    //_emailService.SendSystemPaymentFailConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                    
                     return RedirectToAction("ProcessedAgreements", new { id = Id });
 
                 }
@@ -2482,7 +2584,7 @@ namespace TechCertain.WebUI.Controllers
                 {
 
                     //Payment successed
-                    await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                    //await _emailService.SendSystemPaymentSuccessConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
 
                     EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
 
@@ -2554,22 +2656,18 @@ namespace TechCertain.WebUI.Controllers
                             }
 
                         }
-
-                        //_emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
-
-
-                        await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
-                        await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents);
+                        
+                        //await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
+                        //await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
                     }
 
                     if (hasEglobalNo)
                     {
-                        await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                        //await _emailService.SendSystemSuccessInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                     }
                     else
                     {
-                        _emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
+                        //_emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                     }
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2644,6 +2742,7 @@ namespace TechCertain.WebUI.Controllers
                     model.CurrentUser = user;
 
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
+                    model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ClientProgrammeId = id;
                     foreach (ClientAgreement agreement in programme.Agreements)

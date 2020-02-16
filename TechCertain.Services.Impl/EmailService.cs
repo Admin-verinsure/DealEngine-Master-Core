@@ -121,15 +121,31 @@ namespace TechCertain.Services.Impl
 			email.Send ();
 		}
 
-        public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents)
+        public async Task SendEmailViaEmailTemplate(string recipent, EmailTemplate emailTemplate, List<SystemDocument> documents, ClientInformationSheet clientInformationSheet, ClientAgreement clientAgreement)
         {
-            //string subject = emailTemplate.Subject;
-            string body = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
+            var user = await _userService.GetUserByEmail(recipent);
+            List<KeyValuePair<string, string>> mergeFields;
+
+            if (clientInformationSheet != null)
+            {
+                mergeFields = MergeFieldLibrary(null, null, clientInformationSheet.Programme.BaseProgramme, clientInformationSheet);
+            }
+            else
+            {
+                mergeFields = MergeFieldLibrary(null, null, null, clientInformationSheet);
+            }
+                      
+
+            string systememailbody = System.Net.WebUtility.HtmlDecode(emailTemplate.Body);
+            foreach (KeyValuePair<string, string> field in mergeFields)
+            {                
+                systememailbody = systememailbody.Replace(field.Key, field.Value);
+            }            
 
 			EmailBuilder email = await GetLocalizedEmailBuilder(DefaultSender, recipent);
 			email.From (DefaultSender);
             email.WithSubject (emailTemplate.Subject);
-			email.WithBody (body);
+			email.WithBody (systememailbody);
 			email.UseHtmlBody (true);
             if(documents != null)
             {
@@ -209,12 +225,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("PaymentSuccessConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -248,12 +259,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("PaymentFailConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -288,12 +294,8 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
+
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("InvoiceFailConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -328,12 +330,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("InvoiceSuccessConfig");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -368,12 +365,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);                    
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(uISIssuer, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISIssueNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -406,10 +398,7 @@ namespace TechCertain.Services.Impl
             {
                 recipent.Add(insuredOrg.Email);
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionConfirmationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -447,10 +436,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("UISSubmissionNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -484,11 +470,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementReferralNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -524,11 +506,7 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementIssueNotificationEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -565,10 +543,8 @@ namespace TechCertain.Services.Impl
                     recipent.Add(objNotifyUser.Email);
                 }
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, null);
+
                 mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("AgreementBoundNotificationEmail");
@@ -603,11 +579,7 @@ namespace TechCertain.Services.Impl
             {
                 recipent.Add("support@techcertain.com");
 
-                List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
-                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
-                mergeFields.Add(new KeyValuePair<string, string>("[[ReferenceID]]", sheet.ReferenceId));
-                mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+                List<KeyValuePair<string, string>> mergeFields = MergeFieldLibrary(null, insuredOrg, programme, sheet);
 
                 SystemEmail systemEmailTemplate = await _systemEmailRepository.GetSystemEmailByType("OtherMarinaTCNotifyEmail");
                 string systememailsubject = systemEmailTemplate.Subject;
@@ -705,6 +677,37 @@ namespace TechCertain.Services.Impl
 				attachments.Add(await ToAttachment(document));
 			return attachments;
 		}
+
+
+        #region Merge Field Library
+        public List<KeyValuePair<string, string>> MergeFieldLibrary(User uISIssuer, Organisation insuredOrg, Programme programme, ClientInformationSheet clientInformationSheet)
+        {
+            List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
+
+            if (programme != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[ProgrammeName]]", programme.Name));
+                mergeFields.Add(new KeyValuePair<string, string>("[[ContactBrokerName]]", programme.BrokerContactUser.FullName));
+            }
+            if(insuredOrg != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", insuredOrg.Name));
+            }
+            if(uISIssuer != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuer]]", uISIssuer.FullName));
+                mergeFields.Add(new KeyValuePair<string, string>("[[UISIssuerEmail]]", uISIssuer.Email));
+            }
+            if(clientInformationSheet != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[ReferenceID]]", clientInformationSheet.ReferenceId));
+            }
+                        
+            mergeFields.Add(new KeyValuePair<string, string>("[[SupportPhone]]", "09 377 6564"));
+
+            return mergeFields;
+        }
+        #endregion
 
     }
 }

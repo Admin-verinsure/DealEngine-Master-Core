@@ -1,94 +1,92 @@
 ﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
-@*<article id="programmeEditArticle" class="container-fluid">*@
-<!-- end row -->
-<!-- row -->
-<div class="container-fluid">
-    <form method="POST" id="update-form" enctype="multipart/form-data" class="client-form" style="color:dodgerblue;">
-        <table class="table table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Edit Programme</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <label class="label required"><strong>Programme Name: </strong></label>
-                    </td>
-                    <td>
-                        <label class="input">
-                            @*<i class="icon-append fa fa-edit"></i>*@                            
-                            @Html.TextBoxFor(m => m.programmeName, new { @class="form-control" })
-                        </label>
-                    </td>
-                </tr>
-                <tr class="table-light">
-                    <td>
-                        <label class="label required"><strong>Tax Rate: </strong></label>
-                    </td>
-                    <td>
-                        <label class="input">
-                            @*<i class="icon-append fa fa-edit"></i>*@
-                            @Html.TextBoxFor(m => m.TaxRate, new { @class="form-control" })
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label class="label required"><strong>Policy Number Prefix String: </strong></label>
-                    </td>
-                    <td>
-                        <label class="input">
-                            @*<i class="icon-append fa fa-edit"></i>*@
-                            @Html.TextBoxFor(m => m.PolicyNumberPrefixString, new { @class="form-control" })
-                        </label>
-                    </td>
-                </tr>
-                <tr class="table-light">
-                    <td>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            @Html.CheckBoxFor(m => m.UsesEGlobal)
-                            <i></i>I want this programme to use EGlobal API.
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            @Html.CheckBoxFor(m => m.IsPublic)
-                            <i></i>I want this programme to be publicly available.
-                        </label>
-                    </td>
-                </tr>
-                <tr class="table-light">
-                    <td>
-                    </td>
-                    <td>
-                        <label class="checkbox">
-                            @Html.CheckBoxFor(m => m.StopAgreement)
-                            <i></i>I want this programme to suspend all agreements.
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    </td>      
-                    <td>
-                        @if (User.HasClaim("EditProgramme", "EditProgramme"))
-                        {
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-success"> Save</button>
-                            </div>
-                        }
-                    </td>
-                </tr>
-            </tbody>
-        </table>               
 
-    </form>
+<div class="card">
+    <div class="card-header">
+        <h2>Edit Programme</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST" id="update-form" enctype="multipart/form-data" class="client-form" style="color:dodgerblue;">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label class="label required"><strong>Programme Name: </strong></label>
+                        </td>
+                        <td>
+                            <label class="input">
+                                @*<i class="icon-append fa fa-edit"></i>*@
+                                @Html.TextBoxFor(m => m.programmeName, new { @class = "form-control" })
+                            </label>
+                        </td>
+                    </tr>
+                    <tr class="table-light">
+                        <td>
+                            <label class="label required"><strong>Tax Rate: </strong></label>
+                        </td>
+                        <td>
+                            <label class="input">
+                                @*<i class="icon-append fa fa-edit"></i>*@
+                                @Html.TextBoxFor(m => m.TaxRate, new { @class = "form-control" })
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="label required"><strong>Policy Number Prefix String: </strong></label>
+                        </td>
+                        <td>
+                            <label class="input">
+                                @*<i class="icon-append fa fa-edit"></i>*@
+                                @Html.TextBoxFor(m => m.PolicyNumberPrefixString, new { @class = "form-control" })
+                            </label>
+                        </td>
+                    </tr>
+                    <tr class="table-light">
+                        <td>
+                        </td>
+                        <td>
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.UsesEGlobal)
+                                <i></i>I want this programme to use EGlobal API.
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.IsPublic)
+                                <i></i>I want this programme to be publicly available.
+                            </label>
+                        </td>
+                    </tr>
+                    <tr class="table-light">
+                        <td>
+                        </td>
+                        <td>
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.StopAgreement)
+                                <i></i>I want this programme to suspend all agreements.
+                            </label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </form>
+        @if (User.HasClaim("EditProgramme", "EditProgramme"))
+        {
+            <div class="card-footer">
+                <button type="submit" class="btn btn-success"> Save</button>
+            </div>
+        }
+        </div>
 </div>
+

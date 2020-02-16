@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using TechCertain.Domain.Entities;
@@ -85,7 +86,18 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
             {
                 get
                 {
-                    var description ="";
+
+                var description = "";
+
+                ClientAgreement objClientAgreement = null;
+                foreach (ClientAgreement clientAgreement in ClientProgramme.Agreements)
+                {
+                    if (objClientAgreement == null && clientAgreement.MasterAgreement)
+                    {
+                        objClientAgreement = clientAgreement;
+                    }
+                }
+                
                 if (ClientProgramme.InformationSheet.IsRenewawl && ClientProgramme.InformationSheet.PreviousInformationSheet != null)
                 {
                     description = Package.DescriptionRenew;
@@ -100,22 +112,16 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                 {
                     description = ClientProgramme.EGlobalCustomDescription;
                 }
-
+                if (objClientAgreement.ClientAgreementTermsCancel.Where(catcan => catcan.DateDeleted == null).Count() > 0)
+                {
+                    description = Package.DescriptionCancel;
+                }
 
                 /*if (gv_transactionType == TransactionType.Lapse)
                         return Package.DescriptionLapse;*/
 
                 /*if (EGlobalPolicy.CancelledEffectiveDate != DateTime.MinValue || gv_transactionType == TransactionType.Cancel)
                     return Package.DescriptionCancel;*/
-
-                ClientAgreement objClientAgreement = null;
-                foreach (ClientAgreement clientAgreement in ClientProgramme.Agreements)
-                {
-                    if (objClientAgreement == null && clientAgreement.MasterAgreement)
-                    {
-                        objClientAgreement = clientAgreement;
-                    }
-                }
 
                 Description1 = string.Format(description,
                             TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")),
@@ -144,11 +150,22 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
             {
                 get
                 {
-                    /*if (TCPolicy.CancelledEffectiveDate != DateTime.MinValue || gv_transactionType == TransactionType.Cancel)
+
+                ClientAgreement objClientAgreement = null;
+                foreach (ClientAgreement clientAgreement in ClientProgramme.Agreements)
+                {
+                    if (objClientAgreement == null && clientAgreement.MasterAgreement)
                     {
-                        Description2 = Package.StatementCancel;
-                    }*/
-                    if (ClientProgramme.InformationSheet.IsRenewawl)
+                        objClientAgreement = clientAgreement;
+                    }
+                }
+
+
+                /*if (TCPolicy.CancelledEffectiveDate != DateTime.MinValue || gv_transactionType == TransactionType.Cancel)
+                {
+                    Description2 = Package.StatementCancel;
+                }*/
+                if (ClientProgramme.InformationSheet.IsRenewawl)
                     {
                         Description2 = Package.StatementRenew;
                     }
@@ -160,6 +177,11 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI.BaseClasses
                     {
                         Description2 = Package.StatementNew;
                     }
+
+                if (objClientAgreement.ClientAgreementTermsCancel.Where(catcan => catcan.DateDeleted == null).Count() > 0)
+                {
+                    Description2 = Package.StatementCancel;
+                }
                     
                     return Description2;
                 }

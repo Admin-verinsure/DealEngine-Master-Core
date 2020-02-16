@@ -14,10 +14,12 @@ namespace TechCertain.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
+        IMapperSession<Boat> _boatRepository;
 
-        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository)
+        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository, IMapperSession<Boat> boatRepository)
         {
             _customerInformationRepository = customerInformationRepository;
+            _boatRepository = boatRepository;
         }
 
         public async Task<ClientInformationSheet> IssueInformationFor(User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
@@ -99,6 +101,16 @@ namespace TechCertain.Services.Impl
             // save data to shared data
         }
 
+        public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)
+        {
+            var clientList = new List<ClientInformationSheet>();
+            var boats = await _boatRepository.FindAll().Where(b => b.BoatName ==searchValue).ToListAsync();
+            foreach(var boat in boats)
+            {
+                clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(boat)).ToList());
+            }
+            return clientList;
+        }
     }
 }
 

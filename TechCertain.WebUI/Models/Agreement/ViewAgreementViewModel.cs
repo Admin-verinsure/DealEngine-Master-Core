@@ -38,6 +38,7 @@ namespace TechCertain.WebUI.Models.Agreement
         public bool IsMultipleOption { get; set; }
         public bool IsOptionalProduct { get; set; }
         public Guid ClientProgrammeId { get; set; }
+        public ClientInformationSheet ClientInformationSheet { get; set; }
         public bool HasBoats { get; set; }
         public IEnumerable<BoatViewModel> Boats { get; set; }
         public List<EditTermsViewModel> BVTerms { get; internal set; }

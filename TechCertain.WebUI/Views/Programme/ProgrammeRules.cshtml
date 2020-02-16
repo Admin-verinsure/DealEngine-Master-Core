@@ -1,95 +1,85 @@
 ﻿@model TechCertain.WebUI.Models.Programme.ProgrammeInfoViewModel
 <!-- MAIN CONTENT -->
 <div id="content" class="container">
-    <!-- Bread crumb is created dynamically -->
-    <!-- row -->
-    <div class="row">
+    <div class="form-group">
         <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
             <i class="fa-fw fa fa-home"></i>  <span>
                 <a href="~/Programme/TermSheetConfirguration/@Model.Id">Package Term Sheet</a>
                 > Manage Rules
-
             </span>
         </h1>
     </div>
-    <div class="row">
+    <div class="form-group">
         <span>
-            <a onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" id="backbutton"><i class="fa fa-home"></i> Back </a>            
         </span>
     </div>
 
-    <div class="row">
-        <!-- new widget -->
-        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
-            <header>
-                <span class="widget-icon"> <i class="fa fa-comment text-white"></i> </span>
-                <h2>Manage Rules </h2>
-            </header>
+    <div class="form-group">
+        <div class="card">
+            <div class="card-header">
+                <span class="widget-icon">                    
+                    <h2><i class="fa fa-comment"></i>Manage Rules </h2>
+                </span>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            @if (Model.BrokerContactUser == null)
+                            {
+                                <th>Broker User: Broker FirstName</th>
 
-            <table class="table table-bordered table-striped ">
-                <thead>
-                    <tr>
-                        @if (Model.BrokerContactUser == null)
-                        {
-                            <th>Broker User: Broker FirstName</th>
+                            }
+                            else
+                            {
+                                <th class="th">Broker User: @Model.BrokerContactUser.FirstName</th>
 
-                        }
-                        else
-                        {
-                            <th class="th">Broker User: @Model.BrokerContactUser.FirstName</th>
+                            }
+                            <th></th>
+                        </tr>
+                    </thead>
 
-                        }
+                    <tr class="table-light">
+                        <td align="left">
+                            Manage UIS Issue Notification Users
+                        </td>
+                        <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users"})"><i class="fa fa-search"></i>View</a></td>
                     </tr>
-                </thead>
 
-                <tr class="table-light">
-                    <td align="left">
-                        Manage UIS Issue Notification Users
-                    </td>
-                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Issue Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-                </tr>
-
-                <tr>
-                    <td align="left">
-                        Manage UIS Submission Notification Users
-                    </td>
-                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-                </tr>
-
-                <tr class="table-light">
-                    <td align="left">
-                        Manage Agreement Refer Notification Users
-                    </td>
-                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-                </tr>
-
-                <tr>
-                    <td align="left">
-                        Manage Agreement Refer Notification Users
-                    </td>
-                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-                </tr>
-
-                <tr class="table-light">
-                    <td align="left">
-                        Manage Agreement Bound Notification Users
-                    </td>
-                    <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users"})"><i class="fa fa-search"></i>View</a></td>
-                </tr>
-
-                @foreach (var product in Model.Product)
-                {
                     <tr>
                         <td align="left">
-                            New Product Rules for @product.Name
+                            Manage UIS Submission Notification Users
                         </td>
-                        <td><a class="btn btn-success btn-sm " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
-
+                        <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage UIS Submission Notification Users"})"><i class="fa fa-search"></i>View</a></td>
                     </tr>
-                }
-            </table>
 
+                    <tr class="table">
+                        <td align="left">
+                            Manage Agreement Refer Notification Users
+                        </td>
+                        <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Refer Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                    </tr>
+
+                    <tr class="table-light">
+                        <td align="left">
+                            Manage Agreement Bound Notification Users
+                        </td>
+                        <td><a class="btn btn-success btn-sm " href="@Url.Action("IssueNotification", "Programme",new { Id = @Model.Id, Title = "Manage Agreement Bound Notification Users"})"><i class="fa fa-search"></i>View</a></td>
+                    </tr>
+
+                    @foreach (var product in Model.Product)
+                    {
+                        <tr>
+                            <td align="left">
+                                New Product Rules for @product.Name
+                            </td>
+                            <td><a class="btn btn-success btn-sm " href="@Url.Action("ProductRules", "Programme",new { Id = @Model.Id, productId = product.Id })"><i class="fa fa-search"></i>View</a></td>
+
+                        </tr>
+                    }
+                </table>
+            </div>
         </div>
     </div>
 </div>

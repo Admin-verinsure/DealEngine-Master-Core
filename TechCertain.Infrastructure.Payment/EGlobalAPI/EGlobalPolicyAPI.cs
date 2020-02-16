@@ -79,7 +79,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             GetInsurers();
 
             // Create the Policy
-            GetPolicy(objClientAgreement);
+            GetPolicy(objClientAgreement, false);
 
             // Create the SubAgents
             GetSubAgents();
@@ -197,12 +197,13 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
         /// <summary>
         /// Creates the cancel policy invoice.
         /// </summary>
-        public void CreateCancelPolicyInvoice()
+        public void CreateCancelPolicyInvoice(Package package, ClientProgramme programme)
         {
             //AutoDetectTransactionType();
-
+            gv_transactionType = 6; //cancel
+            GetPolicyRisks();
             //SetTransactionType(TransactionType.Cancel);
-            CreateCancelPolicyInvoice(GetCancelPolicyRisks());
+            CreateCancelPolicyInvoice(GetCancelPolicyRisks(package, programme));
         }
 
         /// <summary>
@@ -221,11 +222,12 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             }
 
             //PolicyRisks = risks;
-
-            GetInsurers();
+            EGlobalPolicy.PolicyRisks = risks;
 
             // Create the Policy
-            GetPolicy(objClientAgreement);
+            GetPolicy(objClientAgreement, true);
+
+            GetInsurers();
 
             // Update Policy fields
             EGlobalPolicy.PaymentDirection = -1;
@@ -237,9 +239,60 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             //                CalculateInvoiceSummary(Policy, 0M);
         }
 
-        protected virtual List<EBixPolicyRisk> GetCancelPolicyRisks()
+        protected virtual List<EBixPolicyRisk> GetCancelPolicyRisks(Package package, ClientProgramme programme)
         {
-            return new List<EBixPolicyRisk>();
+            ClientAgreement objClientAgreement = null;
+            foreach (ClientAgreement clientAgreement in EGlobalPolicy.ClientProgramme.Agreements)
+            {
+                if (objClientAgreement == null && clientAgreement.MasterAgreement)
+                {
+                    objClientAgreement = clientAgreement;
+                }
+            }
+
+            ClientAgreementTermCancel canterm = objClientAgreement.ClientAgreementTermsCancel.FirstOrDefault();
+            List<EBixPolicyRisk> risks = new List<EBixPolicyRisk>();
+
+            risks.Add(GetCancelPolicyRisk(objClientAgreement, canterm, package));
+
+            return risks;
+
+            //return new List<EBixPolicyRisk>();
+        }
+
+        protected EBixPolicyRisk GetCancelPolicyRisk(ClientAgreement clientAgreement, ClientAgreementTermCancel canterm, Package package)
+        {
+            decimal taxRate = clientAgreement.ClientInformationSheet.Programme.BaseProgramme.TaxRate;
+
+            EBixPolicyRisk pr = new EBixPolicyRisk();
+
+            pr.TCMergeCode = canterm.MergeCodeCan;
+            pr.TCClassOfBusiness = canterm.Id;
+            pr.RiskCode = package.PackageProducts.FirstOrDefault().PackageProductRiskCode;
+            pr.SubCoverString = package.PackageProducts.FirstOrDefault().PackageProductSubCover;
+
+            pr.CoyPremium = canterm.PremiumCan;
+            pr.CEQuake = 0M;
+            pr.GSTPremium = (pr.CoyPremium + pr.CEQuake) * taxRate;
+
+            pr.BrokerAmountRate = canterm.BrokerageRateCan;
+            pr.BrokerCeqDueRate = canterm.NDBrokerageRateCan;
+
+            pr.BrokerAmountDue = (pr.BrokerAmountRate / 100M) * pr.CoyPremium;
+            pr.BrokerCeqDue = (pr.BrokerCeqDueRate / 100M) * pr.CEQuake;
+            pr.GSTBrokerage = (pr.BrokerAmountDue + pr.BrokerCeqDue) * taxRate;
+
+            pr.BSCAmount = 0m;
+            pr.BscGST = pr.BSCAmount * taxRate;
+
+            pr.LeviesA = 0M; //eqc
+            pr.LeviesB = canterm.FSLCan; //fsl
+
+            pr.GSTPremium = (pr.CoyPremium + pr.CEQuake + pr.LeviesA + pr.LeviesB) * taxRate;
+
+            pr.DueByClient = Math.Round(pr.CoyPremium + pr.CEQuake + pr.GSTPremium + pr.LeviesA + pr.LeviesB, 2);
+
+            return pr;
         }
 
         #endregion
@@ -356,7 +409,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             {
                 GetPolicyRisks();
 
-                GetPolicy(eglobalsubmission.EGlobalSubmissionClientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault());
+                GetPolicy(eglobalsubmission.EGlobalSubmissionClientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault(), false);
 
                 EGlobalPolicy.Policy.PolicyDateTime = eglobalsubmission.DateCreated.Value;
                 EGlobalPolicy.Policy.EffectiveDate = eglobalsubmission.EGlobalSubmissionClientProgramme.Agreements.Where(cpam => cpam.MasterAgreement).FirstOrDefault().InceptionDate;
@@ -1111,7 +1164,7 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
 
         #region Section Assembly
 
-        protected virtual void GetPolicy(ClientAgreement objClientAgreement)
+        protected virtual void GetPolicy(ClientAgreement objClientAgreement, bool canceltran)
         {
             EBixPolicy EBixPolicy = new EBixPolicy();
 
@@ -1126,7 +1179,13 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
             
             // Dates
             EBixPolicy.PolicyDateTime = DateTime.Now;
-            EBixPolicy.EffectiveDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            if (canceltran)
+            {
+                EBixPolicy.EffectiveDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.CancelledEffectiveDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            } else
+            {
+                EBixPolicy.EffectiveDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
+            }
             EBixPolicy.ExpiryDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.ExpiryDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone));
             EBixPolicy.InceptionDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)); 
             EBixPolicy.LastRenewalDate = TimeZoneInfo.ConvertTimeFromUtc(objClientAgreement.InceptionDate, TimeZoneInfo.FindSystemTimeZoneById(UserTimeZone)); 
@@ -1182,7 +1241,14 @@ namespace TechCertain.Infrastructure.Payment.EGlobalAPI
                 EBixPolicy.GSTBrokerage += risk.GSTBrokerage;
             }
 
-            BrokerFeeTotal = objClientAgreement.BrokerFee;
+            if (canceltran)
+            {
+                BrokerFeeTotal = 0M;
+            } else
+            {
+                BrokerFeeTotal = objClientAgreement.BrokerFee;
+            }
+            
             CalculateInvoiceSummary(EBixPolicy, BrokerFeeTotal);
 
             EGlobalPolicy.Policy = EBixPolicy;

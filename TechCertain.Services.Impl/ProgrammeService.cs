@@ -163,6 +163,11 @@ namespace TechCertain.Services.Impl
         {
             return await _clientProgrammeRepository.GetByIdAsync(clientProgrammeID);
         }
+
+        public async Task<List<ClientProgramme>> FindByOwnerName(string insuredName)
+        {
+            return await _clientProgrammeRepository.FindAll().Where(c => c.Owner.Name.Contains(insuredName)).ToListAsync();
+        }
     }
 }
 

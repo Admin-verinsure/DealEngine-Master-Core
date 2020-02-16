@@ -543,7 +543,6 @@
     }
 
     function Cancell() {
-        debugger;
         var sheetId = $('#InformationSheetId').val();
         var agreementid = $('#ClientAgreementId').val();
         var notes = $('#CancellNotes').val();
@@ -566,7 +565,6 @@
                 async: true
             })
             .done(function (data) {
-               debugger;
                //$.smallBox({
                //    title: "Agreement has been cancelled",
                //    color: "#5F895F",
@@ -577,6 +575,41 @@
            })
           .fail(function (jqXHR, textStatus, errorThrown) {
         alert("There was an error while trying to cancel agreement.");
+               });
+    }
+
+    function ConfirmCancel() {
+        var sheetId = $('#InformationSheetId').val();
+        var agreementid = $('#ClientAgreementId').val();
+        var notes = $('#CancellNotes').val();
+        var cancelleffectivedate = $('#CancellEffectiveDate').val();
+        var cancelAgreementReason = $('#CancelAgreementReason').val();
+
+         var postData = {
+                "InformationId": sheetId,
+                "AgreementId": agreementid,
+                "CancellNotes": notes,
+                "CancellEffectiveDate": cancelleffectivedate,
+                "CancelAgreementReason" : cancelAgreementReason
+        };
+        $.ajax({
+                url: '@Url.Action("ConfirmCancellAgreement", "Agreement")',
+                type: "POST",
+                data: postData,
+                async: true
+            })
+            .done(function (data) {
+               debugger;
+               //$.smallBox({
+               //    title: "Agreement has been cancelled",
+               //    color: "#5F895F",
+               //    iconSmall: "fa fa-check bounce animated",
+               //    timeout: 4000
+               //});
+               window.location.href = data.url;
+           })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+        alert("There was an error while trying to confirm cancel agreement.");
                });
     }
 

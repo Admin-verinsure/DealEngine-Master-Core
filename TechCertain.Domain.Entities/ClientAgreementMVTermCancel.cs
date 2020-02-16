@@ -9,16 +9,16 @@ namespace TechCertain.Domain.Entities
 {
 	public class ClientAgreementMVTermCancel : EntityBase, IAggregateRoot
 	{
-        protected ClientAgreementMVTermCancel() : base(null) { }
+        protected ClientAgreementMVTermCancel() : this(null) { }
 
-        public ClientAgreementMVTermCancel(User createdBy, Vehicle vehicle, ClientAgreementTermCancel clientAgreementTermCancel, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, decimal burnerpremium)
-            : this(createdBy, vehicle.Registration, vehicle.Year, vehicle.Make, vehicle.Model, termLimit, excess, premium, fSL, brokerageRate, brokerage, vehicleCategory, vehicle.FleetNumber, clientAgreementTermCancel, vehicle, burnerpremium)
+        protected ClientAgreementMVTermCancel(User createdBy)
+            : base(createdBy)
         {
 
         }
 
         public ClientAgreementMVTermCancel(User createdBy, string registration, string year, string make, string model, int termLimit, decimal excess, decimal premium, decimal fSL, decimal brokerageRate, decimal brokerage, string vehicleCategory, string fleetNumber, ClientAgreementTermCancel clientAgreementTermCancel, Vehicle vehicle, decimal burnerpremium)
-            : base(createdBy)
+            : this(createdBy)
         {
             if (string.IsNullOrWhiteSpace(year))
                 throw new ArgumentNullException(nameof(year));
@@ -56,6 +56,7 @@ namespace TechCertain.Domain.Entities
             ClientAgreementTermCan = clientAgreementTermCancel;
             VehicleCan = vehicle;
             BurnerPremiumCan = burnerpremium;
+
         }
 
         public virtual ClientAgreementMVTerm exClientAgreementMVTerm
