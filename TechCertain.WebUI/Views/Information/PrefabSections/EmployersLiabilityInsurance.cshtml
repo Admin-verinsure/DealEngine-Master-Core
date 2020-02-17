@@ -145,56 +145,50 @@
 
 <script type="text/javascript">
 
-         $(window).on("load", function () {
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetEmployerLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-                    debugger;
-                     var valid = "true";
-                    for (var i = 0; i < data.length-5; i++) {
-                        if (data[i] == null) {
-                            if (valid) {
-                                valid = "false";
-                            }
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("GetEmployerLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                var count = 0;
+                for (var i = 0; i < data.length - 5; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
                         }
+                    }                    
+                }                
+                if (data[0] != "" && valid == "true") {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if ($('#EmployerLiabilityInsurance1').val() == 'true') {
+                                $('#EmployerLiabilityInsurance2Sec').removeClass('hidden');
+                            } else {
+                                $('#EmployerLiabilityInsurance2Sec').addClass('hidden');
+                            }
+                            if ($('#EmployerLiabilityInsurance2').val() == 'false') {
+                                $('#EmployersInsuranceSec').removeClass('hidden');
+                            } else {
+                                $('#EmployersInsuranceSec').addClass('hidden');
+                            }
+                        }                        
                     }
-                    if (data != "" && valid == "true") {
-                for (var item = 0; item < data.length; item++){
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#EmployerLiabilityInsurance1').val() == 'true') {
-                        $('#EmployerLiabilityInsurance2Sec').removeClass('hidden');
-
-                    } else {
-                        $('#EmployerLiabilityInsurance2Sec').addClass('hidden');
-                    }
-
-                     if ($('#EmployerLiabilityInsurance2').val() == 'false') {
-                        $('#EmployersInsuranceSec').removeClass('hidden');
-
-                    } else {
-                        $('#EmployersInsuranceSec').addClass('hidden');
-                    }
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
-
-         });
-
-     function ValidateEmployer() {
+    function ValidateEmployer() {
         event.preventDefault();
         var GLI1 = $('#EmployerLiabilityInsurance1').val();
         var GLI2 = $('#EmployerLiabilityInsurance2').val();
@@ -214,41 +208,35 @@
             }
         } else {
             $('#ValidateEmployerLiability2').html("<i></i>");
-         }
+        }
 
-          for (var index = 3; index <=6; index++) {
-                     var employerLiabilityInsurance = "#EmployerLiabilityInsurance" + index;
-                 var value = $(employerLiabilityInsurance).val();
-                 var validator = "#ValidateEmployerLiability" + index;
+        for (var index = 3; index <= 6; index++) {
+            var employerLiabilityInsurance = "#EmployerLiabilityInsurance" + index;
+            var value = $(employerLiabilityInsurance).val();
+            var validator = "#ValidateEmployerLiability" + index;
 
-                  if (value == "" && ($('#EmployerLiabilityInsurance2').val()=='false')) {
-              $(validator).html("<font color='red'>Field is required</font>")
+            if (value == "" && ($('#EmployerLiabilityInsurance2').val() == 'false')) {
+                $(validator).html("<font color='red'>Field is required</font>")
                 if (validity) {
-                  validity = false;
+                    validity = false;
                 }
-                  } else {
-                     $(validator).html("<i></i>");
-                }
+            } else {
+                $(validator).html("<i></i>");
+            }
+        }
 
-          }
-         return validity;
-
-        //if (validity) {
-        //    SaveEmployerLiabilityInsurance(); 
-        //}
+        return validity;
     };
-
 
     function EmployerLiabilityInsurance1Selected(EmployerLiabilityInsurance) {
         debugger;
-
         var employerLiabilityInsurance = document.getElementById(EmployerLiabilityInsurance);
 
         if (employerLiabilityInsurance.options[employerLiabilityInsurance.selectedIndex].value == "true") {
             $('#EmployerLiabilityInsurance2Sec').removeClass('hidden');
         } else {
             $('#EmployerLiabilityInsurance2').val('');
-             $('#EmployerLiabilityInsurance3').val('');
+            $('#EmployerLiabilityInsurance3').val('');
             $('#EmployerLiabilityInsurance4').val('');
             $('#EmployerLiabilityInsurance5').val('');
             $('#EmployerLiabilityInsurance6').val('');
@@ -257,9 +245,7 @@
         }
     }
 
-    function EmployerLiabilityInsurance2Selected(EmployerLiabilityInsurance) {
-        debugger;
-
+    function EmployerLiabilityInsurance2Selected(EmployerLiabilityInsurance) {        
         var employerLiabilityInsurance = document.getElementById(EmployerLiabilityInsurance);
 
         if (employerLiabilityInsurance.options[employerLiabilityInsurance.selectedIndex].value == "false") {
@@ -273,41 +259,33 @@
         }
     }
 
+    function SaveEmployerLiabilityInsurance() {
+        var EmployerLiability = new Array(6);
 
-    
-       function SaveEmployerLiabilityInsurance() {
-            debugger;
-                   var EmployerLiability = new Array(6);
-
-                   for (var i = 0; i < EmployerLiability.length; i++) {
-                       EmployerLiability[i] = new Array(2);
-                   }
-
-            for (var i = 1; i <= 6; i++) {
-                for (var j = 0; j < 2; j++) {
-                    EmployerLiability[i-1][0] = "EmployerLiabilityInsurance" + i;
-                var employerLiability = "#EmployerLiabilityInsurance" + i;
-                EmployerLiability[i-1][1] = $(employerLiability).val();
-                }
-
-            }
-
-                   var postData = { Answers: EmployerLiability, ClientInformationSheet: clientInformationSheet };
-
-             $.ajax({
-                           url: '@Url.Action("UpdateAnswer", "Information")',
-                           type: "POST",
-                           data: postData
-                       })
-                           .done(function (data) {
-                              return true;
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
-
-
+        for (var i = 0; i < EmployerLiability.length; i++) {
+            EmployerLiability[i] = new Array(2);
         }
+        for (var i = 1; i <= 6; i++) {
+            for (var j = 0; j < 2; j++) {
+                EmployerLiability[i - 1][0] = "EmployerLiabilityInsurance" + i;
+                var employerLiability = "#EmployerLiabilityInsurance" + i;
+                EmployerLiability[i - 1][1] = $(employerLiability).val();
+            }
+        }
+
+        var postData = { Answers: EmployerLiability, ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                return true;
+            })
+            .fail(function (a, s, d) {
+                alert("Unable to save.");
+            });
+    }
 </script>
 
 <style>

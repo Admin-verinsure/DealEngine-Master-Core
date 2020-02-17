@@ -1,7 +1,7 @@
 ﻿@model TechCertain.WebUI.Models.AdminViewModel
 <!-- START MAIN CONTENT -->
     <div id="content" class="container">
-        <div class="row">
+        <div class="form-group">
             <h1 class="page-title txt-color-blueDark">
                 <i class="fa-fw fa fa-home"></i>
                 <span>
@@ -11,21 +11,21 @@
             </h1>
         </div>
 
-        <div class="row">
+        <div class="form-group">
             <span>
-                <a onclick="location.href='@Url.Action("Index", "Home")'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+                <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("Index", "Home")'" id="backbutton"><i class="fa fa-home"></i> Back </a>                
             </span>
         </div>
 
         <!-- widget grid -->
-        <div class="row">
+        <div class="form-group">
             <!-- Start Private Servers Widget -->
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-private-servers" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
                 @{ await Html.RenderPartialAsync("_PrivateServerControl", Model.PrivateServers); }
             </div>
         </div>
 
-        <div class="row">
+        <div class="form-group">
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-system-emails" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
                 <header>
                     <span class="widget-icon"> <i class="fa fa-upload text-white"></i> </span>
@@ -39,103 +39,140 @@
                             <tr>
                                 <th scope="col" width="30%">System Email Template</th>
                                 <th scope="col" width="70%">Description</th>
+                                <th></th>
                             </tr>
                         </thead>
 
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Login Instruction Email", "SysEmailTemplate", "Admin", new { systemEmailType = "LoginEmail", internalNotes = "System Login Instruction Email" }, null)
+                                Login Instruction Email
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Login Instruction Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "LoginEmail", internalNotes = "System Login Instruction Email" }, new { @class="btn btn-success btn-sm"})
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Information Sheet Issue Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISIssueNotificationEmail", internalNotes = "System Information Sheet Issue Notification Email" }, null)
+                                Information Sheet Issue Notification Email
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Information Sheet Issue Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "UISIssueNotificationEmail", internalNotes = "System Information Sheet Issue Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Payment Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentSuccessConfig", internalNotes = "Payment Success Configuration Notification Email" }, null)
+                                Payment Configuration Notification Email
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 Payment Configuration Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentSuccessConfig", internalNotes = "Payment Success Configuration Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Payment Failed Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentFailConfig", internalNotes = "Payment Failed Configuration Notification Email" }, null)
+                                Payment Failed Configuration Notification Email
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 Payment Failed Configuration Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "PaymentFailConfig", internalNotes = "Payment Failed Configuration Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Invoice Success Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceSuccessConfig", internalNotes = "Invoice Sucess Configuration Notification Email" }, null)
+                                Invoice Success Configuration Notification Email
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 Invoice Success Configuration Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceSuccessConfig", internalNotes = "Invoice Sucess Configuration Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Invoice Fail Configuration Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceFailConfig", internalNotes = "Invoice Fail Configuration Notification Email" }, null)
+                                Invoice Fail Configuration Notification Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 Invoice Fail Configuration Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "InvoiceFailConfig", internalNotes = "Invoice Fail Configuration Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Information Sheet Submission Confirmation Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionConfirmationEmail", internalNotes = "System Information Sheet Submission Confirmation Email" }, null)
+                                Information Sheet Submission Confirmation Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Information Sheet Submission Confirmation Email to Insured.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionConfirmationEmail", internalNotes = "System Information Sheet Submission Confirmation Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Information Sheet Submission Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionNotificationEmail", internalNotes = "System Information Sheet Submission Notification Email" }, null)
+                                Information Sheet Submission Notification Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Information Sheet Submission Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "UISSubmissionNotificationEmail", internalNotes = "System Information Sheet Submission Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Agreement Referral Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementReferralNotificationEmail", internalNotes = "System Agreement Referral Notification Email" }, null)
+                                Agreement Referral Notification Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Agreement Referral Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementReferralNotificationEmail", internalNotes = "System Agreement Referral Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Agreement Issue Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementIssueNotificationEmail", internalNotes = "System Agreement Issue Notification Email" }, null)
+                                Agreement Issue Notification Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Agreement Issue Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementIssueNotificationEmail", internalNotes = "System Agreement Issue Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Agreement Bound Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementBoundNotificationEmail", internalNotes = "System Agreement Bound Notification Email" }, null)
+                                Agreement Bound Notification Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 System Agreement Bound Notification Email.
                             </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "AgreementBoundNotificationEmail", internalNotes = "System Agreement Bound Notification Email" }, new { @class = "btn btn-success btn-sm" })
+                            </td>
                         </tr>
                         <tr>
                             <td align="left">
-                                @Html.ActionLink("Create Other Marina Notification Email", "SysEmailTemplate", "Admin", new { systemEmailType = "OtherMarinaTCNotifyEmail", internalNotes = "Create Other Marina Notification Email" }, null)
+                                Create Other Marina Notification Email                                
                             </td>
                             <td align="left" style="word-wrap: break-word">
                                 Create Other Marina Notification Email.
+                            </td>
+                            <td>
+                                @Html.ActionLink("View", "SysEmailTemplate", "Admin", new { systemEmailType = "OtherMarinaTCNotifyEmail", internalNotes = "Create Other Marina Notification Email" }, new { @class = "btn btn-success btn-sm" })
                             </td>
                         </tr>
                     </table>
@@ -143,7 +180,7 @@
             </div>
             <!-- end widget div -->
         </div>
-        <div class="row">
+        <div class="form-group">
 
             @if (Model.LockedUsers != null)
             {
@@ -185,14 +222,14 @@
             }
         </div>
 
-        <div class="row">
+        <div class="form-group">
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-payment-gateways" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
 
                 @{ await Html.RenderPartialAsync("_PaymentGatewayControl", Model.PaymentGateways); }
 
             </div>
         </div>
-        <div class="row">
+        <div class="form-group">
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-merchants" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
 
                 @{ await Html.RenderPartialAsync("_MerchantControl", Model.Merchants); }
@@ -200,7 +237,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="form-group">
             <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-payment-gateways" data-widget-fullscreenbutton="false" data-widget-editbutton="false" data-widget-colorbutton="false">
 
                 @{ await Html.RenderPartialAsync("_DataUploadControl"); }

@@ -1339,7 +1339,7 @@ namespace TechCertain.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 
-                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true))
+                foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true && a.DateDeleted == null))
                 {
                     productname.Add(agreement.Product.Name);
                 }
@@ -2221,7 +2221,7 @@ namespace TechCertain.WebUI.Controllers
                         {
                             for (var x = 0; x < item.Length - 1; x++)
                             {
-                                ClientInformationAnswer answer = _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet).Result;
+                                ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
                                 if (answer != null)
                                 {
                                     answer.Value = item[1];
@@ -2229,7 +2229,7 @@ namespace TechCertain.WebUI.Controllers
                                 }
                                 else
                                 {
-                                    sheet = _clientInformationService.GetInformation(ClientInformationSheet).Result;
+                                    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
                                     await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
                                 }
                             }
@@ -2355,9 +2355,10 @@ namespace TechCertain.WebUI.Controllers
                         }
 
                     }
-                    await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //sheet owner is null
+                    //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                     //send out information sheet submission notification email
-                    await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                 }
 
                 return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);

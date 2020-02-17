@@ -312,10 +312,10 @@ namespace TechCertain.Services.Impl
 
         public async Task ImportAOEService(User user)
         {
-            //await ImportAOEServiceIndividuals(user);
-            //await ImportAOEServicePrincipals(user);
-            //await ImportAOEServiceClaims(user);
-            //await ImportAOEServiceBusinessContract(user);
+            await ImportAOEServiceIndividuals(user);
+            await ImportAOEServicePrincipals(user);
+            await ImportAOEServiceClaims(user);
+            await ImportAOEServiceBusinessContract(user);
         }
 
         public async Task ImportActivities(User user)
