@@ -73,6 +73,7 @@ deploy_insw:
 #  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
 #  Restart dealengine service
 #  - echo "Restarting DealEngine Service...
+
   environment:
     name: insw
     url: https://dealengine.tai.co.nz
