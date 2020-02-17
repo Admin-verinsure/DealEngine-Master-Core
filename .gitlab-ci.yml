@@ -44,13 +44,13 @@ deploy_marsh:
   script:
   - echo "Compiling code..."
   - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
-  - echo "Establishing Connection to devops.techcertain.com..."
-  - ssh-add <(echo "$PRIVATE_KEY")
-  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
+#  - echo "Establishing Connection to devops.techcertain.com..."
+#  - ssh-add <(echo "$PRIVATE_KEY")
+#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
 #  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
 #  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
 #  Restart dealengine service
-   - echo "Restarting DealEngine Service...
+#  - echo "Restarting DealEngine Service...
 
   environment:
     name: marsh
@@ -65,12 +65,12 @@ deploy_insw:
   - echo "Compiling code..."
   - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
   - echo "Establishing Connection to dealengine.tai.co.nz..."
-  - ssh-add <(echo "$PRIVATE_KEY")
-  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
+#  - ssh-add <(echo "$PRIVATE_KEY")
+#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
 #  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
 #  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
 #  Restart dealengine service
-   - echo "Restarting DealEngine Service...
+#  - echo "Restarting DealEngine Service...
   environment:
     name: insw
     url: https://dealengine.tai.co.nz
