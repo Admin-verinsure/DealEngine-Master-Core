@@ -44,6 +44,7 @@ deploy_marsh:
   script:
   - echo "Compiling code..."
   - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
+
 #  - echo "Establishing Connection to devops.techcertain.com..."
 #  - ssh-add <(echo "$PRIVATE_KEY")
 #  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
@@ -64,7 +65,8 @@ deploy_insw:
   script:
   - echo "Compiling code..."
   - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
-  - echo "Establishing Connection to dealengine.tai.co.nz..."
+
+#  - echo "Establishing Connection to dealengine.tai.co.nz..."
 #  - ssh-add <(echo "$PRIVATE_KEY")
 #  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
 #  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
