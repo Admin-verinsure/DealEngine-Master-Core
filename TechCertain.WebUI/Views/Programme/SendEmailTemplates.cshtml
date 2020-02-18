@@ -3,62 +3,63 @@
 @using TechCertain.WebUI.Helpers.CustomHtml
 
 <!-- MAIN CONTENT -->
-<div id="content" class="container">
+    <div id="content" class="container">
 
-    <div class="row">
-        <h1 class="page-title txt-color-blueDark">
-            <!-- PAGE HEADER -->
-            <i class="fa-fw fa fa-home"></i>  <span>
-                <a href="~/Programme/TermSheetConfirguration/@Model.BaseProgrammeID">Package Term Sheet</a>
-                <a href="~/Programme/EmailTemplate/@Model.BaseProgrammeID">> Programme Email Templates</a>
-                > Add/Edit Email Template
+        <div class="form-group">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>  <span>
+                    <a href="~/Programme/TermSheetConfirguration/@Model.BaseProgrammeID">Package Term Sheet</a>
+                    <a href="~/Programme/EmailTemplate/@Model.BaseProgrammeID">> Programme Email Templates</a>
+                    > Add/Edit Email Template
 
+                </span>
+            </h1>
+        </div>
+        <div class="form-group">
+            <span>
+                <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("EmailTemplate", "Programme",new { Id =@Model.BaseProgrammeID })'" id="backbutton"><i class="fa fa-home"></i> Back </a>
             </span>
-        </h1>
-    </div>
-    <div class="row">
-        <span>
-            <a onclick="location.href='@Url.Action("EmailTemplate", "Programme",new { Id =@Model.BaseProgrammeID })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
-        </span>
-    </div>
-    <div class="row">
-        <div class="jarviswidget jarviswidget-color-blue" id="wid-id-10">
-            <header>
-                <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
-                <h2>@ViewBag.Title </h2>
-            </header>
-            <form action="~/Programme/SendEmailTemplates/@Model.BaseProgrammeID" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
-
-                @Html.HiddenFor(m => m.BaseProgrammeID)
-                @Html.HiddenFor(m => m.Type)
-                @Html.HiddenFor(m => m.Description)
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5>@Model.Description</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;", @class = "form-control", @placeholder = "Subject" })
-                        </div>
-                        <div class="form-group">
-                            @Html.TextAreaFor(m => m.Body, new { @class = "form-control", @placeholder = "Body" })
-                        </div>
-
-                    </div>
-                    <div class="card-footer">
-                        @if (User.HasClaim("EditEmails", "EditEmails"))
-                        {
-                            <div class="form-group">
-                                <button onclick="SaveEmailTemplate()" class="btn btn-primary" id="SaveEmailTemplate">Save Email Template</button>
-                            </div>
-                        }
-                    </div>
+        </div>
+        <div class="form-group">
+            <div class="card" id="wid-id-10">
+                <div class="card-header bg-primary text-white">
+                    <h2>@ViewBag.Title </h2>
                 </div>
-            </form>
+                <div class="card-body">
+                    <form action="~/Programme/SendEmailTemplates/@Model.BaseProgrammeID" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+
+                        @Html.HiddenFor(m => m.BaseProgrammeID)
+                        @Html.HiddenFor(m => m.Type)
+                        @Html.HiddenFor(m => m.Description)
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>@Model.Description</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;", @class = "form-control", @placeholder = "Subject" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.TextAreaFor(m => m.Body, new { @class = "form-control", @placeholder = "Body" })
+                                </div>
+
+                            </div>
+                            <div class="card-footer">
+                                @if (User.HasClaim("EditEmails", "EditEmails"))
+                                {
+                                    <div class="form-group">
+                                        <button onclick="SaveEmailTemplate()" class="btn btn-primary" id="SaveEmailTemplate">Save Email Template</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 <div class="modal" id="ckmodal">
     <div class="modal-dialog">
         <div class="modal-content">

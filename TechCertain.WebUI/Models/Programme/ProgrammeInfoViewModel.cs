@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
 using TechCertain.Domain.Entities;
 using TechCertain.WebUI.Models.Product;
 

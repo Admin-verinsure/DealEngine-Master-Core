@@ -17,56 +17,44 @@
 }
 
 
-<div class="widget-body">
+<div class="card">
 
-    <div class="row">
-        <section class="col col-sm-1"></section>
-        <section class="col col-10">
+    <div class="card-body">
+        <div class="form-group">
             <strong>@clientMessage</strong>
-        </section>
-    </div>
-    <div class="row">
-        <section class="col col-sm-1"></section>
-        <section class="col col-10">
+        </div>
+        <div class="form-group">
             <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
-        </section>
-    </div>
+        </div>
 
-    <div class="row declaration">
-        <section class="col col-sm-1"></section>
-        <section class="col col-10">
-            <div class="form-group">
-                <div class="input-group">
-                    <p>On behalf of the Applicant:</p>
-                    <p>
-                        <ol>
-                            @Html.Raw(Model.Declaration)
-                        </ol>
-                    </p>
-                </div>
+        <div class="form-group">
+            <div class="input-group">
+                <p>On behalf of the Applicant:</p>
+                <p>
+                    <ol>
+                        @Html.Raw(Model.Declaration)
+                    </ol>
+                </p>
             </div>
-        </section>
-    </div>
-    <div class="row declaration container">
-        <section class="col col-sm-1"></section>
-        <section class="col col-10">
-            <div class="form-group">
-                <label class="radio">
-                    <a>
-                        <input id="agreementAccept" name="radio" type="radio">
-                        <i></i>Yes, I accept the offered Agreement
-                    </a> 
-                </label>
-            </div>
-            <div class="form-group">
-                <label class="radio">
-                    <a>
-                        <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModal" >
-                        <i></i>No, I wish to decline the offered Agreement
-                    </a>
-                </label>
-            </div>
-        </section>
+        </div>
+
+        <div class="form-group">
+            <label class="radio">
+                <a>
+                    <input id="agreementAccept" name="radio" type="radio">
+                    <i></i>Yes, I accept the offered Agreement
+                </a>
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="radio">
+                <a>
+                    <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModal">
+                    <i></i>No, I wish to decline the offered Agreement
+                </a>
+            </label>
+        </div>
+
     </div>
 </div>
 

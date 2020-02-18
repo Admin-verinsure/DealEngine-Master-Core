@@ -11,6 +11,7 @@ namespace TechCertain.Services.Interfaces
         Task<User> GetUserById (Guid userId);
         Task<User> GetUserByEmail (string email);
         Task<List<User>> GetAllUsers ();
+        Task ApplicationCreateUser(User user);
         Task Create(User user);
         Task Update(User user);
         Task<List<User>> GetLockedUsers();

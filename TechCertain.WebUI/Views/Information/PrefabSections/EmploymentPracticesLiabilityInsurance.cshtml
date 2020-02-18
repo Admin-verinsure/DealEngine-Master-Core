@@ -142,53 +142,49 @@
 
 <script type="text/javascript">
 
-         $(window).on("load", function () {
+    $(window).on("load", function () {
 
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
 
-
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetEmployerPracticesLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-                    var valid = "true";
-                    for (var i = 0; i < data.length-5; i++) {
-                        if (data[i] == null) {
-                            if (valid) {
-                                valid = "false";
-                            }
+        $.ajax({
+            url: '@Url.Action("GetEmployerPracticesLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                var count = 0;
+                for (var i = 0; i < data.length - 5; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
                         }
-                    }
-             if (data != "" && valid == "true") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#EmployerPracticesLiability1').val() == 'true') {
-                        $('#EmployerPracticesLiability2Sec').removeClass('hidden');
-
-                    } else {
-                        $('#EmployerPracticesLiability2Sec').addClass('hidden');
-                    }
-                     if ($('#EmployerPracticesLiability2').val() == 'false') {
-                        $('#LiabilityInsuranceSec').removeClass('hidden');
-
-                    } else {
-                        $('#LiabilityInsuranceSec').addClass('hidden');
-                    }
+                    }                    
                 }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                  alert("Unable to save.");
-                });
-         });
+                if (data[0] != "" && valid == "true") {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if ($('#EmployerPracticesLiability1').val() == 'true') {
+                                $('#EmployerPracticesLiability2Sec').removeClass('hidden');
+                            } else {
+                                $('#EmployerPracticesLiability2Sec').addClass('hidden');
+                            }
+                            if ($('#EmployerPracticesLiability2').val() == 'false') {
+                                $('#LiabilityInsuranceSec').removeClass('hidden');
+                            } else {
+                                $('#LiabilityInsuranceSec').addClass('hidden');
+                            }
+                        }                       
+                    }
+                };
+            })
+            .fail(function (a, s, d) {
+                alert("Unable to save.");
+            });
+    });
 
 
     function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {

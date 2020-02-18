@@ -38,211 +38,64 @@
                 <!-- new widget -->
                 @if (User.HasClaim("ViewComingUpTask", "ViewComingUpTask"))
                 {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                        <header style="background-color:#3276b1">
-                            <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                            <h2> Coming Up </h2>
-                            <!--<div class="widget-toolbar">
-                </div>-->
-                        </header>
-                        <!-- widget div-->
-                        <div>
-                            <div class="alert alert-info alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                There are currently no upcoming tasks.
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color:#3a57b8">
+                                <span class="widget-icon">
+                                    <h6><i class="fa fa-comments"></i> Coming Up </h6>
+                                </span>
                             </div>
-                            <!-- widget edit box -->
-                            <div class="jarviswidget-editbox">
-                                <div>
-                                    <label>Title:</label>
-                                    <input type="text" />
+                            <div class="card-body">
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    There are currently no upcoming tasks.
                                 </div>
                             </div>
-                            <!-- end widget edit box -->
-
-                            <div class="widget-body widget-hide-overflow no-padding">
-                                <!-- content goes here -->
-                                <!-- end content -->
-                            </div>
-
                         </div>
-                        <!-- end widget div -->
                     </div>
                 }
                 @if (User.HasClaim("ViewMilestoneTasks", "ViewMilestoneTasks"))
                 {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-tasks"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                        <header style="background-color:#3276b1">
-                            <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                            <h2> Tasks </h2>
-                            <!--<div class="widget-toolbar">
-                </div>-->
-                        </header>
-                        <!-- widget div-->
-                        <div>
-                            <hr />
-                            @if (Model.CriticalTaskItems.Count == 0 || Model.ImportantTaskItems.Count == 0)
-                            {
-                                <div class="hidden">
-                                    <div class="alert alert-info alert-dismissible" role="alert">
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        There are currently no pending tasks.
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="hidden">
-                                    <div class="alert alert-info alert-dismissible" role="alert">
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        There are currently no pending tasks.
-                                    </div>
-                                </div>
-
-                            }
-                            <!-- widget edit box -->
-                            <div class="jarviswidget-editbox">
-                                <div>
-                                    <label>Title:</label>
-                                    <input type="text" />
-                                </div>
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color:#3a57b8">
+                                <span class="widget-icon">
+                                    <h6> <i class="fa fa-comments"></i> Tasks </h6>
+                                </span>
                             </div>
-                            <!-- end widget edit box -->
-                            <div class="widget-body widget-hide-overflow no-padding smart-form">
-                                <!-- content goes here -->
-                                <h5 class="todo-group-title"><i class="fa fa-warning"></i> Critical Tasks (<small class="num-of-tasks">@Model.CriticalTaskItems.Count</small>)</h5>
-                                <ul id="sortable1" class="todo">
-                                    @foreach (var task in Model.CriticalTaskItems)
-                                    {
-                                        <li>
-                                            <span class="handle">
-                                                <label class="checkbox">
-                                                    <input type="checkbox" name="checkbox-inline">
-                                                    <i></i>
-                                                </label>
-                                            </span>
-                                            <p>
-                                                @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                                <span class="date">@task.DueDate</span>
-                                            </p>
-                                        </li>
-                                    }
-                                </ul>
-                                <h5 class="todo-group-title"><i class="fa fa-exclamation"></i> Important Tasks (<small class="num-of-tasks">@Model.ImportantTaskItems.Count</small>)</h5>
-                                <ul id="sortable2" class="todo">
-                                    @foreach (var task in Model.ImportantTaskItems)
-                                    {
-                                        <li>
-                                            <span class="handle">
-                                                <label class="checkbox">
-                                                    <input type="checkbox" name="checkbox-inline">
-                                                    <i></i>
-                                                </label>
-                                            </span>
-                                            <p>
-                                                @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                                <span class="date">@task.DueDate</span>
-                                            </p>
-                                        </li>
-                                    }
-                                </ul>
-
-                                <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks (<small class="num-of-tasks">@Model.CompletedTaskItems.Count</small>)</h5>
-                                <ul id="sortable3" class="todo">
-                                    @foreach (var task in Model.CompletedTaskItems)
-                                    {
-                                        <li>
-                                            <span class="handle">
-                                                <label class="checkbox">
-                                                    <input type="checkbox" name="checkbox-inline">
-                                                    <i></i>
-                                                </label>
-                                            </span>
-                                            <p>
-                                                @Html.Raw(task.Description) [<a href="#" onclick="ViewTask('@task.Id'); return false;" class="font-xs">More Details</a>]
-                                                <span class="date">@task.DueDate</span>
-                                            </p>
-                                        </li>
-                                    }
-                                </ul>
-
-
-                                <!-- end content -->
+                            <div class="card-body">
+                                @if (Model.CriticalTaskItems.Count == 0 || Model.ImportantTaskItems.Count == 0)
+                                {
+                                    <div class="hidden">
+                                        <div class="alert alert-info alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            There are currently no pending tasks.
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="hidden">
+                                        <div class="alert alert-info alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            There are currently no pending tasks.
+                                        </div>
+                                    </div>
+                                }
                             </div>
-
-                            <button type="button" class="btn-sm pull-right btn btn-success" data-dismiss="alert" aria-label="Close" onclick="showUserTaskModal()">Add Task</button>
-
                         </div>
-                        <!-- end widget div -->
                     </div>
                 }
                 @if (User.HasClaim("ViewClientAgreements", "ViewClientAgreements"))
                 {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                        <header style="background-color:#3276b1">
-                            <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                            <h2> Client Agreements</h2>
-                            <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
-
-                </div>-->
-                        </header>
-                        <!-- widget div-->
-                        <div>
-                            <!-- widget edit box -->
-                            <div class="jarviswidget-editbox">
-                                <div>
-                                    <label>Title:</label>
-                                    <input type="text" />
-                                </div>
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color:#3a57b8">
+                                <span class="widget-icon">
+                                    <h6><i class="fa fa-comments"></i> Client Agreements</h6>
+                                </span>
                             </div>
-                            <!-- end widget edit box -->
-                            <div class="widget-body no-padding">
-                                <!-- content goes here -->
-                                @*<section class="padding-bottom-10 hidden">
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-accident">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-building ">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-contents">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-death">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-freight">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-incomeprotection">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-liability">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-life">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-medical">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-motor">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-motorcycle">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-travel">
-                            </div>
-                        </section>*@
+                            <div class="card-body">
                                 <table class="table table-striped table-hover table-condensed">
                                     <thead>
                                         <tr>
@@ -267,81 +120,24 @@
                                                 <td>
                                                     <a class="btn btn-success btn-sm" href="/Home/ViewProgramme/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
                                                 </td>
-
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
-
-                                <!-- end content -->
                             </div>
                         </div>
-                        <!-- end widget div -->
                     </div>
                 }
                 @if (User.HasClaim("ViewTermSheets", "ViewTermSheets"))
                 {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-deals"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                        <header style="background-color:#3276b1">
-                            <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                            <h2> Broker/Underwriter Term Sheets </h2>
-                            <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
-
-                </div>-->
-                        </header>
-                        <!-- widget div-->
-                        <div>
-                            <!-- widget edit box -->
-                            <div class="jarviswidget-editbox">
-                                <div>
-                                    <label>Title:</label>
-                                    <input type="text" />
-                                </div>
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color:#3a57b8">
+                                <span class="widget-icon">
+                                    <h6><i class="fa fa-comments text-white"></i> Broker/Underwriter Term Sheets </h6>
+                                </span>
                             </div>
-                            <!-- end widget edit box -->
-                            <div class="widget-body no-padding">
-                                <!-- content goes here -->
-                                @*<section class="padding-bottom-10 hidden">
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-accident">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-building ">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-contents">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-death">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-freight">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-incomeprotection">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-liability">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-life">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-medical">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-motor">
-                            </div>
-                            <div class="col-xs-1 ">
-                                <img class="img-responsive ri ri-motorcycle">
-                            </div>
-                            <div class="col-xs-1">
-                                <img class="img-responsive ri ri-travel">
-                            </div>
-                        </section>*@
+                            <div class="card-body">
                                 <table class="table table-striped table-hover table-condensed">
                                     <thead>
                                         <tr>
@@ -371,45 +167,23 @@
                                         }
                                     </tbody>
                                 </table>
-
-                                <!-- end content -->
                             </div>
                         </div>
-                        <!-- end widget div -->
                     </div>
                 }
                 @if (User.HasClaim("ViewLibraries", "ViewLibraries"))
                 {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-toolbox"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                        <header style="background-color:#3276b1">
-                            <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                            <h2> Libraries </h2>
-                            <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
-                </div>-->
-                        </header>
-                        <!-- widget div-->
-                        <div>
-                            <!-- widget edit box -->
-                            <div class="jarviswidget-editbox">
-                                <div>
-                                    <label>Title:</label>
-                                    <input type="text" />
-                                </div>
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color:#3a57b8">
+                                <span class="widget-icon">
+                                    <h6> <i class="fa fa-comments text-white"></i> Libraries </h6>
+                                </span>
                             </div>
-                            <!-- end widget edit box -->
-                            <div class="widget-body widget-hide-overflow no-padding">
-                                <!-- content goes here ?ch=" + ch-->
+                            <div class="card-body">
                                 <table class="table table-striped table-hover table-condensed">
                                     <tbody>
 
-                                        @*<tr>
-                                    <td>Programmes</td>
-                                    <td>Programmes</td>
-                                    <td><a class="btn btn-success btn-sm" href="/Programme/ManageProgramme"><i class="fa fa-search"></i> View</a></td>
-                                </tr>*@
                                         @if (User.HasClaim("ViewTerritories", "ViewTerritories"))
                                         {
                                             <tr>
@@ -466,11 +240,11 @@
                                                 <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
-                                            <tr>
-                                                <td>Images</td>
-                                                <td>Manage Images</td>
-                                                <td><a class="btn btn-success btn-sm" href="/Image/ManageImage"><i class="fa fa-search"></i> View</a></td>
-                                            </tr>                                      
+                                        <tr>
+                                            <td>Images</td>
+                                            <td>Manage Images</td>
+                                            <td><a class="btn btn-success btn-sm" href="/Image/ManageImage"><i class="fa fa-search"></i> View</a></td>
+                                        </tr>
                                         @if (User.HasClaim("ViewMilestones", "ViewMilestones"))
                                         {
                                             <tr>
@@ -546,65 +320,44 @@
                                         }
                                     </tbody>
                                 </table>
-                                <!-- end content -->
                             </div>
                         </div>
-                        <!-- end widget div -->
                     </div>
                 }
-                @*@if (User.IsInRole("TCUser"))*@
-                @if (true)
+                @if (User.IsInRole("TCUser"))
                 {
-                    <div class="jarviswidget jarviswidget-color-blue" id="wid-id-5"
-                         data-widget-editbutton="false" data-widget-colorbutton="false">
-
-                        <header style="background-color:#3276b1">
-                            <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
-                            <h2> Admin </h2>
-                            <!--<div class="widget-toolbar">
-                     add: non-hidden - to disable auto hide
-
-                </div>-->
-                        </header>
-                        <!-- widget div-->
-                        <div>
-
-                            <!-- widget edit box -->
-                            <div class="jarviswidget-editbox">
-                                <div>
-                                    <label>Title:</label>
-                                    <input type="text" />
-                                </div>
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color:#3a57b8">
+                                <span class="widget-icon">
+                                    <h6> <i class="fa fa-comments text-white"></i> Admin </h6>
+                                </span>
                             </div>
-                            <!-- end widget edit box -->
-                            <div class="widget-body widget-hide-overflow no-padding">
-                                <!-- content goes here -->
+                            <div class="card-body">
                                 <table class="table table-striped table-hover table-condensed">
                                     <tbody>
                                         <tr>
-                                            <td>Manage Admin funtion</td>                                            
+                                            <td>Manage Admin funtion</td>
                                             <td><a class="btn btn-success btn-sm" href="~/Admin/Index"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
-                                            <td>Manage Organisations</td>                                            
+                                            <td>Manage Organisations</td>
                                             <td><a class="btn btn-success btn-sm" href="~/Organisation/ManageOrganisations"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
-                                            <td>Manage Permissions</td>                                            
+                                            <td>Manage Permissions</td>
                                             <td><a class="btn btn-success btn-sm" href="~/Authorize/Index"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                         <tr>
-                                            <td>Manage Rsa Users</td>                                            
+                                            <td>Manage Rsa Users</td>
                                             <td><a class="btn btn-success btn-sm" href="~/Admin/ManageRsaUsers"><i class="fa fa-search"></i> View</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <!-- end content -->
                             </div>
                         </div>
-                        <!-- end widget div -->
                     </div>
-                }            
+                }
                 <!-- end widget -->
             </article>
         </div>

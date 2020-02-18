@@ -3,44 +3,28 @@
 <!-- NEW WIDGET START -->
 <div class="container-fluid">
     <!-- Widget ID (each widget will need unique ID)-->
-    <div class="jarviswidget" id="wid-id-10"
-         data="false"
-         data-widget-editbutton="false"
-         data-widget-togglebutton="false"
-         data-widget-deletebutton="false"
-         data-widget-custombutton="false"
-         data-widget-sortable="false">
-        <header>
-            <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-            <h2>@ViewBag.Title  </h2>
-        </header>
-        <!-- widget div-->
-        <div>
-            <!-- widget edit box -->
-            <div class="jarviswidget-editbox">
-                <!-- This area used as drop downSS edit box -->
-            </div>
-            <!-- end widget edit box -->
-            <!-- widget content -->
+    <div class="card">
+        <div class="card-header">
+            <span class="widget-icon">
+                <h6><i class="fa fa-list-alt"></i> @ViewBag.Title </h6>
+            </span>
+        </div>
+        <div class="card-body">
 
-            <div id="pxpaysection" class="container">
+            <div id="pxpaysection" class="form-group">
                 @foreach (var item in Model)
                 {
-                <div class="row">
+                <div class="form-group">
                     @await Html.PartialAsync("Partials/ViewPxPayments", item)
                 </div>
                 }
-                <div class="row">
+                <div class="form-group">
                     <button onclick="submitPayment()" class="btn btn-primary">Pay now</button>
                 </div>
-            </div>
-            <!-- end widget content -->
-        </div>
-        <!-- end widget div -->
-    </div>
-    <!-- end widget -->
+            </div>            
+        </div>        
+    </div>    
 </div>
-<!-- WIDGET END -->
 
 <style>
 

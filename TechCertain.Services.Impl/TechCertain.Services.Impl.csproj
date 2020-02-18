@@ -9,7 +9,7 @@
     <PackageReference Include="ElmahCore" Version="1.2.5" />
     <PackageReference Include="ElmahCore.Postgresql" Version="1.2.5" />
     <PackageReference Include="ServiceStack.Client" Version="5.7.0" />
-    <PackageReference Include="System.Linq.Dynamic" Version="1.0.7" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.20" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TechCertain.Domain.Exceptions\TechCertain.Domain.Exceptions.csproj" />

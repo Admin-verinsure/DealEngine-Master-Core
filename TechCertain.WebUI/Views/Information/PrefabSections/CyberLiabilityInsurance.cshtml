@@ -340,75 +340,59 @@
 
     <script type="text/javascript">
 
-         $(window).on("load", function () {
-            
-           var clientInformationSheet = $('#AnswerSheetId').val();
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
 
-           var postData = {ClientInformationSheet : clientInformationSheet};
-
-
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetDNO", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-                    debugger;
-                     var valid = "true";
-                    for (var i = 0; i < data.length-14; i++) {
-                        if (data[i] == null) {
-                            if (valid) {
-                                valid = "false";
-                            }
+        $.ajax({
+            url: '@Url.Action("GetDNO", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                for (var i = 0; i < data.length - 14; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
                         }
                     }
-             if (data != "" && valid == "true") {
-                  
-                        for (var item = 0; item < data.length; item++){
-
-                          var arr = data[item];
-                            var count = 0;
-                            if (arr != null) {
-                               $('#' + arr[count]).val(arr[count + 1]);
-                            }
-                        }
-                      if ($('#DNO1').val() == "true") {
-
-                        $('#CyberLiabilitySec').removeClass('hidden');
-                      } else {
-
-                        $('#CyberLiabilitySec').addClass('hidden');
-                      }
-              }     
-
-                     if ($('#DNO2').val() == "false") {
-
-                      $('#CyberPreviousInsuranceSec').removeClass('hidden');
-                     } else {
-
-                      $('#CyberPreviousInsuranceSec').addClass('hidden');
-                     }
-                         
-                })
-                .fail(function (a, s, d) {
                     debugger;
-                  alert("Unable to save.");
-                });
-         });
+                }
+                debugger;
+                if (data != "" && valid == "true") {
+                    for (var item = 0; item < data.length; item++) {
+                        var arr = data[item];
+                        var count = 0;
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                        }
+                    }
+                    if ($('#DNO1').val() == "true") {
+                        $('#CyberLiabilitySec').removeClass('hidden');
+                    } else {
+                        $('#CyberLiabilitySec').addClass('hidden');
+                    }
+                }
+                if ($('#DNO2').val() == "false") {
+                    $('#CyberPreviousInsuranceSec').removeClass('hidden');
+                } else {
+                    $('#CyberPreviousInsuranceSec').addClass('hidden');
+                }
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
+    var clientInformationSheet = $('#AnswerSheetId').val();
 
-        var clientInformationSheet = $('#AnswerSheetId').val();
-
-        function CyberLiabilityInsurance1Selected(DNO1) {
-        debugger;
-
+    function CyberLiabilityInsurance1Selected(DNO1) {
         var CyberLiability = document.getElementById(DNO1);
-
-            if (CyberLiability.options[CyberLiability.selectedIndex].value == "true") {
-
-                $('#CyberLiabilitySec').removeClass('hidden');
-            } else {
+        if (CyberLiability.options[CyberLiability.selectedIndex].value == "true") {
+            $('#CyberLiabilitySec').removeClass('hidden');
+        } else {
             $('#DNO2').val('');
             $('#DNO3').val('');
             $('#DNO4').val('');
@@ -423,122 +407,101 @@
             $('#DNO13').val('');
             $('#DNO14').val('');
             $('#DNO15').val('');
-                $('#CyberLiabilitySec').addClass('hidden');
-            }
+            $('#CyberLiabilitySec').addClass('hidden');
+        }
+    };
 
-        };
-
-         function CyberLiabilityInsurance2Selected(DNO) {
-        debugger;
-
+    function CyberLiabilityInsurance2Selected(DNO) {
         var CyberLiability = document.getElementById(DNO);
-
-            if (CyberLiability.options[CyberLiability.selectedIndex].value == "false") {
-
-                $('#CyberPreviousInsuranceSec').removeClass('hidden');
-            } else {
+        if (CyberLiability.options[CyberLiability.selectedIndex].value == "false") {
+            $('#CyberPreviousInsuranceSec').removeClass('hidden');
+        } else {
             $('#DNO12').val('');
             $('#DNO13').val('');
             $('#DNO14').val('');
             $('#DNO15').val('');
-                $('#CyberPreviousInsuranceSec').addClass('hidden');
-            }
-        };
-
-
-         function ValidateCyber() {
-             debugger;
-             var validity = true;
-             if ($('#DNO1').val() == '') {
-                 $('#ValidateDNO1').html("<font color='red'>Field is required</font>")
-                  if (validity) {
-                  validity = false;
-                }else {
-                     $(validator).html("<i></i>");
-                }
-              }
-
-             for (var index = 2; index <= 11; index++) {
-                     var DNOId = "#DNO" + index;
-                 var value = $(DNOId).val();
-                 var validator = "#ValidateDNO" + index;
-
-                  if (value == "" && ($('#DNO1').val()=='true')) {
-              $(validator).html("<font color='red'>Field is required</font>")
-                if (validity) {
-                  validity = false;
-                }
-                  } else {
-                     $(validator).html("<i></i>");
-                }
-
-             }
-
-             for (var index = 12; index <= 15; index++) {
-                     var DNOId = "#DNO" + index;
-                 var value = $(DNOId).val();
-                 var validator = "#ValidateDNO" + index;
-
-                  if (value == "" && ($('#DNO2').val()=='false')) {
-              $(validator).html("<font color='red'>Field is required</font>")
-                if (validity) {
-                  validity = false;
-                }
-                  } else {
-                     $(validator).html("<i></i>");
-                }
-
-             }
-             return validity;
-
-             //if (validity) {
-             //   ValidateDNO(); 
-             // }
-         };
-
-
-        function ValidateDNO() {
-            debugger;
-                   var DNO = new Array(15); 
-    
-                   for (var i = 0; i < DNO.length; i++) { 
-                       DNO[i] = new Array(2); 
-                   } 
-
-            for (var i = 1; i <= 15; i++) {
-                for (var j = 0; j < 2; j++) {
-                    DNO[i-1][0] = "DNO" + i;
-                var DNOId = "#DNO" + i;
-                DNO[i-1][1] = $(DNOId).val();
-                }
-                       
-            }
-
-             for (var i = 12; i <= 15; i++) {
-                for (var j = 0; j < 2; j++) {
-                    DNO[i-1][0] = "DNO" + i;
-                var DNOId = "#DNO" + i;
-                DNO[i-1][1] = $(DNOId).val();
-                }
-                       
-            }
-
-                   var postData = { Answers: DNO, ClientInformationSheet: clientInformationSheet };
-
-                         $.ajax({
-                           url: '@Url.Action("UpdateAnswer", "Information")',
-                           type: "POST",
-                           data: postData
-                         })
-                           .done(function (data) {
-                            return true;
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
-
-  
+            $('#CyberPreviousInsuranceSec').addClass('hidden');
         }
+    };
+
+    function ValidateCyber() {
+        var validity = true;
+        if ($('#DNO1').val() == '') {
+            $('#ValidateDNO1').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            } else {
+                $(validator).html("<i></i>");
+            }
+        }
+        for (var index = 2; index <= 11; index++) {
+            var DNOId = "#DNO" + index;
+            var value = $(DNOId).val();
+            var validator = "#ValidateDNO" + index;
+
+            if (value == "" && ($('#DNO1').val() == 'true')) {
+                $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                $(validator).html("<i></i>");
+            }
+        }
+        for (var index = 12; index <= 15; index++) {
+            var DNOId = "#DNO" + index;
+            var value = $(DNOId).val();
+            var validator = "#ValidateDNO" + index;
+
+            if (value == "" && ($('#DNO2').val() == 'false')) {
+                $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                $(validator).html("<i></i>");
+            }
+        }
+        return validity;
+    };
+
+    function ValidateDNO() {
+        var DNO = new Array(15);
+
+        for (var i = 0; i < DNO.length; i++) {
+            DNO[i] = new Array(2);
+        }
+        
+        for (var i = 1; i <= 15; i++) {
+            for (var j = 0; j < 2; j++) {
+                DNO[i - 1][0] = "DNO" + i;
+                var DNOId = "#DNO" + i;
+                DNO[i - 1][1] = $(DNOId).val();
+            }
+        }
+        
+        for (var i = 12; i <= 15; i++) {
+            for (var j = 0; j < 2; j++) {
+                DNO[i - 1][0] = "DNO" + i;
+                var DNOId = "#DNO" + i;
+                DNO[i - 1][1] = $(DNOId).val();
+            }
+        }
+        
+        var postData = { Answers: DNO, ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                return true;
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    }
     </script>
     <style>
         .required:after {
@@ -547,3 +510,5 @@
             font-size: 20px;
         }
     </style>
+
+

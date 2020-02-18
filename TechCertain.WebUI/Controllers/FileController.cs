@@ -30,8 +30,8 @@ namespace TechCertain.WebUI.Controllers
         IApplicationLoggingService _applicationLoggingService;
         ILogger<FileController> _logger;
 
-        string _appData = "~/App_Data/";
-		string _uploadFolder = "uploads";
+  //      string _appData = "~/App_Data/";
+		//string _uploadFolder = "uploads";
 
 		public FileController(
             ILogger<FileController> logger,

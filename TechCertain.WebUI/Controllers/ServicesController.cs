@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Xml.Linq;
 using System.Globalization;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
 using System.Threading.Tasks;
 using TechCertain.WebUI.Helpers;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Linq.Dynamic;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -475,7 +474,7 @@ namespace TechCertain.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = new List<Organisation>();
-                for (var i = 0; i < sheet.Organisation.Count(); i++)
+                for (var i = 0; i < sheet.Organisation.Count; i++)
                 {
                     organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
                 }
@@ -850,7 +849,7 @@ namespace TechCertain.WebUI.Controllers
                 model.UpdateEntity(location);
                 var OUList = new List<OrganisationalUnit>();
 
-                if (sheet.Owner.OrganisationalUnits.Count() > 0)
+                if (sheet.Owner.OrganisationalUnits.Count > 0)
                     OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
 
                 location.OrganisationalUnits = OUList;
@@ -3858,52 +3857,58 @@ namespace TechCertain.WebUI.Controllers
                         user.SetPrimaryOrganisation(organisation);
                         await _userService.Update(user);
 
-
-
-                        var programme = await _programmeService.GetCoastGuardProgramme();
-                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
-                        var reference = await _referenceService.GetLatestReferenceId();
-                        var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-                        await _referenceService.CreateClientInformationReference(sheet);
-
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        try
                         {
-                            OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
-                            Boat vessel = new Boat(user)
-                            {
-                                BoatType1 = boatType,
-                                BoatType2 = craftType,
-                                HullConstruction = constructionType,
-                                HullConfiguration = hullConfiguration,
-                                BoatIsTrailered = trailered,
-                                MaxSumInsured = Convert.ToInt32(boatInsuredValue),
-                                BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
-                            };
-                            sheet.Boats.Add(vessel);
-                            organisation.OrganisationalUnits.Add(ou);
-                            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                            clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
-                            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "First Mate Cover Quick Quote Consuming Process Completed"));
-                            try
-                            {
-                                Thread.Sleep(1000);
-                                await uow.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception(ex.Message);
-                            }
+                            var programme = await _programmeService.GetCoastGuardProgramme();
+                            var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+                            var reference = await _referenceService.GetLatestReferenceId();
+                            var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                            await _referenceService.CreateClientInformationReference(sheet);
 
+                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            {
+                                OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
+                                Boat vessel = new Boat(user)
+                                {
+                                    BoatType1 = boatType,
+                                    BoatType2 = craftType,
+                                    HullConstruction = constructionType,
+                                    HullConfiguration = hullConfiguration,
+                                    BoatIsTrailered = trailered,
+                                    MaxSumInsured = Convert.ToInt32(boatInsuredValue),
+                                    BoatQuickQuotePremium = Convert.ToDecimal(quickQuotePremium),
+                                };
+                                sheet.Boats.Add(vessel);
+                                organisation.OrganisationalUnits.Add(ou);
+                                clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                                clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, "First Mate Cover Quick Quote Consuming Process Completed"));
+                                try
+                                {
+                                    Thread.Sleep(1000);
+                                    await uow.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception(ex.Message);
+                                }
+
+                            }
+                            //send out login email
+                            await _emailService.SendSystemEmailLogin(email);
+                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, sheet, null);
+                            }
+                            //send out information sheet issue notification email
+                            await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                         }
-                        ////send out login email
-                        //await _emailService.SendSystemEmailLogin(email);
-                        //EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                        //if (emailTemplate != null)
-                        //{
-                        //    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
-                        //}
-                        ////send out information sheet issue notification email
-                        //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                        catch(Exception ex)
+                        {
+                            await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);                            
+                        }
+                        
                     }
                 }
                 else

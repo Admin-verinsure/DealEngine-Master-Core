@@ -22,6 +22,5 @@ sqlite3
 /web.config
 /packages
 /TechCertain.WebUI/appsettings.json
-
-
-TechCertain.WebUI/wwwroot/Images/
+TechCertain.WebUI/wwwroot/images/
+.vscode
