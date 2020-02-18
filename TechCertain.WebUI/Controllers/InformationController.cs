@@ -2582,7 +2582,7 @@ namespace TechCertain.WebUI.Controllers
                     await uow.Commit();
                 }
 
-                return Json(demoData, System.Web.Mvc.JsonRequestBehavior.AllowGet);
+                return Json(demoData);
             }
             catch (Exception ex)
             {

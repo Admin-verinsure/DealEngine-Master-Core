@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using TechCertain.WebUI.Helpers.CustomHtml.TableFor.Interfaces;
@@ -37,14 +38,14 @@ namespace TechCertain.WebUI.Helpers.CustomHtml.TableFor
 		/// Constructor.
 		/// </summary>
 		/// <param name="expression">Lambda expression identifying a property to be rendered.</param>
-		public TableColumn(Expression<Func<TModel, TProperty>> expression)
-		{
-			string propertyName = (expression.Body as MemberExpression).Member.Name;
-			this.ColumnName = System.Web.Mvc.ExpressionHelper.GetExpressionText (expression);
-			this.ColumnTitle = Regex.Replace(propertyName, "([a-z])([A-Z])", "$1 $2");
-			this.ColumnVisible = true;
-			this.CompiledExpression = expression.Compile();
-		}
+		//public TableColumn(Expression<Func<TModel, TProperty>> expression)
+		//{
+		//	string propertyName = (expression.Body as MemberExpression).Member.Name;
+		//	this.ColumnName = ExpressionHelper.GetExpressionText (expression);
+		//	this.ColumnTitle = Regex.Replace(propertyName, "([a-z])([A-Z])", "$1 $2");
+		//	this.ColumnVisible = true;
+		//	this.CompiledExpression = expression.Compile();
+		//}
 
 		/// <summary>
 		/// Set the title for the column.

@@ -9,8 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.0" />
     <PackageReference Include="NHibernate.AspNetCore.Identity" Version="3.1.2" />
   </ItemGroup>

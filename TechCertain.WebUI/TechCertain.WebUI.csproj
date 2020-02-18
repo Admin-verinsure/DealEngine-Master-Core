@@ -6,10 +6,6 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <RuntimeIdentifiers>ubuntu.18.04-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
-  <ItemGroup>
-    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
-  </ItemGroup>
   
   <ItemGroup>
     <Compile Remove="Controllers\InformationDemoController.cs" />
@@ -27,15 +23,12 @@
     <Content Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="elmah.corelibrary" Version="1.2.2" />
+  <ItemGroup>    
     <PackageReference Include="ElmahCore" Version="1.2.5" />
-    <PackageReference Include="HtmlToOpenXml.dll" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
+    <PackageReference Include="HtmlToOpenXml.dll" Version="2.0.3" />    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
@@ -57,6 +50,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Linq.Dynamic" Version="1.0.7" />
   </ItemGroup>
 
   <ItemGroup>

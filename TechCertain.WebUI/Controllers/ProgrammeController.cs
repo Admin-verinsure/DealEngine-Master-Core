@@ -1398,7 +1398,7 @@ namespace TechCertain.WebUI.Controllers
                 return RedirectToAction("SendEmailTemplates", new { Id = programme.Id, type = model.Type, description = model.Description });
             }
             catch (Exception ex)
-            {
+            {                
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }

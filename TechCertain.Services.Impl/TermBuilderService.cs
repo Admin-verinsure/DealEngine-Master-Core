@@ -2,11 +2,11 @@
 using TechCertain.Services.Interfaces;
 using TechCertain.Domain.Entities;
 using TechCertain.Infrastructure.FluentNHibernate;
-using System.Linq;
-using System.Linq.Dynamic;
 using System.Threading.Tasks;
 using NHibernate.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 
 namespace TechCertain.Services.Impl
 {
@@ -52,7 +52,7 @@ namespace TechCertain.Services.Impl
 
 		public async Task<List<PolicyTermSection>> GetTerms(string orderField, string direction)
 		{
-            return await _policyTermRepository.FindAll().OrderBy(orderField + " " + direction).ToListAsync();
+			return await _policyTermRepository.FindAll().OrderBy(orderField + " " + direction).ToListAsync();
 		}
 
 		public async Task<bool> Deprecate (User deletedBy, Guid termId)
