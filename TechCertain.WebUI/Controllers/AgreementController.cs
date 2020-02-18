@@ -2623,7 +2623,7 @@ namespace TechCertain.WebUI.Controllers
                     //bool hasEglobalNo = programme.EGlobalClientNumber != null ? true : false;
                     status = "Bound and invoice pending";
                     bool hasEglobalNo = false;
-                    if (programme.EGlobalClientNumber != "")
+                    if (programme.EGlobalClientNumber != null)
                     {
                         hasEglobalNo = true;
                     }
