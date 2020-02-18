@@ -140,52 +140,50 @@
 
 
 <script type="text/javascript">
+
     $(window).on("load", function () {
         var clientInformationSheet = $('#AnswerSheetId').val();
         var postData = { ClientInformationSheet: clientInformationSheet };
         $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetStatutoryLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-             var valid = "true";
-                    for (var i = 0; i < data.length-5; i++) {
-                        if (data[i] == null) {
-                            if (valid) {
-                                valid = "false";
-                            }
+            url: '@Url.Action("GetStatutoryLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                var count = 0;
+                for (var i = 0; i < data.length - 5; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
                         }
+                    }                    
+                }                
+                if (data[0] != "" && valid == "true") {
+                    for (var item = 0; item < data.length - 4; item++){
+                        var arr = data[item];
+                        debugger;
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if ($('#StatutoryLiability1').val() == 'true') {
+                                $('#StatutoryLiability2Sec').removeClass('hidden');
+                            } else {
+                                $('#StatutoryLiability2Sec').addClass('hidden');
+                            }
+                            if ($('#StatutoryLiability2').val() == 'false') {
+                                $('#PreviousInsuranceSec').removeClass('hidden');
+                            } else {
+                                $('#PreviousInsuranceSec').addClass('hidden');
+                            }
+                        }                                               
                     }
-             if (data != "" && valid == "true") {
-                for (var item = 0; item < data.length-4; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#StatutoryLiability1').val() == 'true') {
-                        $('#StatutoryLiability2Sec').removeClass('hidden');
-
-                    } else {
-                        $('#StatutoryLiability2Sec').addClass('hidden');
-                    }
-                     if ($('#StatutoryLiability2').val() == 'false') {
-                        $('#PreviousInsuranceSec').removeClass('hidden');
-
-                    } else {
-                        $('#PreviousInsuranceSec').addClass('hidden');
-                    }
-
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
-         });
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
     function StatutoryLiability1Selected(StatutoryLiability) {
         var statutoryLiability = document.getElementById(StatutoryLiability);

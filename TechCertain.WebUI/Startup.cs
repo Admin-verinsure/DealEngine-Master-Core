@@ -12,6 +12,8 @@ using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace TechCertain.WebUI
 {
@@ -38,18 +40,16 @@ namespace TechCertain.WebUI
             services.AddIdentityExtentions();
             services.AddSingleton(MapperConfig.ConfigureMaps());
             services.AddLogging();
-            //services.AddLogging(loggingBuilder =>
-            //{
-            //    // configure Logging with NLog
-            //    loggingBuilder.ClearProviders();
-            //    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
-            //    loggingBuilder.AddNLog();
-            //});
+            services.Configure<RequestLocalizationOptions>(options => 
+            {
+                //https://stackoverflow.com/questions/41289737/get-the-current-culture-in-a-controller-asp-net-core
+                options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
+            });
+
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddElmah(options =>
-            {
-                //options.CheckPermissionAction = context => context.User.Identity.IsAuthenticated;
+            {                
                 options.Path = @"c078b2de-f512-4225-90e8-90f8e17ac70b";
             });
             services.AddBaseLdapPackage();
@@ -77,6 +77,7 @@ namespace TechCertain.WebUI
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            app.UseRequestLocalization();
             app.UseElmah();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

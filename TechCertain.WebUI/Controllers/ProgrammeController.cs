@@ -493,7 +493,7 @@ namespace TechCertain.WebUI.Controllers
                 }
 
 
-                var status = "Bound and invoiced";
+                
 
                 var eGlobalSerializer = new EGlobalSerializerAPI();
 
@@ -518,6 +518,8 @@ namespace TechCertain.WebUI.Controllers
                     EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
                     if (eGlobalResponse != null)
                     {
+                        var status = "Bound and invoiced";
+
                         var documents = new List<SystemDocument>();
                         foreach (ClientAgreement agreement in programme.Agreements)
                         {
@@ -1398,7 +1400,7 @@ namespace TechCertain.WebUI.Controllers
                 return RedirectToAction("SendEmailTemplates", new { Id = programme.Id, type = model.Type, description = model.Description });
             }
             catch (Exception ex)
-            {
+            {                
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }

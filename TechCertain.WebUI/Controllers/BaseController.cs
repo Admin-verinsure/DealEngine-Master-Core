@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Helpers;
 using TechCertain.WebUI.Helpers.CustomActions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Localization;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -71,8 +72,13 @@ namespace TechCertain.WebUI.Controllers
 
 		public CultureInfo UserCulture
 		{
-			get { return CultureInfo.CreateSpecificCulture ("en-NZ"); }
-		}
+            get
+            {
+                return Request.HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.Culture;                
+            }
+
+            //get { return CultureInfo.CreateSpecificCulture ("en-NZ"); }
+        }
 
         public bool DemoEnvironment
         {

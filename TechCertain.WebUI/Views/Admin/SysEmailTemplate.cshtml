@@ -1,112 +1,78 @@
 ﻿@model TechCertain.WebUI.Models.SystemEmailTemplateViewModel
 
-@using TechCertain.WebUI.Helpers.CustomHtml
-<!-- MAIN CONTENT -->
-<div id="content">
-    <div class="row">
-        <div class="row">
-            <!-- col -->
-            <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-                <h1 class="page-title txt-color-blueDark">
-                    <!-- PAGE HEADER -->
-                    <i class="fa-fw fa fa-file-o"></i>  <span>
-                        <a href="~/Admin"> Admin Panel</a>
-                    </span>
-                </h1>
-            </div>
-            <!-- end col -->
-        </div>
+<div id="content" class="container">
+    <div class="form-group">
+        <h1 class="page-title txt-color-blueDark">
+            <!-- PAGE HEADER -->
+            <i class="fa-fw fa fa-file-o"></i>  <span>
+                <a href="~/Admin"> Admin Panel</a>
+                > Add/Edit System Email Template
+            </span>
+        </h1>
+    </div>
+    <div class="form-group">
         <span>
-            <a onclick="location.href='/Admin';" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span>  </a>
+            <a class="btn btn-primary btn-xs text-white" onclick="location.href='/Admin';" id="backbutton"><i class="fa fa-home"></i> Back </a>
         </span>
-        <section class="col-xs-12"></section>
     </div>
     <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <!-- NEW WIDGET START -->
-        <div class="col col-12">
-            <!-- Widget ID (each widget will need unique ID)-->
-            <div class="jarviswidget" id="wid-id-10"
-                 data="false"                          
-                 data-widget-editbutton="false"
-                 data-widget-togglebutton="false"                                     
-                 data-widget-deletebutton="false"
-                 data-widget-custombutton="false"
-                 data-widget-sortable="false">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
-                    <h2>System Email Template</h2>
-                </header>
+    <div class="form-group">
+        <div class="card" id="wid-id-10">
+            <div class="card-header bg-primary text-white">
+                <h2>@ViewBag.Title </h2>
+            </div>
+            <div class="card-body">
+                <form action="~/Admin/SysEmailTemplate" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
 
-                <!-- widget div-->
-                <div>
-                    <!-- widget content -->
-                    <div class="smart-form no-padding">
-                        <div class="widget-body widget-hide-overflow">
-                            <form action="~/Admin/SysEmailTemplate" method="POST" id="update-form" class="smart-form client-form" enctype="multipart/form-data">
-                                <div>
-                                    @Html.HiddenFor(m => m.SystemEmailType)
-                                    @Html.HiddenFor(m => m.InternalNotes)
-                                    <!-- widget edit box -->
-                                    <div class="jarviswidget-editbox">
-                                        <!-- This area used as drop downSS edit box -->
-                                    </div>
-                                    <!-- end widget edit box -->
-                                    <!-- widget content -->
+                    @Html.HiddenFor(m => m.SystemEmailType)
+                    @Html.HiddenFor(m => m.InternalNotes)
 
-                                    <div class="col col-10">
-                                        <div class="alert alert-info">
-                                            <p>@Model.InternalNotes</p>
-                                        </div>
-                                        @Html.TextBoxFor(m => m.Subject)
-                                        <br />
-                                        @Html.TextAreaFor(m => m.Body)
-                                        @*@Html.TextAreaFor(m => m.Body, new { id = "SysEmail", name = "content", cols = "10", rows = "80" })*@
-
-                                        <br />
-                                    </div>
-                                    <!-- end widget content -->
-                                </div>
-                            </form>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>@Model.InternalNotes</h5>
                         </div>
-                        <div class="widget-body widget-hide-overflow">
-                            <fieldset>
-                                <div class="row">
-                                    <section class="col col-12">
-                                        <button onclick="javascript:SaveSystemEmailTemplate()" class="btn txt-color-white bg-color-green btn-sm">Save System Email Template</button>
+                        <div class="card-body">
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;", @class = "form-control", @placeholder = "Subject" })
+                            </div>
+                            <div class="form-group">
+                                @Html.TextAreaFor(m => m.Body, new { @class = "form-control", @placeholder = "Body" })
+                            </div>
 
-                                        @*@Html.Bootstrap().Button().Text("Save System Email Template").HtmlAttributes(new { onclick = "javascript:SaveSystemEmailTemplate()" }).Class("btn txt-color-white bg-color-green btn-sm")*@
-                                    </section>
+                        </div>
+                        <div class="card-footer">
+                            @if (User.HasClaim("EditEmails", "EditEmails"))
+                            {
+                                <div class="form-group">
+                                    <button onclick="SaveSystemEmailTemplate()" class="btn btn-primary">Save System Email Template</button>
                                 </div>
-                            </fieldset>
+                            }
                         </div>
                     </div>
-                    <!-- end widget content -->
-                </div>
-                <!-- end widget div -->
-            </div>
-            <!-- end widget -->
-        </div>
-        <!-- WIDGET END -->
-    </section>
-    <div class="modal" id="ckmodal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Select an Image</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
-                </div>
-                <div class="modal-footer" style="display:flex;">
-                    <label for="selImg" style="float:left;">Selected Image: </label>
-                    <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
-                    <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal" id="ckmodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select an Image</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+            </div>
+            <div class="modal-footer" style="display:flex;">
+                <label for="selImg" style="float:left;">Selected Image: </label>
+                <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
+                <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @section pagespecific {
@@ -128,16 +94,14 @@
 				type: "POST",
 				url: '@Url.Action("SysEmailTemplate", "Admin")',
 			    data: $("#update-form").serialize() // serializes the form's elements.
-			})
-	        .done(function (json) {
-				console.log(json);
-	        })
-	        .fail(function (err, ajaxOptions, thrownError) {
-				alert("Unable to save." + err.responseText );
-				console.log(err);
-				console.log(ajaxOptions);
-				console.log(thrownError);
-	        });
+            })
+                .done(function (json) {
+                    console.log(json);
+                })
+                .fail(function (err, ajaxOptions, thrownError) {
+                    debugger;
+                    alert("Unable to save." + err.responseText);
+                });
         };
 
     </script>

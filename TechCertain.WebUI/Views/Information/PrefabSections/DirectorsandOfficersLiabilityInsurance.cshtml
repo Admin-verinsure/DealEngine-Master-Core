@@ -162,59 +162,52 @@
 
 <script type="text/javascript">
 
-    
-         $(window).on("load", function () {
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
 
-           var clientInformationSheet = $('#AnswerSheetId').val();
-           var postData = {ClientInformationSheet : clientInformationSheet};
-            $.ajax({
-     	// change back once mono decides to fix
-             url: '@Url.Action("GetDirectorsandOfficersLiability", "Information")',
-             type: "POST",
-             data: postData
-             })
-                .done(function (data) {
-                     var valid = "true";
-                    for (var i = 0; i < data.length-6; i++) {
-                        if (data[i] == null) {
-                            if (valid) {
-                                valid = "false";
+        $.ajax({
+            url: '@Url.Action("GetDirectorsandOfficersLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                var count = 0;
+                for (var i = 0; i < data.length - 6; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
+                        }
+                    }
+                }                
+                if (data[0] != "" && valid == "true") {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        debugger;
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if ($('#DirectorsandOfficers1').val() == 'true') {
+                                $('#DirectorsandOfficersLiabilityInsurance2Sec').removeClass('hidden');
+                                $('#DirectorsandOfficersLiabilityInsurance3Sec').removeClass('hidden');
+                            } else {
+                                $('#DirectorsandOfficersLiabilityInsurance2Sec').addClass('hidden');
+                                $('#DirectorsandOfficersLiabilityInsurance3Sec').addClass('hidden');
+                            }
+                            if ($('#DirectorsandOfficers3').val() == 'false') {
+                                $('#DirectorsInsuranceSec').removeClass('hidden');
+                            } else {
+                                $('#DirectorsInsuranceSec').addClass('hidden');
                             }
                         }
                     }
-             if (data != "" && valid == "true") {
-                for (var item = 0; item < data.length; item++){
-
-                  var arr = data[item];
-                  var count = 0;
-                    $('#' + arr[count]).val(arr[count + 1]);
-                    if ($('#DirectorsandOfficers1').val() == 'true') {
-                        $('#DirectorsandOfficersLiabilityInsurance2Sec').removeClass('hidden');
-                        $('#DirectorsandOfficersLiabilityInsurance3Sec').removeClass('hidden');
-
-                    } else {
-                       
-                        $('#DirectorsandOfficersLiabilityInsurance2Sec').addClass('hidden');
-                        $('#DirectorsandOfficersLiabilityInsurance3Sec').addClass('hidden');
-
-                    }
-
-                    if ($('#DirectorsandOfficers3').val() == 'false') {
-                        $('#DirectorsInsuranceSec').removeClass('hidden');
-
-                    } else {
-                        $('#DirectorsInsuranceSec').addClass('hidden');
-
-                    }
-                }
-             };
-
-                })
-                .fail(function (a, s, d) {
-                    debugger;
-                  alert("Unable to save.");
-                });
-         });
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
 
     function DirectorsandOfficersLiabilityInsurance1Selected(DirectorsandOfficers) {
         debugger;
@@ -277,68 +270,60 @@
             }
         } else {
             $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<i></i>");
-        }
-          if (GLI3 == "" && GLI1 == 'true') {
-            $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<i></i>");
-        }
-
-           for (var index = 4; index <=7; index++) {
-                     var employerLiabilityInsurance = "#DirectorsandOfficers" + index;
-                 var value = $(employerLiabilityInsurance).val();
-                 var validator = "#ValidateDirectorsandOfficersLiabilityInsurance" + index;
-
-                  if (value == "" && ($('#DirectorsandOfficers3').val()=='false')) {
-              $(validator).html("<font color='red'>Field is required</font>")
-                if (validity) {
-                  validity = false;
-                }
-                  } else {
-                     $(validator).html("<i></i>");
-                  }
          }
-         return validity;
-        //if (validity) {
-        //    SaveDirectorsandOfficersLiability(); 
-        //}
+         if (GLI3 == "" && GLI1 == 'true') {
+             $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             }
+         } else {
+             $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<i></i>");
+         }
+
+         for (var index = 4; index <= 7; index++) {
+             var employerLiabilityInsurance = "#DirectorsandOfficers" + index;
+             var value = $(employerLiabilityInsurance).val();
+             var validator = "#ValidateDirectorsandOfficersLiabilityInsurance" + index;
+
+             if (value == "" && ($('#DirectorsandOfficers3').val() == 'false')) {
+                 $(validator).html("<font color='red'>Field is required</font>")
+                 if (validity) {
+                     validity = false;
+                 }
+             } else {
+                 $(validator).html("<i></i>");
+             }
+         }
+        return validity;
     };
 
-        function SaveDirectorsandOfficersLiability() {
-            debugger;
-                   var DirectorsandOfficers = new Array(7);
+    function SaveDirectorsandOfficersLiability() {
+        var DirectorsandOfficers = new Array(7);
 
-                   for (var i = 0; i < DirectorsandOfficers.length; i++) {
-                       DirectorsandOfficers[i] = new Array(2);
-                   }
+        for (var i = 0; i < DirectorsandOfficers.length; i++) {
+            DirectorsandOfficers[i] = new Array(2);
+        }
 
-            for (var i = 1; i <= 7; i++) {
-                for (var j = 0; j < 2; j++) {
-                    DirectorsandOfficers[i-1][0] = "DirectorsandOfficers" + i;
+        for (var i = 1; i <= 7; i++) {
+            for (var j = 0; j < 2; j++) {
+                DirectorsandOfficers[i - 1][0] = "DirectorsandOfficers" + i;
                 var directorsandOfficers = "#DirectorsandOfficers" + i;
-                DirectorsandOfficers[i-1][1] = $(directorsandOfficers).val();
-                }
-
+                DirectorsandOfficers[i - 1][1] = $(directorsandOfficers).val();
             }
+        }
 
-                   var postData = { Answers: DirectorsandOfficers, ClientInformationSheet: clientInformationSheet };
-
-             $.ajax({
-                           url: '@Url.Action("UpdateAnswer", "Information")',
-                           type: "POST",
-                           data: postData
-                       })
-                           .done(function (data) {
-                              return true;
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
-
-
+        var postData = { Answers: DirectorsandOfficers, ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                return true;
+            })
+            .fail(function (a, s, d) {
+                alert("Unable to save.");
+            });
     };
 
 </script>

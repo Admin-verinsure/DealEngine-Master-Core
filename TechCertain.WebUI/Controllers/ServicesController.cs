@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TechCertain.Infrastructure.FluentNHibernate;
 using TechCertain.Domain.Entities;
 using TechCertain.Services.Interfaces;
 using System.Xml.Linq;
 using System.Globalization;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TechCertain.WebUI.Models;
 using TechCertain.WebUI.Models.ControlModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq.Dynamic;
 using ServiceStack;
 using System.Threading;
 using System.Threading.Tasks;
 using TechCertain.WebUI.Helpers;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Linq.Dynamic;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -475,7 +474,7 @@ namespace TechCertain.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = new List<Organisation>();
-                for (var i = 0; i < sheet.Organisation.Count(); i++)
+                for (var i = 0; i < sheet.Organisation.Count; i++)
                 {
                     organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
                 }
@@ -850,7 +849,7 @@ namespace TechCertain.WebUI.Controllers
                 model.UpdateEntity(location);
                 var OUList = new List<OrganisationalUnit>();
 
-                if (sheet.Owner.OrganisationalUnits.Count() > 0)
+                if (sheet.Owner.OrganisationalUnits.Count > 0)
                     OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
 
                 location.OrganisationalUnits = OUList;

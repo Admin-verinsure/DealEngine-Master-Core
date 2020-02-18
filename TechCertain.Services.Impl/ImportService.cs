@@ -62,10 +62,9 @@ namespace TechCertain.Services.Impl
                     //}
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
-
-                    if (parts[0] == "f")
+                    try
                     {
-                        try
+                        if (parts[0] == "f")
                         {
                             organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
 
@@ -75,53 +74,62 @@ namespace TechCertain.Services.Impl
                                 organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2] + " " + parts[3], organisationType);
                                 await _organisationService.CreateNewOrganisation(organisation);
                             }
+                        }
+                        else
+                        {
+                            organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
 
-                            user = new User(currentUser, Guid.NewGuid(), parts[7]);
-                            user.FirstName = parts[2];
-                            user.LastName = parts[3];
-                            user.FullName = parts[2] + " " + parts[3];
-                            user.Email = parts[4];
-                            user.Address = parts[5];
-                            user.Phone = "12345";
-
-                            if (!user.Organisations.Contains(organisation))
-                                user.Organisations.Add(organisation);
-                            user.SetPrimaryOrganisation(organisation);
-
-                            await _userService.ApplicationCreateUser(user);
-
-                            var programme = await _programmeService.GetProgramme(programmeID);
-                            var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
-
-                            var reference = await _referenceService.GetLatestReferenceId();
-                            var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
-                            await _referenceService.CreateClientInformationReference(sheet);
-
-                            using (var uow = _unitOfWork.BeginUnitOfWork())
+                            if (organisation == null)
                             {
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType);
+                                await _organisationService.CreateNewOrganisation(organisation);
+                            }
+                        }
 
-                                clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                                clientProgramme.ClientProgrammeMembershipNumber = parts[6];
-                                sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
-                                try
-                                {
-                                    await uow.Commit();
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw new Exception(ex.Message);
-                                }
+                        user = new User(currentUser, Guid.NewGuid(), parts[7]);
+                        user.FirstName = parts[2];
+                        user.LastName = parts[3];
+                        user.FullName = parts[2] + " " + parts[3];
+                        user.Email = parts[4];
+                        user.Address = parts[5];
+                        user.Phone = "12345";
 
+                        if (!user.Organisations.Contains(organisation))
+                            user.Organisations.Add(organisation);
+                        user.SetPrimaryOrganisation(organisation);
+
+                        await _userService.ApplicationCreateUser(user);
+
+                        var programme = await _programmeService.GetProgramme(programmeID);
+                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                        var reference = await _referenceService.GetLatestReferenceId();
+                        var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                        await _referenceService.CreateClientInformationReference(sheet);
+
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+
+                            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                            clientProgramme.ClientProgrammeMembershipNumber = parts[6];
+                            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                            try
+                            {
+                                await uow.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception(ex.Message);
                             }
 
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
 
                     }
-
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }
@@ -231,11 +239,11 @@ namespace TechCertain.Services.Impl
                         user.SetPrimaryOrganisation(organisation);
                         await _userService.ApplicationCreateUser(user);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                     }
-                    
+
                 }
             }
         }
@@ -312,10 +320,10 @@ namespace TechCertain.Services.Impl
 
         public async Task ImportAOEService(User user)
         {
-            //await ImportAOEServiceIndividuals(user);
-            //await ImportAOEServicePrincipals(user);
-            //await ImportAOEServiceClaims(user);
-            //await ImportAOEServiceBusinessContract(user);
+            await ImportAOEServiceIndividuals(user);
+            await ImportAOEServicePrincipals(user);
+            await ImportAOEServiceClaims(user);
+            await ImportAOEServiceBusinessContract(user);
         }
 
         public async Task ImportActivities(User user)

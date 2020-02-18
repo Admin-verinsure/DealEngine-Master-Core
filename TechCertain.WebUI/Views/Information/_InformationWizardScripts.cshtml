@@ -134,97 +134,78 @@
                            });
                    }
                }
-                   if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                       //$("#Vessel").trigger("click");
-
-                       debugger;
-
-                       if (document.querySelector('[id="Professional Indemnity"]') !== null ) {
-                           if (!ValidateProfessionalIndemnity()) {
-                                window.alert("Please Add Professional Indemnity to proceed for policy. ");
-                                $("#more").trigger("click");
-                                $("[id='Professional Indemnity']").trigger("click");
-                                return false;
-                           } else {
-                               SaveProfessionalIndemnity();
-
-                           }
-
-
-
-                       }
-                   }
-                   if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
-                       if (!ValidateStatutory()) {
-                           window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
+               if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+                       if (!ValidateProfessionalIndemnity()) {
+                           window.alert("Please Add Professional Indemnity to proceed for policy. ");
                            $("#more").trigger("click");
-                           $("[id='Statutory Liability Insurance']").trigger("click");
-                           return false;
-
-                       } else {
-                               SaveStatutoryLiability();
-
-                       }
-
-
-
-                   }
-                   if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
-                       if (!ValidateEmployer()) {
-                           window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='Employers Liability Insurance']").trigger("click");
+                           $("[id='Professional Indemnity']").trigger("click");
                            return false;
                        } else {
-                           SaveEmployerLiabilityInsurance();
+                           SaveProfessionalIndemnity();
                        }
                    }
-                   if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
-                       if (!ValidatePractice()) {
-                           window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='Employment Practices Liability Insurance']").trigger("click");
-                           return false;
-                           } else {
-                               SaveEmployerPracticesLiability();
-
-                       }
-
+               }
+               if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
+                   if (!ValidateStatutory()) {
+                       window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='Statutory Liability Insurance']").trigger("click");
+                       return false;
+                   } else {
+                       SaveStatutoryLiability();
                    }
-                   if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
-                       if (!ValidateDNOGeneral()) {
-                           window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='Directors and Officers Liability Insurance']").trigger("click");
-                           return false;
-                           } else {
-                               SaveDirectorsandOfficersLiability();
-
-                       }
+               }
+               if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
+                   if (!ValidateEmployer()) {
+                       window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='Employers Liability Insurance']").trigger("click");
+                       return false;
+                   } else {
+                       SaveEmployerLiabilityInsurance();
                    }
-                   if (document.querySelector('[id="General Liability Insurance"]') !== null) {
-                       if (!ValidateGeneral()) {
-                           window.alert("Please Add General Liability Insurance to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='General Liability Insurance']").trigger("click");
-                           return false;
-                           } else {
-                               SaveGeneralLiability();
-                       }
+               }
+               if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
+                   if (!ValidatePractice()) {
+                       window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='Employment Practices Liability Insurance']").trigger("click");
+                       return false;
+                   } else {
+                       SaveEmployerPracticesLiability();
                    }
-                   if ((document.querySelector('[id="Cyber Liability Insurance"]') !== null) && !ValidateCyber()) {
-                       if (!ValidateCyber()) {
-                           window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='Cyber Liability Insurance']").trigger("click");
-                           return false;
-                           } else {
-                           ValidateDNO();
-
-                       }
-
+               }
+               if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
+                   if (!ValidateDNOGeneral()) {
+                       window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='Directors and Officers Liability Insurance']").trigger("click");
+                       return false;
+                   } else {
+                       SaveDirectorsandOfficersLiability();                       
                    }
-
+               }
+               if (document.querySelector('[id="General Liability Insurance"]') !== null) {
+                   if (!ValidateGeneral()) {
+                       window.alert("Please Add General Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='General Liability Insurance']").trigger("click");
+                       return false;
+                   } else {
+                       SaveGeneralLiability();
+                   }
+               }
+               if (document.querySelector('[id="Cyber Liability Insurance"]') !== null) {
+                   if (!ValidateCyber()) {
+                       window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='Cyber Liability Insurance']").trigger("click");
+                       return false;
+                   } else {
+                       ValidateDNO();
+                   }
+               }
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
@@ -247,19 +228,19 @@
                else {
                    return false;
                }
+
                $('.sw-btn-prev').hide();
                $('#getAgreementDecModal').show();
                var ID = $('#Id').val();
                var postdata = {
-                     id : ID
-                }
-                $.ajax({
+                   id: ID
+               }
+               $.ajax({
                    url: '@Url.Action("GetProductName", "Information")',
                    type: "POST",
                    data: postdata
-                })
-                    .done(function (data) {
-                        debugger;
+               })
+                    .done(function (data) {                        
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
 
@@ -267,11 +248,11 @@
                             var ProdName = prodname[i];
                             var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
-                                    CoverOptions[i] = optionsselected;
+                            CoverOptions[i] = optionsselected;
                         }
 
                         var progId = $('#ClientProgrammeId').val();
-                        var postData = { Answers: CoverOptions, ProgrammeId: progId };
+                        var postData = { Answers: CoverOptions, ProgrammeId: progId };                        
 
                         $.ajax({
                             url: '@Url.Action("SaveCoverOptions", "Information")',

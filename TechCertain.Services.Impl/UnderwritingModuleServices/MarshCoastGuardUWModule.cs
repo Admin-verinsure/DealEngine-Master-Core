@@ -747,7 +747,6 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             term.FSL = totalTermFsl;
             term.BrokerageRate = agreement.Brokerage;
             term.Brokerage = totalTermBrokerage;
-
             term.TermLimitPre = totalBoatTermLimitPre + totalVehicleTermLimitPre;
             term.TermLimitDiffer = totalBoatTermLimitDiffer + totalVehicleTermLimitDiffer;
             term.PremiumPre = totalBoatPremiumPre + totalVehiclePremiumPre;
@@ -756,6 +755,7 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             term.FSLDiffer = totalBoatFslDiffer + totalVehicleFslDiffer;
             term.BrokeragePre = totalBoatBrokeragePre + totalVehicleBrokeragePre;
             term.BrokerageDiffer = totalBoatBrokerageDiffer + totalVehicleBrokerageDiffer;
+            term.Bound = true;
 
             //Referral points per agreement
             //Claim over $5k of losses

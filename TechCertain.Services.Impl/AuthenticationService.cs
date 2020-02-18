@@ -43,9 +43,7 @@ namespace TechCertain.Services.Impl
 			}
 			catch (Exception ex) {
 				throw new Exception(ex.Message);
-			}
-
-			return null;
+			}			
 		}
 
 		public SingleUseToken GenerateSingleUseToken(string email)

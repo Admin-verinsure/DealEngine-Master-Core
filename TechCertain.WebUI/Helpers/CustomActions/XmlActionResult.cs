@@ -18,7 +18,7 @@ namespace TechCertain.WebUI.Helpers.CustomActions
 		public XmlActionResult (XDocument document)
 		{
 			if (document == null)
-				throw new ArgumentNullException("document");
+				throw new ArgumentNullException(nameof(document));
 
 			_document = document;
 
