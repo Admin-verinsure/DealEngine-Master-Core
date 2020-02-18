@@ -6,8 +6,8 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <RuntimeIdentifiers>ubuntu.18.04-x64</RuntimeIdentifiers>
   </PropertyGroup>
-  
-  <ItemGroup>
+
+   <ItemGroup>
     <Compile Remove="Controllers\InformationDemoController.cs" />
   </ItemGroup>
 
