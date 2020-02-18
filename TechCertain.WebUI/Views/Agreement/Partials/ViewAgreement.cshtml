@@ -49,60 +49,64 @@
 
 <fieldset>
     <div class="form-group">
-        <div class="row">
-            <div class="col-3">
-                <strong>Product:</strong>
-            </div>
-            <div class="col">
-                @Html.DisplayFor(m => m.ProductName)
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <strong>Policy Start Date:</strong>
-            </div>
-            <div class="col">
-                @Html.DisplayFor(m => m.StartDate) 4pm local time
+        <table class="table-hover">
+            <tbody>
+                <tr>
+                    <td width="60%" height="40">
+                        <strong>Product:</strong>
+                    </td>
+                    <td width="60%" height="40">
+                        @Html.DisplayFor(m => m.ProductName)
+                    </td>
+                </tr>
+                <tr>
+                    <td width="60%" height="40">
+                        <strong>Policy Start Date:</strong>
+                    </td>
+                    <td width="60%" height="40">
+                        @Html.DisplayFor(m => m.StartDate) 4pm local time
 
-                @if (Model.IsChange == false && !Model.InformationSheetStatus.StartsWith("Bound"))
-                {
-                    <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
+                        @if (Model.IsChange == false && !Model.InformationSheetStatus.StartsWith("Bound"))
+                        {
+                            <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
 
-                }
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <strong>Policy End Date:</strong>
-            </div>
-            <div class="col">
-                @Html.DisplayFor(m => m.EndDate) 4pm local time
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <strong>Current @Html.DisplayNameFor(m => m.Status):</strong>
-            </div>
-            <div class="col">
-                @Html.DisplayFor(m => m.Status)
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <strong>Client Number #:</strong>
-            </div>
-            <div class="col">
-                @Html.DisplayFor(m => m.ClientNumber)
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <strong>Insurer Policy #:</strong>
-            </div>
-            <div class="col">
-                @Html.DisplayFor(m => m.PolicyNumber)
-            </div>
-        </div>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td width="60%" height="40">
+                        <strong>Policy End Date:</strong>
+                    </td>
+                    <td width="60%" height="40">
+                        @Html.DisplayFor(m => m.EndDate) 4pm local time
+                    </td>
+                </tr>
+                <tr>
+                    <td width="60%" height="40">
+                        <strong>Current @Html.DisplayNameFor(m => m.Status):</strong>
+                    </td>
+                    <td width="60%" height="40">
+                        @Html.DisplayFor(m => m.Status)
+                    </td>
+                </tr>
+                <tr>
+                    <td width="60%" height="40">
+                        <strong>Client Number #:</strong>
+                    </td>
+                    <td width="60%" height="40">
+                        @Html.DisplayFor(m => m.ClientNumber)
+                    </td>
+                </tr>
+                <tr>
+                    <td width="60%" height="40">
+                        <strong>Insurer Policy #:</strong>
+                    </td>
+                    <td width="60%" height="40">
+                        @Html.DisplayFor(m => m.PolicyNumber)
+                    </td>
+                </tr>
+            </tbody>
+        </table>        
     </div>
 </fieldset>
 
@@ -247,7 +251,7 @@
             </div>
             @foreach (var item in Model.Exclusions)
             {
-                    <div class="col font-md">
+                    <div class="col">
                         <strong>@item.RiskName</strong>
                     </div>             
             }
