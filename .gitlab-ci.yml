@@ -1,69 +1,82 @@
-image : ubuntu:latest
-#image : mcr.microsoft.com/dotnet/core/sdk:3.1
-#microsoft/dotnet:latest
-
 stages:
   - build
   - deploy
 
-before_script:
-  - apt-get update -qq && apt-get install                                    #eg. system.drawing libraries
-  - 'dotnet restore'                                                          # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
-  - 'dotnet clean'                                                            # cleans the output of the previous build
-  - cp path/to/tbbackuped
+before_script:  
 
-#after_script:
+# Runner server requires following for build
+# dotnet-sdk-3.1
+# dotnet-sdk-2.2
 
 build:
   stage: build
   script:
-    - apt-get update -qq && apt-get install -y wget software-properties-common apt-transport-https
-    - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb 
-    - dpkg -i packages-microsoft-prod.deb
-    - add-apt-repository universe
-    - apt-get update
-    - apt-get install -y dotnet-sdk-3.1
-#    - apt-get update
-#    - apt-get install dotnet-sdk-3.1
-    - apt-get install -y dotnet-runtime-3.1
-
-#    - 'dotnet restore'                                                          # uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file.
-#    - 'dotnet clean'
-    - 'dotnet build -r ubuntu.18.04-x64'                                        # builds the project and its dependencies into a set of binaries
-#    - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'         # compiles the application
-
-#    - 'dotnet /var/www/dealengine/TechCertain.WebUI.dll'
-#    - 'sudo systemctl enable dealengine.service'
-#    - 'sudo systemctl start dealengine.service'
-#    - 'sudo systemctl status dealengine.service'
-#    - 'sudo systemctl stop dealengine.service'
+    - echo "Cleaning previous build..."
+    - 'dotnet clean'
+    - echo "Building project..."
+    - 'dotnet build -c Release -r ubuntu.18.04-x64'
 
 before_script:
 
 deploy_staging:
   stage: deploy
   script:
-  - echo "Deploy to staging server"
-  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
-  - 'git push staging HEAD:master'                                            # ???????????  
-  - 'dotnet run --project TechCertain.WebUI'
+  - echo "Compiling code..."
+  - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
+  
+#  - echo "Establishing Connection to devops.techcertain.com..."
+#  - ssh-add <(echo "$PRIVATE_KEY")
+#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
+#  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
+#  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
+#  Restart dealengine service
+#  - echo "Restarting DealEngine Service...
+
   environment:
     name: staging
     url: https://devops.techcertain.com
-
+  when: manual
   dependencies:
     - build
-    
-#deploy_prod:
-#  stage: deploy
-#  script:
-#    - echo "Deploy to production server"
-#  environment:
-#    name: production
-#    url: https://devops.techcertain.com
-#  when: manual
-#  only:
-#  - master
 
-# xcopy takes care of recursively creating required folders
-#   - 'xcopy /y ".\$env:EXE_RELEASE_FOLDER\YourApp.exe" "$deployFolder"'
+deploy_marsh:
+  stage: deploy
+  script:
+  - echo "Compiling code..."
+  - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
+
+#  - echo "Establishing Connection to devops.techcertain.com..."
+#  - ssh-add <(echo "$PRIVATE_KEY")
+#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
+#  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
+#  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
+#  Restart dealengine service
+#  - echo "Restarting DealEngine Service...
+
+  environment:
+    name: marsh
+    url: https://staging.mnzconnect.com
+  when: manual
+  dependencies:
+    - build
+
+deploy_insw:
+  stage: deploy
+  script:
+  - echo "Compiling code..."
+  - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
+
+#  - echo "Establishing Connection to dealengine.tai.co.nz..."
+#  - ssh-add <(echo "$PRIVATE_KEY")
+#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
+#  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
+#  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
+#  Restart dealengine service
+#  - echo "Restarting DealEngine Service...
+
+  environment:
+    name: insw
+    url: https://dealengine.tai.co.nz
+  when: manual
+  dependencies:
+    - build
