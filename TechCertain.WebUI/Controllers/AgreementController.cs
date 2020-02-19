@@ -2137,19 +2137,23 @@ namespace TechCertain.WebUI.Controllers
                 user = await CurrentUser();
 
                 var status = "Bound";
-                status = "Bound and invoice pending";
-
-                var documents = new List<SystemDocument>();
+                if (sheet.Programme.BaseProgramme.UsesEGlobal)
+                {
+                    status = "Bound and invoice pending";
+                }
+                
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
+                    var documents = new List<SystemDocument>();
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (agreement.Status != status)
                         {
                             agreement.Status = status;
+                            agreement.BoundDate = DateTime.Now;
                             if (programme.BaseProgramme.PolicyNumberPrefixString != null)
                             {
-                                agreement.PolicyNumber = programme.BaseProgramme.PolicyNumberPrefixString + "-0" + agreement.ReferenceId;
+                                agreement.PolicyNumber = programme.BaseProgramme.PolicyNumberPrefixString + "-0" + agreement.ReferenceId;                                
                             }
                             await uow.Commit();
                         }
@@ -2161,6 +2165,8 @@ namespace TechCertain.WebUI.Controllers
                     {
                         doc.Delete(user);
                     }
+
+
                     foreach (SystemDocument template in agreement.Product.Documents)
                     {
                         //render docs except invoice

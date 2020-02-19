@@ -1,71 +1,37 @@
 ﻿@model BaseListViewModel<TechCertain.WebUI.Models.Agreement.ViewAgreementViewModel>
 
 <!-- MAIN CONTENT -->
-<div id="content">
-    <div class="row">
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-            <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Documents <span>> @ViewBag.Title</span></h1>
-        </div>
+<div id="content" class="container">
+    <div class="form-group">
+        <h1 class="page-title txt-color-blueDark">
+            <a href="~/Home/Index"> Home</a>
+            > <span>@ViewBag.Title</span>
+        </h1>
+    </div>
+    <div class="form-group">
+        <a class="btn btn-primary btn-sm" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
     </div>
     <!-- widget grid -->
-    <section id="widget-grid" class="">
-        <!-- NEW WIDGET START -->
-        <div class="col col-12">
-            <!-- Widget ID (each widget will need unique ID)-->
-            <div class="jarviswidget" id="wid-id-10"
-                 data="false"
-                 data-widget-collapsed="false"
-                 data-widget-colorbutton="false"
-                 data-widget-custombutton="false"
-                 data-widget-deletebutton="false"
-                 data-widget-editbutton="false"
-                 data-widget-fullscreenbutton="false"
-                 data-widget-togglebutton="false"
-                 data-widget-sortable="false">
-
-                <header></header>
-                <!-- widget div-->
-                <div>
-                    <!-- widget content -->
-                    <div class="smart-form no-padding">
-                        <div class="row">
-                            <section class="col col-12">
-                                <a class="btn btn-primary btn-sm" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
-                            </section>
-                        </div>
-                        @foreach (var item in Model)
-                        {
-                            @await Html.PartialAsync("Partials/ViewAgreement", item)
-                            <h3><strong>Documents </strong></h3>
-                            @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
-                            
-                            //<h3><strong>Options </strong></h3>
-                            //<div class="widget-body widget-hide-overflow">
-                            //    <fieldset>
-                            //        <div class="row">
-                            //            <section class="col col-12">
-                            //                <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                            //                <a class="btn txt-color-white bg-color-green btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
-                            //            </section>
-                            //        </div>
-                            //    </fieldset>
-                            //</div>
-                        }
-                    </div>
-                    <!-- end widget content -->
+    <div id="widget-grid" class="form-group">
+        <div class="client-form">
+            <div class="card">
+                <div class="card-header">
+                    <h6>
+                        @ViewBag.Title
+                    </h6>
                 </div>
-                <!-- end widget div -->
-            </div>
-            <!-- end widget -->
+                <div class="card-body">
+                    @foreach (var item in Model)
+                    {
+                        @await Html.PartialAsync("Partials/ViewAgreement", item)
+                        <h3><strong>Documents </strong></h3>
+                        @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
+
+                    }
+                </div>
+            </div>            
         </div>
-        <!-- WIDGET END -->
-    </section>
+    </div>
 </div>
 
 
-@section pagespecific {
-    <link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">
-    <script type="text/javascript">
-
-    </script>
-}

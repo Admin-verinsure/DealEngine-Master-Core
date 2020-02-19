@@ -81,7 +81,7 @@ namespace TechCertain.Domain.Entities
 
         public virtual bool Bound { get; protected set; }
 
-        public virtual DateTime BoundDate { get; protected set; }
+        public virtual DateTime BoundDate { get; set; }
 
         public virtual DateTime FinalacceptanceDate { get;  set; }
 
