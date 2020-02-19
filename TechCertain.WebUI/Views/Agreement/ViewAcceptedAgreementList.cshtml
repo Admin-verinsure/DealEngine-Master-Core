@@ -148,27 +148,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                         @await Html.PartialAsync("Partials/ViewAgreement", item)
                     </div>
 
-                    <div class="form-group">
-                        @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
-(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
-                        {
-                            <h3><strong>Documents </strong></h3>
-                            @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
-                            <h3><strong>Options </strong></h3>
-
-                            <div class="widget-body widget-hide-overflow">
-                                <fieldset>
-                                    <div class="row">
-                                        <section class="col col-12">
-                                            <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
-                                            <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
-                                        </section>
-                                    </div>
-                                </fieldset>
-                            </div>
-                        }
-                    </div>
-
                 }
 
 
@@ -180,22 +159,37 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                 }
 
 
+            <div class="form-group">
+                @foreach (var item in Model)
+                {
 
-            </form>
+                    @if ((item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled") &&
+(item.Status == "Bound" || item.Status == "Bound and invoice pending" || item.Status == "Bound and invoiced"))
+                    {
+                        <h3><strong>Documents </strong></h3>
+
+                        @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
+
+                        <h3><strong>Options </strong></h3>
+                        <a class="btn btn-primary btn-sm" href="/Agreement/RenderDocuments/@item.InformationSheetId">Render Documents</a>
+                        <a class="btn btn-success btn-sm" href="~/Agreement/SendPolicyDocuments/@item.InformationSheetId"><i class="fa fa-edit"></i> Send Policy Documents</a>
+                    }
+                    <!-- loop through process once only!! -->
+                    break;
+                }
+            </div>
+
+                </form>
         </div>
-        <!-- end widget -->
+
     </div>
     <!-- WIDGET END -->
 </div>
 
 
 @section pagespecific {
-    <script src="~/jquery/jquery.min.js"></script>
-    @*<link rel="stylesheet" type="text/css" media="screen" href="~/css/smartadmin-production.min.css">*@
-
     <script type="text/javascript">
           function SaveCoveroptions() {
-              debugger;
               var ID = "@ViewBag.Id";
          //var ID = $('#Id').val();
                var postdata = {
@@ -207,7 +201,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                    data: postdata
                 })
                     .done(function (data) {
-                        debugger;
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
 
@@ -239,7 +232,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
           };
 
         $(window).on("load", function () {
-            debugger;
             if ($("#Sheetstatus").val() != "Started") {
                 debugger;
                 var progId = "@ViewBag.Id";
@@ -271,7 +263,6 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
 
 
             }
-            debugger;
 
             if ("@ViewBag.Status.Contains("Bound")" == "True") {
                 debugger;

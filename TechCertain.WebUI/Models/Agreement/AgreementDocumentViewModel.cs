@@ -7,7 +7,7 @@ namespace TechCertain.WebUI.Models.Agreement
 		public string DisplayName { get; set; }
 
 		public string Url { get; set; }
-
-    }
+		public Guid ClientAgreementId { get; set; }
+	}
 }
 

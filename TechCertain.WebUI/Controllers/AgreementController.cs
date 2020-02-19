@@ -2818,7 +2818,7 @@ namespace TechCertain.WebUI.Controllers
                         model.ClientAgreementId = agreement.Id;
                         foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
                         {
-                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
+                            model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id , ClientAgreementId = agreement.Id });
                         }
                     }
                 }
