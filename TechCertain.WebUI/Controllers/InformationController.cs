@@ -1367,11 +1367,15 @@ namespace TechCertain.WebUI.Controllers
                     foreach (var agreement in clientProgramme.Agreements)
                     {
 
-                        foreach (var term in agreement.ClientAgreementTerms)
+                        if (agreement.Product.IsMultipleOption)
                         {
-                            term.Bound = false;
-                            await uow.Commit();
+                            foreach (var term in agreement.ClientAgreementTerms)
+                            {
+                                term.Bound = false;
+                                await uow.Commit();
+                            }
                         }
+                        
                     }
                 }
 
