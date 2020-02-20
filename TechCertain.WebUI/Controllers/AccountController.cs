@@ -33,6 +33,7 @@ namespace TechCertain.WebUI.Controllers
         IAuthenticationService _authenticationService;        
         IEmailService _emailService;
 		IFileService _fileService;
+        IOrganisationService _organisationService;
         SignInManager<IdentityUser> _signInManager;
         UserManager<IdentityUser> _userManager;
         RoleManager<IdentityRole> _roleManager;
@@ -53,6 +54,7 @@ namespace TechCertain.WebUI.Controllers
             RoleManager<IdentityRole> roleManager,
             ILogger<AccountController> logger,            
             IHttpClientService httpClientService,
+            IOrganisationService organisationService,
             ILdapService ldapService,
             IUserService userService,
 			IEmailService emailService, 
@@ -60,6 +62,7 @@ namespace TechCertain.WebUI.Controllers
             IOrganisationalUnitService organisationalUnitService, 
             IAppSettingService appSettingService) : base (userService)
 		{
+            _organisationService = organisationService;
             _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _authenticationService = authenticationService;
@@ -343,35 +346,48 @@ namespace TechCertain.WebUI.Controllers
 
         private async Task<SignInResult> DealEngineIdentityUserLogin(User user, string password)
         {
-            IdentityUser deUser = await _userManager.FindByNameAsync(user.UserName);
-            if (deUser == null)
+            try
             {
-                deUser = new IdentityUser
+                IdentityUser deUser = await _userManager.FindByNameAsync(user.UserName);
+                if (deUser == null)
                 {
-                    Email = user.Email,
-                    UserName = user.UserName
-                };
-                await _userManager.CreateAsync(deUser, password);
-                var hasRole = await _roleManager.RoleExistsAsync("Client");
-                if (hasRole)
-                {
-                    await _userManager.AddToRoleAsync(deUser, "Client");
-                }
-            }
-
-            var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
-            if (identityResult.Succeeded)
-            {
-                if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
-                {
+                    deUser = new IdentityUser
+                    {
+                        Email = user.Email,
+                        UserName = user.UserName
+                    };
+                    await _userManager.CreateAsync(deUser, password);
                     var hasRole = await _roleManager.RoleExistsAsync("Client");
                     if (hasRole)
                     {
                         await _userManager.AddToRoleAsync(deUser, "Client");
                     }
                 }
+
+                var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                if (identityResult.Succeeded)
+                {
+                    if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
+                    {
+                        var hasRole = await _roleManager.RoleExistsAsync("Client");
+                        if (hasRole)
+                        {
+                            await _userManager.AddToRoleAsync(deUser, "Client");
+                        }
+                    }
+                    _userService.Update(user);
+                    foreach (var org in user.Organisations)
+                    {
+                        _organisationService.UpdateOrganisation(org);
+                    }
+                }
+                return identityResult;
             }
-            return identityResult;
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                throw new Exception(ex.Message + " " + ex.StackTrace);
+            }
         }
 
         [HttpPost]
