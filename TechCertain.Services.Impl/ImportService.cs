@@ -148,7 +148,7 @@ namespace TechCertain.Services.Impl
             string line;
 
             //addresses need to be on one line
-            var principalsFileName = "/tmp/NZACSPrincipals20181.csv";
+            var principalsFileName = "/tmp/NZACSPrincipals2018.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             if (organisationType == null)
