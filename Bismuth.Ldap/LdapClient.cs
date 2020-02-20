@@ -55,15 +55,24 @@ namespace Bismuth.Ldap
 			LdapResponse response = null;
 			byte [] messageBytes = ldapRequest.ToBytes ();
 
-			NetworkStream stream = currentConnection.GetStream ();
-			stream.Write (messageBytes, 0, messageBytes.Length);
-			response = ldapRequest.GetResponse (stream);
+			try
+			{
+				NetworkStream stream = currentConnection.GetStream();
+				stream.Write(messageBytes, 0, messageBytes.Length);
+				response = ldapRequest.GetResponse(stream);
 
-            // if we are unbinding, flag it her so we don't need to do it when disposing.
-            if (ldapRequest is UnbindRequest)
-                _unbound = true;
+				// if we are unbinding, flag it her so we don't need to do it when disposing.
+				if (ldapRequest is UnbindRequest)
+					_unbound = true;
 
-			return (TResponse)response;
+				return (TResponse)response;
+			}
+			catch(Exception ex)
+			{
+				return (TResponse)response;
+			}
+
+			
 		}
 
 		public bool Bind (string userDN, string password, BindAuthentication bindAuthentication)

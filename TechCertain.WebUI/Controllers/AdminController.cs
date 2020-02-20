@@ -96,17 +96,71 @@ namespace TechCertain.WebUI.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> AONImport()
+        public async Task<IActionResult> AONImportUsers()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportAOEService(user);
+                await _importService.ImportAOEServiceIndividuals(user);
 
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("Index", "Home");
             }
             catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AONImportPrincipals()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportAOEServicePrincipals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AONImportContracts()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportAOEServiceBusinessContract(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AONImportClaims()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportAOEServiceClaims(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");

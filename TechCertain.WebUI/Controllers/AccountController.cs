@@ -309,9 +309,7 @@ namespace TechCertain.WebUI.Controllers
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
-                string resultMessage = "";
-
-                //await _importService.ImportAOEService(user);
+                string resultMessage = "";                
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
