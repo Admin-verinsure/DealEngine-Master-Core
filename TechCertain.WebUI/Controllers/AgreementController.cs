@@ -2812,10 +2812,9 @@ namespace TechCertain.WebUI.Controllers
                     ClientProgramme programme = await _programmeService.GetClientProgrammebyId(id);
                     model.ClientInformationSheet = programme.InformationSheet;
                     model.InformationSheetId = programme.InformationSheet.Id;
-                    model.ClientProgrammeId = id;
-                    foreach (ClientAgreement agreement in programme.Agreements)
-                    {
-                        model.ClientAgreementId = agreement.Id;
+                    model.ClientProgrammeId = id;                    
+                    foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
+                    {                        
                         foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
                         {
                             model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id , ClientAgreementId = agreement.Id });

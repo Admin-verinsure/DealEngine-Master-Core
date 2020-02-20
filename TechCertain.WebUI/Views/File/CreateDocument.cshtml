@@ -168,7 +168,7 @@
 
                  if (confirm("Are you sure you want to submit this document?")) {
                      console.log("Document has been submitted!");
-                     const body = window.editor1.getData();
+                     const body = window.editor.getData();
                      var bodyElement = $("#@Html.IdFor(m => m.Content)");
                      bodyElement.text(bodyElement.text(body).html());
 

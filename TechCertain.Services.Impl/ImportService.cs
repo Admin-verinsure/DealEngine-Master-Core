@@ -42,7 +42,7 @@ namespace TechCertain.Services.Impl
         public async Task ImportAOEServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line
-            var userFileName = "C:\\tmp\\NZACSUsers2018realtest.csv";
+            var userFileName = "C:\\tmp\\NZACSUsers2018.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("214efe24-552d-46a3-a666-6bede7c88ca1");
             StreamReader reader;
@@ -87,7 +87,12 @@ namespace TechCertain.Services.Impl
                             }
                         }
 
-                        user = new User(currentUser, Guid.NewGuid(), parts[7]);
+                        user = await _userService.GetUserByEmail(parts[4]);
+                        if(user == null)
+                        {
+                            user = new User(currentUser, Guid.NewGuid(), parts[7]);
+                        }
+                                                
                         user.FirstName = parts[2];
                         user.LastName = parts[3];
                         user.FullName = parts[2] + " " + parts[3];
@@ -143,7 +148,7 @@ namespace TechCertain.Services.Impl
             string line;
 
             //addresses need to be on one line
-            var principalsFileName = "C:\\tmp\\NZACSPrincipals2018realtest.csv";
+            var principalsFileName = "C:\\tmp\\NZACSPrincipals20181.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             if (organisationType == null)
@@ -165,7 +170,11 @@ namespace TechCertain.Services.Impl
 
                     try
                     {
-                        organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType);
+                        organisation = await _organisationService.GetOrganisationByEmail(parts[5]);
+                        if(organisation == null)
+                        {
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType);
+                        }                        
                         organisation.InsuranceAttributes.Add(insuranceAttribute);
                         organisation.NZIAmembership = parts[1];
                         organisation.Email = parts[5];
@@ -254,7 +263,7 @@ namespace TechCertain.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;
-            var claimFileName = "C:\\tmp\\NZACSClaimsData2018realtest.csv";
+            var claimFileName = "C:\\tmp\\NZACSClaimsData2018.csv";
             using (reader = new StreamReader(claimFileName))
             {
                 while (!reader.EndOfStream)
@@ -264,17 +273,24 @@ namespace TechCertain.Services.Impl
                     //    line = reader.ReadLine();
                     //    readFirstLine = true;
                     //}
-                    line = reader.ReadLine();
-                    string[] parts = line.Split(',');
-                    claimNotification = new ClaimNotification(currentUser);
-                    claimNotification.ClaimMembershipNumber = parts[0];
-                    claimNotification.ClaimTitle = parts[1];
-                    claimNotification.ClaimReference = parts[2];
-                    claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[3]);
-                    claimNotification.Claimant = parts[4];
-                    claimNotification.ClaimStatus = parts[5];
+                    try
+                    {
+                        line = reader.ReadLine();
+                        string[] parts = line.Split(',');
+                        claimNotification = new ClaimNotification(currentUser);
+                        claimNotification.ClaimMembershipNumber = parts[0];
+                        claimNotification.ClaimTitle = parts[1];
+                        claimNotification.ClaimReference = parts[2];
+                        claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[3]);
+                        claimNotification.Claimant = parts[4];
+                        claimNotification.ClaimStatus = parts[5];
 
-                    await _programmeService.AddClaimNotificationByMembership(claimNotification);
+                        await _programmeService.AddClaimNotificationByMembership(claimNotification);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }
@@ -286,7 +302,7 @@ namespace TechCertain.Services.Impl
             bool readFirstLine = false;
             string line;
             //special characters /,/
-            var contractFileName = "C:\\tmp\\NZACSContractorsPrincipals2018realtest.csv";
+            var contractFileName = "C:\\tmp\\NZACSContractorsPrincipals2018.csv";
 
             using (reader = new StreamReader(contractFileName))
             {
@@ -320,10 +336,10 @@ namespace TechCertain.Services.Impl
 
         public async Task ImportAOEService(User user)
         {
-            await ImportAOEServiceIndividuals(user);
-            await ImportAOEServicePrincipals(user);
-            await ImportAOEServiceClaims(user);
-            await ImportAOEServiceBusinessContract(user);
+            //await ImportAOEServiceIndividuals(user);
+            //await ImportAOEServicePrincipals(user);
+            //await ImportAOEServiceClaims(user);
+            //await ImportAOEServiceBusinessContract(user);
         }
 
         public async Task ImportActivities(User user)
