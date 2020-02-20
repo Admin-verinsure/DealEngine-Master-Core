@@ -42,12 +42,12 @@ namespace TechCertain.Services.Impl
         public async Task ImportAOEServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line
-            var userFileName = "//tmp//NZACSUsers2018.csv";
+            var userFileName = "C:\\tmp\\testclientdata\\NZACSUsers2018.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("214efe24-552d-46a3-a666-6bede7c88ca1");
             StreamReader reader;
-            User user;
-            Organisation organisation;
+            User user = null;
+            Organisation organisation = null;
             bool readFirstLine = false;
             string line;
             using (reader = new StreamReader(userFileName))
@@ -62,12 +62,16 @@ namespace TechCertain.Services.Impl
                     //}
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
                     try
                     {
                         if (parts[0] == "f")
                         {
-                            organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
-
+                            if (!string.IsNullOrWhiteSpace(parts[4]))
+                            {
+                                organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
+                            }
                             if (organisation == null)
                             {
                                 var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
@@ -77,9 +81,11 @@ namespace TechCertain.Services.Impl
                         }
                         else
                         {
-                            organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
-
-                            if (organisation == null)
+                        if (!string.IsNullOrWhiteSpace(parts[4]))
+                        {
+                                organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
+                        }
+                        if (organisation == null)
                             {
                                 var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
                                 organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType);
@@ -87,7 +93,11 @@ namespace TechCertain.Services.Impl
                             }
                         }
 
-                        user = await _userService.GetUserByEmail(parts[4]);
+                        if (!string.IsNullOrWhiteSpace(parts[4]))
+                        {
+                            var email = parts[7] + "@techcertain.com";
+                            user = await _userService.GetUserByEmail(email);
+                        }                            
                         if(user == null)
                         {
                             user = new User(currentUser, Guid.NewGuid(), parts[7]);
@@ -143,12 +153,13 @@ namespace TechCertain.Services.Impl
             var currentUser = CreatedUser;
             StreamReader reader;
             User user = null;
-            Organisation organisation;
+            Organisation organisation = null;
             bool readFirstLine = false;
             string line;
+            var email = "";
 
             //addresses need to be on one line
-            var principalsFileName = "//tmp//NZACSPrincipals20181.csv";
+            var principalsFileName = "C:\\tmp\\testclientdata\\NZACSPrincipals2018.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             if (organisationType == null)
@@ -167,17 +178,29 @@ namespace TechCertain.Services.Impl
                     //}
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
-
+                    user = null;
+                    organisation = null;
                     try
                     {
-                        organisation = await _organisationService.GetOrganisationByEmail(parts[5]);
-                        if(organisation == null)
+                        if (!string.IsNullOrWhiteSpace(parts[5]))
+                        {
+                            email = parts[3] + "@techcertain.com";
+                            organisation = await _organisationService.GetOrganisationByEmail(email);
+                        }
+                        if (organisation == null)
                         {
                             organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType);
-                        }                        
+                        }
                         organisation.InsuranceAttributes.Add(insuranceAttribute);
                         organisation.NZIAmembership = parts[1];
-                        organisation.Email = parts[5];
+                        if (!string.IsNullOrWhiteSpace(parts[5]))
+                        {
+                            organisation.Email = email;
+                        }
+                        else
+                        {
+                            organisation.Email = parts[5];
+                        }
                         organisation.Phone = "12345";
 
                         if (!string.IsNullOrEmpty(parts[6]))
@@ -229,7 +252,11 @@ namespace TechCertain.Services.Impl
                         await _organisationService.CreateNewOrganisation(organisation);
                         await _programmeService.AddOrganisationByMembership(organisation);
 
-                        user = await _userService.GetUserByEmail(parts[5]);
+                        if (!string.IsNullOrWhiteSpace(parts[5]))
+                        {
+                            email = parts[3] + "@techcertain.com";
+                            user = await _userService.GetUserByEmail(email);
+                        }                        
                         if (user == null)
                         {
                             string userName = parts[4] + "_" + parts[3];
@@ -263,7 +290,7 @@ namespace TechCertain.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;
-            var claimFileName = "//tmp//NZACSClaimsData2018.csv";
+            var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
             using (reader = new StreamReader(claimFileName))
             {
                 while (!reader.EndOfStream)
@@ -302,7 +329,7 @@ namespace TechCertain.Services.Impl
             bool readFirstLine = false;
             string line;
             //special characters /,/
-            var contractFileName = "//tmp//NZACSContractorsPrincipals2018.csv";
+            var contractFileName = "C:\\tmp\\testclientdata\\NZACSContractorsPrincipals2018.csv";
 
             using (reader = new StreamReader(contractFileName))
             {
