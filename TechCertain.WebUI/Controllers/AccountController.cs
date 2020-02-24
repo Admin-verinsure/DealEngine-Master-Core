@@ -1,6 +1,4 @@
 ﻿#region Using
-
-using ElmahCore;
 using System;
 using System.Threading.Tasks;
 using TechCertain.Domain.Entities;
@@ -17,7 +15,6 @@ using TechCertain.Infrastructure.Ldap.Interfaces;
 using IAuthenticationService = TechCertain.Services.Interfaces.IAuthenticationService;
 using DealEngine.Infrastructure.AuthorizationRSA;
 using System.Linq;
-using TechCertain.Infrastructure.FluentNHibernate;
 using Microsoft.AspNetCore.Identity;
 using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using IdentityRole = NHibernate.AspNetCore.Identity.IdentityRole;
@@ -192,14 +189,13 @@ namespace TechCertain.WebUI.Controllers
                 var result = await _authenticationService.ValidSingleUseToken(id);
                 if (result)
                     return View();
-                // invalid token? display an error
+
                 return Redirect("~/Error/InvalidPasswordReset");
             }
-            // if we get here - either invalid guid or token doesn't exist - 404
+
             return PageNotFound();
         }
 
-        // POST: /account/changepassword
         [HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
