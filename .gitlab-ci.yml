@@ -27,10 +27,12 @@ deploy_staging:
   - ssh-add <(echo "$PKgitlab")
   - ls -la ~/.ssh/
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /var/www/dealengine/publish/*'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/Projects'
+
 #  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
   - echo "Compiling code..."
   - 'dotnet publish -c Release'
-#  - rsync -azhe ssh /path/to/project ubuntu@$URLdevops:/home/ubuntu/
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/Projects/dealengine
 #  Restart dealengine service
 #  - echo "Restarting DealEngine Service...
 
