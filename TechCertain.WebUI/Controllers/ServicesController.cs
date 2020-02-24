@@ -2222,15 +2222,21 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
+                bool hasTrailer = false;
                 user = await CurrentUser();
                 Boat boat = await _boatRepository.GetByIdAsync(boatId);
+
+                if(boat.BoatTrailer != null)
+                {
+                    hasTrailer = true;
+                }
 
                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                 {
                     boat.Removed = status;
                     await uow.Commit();
                 }
-                return new JsonResult(true);
+                return Json(new { HasTrailer = hasTrailer, Success = true });                
             }
             catch (Exception ex)
             {
