@@ -1002,9 +1002,7 @@ namespace TechCertain.WebUI.Controllers
                 var elterms = new List<EditTermsViewModel>();
                 var clterms = new List<EditTermsViewModel>();
                 var slterms = new List<EditTermsViewModel>();
-                var doterms = new List<EditTermsViewModel>();
-
-                //List<ClientAgreementTerm> plterms = agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PL" && t.DateDeleted == null);
+                var doterms = new List<EditTermsViewModel>();                
 
                 foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "PL" && t.DateDeleted == null))
                 {
@@ -1016,8 +1014,6 @@ namespace TechCertain.WebUI.Controllers
                         Excess = Convert.ToInt32(plterm.Excess),
                         Premium = plterm.Premium
                     });
-
-
                 }
                 foreach (var plterm in agreement.ClientAgreementTerms.Where(t => t.SubTermType == "ED" && t.DateDeleted == null))
                 {
@@ -1095,13 +1091,13 @@ namespace TechCertain.WebUI.Controllers
                         Premium = plterm.Premium
                     });
                 }
-                model.PLTerms = plterms;
-                model.EDTerms = edterms;
-                model.PITerms = piterms;
-                model.ELTerms = elterms;
-                model.CLTerms = clterms;
-                model.SLTerms = slterms;
-                model.DOTerms = doterms;
+                model.PLTerms = plterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.EDTerms = edterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.PITerms = piterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.ELTerms = elterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.CLTerms = clterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.SLTerms = slterms.OrderBy(acat => acat.TermLimit).ToList();
+                model.DOTerms = doterms.OrderBy(acat => acat.TermLimit).ToList();
                 ViewBag.Title = "Edit Terms ";
 
                 return View("EditTerms", model);
@@ -1295,11 +1291,6 @@ namespace TechCertain.WebUI.Controllers
 
                 // List Agreement Parties
                 insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
-                //TODO - get from sheet or org?
-                //foreach (Product product in products)
-                //	foreach (KeyValuePair<string, Organisation> kvp in product.Parties) {
-                //		insuranceRoles.Add (new InsuranceRoleViewModel () { RoleName = kvp.Key, Name = kvp.Value.Name, ManagedBy = kvp.Value.Name, Email = "" });
-                //	}
 
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(apa => apa.DateDeleted == null).OrderBy(apa => apa.Product.OrderNumber))
                 {
@@ -1307,7 +1298,8 @@ namespace TechCertain.WebUI.Controllers
                     {
                         EditEnabled = true,
                         ClientAgreementId = agreement.Id,
-                        ClientProgrammeId = clientProgramme.Id
+                        ClientProgrammeId = clientProgramme.Id,
+                        SentOnlineAcceptance = agreement.SentOnlineAcceptance
                     };
 
                     var insuranceInclusion = new List<InsuranceInclusion>();
@@ -1403,14 +1395,14 @@ namespace TechCertain.WebUI.Controllers
                         }
                     }
 
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.OrderBy(acat => acat.TermLimit))
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
                     {
 
                         multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
                     }
 
                     // List Agreement Premiums
-                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
+                    foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null))
                     {
                         if (answerSheet.IsChange && answerSheet.PreviousInformationSheet != null)
                         {

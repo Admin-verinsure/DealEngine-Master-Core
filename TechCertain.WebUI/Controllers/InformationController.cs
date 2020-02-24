@@ -1141,7 +1141,6 @@ namespace TechCertain.WebUI.Controllers
                         var insuranceAttributesList = await _insuranceAttributeService.GetInsuranceAttributes();
                         foreach (InsuranceAttribute IA in insuranceAttributesList.Where(ia => ia.InsuranceAttributeName == "Financial" || ia.InsuranceAttributeName == "Private" || ia.InsuranceAttributeName == "CoOwner"))
                         {
-
                             foreach (var org in IA.IAOrganisations)
                             {
                                 if (org.OrganisationType.Name == "Person - Individual" || org.OrganisationType.Name == "Corporation – Limited liability")
@@ -1159,9 +1158,7 @@ namespace TechCertain.WebUI.Controllers
                     }
 
                     model.InterestedParties = interestedParties;
-
                     List<SelectListItem> linterestedparty = new List<SelectListItem>();
-
 
                     for (var i = 0; i < model.InterestedParties.Count(); i++)
                     {
@@ -1174,7 +1171,6 @@ namespace TechCertain.WebUI.Controllers
                     }
 
                     model.InterestedPartyList = linterestedparty;
-
 
                     var boatUses = new List<BoatUseViewModel>();
                     foreach (BoatUse bu in sheet.BoatUses)
@@ -1196,8 +1192,6 @@ namespace TechCertain.WebUI.Controllers
                                 Value = val,
                                 Text = text
                             });
-
-
                         }
                     }
                     catch (Exception ex)
@@ -1263,9 +1257,7 @@ namespace TechCertain.WebUI.Controllers
                         Console.WriteLine(ex.Message);
                     }
 
-
                     model.MarinaLocations = MarinaLocations;
-
 
                     foreach (WaterLocation wl in sheet.WaterLocations)
                     {
@@ -1299,7 +1291,6 @@ namespace TechCertain.WebUI.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
-
                 }
                 ViewBag.Title = "Programme Email Template ";
                 return View(model);
@@ -1366,7 +1357,6 @@ namespace TechCertain.WebUI.Controllers
                 {
                     foreach (var agreement in clientProgramme.Agreements)
                     {
-
                         if (agreement.Product.IsMultipleOption)
                         {
                             foreach (var term in agreement.ClientAgreementTerms)
@@ -1374,8 +1364,7 @@ namespace TechCertain.WebUI.Controllers
                                 term.Bound = false;
                                 await uow.Commit();
                             }
-                        }
-                        
+                        }                        
                     }
                 }
 
@@ -1393,8 +1382,6 @@ namespace TechCertain.WebUI.Controllers
                                 await uow.Commit();
                             }
                         }
-
-
                     }
                 }
 
@@ -1536,98 +1523,9 @@ namespace TechCertain.WebUI.Controllers
 
                 }
 
-                SharedRoleViewModel sharedRoleViewModel = new SharedRoleViewModel();
-                if (sheet.SharedDataRoles.Count != 0)
-                {
-                    foreach (var sharedRole in sheet.SharedDataRoles)
-                    {
-                        var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateByRoleName(sharedRole.Name);
-                        sharedRoleViewModel.SharedRoles.Add(new SelectListItem
-                        {
-                            Text = sharedRoleTemplate.Name,
-                            Value = sharedRoleTemplate.Id.ToString(),
-                            Selected = true
-                        });
-
-                        if (sharedRole.AdditionalRoleInformation != null)
-                        {
-                            sharedRoleViewModel.OtherProfessionId = sharedRole.AdditionalRoleInformation.OtherProfessionId;
-                        }
-
-                        sharedRoleViewModel.SharedDataRoles.Add(sharedRole);
-                    }
-                }
-
-                var programmeSharedRoles = await _sharedDataRoleService.GetSharedRoleTemplatesByProgramme(clientProgramme.BaseProgramme);
-                foreach (var sharedRoleTemplate in programmeSharedRoles)
-                {
-                    sharedRoleViewModel.SharedRoles.Add(new SelectListItem
-                    {
-                        Text = sharedRoleTemplate.Name,
-                        Value = sharedRoleTemplate.Id.ToString(),
-                        Selected = false
-                    });
-                }
-
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);               
                 model.SharedRoleViewModel = sharedRoleViewModel;
-
-                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
-                List<SelectListItem> territoryTemplates = new List<SelectListItem>();
-                List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
-                if (sheet.RevenueData != null)
-                {
-                    if (sheet.RevenueData.Territories.Count > 0)
-                    {
-                        foreach (Territory territory in sheet.RevenueData.Territories)
-                        {
-                            territoryTemplates.Add(new SelectListItem
-                            {
-                                Value = territory.TerritoryTemplateId.ToString(),
-                                Text = territory.Location,
-                                Selected = true
-                            });
-                        }
-                    }
-
-                    if (sheet.RevenueData.Activities.Count > 0)
-                    {
-                        foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities.OrderBy(ba => ba.AnzsciCode))
-                        {
-                            businessActivityTemplates.Add(new SelectListItem
-                            {
-                                Value = businessActivity.BusinessActivityTemplate.ToString(),
-                                Text = businessActivity.Description,
-                                Selected = true
-                            });
-                        }
-                    }
-
-                    revenueByActivityViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityInformation>(sheet.RevenueData.AdditionalActivityInformation);
-                    revenueByActivityViewModel.TotalRevenue = sheet.RevenueData.TotalRevenue;
-                    revenueByActivityViewModel.RevenueData = sheet.RevenueData;
-                }
-
-                foreach (TerritoryTemplate territoryTemplate in clientProgramme.BaseProgramme.TerritoryTemplates)
-                {
-                    territoryTemplates.Add(new SelectListItem
-                    {
-                        Value = territoryTemplate.Id.ToString(),
-                        Text = territoryTemplate.Location,
-                        Selected = false
-                    });
-                }
-
-                foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates.OrderBy(ba => ba.AnzsciCode))
-                {
-                    businessActivityTemplates.Add(new SelectListItem
-                    {
-                        Value = businessActivityTemplate.Id.ToString(),
-                        Text = businessActivityTemplate.Description,
-                        Selected = false
-                    });
-                }
-                revenueByActivityViewModel.Territories = territoryTemplates;
-                revenueByActivityViewModel.Activities = businessActivityTemplates;
+                RevenueByActivityViewModel revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);                
                 model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
                 var boats = new List<BoatViewModel>();
@@ -1856,6 +1754,177 @@ namespace TechCertain.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        private async Task<SharedRoleViewModel> GetSharedRoleViewModel(ClientInformationSheet sheet)
+        {
+            SharedRoleViewModel sharedRoleViewModel = new SharedRoleViewModel();
+            var clientProgramme = sheet.Programme;
+            var roleList = new List<SharedDataRoleTemplate>();
+            var roleListCount = 0;
+            var sharedRoles = new List<SelectListItem>();
+            var programmeSharedRoles = await _sharedDataRoleService.GetSharedRoleTemplatesByProgramme(clientProgramme.BaseProgramme);
+
+            if (sheet.SharedDataRoles.Count != 0)
+            {
+                foreach (var sharedRole in sheet.SharedDataRoles)
+                {
+                    var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateByRoleName(sharedRole.Name);
+                    if(sharedRoleTemplate != null)
+                    {
+                        roleList.Add(sharedRoleTemplate);
+                    }
+
+                    if (sharedRole.AdditionalRoleInformation != null)
+                    {
+                        sharedRoleViewModel.OtherProfessionId = sharedRole.AdditionalRoleInformation.OtherProfessionId;
+                    }
+
+                    sharedRoleViewModel.SharedDataRoles.Add(sharedRole);
+                }
+                roleListCount = roleList.Count;
+            }
+
+            foreach (var sharedRoleTemplate in programmeSharedRoles)
+            {
+                if (!roleList.Contains(sharedRoleTemplate))
+                {
+                    roleList.Add(sharedRoleTemplate);
+                }
+            }
+
+            foreach(var template in roleList)
+            {
+                if(roleList.IndexOf(template) <= roleListCount)
+                {
+                    sharedRoles.Add(new SelectListItem
+                    {
+                        Text = template.Name,
+                        Value = template.Id.ToString(),
+                        Selected = true
+                    });
+                }
+                else
+                {
+                    sharedRoles.Add(new SelectListItem
+                    {
+                        Text = template.Name,
+                        Value = template.Id.ToString(),
+                        Selected = false
+                    });
+                }
+            }
+
+            return sharedRoleViewModel;
+        }
+        private async Task<RevenueByActivityViewModel> GetRevenueActivityViewModel(ClientInformationSheet sheet)
+        {
+            RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
+            var clientProgramme = sheet.Programme;
+            var territoryList = new List<TerritoryTemplate>();
+            var businessActivityList = new List<BusinessActivityTemplate>();
+            var sharedTerritoryCountList = 0;
+            var sharedRevenueCountList = 0;
+            List<SelectListItem> territoryTemplates = new List<SelectListItem>();
+            List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
+
+            if (sheet.RevenueData != null)
+            {
+                if (sheet.RevenueData.Territories.Count > 0)
+                {
+                    foreach (Territory territory in sheet.RevenueData.Territories)
+                    {
+                        var territoryTemplate = await _territoryService.GetTerritoryTemplateById(territory.TerritoryTemplateId);
+                        if (territoryTemplate != null)
+                        {
+                            territoryList.Add(territoryTemplate);
+                        }
+                    }
+                    sharedTerritoryCountList = territoryList.Count;
+                }
+
+                if (sheet.RevenueData.Activities.Count > 0)
+                {
+                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
+                    {
+                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(businessActivity.BusinessActivityTemplate);
+                        if(businessActivityTemplate != null)
+                        {
+                            businessActivityList.Add(businessActivityTemplate);
+                        }                        
+                    }
+                    sharedRevenueCountList = businessActivityList.Count;
+                }
+
+                revenueByActivityViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityInformation>(sheet.RevenueData.AdditionalActivityInformation);
+                revenueByActivityViewModel.TotalRevenue = sheet.RevenueData.TotalRevenue;
+                revenueByActivityViewModel.RevenueData = sheet.RevenueData;
+            }
+
+            foreach (TerritoryTemplate territoryTemplate in clientProgramme.BaseProgramme.TerritoryTemplates)
+            {
+                if (!territoryList.Contains(territoryTemplate))
+                {
+                    territoryList.Add(territoryTemplate);
+                }
+            }
+
+            foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+            {
+                if (!businessActivityList.Contains(businessActivityTemplate))
+                {
+                    businessActivityList.Add(businessActivityTemplate);
+                }
+            }
+
+            foreach (var businessActivityTemplate in businessActivityList)
+            {
+                if (businessActivityList.IndexOf(businessActivityTemplate) <= sharedTerritoryCountList)
+                {
+                    businessActivityTemplates.Add(new SelectListItem
+                    {
+                        Value = businessActivityTemplate.Id.ToString(),
+                        Text = businessActivityTemplate.Description,
+                        Selected = true
+                    });
+                }
+                else
+                {
+                    businessActivityTemplates.Add(new SelectListItem
+                    {
+                        Value = businessActivityTemplate.Id.ToString(),
+                        Text = businessActivityTemplate.Description,
+                        Selected = false
+                    });
+                }
+            }
+
+            foreach (var territoryTemplate in territoryList)
+            {
+                if (territoryList.IndexOf(territoryTemplate) <= sharedTerritoryCountList)
+                {
+                    territoryTemplates.Add(new SelectListItem
+                    {
+                        Value = territoryTemplate.Id.ToString(),
+                        Text = territoryTemplate.Location,
+                        Selected = true
+                    });
+                }
+                else
+                {
+                    territoryTemplates.Add(new SelectListItem
+                    {
+                        Value = territoryTemplate.Id.ToString(),
+                        Text = territoryTemplate.Location,
+                        Selected = false
+                    });
+                }
+            }
+
+            revenueByActivityViewModel.Territories = territoryTemplates;
+            revenueByActivityViewModel.Activities = businessActivityTemplates.OrderBy(ba => ba.Text).ToList();
+
+            return revenueByActivityViewModel;
         }
 
         [HttpGet]

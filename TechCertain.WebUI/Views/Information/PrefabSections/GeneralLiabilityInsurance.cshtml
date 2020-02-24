@@ -181,8 +181,7 @@
                         }
                     }                    
                 }                
-                if (data[0] != "" && valid == "true") {
-                    debugger;
+                if (data[0] != "" && valid == "true") {                    
                     for (var item = 0; item < data.length; item++){
                         var arr = data[item];
                         if (arr != null) {
@@ -211,8 +210,6 @@
 
 
     function GeneralLiabilityInsurance1Selected(GeneralLiability) {
-        debugger;
-
         var generalLiability = document.getElementById(GeneralLiability);
 
         if (generalLiability.options[generalLiability.selectedIndex].value == "true") {
@@ -222,13 +219,12 @@
         } else {
             $('#GeneralLiabilityInsurance2').val('');
             $('#GeneralLiabilityInsurance3').val('');
-             $('#GeneralLiabilityInsurance4').val('');
-             $('#GeneralLiabilityInsurance5').val('');
-             $('#GeneralLiabilityInsurance6').val('');
-             $('#GeneralLiabilityInsurance7').val('');
+            $('#GeneralLiabilityInsurance4').val('');
+            $('#GeneralLiabilityInsurance5').val('');
+            $('#GeneralLiabilityInsurance6').val('');
+            $('#GeneralLiabilityInsurance7').val('');
             $('#GeneralLiabilityInsurance2Sec').addClass('hidden');
             $('#GeneralLiabilityInsurance3Sec').addClass('hidden');
-
         }
     }
 

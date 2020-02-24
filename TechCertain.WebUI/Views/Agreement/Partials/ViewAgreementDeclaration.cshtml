@@ -49,7 +49,7 @@
         <div class="form-group">
             <label class="radio">
                 <a>
-                    <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModal">
+                    <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModalDecline">
                     <i></i>No, I wish to decline the offered Agreement
                 </a>
             </label>
@@ -61,7 +61,7 @@
 
 @if (Model.Advisory != null)
 {
-    <div class="modal" id="advisoryModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal" id="advisoryModalDecline" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

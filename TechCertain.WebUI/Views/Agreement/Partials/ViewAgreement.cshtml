@@ -376,38 +376,37 @@ else
                         <th class="text-center" width="20%">Limit</th>
                         <th class="text-center" width="20%">Excess</th>
                         <th class="text-center" width="20%">Premium</th>
-                    </tr>
-                    @foreach (var item in Model.MultiCoverOptions)
-                    {
-                        <tr class="clickable-row">
-                            <td>
-                                <input type="radio" dirname=""
-                                       id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.RiskName
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Inclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.Exclusion
-                            </td>
-                            <td class="pt-3-half" width="20%" contenteditable="true">
-                                @item.TotalPremium
-                            </td>
-                        </tr>
-                    }
-
-                    @if (Model.IsOptionalProduct)
-                    {
-                        <tr>
-                            <td><input type="radio" dirname="" name="@Model.ProductName" value="None"></td>
-                            <td class="pt-4-half" colspan="3" width="15%">
-                                <label> I don't want this cover</label>
-                            </td>
-                        </tr>
-                    }
+                    </tr>                    
+                        @foreach (var item in Model.MultiCoverOptions)
+                        {
+                            <tr class="clickable-row">
+                                <td>
+                                    <input type="radio" dirname=""
+                                           id="@item.TermId" name="@item.RiskName" @item.isSelected value="@item.TermId">
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.RiskName
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.Inclusion
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.Exclusion
+                                </td>
+                                <td class="pt-3-half" width="20%" contenteditable="true">
+                                    @item.TotalPremium
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.IsOptionalProduct)
+                        {
+                            <tr>
+                                <td><input type="radio" dirname="" name="@Model.ProductName" value="None"></td>
+                                <td class="pt-4-half" colspan="3" width="15%">
+                                    <label> I don't want this cover</label>
+                                </td>
+                            </tr>
+                        }                    
                 </table>
             </div>
 
@@ -480,6 +479,12 @@ else
         function Close() {
             $("#modal").hide();
         };
+
+        function ValidateCoverOption() {
+            var itemPI = $('#Professional Indemnity input:radio:checked').val()
+            debugger;
+        }
+
 
         function dateChange() {
             var agreementId = $("#ClientAgreementId").val();

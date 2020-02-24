@@ -202,9 +202,7 @@
         }
     }
 
-    function StatutoryLiability2Selected(StatutoryLiability) {
-        debugger;
-
+    function StatutoryLiability2Selected(StatutoryLiability) {        
         var statutoryLiability = document.getElementById(StatutoryLiability);
         var vhh = statutoryLiability.options[statutoryLiability.selectedIndex].value;
 
@@ -221,9 +219,8 @@
 
     var clientInformationSheet = $('#AnswerSheetId').val();
 
-      function ValidateStatutory() {
+    function ValidateStatutory() {
         event.preventDefault();
-
         var GLI1 = $('#StatutoryLiability1').val();
         var GLI2 = $('#StatutoryLiability2').val();
         var GLI3 = $('#StatutoryLiability3').val();
@@ -270,8 +267,8 @@
             }
         } else {
             $('#ValidateStatutoryLiability5').html("<i></i>");
-          }
-          if (GLI6 == "" && GLI2 == 'false') {
+        }
+        if (GLI6 == "" && GLI2 == 'false') {
             $('#ValidateStatutoryLiability2').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
@@ -281,48 +278,35 @@
         }
 
           return validity;
-        //if (validity) {
-        //    SaveStatutoryLiability();
-        //}
     };
 
-
-
-
-        function SaveStatutoryLiability() {
-            debugger;
-                   var StatutoryLiability = new Array(6);
-
-                   for (var i = 0; i < StatutoryLiability.length; i++) {
-                       StatutoryLiability[i] = new Array(2);
-                   }
-
-            for (var i = 1; i <= 6; i++) {
-                for (var j = 0; j < 2; j++) {
-                    StatutoryLiability[i-1][0] = "StatutoryLiability" + i;
+    function SaveStatutoryLiability() {
+        var StatutoryLiability = new Array(6);
+        for (var i = 0; i < StatutoryLiability.length; i++) {
+            StatutoryLiability[i] = new Array(2);
+        }
+        for (var i = 1; i <= 6; i++) {
+            for (var j = 0; j < 2; j++) {
+                StatutoryLiability[i - 1][0] = "StatutoryLiability" + i;
                 var statutoryLiability = "#StatutoryLiability" + i;
                 StatutoryLiability[i-1][1] = $(statutoryLiability).val();
-                }
-
             }
-
-                   var postData = { Answers: StatutoryLiability, ClientInformationSheet: clientInformationSheet };
-
-             $.ajax({
-                           url: '@Url.Action("UpdateAnswer", "Information")',
-                           type: "POST",
-                           data: postData
-                       })
-                           .done(function (data) {
-                                   return true;
-
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
-
-
         }
+
+        var postData = { Answers: StatutoryLiability, ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                return true;
+            })
+            .fail(function (a, s, d) {
+                alert("Unable to save.");
+            });
+    }
+
 </script>
 
 <style>

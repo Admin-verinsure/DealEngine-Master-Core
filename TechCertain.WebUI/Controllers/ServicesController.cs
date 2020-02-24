@@ -4105,7 +4105,11 @@ namespace TechCertain.WebUI.Controllers
 
                                 organisation.OrganisationalUnits.Add(ou);
                                 clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                                clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                                if (!string.IsNullOrWhiteSpace(membershipNumber))
+                                {
+                                    clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                                }                                
+
                                 sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                                 try
                                 {

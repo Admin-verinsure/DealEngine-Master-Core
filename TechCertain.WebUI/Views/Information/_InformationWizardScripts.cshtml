@@ -56,8 +56,7 @@
 
            if (stepNumber === 0) {
 
-               event.preventDefault();
-               debugger;
+               event.preventDefault();               
                if (stepDirection == "forward") {
                    var claim1 = $('#Claimexp1').val();
                    var claim2 = $('#Claimexp2').val();
@@ -212,16 +211,15 @@
                    data: $("#tab1 :input").serialize({ json: true })
                })
                    .done(function (url) {
-                       $("#agreementView").load(url, function () {
-                           //$('#getAgreementModal').hide();
+                       $("#agreementView").load(url, function () {                           
                        });
                    })
                    .fail(function (a, s, d) {
-                       $('#getAgreementModal').hide();
-                       debugger;
+                       $('#getAgreementModal').hide();                       
                    });
 
            } else if (stepNumber === 1) {
+               //ValidateCoverOption();
                var status = $('#Status').val();
                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                }
@@ -230,7 +228,8 @@
                }
 
                $('.sw-btn-prev').hide();
-               $('#getAgreementDecModal').show();
+               $('#getAgreementDecModal').show();               
+
                var ID = $('#Id').val();
                var postdata = {
                    id: ID

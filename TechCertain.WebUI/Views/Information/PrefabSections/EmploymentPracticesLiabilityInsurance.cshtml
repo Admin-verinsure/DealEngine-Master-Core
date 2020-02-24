@@ -187,9 +187,7 @@
     });
 
 
-    function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {
-        debugger;
-
+    function EmployerPracticesLiabilityInsurance1Selected(EmployerPracticesLiability) {        
         var employerPracticesLiability = document.getElementById(EmployerPracticesLiability);
 
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "true") {
@@ -205,8 +203,7 @@
     };
 
     
-    function EmployerPracticesLiabilityInsurance2Selected(EmployerPracticesLiability) {
-        debugger;
+    function EmployerPracticesLiabilityInsurance2Selected(EmployerPracticesLiability) {        
         var employerPracticesLiability = document.getElementById(EmployerPracticesLiability);
 
         if (employerPracticesLiability.options[employerPracticesLiability.selectedIndex].value == "false") {
@@ -219,9 +216,8 @@
               $('#LiabilityInsuranceSec').addClass('hidden');
         }
     };
-    
 
-     function ValidatePractice() {
+    function ValidatePractice() {
         event.preventDefault();
 
         var GLI1 = $('#EmployerPracticesLiability1').val();
@@ -258,45 +254,37 @@
                      $(validator).html("<i></i>");
                   }
          }
-         return validity;
-        //if (validity) {
-        //    SaveEmployerPracticesLiability(); 
-        // }
+        return validity;
     };
 
 
-
-       function SaveEmployerPracticesLiability() {
-                   var EmployerPracticesLiability = new Array(6);
-                   for (var i = 0; i < EmployerPracticesLiability.length; i++) {
-                       EmployerPracticesLiability[i] = new Array(2);
-                   }
-
-            for (var i = 1; i <= 6; i++) {
-                for (var j = 0; j < 2; j++) {
-                    EmployerPracticesLiability[i-1][0] = "EmployerLiabilityInsurance" + i;
-                var employerPracticesLiability = "#EmployerLiabilityInsurance" + i;
-                EmployerPracticesLiability[i-1][1] = $(employerPracticesLiability).val();
-                }
-
-            }
-
-                   var postData = { Answers: EmployerPracticesLiability, ClientInformationSheet: clientInformationSheet };
-
-             $.ajax({
-                           url: '@Url.Action("UpdateAnswer", "Information")',
-                           type: "POST",
-                           data: postData
-                       })
-                           .done(function (data) {
-                                  return true;
-                           })
-                           .fail(function (a, s, d) {
-                               alert("Unable to save.");
-                           });
-
-
+    function SaveEmployerPracticesLiability() {
+        var EmployerPracticesLiability = new Array(6);
+        for (var i = 0; i < EmployerPracticesLiability.length; i++) {
+            EmployerPracticesLiability[i] = new Array(2);
         }
+
+        for (var i = 1; i <= 6; i++) {
+            for (var j = 0; j < 2; j++) {
+                EmployerPracticesLiability[i - 1][0] = "EmployerLiabilityInsurance" + i;
+                var employerPracticesLiability = "#EmployerLiabilityInsurance" + i;
+                EmployerPracticesLiability[i - 1][1] = $(employerPracticesLiability).val();
+            }
+        }
+
+        var postData = { Answers: EmployerPracticesLiability, ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                return true;
+            })
+            .fail(function (a, s, d) {
+                alert("Unable to save.");
+            });
+    }
 </script>
 <style>
     .required:after {

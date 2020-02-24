@@ -196,12 +196,8 @@
 
 @section pagespecific {
     <script>
-        $(window).on("load", function () {
-            debugger;
-            for (var answer in @Model.ClientInformationAnswers)
-            {
-
-                debugger;
+        $(window).on("load", function () {            
+            for (var answer in @Model.ClientInformationAnswers){                
                 if(answer.ItemName == "Claim1")
                 {
                     $('#Claim1').val() = 0;

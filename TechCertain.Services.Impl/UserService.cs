@@ -139,7 +139,14 @@ namespace TechCertain.Services.Impl
 		{
             await CreateDefaultUserOrganisation (user);
             await _userRepository.AddAsync(user);
-            _ldapService.Create (user);
+			try
+			{
+				_ldapService.Create(user);
+			}
+            catch(Exception ex)
+			{
+				_logger.LogWarning(ex.Message);
+			}
             await Update (user);
 		}
 

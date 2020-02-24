@@ -314,7 +314,6 @@
 
     function ValidateProfessionalIndemnity() {
         event.preventDefault();
-        debugger;
         var validity = true;
         for (var index = 1; index <= 7; index++) {
             var addPrincial = "#ProfessionalIndemnity" + index;
@@ -355,47 +354,36 @@
         alert ("Please use the  Notification Panel below to notify of this potential claim");
     };
 
-
-
-        function SaveProfessionalIndemnity() {
-            debugger;
-                   var ProfessionalIndemnity = new Array(11);
-
-                   for (var i = 0; i < ProfessionalIndemnity.length; i++) {
-                       ProfessionalIndemnity[i] = new Array(2);
-                   }
-
-            for (var i = 1; i <= 11; i++) {
-                for (var j = 0; j < 2; j++) {
+    function SaveProfessionalIndemnity() {
+        var ProfessionalIndemnity = new Array(11);
+        for (var i = 0; i < ProfessionalIndemnity.length; i++) {
+            ProfessionalIndemnity[i] = new Array(2);
+        }
+        for (var i = 1; i <= 11; i++) {
+            for (var j = 0; j < 2; j++) {
                 ProfessionalIndemnity[i - 1][0] = "ProfessionalIndemnity" + i;
                 var professionalIndemnity = "#ProfessionalIndemnity" + i;
-                ProfessionalIndemnity[i-1][1] = $(professionalIndemnity).val();
-                }
-
+                ProfessionalIndemnity[i - 1][1] = $(professionalIndemnity).val();
             }
-
-               var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
-              var success = false;
-
-                       $.ajax({
-                           async: false,
-                           url: '@Url.Action("UpdateAnswer", "Information")',
-                           type: "POST",
-                           data: postData
-                       })
-                           .done(function (data) {
-                               debugger;
-                               success = true;
-                           })
-                           .fail(function (a, s, d) {
-                               debugger;
-                               success = false;
-                               alert("Unable to save.");
-                           });
-                      return success;
-
         }
 
+        var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
+        var success = false;
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                success = true;
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                success = false;
+                alert("Unable to save.");
+            });
+        return success;
+    }
 </script>
 
 

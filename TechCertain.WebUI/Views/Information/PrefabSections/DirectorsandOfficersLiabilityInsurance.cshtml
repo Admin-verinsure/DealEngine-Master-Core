@@ -183,8 +183,7 @@
                 }                
                 if (data[0] != "" && valid == "true") {
                     for (var item = 0; item < data.length; item++){
-                        var arr = data[item];
-                        debugger;
+                        var arr = data[item];                        
                         if (arr != null) {
                             $('#' + arr[count]).val(arr[count + 1]);
                             if ($('#DirectorsandOfficers1').val() == 'true') {
@@ -209,9 +208,7 @@
             });
     });
 
-    function DirectorsandOfficersLiabilityInsurance1Selected(DirectorsandOfficers) {
-        debugger;
-
+    function DirectorsandOfficersLiabilityInsurance1Selected(DirectorsandOfficers) {       
         var directorsandOfficers = document.getElementById(DirectorsandOfficers);
 
         if (directorsandOfficers.options[directorsandOfficers.selectedIndex].value == "true") {
@@ -230,9 +227,7 @@
 
         }
     }
-    function DirectorsandOfficersLiabilityInsurance3Selected(DirectorsandOfficers) {
-        debugger;
-
+    function DirectorsandOfficersLiabilityInsurance3Selected(DirectorsandOfficers) {        
         var directorsandOfficers = document.getElementById(DirectorsandOfficers);
 
         if (directorsandOfficers.options[directorsandOfficers.selectedIndex].value == "false") {
@@ -248,13 +243,12 @@
         }
     }
     
-     function ValidateDNOGeneral() {
-        debugger;
+    function ValidateDNOGeneral() {
         var GLI1 = $('#DirectorsandOfficers1').val();
         var GLI2 = $('#DirectorsandOfficers2').val();
         var GLI3 = $('#DirectorsandOfficers3').val();
-
         var validity = true;
+
         if (GLI1 == "") {
             $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<font color='red'>Field is required</font>")
             if (validity) {

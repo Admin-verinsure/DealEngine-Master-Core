@@ -177,11 +177,6 @@ namespace TechCertain.Infrastructure.Ldap.Services
 			}
 		}
 
-		//public void Update (PasswordPolicy passwordPolicy)
-		//{
-
-		//}
-
 		public void GlobalBan (User user)
 		{
 			// Note: Cannot add operational attributes

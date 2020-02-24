@@ -42,7 +42,7 @@ namespace TechCertain.Services.Impl
         public async Task ImportAOEServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line
-            var userFileName = "//tmp//NZACSUsers2018.csv";
+            var userFileName = "C:\\tmp\\testclientdata\\NZACSUsers2018.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("214efe24-552d-46a3-a666-6bede7c88ca1");
             StreamReader reader;
@@ -159,7 +159,7 @@ namespace TechCertain.Services.Impl
             var email = "";
 
             //addresses need to be on one line
-            var principalsFileName = "//tmp//NZACSPrincipals2018.csv";
+            var principalsFileName = "C:\\tmp\\testclientdata\\NZACSPrincipals2018.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             if (organisationType == null)
@@ -290,7 +290,7 @@ namespace TechCertain.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;
-            var claimFileName = "//tmp//NZACSClaimsData2018.csv";
+            var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
             using (reader = new StreamReader(claimFileName))
             {
                 while (!reader.EndOfStream)
@@ -329,7 +329,7 @@ namespace TechCertain.Services.Impl
             bool readFirstLine = false;
             string line;
             //special characters /,/
-            var contractFileName = "//tmp//NZACSContractorsPrincipals2018.csv";
+            var contractFileName = "C:\\tmp\\testclientdata\\NZACSContractorsPrincipals2018.csv";
 
             using (reader = new StreamReader(contractFileName))
             {
