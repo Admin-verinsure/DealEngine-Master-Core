@@ -25,10 +25,14 @@ deploy_staging:
   - ssh-add <(echo "$PKgitlab")
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/projects'
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /home/ubuntu/projects/dealengine/*'
-#  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl status dealengine'
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl stop dealengine'
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
+  
+# Prepare files 
+# TODO put below into one script that will prep the folders
+
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'mkdir -p /var/www/dealengine/publish/wwwroot/images'
 #  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'ls -la /var/www/dealengine/'
 #  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'ls -la /var/www/dealengine/publish'
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl start dealengine'
