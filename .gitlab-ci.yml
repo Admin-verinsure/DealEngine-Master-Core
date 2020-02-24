@@ -25,9 +25,9 @@ deploy_staging:
   - ls -la ~/.ssh/
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ls -la ~/.s~sh/
-  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /home/ubuntu/projects/dealengine/*'
+  - ls -la ~/.ssh/
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/projects'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /home/ubuntu/projects/dealengine/*'
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl start dealengine'
 
 #  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
