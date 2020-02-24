@@ -27,6 +27,7 @@ deploy_staging:
   - ls -la ~/.ssh/
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
+  - ls -la ~/.ssh/
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /var/www/dealengine/publish/*'
 #  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
 #  - rsync -azhe ssh /path/to/project ubuntu@$URLdevops:/home/ubuntu/
