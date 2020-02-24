@@ -1,5 +1,5 @@
 stages:
-  - build
+#  - build
   - deploy
 
 before_script:  
@@ -22,9 +22,8 @@ deploy_staging:
   stage: deploy
   script:
   - echo "Compiling code..."
-  - 'dotnet publish -c Release'
-  
-  - echo "Establishing Connection to $URLdevops ..."
+#  - 'dotnet publish -c Release'
+  - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /var/www/dealengine/publish/*'
 #  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
