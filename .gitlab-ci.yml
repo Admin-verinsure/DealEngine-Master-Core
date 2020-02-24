@@ -14,7 +14,7 @@ build:
     - echo "Cleaning previous build..."
     - 'dotnet clean'
     - echo "Building project..."
-    - 'dotnet build -c Release -r ubuntu.18.04-x64'
+    - 'dotnet build -c Release'
 
 before_script:
 
@@ -22,13 +22,13 @@ deploy_staging:
   stage: deploy
   script:
   - echo "Compiling code..."
-  - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
+  - 'dotnet publish -c Release'
   
-#  - echo "Establishing Connection to devops.techcertain.com..."
-#  - ssh-add <(echo "$PRIVATE_KEY")
-#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
-#  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
-#  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
+  - echo "Establishing Connection to $URLdevops ..."
+  - ssh-add <(echo "$PKgitlab")
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /var/www/dealengine/publish/*'
+#  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
+#  - rsync -azhe ssh /path/to/project ubuntu@$URLdevops:/home/ubuntu/
 #  Restart dealengine service
 #  - echo "Restarting DealEngine Service...
 
