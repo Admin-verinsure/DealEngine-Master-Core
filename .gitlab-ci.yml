@@ -11,8 +11,10 @@ before_script:
 build:
   stage: build
   script:
-    - 'dotnet clean'
-    - 'dotnet build -c Release'
+    - echo "Cleaning previous build..."
+    #- 'dotnet clean'
+    - echo "Building project..."
+    #- 'dotnet build -c Release'
 
 before_script:
 
