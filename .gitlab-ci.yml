@@ -28,10 +28,8 @@ deploy_staging:
   - ls -la ~/.ssh/
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/projects'
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /home/ubuntu/projects/dealengine/*'
-  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl start dealengine'
-
-#  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
-  - echo "Compiling code..."
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl status dealengine'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'sudo systemctl stop dealengine'
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'ls -la /var/www/dealengine/'
