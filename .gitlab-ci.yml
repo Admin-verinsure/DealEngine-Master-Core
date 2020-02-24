@@ -21,8 +21,6 @@ before_script:
 deploy_staging:
   stage: deploy
   script:
-  - echo "Compiling code..."
-#  - 'dotnet publish -c Release'
   - ls -la
   - ls -la ~/.ssh/
   - eval "$(ssh-agent -s)"
@@ -30,6 +28,8 @@ deploy_staging:
   - ls -la ~/.ssh/
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /var/www/dealengine/publish/*'
 #  - scp -P22 -r . ubuntu@"$URLdevops":/var/www/dealengine
+  - echo "Compiling code..."
+  - 'dotnet publish -c Release'
 #  - rsync -azhe ssh /path/to/project ubuntu@$URLdevops:/home/ubuntu/
 #  Restart dealengine service
 #  - echo "Restarting DealEngine Service...
