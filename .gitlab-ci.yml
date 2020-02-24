@@ -35,8 +35,8 @@ deploy_staging:
     name: staging
     url: https://devops.techcertain.com
   when: manual
-  dependencies:
-    - build
+#  dependencies:
+#    - build
 
 deploy_marsh:
   stage: deploy
@@ -56,8 +56,8 @@ deploy_marsh:
     name: marsh
     url: https://staging.mnzconnect.com
   when: manual
-  dependencies:
-    - build
+#  dependencies:
+#    - build
 
 deploy_insw:
   stage: deploy
@@ -78,4 +78,4 @@ deploy_insw:
     url: https://dealengine.tai.co.nz
   when: manual
   dependencies:
-    - build
+#    - build
