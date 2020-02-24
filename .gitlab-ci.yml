@@ -23,6 +23,8 @@ deploy_staging:
   script:
   - echo "Compiling code..."
 #  - 'dotnet publish -c Release'
+  - ls -la
+  - ls -la ~/.ssh/
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLdevops" 'rm -rf /var/www/dealengine/publish/*'
