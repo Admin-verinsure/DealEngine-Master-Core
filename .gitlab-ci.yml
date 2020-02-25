@@ -1,22 +1,16 @@
-stages:
-  - build
-  - deploy
-
-before_script:  
-
 # Runner server requires following for build
 # dotnet-sdk-3.1
 # dotnet-sdk-2.2
 
+stages:
+  - build
+  - deploy
+
 build:
   stage: build
   script:
-    - echo "Cleaning previous build..."
-    #- 'dotnet clean'
-    - echo "Building project..."
-    #- 'dotnet build -c Release'
-
-before_script:
+    - 'dotnet clean'
+    - 'dotnet build -c Release'
 
 deploy_staging:
   stage: deploy
@@ -35,46 +29,38 @@ deploy_staging:
   dependencies:
     - build
 
-# useful - #  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLmpak" ''
+# useful for first time connection (- ssh -o StrictHostKeyChecking=no ubuntu@"$URLmpak" 'command')
 
 deploy_marsh:
   stage: deploy
   script:
-  - echo "Compiling code..."
-  - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
-
-#  - echo "Establishing Connection to devops.techcertain.com..."
-#  - ssh-add <(echo "$PRIVATE_KEY")
-#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
-#  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
-#  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
-#  Restart dealengine service
-#  - echo "Restarting DealEngine Service...
+  - eval "$(ssh-agent -s)"
+  - ssh-add <(echo "$PKgitlab")
+  - ssh ubuntu@"$URLmarsh" './DE-DeployPrep.sh'
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLmarsh" './DE-DeployFin.sh'
 
   environment:
     name: marsh
     url: https://staging.mnzconnect.com
   when: manual
-#  dependencies:
-#    - build
+  dependencies:
+    - build
 
 deploy_insw:
   stage: deploy
   script:
-  - echo "Compiling code..."
-  - 'dotnet publish -c Release --self-contained -r ubuntu.18.04-x64'
-
-#  - echo "Establishing Connection to dealengine.tai.co.nz..."
-#  - ssh-add <(echo "$PRIVATE_KEY")
-#  - ssh -o StrictHostKeyChecking=no user@"$QA_SERVER" 'rm -rf /var/www/html/*'
-#  - scp -P22 -r . ubuntu@"$QA_SERVER":/var/www/dealengine
-#  - rsync -azhe ssh /path/to/project ubuntu@devops.techcertain.com:/home/ubuntu/
-#  Restart dealengine service
-#  - echo "Restarting DealEngine Service...
+  - eval "$(ssh-agent -s)"
+  - ssh-add <(echo "$PKgitlab")
+  - ssh ubuntu@"$URLinsw" './DE-DeployPrep.sh'
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLinsw" './DE-DeployFin.sh'
 
   environment:
     name: insw
     url: https://dealengine.tai.co.nz
   when: manual
   dependencies:
-#    - build
+    - build
