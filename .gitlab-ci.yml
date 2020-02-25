@@ -26,15 +26,17 @@ deploy_staging:
   
 #script 1
   - ssh ubuntu@"$URLdevops" 'ls -la'
-#  - ssh ubuntu@"$URLdevops" 'bash -s' < DE-DeployPrep.sh'
+#  - ssh ubuntu@"$URLdevops" './DE-DeployPrep.sh'
 
-  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/projects'
-  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/backup'
-  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/backup/images'
-  - ssh ubuntu@"$URLdevops" 'cp -R /var/www/dealengine/publish/wwwroot/images/* /home/ubuntu/backup/images'
+  - ssh ubuntu@"$URLdevops" 'bash -s' < DE-DeployPrep.sh'
+
+#  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/projects'
+#  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/backup'
+#  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/backup/images'
+#  - ssh ubuntu@"$URLdevops" 'cp -R /var/www/dealengine/publish/wwwroot/images/* /home/ubuntu/backup/images'
 #  - ssh ubuntu@"$URLdevops" 'cp -R /var/www/dealengine/publish/appsettings.json /home/ubuntu/backup/appsettings.json'   
-  - ssh ubuntu@"$URLdevops" 'rm -rf /home/ubuntu/projects/dealengine/*'
-  - ssh ubuntu@"$URLdevops" 'sudo systemctl stop dealengine'
+#  - ssh ubuntu@"$URLdevops" 'rm -rf /home/ubuntu/projects/dealengine/*'
+#  - ssh ubuntu@"$URLdevops" 'sudo systemctl stop dealengine'
   
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
