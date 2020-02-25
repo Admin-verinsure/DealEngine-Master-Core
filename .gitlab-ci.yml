@@ -26,9 +26,9 @@ deploy_staging:
   
 #script 1
   - ssh ubuntu@"$URLdevops" 'ls -la'
-#  - ssh ubuntu@"$URLdevops" './DE-DeployPrep.sh'
+  - ssh ubuntu@"$URLdevops" './DE-DeployPrep.sh'
 
-  - ssh ubuntu@"$URLdevops" 'bash -s' < DE-DeployPrep.sh
+#  - ssh ubuntu@"$URLdevops" 'bash -s' < DE-DeployPrep.sh
 
 #  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/projects'
 #  - ssh ubuntu@"$URLdevops" 'mkdir -p /home/ubuntu/backup'
