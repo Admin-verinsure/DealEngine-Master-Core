@@ -29,7 +29,7 @@ deploy_staging:
   dependencies:
     - build
     
-deploy_staging:
+deploy_demo:
   stage: deploy
   script:
   - eval "$(ssh-agent -s)"
