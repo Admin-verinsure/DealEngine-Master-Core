@@ -28,6 +28,23 @@ deploy_staging:
   when: manual
   dependencies:
     - build
+    
+deploy_staging:
+  stage: deploy
+  script:
+  - eval "$(ssh-agent -s)"
+  - ssh-add <(echo "$PKgitlab")
+  - ssh ubuntu@"$URLdemo" './DE-DeployPrep.sh'
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/de2020master/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdemo:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLdemo" './DE-DeployFin.sh'
+
+  environment:
+    name: demo
+    url: https://demo.proposalonline.com
+  when: manual
+  dependencies:
+    - build
 
 # useful for first time connection (- ssh -o StrictHostKeyChecking=no ubuntu@"$URLmpak" 'command')
 
