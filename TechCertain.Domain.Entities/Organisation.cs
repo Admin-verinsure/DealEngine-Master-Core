@@ -160,24 +160,15 @@ namespace TechCertain.Domain.Entities
         }
 
         public virtual Location Location { get; set; }
-
         public virtual string Description { get; set; }
-
         public virtual string Phone { get; set; }
-
         public virtual string Domain { get; set; }
-
         public virtual string Email { get; set; }
-
         public virtual bool IsBroker { get; set; }
-
         public virtual bool IsInsurer { get; set; }
-
         public virtual bool IsReinsurer { get; set; }
-
         public virtual bool IsTC { get; set; }
         public virtual bool IsApproved { get; set; }
-
         public virtual string Qualifications { get; set; }
         public virtual bool IsNZIAmember { get; set; }
         public virtual string NZIAmembership { get; set; }

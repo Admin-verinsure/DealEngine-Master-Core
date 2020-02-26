@@ -222,5 +222,10 @@ namespace TechCertain.Services.Impl
 		{
 			return await _userRepository.FindAll().Where(u => u.Locked == true).ToListAsync();
 		}
+
+		public async Task<User> GetUserByOrganisation(Organisation org)
+		{
+			return _userRepository.FindAll().FirstOrDefault(u => u.PrimaryOrganisation == org);
+		}
 	}
 }

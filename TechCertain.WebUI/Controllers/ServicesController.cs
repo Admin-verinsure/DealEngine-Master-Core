@@ -319,60 +319,44 @@ namespace TechCertain.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("No valid information for id " + informationId);
 
-            var organisations = new List<Organisation>();
-                var Insurancelist = await _insuranceAttributeService.GetInsuranceAttributes();
-                foreach (InsuranceAttribute IA in Insurancelist.Where(ia => ia.InsuranceAttributeName == "Principal" || ia.InsuranceAttributeName == "Subsidiary"
-                                                                                                    || ia.InsuranceAttributeName == "PreviousConsultingBusiness" || ia.InsuranceAttributeName == "JointVenture"
-                                                                                                    || ia.InsuranceAttributeName == "Mergers"))
+                var organisations = await _organisationService.GetOrganisationPrincipals(sheet);
+                
+                if (_search)
                 {
-                    foreach (var org in IA.IAOrganisations)
+                    switch (searchOper)
                     {
-                        foreach (var organisation in sheet.Organisation.Where(o => o.Id == org.Id && o.Removed != true))
-
-                        {
-
-                            organisations.Add(organisation);
-
-
-                        }
+                        case "eq":
+                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
                     }
                 }
-                    if (_search)
-                    {
-                        switch (searchOper)
-                        {
-                            case "eq":
-                                organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
-                                break;
-                            case "bw":
-                                organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
-                                break;
-                            case "cn":
-                                organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
-                                break;
-                        }
-                    }
-                    //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
-                    model.Page = page;
-                    model.TotalRecords = organisations.Count;
-                    model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
-                    JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                    row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
-                    model.AddRow(row1);
-                    int offset = rows * (page - 1);
-                    for (int i = offset; i < offset + rows; i++)
-                    {
-                        if (i == model.TotalRecords)
-                            break;
-                        Organisation organisation = organisations[i];
-                        JqGridRow row = new JqGridRow(organisation.Id);
+                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                model.Page = page;
+                model.TotalRecords = organisations.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
+                model.AddRow(row1);
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+                    Organisation organisation = organisations[i];
+                    JqGridRow row = new JqGridRow(organisation.Id);
 
-                        for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
-                        {
-                            row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
-                        }
-                        model.AddRow(row);
+                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    {
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
                     }
+                    model.AddRow(row);
+                }
 
 
                 //// convert model to XDocument for rendering.
@@ -383,7 +367,7 @@ namespace TechCertain.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }           
+            }
         }
 
         [HttpGet]

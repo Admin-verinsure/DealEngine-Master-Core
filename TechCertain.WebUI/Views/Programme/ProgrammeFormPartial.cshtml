@@ -77,6 +77,19 @@
                                 </label>
                             </td>
                         </tr>
+                        @if (User.IsInRole("TCUser"))
+                        {
+                            <tr class="table-light">
+                                <td>
+                                </td>
+                                <td>
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.HasSubsystemEnabled)
+                                        <i></i>I want to enable the sub system
+                                    </label>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
 

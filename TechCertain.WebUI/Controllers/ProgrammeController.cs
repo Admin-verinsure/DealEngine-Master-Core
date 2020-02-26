@@ -995,6 +995,7 @@ namespace TechCertain.WebUI.Controllers
 
             try
             {
+                user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(Id);
                 model.Id = Id;
                 model.programmeName = programme.Name;
@@ -1003,6 +1004,7 @@ namespace TechCertain.WebUI.Controllers
                 model.UsesEGlobal = programme.UsesEGlobal;
                 model.StopAgreement = programme.StopAgreement;
                 model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
+                model.HasSubsystemEnabled = programme.HasSubsystemEnabled;
 
                 return View("EditProgramme", model);
             }
@@ -1062,7 +1064,8 @@ namespace TechCertain.WebUI.Controllers
                     programme.UsesEGlobal = model.UsesEGlobal;
                     programme.TaxRate = model.TaxRate;
                     programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
-                    programme.StopAgreement = model.StopAgreement;
+                    programme.HasSubsystemEnabled = model.HasSubsystemEnabled;
+                    programme.StopAgreement = model.StopAgreement;                    
                     if (model.StopAgreement)
                     {
                         programme.StopAgreementDateTime = DateTime.UtcNow;

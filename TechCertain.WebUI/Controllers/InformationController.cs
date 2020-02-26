@@ -20,6 +20,7 @@ namespace TechCertain.WebUI.Controllers
     [Authorize]
     public class InformationController : BaseController
     {
+        ISubsystemService _subsystemService;
         IProgrammeService _programmeService;
         IEmailTemplateService _emailTemplateService;
         IApplicationLoggingService _applicationLoggingService;
@@ -56,6 +57,7 @@ namespace TechCertain.WebUI.Controllers
 
 
         public InformationController(
+            ISubsystemService subsystemService,
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<InformationController> logger,
@@ -93,6 +95,7 @@ namespace TechCertain.WebUI.Controllers
             )
             : base(userService)
         {
+            _subsystemService = subsystemService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
@@ -2366,14 +2369,14 @@ namespace TechCertain.WebUI.Controllers
             Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
             User user = null;
-
+            
             try
             {
                 user = await CurrentUser();
                 if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
-                {
-
+                {                    
                     sheet = await _clientInformationService.GetInformation(sheetId);
+                    var programme = sheet.Programme.BaseProgramme;
 
                     var reference = await _referenceService.GetLatestReferenceId();
 
@@ -2392,6 +2395,19 @@ namespace TechCertain.WebUI.Controllers
                     foreach (ClientAgreement agreement in sheet.Programme.Agreements)
                     {
                         await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
+                    }
+
+                    if (programme.HasSubsystemEnabled)
+                    {
+                        try
+                        {
+                            await _subsystemService.CreateSubObjects(sheet.Programme.Id, sheet);
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                        
                     }
                 }
 
@@ -2871,7 +2887,7 @@ namespace TechCertain.WebUI.Controllers
                     sheet.RevenueData.Territories.Clear();
                 }
 
-                var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("NZ");
+                var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("New Zealand");
                 territoryTemplates.Add(territorytemplateNZ);
 
                 foreach (var territoryId in Territories)
@@ -2999,7 +3015,7 @@ namespace TechCertain.WebUI.Controllers
                                 saveTerritory.Pecentage = percentage;
                                 await _territoryService.UpdateTerritory(saveTerritory);
                             }
-                            if (saveTerritory.Location == "NZ")
+                            if (saveTerritory.Location == "New Zealand")
                             {
                                 NZId = saveTerritory.Id;
                             }
