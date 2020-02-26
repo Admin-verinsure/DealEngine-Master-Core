@@ -9,6 +9,7 @@ stages:
 build:
   stage: build
   script:
+  - ls -la
     #- 'dotnet clean'
     #- 'dotnet build -c Release'
 
