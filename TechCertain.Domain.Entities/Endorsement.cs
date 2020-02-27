@@ -71,11 +71,6 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
-        public virtual bool ProductDefault
-        {
-            get;
-            protected set;
-        }
 
     }
 }

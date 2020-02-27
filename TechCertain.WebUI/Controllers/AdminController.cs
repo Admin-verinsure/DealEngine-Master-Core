@@ -8,10 +8,8 @@ using TechCertain.Services.Interfaces;
 using TechCertain.WebUI.Models;
 using TechCertain.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
-using ElmahCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Http;
 
 namespace TechCertain.WebUI.Controllers
 {
@@ -78,7 +76,7 @@ namespace TechCertain.WebUI.Controllers
             AdminViewModel model = new AdminViewModel();
             var user = await CurrentUser();
             try
-            {
+            {         
                 var privateServers = await _privateServerService.GetAllPrivateServers();
                 var paymentGateways = await _paymentGatewayService.GetAllPaymentGateways();
                 var merchants = await _merchantService.GetAllMerchants();                

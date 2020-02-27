@@ -14,10 +14,15 @@ namespace TechCertain.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
+        IMapperSession<SubClientInformationSheet> _customerSubInformationRepository;
         IMapperSession<Boat> _boatRepository;
 
-        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository, IMapperSession<Boat> boatRepository)
+        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository, 
+            IMapperSession<Boat> boatRepository,
+            IMapperSession<SubClientInformationSheet> customerSubInformationRepository
+            )
         {
+            _customerSubInformationRepository = customerSubInformationRepository;
             _customerInformationRepository = customerInformationRepository;
             _boatRepository = boatRepository;
         }
@@ -35,7 +40,7 @@ namespace TechCertain.Services.Impl
                 throw new Exception("ClientProgramme [" + clientProgramme.Id + "] already has an InformationSheet assigned");
 
             ClientInformationSheet sheet = new ClientInformationSheet(createdBy, createdFor, clientProgramme.BaseProgramme.Products.FirstOrDefault().InformationTemplate, reference);
-
+            
             clientProgramme.InformationSheet = sheet;
             sheet.Programme = clientProgramme;
             await _customerInformationRepository.AddAsync(sheet);            
@@ -110,6 +115,19 @@ namespace TechCertain.Services.Impl
                 clientList.AddRange(_customerInformationRepository.FindAll().Where(c => c.Boats.Contains(boat)).ToList());
             }
             return clientList;
+        }
+
+        public async Task<SubClientInformationSheet> IssueSubInformationFor(SubClientProgramme subClientProgramme)
+        {
+            if (subClientProgramme.InformationSheet != null)
+                throw new Exception("ClientProgramme [" + subClientProgramme.Id + "] already has an InformationSheet assigned");
+
+            SubClientInformationSheet sheet = new SubClientInformationSheet(subClientProgramme.InformationSheet);
+            sheet.CopyClientInformationSheet(subClientProgramme);
+            subClientProgramme.InformationSheet = sheet;
+
+            await _customerSubInformationRepository.AddAsync(sheet);
+            return sheet;
         }
     }
 }

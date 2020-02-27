@@ -12,12 +12,15 @@ namespace TechCertain.Services.Impl
 	public class ProgrammeService : IProgrammeService
 	{
 		IMapperSession<Programme> _programmeRepository;
-		IMapperSession<ClientProgramme> _clientProgrammeRepository;
+		IMapperSession<ClientProgramme> _clientProgrammeRepository;        
         IReferenceService _referenceService;
 
-        public ProgrammeService (IMapperSession<Programme> programmeRepository, IMapperSession<ClientProgramme> clientProgrammeRepository, IReferenceService referenceService)
-        {
-			_programmeRepository = programmeRepository;
+        public ProgrammeService (IMapperSession<Programme> programmeRepository, 
+            IMapperSession<ClientProgramme> clientProgrammeRepository, 
+            IReferenceService referenceService
+            )
+        {            
+            _programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
         }
@@ -87,7 +90,7 @@ namespace TechCertain.Services.Impl
 		{
 			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
 			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
-            newClientProgramme.changeReason = changeReason;
+            newClientProgramme.ChangeReason = changeReason;
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
             newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
             newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
@@ -176,6 +179,20 @@ namespace TechCertain.Services.Impl
         public async Task<List<ClientProgramme>> FindByOwnerName(string insuredName)
         {
             return await _clientProgrammeRepository.FindAll().Where(c => c.Owner.Name.Contains(insuredName)).ToListAsync();
+        }
+
+        public async Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId, Organisation organisation)
+        {
+            var programme = await GetClientProgrammebyId(programmeId);
+            return await CreateSubClientProgrammeFor(programme, organisation);
+        }
+
+        public async Task<SubClientProgramme> CreateSubClientProgrammeFor(ClientProgramme programme, Organisation organisation)
+        {
+            SubClientProgramme subClientProgramme = new SubClientProgramme(programme);
+            subClientProgramme.CopyClientProgramme(programme, organisation);
+            await Update(subClientProgramme);
+            return subClientProgramme;
         }
     }
 }

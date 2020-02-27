@@ -2410,7 +2410,7 @@ function showAccordionPanel(id, panelNo) {
         var tbody = $('<tbody>');
         roleTable.append(thead, tbody);
             var lista = GetRoles('text');
-            var listb = ['NZ'];
+            var listb = ['New Zealand'];
             var listd = GetRoles('val');
         var header = $('<tr>');
         header.append($('<th>'));
@@ -2469,18 +2469,18 @@ function showAccordionPanel(id, panelNo) {
             lista = GetTerritoriesForRevenue('Text');
             listb = GetTerritoriesForRevenue('value');
             if (lista.length == 0) {
-                lista = ['NZ'];
-                listb = ['NZ'];
+                lista = ['New Zealand'];
+                listb = ['New Zealand'];
             } else {
                 var hasNZ = false;
                 lista.forEach(function (terrName, Index) {
-                    if (terrName == 'NZ') {
+                    if (terrName == 'New Zealand') {
                         hasNZ = true;
                     }
                 });
 
                 if (hasNZ == false) {
-                    lista.push('NZ');
+                    lista.push('New Zealand');
                 }
             }
             }

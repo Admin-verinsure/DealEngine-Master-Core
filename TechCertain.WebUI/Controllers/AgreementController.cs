@@ -1995,7 +1995,7 @@ namespace TechCertain.WebUI.Controllers
                 if (model.HasEndorsements)
                 {
                     var clientAgreementEndorsements = new AgreementEndorsementsViewModel();
-                    foreach (ClientAgreementEndorsement ce in agreement.ClientAgreementEndorsements.OrderBy(ce => ce.OrderNumber))
+                    foreach (ClientAgreementEndorsement ce in agreement.ClientAgreementEndorsements.Where(ce => ce.DateDeleted == null).OrderBy(ce => ce.OrderNumber))
                     {
                         clientAgreementEndorsements.Add(new ClientAgreementEndorsementViewModel { ClientAgreementEndorsementID = ce.Id, Name = ce.Name, Value = ce.Value });
                     }

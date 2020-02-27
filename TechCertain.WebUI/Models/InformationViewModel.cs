@@ -13,22 +13,18 @@ namespace TechCertain.WebUI.Models
     public class InformationViewModel : BaseViewModel
     {
         public Guid Id { get; set; }
-
         public Guid AnswerSheetId { get; set; }
         public Boolean IsChange { get; set; }
         public Guid MilestoneId { get; set; }
         public string MilestoneStatus { get; set; }
         public string CompanyName { get; set; }
-
         public string Name { get; set; }
         public string AgreementStatus { get; set; }
-
         public string Status { get; set; }
         public string SheetStatus { get; set; }
         public string SectionView { get; set; }
         //public string UserRole { get; set; }
         public IEnumerable<String> UserRole { get; set; }
-
         public IEnumerable<InformationItem> SectionItems { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListProductName { get; set; }

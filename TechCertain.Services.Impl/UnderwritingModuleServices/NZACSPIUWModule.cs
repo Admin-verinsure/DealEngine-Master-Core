@@ -141,25 +141,20 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
                         feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
                     }
 
+                    ClientAgreementEndorsement clientAgreementEndorsement = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "USA / Canada Covered");
+
+                    if (clientAgreementEndorsement != null)
+                    {
+                        clientAgreementEndorsement.DateDeleted = DateTime.UtcNow;
+                        clientAgreementEndorsement.DeletedBy = underwritingUser;
+                    }
+
                     if (uISTerritory.Location == "USA / Canada")
                     {
-                        foreach (var defaultProductEndorsment in product.Endorsements.Where(pe => pe.DateDeleted == null && pe.ProductDefault))
-                        {
-                            if (defaultProductEndorsment.Name == "USA / Canada Covered")
-                            {
-                                ClientAgreementEndorsement clientAgreementEndorsement = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Product.Id == product.Id &&
-                                cae.Name == defaultProductEndorsment.Name && cae.DateDeleted == null);
+                        clientAgreementEndorsement.DateDeleted = null;
+                        clientAgreementEndorsement.DeletedBy = null;
 
-                                if (clientAgreementEndorsement == null)
-                                {
-                                    clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, defaultProductEndorsment.Name, defaultProductEndorsment.Type, product,
-                                        defaultProductEndorsment.Value, defaultProductEndorsment.OrderNumber, agreement);
-                                }
-                            }
-                            
-                        }
-
-                    }
+                    } 
                 }
 
                 foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)

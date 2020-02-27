@@ -29,6 +29,7 @@ namespace TechCertain.Services.Interfaces
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
         Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
+        Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId, Organisation organisation);
     }
 }
 
