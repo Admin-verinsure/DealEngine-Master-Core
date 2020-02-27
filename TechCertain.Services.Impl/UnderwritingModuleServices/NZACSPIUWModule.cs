@@ -136,9 +136,29 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
             {
                 foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
                 {
-                    if (uISTerritory.Location == "NZ") //NZ income only
+                    if (uISTerritory.Location == "New Zealand") //New Zealand income only
                     {
                         feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
+                    }
+
+                    if (uISTerritory.Location == "USA / Canada")
+                    {
+                        foreach (var defaultProductEndorsment in product.Endorsements.Where(pe => pe.DateDeleted == null && pe.ProductDefault))
+                        {
+                            if (defaultProductEndorsment.Name == "USA / Canada Covered")
+                            {
+                                ClientAgreementEndorsement clientAgreementEndorsement = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Product.Id == product.Id &&
+                                cae.Name == defaultProductEndorsment.Name && cae.DateDeleted == null);
+
+                                if (clientAgreementEndorsement == null)
+                                {
+                                    clientAgreementEndorsement = new ClientAgreementEndorsement(underwritingUser, defaultProductEndorsment.Name, defaultProductEndorsment.Type, product,
+                                        defaultProductEndorsment.Value, defaultProductEndorsment.OrderNumber, agreement);
+                                }
+                            }
+                            
+                        }
+
                     }
                 }
 

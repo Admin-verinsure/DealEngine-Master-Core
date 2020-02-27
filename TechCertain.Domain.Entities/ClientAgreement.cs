@@ -75,9 +75,9 @@ namespace TechCertain.Domain.Entities
 
         public virtual string BreachProfDuty { get; protected set; }
 
-        public virtual bool EnableRetroactiveDate { get; protected set; }
+        public virtual bool EnableRetroactiveDate { get; set; }
 
-        public virtual string RetroactiveDate { get; protected set; }
+        public virtual string RetroactiveDate { get; set; }
 
         public virtual bool Bound { get; protected set; }
 

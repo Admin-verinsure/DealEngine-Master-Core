@@ -1847,6 +1847,7 @@ namespace TechCertain.WebUI.Controllers
                 model.CurrencySymbol = "fa fa-dollar";
                 model.ClientNumber = agreement.ClientNumber;
                 model.PolicyNumber = agreement.PolicyNumber;
+                model.RetroactiveDate = agreement.RetroactiveDate;
 
                 ViewBag.Title = answerSheet.Programme.BaseProgramme.Name + " Edit Agreement for " + insured.Name;
 
@@ -1878,6 +1879,7 @@ namespace TechCertain.WebUI.Controllers
                     agreement.BrokerFee = Convert.ToDecimal(model.AdministrationFee.Replace("$", ""));
                     agreement.ClientNumber = model.ClientNumber;
                     agreement.PolicyNumber = model.PolicyNumber;
+                    agreement.RetroactiveDate = model.RetroactiveDate;
 
                     string auditLogDetail = "Agreement details have been modified by " + user.FullName;
                     AuditLog auditLog = new AuditLog(user, answerSheet, agreement, auditLogDetail);
