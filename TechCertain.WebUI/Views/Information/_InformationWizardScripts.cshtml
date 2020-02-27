@@ -56,8 +56,7 @@
 
            if (stepNumber === 0) {
 
-               event.preventDefault();
-               debugger;
+               event.preventDefault();               
                if (stepDirection == "forward") {
                    var claim1 = $('#Claimexp1').val();
                    var claim2 = $('#Claimexp2').val();
@@ -212,16 +211,15 @@
                    data: $("#tab1 :input").serialize({ json: true })
                })
                    .done(function (url) {
-                       $("#agreementView").load(url, function () {
-                           //$('#getAgreementModal').hide();
+                       $("#agreementView").load(url, function () {                           
                        });
                    })
                    .fail(function (a, s, d) {
-                       $('#getAgreementModal').hide();
-                       debugger;
+                       $('#getAgreementModal').hide();                       
                    });
 
            } else if (stepNumber === 1) {
+               //ValidateCoverOption();
                var status = $('#Status').val();
                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                }
@@ -230,7 +228,8 @@
                }
 
                $('.sw-btn-prev').hide();
-               $('#getAgreementDecModal').show();
+               $('#getAgreementDecModal').show();               
+
                var ID = $('#Id').val();
                var postdata = {
                    id: ID
@@ -662,189 +661,148 @@
     });
 
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
-
-
         var validity = true;
-
         if (claim1 == "") {
             $('#ValidateClaimcond1').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
             }
         } else {
-            if (claim1=="true" && $("#Claimexp1Details").val() == "") {
+            if (claim1 == "true" && $("#Claimexp1Details").val() == "") {
                 $('#ValidateClaimDetails1').html("<font color='red'>Field is required</font>")
-                 if (validity) {
+                if (validity) {
                     validity = false;
-                  }
-
+                }
             } else {
-                    if (claim1 == "false") {
-                      $('#Claimexp1Details').val("");
-
-                    }
-
-                            $('#ValidateClaimcond1').html("<i></i>");
-                            $('#ValidateClaimDetails1').html("<i></i>");
-
+                if (claim1 == "false") {
+                    $('#Claimexp1Details').val("");
+                }
+                $('#ValidateClaimcond1').html("<i></i>");
+                $('#ValidateClaimDetails1').html("<i></i>");
             }
         }
-          if (claim2 == "") {
+        if (claim2 == "") {
             $('#ValidateClaimcond2').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
             }
-          } else {
-
-               if ( claim2=="true" && $("#Claimexp2Details").val() == "") {
+        } else {
+            if (claim2 == "true" && $("#Claimexp2Details").val() == "") {
                 $('#ValidateClaimDetails2').html("<font color='red'>Field is required</font>")
-                 if (validity) {
-                   validity = false;
-                 }
-
-               } else {
-                    if (claim2 == "false") {
-                      $('#Claimexp2Details').val("");
-
-                    }
-                            $('#ValidateClaimcond2').html("<i></i>");
-                            $('#ValidateClaimDetails2').html("<i></i>");
-
-               }
-
-          }
-           if (claim3 == "") {
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                if (claim2 == "false") {
+                    $('#Claimexp2Details').val("");
+                }
+                $('#ValidateClaimcond2').html("<i></i>");
+                $('#ValidateClaimDetails2').html("<i></i>");
+            }
+        }
+        if (claim3 == "") {
             $('#ValidateClaimcond3').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
             }
-           } else {
-
-                if (claim3=="true" && $("#Claimexp3Details").val() == "") {
+        } else {
+            if (claim3 == "true" && $("#Claimexp3Details").val() == "") {
                 $('#ValidateClaimDetails3').html("<font color='red'>Field is required</font>")
-                 if (validity) {
-                  validity = false;
-                  }
-
-                } else {
-                     if (claim3 == "false") {
-                      $('#Claimexp3Details').val("");
-
-                    }
-                            $('#ValidateClaimcond3').html("<i></i>");
-                            $('#ValidateClaimDetails3').html("<i></i>");
+                if (validity) {
+                    validity = false;
                 }
-
-           }
-
-          if (claim4 == "") {
+            } else {
+                if (claim3 == "false") {
+                    $('#Claimexp3Details').val("");
+                }
+                $('#ValidateClaimcond3').html("<i></i>");
+                $('#ValidateClaimDetails3').html("<i></i>");
+            }
+        }
+        if (claim4 == "") {
             $('#ValidateClaimcond4').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
             }
-          } else {
-               if (claim4=="true" && $("#Claimexp4Details").val() == "") {
+        } else {
+            if (claim4 == "true" && $("#Claimexp4Details").val() == "") {
                 $('#ValidateClaimDetails4').html("<font color='red'>Field is required</font>")
-                 if (validity) {
-                validity = false;
-                  }
-
-               } else {
-                    if (claim4 == "false") {
-                      $('#Claimexp4Details').val("");
-                    }
-                            $('#ValidateClaimcond4').html("<i></i>");
-                            $('#ValidateClaimDetails4').html("<i></i>");
-               }
-
-           }
-           if (claim5 == "") {
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                if (claim4 == "false") {
+                    $('#Claimexp4Details').val("");
+                }
+                $('#ValidateClaimcond4').html("<i></i>");
+                $('#ValidateClaimDetails4').html("<i></i>");
+            }
+        }
+        if (claim5 == "") {
             $('#ValidateClaimcond5').html("<font color='red'>Field is required</font>")
             if (validity) {
                 validity = false;
             }
-           } else {
-
-               if (claim5=="true" && $("#Claimexp5Details").val() == "") {
+        } else {
+            if (claim5 == "true" && $("#Claimexp5Details").val() == "") {
                 $('#ValidateClaimDetails5').html("<font color='red'>Field is required</font>")
                 if (validity) {
-                 validity = false;
+                    validity = false;
                 }
-
-               } else {
-                    if (claim5 == "false") {
-                      $('#Claimexp5Details').val("");
-
-                    }
-                            $('#ValidateClaimcond5').html("<i></i>");
-                            $('#ValidateClaimDetails5').html("<i></i>");
-               }
-
-           }
-
+            } else {
+                if (claim5 == "false") {
+                    $('#Claimexp5Details').val("");
+                }
+                $('#ValidateClaimcond5').html("<i></i>");
+                $('#ValidateClaimDetails5').html("<i></i>");
+            }
+        }
         return validity;
     }
 
+    function RemoveVehicle(vehicleId, status, sourceTable, destTable, Modelstatus) {
+        var _sheetId = $('#AnswerSheetId').val();
+        var postData = {
+            'vehicleId': vehicleId,
+            'answerSheetId': _sheetId
+        };
 
-     function RemoveVehicle(vehicleId, status, sourceTable, destTable,Modelstatus) {
-        debugger;
-           var _sheetId = $('#AnswerSheetId').val();
-             var postData = {
-		       'vehicleId': vehicleId,
-		       'answerSheetId': _sheetId
-	        };
-
-	 $.ajax({
-
-        url: '@Url.Action("GetOriginalVehicle", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+        $.ajax({
+            url: '@Url.Action("GetOriginalVehicle", "Services")',
+            type: "Post",
             data: postData
-         })
+        })
             .done(function (data) {
-           debugger;
                 if (data.OriginalVehicleId != "00000000-0000-0000-0000-000000000000") {
-
                     if (Modelstatus != "Submitted") {
                         $('#VehicleRemoveModal').show();
-                        $('.modal').css({ "width": "600px", "margin-left": "600px"  });
+                        $('.modal').css({ "width": "600px", "margin-left": "600px" });
                         $('#vehicleId').val(vehicleId);
                         $('#vehiclestatus').val(status);
                         $('#vehiclesourceTable').val(sourceTable);
                         $('#vehicledestTable').val(destTable);
-                   } else {
-                            alert("Information Sheet has already been submitted, and cannot be updated.");
+                    } else {
+                        alert("Information Sheet has already been submitted, and cannot be updated.");
                     }
-
                 } else {
-                    debugger;
                     SetVehicleRemovedStatus(vehicleId, status, sourceTable, destTable);
-
                 }
+            });
+    }
 
-		 });
-    };
+    function RemoveBoat(boatId, status, sourceTable, destTable, Modelstatus) {
+        var _sheetId = $('#AnswerSheetId').val();
+        var postData = {
+            'boatId': boatId,
+            'answerSheetId': _sheetId
+        };
 
-
-     function RemoveBoat(boatId, status, sourceTable, destTable, Modelstatus) {
-        debugger;
-           var _sheetId = $('#AnswerSheetId').val();
-             var postData = {
-		       'boatId': boatId,
-		       'answerSheetId': _sheetId
-	        };
-
-	 $.ajax({
-
-        url: '@Url.Action("GetOriginalBoat", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, answerSheetId : _sheetId })
+        $.ajax({
+            url: '@Url.Action("GetOriginalBoat", "Services")',
+            type: "Post",
             data: postData
-         })
+        })
             .done(function (data) {
-           debugger;
                 if (data.originalBoatId != "00000000-0000-0000-0000-000000000000") {
                     if (Modelstatus != "Submitted") {
                         $('#BoatRemoveModal').show();
@@ -854,17 +812,13 @@
                         $('#sourceTable').val(sourceTable);
                         $('#destTable').val(destTable);
                     } else {
-                            alert("Information Sheet has already been submitted, and cannot be updated.");
+                        alert("Information Sheet has already been submitted, and cannot be updated.");
                     }
                 } else {
-                    debugger;
                     SetBoatRemovedStatus(boatId, status, sourceTable, destTable);
-
                 }
-
-		 });
+            });
     };
-
 
     function validateClaimDetails(Claim) {
 
@@ -2456,7 +2410,7 @@ function showAccordionPanel(id, panelNo) {
         var tbody = $('<tbody>');
         roleTable.append(thead, tbody);
             var lista = GetRoles('text');
-            var listb = ['NZ'];
+            var listb = ['New Zealand'];
             var listd = GetRoles('val');
         var header = $('<tr>');
         header.append($('<th>'));
@@ -2515,18 +2469,18 @@ function showAccordionPanel(id, panelNo) {
             lista = GetTerritoriesForRevenue('Text');
             listb = GetTerritoriesForRevenue('value');
             if (lista.length == 0) {
-                lista = ['NZ'];
-                listb = ['NZ'];
+                lista = ['New Zealand'];
+                listb = ['New Zealand'];
             } else {
                 var hasNZ = false;
                 lista.forEach(function (terrName, Index) {
-                    if (terrName == 'NZ') {
+                    if (terrName == 'New Zealand') {
                         hasNZ = true;
                     }
                 });
 
                 if (hasNZ == false) {
-                    lista.push('NZ');
+                    lista.push('New Zealand');
                 }
             }
             }
@@ -3868,187 +3822,146 @@ function EditClaim(claimId, tableId) {
       }
 
     function Validateremove() {
-            debugger;
-            var ceaseDate = $("#RemoveCeaseEffectiveDate").val();
-            var ceaseReason = $("#RemoveCeaseReason").val();
+        var ceaseDate = $("#RemoveCeaseEffectiveDate").val();
+        var ceaseReason = $("#RemoveCeaseReason").val();
+        var validation = true;
 
-            var validation = true;
-
-
-            if (ceaseDate == "") {
-                $('#validateBoatCeasedate').html("<font color='red'>Field is required</font>");
-                if (validation) {
-                    validation = false;
-                }
-            } else {
-                $('#validateBoatCeasedate').html("");
+        if (ceaseDate == "") {
+            $('#validateBoatCeasedate').html("<font color='red'>Field is required</font>");
+            if (validation) {
+                validation = false;
             }
-
-            if (ceaseReason == "") {
-                $('#validateBoatDescription').html("<font color='red'>Field is required</font>");
-                if (validation) {
-                    validation = false;
-                }
-            } else {
-                $('#validateBoatDescription').html("");
-            }
-
-
-            return validation;
-    }
-        function ValidateVehicleremove() {
-            debugger;
-            var ceaseDate = $("#RemoveVehicleCeaseEffectiveDate").val();
-            var ceaseReason = $("#VehicleCeaseReason").val();
-
-            var validation = true;
-
-
-            if (ceaseDate == "") {
-                $('#validateVehicleCeasedate').html("<font color='red'>Field is required</font>");
-                if (validation) {
-                    validation = false;
-                }
-            } else {
-                $('#validateVehicleCeasedate').html("");
-            }
-
-            if (ceaseReason == "") {
-                $('#validateVehicleDescription').html("<font color='red'>Field is required</font>");
-                if (validation) {
-                    validation = false;
-                }
-            } else {
-                $('#validateVehicleDescription').html("");
-            }
-
-
-            return validation;
+        } else {
+            $('#validateBoatCeasedate').html("");
         }
 
+        if (ceaseReason == "") {
+            $('#validateBoatDescription').html("<font color='red'>Field is required</font>");
+            if (validation) {
+                validation = false;
+            }
+        } else {
+            $('#validateBoatDescription').html("");
+        }
 
+        return validation;
+    }
+
+    function ValidateVehicleremove() {
+        var ceaseDate = $("#RemoveVehicleCeaseEffectiveDate").val();
+        var ceaseReason = $("#VehicleCeaseReason").val();
+        var validation = true;
+
+        if (ceaseDate == "") {
+            $('#validateVehicleCeasedate').html("<font color='red'>Field is required</font>");
+            if (validation) {
+                validation = false;
+            }
+        } else {
+            $('#validateVehicleCeasedate').html("");
+        }
+
+        if (ceaseReason == "") {
+            $('#validateVehicleDescription').html("<font color='red'>Field is required</font>");
+            if (validation) {
+                validation = false;
+            }
+        } else {
+            $('#validateVehicleDescription').html("");
+        }
+        return validation;
+    }
 
     function UndoBoatRemovedStatus(boatId, status, sourceTable, destTable) {
-
-                event.preventDefault();
-
+        event.preventDefault();
         var postData = {
-		'BoatId': boatId,
-		'Removed': status
-	};
-    $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("UndoBoatRemovedStatus", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, status : status })
-        data: postData,
-async: true
-    })
-        .done(function (data) {
-             $('#getDetailsModal').hide();
+            'BoatId': boatId,
+            'Removed': status
+        };
 
-        if (data === true) {
-            $(sourceTable).trigger( 'reloadGrid' );
-            $(destTable).trigger( 'reloadGrid' );
-            //$.smallBox({
-            //    title: "Boat status has been updated",
-            //    color: "#5F895F",
-            //    iconSmall: "fa fa-check bounce animated",
-            //    timeout: 4000
-            //});
-        }
-    });
-};
+        $.ajax({
+            url: '@Url.Action("UndoBoatRemovedStatus", "Services")',
+            type: "Post",
+            data: postData
+        })
+            .done(function (data) {
+                $('#getDetailsModal').hide();
+                if (data === true) {
+                    $(sourceTable).trigger('reloadGrid');
+                    $(destTable).trigger('reloadGrid');
+                }
+            });
+    }
 
-   function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
-       var postData = {
-           'boatId': boatId,
-           'status': status
-       };
+    function SetBoatRemovedStatus(boatId, status, sourceTable, destTable) {
+        var postData = {
+            'boatId': boatId,
+            'status': status
+        };
 
-       $.ajax({
-           url: '@Url.Action("SetBoatRemovedStatus", "Services")',
-           type: "Post",
-           data: postData,
-       })
-        .done(function (data) {
-            $('#BoatRemoveModal').hide();
-            $('#getDetailsModal').hide();
-
-            if (data === true) {
-                $(sourceTable).trigger('reloadGrid');
-                $(destTable).trigger('reloadGrid');
-            }
-        });
+        $.ajax({
+            url: '@Url.Action("SetBoatRemovedStatus", "Services")',
+            type: "Post",
+            data: postData
+        })
+            .done(function (data) {
+                console.log(data);
+                $('#BoatRemoveModal').hide();
+                $('#getDetailsModal').hide();
+                if (data.success === true) {
+                    $(sourceTable).trigger('reloadGrid');
+                    $(destTable).trigger('reloadGrid');
+                }
+                if (data.hasTrailer === true) {
+                    alert("You have removed a trailered vessel. Please go to trailer section to remove trailer associated with this boat if needed.");
+                }
+            });
     }
 
     function SetBoatCeasedStatus(boatId, status, sourceTable, destTable) {
-                event.preventDefault();
+        event.preventDefault();
         var CeaseDate =  $('#RemoveCeaseEffectiveDate').val();
         var ceaseReason = $('#RemoveCeaseReason').val();
 
         var postData = {
-		'boatId': boatId,
-        'status': status,
-        'ceaseDate': CeaseDate,
-        'ceaseReason':ceaseReason
-	};
+            'boatId': boatId,
+            'status': status,
+            'ceaseDate': CeaseDate,
+            'ceaseReason': ceaseReason
+        };
 
         $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("SetBoatCeasedStatus", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, status: status })
-        data: postData,
-async: true
-    })
-        .done(function (data) {
-            if (data === true) {
-                $(sourceTable).trigger('reloadGrid');
-                $(destTable).trigger('reloadGrid');
-                //$.smallBox({
-                //    title: "Boat status has been updated",
-                //    color: "#5F895F",
-                //    iconSmall: "fa fa-check bounce animated",
-                //    timeout: 4000
-                //});
-            }
-        });
-};
-
-    function SetBoatTransferedStatus(boatId, status, sourceTable, destTable) {
-                event.preventDefault();
-
-        var postData = {
-		'boatIdboatId': locationId,
-		'status': status
-	};
-        $.ajax({
-        // change back once mono decides to fix
-        url: '@Url.Action("SetBoatTransferedStatus", "Services")',
-        type: "Post",
-        //contentType: "application/json; charset=utf-8",
-        //data: JSON.stringify({ boatId: boatId, status: status })
-        data: postData,
-async: true
-    })
+            url: '@Url.Action("SetBoatCeasedStatus", "Services")',
+            type: "Post",
+            data: postData
+        })
             .done(function (data) {
                 if (data === true) {
-                    // reload grids
                     $(sourceTable).trigger('reloadGrid');
                     $(destTable).trigger('reloadGrid');
-                    //$.smallBox({
-                    //    title: "Boat status has been updated",
-                    //    color: "#5F895F",
-                    //    iconSmall: "fa fa-check bounce animated",
-                    //    timeout: 4000
-                    //});
                 }
             });
     };
 
+    function SetBoatTransferedStatus(boatId, status, sourceTable, destTable) {
+        event.preventDefault();
+        var postData = {
+            'boatIdboatId': locationId,
+            'status': status
+        };
+
+        $.ajax({
+            url: '@Url.Action("SetBoatTransferedStatus", "Services")',
+            type: "Post",
+            data: postData
+        })
+            .done(function (data) {
+                if (data === true) {
+                    $(sourceTable).trigger('reloadGrid');
+                    $(destTable).trigger('reloadGrid');
+                }
+            });
+    };
 
     function ValidateBoatUse(event, tabId, tableId, currenttab) {
         event.preventDefault();
@@ -4092,7 +4005,6 @@ async: true
     }
 
     function ValidateAddNamedParty(tabId, tableId, currenttab) {
-
         var partyIA = $('#InsuranceAttributes').val();
         var partyOrgType = $('#AddOrganisationType').val();
         var partyName = $('#AddNPOrgName').val();
@@ -4106,7 +4018,7 @@ async: true
         var user = $('#UserDetail').val();
         var result = true;
 
-         if (AdminFirstName == "" && user == "UserNotFound") {
+        if (AdminFirstName == "" && user == "UserNotFound") {
             $('#Adminfname').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4114,7 +4026,7 @@ async: true
         } else {
             $('#Adminfname').html("<font></font>");
         }
-         if (AdminLastName == ""  && user == "UserNotFound") {
+        if (AdminLastName == "" && user == "UserNotFound") {
             $('#Adminlname').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4122,7 +4034,7 @@ async: true
         } else {
             $('#Adminlname').html("<font></font>");
         }
-         if (AdminPhone == ""  && user == "UserNotFound") {
+        if (AdminPhone == "" && user == "UserNotFound") {
             $('#AdminPhone').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4130,8 +4042,7 @@ async: true
         } else {
             $('#AdminPhone').html("<font></font>");
         }
-
-         if (FirstName == "" && partyIA == "Skipper") {
+        if (FirstName == "" && partyIA == "Skipper") {
             $('#skipperFirstname').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4139,7 +4050,7 @@ async: true
         } else {
             $('#skipperFirstname').html("<font></font>");
         }
-         if (LastName == "" && partyIA == "Skipper") {
+        if (LastName == "" && partyIA == "Skipper") {
             $('#skipperLastname').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4148,7 +4059,7 @@ async: true
             $('#skipperLastname').html("<font></font>");
         }
 
-         if (partyOrgType == "") {
+        if (partyOrgType == "") {
             $('#orgType').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4156,7 +4067,7 @@ async: true
         } else {
             $('#orgType').html("<font></font>");
         }
-         if (partyIA == "") {
+        if (partyIA == "") {
             $('#partyIA').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4164,7 +4075,7 @@ async: true
         } else {
             $('#partyIA').html("<font></font>");
         }
-         if (partyName == "" && partyIA != "Skipper") {
+        if (partyName == "" && partyIA != "Skipper") {
             $('#Addpartyname').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
@@ -4198,10 +4109,8 @@ async: true
 
     }
 
-    function AddAddNamedParty(event,tabId, tableId) {
-
-                            event.preventDefault();
-
+    function AddAddNamedParty(event, tabId, tableId) {
+        event.preventDefault();
         $('#getPartyModal').show();
         var informationId = $('#AnswerSheetId').val();
         var partyIA = $('#InsuranceAttributes').val();

@@ -217,9 +217,6 @@ namespace TechCertain.WebUI.Controllers
 			}
 		}
 
-
-        // Can not create a product without different insurance elements existing
-        // Can only map and not add new elements
         [HttpGet]
         public async Task<IActionResult> CreateTerritory()
         {
@@ -233,17 +230,19 @@ namespace TechCertain.WebUI.Controllers
 				{
 					Location = "",
 					Zoneorder = 0,
-					Ispublic = false,
-					// TODO - load this from db
+					Ispublic = false,					
 					BaseExclIncl = new List<SelectListItem> {
-					new SelectListItem { Text = "Inclusion", Value = "Incl" },
-					new SelectListItem { Text = "Exclusion", Value = "Excl" },
-
-				}
+						new SelectListItem { Text = "Inclusion", Value = "Incl" },
+						new SelectListItem { Text = "Exclusion", Value = "Excl" },
+					}
 				};
 
 				List<SelectListItem> proglist = new List<SelectListItem>();
 				var progList = await _programmeService.GetProgrammesByOwner(user.PrimaryOrganisation.Id);
+				if (user.PrimaryOrganisation.IsTC)
+				{
+					progList = await _programmeService.GetAllProgrammes();
+				}
 				foreach (Programme programme in progList)
 				{
 					proglist.Add(new SelectListItem
@@ -292,11 +291,11 @@ namespace TechCertain.WebUI.Controllers
                     ExclorIncl = IncluExclu,                    
                 };
 
-                var territoryNZ = await _territoryService.GetTerritoryTemplateByName("NZ");
+                var territoryNZ = await _territoryService.GetTerritoryTemplateByName("New Zealand");
                 await _territoryService.AddTerritoryTemplate(territoryTemplate);
                 await _programmeService.AttachProgrammeToTerritory(programme, territoryTemplate);
 
-                return Redirect("~/Product/MyProducts");
+                return RedirectToAction("Index", "Home");
             }
 			catch(Exception ex)
 			{

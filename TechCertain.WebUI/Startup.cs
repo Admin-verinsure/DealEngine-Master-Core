@@ -12,7 +12,6 @@ using TechCertain.WebUI.Models;
 using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
-using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 
 namespace TechCertain.WebUI
@@ -22,13 +21,11 @@ namespace TechCertain.WebUI
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
         public static void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            {                
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
@@ -56,19 +53,16 @@ namespace TechCertain.WebUI
             services.AddResponseCaching();
             services.AddMvc();            
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
+                app.UseDeveloperExceptionPage();                
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/Home/Error");                
                 app.UseHsts();
             }
 
@@ -90,7 +84,7 @@ namespace TechCertain.WebUI
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                endpoints.MapRazorPages();                
             });
         }
     }

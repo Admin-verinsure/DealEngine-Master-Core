@@ -37,25 +37,6 @@
                 {
                     <div class="form-group">
                         <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                            @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
-                            {
-                                @foreach (var clientAgreement in item.ClientInformationSheet.Programme.Agreements)
-                                {
-                                    @if (clientAgreement.SentOnlineAcceptance != true)
-                                    {
-                                        <li class="nav-item">
-                                            <a href="~/Information/SendOnlineAcceptance/?ClientAgreement=@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Send Online Acceptance</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="nav-item">
-                                            <a href="~/Information/SendOnlineAcceptance/?ClientAgreement=@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Resend Online Acceptance</a>
-                                        </li>
-                                    }
-                                }
-
-                            }
                             @if (item.CurrentUser.PrimaryOrganisation.IsBroker || item.CurrentUser.PrimaryOrganisation.IsTC)
                             {
                                 <li class="nav-item">
@@ -77,6 +58,21 @@
                                 <li class="nav-item">
                                     <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                                 </li>
+                                @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
+                                {
+                                    @if (item.SentOnlineAcceptance != true)
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Information/SendOnlineAcceptance/?ClientAgreement=@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Send Online Acceptance</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Information/SendOnlineAcceptance/?ClientAgreement=@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Resend Online Acceptance</a>
+                                        </li>
+                                    }
+                                }
                                 @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||
 item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Status != "Bound and invoiced")
                                 {
@@ -116,6 +112,21 @@ item.Status != "Bound" || item.Status != "Bound and invoice pending" || item.Sta
                                 <li class="nav-item">
                                     <a href="@Url.Action("AuthoriseReferrals", "Agreement", new { sheetId = @item.ClientProgrammeId, informationsheet = @item.InformationSheetId, agreementId = @item.ClientAgreementId })" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-edit"></i> Authorise Referrals</a>
                                 </li>
+                                @if (item.Status == "Quoted" && item.ClientInformationSheet.Status == "Submitted")
+                                {
+                                    @if (item.SentOnlineAcceptance != true)
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Information/SendOnlineAcceptance/?ClientAgreement=@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Send Online Acceptance</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item">
+                                            <a href="~/Information/SendOnlineAcceptance/?ClientAgreement=@item.ClientAgreementId" class="btn btn-success btn-sm"><i class="fa fa-edit"></i> Resend Online Acceptance</a>
+                                        </li>
+                                    }
+                                }
 
 
                                 @if (item.Status != "Declined by Insurer" || item.Status != "Declined by Insured" || item.Status != "Cancelled" ||

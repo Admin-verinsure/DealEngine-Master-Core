@@ -139,7 +139,14 @@ namespace TechCertain.Services.Impl
 		{
             await CreateDefaultUserOrganisation (user);
             await _userRepository.AddAsync(user);
-            _ldapService.Create (user);
+			try
+			{
+				_ldapService.Create(user);
+			}
+            catch(Exception ex)
+			{
+				_logger.LogWarning(ex.Message);
+			}
             await Update (user);
 		}
 
@@ -214,6 +221,11 @@ namespace TechCertain.Services.Impl
 		public async Task<List<User>> GetLockedUsers()
 		{
 			return await _userRepository.FindAll().Where(u => u.Locked == true).ToListAsync();
+		}
+
+		public async Task<User> GetUserByOrganisation(Organisation org)
+		{
+			return _userRepository.FindAll().FirstOrDefault(u => u.PrimaryOrganisation == org);
 		}
 	}
 }

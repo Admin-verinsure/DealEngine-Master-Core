@@ -71,6 +71,7 @@ namespace TechCertain.Domain.Entities
             protected set;
         }
 
+
     }
 }
 

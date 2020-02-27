@@ -42,6 +42,7 @@ namespace TechCertain.Services.Impl
         public async Task ImportAOEServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line
+            //var userFileName = "C:\\tmp\\testclientdata\\NZACSUsers2018.csv";
             var userFileName = "/tmp/NZACSUsers2018.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("214efe24-552d-46a3-a666-6bede7c88ca1");
@@ -75,20 +76,20 @@ namespace TechCertain.Services.Impl
                             if (organisation == null)
                             {
                                 var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2] + " " + parts[3], organisationType);
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2] + " " + parts[3], organisationType, parts[4]);
                                 await _organisationService.CreateNewOrganisation(organisation);
                             }
                         }
                         else
                         {
-                        if (!string.IsNullOrWhiteSpace(parts[4]))
-                        {
+                            if (!string.IsNullOrWhiteSpace(parts[4]))
+                            {
                                 organisation = await _organisationService.GetOrganisationByEmail(parts[4]);
-                        }
-                        if (organisation == null)
+                            }
+                            if (organisation == null)
                             {
                                 var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType);
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, parts[4]);
                                 await _organisationService.CreateNewOrganisation(organisation);
                             }
                         }
@@ -137,9 +138,7 @@ namespace TechCertain.Services.Impl
                             {
                                 throw new Exception(ex.Message);
                             }
-
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -159,6 +158,7 @@ namespace TechCertain.Services.Impl
             var email = "";
 
             //addresses need to be on one line
+            //var principalsFileName = "C:\\tmp\\testclientdata\\NZACSPrincipals2018.csv";
             var principalsFileName = "/tmp/NZACSPrincipals2018.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
@@ -182,98 +182,106 @@ namespace TechCertain.Services.Impl
                     organisation = null;
                     try
                     {
-                        if (!string.IsNullOrWhiteSpace(parts[5]))
-                        {
-                            email = parts[3] + "@techcertain.com";
-                            organisation = await _organisationService.GetOrganisationByEmail(email);
-                        }
-                        if (organisation == null)
-                        {
-                            organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType);
-                        }
-                        organisation.InsuranceAttributes.Add(insuranceAttribute);
-                        organisation.NZIAmembership = parts[1];
-                        if (!string.IsNullOrWhiteSpace(parts[5]))
-                        {
-                            organisation.Email = email;
-                        }
-                        else
-                        {
-                            organisation.Email = parts[5];
-                        }
-                        organisation.Phone = "12345";
-
-                        if (!string.IsNullOrEmpty(parts[6]))
-                        {
-                            organisation.Qualifications = parts[6];
-                        }
-                        if (!string.IsNullOrEmpty(parts[7]))
-                        {
-                            if (parts[7] == "1")
-                            {
-                                organisation.IsNZIAmember = true;
-                            }
-                            else
-                                organisation.IsNZIAmember = false;
-                        }
-                        if (!string.IsNullOrEmpty(parts[8]))
-                        {
-                            if (parts[8] == "1")
-                            {
-                                organisation.IsADNZmember = true;
-                            }
-                            else
-                                organisation.IsADNZmember = false;
-                        }
-                        //clarify correct field
-                        if (!string.IsNullOrEmpty(parts[9]))
-                        {
-                            if (parts[9] == "1")
-                            {
-                                organisation.IsOtherdirectorship = true;
-                            }
-                            else
-                                organisation.IsOtherdirectorship = false;
-                        }
-
-                        using (var uom = _unitOfWork.BeginUnitOfWork())
-                        {
-                            insuranceAttribute.IAOrganisations.Add(organisation);
-                            try
-                            {
-                                await uom.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                await uom.Rollback();
-                            }
-                        }
-
-                        await _organisationService.CreateNewOrganisation(organisation);
-                        await _programmeService.AddOrganisationByMembership(organisation);
-
-                        if (!string.IsNullOrWhiteSpace(parts[5]))
-                        {
-                            email = parts[3] + "@techcertain.com";
-                            user = await _userService.GetUserByEmail(email);
-                        }                        
-                        if (user == null)
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[1]);
+                        if (hasProgramme)
                         {
                             string userName = parts[4] + "_" + parts[3];
-                            user = new User(currentUser, Guid.NewGuid(), userName);
-                            user.FirstName = parts[4];
-                            user.LastName = parts[3];
-                            user.FullName = parts[4] + " " + parts[3];
-                            user.Email = parts[5];
-                            user.Address = "Import Address";
-                            user.Phone = "12345";
+
+                            if (string.IsNullOrWhiteSpace(parts[5]))
+                            {
+                                email = parts[2] + "@techcertain.com";
+                            }
+                            else
+                            {
+                                email = parts[5];
+                            }
+                            
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType, email);                            
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            organisation.NZIAmembership = parts[1];
+                            organisation.Email = email;
+                            organisation.Phone = "12345";
+
+                            if (!string.IsNullOrEmpty(parts[6]))
+                            {
+                                organisation.Qualifications = parts[6];
+                            }
+                            if (!string.IsNullOrEmpty(parts[7]))
+                            {
+                                if (parts[7] == "1")
+                                {
+                                    organisation.IsNZIAmember = true;
+                                }
+                                else
+                                    organisation.IsNZIAmember = false;
+                            }
+                            if (!string.IsNullOrEmpty(parts[8]))
+                            {
+                                if (parts[8] == "1")
+                                {
+                                    organisation.IsADNZmember = true;
+                                }
+                                else
+                                    organisation.IsADNZmember = false;
+                            }
+                            //clarify correct field
+                            if (!string.IsNullOrEmpty(parts[9]))
+                            {
+                                if (parts[9] == "1")
+                                {
+                                    organisation.IsOtherdirectorship = true;
+                                }
+                                else
+                                    organisation.IsOtherdirectorship = false;
+                            }
+
+                            using (var uom = _unitOfWork.BeginUnitOfWork())
+                            {
+                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                try
+                                {
+                                    await uom.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    await uom.Rollback();
+                                }
+                            }
+
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            await _programmeService.AddOrganisationByMembership(organisation);
+                                                       
+                            user = await _userService.GetUserByEmail(email);                            
+                            
+                            if (user == null)
+                            {
+                                userName = parts[4] + "_" + parts[3];
+                                try
+                                {
+                                    user = await _userService.GetUser(userName);
+                                }                                
+                                catch(Exception ex)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    userName = userName + randomNumber.ToString();
+                                }
+                                user = new User(currentUser, Guid.NewGuid(), userName);
+                                user.FirstName = parts[4];
+                                user.LastName = parts[3];
+                                user.FullName = parts[4] + " " + parts[3];
+                                user.Email = email;
+                                user.Address = "Import Address";
+                                user.Phone = "12345";
+
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                user.SetPrimaryOrganisation(organisation);
+                                await _userService.ApplicationCreateUser(user);
+                            }
                         }
-
-                        if (!user.Organisations.Contains(organisation))
-                            user.Organisations.Add(organisation);
-
-                        user.SetPrimaryOrganisation(organisation);
-                        await _userService.ApplicationCreateUser(user);
                     }
                     catch (Exception ex)
                     {
@@ -290,6 +298,8 @@ namespace TechCertain.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;
+
+            //var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
             var claimFileName = "/tmp/NZACSClaimsData2018.csv";
             using (reader = new StreamReader(claimFileName))
             {
@@ -329,6 +339,7 @@ namespace TechCertain.Services.Impl
             bool readFirstLine = false;
             string line;
             //special characters /,/
+            //var contractFileName = "C:\\tmp\\testclientdata\\NZACSContractorsPrincipals2018.csv";
             var contractFileName = "/tmp/NZACSContractorsPrincipals2018.csv";
 
             using (reader = new StreamReader(contractFileName))

@@ -8,64 +8,35 @@ namespace TechCertain.Domain.Entities
 	public class ClientInformationSheet : EntityBase, IAggregateRoot
 	{
 		public virtual Organisation Owner { get; protected set; }
-
 		public virtual ClientProgramme Programme { get; set; }
-
-		//[Obsolete ("No longer required with the new Programme implementation")]
-		//public virtual InformationTemplate InformationTemplate { get; protected set; }
-
 		[Obsolete ("No longer required with the new Programme implementation")]
 		public virtual ClientAgreement ClientAgreement { get; set; }
-
 		public virtual IList<ClientInformationAnswer> Answers { get; protected set; }
-
 		public virtual IList<Vehicle> Vehicles { get; protected set; }
-
         public virtual IList<Building> Buildings { get; protected set; }
-
         public virtual IList<BusinessInterruption> BusinessInterruptions { get; protected set; }
-
         public virtual IList<MaterialDamage> MaterialDamages { get; protected set; }
-
         public virtual IList<ClaimNotification> ClaimNotifications { get; protected set; }
-
         public virtual IList<Location> Locations { get; protected set; }
-
         public virtual IList<WaterLocation> WaterLocations { get; protected set; }
-
         public virtual IList<Boat> Boats { get; protected set; }
-
         public virtual IList<BoatUse> BoatUses { get; protected set; }
         public virtual IList<Organisation> Organisation { get; protected set; }
-
 		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }
-
-		public virtual RevenueByActivity RevenueData { get; set; }
-
+        public virtual IList<SubClientInformationSheet> SubClientInformationSheets { get; set; }
+        public virtual RevenueByActivity RevenueData { get; set; }
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up
         public virtual string Status { get; set; }
-
         public virtual string ReferenceId { get; set; }
-
 		public virtual ClientInformationSheet PreviousInformationSheet { get; protected set; }
-
 		public virtual ClientInformationSheet NextInformationSheet { get; protected set; }
-
 		public virtual bool IsRenewawl { get; set; }
-
         public virtual bool IsChange { get; set; }
         public virtual string SheetReference { get; set; }
-
         public virtual DateTime SubmitDate { get; set; }
-
 		public virtual User SubmittedBy { get; set; }
-
         public virtual DateTime UnlockDate { get; set; }
-
-        public virtual User UnlockedBy { get; set; }
-
-        //public virtual IList<Operator> Operators { get; protected set; }
-
+        public virtual User UnlockedBy { get; set; }        
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
         public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
         protected ClientInformationSheet () : this (null) { }
@@ -73,6 +44,7 @@ namespace TechCertain.Domain.Entities
 		protected ClientInformationSheet (User createdBy)
 			: base (createdBy)
 		{
+            SubClientInformationSheets = new List<SubClientInformationSheet>();
             Organisation = new List<Organisation>();
             SharedDataRoles = new List<SharedDataRole>();
             Answers = new List<ClientInformationAnswer> ();
@@ -112,9 +84,9 @@ namespace TechCertain.Domain.Entities
 			//InformationTemplate = originalSheet.InformationTemplate;
 			PreviousInformationSheet = originalSheet;
 			IsRenewawl = renewal;
-		}
+		}       
 
-		public virtual void AddAnswer(string itemName, string value)
+        public virtual void AddAnswer(string itemName, string value)
 		{
 			// no value entered for that question? we won't bother saving it
 			if (string.IsNullOrWhiteSpace (value))
@@ -210,5 +182,21 @@ namespace TechCertain.Domain.Entities
 
 		public virtual Product Product { get; set; }
 	}
+
+    public class SubClientInformationSheet : ClientInformationSheet
+    {
+        public virtual ClientInformationSheet BaseClientInformationSheet { get; set; }        
+        public SubClientInformationSheet(ClientInformationSheet sheet)            
+        {
+            BaseClientInformationSheet = sheet;
+        }
+        protected SubClientInformationSheet() : this(null) { }
+
+        public virtual void CopyClientInformationSheet(SubClientProgramme subClientProgramme)
+        {
+            Owner = subClientProgramme.Owner;            
+            Programme = subClientProgramme;
+        }
+    }
 }
 

@@ -18,7 +18,7 @@ namespace TechCertain.Domain.Entities
         public virtual IList<ClientProgramme> ClientProgrammes { get; protected set; }
         public virtual IList<Merchant> Merchants { get; protected set; }
         public virtual User BrokerContactUser { get; set; }
-        public virtual Boolean IsPublic { get; set; }
+        public virtual bool IsPublic { get; set; }
         public virtual IList<Organisation> Parties { get; set; }
         public virtual IList<User> UISIssueNotifyUsers { get; set; }
         public virtual IList<User> UISSubmissionNotifyUsers { get; set; }
@@ -27,37 +27,23 @@ namespace TechCertain.Domain.Entities
         public virtual IList<User> AgreementBoundNotifyUsers { get; set; }
         public virtual IList<User> PaymentConfigNotifyUsers { get; set; }
         public virtual IList<User> InvoiceConfigNotifyUsers { get; set; }
-        public virtual Boolean StopAgreement { get; set; }
+        public virtual bool StopAgreement { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
         public virtual string StopAgreementMessage { get; set; }
         public virtual string NoPaymentRequiredMessage { get; set; }
-        public virtual Boolean AllowUsesChange { get; set; }
-        public virtual Boolean CalculateCancelTerm { get; set; }
-        public virtual bool HasCCPayment
-        {
-            get;
-            set;
-        }
-
-        public virtual bool HasPFPayment
-        {
-            get;
-            set;
-        }
-
-        public virtual bool HasInvoicePayment
-        {
-            get;
-            set;
-        }
-
+        public virtual bool AllowUsesChange { get; set; }
+        public virtual bool CalculateCancelTerm { get; set; }
+        public virtual bool HasSubsystemEnabled { get; set; }
+        public virtual bool HasCCPayment { get; set; }
+        public virtual bool HasPFPayment { get; set; }
+        public virtual bool HasInvoicePayment { get; set; }
         public virtual decimal TaxRate { get; set; }
         public virtual decimal SurchargeRate { get; set; }
         public virtual bool ProgrammeEmailCCToBroker { get; set; }
 
         public virtual IList<Package> Packages { get; protected set; }
 
-        public virtual Boolean UsesEGlobal { get; set; }
+        public virtual bool UsesEGlobal { get; set; }
 
         public virtual string PolicyNumberPrefixString { get; set; }
 
