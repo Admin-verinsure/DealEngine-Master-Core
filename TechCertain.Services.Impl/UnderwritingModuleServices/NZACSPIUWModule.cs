@@ -151,9 +151,11 @@ namespace TechCertain.Services.Impl.UnderwritingModuleServices
 
                     if (uISTerritory.Location == "USA / Canada")
                     {
-                        clientAgreementEndorsement.DateDeleted = null;
-                        clientAgreementEndorsement.DeletedBy = null;
-
+                        if (clientAgreementEndorsement != null)
+                        {
+                            clientAgreementEndorsement.DateDeleted = null;
+                            clientAgreementEndorsement.DeletedBy = null;
+                        }
                     } 
                 }
 
