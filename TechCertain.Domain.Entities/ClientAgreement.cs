@@ -59,8 +59,8 @@ namespace TechCertain.Domain.Entities
         public virtual DateTime IssuedToBroker { get; protected set; }
         public virtual string InsurerQuoteIssueComment { get; protected set; }
         public virtual string BreachProfDuty { get; protected set; }
-        public virtual bool EnableRetroactiveDate { get; protected set; }
-        public virtual string RetroactiveDate { get; protected set; }
+        public virtual bool EnableRetroactiveDate { get; set; }
+        public virtual string RetroactiveDate { get; set; }
         public virtual bool Bound { get; protected set; }
         public virtual DateTime BoundDate { get; set; }
         public virtual DateTime FinalacceptanceDate { get;  set; }

@@ -48,7 +48,7 @@
                         </tr>
                         <tr class="table-light">
                             <td>
-                                <label class="label required"><strong>Client Number #: </strong></label>
+                                <label class="label required"><strong>Policy End Date: </strong></label>
                             </td>
                             <td>
                                 <label class="input">
@@ -59,7 +59,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <label class="label required"><strong>Policy Number Prefix String: </strong></label>
+                                <label class="label required"><strong>Client Number #: </strong></label>
                             </td>
                             <td>
                                 <label class="input">
@@ -98,6 +98,17 @@
                                 <label class="input">
                                     @*<i class="icon-append fa fa-edit"></i>*@
                                     @Html.TextBoxFor(m => m.AdministrationFee)
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="label required"><strong>Retroactive Date: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @*<i class="icon-append fa fa-edit"></i>*@
+                                    @Html.TextBoxFor(m => m.RetroactiveDate)
                                 </label>
                             </td>
                         </tr>
