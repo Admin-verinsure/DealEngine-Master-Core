@@ -30,6 +30,7 @@ namespace TechCertain.Services.Impl
 		{
 			try
 			{
+				await UpdateOrganisation(organisation);
 				_ldapService.Create(organisation);
 			}
 			catch (Exception ex)
@@ -40,7 +41,7 @@ namespace TechCertain.Services.Impl
 					await UpdateOrganisation(organisation);
 				}
 			}
-
+			
 			return organisation;
 		}
 

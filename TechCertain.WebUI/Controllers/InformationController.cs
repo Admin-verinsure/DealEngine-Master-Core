@@ -2168,7 +2168,6 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> GetEmployerPracticesLiability(Guid ClientInformationSheet)
         {
@@ -2241,8 +2240,6 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> GetDirectorsandOfficersLiability(Guid ClientInformationSheet)
         {
@@ -2278,8 +2275,6 @@ namespace TechCertain.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateAnswer(List<string[]> Answers, Guid ClientInformationSheet)
@@ -2322,7 +2317,6 @@ namespace TechCertain.WebUI.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> UpdateClaim(List<string[]> Claims, Guid ClientInformationSheet)
         {
@@ -2361,7 +2355,6 @@ namespace TechCertain.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> SubmitInformation(IFormCollection collection)

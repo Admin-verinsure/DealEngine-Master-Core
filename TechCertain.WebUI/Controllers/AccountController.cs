@@ -371,11 +371,6 @@ namespace TechCertain.WebUI.Controllers
                             await _userManager.AddToRoleAsync(deUser, "Client");
                         }
                     }
-                    _userService.Update(user);
-                    foreach (var org in user.Organisations)
-                    {
-                        _organisationService.UpdateOrganisation(org);
-                    }
                 }
                 return identityResult;
             }

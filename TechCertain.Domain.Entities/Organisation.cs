@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using TechCertain.Domain.Entities.Abstracts;
 
 namespace TechCertain.Domain.Entities
@@ -12,7 +10,6 @@ namespace TechCertain.Domain.Entities
     {
         string _name;
         string _phone;
-        string _email;
         string _SkipperExp;
         OrganisationType _organisationType;
 
@@ -73,25 +70,25 @@ namespace TechCertain.Domain.Entities
             _organisationType = organisationType;
         }
 
-        public Organisation(User createdBy, string organisationName, OrganisationType organisationType, string Email, string Phone)
+        public Organisation(User createdBy, string organisationName, OrganisationType organisationType, string email, string Phone)
            : this(createdBy, organisationName)
         {
             if (organisationType == null)
                 throw new ArgumentNullException(nameof(organisationType), "Not allowed to create an organisation without specifying a type.");
 
             _name = organisationName;
-            _email = Email;
+            Email = email;
             _phone = Phone;
             _organisationType = organisationType;
         }
 
-        public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType, string Email)
+        public Organisation(User createdBy, Guid id, string organisationName, OrganisationType organisationType, string email)
           : this(createdBy, organisationName, organisationType)
         {
             if (organisationType == null)
                 throw new ArgumentNullException(nameof(organisationType), "Not allowed to create an organisation without specifying a type.");
             Id = id;
-            _email = Email;
+            Email = email;
         }
 
         #endregion
@@ -220,12 +217,5 @@ namespace TechCertain.Domain.Entities
             };
         }
 
-        public static Organisation CreateOrganisation(User creatingUser, string organisationName, OrganisationType organisationType, string Email, string Phone)
-        {
-            return new Organisation(creatingUser, organisationName, organisationType, Email, Phone)
-            {
-                Domain = "#"
-            };
-        }
     }
 }

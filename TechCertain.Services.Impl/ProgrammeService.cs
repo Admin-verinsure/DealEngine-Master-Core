@@ -194,6 +194,16 @@ namespace TechCertain.Services.Impl
             await Update(subClientProgramme);
             return subClientProgramme;
         }
+
+        public async Task<bool> HasProgrammebyMembership(string membershipNumber)
+        {
+            var clientProgramme = await _clientProgrammeRepository.FindAll().FirstOrDefaultAsync(c => c.ClientProgrammeMembershipNumber == membershipNumber);
+            if (clientProgramme == null)
+            {
+                return false;
+            }
+            return true;    
+        }
     }
 }
 

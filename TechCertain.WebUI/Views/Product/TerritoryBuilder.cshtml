@@ -13,25 +13,21 @@
             <div class="card-body">
                 <form action="#" id="myForm" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true" _lpchecked="1">
                     <!-- SmartWizard html -->
-                    <div id="smartwizard" class="sw-main sw-theme-dots">
+                    <div id="smartwizard" class="sw-main sw-theme-circles">
                         <ul class="nav nav-tabs step-anchor">
                             <li class="nav-item active">
-                                <a href="#step-1"> <span class="nav-link">1</span> <span class="title">Start</span> </a>
+                                <a href="#step-1"> <span class="nav-link">1</span> <span class="title"></span> </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#step-2"> <span class="nav-link">2</span> <span class="title">Attach to Programme</span> </a>
+                                <a href="#step-2"> <span class="nav-link">2</span> <span class="title"></span> </a>
                             </li>
                         </ul>
 
                         <div class="sw-container tab-content" style="min-height: 152px;">
                             <div id="step-1" class="tab-pane step-content" style="display: block;">
-                                <div id="form-step-0" role="form" data-toggle="validator" novalidate="true">
-                                    <div class="form-group">
-                                        @await Html.PartialAsync("DisplayTemplates/TerritoryBuilderVM", Model.Builder)                                        
-                                    </div>
-                                </div>
-
+                                @await Html.PartialAsync("DisplayTemplates/TerritoryBuilderVM", Model.Builder)                                        
                             </div>
+
                             <div id="step-2" class="tab-pane step-content" style="display: none;">
                                 @await Html.PartialAsync("DisplayTemplates/TerritoryBuilderAttach", Model.TerritoryAttach)                                       
                             </div>
