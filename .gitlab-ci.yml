@@ -48,36 +48,37 @@ deploy_demo:
 
 # useful for first time connection (- ssh -o StrictHostKeyChecking=no ubuntu@"$URLmpak" 'command')
 
-deploy_marsh:
+deploy_professionalrisks:
   stage: deploy
   script:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ssh ubuntu@"$URLmarsh" './DE-DeployPrep.sh'
-  - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
-  - ssh ubuntu@"$URLmarsh" './DE-DeployFin.sh'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
+  - ls -la
+  #- 'dotnet publish -c Release'
+  #- rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
+  #- ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
 
   environment:
-    name: marsh
-    url: https://staging.mnzconnect.com
+    name: professionalrisks
+    url: https://professionalrisks.online
   when: manual
   dependencies:
     - build
 
-deploy_insw:
+deploy_mydealslive:
   stage: deploy
   script:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ssh ubuntu@"$URLinsw" './DE-DeployPrep.sh'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLmydealslive" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
-  - ssh ubuntu@"$URLinsw" './DE-DeployFin.sh'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLmydealslive:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLmydealslive" './DE-DeployFin.sh'
 
   environment:
-    name: insw
-    url: https://dealengine.tai.co.nz
+    name: mydealslive
+    url: https://staging.mydealslive.com
   when: manual
   dependencies:
     - build
