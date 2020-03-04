@@ -1,0 +1,38 @@
+﻿@model List<DealEngine.WebUI.Models.Agreement.AgreementDocumentViewModel>
+
+<!-- NEW WIDGET START -->
+<div class="col col-12" id="documentsSection">
+    <!-- Widget ID (each widget will need unique ID)-->
+    <div class="jarviswidget" id="wid-id-10"
+         data="false"
+         data-widget-editbutton="false"
+         data-widget-togglebutton="false"
+         data-widget-deletebutton="false"
+         data-widget-custombutton="false"
+         data-widget-sortable="false">
+        <!-- widget div-->
+        <div>
+            <!-- widget edit box -->
+            <div class="jarviswidget-editbox">
+                <!-- This area used as drop downSS edit box -->
+            </div>
+            <!-- end widget edit box -->
+            <!-- widget content -->
+
+            <div class="smart-form">
+            @foreach (var doc in Model)
+            {
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-12 font-md">
+                            <a href="@(doc.Url + "?format=docx")">@doc.DisplayName</a>
+                        </section>
+                    </div>
+                </fieldset>
+            }
+			</div>
+		</div>
+	</div>
+</div>
+
+

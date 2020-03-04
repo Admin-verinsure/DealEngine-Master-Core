@@ -1,0 +1,85 @@
+﻿@model DealEngine.WebUI.Models.Policy.OptionsSectionVM
+
+    <div id="policydocstart-form" class="smart-form" novalidate="novalidate">
+        <div class="row">
+            <section class="col col-6">
+                <span>Select Territory</span>
+                <label class="select">
+                    @Html.DropDownListFor(m => m.Territory, Model.Territories)
+                    <i></i>
+                </label>
+            </section>
+        </div>
+        <div id="divCustomTerritory" class="row" style="display: none;">
+            <section class="col col-6">
+                <label class="input">
+                    @*@Html.Bootstrap().Icon("icon-append fa fa-globe")*@
+                    @Html.TextBoxFor(m => m.CustomTerritory)
+                    <b class="tooltip tooltip-bottom-right">Enter a custom Territory</b>
+                </label>
+            </section>
+        </div>
+        <div class="row">
+            <section class="col col-6">
+                <span>Select Jurisdiction</span>
+                <label class="select">
+                    @Html.DropDownListFor(m => m.Jurisdiction, Model.Jurisdictions)
+                    <i></i>
+                </label>
+            </section>
+        </div>
+        <div id="divCustomJurisdiction" class="row" style="display: none;">
+            <section class="col col-6">
+                <label class="input">
+                    @*@Html.Bootstrap().Icon("icon-append fa fa-globe")*@
+                    @Html.TextBoxFor(m => m.CustomJurisdiction)
+                    <b class="tooltip tooltip-bottom-right">Enter a custom Jurisdiction</b>
+                </label>
+            </section>
+        </div>
+        <div class="row">
+            <section class="col col-6">
+                <span>Select Wording Type</span>
+                <label class="select">
+                    @Html.DropDownListFor(m => m.Clause, Model.Clauses)
+                    <i></i>
+                </label>
+            </section>
+        </div>
+        @*<div class="row">
+            <section class="col col-6">
+                <span>Select Product</span>
+                <label class="select">
+                    @Html.DropDownListFor(m => m.Product, Model.Products)
+                    <i></i>
+                </label>
+            </section>
+        </div>*@
+        <div class="row">
+            <section class="col col-6">
+                <span>Private Section (this template will not be publically available)</span>
+                <label class="checkbox">
+                    @Html.CheckBoxFor(m => m.IsPrivate)
+                    <i></i>
+                </label>
+            </section>
+        </div>
+        
+    </div>
+
+<script type="text/javascript">
+    function GetOptionsJson()
+    {
+    	return {
+    		Territory: $("#@(Html.IdFor(m => m.Territory))").val(),
+    		CustomTerritory: $("#@(Html.IdFor(m => m.CustomTerritory))").val(),
+    		Jurisdiction: $("#@(Html.IdFor(m => m.Jurisdiction))").val(),
+            CustomJurisdiction: $("#@(Html.IdFor(m => m.CustomJurisdiction))").val(),
+            Product : $("#@(Html.IdFor(m => m.Product))").val(),
+    		Clause: $("#@(Html.IdFor(m => m.Clause))").val(),
+    		TerritoryText: $("#@(Html.IdFor(m => m.Territory)) option:selected").text(),
+    		JurisdictionText: $("#@(Html.IdFor(m => m.Jurisdiction)) option:selected").text()
+    	};
+    }
+</script>
+

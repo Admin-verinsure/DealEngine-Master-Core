@@ -1,0 +1,107 @@
+﻿@model DealEngine.WebUI.Models.RevenueByActivityViewModel
+
+<ul id="sharedRevenTabs" class="nav nav-tabs d-sm-flex">
+    <li class="nav nav-tabs Territory" id="SharedRevenueTab1"> <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a> </li>
+    <li class="nav nav-tabs Activities" style="display:none" id="SharedRevenueTab2"> <a class="nav-link" href="#RevenueTabs2" data-toggle="tab"> Activities </a> </li>
+    <li class="nav nav-tabs AdditionalInformation" style="display:none" id="SharedRevenueTab3"> <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Additional Information </a> </li>
+    <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Summary </a> </li>
+</ul>
+
+<div id="RevenueTabs1" class="tab-content">
+        <div class="container-fluid">
+            <form class="client-form">
+                <div class="form-group">
+
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-primary">
+                            <input type="radio" name="tradingOption" id="tradingOption1" value=true onchange="toggleTerritoriesVisible('active')"> Yes, I do trade outside of New Zealand
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="tradingOption" id="tradingOption2" value=false onchange="toggleTerritoriesVisible('Inactive')"> No, I don't trade outside of New Zealand
+                        </label>
+                    </div>
+
+                </div>
+                <div class="form-group" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
+                    <label for="SharedTerritories">Select Territories</label>
+                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
+                        @foreach (var territory in Model.Territories)
+                        {
+                            <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <table id="sharedRevenueTerritoriesTable" class="table">
+                    </table>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn-primary btn" id="tradingButton" onclick="SaveRevenueTabOne()" style="display:none">  Submit To Save  </button>
+                </div>
+            </form>
+        </div>
+</div>
+<div id="RevenueTabs2" class="tab-content">
+        <div class="container-fluid">
+            <form class="client-form">
+                <div class="form-group">
+                    <label for="totalRevenue">Enter Fee Income</label>
+                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sharedRevenueActivities">Select Activites</label>
+                    <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                        @foreach (var ou in Model.Activities)
+                        {
+                            <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <table id="sharedRevenueActivityTable" class="table">
+                    </table>
+                </div>
+
+                <div class="form-group">
+                    <div class="footer" id="submitTab4">
+                        <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('newSummary')">
+                    </div>
+                    <div class="footer" id="additionalInfomation" style="display:none">
+                        <button class="btn-primary btn" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>    
+</div>
+
+<div id="RevenueTabs3" class="tab-content">
+    <div class="container-fluid">
+        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model)        
+    </div>
+</div>
+<div id="RevenueTabs4" class="tab-content">
+    <form class="client-form">
+        <div class="form-group">
+            <label for="SharedTotalRevenue">Fee Income</label>
+            <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" required>
+        </div>
+        <div class="form-group">
+            <table id="ListSharedRevenueTerritories" class="table">
+            </table>
+        </div>
+        <div class="form-group">
+            <table id="ListSharedRevenueActivities" class="table">
+            </table>
+        </div>
+        <div class="form-group">
+            <div class="footer" id="UpdateSharedActivity">
+                <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+            </div>
+        </div>
+    </form>
+</div>

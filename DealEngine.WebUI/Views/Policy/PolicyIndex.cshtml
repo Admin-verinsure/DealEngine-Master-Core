@@ -1,0 +1,131 @@
+﻿@model DealEngine.WebUI.Models.PolicyDocumentListViewModel
+
+@using DealEngine.WebUI.Helpers.CustomHtml
+
+@section pagespecific {
+
+	<script type="text/javascript">
+	$(function () {
+	    $("#list").jqGrid({
+	        url: "/Policy/GetDocuments",
+	        datatype: "xml",
+	        mtype: "GET",
+	        colNames: ["Title", "Creator", "Owner", "Description", "Type", "Version", "Revision", "", "Options", ""],
+	        colModel: [
+	            { name: "name", align: 'center' },
+	            { name: "creator", align: 'center' },
+	            { name: "owner", align: 'center' },
+	            { name: "description", align: 'center' },
+	            { name: "type", align: 'center' },
+	            { name: "version", align: 'center' },
+	            { name: "revision", align: 'center', sortable: false },
+	            { name: "view", align: 'center', width:80, sortable: false, formatter: function (value) { return "<a href='#'>" + value + "</a>"; } },
+	            { name: "edit", align: 'center', width:80, sortable: false, formatter: function (value) { return "<a href='#'>" + value + "</a>"; } },
+	            { name: "deprecate", align: 'center', width:80, sortable: false, formatter: function (value) { return "<a href='#'>" + value + "</a>"; } }
+	        ],
+	        autowidth: true,
+	        pager: "#pager",
+	        rowNum: 10,
+	        rowList: [10, 20, 30],
+	        sortname: "name",
+	        sortorder: "desc",
+	        viewrecords: true,
+	        gridview: true,
+	        autoencode: true,
+	        beforeSelectRow: function (rowid, e) {
+		        var $self = $(this),
+		            $td = $(e.target).closest("td"),
+		            rowid = $td.closest("tr.jqgrow").attr("id"),
+		            iCol = $.jgrid.getCellIndex($td[0]),
+		            cm = $self.jqGrid("getGridParam", "colModel");
+		        if (e.target.tagName.toUpperCase() === "A")
+		        {
+                    if (cm[iCol].name === "view") {
+                        window.location = '/Policy/ViewSectionTemplate/' + rowid;
+                    }
+                    if (cm[iCol].name === "edit") {
+                        window.location = '/Policy/EditSection/' + rowid;
+                    }
+                    if (cm[iCol].name === "deprecate")
+                    {
+                        if (confirm('Are you sure you want to deprecate this document? This action cannot be undone.'))
+                        {
+                            // DO Ajax call to create the policy document
+                            $.ajax({ url: "/Policy/DeprecateSection", type: "POST", data: {id: rowid} })
+                                .done(function (json) {
+                                    alert("Deprecated");
+                                })
+                                .fail(function (err) {
+                                    alert("Unable to save." + err.responseText );
+                                });
+                        }
+                    }
+                    //alert('View id: ' + rowid);
+                    return false; // don't select the row on click
+		        }
+		        return true;
+		    }
+	    }); 
+	    $("#list").jqGrid('navGrid',
+	    	'#pager', 
+	    	{edit: false, add: false, del: false},
+	    	//options
+	    	{height:280,reloadAfterSubmit:false},
+	    	// edit options
+	    	{height:280,reloadAfterSubmit:false},
+	    	// add options
+	    	{reloadAfterSubmit:false},
+	    	// del options
+	    	{}
+	    	// search options
+	    );
+	}); 
+	</script>
+}
+
+<div id="content">
+	<script src="~/Scripts/plugin/jqgrid/jquery.jqGrid.js"></script>
+
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1" 
+                     data-widget-colorbutton="false" 
+                     data-widget-editbutton="false" 
+                     data-widget-togglebutton="false" 
+                     data-widget-deletebutton="false" 
+                     data-widget-custombutton="false" 
+                     data-widget-sortable="false">
+
+                    <header>
+                        <h2>Policy Document Archive</h2>
+                    </header>
+                    <div class="padding-10">
+						<table id="list"><tr><td></td></tr></table> 
+						<div id="pager"></div>
+
+						@{ //Html.TableFor<DealEngine.Web.UI.ViewModels.PolicyDocumentViewModel>()
+						   // .Columns(column =>
+						   // {
+						   //     column.Expression(p => p.Title);
+						   //     column.Expression(p => p.Creator).Title("Creator").Icon("user");
+						   //     column.Expression(p => p.Owner).Title("Owner");
+						   //     column.Expression(p => p.Description).Title("Description");
+						   //     column.Expression(p => p.Type).Title("Type");
+						   //     column.Expression(p => p.Version);
+						   //     column.Expression(p => p.Title);
+						   // })
+						   // .DataSource(this.Model.Documents)
+						   // .ToHtml();
+						}
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+</div>

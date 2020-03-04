@@ -1,0 +1,19 @@
+﻿@model DealEngine.WebUI.Models.Programme.ActivityListViewModel
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Programme Activities</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var busActivity in Model.BusinessActivityList)
+        {
+            <tr>
+                <td>
+                    @busActivity.AnzsciCode
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

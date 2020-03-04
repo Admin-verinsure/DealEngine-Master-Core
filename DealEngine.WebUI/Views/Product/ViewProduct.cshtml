@@ -1,0 +1,143 @@
+﻿@model DealEngine.WebUI.Models.Product.ProductViewModel
+
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <!-- col -->
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-file-o"></i> Products <span>
+                    >
+                    View Product
+                </span>
+            </h1>
+        </div>
+        <!-- end col -->
+    </div>
+
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <div class="row">
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- new widget -->
+                <div class="jarviswidget" id="wid-id-2"
+                     data="false"
+                     data-widget-editbutton="false"
+                     data-widget-togglebutton="false"
+                     data-widget-deletebutton="false"
+                     data-widget-custombutton="false"
+                     data-widget-sortable="false">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
+                        <h2> @Model.Description.Name </h2>
+                    </header>
+                    <!-- widget div-->
+                    <div>
+                        <div class="widget-body no-padding smart-form">
+                            <!-- content goes here -->
+
+                            <fieldset>
+                                <div class="row">
+                                    <section class="col col-3">
+                                        <strong>
+                                            Description
+                                        </strong>
+                                    </section>
+                                    <section class="col col-9">
+                                        <span>
+                                            @Model.Description.Description
+                                        </span>
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <section class="col col-3">
+                                        <strong>
+                                            Publicity
+                                        </strong>
+                                    </section>
+                                    <section class="col col-9">
+                                        @if (Model.Description.Public) {
+                                        <span>Public</span>
+                                        }
+										else {
+										<span>Private</span>
+										}
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <section class="col col-3">
+                                        <strong>
+                                            Date Created
+                                        </strong>
+                                    </section>
+                                    <section class="col col-9">
+                                        <span>
+                                            @Model.Description.DateCreated
+                                        </span>
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <section class="col col-3">
+                                        <strong>
+                                            Owner
+                                        </strong>
+                                    </section>
+                                    <section class="col col-9">
+                                        <span>
+                                            
+                                        </span>
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <section class="col col-3">
+                                        <strong>
+                                            Languages
+                                        </strong>
+                                    </section>
+                                    <section class="col col-9">
+                                        <span>
+                                        @foreach (var lang in Model.Description.SelectedLanguages)
+                                        {
+                                            <img src="~/Content/img/blank.gif" class="flag flag-@lang" />
+                                        }
+                                        </span>
+                                    </section>
+                                </div>
+							</fieldset>
+                            <fieldset>
+                                <div class="row">
+                                    <section class="col col-10 font-md">
+                                        <strong>
+                                            Risk Coverage
+                                        </strong>
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <section class="col col-10">
+                                        <span>
+										@*@(Html.TableFor<DealEngine.Web.UI.ViewModels.RiskEntityViewModel>()
+										    .Columns(column =>
+										    {
+										        column.Expression(p => p.Insured).Title("");
+										        column.Expression(p => p.CoverAll).Title("All");
+										        column.Expression(p => p.CoverLoss).Title("Loss");
+										        column.Expression(p => p.CoverInterruption).Title("Interuption");
+										        column.Expression(p => p.CoverThirdParty).Title("Liability to others");
+										    })
+										    .DataSource(this.Model.Risks))*@
+                                        </span>
+                                    </section>
+                                </div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</article>
+		</div>
+	</section>
+</div>
+

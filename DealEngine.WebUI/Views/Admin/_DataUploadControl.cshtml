@@ -1,0 +1,61 @@
+﻿
+    <!-- Header Start-->
+    <header>
+        <span class="widget-icon"> <i class="fa fa-desktop text-white"></i> </span>
+        <h2> Data Uploads </h2>
+    </header>
+    <!-- Header End -->
+    <!-- widget div-->
+    <div>
+        <!-- widget edit box -->
+        <div class="jarviswidget-editbox">
+            <div>
+                <label>Title:</label>
+                <input type="text" />
+            </div>
+        </div>
+        <!-- end widget edit box -->
+        <!-- widget content -->
+        <div class="widget-body no-padding">
+            <div class="table-responsive custom-scroll">
+                <table class="table table-bordered">                    
+                    <tbody>
+                        <tr>
+                            <td>
+                                AON Import (Individual, Principals, etc)
+                            </td>
+                            </tr>
+                        <tr>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="~/Admin/AONImportUsers">Upload Users</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="~/Admin/AONImportPrincipals">Upload Principals etc</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="~/Admin/AONImportContracts">Upload Principal Contracts</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="~/Admin/AONImportClaims">Upload Claims</a>
+                            </td>
+                        </tr>
+
+                    </tbody>                    
+                </table>
+            </div>
+        </div>
+        <!-- end widget content -->
+    </div>
+    <!-- end widget div -->
+
+    <script type="text/javascript">
+        function ClearMerchantForm() {
+            $("#merchantUserName").val("");
+            $("#merchantPassword").val("");
+            $("#merchantKey").val("");
+            $("#merchantReference").val("");
+        }
+    </script>
+
+
+

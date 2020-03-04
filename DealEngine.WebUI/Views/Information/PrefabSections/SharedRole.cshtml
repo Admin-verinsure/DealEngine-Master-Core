@@ -1,0 +1,15 @@
+﻿
+@model DealEngine.WebUI.Models.InformationViewModel
+
+    <div id="SharedRole">
+        <form class="client-form" name="SharedRoleForm">
+            @if (Model.SharedRoleViewModel != null)
+            {
+                @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRole/Existing.cshtml", Model.SharedRoleViewModel)
+            }
+            else
+            {
+                throw new Exception("empty model");
+            }
+            </form>
+    </div>

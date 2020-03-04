@@ -1,0 +1,29 @@
+﻿@model DealEngine.WebUI.Models.Milestone.MilestoneBuilderViewModel
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="AdvisoryPartial">
+            @if (Model.IsAdvisory)
+            {
+                @await Html.PartialAsync("ViewMilestoneAdvisoryContent", Model)
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div id="EmailPartial">
+            @if (Model.IsEmail)
+            {
+                @await Html.PartialAsync("ViewMilestoneEmailContent", Model)
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div id="TaskPartial">
+            @if (Model.IsUserTask)
+            {
+                @await Html.PartialAsync("ViewMilestoneTaskContent", Model)
+            }
+        </div>
+    </div>
+</div>
+

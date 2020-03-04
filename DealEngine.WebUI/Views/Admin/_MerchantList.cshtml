@@ -1,0 +1,17 @@
+﻿@model IEnumerable<DealEngine.WebUI.Models.MerchantViewModel>
+
+<!-- List Start-->
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.MerchantUserName)</td>
+        <td>@Html.DisplayFor(modelItem => item.MerchantPassword)</td>
+        <td>@Html.DisplayFor(modelItem => item.MerchantKey)</td>
+        <td>@Html.DisplayFor(modelItem => item.MerchantReference)</td>
+        <td>
+            @*@Ajax.FixedActionLink("Delete", "DeleteMerchant", new RouteValueDictionary (new {merchantKey = item.MerchantKey}),
+        new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "merchantList" })*@
+        </td>
+    </tr>
+}
+<!-- List End-->

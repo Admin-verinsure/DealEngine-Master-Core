@@ -1,0 +1,23 @@
+﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
+<!-- MAIN CONTENT -->
+    <div id="content" class="container">
+
+        <div class="form-group">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>  <span>
+                    <a href="~/Programme/TermSheetConfirguration/@Model.Id"> Package Term Sheet</a>
+                    > Edit Programme
+                </span>
+            </h1>
+        </div>
+        <div class="form-group">
+            <span>
+                <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("TermSheetConfirguration", "Programme",new { Id =@Model.Id })'" id="backbutton"><i class="fa fa-home"></i> Back </a>
+            </span>
+        </div>
+        <div class="form-group">
+            @await Html.PartialAsync("ProgrammeFormPartial", Model)
+        </div>
+    </div>
+

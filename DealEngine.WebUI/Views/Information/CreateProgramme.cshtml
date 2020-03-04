@@ -1,0 +1,47 @@
+﻿@model DealEngine.WebUI.Models.InformationBuilderViewModel
+
+<div id="content">
+
+    <section id="widget-grid" class="">
+        <div class="row">
+            <article class="col-sm-12 col-md-12 col-lg-6">
+                <!-- new widget -->
+                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-comments txt-color-white"></i> </span>
+                        <h2> Programme Templates </h2>
+                    </header>
+                    <!-- widget div-->
+                    <div>
+
+                        <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                            <label class="label required">Programme Name</label>
+
+                            <label class="input form-group">
+                                <i></i>
+                                <input class="form-control b " type="text" data-type="TEXTBOX" data-name="BoatName" id="ProgName" name="ProgName" placeholder="Programme Name" value="" required>
+                            </label>
+                            <p class="validationContainer" id="validateProgName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
+
+                            @*@Html.Bootstrap().Button().Text("Add").HtmlAttributes(new { onclick = "CreateProgramme('#boatTabs-3', '#tblBoat','boatTabs-1'); " }).Class("btn-sm AddupdateBoat").Id("AddupdateBoat")*@
+                        </section>
+
+
+
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+
+</div>
+<!-- END MAIN CONTENT -->
+@section pagespecific {
+
+    @Html.Partial("_InformationWizardScripts")
+
+}

@@ -1,0 +1,24 @@
+﻿@model DealEngine.WebUI.Models.SharedRoleViewModel
+
+@if (Model.OtherProfessionId != null)
+{
+    <div class="form-group">
+        <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
+        <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control" form="addtionalRoleInformationContainer">@Model.OtherProfessionId</textarea>
+    </div>
+
+    <div class="form-group">
+        <button class="btn-success btn" type="submit" onclick="SaveRoleTabTwo()">  Submit  </button>
+    </div>
+}
+else
+{
+    <div class="form-group">
+        <label for="OtherProfessionId">You have specified Other Profession, please provide further details: </label>
+        <textarea id="OtherProfessionId" name="OtherProfessionId" type="Text" class="form-control" form="addtionalRoleInformationContainer"></textarea>
+    </div>
+
+    <div class="form-group">
+        <button class="btn-success btn" type="submit" onclick="SaveRoleTabTwo()">  Submit  </button>
+    </div>
+}

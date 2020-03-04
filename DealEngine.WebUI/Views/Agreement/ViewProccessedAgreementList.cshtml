@@ -1,0 +1,37 @@
+﻿@model BaseListViewModel<DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel>
+
+<!-- MAIN CONTENT -->
+<div id="content" class="container">
+    <div class="form-group">
+        <h1 class="page-title txt-color-blueDark">
+            <a href="~/Home/Index"> Home</a>
+            > <span>@ViewBag.Title</span>
+        </h1>
+    </div>
+    <div class="form-group">
+        <a class="btn btn-primary btn-sm" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
+    </div>
+    <!-- widget grid -->
+    <div id="widget-grid" class="form-group">
+        <div class="client-form">
+            <div class="card">
+                <div class="card-header">
+                    <h6>
+                        @ViewBag.Title
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model)
+                    {
+                        @await Html.PartialAsync("Partials/ViewAgreement", item)
+                        <h3><strong>Documents </strong></h3>
+                        @await Html.PartialAsync("Partials/ViewAgreementDocs", item.Documents)
+
+                    }
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
+
+

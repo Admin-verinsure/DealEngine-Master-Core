@@ -1,0 +1,53 @@
+﻿@model DealEngine.WebUI.Models.SharedRoleViewModel
+
+<ul id="sharedRoleTabs" class="nav nav-tabs d-sm-flex">
+    <li class="nav nav-item" ><a href="#sharedRoleTabs1" data-toggle="tab"> Shared Roles </a></li>
+    <li class="nav nav-item" ><a href="#sharedRoleTabs2" data-toggle="tab"> Additional Information </a></li>
+</ul>
+
+<div id="sharedRoleTabs1" class="tab-content">
+    <div class="form-group">
+        <label for="sharedRoleTemplates">Select Roles</label>
+        <select data-placeholder="Choose Shared Role" id="sharedRoleTemplates" name="sharedRoleTemplates" multiple class="col-6 chosen-select form-control b" required onchange="SharedRoleOnChange()">
+            @foreach (var role in Model.SharedRoles)
+            {
+                <option selected="@role.Selected" value="@role.Value">@role.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <table id="sharedRoleTable" class="table">
+            <thead>
+                <tr>
+                    @foreach (var sharedDataRole in Model.SharedDataRoles)
+                    {
+                        <th scope="col">@sharedDataRole.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var sharedDataRole in Model.SharedDataRoles)
+                    {
+                        <th scope="row">
+                            <input class="form-control" type="text" name="@sharedDataRole.Id" id="@sharedDataRole.Id" maxlength="3" value="@sharedDataRole.Count">
+                        </th>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-group">
+        <div class="footer" id="btnSharedRoleSubmit">
+            <input type="submit" value="Submit" class="btn btn-success" onclick="SaveRoleTabOne()">
+        </div>
+        <div class="footer" id="additionalRoleInfomationBtn" style="display:none">
+            <button class="btn-primary btn" onclick="SaveRoleTabOne(true)">Submit To Save</button>
+        </div>
+    </div>
+</div>
+<div id="sharedRoleTabs2" class="tab-content">
+    @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRole/AdditionalQuestions.cshtml", Model)
+</div>

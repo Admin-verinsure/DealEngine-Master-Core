@@ -1,0 +1,17 @@
+﻿@model IEnumerable<DealEngine.WebUI.Models.PaymentGatewayViewModel>
+
+<!-- List Start-->
+@foreach (var item in Model)
+{
+<tr>
+    <td>@Html.DisplayFor(modelItem => item.PaymentGatewayName)</td>
+    <td>@Html.DisplayFor(modelItem => item.PaymentGatewayWebServiceURL)</td>
+    <td>@Html.DisplayFor(modelItem => item.PaymentGatewayResponsePageURL)</td>
+    <td>@Html.DisplayFor(modelItem => item.PaymentGatewayType)</td>
+    <td>
+        @*@Ajax.FixedActionLink("Delete", "DeletePaymentGateway", new RouteValueDictionary (new {paymentGatewayWebServiceURL = item.PaymentGatewayWebServiceURL}),
+    new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "paymentGatewayList" })*@
+    </td>
+</tr>
+}
+<!-- List End-->

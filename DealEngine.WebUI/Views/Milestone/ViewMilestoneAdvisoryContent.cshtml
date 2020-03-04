@@ -1,0 +1,24 @@
+﻿@model DealEngine.WebUI.Models.Milestone.MilestoneBuilderViewModel
+
+
+<div class="form-group">
+    @Html.TextAreaFor(m => m.AdvisoryContent.Advisory, new { id = "advisory", name = "content", cols = "100", rows = "10", @class = "form-control", @placeholder = "Enter Advisory", onchange = "SaveStatus();" })
+</div>
+
+<script type="text/javascript">
+    ClassicEditor
+        .create(document.querySelector('#advisory'))
+        .then(newAdvisory => {
+            editorAdvisory = newAdvisory;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    function GetAdvisoryContentJson() {
+
+        return {
+            Advisory: editorAdvisory.getData()
+        };
+    }
+</script>

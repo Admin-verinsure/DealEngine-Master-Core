@@ -1,0 +1,124 @@
+﻿@model DealEngine.WebUI.Models.Programme.ClientProgrammeInfoViewModel
+
+
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <!-- col -->
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-file-o"></i><a href="~/Programme/MyProgrammes/@Model.Id"> Programmes</a>
+                <span>
+                    <a href="~/Programme/TermSheetTemplate/@Model.Id"> > Package Term Sheet</a>
+                    <a href="~/Programme/ManageClient/@Model.Id"> > Programme Owner</a>
+                   <a onclick="location.href='@Url.Action("OwnerProgrammes", "Programme",new {ownerId=@Model.OwnerId, Id =@Model.Id })'"> > Owner Programmes</a>
+                    > Client Program Details
+                </span>
+            </h1>
+        </div>
+        <!-- end col -->
+    </div>
+    <div>
+        <a onclick="location.href='@Url.Action("OwnerProgrammes", "Programme",new {ownerId=@Model.OwnerId, Id =@Model.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-circle-arrow-left"></span> </a>
+
+    </div>
+
+
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <div class="row">
+            <article class="col-sm-12 col-md-12 col-lg-6">
+                <!-- new widget -->
+                <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa--envelope txt-color-white"></i> </span>
+                        <h2> Client Program Details </h2>
+                    </header>
+                    @*<div class="row">*@
+
+                <section>
+                    <table class="table table-bordered table-striped table-hover table-condensed">
+
+
+                        <tbody>
+
+                            <tr>
+
+                                <td align="center">
+                                    <b>Owner</b>
+                                </td>
+
+                                <td align="center">
+                                    @Model.Name
+                                </td>
+
+                            </tr>
+
+                            <tr>
+
+                                <td align="center">
+                                    <b>Contact Email</b>
+                                </td>
+
+                                <td align="center">
+                                    <i class="fa fa-envelope"></i>
+                                    @Model.Email
+                                </td>
+
+                            </tr>
+                            <tr>
+
+                                <td align="center">
+                                    <b>Phone</b>
+                                </td>
+
+                                <td align="center">
+                                    <i class="fa fa-phone-square"></i>
+                                    @Model.Phone
+                                </td>
+
+                            </tr>
+                            <tr>
+
+                                <td align="center">
+                                    <b>Date created</b>
+                                </td>
+
+                                <td align="center">
+                                    @Model.DateCreated
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <p>
+                        <a onclick="location.href='@Url.Action("EditClientProgrammeDetails", "Programme",new { programmeId = Model.ProgramId, Id =Model.Id,OwnerId=Model.OwnerId })'" style="color:forestgreen;font-size:15px; cursor:pointer"> <span _ngcontent-c7="" class="glyphicon glyphicon-edit"></span> </a>                        
+                    </p>
+                    <p>
+                        <a onclick="location.href='@Url.Action("ViewProgrammeDetails", "Information",new { id =  Model.ProgramId})'" style="cursor:pointer" align="center">
+                            View Client Information Sheet
+                        </a>
+                    </p>
+                    <p>
+                        <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { id =  Model.ProgramId})'" style="cursor:pointer" align="center">
+                            View Client Agreement
+                        </a>
+                    </p>
+                    <p>
+                        <a onclick="location.href='@Url.Action("EditBillingConfiguration", "Programme", new { programmeId = Model.ProgramId })'" style="cursor:pointer" align="center">
+                            Edit Billing Information Configuration
+                        </a>
+                    </p>
+
+                </section>
+                    @*</div>*@
+
+                </div>
+            </article>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,45 @@
+﻿@model DealEngine.WebUI.Models.UserTaskViewModel
+
+<div id="content">
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
+                     data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+
+                    <header>
+                        <h2>Details</h2>
+                    </header>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                                    @Html.TextBoxFor(m => m.Details, new { HtmlAttribute = new { @placeholder = @Model.Details } })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <header>
+                        <h2>Description</h2>
+                    </header>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
+                                    @Html.TextBoxFor(m => m.Description, new { HtmlAttribute = new { @placeholder = @Model.Description } })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>

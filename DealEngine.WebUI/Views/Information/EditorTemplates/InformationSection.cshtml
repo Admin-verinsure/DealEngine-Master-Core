@@ -1,0 +1,23 @@
+﻿@model InformationSectionViewModel
+
+<div>
+    <h4>@Model.Name</h4>
+    <div class="padding-10">
+        <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+            <fieldset>
+                <div class="row">
+
+                    @if (Model.Items != null)
+                    {
+                        @Html.HiddenFor(m => m.Id)
+                        @Html.EditorFor(m => m.Items)
+                    }
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+</div>
+
+

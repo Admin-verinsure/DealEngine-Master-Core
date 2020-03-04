@@ -1,0 +1,41 @@
+﻿@model DealEngine.WebUI.Models.Programme.ActivityBuilderVM
+
+
+<div class="tab-pane active" id="tab1">
+    <br />
+    <h3><strong>Setup </strong> - New Business Activity</h3>
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label><strong>Public Activities</strong></label>
+                <div class="input-group">
+                    <select class="cselect form-control" data-placeholder="Activities" id="Activities" multiple="multiple" name="@Html.NameFor(m => m.SelectedActivities)" style="display: none;">
+                        @foreach (var Activity in Model.Activities)
+                        {
+                            <option value="@Activity.Value">@Activity.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="smart-form">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(m => m.Ispublic)
+                        <i></i>I want these Activity to be publicly available.
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,23 @@
+﻿@model BaseListViewModel<DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel>
+<!-- NEW WIDGET START -->
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <span class="widget-icon">
+                    <h6><i class="fa fa-list-alt"></i> @ViewBag.Title  </h6>
+                </span>
+            </div>
+            <div id="nopaymentsection" class="card-body">
+                @foreach (var item in Model)
+                {
+                    <div class="form-group">
+                        @await Html.PartialAsync("Partials/ViewNoPaymentRequiredMsg", item)
+                    </div>
+                    break;
+                }
+                <div class="form-group float-right">
+                    <button onclick="bypassPayment()" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>

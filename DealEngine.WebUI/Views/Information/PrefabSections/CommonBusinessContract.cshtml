@@ -1,0 +1,535 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+        <div id="BusinessContracttabs">
+            <ul id="tab" class="nav nav-tabs">
+                <li class="nav nav-tabs active"> <a href="#businessContractTabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#businessContractTabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#businessContractTabs3"> Add </a> </li>
+                <li class="nav nav-tabs"> <a href="#businessContractTabs4" Class="BusinessContractRemoved"> List Removed </a> </li>
+
+            </ul>
+
+            <div id="businessContractTabs1" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script type="text/javascript">
+
+                                $(window).on('load',function () {
+                                        $("#tblBusinessContract").jqGrid({
+                                            url: "/Services/GetBusinessContracts?informationId=@Model.AnswerSheetId&removed=false",
+                                            datatype: "xml",
+                                            mtype: "GET",
+                                            async: true,
+                                            colNames: ["", "Year", "Contract Title", "Construction Value", "Fees", "Contract Type", ""],
+                                            colModel: [
+                                                {
+                                                    name: "update", align: 'center',width:120, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                        return ('<button onclick="EditBusinessContract(\'' + cellvalue + '\', \'#tblBusinessContract\'); SetCurrentTab(\'businessContractTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                                    }
+                                                },
+                                                { name: "Year", align: 'center', key: 'true' },
+                                                { name: "Contract Title", align: 'center' },
+                                                { name: "Construction Value", align: 'center' },
+                                                { name: "Fees", align: 'center' },
+                                                { name: "Contract Type", align: 'center' },
+                                                {
+                                                    name: "update", align: 'center',width:120, search: false, formatter: function (cellvalue, options, rowobject) {
+                                                        return ('<button onclick="SetBusinessContractRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblBusinessContract\', \'#tblRemovedBusinessContract\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                                    }
+                                                }
+                                            ],
+                                            autowidth: true,
+                                            shrinkToFit: true,
+                                            pager: "#pagerBusinessContract",
+                                            rowNum: 10,
+                                            rowList: [10, 20, 30],
+                                            sortname: "Year",
+                                            sortorder: "desc",
+                                            viewrecords: true,
+                                            gridview: true,
+                                            autoencode: true
+                                        });
+                                        $("#tblBusinessContract").jqGrid('navGrid',
+                                            '#pagerBusinessContract',
+                                            { edit: false, add: false, del: false },
+                                            //options
+                                            { height: 280, reloadAfterSubmit: false },
+                                            // edit options
+                                            { height: 280, reloadAfterSubmit: false },
+                                            // add options
+                                            { reloadAfterSubmit: false },
+                                            // del options
+                                            { sopt: ['eq', 'bw', 'cn'] }
+                                            // search options
+                                        );
+
+
+                                });
+
+                            </script>
+                            <table id="tblBusinessContract"><tr><td></td></tr></table>
+
+
+
+                            <div id="pagerBusinessContract"></div>
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="businessContractTabs2" class="tab-content">
+
+                <fieldset id="fieldset">
+                    <input id="BusinessContractId" name="BusinessContractId" type="hidden" />
+                    <div class="row">
+                        
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Year</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Year" id="Year" name="Year" placeholder="Year" value="">
+                            </label>
+                            <p class="validationContainer" id="validateYear"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Contract Title</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="ContractTitle" id="ContractTitle" name="ContractTitle" placeholder="Contract Title" value="">
+                            </label>
+                            <p class="validationContainer" id="validateContractTitle"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Construction Value</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="ConstructionValue" id="ConstructionValue" name="ConstructionValue" placeholder="Construction Value" value="">
+                            </label>
+                            <p class="validationContainer" id="validateConstructionValue"></p>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Fees</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Fees" id="Fees" name="Fees" placeholder="Fees" value="">
+                            </label>
+                            <p class="validationContainer" id="validateFees"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label cgmodalLabel required">Contract Type</label>
+                            <label class="input">
+                                <select class="form-control" id="ContractType" name="ContractType">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Residential">Residential</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="New">New</option>
+                                    <option value="Alteration">Alteration</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateContractType"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            <button onclick="ValidateBusinessContract(event,'#businessContractTabs2', '#tblBusinessContract','businessContractTabs1')" class="btn-sm updateBoat" id="updateBusinessContract">Update</button>
+                            @*<button onclick="ClearBoats(event,'#businessContractTabs2','businessContractTabs1')" class="btn-sm AddClearBusinessContract" id="ClearBusinessContract">Cancel Update</button>*@
+                            <button onclick="ClearBoats(event,'#businessContractTabs2','businessContractTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div id="businessContractTabs3" class="tab-content">
+
+                <fieldset id="fieldset">
+                    <input id="BusinessContractId" name="BusinessContractId" type="hidden" />
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Year</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Year" id="AddYear" name="Year" placeholder="Year" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddYear"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Contract Title</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="ContractTitle" id="AddContractTitle" name="ContractTitle" placeholder="Contract Title" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddContractTitle"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label">Construction Value</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="ConstructionValue" id="AddConstructionValue" name="ConstructionValue" placeholder="Construction Value" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddConstructionValue"></p>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Fees</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Fees" id="AddFees" name="Fees" placeholder="Fees" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddFees"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row">
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label cgmodalLabel required">Contract Type</label>
+                            <label class="input">
+                                <select class="form-control" id="AddContractType" name="ContractType">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Residential">Residential</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="New">New</option>
+                                    <option value="Alteration">Alteration</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddContractType"></p>
+
+                        </section>
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            <button onclick="ValidateAddBusinessContract(event,'#businessContractTabs3', '#tblBusinessContract','businessContractTabs1')" class="btn-sm AddupdateBoat" id="updateBusinessContract">Add</button>
+                            @*<button onclick="ClearBoats(event,'#businessContractTabs3','businessContractTabs1')" class="btn-sm AddClearBusinessContract" id="ClearBusinessContract">Clear and Cancel</button>*@
+                            <button onclick="ClearBoats(event,'#businessContractTabs3','businessContractTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="businessContractTabs4" class="tab-content">
+
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            <script type="text/javascript">
+                                $(".BusinessContractRemoved").click(function () {
+						    $("#tblRemovedBusinessContract").jqGrid({
+						        url: "/Services/GetBusinessContracts?informationId=@Model.AnswerSheetId&removed=true",
+						        datatype: "xml",
+                                mtype: "GET",
+                                async: true,
+                                colNames: ["", "Year", "Contract Title", "Construction Value", "Fees", "Contract Type"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject)
+                                        { return '<button onclick="SetBusinessContractRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedBusinessContract\', \'#tblBusinessContract\'); SetCurrentTab(\'businessContractTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                    },
+                                    { name: "Year", align: 'center', key: 'true' },
+                                    { name: "Contract Title", align: 'center' },
+                                    { name: "Construction Value", align: 'center' },
+                                    { name: "Fees", align: 'center' },
+                                    { name: "Contract Type", align: 'center' }
+								],
+						        autowidth: true,
+						        pager: "#pagerRemovedBusinessContract",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+                                sortname: "Year",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#tblRemovedBusinessContract").jqGrid('navGrid',
+						    	'#pagerRemovedBusinessContract',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                            </script>
+                            <table id="tblRemovedBusinessContract"><tr><td></td></tr></table>
+                            <div id="pagerRemovedBusinessContract"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+    function UpdateChosen() {
+    // find all multiselect items and apply Chosen
+	$('.cselect').each(function() {
+		$('#'+this.id).trigger("chosen:updated");
+	});
+    };
+
+    function ValidateAddBusinessContract(event,tabId, tableId, currenttab) {
+        debugger;
+                event.preventDefault();
+
+        var contractType = $('#AddContractType').val();
+        var year = $('#AddYear').val();
+        var contractTitle = $('#AddContractTitle').val();
+        var constructionValue = $('#AddConstructionValue').val();
+        var fees = $('#AddFees').val();
+        var result = true;
+        if (contractType == "") {
+            $('#validateAddContractType').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddContractType').html("<font></font>");
+        }
+        if (year == "") {
+            $('#validateAddYear').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddYear').html("<font></font>");
+        }
+        if (contractTitle == "") {
+            $('#validateAddContractTitle').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddContractTitle').html("<font></font>");
+        }
+        if (constructionValue == "") {
+            $('#validateAddConstructionValue').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddConstructionValue').html("<font></font>");
+        }
+        if (fees == "") {
+            $('#validateAddFees').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateAddFees').html("<font></font>");
+        }
+        if (result) {
+            AddBusinessContract(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return result;
+        }
+    }
+
+    function EditBusinessContract(businessContractId, tableId) {
+       var _sheetId = $('#AnswerSheetId').val();
+
+       var postData = {
+		'businessContractId': businessContractId,
+		'answerSheetId': _sheetId
+	};
+
+        $('#getDetailsModal').show();
+	    $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("GetBusinessContract", "Services")',
+        type: "Post",
+        data: postData
+        })
+            .done(function (data) {
+                debugger;
+        $('#BusinessContractId').val(data.businessContractId);
+        $('#ContractType').val(data.contractType);
+        $('#Year').val(data.year);
+        $('#ContractTitle').val(data.contractTitle);
+        $('#ConstructionValue').val(data.constructionValue);
+        $('#Fees').val(data.fees);
+        $('#getDetailsModal').hide();
+        UpdateChosen();
+        });
+    };
+
+    function UpdateChosen() {
+    // find all multiselect items and apply Chosen
+	$('.cselect').each(function() {
+		$('#'+this.id).trigger("chosen:updated");
+	});
+    };
+
+    function SetCurrentTab(tabPaneId) {
+        debugger;
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger("click");
+        $('.nav-tabs a[href="#' + tabPaneId + '"]').trigger('reloadGrid');
+    };
+
+    function SetBusinessContractRemovedStatus(businessContractId, status, sourceTable, destTable) {
+
+            var postData = {
+		'businessContractId': businessContractId,
+		'status': status
+	};
+
+            $.ajax({
+            // change back once mono decides to fix
+            url: '@Url.Action("SetBusinessContractRemovedStatus", "Services")',
+            type: "Post",
+            data: postData,
+            async: true
+        })
+        .done(function (data) {
+            if (data === true) {
+                $(sourceTable).trigger('reloadGrid');
+                $(destTable).trigger('reloadGrid');
+                //$.smallBox({
+                //    title: "Location status has been updated",
+                //    color: "#5F895F",
+                //    iconSmall: "fa fa-check bounce animated",
+                //    timeout: 4000
+                //});
+            }
+        });
+    };
+
+
+    function ValidateBusinessContract(event,tabId, tableId, currenttab) {
+        debugger;
+                event.preventDefault();
+
+       var contractType = $('#ContractType').val();
+        var year = $('#Year').val();
+        var contractTitle = $('#ContractTitle').val();
+        var constructionValue = $('#ConstructionValue').val();
+        var fees = $('#Fees').val();
+        var result = true;
+        if (contractType == "") {
+            $('#validateContractType').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateContractType').html("<font></font>");
+        }
+        if (year == "") {
+            $('#validateYear').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateYear').html("<font></font>");
+        }
+        if (contractTitle == "") {
+            $('#validateContractTitle').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateContractTitle').html("<font></font>");
+        }
+        if (constructionValue == "") {
+            $('#validateConstructionValue').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateConstructionValue').html("<font></font>");
+        }
+        if (fees == "") {
+            $('#validateFees').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateFees').html("<font></font>");
+        }
+        if (result) {
+            AddBusinessContract(tabId, tableId);
+            SetCurrentTab(currenttab);
+        } else {
+            return result;
+        }
+    }
+
+
+    function AddBusinessContract(tabId, tableId) {
+        debugger;
+
+        var informationId = $('#AnswerSheetId').serialize();
+
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("AddBusinessContract", "Services")',
+	    type: "POST",
+	    data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
+	})
+	.done(function (data) {
+		//$.smallBox({
+		//    title: "BusinessContract at ("+data.ContractTitle+") has been saved",
+		//    color: "#5F895F",
+		//    iconSmall: "fa fa-check bounce animated",
+		//    timeout: 4000
+  //      });
+
+		// reload grid
+		$(tableId).trigger( 'reloadGrid' );
+		$('#BusinessContract').val("");
+		$(tabId + " :input").val("");
+
+	})
+        .fail(function (jqXHR, textStatus) {
+		alert("There was an error while trying to save the BusinessContract.");
+	});
+    };
+
+
+</script>
+
+

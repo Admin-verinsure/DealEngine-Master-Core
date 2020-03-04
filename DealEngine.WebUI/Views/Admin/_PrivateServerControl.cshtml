@@ -1,0 +1,38 @@
+﻿@model IEnumerable<DealEngine.WebUI.Models.PrivateServerViewModel>
+<!-- Header Start-->
+<header>
+    <span class="widget-icon"> <i class="fa fa-desktop text-white"></i> </span>
+    <h2> Private Servers </h2>
+</header>
+
+<form action="/Admin/AddPrivateServer" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#serverList"
+      data-ajax-success="ClearForm();" id="form0" method="post">
+    <table id="privateServersTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Server Name</th>
+                <th>Server Address</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="serverList">
+            @{ await Html.RenderPartialAsync("_PrivateServerList", Model); }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>@Html.TextBox("serverName")</td>
+                <td>@Html.TextBox("serverAddress") </td>
+                <td><button type="submit" class="btn btn-success btn-sm">Add</button></td>
+            </tr>
+        </tfoot>
+    </table>
+</form>
+
+
+<script type="text/javascript">
+    function ClearForm() {
+        $("#serverName").val("");
+        $("#serverAddress").val("");
+    }
+</script>
+

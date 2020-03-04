@@ -1,0 +1,118 @@
+﻿@model DealEngine.WebUI.Models.EmailTemplateViewModel
+
+@using DealEngine.WebUI.Helpers.CustomHtml
+
+<!-- MAIN CONTENT -->
+    <div id="content" class="container">
+
+        <div class="form-group">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+                <i class="fa-fw fa fa-home"></i>  <span>
+                    <a href="~/Programme/TermSheetConfirguration/@Model.BaseProgrammeID">Package Term Sheet</a>
+                    <a href="~/Programme/EmailTemplate/@Model.BaseProgrammeID">> Programme Email Templates</a>
+                    > Add/Edit Email Template
+
+                </span>
+            </h1>
+        </div>
+        <div class="form-group">
+            <span>
+                <a class="btn btn-primary btn-xs text-white" onclick="location.href='@Url.Action("EmailTemplate", "Programme",new { Id =@Model.BaseProgrammeID })'" id="backbutton"><i class="fa fa-home"></i> Back </a>
+            </span>
+        </div>
+        <div class="form-group">
+            <div class="card" id="wid-id-10">
+                <div class="card-header bg-primary text-white">
+                    <h2>@ViewBag.Title </h2>
+                </div>
+                <div class="card-body">
+                    <form action="~/Programme/SendEmailTemplates/@Model.BaseProgrammeID" method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+
+                        @Html.HiddenFor(m => m.BaseProgrammeID)
+                        @Html.HiddenFor(m => m.Type)
+                        @Html.HiddenFor(m => m.Description)
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>@Model.Description</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(m => m.Subject, new { style = "width: 300px;", @class = "form-control", @placeholder = "Subject" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.TextAreaFor(m => m.Body, new { @class = "form-control", @placeholder = "Body" })
+                                </div>
+
+                            </div>
+                            <div class="card-footer">
+                                @if (User.HasClaim("EditEmails", "EditEmails"))
+                                {
+                                    <div class="form-group">
+                                        <button onclick="SaveEmailTemplate()" class="btn btn-primary" id="SaveEmailTemplate">Save Email Template</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="ckmodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select an Image</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div id="images" class="modal-body col-sm-12" style="overflow-y:auto; height:355px;">
+            </div>
+            <div class="modal-footer" style="display:flex;">
+                <label for="selImg" style="float:left;">Selected Image: </label>
+                <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
+                <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+@section pagespecific {
+    <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
+    <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
+    <script src="~/lib/popper.js/umd/popper.js"></script>
+    <script src="~/ckeditor/ckeditor5-build-classic-tc/build/ckeditor.js"></script>
+    <link href="~/css/ckeditor.css" rel="stylesheet" />
+    <script src="~/js/ckeditorPlugin.js"></script>
+
+    <script type="text/javascript">
+        function SaveEmailTemplate() {
+
+            var body = window.editor.getData();
+			var bodyElement = $("#@Html.IdFor(m => m.Body)");
+            bodyElement.text(bodyElement.text(body).html());
+
+			$.ajax({
+				type: "POST",
+				url: '@Url.Action("SendEmailTemplates", "Programme")',
+			    data: $("#update-form").serialize() // serializes the form's elements.
+			})
+	        .done(function (json) {
+				debugger
+	        })
+	        .fail(function (err, ajaxOptions, thrownError) {
+                debugger;
+				console.log(err);
+				console.log(ajaxOptions);
+				console.log(thrownError);
+	        });
+        };
+
+    </script>
+
+}
+
+

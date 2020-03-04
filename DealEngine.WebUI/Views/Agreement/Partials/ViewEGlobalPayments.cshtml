@@ -1,0 +1,38 @@
+﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
+
+
+@{
+    var totalPremiums = 0d;
+    var premiumsGSTBrokerFee = 0d;
+    var brokerageFee = Model.AdministrationFee.Replace("$", "");
+    string eglobalstatus = "";
+
+    foreach (var item in Model.RiskPremiums)
+    {
+        var premium = item.TotalPremium.Replace("$", "");
+        totalPremiums += double.Parse(premium);
+    }
+    premiumsGSTBrokerFee = Math.Round((double.Parse(brokerageFee) + totalPremiums) * (1.15f), 2);
+
+    if (Model.EGlobalIsActive)
+    {
+        eglobalstatus = @"EGlobal site is active";
+    } else
+    {
+        eglobalstatus = @"EGlobal site is inactive";
+    }
+
+}
+
+<div class="input -group">
+    <label class="radio">
+        <input id="paymentEGlobal" name="paymentRadio" type="radio">
+        <i></i><strong>
+            Payment on Invoice (Cheque or Direct Credit) -- $@premiumsGSTBrokerFee including GST (eglobal status: @eglobalstatus)
+        </strong>
+    </label>
+</div>
+
+
+
+

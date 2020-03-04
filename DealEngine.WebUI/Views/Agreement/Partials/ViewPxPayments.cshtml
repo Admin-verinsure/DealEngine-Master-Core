@@ -1,0 +1,43 @@
+﻿@model DealEngine.WebUI.Models.Agreement.ViewAgreementViewModel
+
+
+@{
+    var totalPremiums = 0d;
+    var premiumsGSTBrokerFee = 0d;
+    var brokerageFee = Model.AdministrationFee.Substring(1);
+
+    foreach (var item in Model.RiskPremiums)
+    {
+        //var premium = item.TotalPremium.Replace("$", "");
+        var premium = item.TotalPremium.Substring(1);
+        totalPremiums += double.Parse(premium);
+    }
+    premiumsGSTBrokerFee = Math.Round((double.Parse(brokerageFee) + totalPremiums) * (1.15f) * (1.02f), 2);
+
+}
+
+<div class="container" id="pxpaycontainer">
+    <label class="radio">
+        <input id="paymentCreditCard" name="paymentRadio" type="radio">
+        <i></i><strong>
+            Credit Card -- $@premiumsGSTBrokerFee including GST
+        </strong>
+    </label>
+
+    <p>Payment by credit card will incur 2% +GST surcharge which will be included on your invoice.</p>
+    <p>The total amount to be charged to your credit card will be $@premiumsGSTBrokerFee</p>
+    <p>Payment can be made by Visa or MasterCard.</p>
+</div>
+
+<script type="text/javascript">
+    var nextbutton1 = document.getElementsByClassName("sw-btn-next");
+    $(nextbutton1).addClass("hidden");
+    $(nextbutton1).hide();
+</script>
+
+<style>
+
+    #pxpaycontainer {
+        margin-left: 0 !important;
+    }
+</style>

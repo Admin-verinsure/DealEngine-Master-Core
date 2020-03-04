@@ -1,0 +1,161 @@
+﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
+<!-- MAIN CONTENT -->
+<div id="content">
+    <!-- Bread crumb is created dynamically -->
+    <!-- row -->
+    <div class="row">
+        <!-- col -->
+        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+            <h1 class="page-title txt-color-blueDark">
+                <!-- PAGE HEADER -->
+            </h1>
+        </div>
+        <!-- end col -->
+    </div>
+
+    <!-- widget grid -->
+    <article class="container">
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-comments text-white"></i> </span>
+                <h2>Term Sheet Configuration - [@Model.programmeName] </h2>
+            </header>
+            <!-- widget div-->
+            <div>
+                <div class="widget-body widget-hide-overflow no-padding">
+                    <!-- content goes here -->
+                    <table class="table table-striped">
+                        <tbody>
+                            @if (User.HasClaim("ViewProgramme", "ViewProgramme"))
+                            {
+                                <tr>
+                                    <td>Programme</td>
+                                    <td> @Model.programmeName  </td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("EditProgramme", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewActivities", "ViewActivities"))
+                            {
+                                <tr>
+                                    <td>Activities</td>
+                                    <td>ANZSIC Codes</td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("ActivityBuilder", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+
+                            <tr>
+                                <td>Addresses</td>
+                                <td>Address API used </td>
+                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                            </tr>
+
+                            @if (User.HasClaim("ViewManageDocuments", "ViewManageDocuments"))
+                            {
+                                <tr>
+                                    <td>Manage Documents</td>
+                                    <td>Certificates, Schedules, Wordings, Invoices</td>
+                                    <td><a class="btn btn-success btn-sm" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewRules", "ViewRules"))
+                            {
+                                <tr>
+                                    <td>Rules</td>
+                                    <td>Configure the Rules</td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("ManageRules", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewEmails", "ViewEmails"))
+                            {
+                                <tr>
+                                    <td>Emails</td>
+                                    <td>System and proggramme specific</td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("EmailTemplate", "Programme", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewMilestones", "ViewMilestones"))
+                            {
+                                <tr>
+                                    <td>Milestones</td>
+                                    <td>Milestones</td>
+                                    <td><a class="btn btn-success btn-sm" href="/Milestone/MilestoneList"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewMarinas/FinancialInstitutions", "ViewMarinas/FinancialInstitutions"))
+                            {
+                                <tr>
+                                    <td>Marinas/Financial Institutions</td>
+                                    <td>Manage Marinas and Financial Institutions</td>
+                                    <td><a class="btn btn-success btn-sm" href="@Url.Action("AddNewOrganisation", "Organisation", new { Id = @Model.Id })"><i class="fa fa-search"></i> View</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewMotor", "ViewMotor"))
+                            {
+                                <tr>
+                                    <td>Motor</td>
+                                    <td>Motor API used   </td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewProducts", "ViewProducts"))
+                            {
+                                <tr>
+                                    <td>Products</td>
+                                    <td>Insurance Policies for adding to a programme   </td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewSections", "ViewSections"))
+                            {
+                                <tr>
+                                    <td>Sections</td>
+                                    <td>Sections for the Client Information Sheet   </td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewSpecialTerms", "ViewSpecialTerms"))
+                            {
+                                <tr>
+                                    <td>Special Terms</td>
+                                    <td>Endorsements</td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewUnderwritingRules", "ViewUnderwritingRules"))
+                            {
+                                <tr>
+                                    <td>Underwriting Rules</td>
+                                    <td>Underwriting Rules</td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewUsers", "ViewUsers"))
+                            {
+                                <tr>
+                                    <td>Users</td>
+                                    <td>User Management</td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            @if (User.HasClaim("ViewWater", "ViewWater"))
+                            {
+                                <tr>
+                                    <td>Water</td>
+                                    <td>Water Location API used</td>
+                                    <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                                </tr>
+                            }
+                            <tr>
+                                <td>Images</td>
+                                <td>Images Management</td>
+                                <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>        
+    </article>
+</div>
+

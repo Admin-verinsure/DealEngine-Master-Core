@@ -1,0 +1,375 @@
+﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
+
+@{
+    string EGlobalIsActiveOrNot = "";
+    if (Model.EGlobalIsActiveOrNot)
+    {
+        EGlobalIsActiveOrNot = @"EGlobal site is active";
+    }
+    else
+    {
+        EGlobalIsActiveOrNot = @"EGlobal site is inactive";
+    }
+
+}
+
+<!-- MAIN CONTENT -->
+<div id="content" class="container">
+
+    <div class="row">
+        <h1 class="page-title txt-color-blueDark">
+            <i class="fa-fw fa fa-home"></i>
+            <a href="~/Agreement/ViewAcceptedAgreement/@Model.clientprogramme.Id"> Agreement</a>
+            > <span>
+                Edit Billing Configuration
+            </span>
+        </h1>
+    </div>
+    <!-- end col -->
+    <div class="row">
+        <span>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.clientprogramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+        </span>
+    </div>
+
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="row">
+        <!-- new widget -->
+        <div class="jarviswidget jarviswidget-color-blue container-fluid" id="wid-id-2" data-widget-editbutton="true" data-widget-colorbutton="false">
+            <header>
+                <span class="widget-icon"> <i class="fa fa-envelope text-light"></i> </span>
+                <h2>Invoice Management</h2>
+            </header>
+
+            <table class="table table-bordered table-striped table-hover table-condensed">
+                <tbody>
+                    <tr>
+
+                        <td align="left">
+                            <b>eGlobal Status: </b>
+                        </td>
+
+                        <td align="left">
+                            @EGlobalIsActiveOrNot
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td align="left">
+                            <b>eGlobal Client Branch:</b>
+                        </td>
+
+                        <td align="left">
+                            <select class="browser-default custom-select custom-select-sm col-sm-3" id="branch">
+                                <option selected="selected" value="">-- Select here --</option>
+                                <option value="AKL">AKL</option>
+                                <option value="CHC">CHC</option>
+                                <option value="DUN">DUN</option>
+                                <option value="NAP">NAP</option>
+                                <option value="NPL">NPL</option>
+                                <option value="TGA">TGA</option>
+                                <option value="WEL">WEL</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td align="left">
+                            <b>eGlobal Client Number:</b>
+                        </td>
+
+                        <td align="left">
+                            <input id="clientId" class="form-control col-3" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td align="left">
+                            <b>Broker Salesperson User:</b>
+                        </td>
+
+                        <td align="left">
+                            @Model.BrokerContactUser.FullName (@Model.BrokerContactUser.SalesPersonUserName)
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td align="left">
+                            <b>Broker Branch:</b>
+                        </td>
+
+                        <td align="left">
+                            @Model.BrokerContactUser.DefaultOU.Name (@Model.BrokerContactUser.DefaultOU.EbixDepartmentCode)
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="2">
+                            <button onclick="SaveBillingConfiguration()" class="btn btn-success btn-sm" id="SaveBillingConfiguration"><i class="fa fa-edit"></i>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button onclick="ClearForm()" class="btn btn-danger btn-sm" id="ClearForm"><i class="fa fa-trash"></i>Clear</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button onclick="SendInvoice()" class="btn btn-success btn-sm" id="SendInvoice"><i class="fa fa-edit"></i>Send Invoice</button>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+            @if (Model.EGlobalSubmissions.Count > 0)
+            {
+                <table class="table table-bordered table-striped table-hover table-condensed">
+                    <tbody>
+                        <tr>
+
+                            <td colspan="3">
+                                <b>Transactions </b>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                <strong>Description</strong>
+                            </td>
+                            <td>
+                                <strong>Export Transaction XML</strong>
+                            </td>
+                        </tr>
+
+                        @foreach (var submission in Model.EGlobalSubmissions.OrderByDescending(esub => esub.DateCreated))
+                        {
+                    <tr>
+ 
+                        <td width="40%">
+                            @submission.SubmissionDesc
+                        </td>
+
+                            <td width="20%">
+                               <a href="#TransactionXMl" aria-hidden="true" style="color:forestgreen" data-toggle="modal" data-trans-xml="@submission.SubmissionRequestXML"><i class="fa fa-edit"> View Transaction XML </i></a>
+                            </td>
+
+                        <td width="15%">
+                            <button data-rev-trans="@submission.Id" class="btn btn-success btn-sm" id="ReverseTransaction"><i class="fa fa-edit"></i>Reverse Transaction</button>
+                        </td>
+
+                    </tr>
+
+                         
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="TransactionXMl" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Transaction Detail</h4>
+                <button data-dismiss="modal" data-backdrop="false" type="button" class="close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="textareaID" class="form-control" cols="1" rows="20" name="transxml"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*<div id="toNewWindow">
+    <p>open new window testykdhjkf fdgredg</p>
+</div>*@
+
+@*<div class="modal" id="TransactionXMl" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Transaction XML title</h4>
+                <button onclick="$('#TransactionXMl').hide()" type="button" class="close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="textareaID" name="transxml" class="form-control"></textarea>
+            </div>
+
+        </div>
+    </div>
+</div>*@
+
+@*@section pagespecific {
+
+        <script>
+
+        </script>
+    }*@
+@*@if (Model.EGlobalSubmissions.Count > 0)
+    {
+        <div id="content">
+            <form method="POST" id="update-form" class="client-form" enctype="multipart/form-data">
+                <header>  Invoice Management</header>
+                <table class="table table-bordered table-responsive-md table-striped text-center" id="eglobaltransactions">
+                    <tr>
+                        <th class="text-center" width="60%" style="color:black">Transaction Description</th>
+                        <th class="text-center" width="20%" style="color:black">Transaction Details</th>
+                        <th class="text-center" width="20%" style="color:black"></th>
+                    </tr>
+
+                    @foreach (var item in Model.EGlobalSubmissions)
+                    {
+                        <tr>
+                            <td class="pt-3-half" width="40%" contenteditable="true" id="ReferralName" style="color:black">
+                                @item.DateCreated
+                            </td>
+                            <td class="pt-3-half" width="20%" contenteditable="true" style="color:black">
+                                @item.SubmissionRequestXML
+                            </td>
+                            <td width="20%">
+
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </form>
+
+        </div>
+    }*@
+
+
+
+@section pagespecific {
+    <script>
+
+         $('#TransactionXMl').on('show.bs.modal', function (e) {
+             debugger;
+             //$('.modal').css('width', '70%');
+                                     $('.modal').css({ "width": "600px", "margin-left": "600px"  });
+             //$('.modal-content').css({ "height": "700px" });
+
+            //$('.modal').css({ "position": "absolute", "height":"400px" , "max-height" : "100%"});
+            var transxml = $(e.relatedTarget).data('trans-xml');
+             $('#textareaID').text(transxml);
+            //$(e.currentTarget).find('input[name="transxml"]').text("heelo");
+
+         });
+
+        $('#TransactionXMl').on('hidden.bs.modal', function () {
+            debugger;
+            $(".modal-fade").modal("hide");
+            $(".modal-backdrop").remove();
+        })
+
+        $('.btnView').click(function () {
+            debugger;
+            var prop = $(this).data('prop');
+            var w = window.open();
+             //var html =  $(this).data('prop').html();
+            $(w.document.body).val(prop);
+        });
+
+        $('#ReverseTransaction').click(function () {
+            debugger;
+            var transID = $(this).data('rev-trans');
+             //var html =  $(this).data('prop').html();
+           $.ajax({
+            type: "POST",
+            url: "@Url.Action("ReverseTransaction", "Programme")",
+            data: { TransId : transID },
+            traditional: true,
+            })
+                .done(function (data) {
+                window.location.href = data.url;
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("There was an error while trying to reverse your invoice.");
+                });
+        });
+
+
+
+        function ShowXML(e) {
+            debugger;
+
+            var prop = $(this).attr('data-trans-xml');
+                             var prerop = $(this).attr('trans-xml');
+
+                        //var transxml = $(e.relatedTarget).data('data-trans-xml');
+
+             var w = window.open();
+              var html = $("#toNewWindow").html();
+                $(w.document.body).html(html);
+        };
+
+
+        $(window).on("load", function () {
+            $('#clientId').val(@Model.EGlobalClientNumber);
+            $('#branch').val("@Model.EGlobalBranchCode");
+        });
+
+        var bcdata = [];
+        var programmeId;
+
+        function SendInvoice() {
+            programmeId = $('#Id').val();
+
+            $.ajax({
+            type: "POST",
+            url: "@Url.Action("SendInvoice", "Programme")",
+            data: { programmeId : programmeId },
+            traditional: true,
+            })
+                .done(function (data) {
+                    //$.smallBox({
+                    //    title: "Invoice has been sent",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
+                    window.location.href = data.url;
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("There was an error while trying to send your invoice.");
+                });
+        }
+
+        function SaveBillingConfiguration() {
+            addBCData();
+            debugger;
+            $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveBillingConfiguration", "Programme")",
+            data: { billingConfig : bcdata, programmeId : programmeId },
+            traditional: true,
+            })
+                .done(function (data) {
+                    //$.smallBox({
+                    //    title: "billing configuration has been saved",
+                    //    color: "#5F895F",
+                    //    iconSmall: "fa fa-check bounce animated",
+                    //    timeout: 4000
+                    //});
+                    alert("Saved.");
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("You are going to save billing configuration.");
+                });
+        }
+
+        function ClearForm() {
+            document.getElementById("branch").value = "";
+            document.getElementById("clientId").value = "";
+        }
+
+        function addBCData() {
+            programmeId = $('#Id').val();
+            var branch = document.getElementById("branch").value;
+            var clientId = document.getElementById("clientId").value;
+            bcdata = [branch, clientId];
+        }
+
+    </script>
+
+}
+
