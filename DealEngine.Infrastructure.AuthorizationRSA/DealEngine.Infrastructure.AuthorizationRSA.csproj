@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <FileUpgradeFlags>40</FileUpgradeFlags>
-    <UpgradeBackupLocation>C:\inetpub\wwwroot\techcertain2019core\Backup\DealEngine.Infrastructure.AuthorizationRSA\</UpgradeBackupLocation>
+    <UpgradeBackupLocation>C:\inetpub\wwwroot\DealEngine2019core\Backup\DealEngine.Infrastructure.AuthorizationRSA\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -10,6 +10,6 @@
     <PackageReference Include="NLog" Version="4.6.8" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TechCertain.Services.Interfaces\TechCertain.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\DealEngine.Services.Interfaces\DealEngine.Services.Interfaces.csproj" />
   </ItemGroup>
 </Project>

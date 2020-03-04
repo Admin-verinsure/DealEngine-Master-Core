@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TechCertain.Infrastructure.BaseLdap.Interfaces;
-using TechCertain.Infrastructure.BaseLdap.Repositories;
-using TechCertain.Infrastructure.BaseLdap.Services;
-using TechCertain.Infrastructure.Legacy.Interfaces;
-using TechCertain.Infrastructure.Legacy.Repositories;
-using TechCertain.Infrastructure.Legacy.Services;
+using DealEngine.Infrastructure.BaseLdap.Interfaces;
+using DealEngine.Infrastructure.BaseLdap.Repositories;
+using DealEngine.Infrastructure.BaseLdap.Services;
+using DealEngine.Infrastructure.Legacy.Interfaces;
+using DealEngine.Infrastructure.Legacy.Repositories;
+using DealEngine.Infrastructure.Legacy.Services;
 
 namespace DealEngine.Infrastructure.AppInitialize.BaseLdapPackage
 {

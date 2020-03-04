@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <FileUpgradeFlags>40</FileUpgradeFlags>
-    <UpgradeBackupLocation>C:\inetpub\wwwroot\techcertain2019core\Backup\Bismuth.Ldap\</UpgradeBackupLocation>
+    <UpgradeBackupLocation>C:\inetpub\wwwroot\DealEngine2019core\Backup\Bismuth.Ldap\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
 </Project>

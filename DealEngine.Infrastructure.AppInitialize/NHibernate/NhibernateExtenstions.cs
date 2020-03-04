@@ -8,7 +8,7 @@ using NHibernate.Extensions.NpgSql;
 using NHibernate.Mapping.ByCode;
 using System;
 using System.Reflection;
-using TechCertain.Infrastructure.FluentNHibernate;
+using DealEngine.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
 {
@@ -17,7 +17,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
         public static IServiceCollection AddNHibernate(this IServiceCollection services)
         {
 
-            var connectionStringName = "TechCertainConnection";
+            var connectionStringName = "DealEngineConnection";
             var sessionFactory = SessionFactoryBuilder.BuildSessionFactory(connectionStringName);
             
             services.AddSingleton(sessionFactory);

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.FluentNHibernate;
+using DealEngine.Domain.Entities;
+using DealEngine.Infrastructure.FluentNHibernate;
 
 namespace DealEngine.Infrastructure.AppInitialize
 {
@@ -56,7 +56,7 @@ namespace DealEngine.Infrastructure.AppInitialize
 
         void SetupProducts()
         {
-            var defaultOrganisation = _organisationRepository.FindAll().FirstOrDefault(o => o.Name == "TechCertain Ltd.");
+            var defaultOrganisation = _organisationRepository.FindAll().FirstOrDefault(o => o.Name == "DealEngine Ltd.");
 
             var baseProducts = new Product[] {
                 CreateCyberProduct (defaultOrganisation),

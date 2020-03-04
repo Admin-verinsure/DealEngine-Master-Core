@@ -10,9 +10,9 @@ using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate.Dialect;
 using FluentNHibernate.Automapping;
-using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.FluentNHibernate.MappingConventions;
-using TechCertain.Infrastructure.FluentNHibernate.MappingOverrides;
+using DealEngine.Domain.Entities;
+using DealEngine.Infrastructure.FluentNHibernate.MappingConventions;
+using DealEngine.Infrastructure.FluentNHibernate.MappingOverrides;
 using NHibernate.Extensions.NpgSql;
 using System.Reflection;
 
@@ -30,7 +30,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Nhibernate
                                         .AddJsonFile("appsettings.json")
                                         .Build();
 
-            NpgsqlConnectionString = configuration.GetConnectionString("TechCertainConnection");
+            NpgsqlConnectionString = configuration.GetConnectionString("DealEngineConnection");
 
             var session = Fluently.Configure()
                 .Database(PostgreSQLConfiguration.Standard.ConnectionString(NpgsqlConnectionString)

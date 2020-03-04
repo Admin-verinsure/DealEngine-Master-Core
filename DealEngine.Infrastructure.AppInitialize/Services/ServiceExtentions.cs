@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using TechCertain.Infrastructure.Tasking;
-using TechCertain.Services.Impl;
-using TechCertain.Services.Impl.UnderwritingModuleServices;
-using TechCertain.Services.Interfaces;
+using DealEngine.Infrastructure.Tasking;
+using DealEngine.Services.Impl;
+using DealEngine.Services.Impl.UnderwritingModuleServices;
+using DealEngine.Services.Interfaces;
 
 namespace DealEngine.Infrastructure.AppInitialize.Services
 {
@@ -15,7 +15,7 @@ namespace DealEngine.Infrastructure.AppInitialize.Services
             var repositoryAssembly = typeof(EmailService).Assembly;
             var registrations =
                 from type in repositoryAssembly.GetExportedTypes()
-                where type.Namespace == "TechCertain.Services.Impl"
+                where type.Namespace == "DealEngine.Services.Impl"
                 where type.GetInterfaces().Any()
                 select new { Service = type.GetInterfaces().Single(), Implementation = type };
 

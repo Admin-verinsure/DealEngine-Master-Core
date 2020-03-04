@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TechCertain.Infrastructure.BaseLdap.Repositories;
-using TechCertain.Services.Interfaces;
+using DealEngine.Infrastructure.BaseLdap.Repositories;
+using DealEngine.Services.Interfaces;
 
 namespace DealEngine.Infrastructure.AppInitialize.Repositories
 {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using TechCertain.Services.Interfaces;
+using DealEngine.Services.Interfaces;
 
 namespace DealEngine.Infrastructure.AuthorizationRSA
 {

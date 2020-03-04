@@ -14,10 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechCertain.Infrastructure.BaseLdap\TechCertain.Infrastructure.BaseLdap.csproj" />
-    <ProjectReference Include="..\TechCertain.Infrastructure.FluentNHibernate\TechCertain.Infrastructure.FluentNHibernate.csproj" />
-    <ProjectReference Include="..\TechCertain.Infrastructure.Logging\TechCertain.Infrastructure.Logging.csproj" />
-    <ProjectReference Include="..\TechCertain.Services.Impl\TechCertain.Services.Impl.csproj" />
+    <ProjectReference Include="..\DealEngine.Infrastructure.BaseLdap\DealEngine.Infrastructure.BaseLdap.csproj" />
+    <ProjectReference Include="..\DealEngine.Infrastructure.FluentNHibernate\DealEngine.Infrastructure.FluentNHibernate.csproj" />
+    <ProjectReference Include="..\DealEngine.Infrastructure.Logging\DealEngine.Infrastructure.Logging.csproj" />
+    <ProjectReference Include="..\DealEngine.Services.Impl\DealEngine.Services.Impl.csproj" />
   </ItemGroup>
 
 </Project>

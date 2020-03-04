@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TechCertain.Domain.Entities;
-using TechCertain.Infrastructure.Ldap;
-using TechCertain.Infrastructure.Ldap.Interfaces;
-using TechCertain.Infrastructure.Ldap.Mapping;
-using TechCertain.Infrastructure.Ldap.Services;
+using DealEngine.Domain.Entities;
+using DealEngine.Infrastructure.Ldap;
+using DealEngine.Infrastructure.Ldap.Interfaces;
+using DealEngine.Infrastructure.Ldap.Mapping;
+using DealEngine.Infrastructure.Ldap.Services;
 
 namespace DealEngine.Infrastructure.AppInitialize.BaseLdapPackage
 {
