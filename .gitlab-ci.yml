@@ -19,7 +19,7 @@ deploy_staging:
   - ssh-add <(echo "$PKgitlab")
   - ssh ubuntu@"$URLdevops" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/dealengine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdevops:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLdevops" './DE-DeployFin.sh'
 
   environment:
@@ -36,7 +36,7 @@ deploy_demo:
   - ssh-add <(echo "$PKgitlab")
   - ssh ubuntu@"$URLdemo" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/dealengine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdemo:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLdemo:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLdemo" './DE-DeployFin.sh'
 
   environment:
@@ -55,7 +55,7 @@ deploy_professionalrisks:
   - ssh-add <(echo "$PKgitlab")
   - ssh ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/dealengine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
 
   environment:
@@ -72,7 +72,7 @@ deploy_mydealslive:
   - ssh-add <(echo "$PKgitlab")
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLmydealslive" './DE-DeployPrep.sh'
   - 'dotnet publish -c Release'
-  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/dealengine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLmydealslive:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLmydealslive:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLmydealslive" './DE-DeployFin.sh'
 
   environment:
