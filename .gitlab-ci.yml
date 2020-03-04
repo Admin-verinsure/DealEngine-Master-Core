@@ -55,9 +55,9 @@ deploy_professionalrisks:
   - ssh-add <(echo "$PKgitlab")
   - ssh -o StrictHostKeyChecking=no ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
   - ls -la
-  #- 'dotnet publish -c Release'
-  #- rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
-  #- ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/TechCertain.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
 
   environment:
     name: professionalrisks
