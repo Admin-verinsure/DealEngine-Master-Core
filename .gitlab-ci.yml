@@ -53,7 +53,9 @@ deploy_professionalrisks:
   script:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ssh ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
+  - ssh ubuntu@"$URLprorisks" 'ls -la'
+
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
