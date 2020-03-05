@@ -46,7 +46,7 @@ deploy_demo:
   dependencies:
     - build
 
-# useful for first time connection (- ssh -o StrictHostKeyChecking=no ubuntu@"$URLmpak" 'command')
+# useful for first time connection (- ssh -o StrictHostKeyChecking=no ubuntu@"$URLmpak" 'command') 
 
 deploy_professionalrisks:
   stage: deploy
