@@ -53,12 +53,11 @@ deploy_professionalrisks:
   script:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
-  - ssh ubuntu@"$URLprorisks" 'ls -la'
-
+  - ssh ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
+  - cp ~/aon/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
   - 'dotnet publish -c Release'
-#  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
-  - scp -r /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
+#  - scp -r /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
 
   environment:
