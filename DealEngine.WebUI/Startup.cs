@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using DealEngine.Infrastructure.AppInitialize;
 using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Localization;
+using AutoMapper;
 
 namespace DealEngine.WebUI
 {
@@ -43,6 +44,7 @@ namespace DealEngine.WebUI
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-NZ", uiCulture: "en-NZ");
             });
 
+            services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddRepositories();
             services.AddBaseLdap();
             services.AddElmah(options =>

@@ -205,10 +205,12 @@
                        ValidateDNO();
                    }
                }
+               postData = { clientInformationId: clientInformationSheet }
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
+                   data: postData
+                   //data: $("#tab1 :input").serialize({ json: true })
                })
                    .done(function (url) {
                        $("#agreementView").load(url, function () {                           
@@ -270,8 +272,8 @@
 
                $.ajax({
                    url: '@Url.Action("QuoteToAgree", "Information")',
-                   type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
+                   type: "GET",
+                   data: postdata
                })
                    .done(function (url) {
                        $("#agreementDeclarationView").load(url, function () {

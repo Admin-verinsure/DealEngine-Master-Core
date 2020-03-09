@@ -1598,16 +1598,50 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model = new ViewAgreementViewModel();
                     model.ProgrammeStopAgreement = true;
-                    model.AgreementMessage = clientProgramme.BaseProgramme.SubsystemtMessage;
-                    try
+                    var message = clientProgramme.BaseProgramme.SubsystemMessage;
+                    if (string.IsNullOrWhiteSpace(message))
                     {
-                        await _subsystemService.CreateSubObjects(clientProgramme.Id, answerSheet);
+                        message = "subsystem invoked";
+                    }
+                    model.AgreementMessage = message;
+
+                    var isBaseClientProgramme = await _programmeService.IsBaseClass(clientProgramme);
+                    if (isBaseClientProgramme)
+                    {
+                        bool isComplete;
+                        if (clientProgramme.SubClientProgrammes.Count != 0)
+                        {
+                            isComplete = await _programmeService.SubsystemCompleted(clientProgramme);
+                            if (isComplete)
+                            {
+                                return PartialView("_ViewAgreementList", models);
+                            }
+                            else
+                            {
+                                model.AgreementMessage = "not all subsystem client information sheets have been completed";
+                                return PartialView("_ViewStopAgreementMessage", model);
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                await _subsystemService.CreateSubObjects(clientProgramme.Id, answerSheet);
+                                return PartialView("_ViewStopAgreementMessage", model);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("Create Sub Objects failed", ex);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        message = "subsystem client information sheet completed and have notified the broker";
+                        //Notify broker 
                         return PartialView("_ViewStopAgreementMessage", model);
                     }
-                    catch(Exception ex)
-                    {
-                        throw ex;
-                    }
+
                 }
                 else
                 {
@@ -1685,7 +1719,7 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgrammebyId(id);
+                var clientProgramme = await _programmeService.GetClientProgrammebyId(id);
                 Organisation insured = clientProgramme.Owner;
                 ClientInformationSheet answerSheet = clientProgramme.InformationSheet;
 
@@ -1703,22 +1737,40 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                //subsystem check
+                if(clientProgramme.Agreements.Count == 0)
                 {
                     ViewAgreementViewModel model = new ViewAgreementViewModel
                     {
                         EditEnabled = true,
-                        ClientAgreementId = agreement.Id,
                         ClientProgrammeId = clientProgramme.Id,
-                        Declaration = clientProgramme.BaseProgramme.Declaration
+                        Declaration = "Declaration for subsystem"
                     };
 
                     model.Advisory = advisoryDesc;
-                    model.Status = agreement.Status;
+                    model.Status = answerSheet.Status;
                     model.InformationSheetId = answerSheet.Id;
                     models.Add(model);
                 }
+                else
+                {
+                    foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                    {
+                        ViewAgreementViewModel model = new ViewAgreementViewModel
+                        {
+                            EditEnabled = true,
+                            ClientAgreementId = agreement.Id,
+                            ClientProgrammeId = clientProgramme.Id,
+                            Declaration = clientProgramme.BaseProgramme.Declaration
+                        };
 
+                        model.Advisory = advisoryDesc;
+                        model.Status = agreement.Status;
+                        model.InformationSheetId = answerSheet.Id;
+                        models.Add(model);
+                    }
+                }
+                
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
 
                 return PartialView("_ViewAgreementDeclaration", models);

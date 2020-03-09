@@ -10,10 +10,9 @@ namespace DealEngine.Services.Interfaces
     {
         Task<InformationTemplate> CreateInformationTemplate(User createdBy, string name, IList<InformationSection> sections);
         Task<List<InformationTemplate>> GetAllTemplates();        
-        Task<List<InformationTemplate>> GetAllTemplatesbyproduct(Guid productId);
         Task<InformationTemplate> GetTemplate(Guid templateId);
         Task<InformationTemplate> GetTemplatebyProduct(Guid productId);
         Task<InformationTemplate> AddProductTo(Guid templateId, Product product);
-        Task<InformationTemplate> AddProductTo(InformationTemplate template, Product product);        
+        Task<InformationTemplate> AddProductTo(InformationTemplate informationTemplate, Product product);
     }
 }

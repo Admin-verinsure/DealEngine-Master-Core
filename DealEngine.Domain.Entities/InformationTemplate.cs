@@ -38,4 +38,10 @@ namespace DealEngine.Domain.Entities
         }
     }
 
+    public class SubInformationTemplate : InformationTemplate
+    {
+        public virtual InformationTemplate BaseInformationTemplate { get; set; }
+        public SubInformationTemplate() { }
+    }
+
 }

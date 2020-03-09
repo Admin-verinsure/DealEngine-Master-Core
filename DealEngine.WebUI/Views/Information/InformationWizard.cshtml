@@ -42,16 +42,24 @@
                                 <!-- SmartWizard html -->
                                 <div id="smartwizard" class="sw-main sw-theme-circles">
                                     <ul class="nav nav-tabs step-anchor">
-                                        <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Details</small></a></li>
-                                        <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Quote</small></a></li>
-                                        <li class="nav-item"><a href="#tab3" class="nav-link">3<br><small>Declaration</small></a></li>
-                                        <li class="nav-item"><a href="#tab4" class="nav-link">4<br><small>Payment</small></a></li>
-                                        <li class="nav-item"><a href="#tab5" class="nav-link">5<br><small>Documents</small></a></li>
+
+                                        @for (int i = 0; i < Model.Wizardsteps.Count; i++)
+                                        {
+                                            var index = i + 1;
+                                            if (i == 0)
+                                            {
+                                                <li class="nav-item active"><a href="#tab_@index" class="nav-link">@index<br><small>@Model.Wizardsteps.ElementAt(i)</small></a></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="nav-item"><a href="#tab_@index" class="nav-link">@index<br><small>@Model.Wizardsteps.ElementAt(i)</small></a></li>
+                                            }
+                                        }
                                     </ul>
 
                                     <div class="sw-container tab-content">
-                                        <div id="tab1" class="tab-pane step-content" style="display: block;">
-                                            <h3><strong> Details </strong> - Complete Information</h3>
+                                        <div id="tab_1" class="tab-pane step-content" style="display: block;">
+                                            <h3><strong> @Model.Wizardsteps.ElementAt(0) </strong> - Complete Information</h3>
                                             <div id="form-step-0" role="form" data-toggle="validator">
                                                 <div class="form-group">
                                                     <div class="row">
@@ -861,8 +869,8 @@
                                                                         <div class="modal-body">
                                                                             @Html.Raw(Model.Advisory)
                                                                         </div>
-                                                                        <div class="modal-footer">                                                                            
-                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AdvisoryModelClose('advisoryModal')">Ok</button>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -952,35 +960,39 @@
                                             </div>
 
                                         </div>
-                                        <div id="tab2" class="tab-pane step-content">
-                                            <h3><strong> Quote </strong></h3>
+                                        <div id="tab_2" class="tab-pane step-content">
+                                            <h3><strong> @Model.Wizardsteps.ElementAt(1) </strong></h3>
                                             <div id="agreementView" class="row">
                                             </div>
                                         </div>
-                                        <div id="tab3" class="tab-pane step-content">
-                                            <h3><strong> Declaration </strong></h3>
-                                            <div id="agreementDeclarationView" class="row">
+                                        @if (Model.Wizardsteps.Count > 2)
+                                        {
+                                            <div id="tab_3" class="tab-pane step-content">
+                                                <h3><strong> @Model.Wizardsteps.ElementAt(2) </strong></h3>
+                                                <div id="agreementDeclarationView" class="row">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div id="tab4" class="tab-pane step-content">
-                                            <h3><strong> Payment Section</strong></h3>
-                                            <div id="pxpaymentView"></div>
-                                        </div>
-                                        <div id="tab5" class="tab-pane step-content">
-                                            <h3><strong> Documents </strong></h3>
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div id="documentsSection"></div>
+                                            <div id="tab_4" class="tab-pane step-content">
+                                                <h3><strong> @Model.Wizardsteps.ElementAt(3)</strong></h3>
+                                                <div id="pxpaymentView"></div>
+                                            </div>
+                                            <div id="tab_5" class="tab-pane step-content">
+                                                <h3><strong> @Model.Wizardsteps.ElementAt(4) </strong></h3>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div id="documentsSection"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col col-12">
+                                                    <a href="~/Agreement/SendPolicyDocuments/@Model.AnswerSheetId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-envelope"></i> Send Policy Documents</a>
+                                                </div>
                                             </div>
-                                            <div class="col col-12">
-                                                <a href="~/Agreement/SendPolicyDocuments/@Model.AnswerSheetId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-envelope"></i> Send Policy Documents</a>
-                                            </div>
-                                        </div>
+                                        }
+
                                     </div>
 
                                 </div>

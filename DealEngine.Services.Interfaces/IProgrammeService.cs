@@ -29,9 +29,11 @@ namespace DealEngine.Services.Interfaces
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
         Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
-        Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId, Organisation organisation);
+        Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId);
         Task<bool> HasProgrammebyMembership(string membershipNumber);
         Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId);
+        Task<bool> IsBaseClass(ClientProgramme clientProgramme);
+        Task<bool> SubsystemCompleted(ClientProgramme clientProgramme);
     }
 }
 

@@ -7,7 +7,7 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using System.Threading.Tasks;
 using DealEngine.Infrastructure.Payment.EGlobalAPI;
 using Microsoft.Extensions.Logging;

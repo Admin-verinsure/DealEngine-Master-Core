@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 
 namespace DealEngine.WebUI.Models.Programme
 {
