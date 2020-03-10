@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DealEngine.WebUI.Models.Product
+namespace DealEngine.WebUI.Models.ProductModels
 {
 
     public class TerritoryViewModel : BaseViewModel

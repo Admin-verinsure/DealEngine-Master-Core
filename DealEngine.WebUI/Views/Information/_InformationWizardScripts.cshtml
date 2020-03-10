@@ -210,7 +210,7 @@
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
                    data: postData
-                   //data: $("#tab1 :input").serialize({ json: true })
+                   //data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
                        $("#agreementView").load(url, function () {                           
@@ -221,7 +221,6 @@
                    });
 
            } else if (stepNumber === 1) {
-               //ValidateCoverOption();
                var status = $('#Status').val();
                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                }
@@ -511,8 +510,8 @@
         if (ui.oldPanel != null) {
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",
-                data: $("#tab1 :input").serialize({ json:true })
+                type: "POST",                
+                data: $("#tab_1 :input").serialize({ json:true })
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');

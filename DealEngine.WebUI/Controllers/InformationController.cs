@@ -2034,18 +2034,15 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
+                if (sheet == null)
+                    return Json("Failure");
+                
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
-                    if (sheet == null)
-                        return Json("Failure");
-
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        await _clientInformationService.SaveAnswersFor(sheet, collection);
-                        await _clientInformationService.UpdateInformation(sheet);
-                        await uow.Commit();
-                    }
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    await _clientInformationService.UpdateInformation(sheet);
+                    await uow.Commit();
                 }
 
                 return Json("Success");
@@ -2421,7 +2418,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-                    return Redirect("/Information/QuoteToAgree?clientInformationId="+ sheet.Id);
+                    return Redirect("/Information/QuoteToAgree?id=" + sheet.Programme.Id);
                 }
 
             }

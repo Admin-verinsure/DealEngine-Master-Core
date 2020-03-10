@@ -162,7 +162,9 @@ namespace DealEngine.Services.Impl
         public async Task<SubClientInformationSheet> IssueSubInformationFor(ClientInformationSheet clientInformationSheet)
         {
             clientInformationSheet.Status = "Not Started";
-            SubClientInformationSheet sheet = _mapper.Map<SubClientInformationSheet>(clientInformationSheet);            
+            SubClientInformationSheet sheet = _mapper.Map<SubClientInformationSheet>(clientInformationSheet);
+            await _customerInformationRepository.AddAsync(sheet);
+            clientInformationSheet.Status = "Submitted";
             return sheet;
         }
     }
