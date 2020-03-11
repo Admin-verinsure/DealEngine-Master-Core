@@ -887,7 +887,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                var docs = agreement.Documents.Where(d => d.DateDeleted == null);
+                var docs = agreement.GetDocuments();
                 var documents = new List<SystemDocument>();
 
                 if (docs != null)
@@ -902,7 +902,6 @@ namespace DealEngine.WebUI.Controllers
                 }
                 else
                 {
-
                     documents = null;
                 }
 
@@ -1293,7 +1292,6 @@ namespace DealEngine.WebUI.Controllers
 
                 // List Agreement Parties
                 insuranceRoles.Add(new InsuranceRoleViewModel { RoleName = "Client", Name = insured.Name, ManagedBy = "", Email = "" });
-
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(apa => apa.DateDeleted == null).OrderBy(apa => apa.Product.OrderNumber))
                 {
                     model = new ViewAgreementViewModel
@@ -2139,7 +2137,8 @@ namespace DealEngine.WebUI.Controllers
                     if (agreement == null)
                         throw new Exception(string.Format("No Agreement found for {0}", agreement.Id));
 
-                    foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                    var agreeDocList = agreement.GetDocuments();
+                    foreach (SystemDocument doc in agreeDocList)
                     {
                         doc.Delete(user);
                     }
@@ -2153,7 +2152,8 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     ClientAgreement reloadedAgreement = await _clientAgreementService.GetAgreement(agreement.Id);
-                    foreach (SystemDocument doc in reloadedAgreement.Documents.Where(d => d.DateDeleted == null))
+                    agreeDocList = reloadedAgreement.GetDocuments();
+                    foreach (SystemDocument doc in agreeDocList)
                     {
                         if (doc.DocumentType == 4)
                         {
@@ -2197,8 +2197,7 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 ClientProgramme programme = sheet.Programme;
-                user = await CurrentUser();
-
+                user = await CurrentUser();                
                 var status = "Bound";
                 if (sheet.Programme.BaseProgramme.UsesEGlobal)
                 {
@@ -2207,7 +2206,11 @@ namespace DealEngine.WebUI.Controllers
                 
                 foreach (ClientAgreement agreement in programme.Agreements)
                 {
+                    var allDocs = await _fileService.GetDocumentByOwner(programme.Owner);
                     var documents = new List<SystemDocument>();
+                    var agreeTemplateList = agreement.Product.Documents;
+                    var agreeDocList = agreement.GetDocuments();
+                    
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (agreement.Status != status)
@@ -2223,14 +2226,13 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     agreement.Status = status;
-
-                    foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                    
+                    foreach (SystemDocument doc in agreeDocList)
                     {
                         doc.Delete(user);
                     }
-
-
-                    foreach (SystemDocument template in agreement.Product.Documents)
+                                       
+                    foreach (SystemDocument template in agreeTemplateList)
                     {
                         //render docs except invoice
                         if (template.DocumentType != 4)
@@ -2431,7 +2433,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                var docs = agreement.Documents.Where(d => d.DateDeleted == null);
+                var docs = agreement.GetDocuments();
                 var documents = new List<SystemDocument>();
 
                 if (docs != null)
@@ -2752,7 +2754,8 @@ namespace DealEngine.WebUI.Controllers
                             //_emailService.SendSystemFailedInvoiceConfigEmailUISIssueNotify(programme.BrokerContactUser, programme.BaseProgramme, programme.InformationSheet, programme.Owner);
                         }
 
-                        foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                        var agreeDocList = agreement.GetDocuments();
+                        foreach (SystemDocument doc in agreeDocList)
                         {
                             doc.Delete(user);
                         }
@@ -2827,8 +2830,8 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 PartialViewResult result = (PartialViewResult)await ViewAgreement(id);
-
                 var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
+                var agreeDocList = new List<Document>();
                 foreach (ViewAgreementViewModel model in models)
                 {
                     model.EditEnabled = false;
@@ -2840,7 +2843,8 @@ namespace DealEngine.WebUI.Controllers
                     foreach (ClientAgreement agreement in programme.Agreements)
                     {
                         model.ClientAgreementId = agreement.Id;
-                        foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                        agreeDocList = agreement.GetDocuments();
+                        foreach (Document doc in agreeDocList)
                         {
                             model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id });
                         }
@@ -2865,6 +2869,7 @@ namespace DealEngine.WebUI.Controllers
                 PartialViewResult result = (PartialViewResult)await ViewAgreement(id);
                 var models = (BaseListViewModel<ViewAgreementViewModel>)result.Model;
                 user = await CurrentUser();
+                var agreeDocList = new List<Document>();
 
                 foreach (ViewAgreementViewModel model in models)
                 {
@@ -2877,8 +2882,9 @@ namespace DealEngine.WebUI.Controllers
                     model.InformationSheetId = programme.InformationSheet.Id;
                     model.ClientProgrammeId = id;                    
                     foreach (ClientAgreement agreement in programme.Agreements.Where(a=>a.DateDeleted == null))
-                    {                        
-                        foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                    {
+                        agreeDocList = agreement.GetDocuments();
+                        foreach (Document doc in agreeDocList)
                         {
                             model.Documents.Add(new AgreementDocumentViewModel { DisplayName = doc.Name, Url = "/File/GetDocument/" + doc.Id , ClientAgreementId = agreement.Id });
                         }
@@ -2980,10 +2986,11 @@ namespace DealEngine.WebUI.Controllers
                 //if (agreement == null)
                 //	throw new Exception (string.Format ("No Information found for {0}", id));
                 user = await CurrentUser();
-
+                var agreeDocList = new List<Document>();
                 foreach (ClientAgreement agreement in clientProgramme.Agreements)
                 {
-                    foreach (Document doc in agreement.Documents.Where(d => d.DateDeleted == null))
+                    agreeDocList = agreement.GetDocuments();
+                    foreach (Document doc in agreeDocList)
                     {
                         doc.Delete(user);
                     }

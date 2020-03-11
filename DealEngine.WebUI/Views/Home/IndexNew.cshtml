@@ -216,14 +216,6 @@
                                                 <td><a class="btn btn-success btn-sm disabled" href="#"><i class="fa fa-search"></i> In Dev</a></td>
                                             </tr>
                                         }
-                                        @if (User.HasClaim("ViewManageDocuments", "ViewManageDocuments"))
-                                        {
-                                            <tr>
-                                                <td>Manage Documents</td>
-                                                <td>Certs, Schedules, Wording, Invoices</td>
-                                                <td><a class="btn btn-success btn-sm" href="/File/ManageDocuments"><i class="fa fa-search"></i> View</a></td>
-                                            </tr>
-                                        }
                                         @if (User.HasClaim("ViewEmails", "ViewEmails"))
                                         {
                                             <tr>

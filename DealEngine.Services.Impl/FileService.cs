@@ -630,7 +630,12 @@ namespace DealEngine.Services.Impl
 			return html;
 		}
 
-		#endregion
-	}
+        public async Task<List<Document>> GetDocumentByOwner(Organisation Owner)
+        {
+            return await _documentRepository.FindAll().Where(d => d.OwnerOrganisation == Owner && d.DateDeleted == null).ToListAsync();
+        }
+
+        #endregion
+    }
 }
 

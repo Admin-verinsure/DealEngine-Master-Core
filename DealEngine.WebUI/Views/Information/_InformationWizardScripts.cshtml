@@ -305,7 +305,7 @@
                $.ajax({
                    url: '@Url.Action("PaymentInformation", "Information")',
                    type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
+                   data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
                        $("#pxpaymentView").load(url, function () {
@@ -326,7 +326,7 @@
                }
 
                var AnswerSheetId = $('#AnswerSheetId').val();
-               var array = $("#tab2 :input").serializeArray();
+               var array = $("#tab_2 :input").serializeArray();
                var ids = [];
                $.each(array, function (i, pair) {
                    ids.push(pair.value);
@@ -7228,7 +7228,7 @@ async: true
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true }),
+                data: $("#tab_1 :input").serialize({ json: true }),
                 complete: function (data) {
                     window.location = data.responseJSON.url;
                 },
@@ -7238,7 +7238,7 @@ async: true
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("GenerateEGlobal", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true })
+                data: $("#tab_1 :input").serialize({ json: true })
 
             })
                 .done(function (url) {
@@ -7259,7 +7259,7 @@ async: true
         $.ajax({
             url: '@Url.Action("ByPassPayment", "Agreement")',
             type: "Post",
-            data: $("#tab1 :input").serialize({ json: true }),
+            data: $("#tab_1 :input").serialize({ json: true }),
             async: true
         }).done(function (data) {
                window.location.href = data.url;

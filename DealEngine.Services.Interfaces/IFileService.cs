@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
 
 namespace DealEngine.Services.Interfaces
@@ -26,6 +27,7 @@ namespace DealEngine.Services.Interfaces
 		byte [] ToBytes (string contents);
 		string FromBytes (byte [] bytes);
         Task<Document> GetDocumentByType(Organisation primaryOrganisation, int documentType);
+		Task<List<Document>> GetDocumentByOwner(Organisation Owner);
     }
 }
 

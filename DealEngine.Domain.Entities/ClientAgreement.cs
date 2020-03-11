@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
 
 namespace DealEngine.Domain.Entities
@@ -94,6 +95,11 @@ namespace DealEngine.Domain.Entities
         public virtual bool MasterAgreement { get; set; }
         public virtual ClientAgreement PreviousAgreement { get; set; }
         public virtual IList<ClientAgreementTermCancel> ClientAgreementTermsCancel { get; set; }
+
+        public virtual List<Document> GetDocuments()
+        {
+            return Documents.Where(d => d.DateDeleted == null).ToList();                        
+        }
     }
 }
 

@@ -13,8 +13,9 @@ namespace DealEngine.WebUI.Models
 		public int DocumentType { get; set; }
 
 		public string Content { get; set; }
+        public string ProductId { get; set; }
 
-		public DocumentViewModel ()
+        public DocumentViewModel ()
 		{
 		}
 	}
@@ -30,6 +31,7 @@ namespace DealEngine.WebUI.Models
         public string ProductName { get; set; }
 
         public string Owner { get; set; }
+		public string ProductId { get; set; }
 	}
 }
 

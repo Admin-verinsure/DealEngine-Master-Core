@@ -66,7 +66,13 @@ namespace DealEngine.Services.Impl
                 var subSheet = await _clientInformationService.IssueSubInformationFor(sheet);
                 subSheet.BaseClientInformationSheet = sheet;
                 subSheet.Programme = subClientProgramme;
+                subSheet.Status = "Not Started";
+                await _clientInformationService.UpdateInformation(subSheet);
+                
                 subClientProgramme.InformationSheet = subSheet;
+                await _programmeService.Update(subClientProgramme);
+
+                sheet.Status="Started";
                 sheet.SubClientInformationSheets.Add(subSheet);
                 await _clientInformationService.UpdateInformation(sheet);
             }
