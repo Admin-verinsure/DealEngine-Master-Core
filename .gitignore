@@ -24,3 +24,4 @@ sqlite3
 /TechCertain.WebUI/appsettings.json
 TechCertain.WebUI/wwwroot/images/
 .vscode
+/DealEngine.WebUI/appsettingsnathan.json
