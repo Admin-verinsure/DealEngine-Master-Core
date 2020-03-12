@@ -54,7 +54,7 @@ deploy_professionalrisks:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
   - ssh ubuntu@"$URLprorisks" './DE-DeployPrep.sh'
-  - cp ~/aon/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
+  - cp ~/general/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLprorisks:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLprorisks" './DE-DeployFin.sh'
@@ -71,8 +71,8 @@ deploy_stagingprofessionalrisks:
   script:
   - eval "$(ssh-agent -s)"
   - ssh-add <(echo "$PKgitlab")
-  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLstagingprorisks" './DE-DeployPrep.sh'
-  - cp ~/aon/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
+  - ssh ubuntu@"$URLstagingprorisks" './DE-DeployPrep.sh'
+  - cp ~/general/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
   - 'dotnet publish -c Release'
   - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingprorisks:/home/ubuntu/projects/dealengine
   - ssh ubuntu@"$URLstagingprorisks" './DE-DeployFin.sh'
@@ -80,6 +80,24 @@ deploy_stagingprofessionalrisks:
   environment:
     name: stagingprofessionalrisks
     url: https://staging.professionalrisks.online
+  when: manual
+  dependencies:
+    - build
+
+deploy_stagingdetai:
+  stage: deploy
+  script:
+  - eval "$(ssh-agent -s)"
+  - ssh-add <(echo "$PKgitlab")
+  - ssh -o StrictHostKeyChecking=no ubuntu@"$URLstagingdetai" './DE-DeployPrep.sh'
+  - cp ~/general/_LoginText.cshtml /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/Views/Account/_LoginText.cshtml
+  - 'dotnet publish -c Release'
+  - rsync -azhe ssh /home/gitlab-runner/builds/MsHgSUxs/0/tcdev/dealengine/DealEngine.WebUI/bin/Release/netcoreapp3.1/ ubuntu@$URLstagingdetai:/home/ubuntu/projects/dealengine
+  - ssh ubuntu@"$URLstagingdetai" './DE-DeployFin.sh'
+
+  environment:
+    name: stagingdetai
+    url: https://staging-de.tai.co.nz
   when: manual
   dependencies:
     - build
