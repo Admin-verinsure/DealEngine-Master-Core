@@ -153,8 +153,7 @@ namespace DealEngine.WebUI.Controllers
             SystemDocument document = null;
             Product product = null;
             try
-            {
-                product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
+            {                
                 user = await CurrentUser();
                 if (model.DocumentId != Guid.Empty)
                 {
@@ -171,10 +170,15 @@ namespace DealEngine.WebUI.Controllers
                 document.Description = model.Description;
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = user.PrimaryOrganisation;
-                document.IsTemplate = true;                
+                document.IsTemplate = true;
 
-                product.Documents.Add(document);
-                await _productRepository.AddAsync(product);
+                if (model.ProductId != null)
+                {
+                    product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
+                    product.Documents.Add(document);
+                    await _productRepository.AddAsync(product);
+                }
+                
                 return View(model);
             }
             catch (Exception ex)
@@ -192,13 +196,20 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => user.Organisations.Contains(d.OwnerOrganisation) && !d.DateDeleted.HasValue).ToList();
+                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation).ToList();
 
                 if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
                 {
                     //docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
-                    var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
-                    docs = products.Documents.ToList();
+                    if(productId != null)
+                    {
+                        var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
+                        docs = products.Documents.ToList();
+                    }
+                    else
+                    {
+                        productId = "";
+                    }
                 }
 
                 foreach (SystemDocument doc in docs)
@@ -229,6 +240,16 @@ namespace DealEngine.WebUI.Controllers
                         case 4:
                             {
                                 documentType = "Invoice";
+                                break;
+                            }
+                        case 5:
+                            {
+                                documentType = "Advisory";
+                                break;
+                            }
+                        case 6:
+                            {
+                                documentType = "Sub-Certificate";
                                 break;
                             }
                         default:

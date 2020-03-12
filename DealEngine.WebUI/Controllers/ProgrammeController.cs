@@ -534,7 +534,7 @@ namespace DealEngine.WebUI.Controllers
                                     //render docs invoice
                                     if (template.DocumentType == 4)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                         agreement.Documents.Add(renderedDoc);
                                         documents.Add(renderedDoc);

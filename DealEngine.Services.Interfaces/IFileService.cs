@@ -22,7 +22,7 @@ namespace DealEngine.Services.Interfaces
 
         Task<Image> GetImage (string imageName);
 
-        Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement) where T : Document;
+        Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation) where T : Document;
 
 		byte [] ToBytes (string contents);
 		string FromBytes (byte [] bytes);

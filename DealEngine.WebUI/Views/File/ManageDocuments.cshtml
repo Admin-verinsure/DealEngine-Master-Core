@@ -1,4 +1,9 @@
 ﻿@model BaseListViewModel<DealEngine.WebUI.Models.DocumentInfoViewModel>
+
+@{ 
+    var productId = Model.FirstOrDefault().ProductId;
+}
+
 <!-- MAIN CONTENT -->
 <div id="content" class="container">
 
@@ -19,8 +24,15 @@
     <div class="form-group">
         <div class="card">
             <div class="card-header">
-                <span class="widget-icon">                    
-                    <h2><i class="fa fa-comments txt-color-white"></i> My Documents </h2><a class="btn btn-primary float-right" href="/File/CreateDocument?productId=@Model.FirstOrDefault().ProductId" >Create New Document</a>
+                <span class="widget-icon">
+                    @if (productId == "")
+                    {
+                        <h2><i class="fa fa-comments txt-color-white"></i> My Documents </h2>
+                    }
+                    else
+                    {
+                        <h2><i class="fa fa-comments txt-color-white"></i> My Documents </h2><a class="btn btn-primary float-right" href="/File/CreateDocument?productId=@Model.FirstOrDefault().ProductId">Create New Document</a>
+                    }                    
                 </span>
             </div>
             <div class="card-body">
@@ -47,7 +59,14 @@
                                     <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx">Get Docx</a>
                                     @if (User.HasClaim("EditManageDocuments", "EditManageDocuments"))
                                     {
-                                        <a class="btn btn-primary btn-xs" href="/File/CreateDocument/@(doc.Id)">Update</a>
+                                        @if (productId == "")
+                                        {
+                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id">Update</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId">Update</a>
+                                        }                                        
                                     }
                                 </td>
                             </tr>

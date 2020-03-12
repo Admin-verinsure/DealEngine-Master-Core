@@ -2145,7 +2145,7 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (SystemDocument template in agreement.Product.Documents)
                     {
-                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                         agreement.Documents.Add(renderedDoc);
                         await _fileService.UploadFile(renderedDoc);
@@ -2235,15 +2235,26 @@ namespace DealEngine.WebUI.Controllers
                     foreach (SystemDocument template in agreeTemplateList)
                     {
                         //render docs except invoice
-                        if (template.DocumentType != 4)
+                        if (template.DocumentType != 4 && template.DocumentType != 6)
                         {
-                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                            SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                             renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                             agreement.Documents.Add(renderedDoc);
                             documents.Add(renderedDoc);
                             await _fileService.UploadFile(renderedDoc);
                         }
-
+                        //render all subsystem
+                        if (template.DocumentType == 6)
+                        {
+                            foreach(var subSystemClient in sheet.SubClientInformationSheets)
+                            {
+                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, subSystemClient);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                agreement.Documents.Add(renderedDoc);
+                                documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
+                            }                            
+                        }
                     }
                 }
 
@@ -2255,70 +2266,6 @@ namespace DealEngine.WebUI.Controllers
                         await uow.Commit();
                     }
                 }
-
-                //if (programme.BaseProgramme.UsesEGlobal)
-                //{
-                //    if (programme.EGlobalClientNumber != null)
-                //    {
-                //        var status1 = "Bound and invoiced";
-                //        var eGlobalSerializer = new EGlobalSerializerAPI();
-
-                //        var xmlPayload = eGlobalSerializer.SerializePolicy(programme, user, _unitOfWork);
-                //        var byteResponse = await _httpClientService.CreateEGlobalInvoice(xmlPayload);
-                //        eGlobalSerializer.DeSerializeResponse(byteResponse, programme, user, _unitOfWork);
-                //        if (programme.ClientAgreementEGlobalResponses.Count > 0)
-                //        {
-                //            EGlobalResponse eGlobalResponse = programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
-                //            if (eGlobalResponse != null)
-                //            {
-                //                var documents1 = new List<SystemDocument>();
-                //                foreach (ClientAgreement agreement in programme.Agreements)
-                //                {
-                //                    if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
-                //                    {
-                //                        foreach (SystemDocument doc in agreement.Documents.Where(d => d.DateDeleted == null && d.DocumentType == 4))
-                //                        {
-                //                            doc.Delete(user);
-                //                        }
-                //                        foreach (SystemDocument template in agreement.Product.Documents)
-                //                        {
-                //                            //render docs invoice
-                //                            if (template.DocumentType == 4)
-                //                            {
-                //                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
-                //                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                //                                agreement.Documents.Add(renderedDoc);
-                //                                documents1.Add(renderedDoc);
-                //                                await _fileService.UploadFile(renderedDoc);
-                //                            }
-                //                        }
-                //                    }
-                //                }
-                //                foreach (ClientAgreement agreement in programme.Agreements)
-                //                {
-                //                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                //                    {
-                //                        if (agreement.Status != status1)
-                //                        {
-                //                            agreement.Status = status1;
-                //                            await uow.Commit();
-                //                        }
-                //                    }
-                //                    agreement.Status = status1;
-                //                }
-                //                using (var uow = _unitOfWork.BeginUnitOfWork())
-                //                {
-                //                    if (programme.InformationSheet.Status != status1)
-                //                    {
-                //                        programme.InformationSheet.Status = status1;
-                //                        await uow.Commit();
-                //                    }
-                //                }
-                //            }
-
-                //        }
-                //    }
-                //}
 
                 var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
                 return Json(new { url });
@@ -2605,7 +2552,7 @@ namespace DealEngine.WebUI.Controllers
                                     //render docs invoice
                                     if (template.DocumentType == 4)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                         agreement.Documents.Add(renderedDoc);
                                         documents.Add(renderedDoc);
@@ -2766,7 +2713,7 @@ namespace DealEngine.WebUI.Controllers
                                 //render docs except invoice
                                 if (template.DocumentType != 4)
                                 {
-                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                    SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                     renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                     agreement.Documents.Add(renderedDoc);
                                     documents.Add(renderedDoc);
@@ -2775,7 +2722,7 @@ namespace DealEngine.WebUI.Controllers
                             }
                             else
                             {
-                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                 renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                 agreement.Documents.Add(renderedDoc);
                                 documents.Add(renderedDoc);
@@ -2987,6 +2934,7 @@ namespace DealEngine.WebUI.Controllers
                 //	throw new Exception (string.Format ("No Information found for {0}", id));
                 user = await CurrentUser();
                 var agreeDocList = new List<Document>();
+                Document renderedDoc;
                 foreach (ClientAgreement agreement in clientProgramme.Agreements)
                 {
                     agreeDocList = agreement.GetDocuments();
@@ -2997,10 +2945,23 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (Document template in agreement.Product.Documents)
                     {
-                        Document renderedDoc = await _fileService.RenderDocument(user, template, agreement);
-                        renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
-                        agreement.Documents.Add(renderedDoc);
-                        await _fileService.UploadFile(renderedDoc);
+                        if (template.DocumentType == 6)
+                        {
+                            foreach (var subsheet in agreement.ClientInformationSheet.SubClientInformationSheets)
+                            {
+                                renderedDoc = await _fileService.RenderDocument(user, template, agreement, subsheet);
+                                renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                                agreement.Documents.Add(renderedDoc);
+                                await _fileService.UploadFile(renderedDoc);
+                            }
+                        }
+                        else
+                        {
+                            renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
+                            renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
+                            agreement.Documents.Add(renderedDoc);
+                            await _fileService.UploadFile(renderedDoc);
+                        }
                     }
                 }
 

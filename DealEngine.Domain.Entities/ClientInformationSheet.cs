@@ -9,37 +9,28 @@ namespace DealEngine.Domain.Entities
 {
     public class ClientInformationSheet : EntityBase, IAggregateRoot
     {
-        public virtual Organisation Owner { get; protected set; }
-        [IgnoreAttribute]
+        public virtual Organisation Owner { get; set; }        
         public virtual ClientProgramme Programme { get; set; }
-		[Obsolete ("No longer required with the new Programme implementation")]
-        [IgnoreAttribute]
-        public virtual ClientAgreement ClientAgreement { get; set; }
-        [IgnoreAttribute]
+		[Obsolete ("No longer required with the new Programme implementation")]        
+        public virtual ClientAgreement ClientAgreement { get; set; }       
         public virtual IList<ClientInformationAnswer> Answers { get; protected set; }
 		public virtual IList<Vehicle> Vehicles { get; protected set; }
         public virtual IList<Building> Buildings { get; protected set; }
         public virtual IList<BusinessInterruption> BusinessInterruptions { get; protected set; }
-        public virtual IList<MaterialDamage> MaterialDamages { get; protected set; }
-        [IgnoreAttribute]
+        public virtual IList<MaterialDamage> MaterialDamages { get; protected set; }        
         public virtual IList<ClaimNotification> ClaimNotifications { get; protected set; }
         public virtual IList<Location> Locations { get; protected set; }
         public virtual IList<WaterLocation> WaterLocations { get; protected set; }
         public virtual IList<Boat> Boats { get; protected set; }
         public virtual IList<BoatUse> BoatUses { get; protected set; }
-        public virtual IList<Organisation> Organisation { get; protected set; }
-		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }
-        [IgnoreAttribute]
+        public virtual IList<Organisation> Organisation { get; set; }
+		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }        
         public virtual IList<SubClientInformationSheet> SubClientInformationSheets { get; set; }
         public virtual RevenueByActivity RevenueData { get; set; }
-        //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up
-        [IgnoreAttribute]
-        public virtual string Status { get; set; }
-        [IgnoreAttribute]
-        public virtual string ReferenceId { get; set; }
-        [IgnoreAttribute]
-        public virtual ClientInformationSheet PreviousInformationSheet { get; protected set; }
-        [IgnoreAttribute]
+        //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up        
+        public virtual string Status { get; set; }        
+        public virtual string ReferenceId { get; set; }        
+        public virtual ClientInformationSheet PreviousInformationSheet { get; protected set; }        
         public virtual ClientInformationSheet NextInformationSheet { get; protected set; }
 		public virtual bool IsRenewawl { get; set; }
         public virtual bool IsChange { get; set; }
@@ -48,8 +39,7 @@ namespace DealEngine.Domain.Entities
 		public virtual User SubmittedBy { get; set; }
         public virtual DateTime UnlockDate { get; set; }
         public virtual User UnlockedBy { get; set; }        
-        public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }
-        [IgnoreAttribute]
+        public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }        
         public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
         protected ClientInformationSheet () : this (null) { }
 

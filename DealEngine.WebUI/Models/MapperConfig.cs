@@ -92,6 +92,7 @@ namespace DealEngine.WebUI.Models
                 .ForMember(dest => dest.PreviousInformationSheet, map => map.Ignore())
                 .ForMember(dest => dest.NextInformationSheet, map => map.Ignore())
                 .ForMember(dest => dest.BusinessContracts, map => map.Ignore())
+                .ForMember(dest => dest.Organisation, map => map.Ignore())
                 .ForMember(dest => dest.ClaimNotifications, map => map.Ignore());                
             CreateMap<ClientProgramme, SubClientProgramme>()
                 .ForMember(dest => dest.BaseClientProgramme, map => map.Ignore())                             

@@ -48,9 +48,12 @@ namespace DealEngine.Services.Impl
                 await SubInformationTemplate(clientProgramme);
                 foreach (var org in principalOrganisations)
                 {
-                    var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet);
-                    await CreateSubInformationSheet(subClientProgramme, sheet);
+                    var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
+                    var subClientSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
+                    sheet.SubClientInformationSheets.Add(subClientSheet);
                 }
+                sheet.Status = "Started";                
+                await _clientInformationService.UpdateInformation(sheet);
             }
             catch(Exception ex)
             {
@@ -59,7 +62,7 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private async Task CreateSubInformationSheet(SubClientProgramme subClientProgramme, ClientInformationSheet sheet)
+        private async Task<SubClientInformationSheet> CreateSubInformationSheet(SubClientProgramme subClientProgramme, ClientInformationSheet sheet, Organisation organisation)
         {
             try
             {
@@ -67,14 +70,14 @@ namespace DealEngine.Services.Impl
                 subSheet.BaseClientInformationSheet = sheet;
                 subSheet.Programme = subClientProgramme;
                 subSheet.Status = "Not Started";
+                subSheet.Owner = organisation;
                 await _clientInformationService.UpdateInformation(subSheet);
                 
                 subClientProgramme.InformationSheet = subSheet;
                 await _programmeService.Update(subClientProgramme);
 
-                sheet.Status="Started";
-                sheet.SubClientInformationSheets.Add(subSheet);
-                await _clientInformationService.UpdateInformation(sheet);
+                return subSheet;
+
             }
             catch (Exception ex)
             {
@@ -83,12 +86,13 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        private async Task<SubClientProgramme> CreateSubClientProgramme(ClientProgramme clientProgramme, ClientInformationSheet sheet)
+        private async Task<SubClientProgramme> CreateSubClientProgramme(ClientProgramme clientProgramme, ClientInformationSheet sheet, Organisation org)
         {
             try
             {
                 var subClientProgramme = await _programmeService.CreateSubClientProgrammeFor(clientProgramme.Id);
                 subClientProgramme.InformationSheet = sheet;
+                subClientProgramme.Owner = org;
                 clientProgramme.SubClientProgrammes.Add(subClientProgramme);
                 await _programmeService.Update(clientProgramme);
 

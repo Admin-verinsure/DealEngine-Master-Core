@@ -7,21 +7,16 @@ namespace DealEngine.Domain.Entities
 {
     public class ClientProgramme : EntityBase, IAggregateRoot
     {
-        public virtual Organisation Owner { get; protected set; }
-        public virtual Programme BaseProgramme { get; set; }
-        [IgnoreAttribute]
+        public virtual Organisation Owner { get; set; }
+        public virtual Programme BaseProgramme { get; set; }        
         public virtual ClientInformationSheet InformationSheet { get; set; }
         public virtual Payment Payment { get; set; }
         public virtual User BrokerContactUser { get; set; }
         public virtual ChangeReason ChangeReason { get; set; }
-        public virtual IDictionary<Product, bool> Products { get; set; }
-        [IgnoreAttribute]
-        public virtual IList<ClientAgreement> Agreements { get; protected set; }
-        [IgnoreAttribute]
-        public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }
-        [IgnoreAttribute]
-        public virtual IList<EGlobalResponse> ClientAgreementEGlobalResponses { get; set; }
-        [IgnoreAttribute]
+        public virtual IDictionary<Product, bool> Products { get; set; }        
+        public virtual IList<ClientAgreement> Agreements { get; protected set; }        
+        public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }        
+        public virtual IList<EGlobalResponse> ClientAgreementEGlobalResponses { get; set; }        
         public virtual IList<SubClientProgramme> SubClientProgrammes { get; set; }       
         public virtual bool HasEGlobalCustomDescription { get; set; }
         public virtual string PaymentType { get; set; }
