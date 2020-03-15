@@ -122,10 +122,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl1millimitoption.Brokerage = TermBrokerage1mil;
             termsl1millimitoption.DateDeleted = null;
             termsl1millimitoption.DeletedBy = null;
-  
 
-            //Referral points per agreement
 
+            ////Referral points per agreement
+            ////Not a renewal of an existing policy
+            //uwrfnotrenewaldo(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -310,6 +311,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return premiumoption;
         }
 
+        void uwrfnotrenewaldo(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewaldo" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewaldo") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewaldo").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewaldo").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewaldo").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewaldo").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewaldo" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    {
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers3").First().Value == "false")
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewaldo" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
 
 
     }

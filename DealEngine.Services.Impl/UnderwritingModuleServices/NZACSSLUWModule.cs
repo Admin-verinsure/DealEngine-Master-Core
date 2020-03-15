@@ -117,8 +117,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl1millimitoption.DateDeleted = null;
             termsl1millimitoption.DeletedBy = null;
 
-            //Referral points per agreement
-
+            ////Referral points per agreement
+            ////Not a renewal of an existing policy
+            //uwrfnotrenewalsl(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -274,6 +275,31 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return premiumoption;
         }
 
+        void uwrfnotrenewalsl(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalsl" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalsl") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalsl").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalsl").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalsl").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnotrenewalsl").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalsl" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    {
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "StatutoryLiability2").First().Value == "false")
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalsl" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
 
 
     }
