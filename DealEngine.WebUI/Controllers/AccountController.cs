@@ -325,10 +325,20 @@ namespace DealEngine.WebUI.Controllers
                     if (result.Succeeded)
                     {
                         await _applicationLoggingService.LogInformation(_logger, new Exception("User [" + userName + "] has logged in"), user, HttpContext);
-                        return LocalRedirect("~/Home/Index");
-                    }                                                            
+                    }
+                    //we assume the user has changed password and isnt new a new user
+                    else
+                    {
+                        var deUser = await _userManager.FindByNameAsync(user.UserName);
+                        if (deUser != null)
+                        {
+                            var removePasswordResult = await _userManager.RemovePasswordAsync(deUser);
+                            var addPasswordResult = await _userManager.AddPasswordAsync(deUser, password);
+                        }
+                    }
+                    return LocalRedirect("~/Home/Index");
                 }
-
+                
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@DealEngine.com.");
                 return View(viewModel);
 
