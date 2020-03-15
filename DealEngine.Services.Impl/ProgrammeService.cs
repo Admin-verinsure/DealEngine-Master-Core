@@ -254,6 +254,11 @@ namespace DealEngine.Services.Impl
             }
             return true;
         }
+
+        public async Task Update(Programme programmes)
+        {
+            await _programmeRepository.UpdateAsync(programmes);
+        }
     }
 }
 

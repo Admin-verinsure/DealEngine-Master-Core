@@ -1024,28 +1024,112 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProgramme()
         {
-            return View();
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            model.ProductViewModel = await GetProductViewModel();
+            return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ViewProgrammes()
+        private async Task<ProductViewModel> GetProductViewModel()
         {
-            ProgrammeListModel model = new ProgrammeListModel();
+            User user = await CurrentUser();
+            ProductViewModel model = new ProductViewModel();
+            model.Description = new ProductDescriptionVM
+            {
+                CreatorOrganisation = user.PrimaryOrganisation.Id,
+                OwnerOrganisation = user.PrimaryOrganisation.Id,
+                // TODO - load this from db
+                Languages = new List<SelectListItem> {
+                    new SelectListItem { Text = "English (NZ)", Value = "nz" },
+                    new SelectListItem { Text = "English (US)", Value = "uk" },
+                    new SelectListItem { Text = "English (UK)", Value = "us" },
+                    new SelectListItem { Text = "German", Value = "de" },
+                    new SelectListItem { Text = "French", Value = "fr" },
+                    new SelectListItem { Text = "Chinese", Value = "cn" }
+                },
+                BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
+            };
+
+            model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
+
+            var productList = await _productService.GetAllProducts();
+            foreach (Product product in productList.Where(p => p.IsBaseProduct))
+            {
+                model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
+            }
+
+            var riskList = await _riskCategoryService.GetAllRiskCategories();
+            foreach (RiskCategory risk in riskList)
+                model.Risks.Add(new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
+
+            // set product settings
+            foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
+                model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
+
+            model.Settings.InformationSheets = new List<SelectListItem>();
+            model.Settings.InformationSheets.Add(new SelectListItem { Text = "Select Information Sheet", Value = "" });
+            var templates = await _informationService.GetAllTemplates();
+            foreach (var template in templates)
+                model.Settings.InformationSheets.Add(
+                    new SelectListItem
+                    {
+                        Text = template.Name,
+                        Value = template.Id.ToString()
+                    }
+                );
+
+            model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
+            model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
+            // loop over all non personal organisations and add them, excluding our own since its already added
+            var orgList = await _organisationService.GetAllOrganisations();
+            foreach (Organisation org in orgList.Where(org => org.OrganisationType.Name != "personal").OrderBy(o => o.Name))
+                if (org.Id.ToString() != model.Settings.PossibleOwnerOrganisations[1].Value)
+                    model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = org.Name, Value = org.Id.ToString() });
+
+            var programmes = new List<Programme>();
+            var programmeList = await _programmeService.GetAllProgrammes();
+            foreach (Programme programme in programmeList)
+                model.Settings.InsuranceProgrammes.Add(
+                    new SelectListItem
+                    {
+                        Text = programme.Name,
+                        Value = programme.Id.ToString()
+                    }
+                );
+
+            model.Parties = new ProductPartiesVM
+            {
+                Brokers = new List<SelectListItem>(),
+                Insurers = new List<SelectListItem>()
+            };
+
+            return model;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProgramme(IFormCollection collection)
+        {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                var programmes = await _programmeService.GetAllProgrammes();
-                programmes.Where(p => p.IsPublic || p.Owner == user.PrimaryOrganisation);
-                model.Programmes = programmes;
-                return View(model);
+                Programme programme = new Programme(user);
+                programme.Name = collection["programmeName"];
+                programme.TaxRate = decimal.Parse(collection["TaxRate"]);
+                programme.PolicyNumberPrefixString = collection["PolicyNumberPrefixString"];
+                programme.LastModifiedBy = user;
+                programme.LastModifiedOn = DateTime.UtcNow;
+
+                //await _programmeService.Update(programme);
+
+                //return Content("../Product/CreateProduct");
+                return Ok();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+                return BadRequest();
+            }                
         }
 
         [HttpPost]

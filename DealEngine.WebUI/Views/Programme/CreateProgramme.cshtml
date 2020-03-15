@@ -2,29 +2,28 @@
 
 <article class="container">
     <div class="container-fluid">
-        <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false"
-             data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-sortable="false">
-
-            <header>
+        <div class="card">
+            <div class="card-header">
                 <h2>Create Programme</h2>
-            </header>
-            <div id="smartwizard" class="sw-main sw-theme-circles">
-                <ul class="nav nav-tabs step-anchor">
-                    <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Programme</small></a></li>
-                    <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Product</small></a></li>
-                </ul>
+            </div>
+            <div class="card-body">
+                <div id="smartwizardprogramme" class="sw-main sw-theme-circles">
+                    <ul class="nav nav-tabs step-anchor">
+                        <li class="nav-item active"><a href="#programme1" class="nav-link">1<br><small>Programme</small></a></li>
+                        <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Product</small></a></li>
+                    </ul>
 
-                <div class="sw-container tab-content">
-                    <div id="tab1" class="tab-pane step-content" style="display: block;">
-                        @await Html.PartialAsync("ProgrammeFormPartial", Model)
-                    </div>
-                    <div id="tab2" class="tab-pane step-content">
-                        @await  Html.PartialAsync("/Product/CreateNew")
-                    </div>
+                    <div class="sw-container tab-content">
+                        <div id="programme1" class="tab-pane step-content">
+                            @await Html.PartialAsync("ProgrammeFormPartial", Model)
+                        </div>
+                        <div id="programme2" class="tab-pane step-content">
+                            @await Html.PartialAsync("../Product/CreateProduct", Model.ProductViewModel)
+                        </div>
 
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </article>
@@ -36,7 +35,7 @@
 
         $(document).ready(function () {
 
-            $('#smartwizard').smartWizard({
+            $('#smartwizardprogramme').smartWizard({
                 selected: 0,  // Initial selected step, 0 = first step
                 keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
                 autoAdjustHeight: true, // Automatically adjust content height
@@ -51,7 +50,7 @@
                     toolbarPosition: 'bottom', // none, top, bottom, both
                     toolbarButtonPosition: 'right', // left, right
                     showNextButton: true, // show/hide a Next button
-                    showPreviousButton: true, // show/hide a Previous button
+                    showPreviousButton: false, // show/hide a Previous button
 
                 },
                 anchorSettings: {
@@ -68,7 +67,13 @@
                 transitionSpeed: '400'
             });
 
-        });
+            $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+                if (stepDirection == "forward") {
+                    if (stepNumber == 0) {
 
+                    }
+                }
+            });
+        });
     </script>
 }

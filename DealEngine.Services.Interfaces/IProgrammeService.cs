@@ -17,6 +17,7 @@ namespace DealEngine.Services.Interfaces
         Task<ClientProgramme> CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);
         Task<ClientProgramme> CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
 		Task Update (params ClientProgramme[] clientProgrammes);
+        Task Update(Programme programmes);
         Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
         Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);

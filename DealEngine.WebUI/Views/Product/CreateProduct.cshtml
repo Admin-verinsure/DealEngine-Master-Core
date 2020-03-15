@@ -1,0 +1,114 @@
+﻿@model DealEngine.WebUI.Models.ProductModels.ProductViewModel
+
+
+
+<div id="content" class="container">
+    <div class="card">
+        <div class="card-header">
+            <header class="col-sm-11 col-md-11 col-lg-11 pull-left">
+                <h2>Create a new Product</h2>
+            </header>
+        </div>
+        <div class="card-body">
+            <form action="#" id="ProductForm" method="post">
+                @Html.HiddenFor(m => Model.Description.OriginalProductId)
+                @Html.HiddenFor(m => Model.Description.CreatorOrganisation)
+                @Html.HiddenFor(m => Model.Description.OwnerOrganisation)
+                @Html.DisplayFor(m => Model.Description.Description)
+                
+                <div class="form-group">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <label><strong>Product Name</strong></label>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(t => t.Description.Name, new { placeholder = "Product Name", @class = "form-control", @required = "true" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label><strong>Product Description</strong></label>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(t => t.Description.Description, new { placeholder = "Product Description", @class = "form-control", @required = "true" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label><strong>Select Base Product</strong></label>
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.Description.SelectedBaseProduct, Model.Description.BaseProducts, new { @class = "form-control", @required = "true" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label><strong>Select Languages</strong></label>
+                                </td>
+                                <td>
+                                    @Html.ListBoxFor(m => m.Description.SelectedLanguages, Model.Description.Languages, new { @class = "listbox", style = "width: 80%;" })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                    <div class="form-group">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Cover All</th>
+                                    <th>Cover Loss</th>
+                                    <th>Cover Interruption</th>
+                                    <th>Cover Third Party</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Risks.Count(); ++i)
+                                {
+                                <tr>
+                                    <td>@Html.DisplayFor(m => m.Risks[i].Insured)</td>
+                                    <td>@Html.HiddenFor(m => m.Risks[i].Id)</td>
+                                    <td>
+                                        @Html.CheckBoxFor(m => m.Risks[i].CoverAll)
+                                    </td>
+                                    <td>
+                                        @Html.CheckBoxFor(m => m.Risks[i].CoverLoss)
+                                    </td>
+                                    <td>
+                                        @Html.CheckBoxFor(m => m.Risks[i].CoverInterruption)
+                                    </td>
+                                    <td>
+                                        @Html.CheckBoxFor(m => m.Risks[i].CoverThirdParty)
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div id="product3" class="tab-pane step-content">
+                        <div id="form-step-2" role="form" data-toggle="validator">
+                            <div class="form-group">
+                                @Html.DisplayFor(m => m.Settings)
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                    </div>
+</form>
+        </div>
+    </div>
+</div>
+
+
+@section pagespecific {
+    <script type="text/javascript">
+
+
+    </script>
+}

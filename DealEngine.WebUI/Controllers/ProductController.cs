@@ -119,17 +119,11 @@ namespace DealEngine.WebUI.Controllers
 
 		// Proposal Element,
 		// Premium Element,
-                   		// Policy Element
-		[HttpGet]
-		public async Task<IActionResult> CreateProduct ()
-		{
-			return View ();
-		}
-
+        // Policy Element
 		// Can not create a product without different insurance elements existing
 		// Can only map and not add new elements
 		[HttpGet]
-		public async Task<IActionResult> CreateNew()
+		public async Task<IActionResult> CreateProduct()
 		{
 			User user = null;
 			try
@@ -152,7 +146,6 @@ namespace DealEngine.WebUI.Controllers
 					BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
 				};
 
-				//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
 				model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
 
 				var productList = await _productService.GetAllProducts();
@@ -191,7 +184,6 @@ namespace DealEngine.WebUI.Controllers
 
 				var programmes = new List<Programme>();
 				var programmeList = await _programmeService.GetAllProgrammes();
-				//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
 				foreach (Programme programme in programmeList)
 					model.Settings.InsuranceProgrammes.Add(
 						new SelectListItem
@@ -206,7 +198,6 @@ namespace DealEngine.WebUI.Controllers
 					Brokers = new List<SelectListItem>(),
 					Insurers = new List<SelectListItem>()
 				};
-
 
 				return View(model);
 			}
