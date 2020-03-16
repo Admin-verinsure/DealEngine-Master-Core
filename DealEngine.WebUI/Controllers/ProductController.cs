@@ -119,17 +119,11 @@ namespace DealEngine.WebUI.Controllers
 
 		// Proposal Element,
 		// Premium Element,
-                   		// Policy Element
-		[HttpGet]
-		public async Task<IActionResult> CreateProduct ()
-		{
-			return View ();
-		}
-
+        // Policy Element
 		// Can not create a product without different insurance elements existing
 		// Can only map and not add new elements
 		[HttpGet]
-		public async Task<IActionResult> CreateNew()
+		public async Task<IActionResult> CreateProduct()
 		{
 			User user = null;
 			try
@@ -152,11 +146,10 @@ namespace DealEngine.WebUI.Controllers
 					BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
 				};
 
-				//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
 				model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
 
 				var productList = await _productService.GetAllProducts();
-				foreach (Product product in productList.Where(p => p.IsBaseProduct))
+				foreach (Product product in productList.Where(p => p.IsMasterProduct))
 				{
 					model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
 				}
@@ -191,7 +184,6 @@ namespace DealEngine.WebUI.Controllers
 
 				var programmes = new List<Programme>();
 				var programmeList = await _programmeService.GetAllProgrammes();
-				//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
 				foreach (Programme programme in programmeList)
 					model.Settings.InsuranceProgrammes.Add(
 						new SelectListItem
@@ -206,7 +198,6 @@ namespace DealEngine.WebUI.Controllers
 					Brokers = new List<SelectListItem>(),
 					Insurers = new List<SelectListItem>()
 				};
-
 
 				return View(model);
 			}
@@ -307,7 +298,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
 		//[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateNew(ProductViewModel model)
+		public async Task<IActionResult> CreateProduct(ProductViewModel model)
 		{
 			if (!ModelState.IsValid) {
 				ModelState.AddModelError ("", "Form has not been completed");
@@ -380,9 +371,9 @@ namespace DealEngine.WebUI.Controllers
                 if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                await _productService.CreateProduct(product);
+				//await _productService.CreateProduct(product);
 
-
+				return NoContent();
                 return Redirect ("~/Product/MyProducts");
 				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
 			}
@@ -533,7 +524,7 @@ namespace DealEngine.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CloneProduct (ProductViewModel model)
 		{
-			return await CreateNew(model);
+			return await CreateProduct(model);
 		}
 
 		[HttpGet]
