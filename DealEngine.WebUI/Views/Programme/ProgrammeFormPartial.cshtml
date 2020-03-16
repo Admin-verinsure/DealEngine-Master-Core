@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.Programme.ProgrammeInfoViewModel
 
-<form id="ProgrammeForm" method="post">
+<form id="programmeform" method="post" class="needs-validation" novalidate>
     <div class="card">
         <div class="card-header text-white" style="background-color:#3276b1">
             <h2>Edit Programme</h2>
@@ -14,7 +14,8 @@
                         </td>
                         <td>
                             <label class="input">
-                                @Html.TextBoxFor(m => m.programmeName, new { @class = "form-control", @required = "true" })
+                                @Html.TextBoxFor(m => m.programmeName, new { @class = "form-control", @required="required"})
+                                <span asp-validation-for="programmeName" class="text-danger"></span>                              
                             </label>
                         </td>
                     </tr>
@@ -24,7 +25,7 @@
                         </td>
                         <td>
                             <label class="input">
-                                @Html.TextBoxFor(m => m.TaxRate, new { @class = "form-control", @required = "true" })
+                                @Html.TextBoxFor(m => m.TaxRate, new { @class = "form-control", @required="required"})                                
                             </label>
                         </td>
                     </tr>
@@ -34,7 +35,7 @@
                         </td>
                         <td>
                             <label class="input">
-                                @Html.TextBoxFor(m => m.PolicyNumberPrefixString, new { @class = "form-control", @required = "true" })
+                                @Html.TextBoxFor(m => m.PolicyNumberPrefixString, new { @class = "form-control", @required = "required" })                                
                             </label>
                         </td>
                     </tr>
@@ -95,10 +96,6 @@
                     @if (Model.ProductViewModel == null)
                     {
                         <button type="submit" class="btn btn-success"> Save</button>
-                    }
-                    else
-                    {
-                        <button id="bootstrapvalidate" type="submit" class="btn btn-success" hidden> Save</button>
                     }
                 </div>
             }

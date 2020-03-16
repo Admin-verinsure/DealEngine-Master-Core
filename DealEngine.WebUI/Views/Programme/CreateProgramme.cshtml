@@ -11,6 +11,7 @@
                     <ul class="nav nav-tabs step-anchor">
                         <li class="nav-item active"><a href="#programme1" class="nav-link">1<br><small>Programme</small></a></li>
                         <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Product</small></a></li>
+                        <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Submit</small></a></li>
                     </ul>
 
                     <div class="sw-container tab-content">
@@ -19,6 +20,9 @@
                         </div>
                         <div id="programme2" class="tab-pane step-content">
                             @await Html.PartialAsync("../Product/CreateProduct", Model.ProductViewModel)
+                        </div>
+                        <div id="programme3" class="tab-pane step-content">
+                            <p>fin</p>
                         </div>
 
                     </div>
@@ -34,7 +38,6 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-
             $('#smartwizardprogramme').smartWizard({
                 selected: 0,  // Initial selected step, 0 = first step
                 keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
@@ -67,13 +70,32 @@
                 transitionSpeed: '400'
             });
 
-            $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-                if (stepDirection == "forward") {
+            $("#smartwizardprogramme").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
+                if (stepDirection == "forward") {                                   
                     if (stepNumber == 0) {
-
+                        var form = document.getElementById('programmeform');
+                        form.classList.add('was-validated');
+                        if (form.checkValidity() === false) {
+                            throw "stop process";
+                        }
+                        else {
+                            form.submit();
+                        }
+                    }
+                    else if (stepNumber == 1) {
+                        var form = document.getElementById('productform');
+                        form.classList.add('was-validated');
+                        if (form.checkValidity() === false) {
+                            throw "stop process";
+                        }
+                        else {
+                            form.submit();
+                        }
                     }
                 }
             });
+
         });
+
     </script>
 }

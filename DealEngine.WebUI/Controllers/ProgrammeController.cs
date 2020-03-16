@@ -1031,7 +1031,9 @@ namespace DealEngine.WebUI.Controllers
 
         private async Task<ProductViewModel> GetProductViewModel()
         {
-            User user = await CurrentUser();
+            User user = null;
+
+            user = await CurrentUser();
             ProductViewModel model = new ProductViewModel();
             model.Description = new ProductDescriptionVM
             {
@@ -1052,7 +1054,7 @@ namespace DealEngine.WebUI.Controllers
             model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
 
             var productList = await _productService.GetAllProducts();
-            foreach (Product product in productList.Where(p => p.IsBaseProduct))
+            foreach (Product product in productList.Where(p => p.IsMasterProduct))
             {
                 model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
             }
@@ -1065,8 +1067,12 @@ namespace DealEngine.WebUI.Controllers
             foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
                 model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
 
-            model.Settings.InformationSheets = new List<SelectListItem>();
-            model.Settings.InformationSheets.Add(new SelectListItem { Text = "Select Information Sheet", Value = "" });
+            model.Settings.InformationSheets = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Select Information Sheet", Value = "" },
+                    new SelectListItem { Text = "New Information Sheet", Value = "1" }
+                };
+
             var templates = await _informationService.GetAllTemplates();
             foreach (var template in templates)
                 model.Settings.InformationSheets.Add(
@@ -1079,31 +1085,10 @@ namespace DealEngine.WebUI.Controllers
 
             model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
             model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
-            // loop over all non personal organisations and add them, excluding our own since its already added
-            var orgList = await _organisationService.GetAllOrganisations();
-            foreach (Organisation org in orgList.Where(org => org.OrganisationType.Name != "personal").OrderBy(o => o.Name))
-                if (org.Id.ToString() != model.Settings.PossibleOwnerOrganisations[1].Value)
-                    model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = org.Name, Value = org.Id.ToString() });
-
-            var programmes = new List<Programme>();
-            var programmeList = await _programmeService.GetAllProgrammes();
-            foreach (Programme programme in programmeList)
-                model.Settings.InsuranceProgrammes.Add(
-                    new SelectListItem
-                    {
-                        Text = programme.Name,
-                        Value = programme.Id.ToString()
-                    }
-                );
-
-            model.Parties = new ProductPartiesVM
-            {
-                Brokers = new List<SelectListItem>(),
-                Insurers = new List<SelectListItem>()
-            };
 
             return model;
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> CreateProgramme(IFormCollection collection)
@@ -1123,7 +1108,7 @@ namespace DealEngine.WebUI.Controllers
                 //await _programmeService.Update(programme);
 
                 //return Content("../Product/CreateProduct");
-                return Ok();
+                return NoContent();
             }
             catch(Exception ex)
             {

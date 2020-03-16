@@ -22,6 +22,29 @@ namespace DealEngine.Services.Impl
             await _riskCategoryRepository.AddAsync(risk);
         }
 
+        public async Task<List<RiskCategory>> CreateAllRiskCategories()
+        {
+            var riskArray = new List<string>();
+            riskArray.Add("People");
+            riskArray.Add("Business");
+            riskArray.Add("Associations");
+            riskArray.Add("Professions");
+            riskArray.Add("Goods");
+            riskArray.Add("Agriculture");
+            riskArray.Add("Transport");
+            riskArray.Add("Marine");
+
+            var list = new List<RiskCategory>();
+            foreach(var risk in riskArray)
+            {
+                RiskCategory riskCategory = new RiskCategory(null, risk, "");
+                await _riskCategoryRepository.AddAsync(riskCategory);
+                list.Add(riskCategory);
+            }
+
+            return list;
+        }
+
         public async Task<List<RiskCategory>> GetAllRiskCategories()
         {
             return await _riskCategoryRepository.FindAll().ToListAsync();

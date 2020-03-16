@@ -149,7 +149,7 @@ namespace DealEngine.WebUI.Controllers
 				model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
 
 				var productList = await _productService.GetAllProducts();
-				foreach (Product product in productList.Where(p => p.IsBaseProduct))
+				foreach (Product product in productList.Where(p => p.IsMasterProduct))
 				{
 					model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
 				}
@@ -298,7 +298,7 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
 		//[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateNew(ProductViewModel model)
+		public async Task<IActionResult> CreateProduct(ProductViewModel model)
 		{
 			if (!ModelState.IsValid) {
 				ModelState.AddModelError ("", "Form has not been completed");
@@ -524,7 +524,7 @@ namespace DealEngine.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CloneProduct (ProductViewModel model)
 		{
-			return await CreateNew(model);
+			return await CreateProduct(model);
 		}
 
 		[HttpGet]
