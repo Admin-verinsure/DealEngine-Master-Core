@@ -198,12 +198,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                 if (boatPremium < boatMinPremium)
                     boatPremium = boatMinPremium;
-                boatPremium = boatPremium + boatFsl;
                 boatBrokerageRate = agreement.Brokerage;
                 boatBrokerage = boatPremium * boatBrokerageRate / 100;
+                boatproratedBrokerage = boatBrokerage;
+
+                boatPremium = boatPremium + boatFsl;
                 boatproratedPremium = boatPremium;
                 boatproratedFsl = boatFsl;
-                boatproratedBrokerage = boatBrokerage;
+                
                 //Pre-rate premium if the boat effective date is later than policy inception date
                 if (boat.BoatEffectiveDate > agreement.InceptionDate)
                 {
@@ -388,7 +390,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                    
                 }
 
-                boatBrokerageDiffer = boatPremiumDiffer * boatBrokerageRate / 100;
+                boatBrokerageDiffer = (boatPremiumDiffer- boatFslDiffer) * boatBrokerageRate / 100;
                 totalBoatBrokerageDiffer += boatBrokerageDiffer;
 
                 bvTerm.FSLPre = boatFslPre;
@@ -521,7 +523,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                 vehiclePremium = (vehicle.GroupSumInsured * rates["mvpremiumrate"] / 100) + vehicleFsl;
                 vehicleBrokerageRate = agreement.Brokerage;
-                vehicleBrokerage = vehiclePremium * vehicleBrokerageRate / 100;
+                vehicleBrokerage = (vehicle.GroupSumInsured * rates["mvpremiumrate"] / 100) * vehicleBrokerageRate / 100;
                 vehicleproratedPremium = vehiclePremium;
                 vehicleproratedFsl = vehicleFsl;
                 vehicleproratedBrokerage = vehicleBrokerage;
@@ -708,7 +710,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     totalVehicleTermLimitDiffer += vehicle.GroupSumInsured;
                 }
 
-                vehicleBrokerageDiffer = vehiclePremiumDiffer * vehicleBrokerageRate / 100;
+                vehicleBrokerageDiffer = (vehiclePremiumDiffer-vehicleFslDiffer) * vehicleBrokerageRate / 100;
                 totalVehicleBrokerageDiffer += vehicleBrokerageDiffer;
 
                 mvTerm.FSLPre = vehicleFslPre;
