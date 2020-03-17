@@ -514,7 +514,7 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
                         ReferenceId = referenceId,// Move into ClientProgramme?
-                        //SubClientProgrammes = client.SubClientProgrammes
+                        SubClientProgrammes = client.SubClientProgrammes
                     });
                 }
             }
@@ -556,7 +556,7 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
                         ReferenceId = referenceId,// Move into ClientProgramme?
-                        //SubClientProgrammes = client.SubClientProgrammes
+                        SubClientProgrammes = client.SubClientProgrammes
                     });
                 }
             }
