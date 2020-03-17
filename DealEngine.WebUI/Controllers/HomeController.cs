@@ -482,7 +482,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.ProgrammeId = client.BaseProgramme.Id.ToString();
                     string status = client.InformationSheet.Status;
-                    string referenceid = client.InformationSheet.ReferenceId;
+                    string referenceId = client.InformationSheet.ReferenceId;
                     bool nextInfoSheet = false;
                     bool programmeAllowUsesChange = false;
 
@@ -513,8 +513,8 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
-                        ReferenceId = referenceid,// Move into ClientProgramme?
-                        SubClientProgrammes = client.SubClientProgrammes
+                        ReferenceId = referenceId,// Move into ClientProgramme?
+                        //SubClientProgrammes = client.SubClientProgrammes
                     });
                 }
             }
@@ -525,7 +525,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.ProgrammeId = client.BaseProgramme.Id.ToString();
                     string status = client.InformationSheet.Status;
-                    string referenceid = client.InformationSheet.ReferenceId;
+                    string referenceId = client.InformationSheet.ReferenceId;
                     bool nextInfoSheet = false;
                     bool programmeAllowUsesChange = false;
                     string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
@@ -555,8 +555,8 @@ namespace DealEngine.WebUI.Controllers
                         LocalDateCreated = localDateCreated,
                         LocalDateSubmitted = localDateSubmitted,
                         Status = status,
-                        ReferenceId = referenceid,// Move into ClientProgramme?
-                        SubClientProgrammes = client.SubClientProgrammes
+                        ReferenceId = referenceId,// Move into ClientProgramme?
+                        //SubClientProgrammes = client.SubClientProgrammes
                     });
                 }
             }
@@ -623,19 +623,15 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
                 var clientList = await _programmeService.GetClientProgrammesForProgramme(id);
-
-                if(clientList.Count > 0)
+                foreach (var clientProg in clientList)
                 {
-                    foreach (var clientProg in clientList)
-                    {
-                        foreach (var sub in clientProg.SubClientProgrammes)
-                        {
-                            if (clientProg.Owner == user.PrimaryOrganisation)
-                            {
-                                return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
-                            }
-                        }
-                    }
+                    //foreach (var sub in clientProg.SubClientProgrammes)
+                    //{
+                    //    if (clientProg.Owner == user.PrimaryOrganisation)
+                    //    {
+                    //        return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
+                    //    }
+                    //}
                 }
 
                 model = await GetClientProgrammeListModel(user, clientList);                                                
