@@ -17,7 +17,8 @@ namespace DealEngine.Infrastructure.AppInitialize
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireLowercase = false;
-                options.User.RequireUniqueEmail = true;                
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+'";
             })
                 .AddSignInManager<SignInManager<IdentityUser>>()
                 .AddUserManager<UserManager<IdentityUser>>()  
