@@ -64,7 +64,7 @@ namespace DealEngine.Services.Impl
             return clientList;
         }
 
-		public async Task<IList<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
+		public async Task<List<ClientProgramme>> GetClientProgrammesForProgramme(Guid programmeId)
 		{
 			Programme programme = await GetProgramme(programmeId);
             var clientList = new List<ClientProgramme>();
