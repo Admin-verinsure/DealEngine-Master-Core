@@ -623,16 +623,21 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 Programme programme = await _programmeService.GetProgrammeById(id);
                 var clientList = await _programmeService.GetClientProgrammesForProgramme(id);
-                foreach(var clientProg in clientList)
-                {                 
-                    foreach(var sub in clientProg.SubClientProgrammes)
+
+                if(clientList.Count > 0)
+                {
+                    foreach (var clientProg in clientList)
                     {
-                        if (clientProg.Owner == user.PrimaryOrganisation)
+                        foreach (var sub in clientProg.SubClientProgrammes)
                         {
-                            return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
+                            if (clientProg.Owner == user.PrimaryOrganisation)
+                            {
+                                return Redirect("/Home/ViewSubClientProgramme?subClientProgrammeId=" + sub.Id.ToString());
+                            }
                         }
                     }
                 }
+
                 model = await GetClientProgrammeListModel(user, clientList);                                                
 
                 return View(model);

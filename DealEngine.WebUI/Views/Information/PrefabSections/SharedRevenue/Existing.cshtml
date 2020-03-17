@@ -107,8 +107,9 @@
     <div class="tab-pane active" id="RevenueTabs2" role="tabpanel">
         <div class="container-fluid">
             <div class="form-group">
-                <label for="totalRevenue">Enter Fee Income</label>
-                <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                <label for="totalRevenue">Estimate of current year</label>
+                @Html.TextBoxFor(m => m.TotalRevenue, new { @class = "form-control", @required="required", type="number"})
+                @*<input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model..ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>*@
             </div>
 
             <div class="form-group">

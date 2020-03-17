@@ -52,7 +52,6 @@
                $('tab1').click();
            }
 
-
            if (stepNumber === 0) {
 
                event.preventDefault();               
@@ -69,14 +68,12 @@
                    var value = "";
 
                    $('#tblBoat tr').each(function () {
-                       debugger;
-                        var $tds = $(this).find('td'),
-                          value = $tds.eq(1).text().toString();
+                       var $tds = $(this).find('td'),
+                           value = $tds.eq(1).text().toString();
 
                        if (value == false && value != "") {
                            IsboatNamecount++;
                        }
-
                    });
 
                    if ((Isboatexist == false ||  IsboatNamecount == 1) && (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") && vesselExists != null) {

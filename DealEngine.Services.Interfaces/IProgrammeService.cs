@@ -13,7 +13,7 @@ namespace DealEngine.Services.Interfaces
 		Task<ClientProgramme> GetClientProgramme (Guid id);
         Task<Programme> GetClientProgrammebyName(string programmeName);
         Task<List<ClientProgramme>> GetClientProgrammesByOwner (Guid ownerOrganisationId);
-		Task<IList<ClientProgramme>> GetClientProgrammesForProgramme (Guid programmeId);
+		Task<List<ClientProgramme>> GetClientProgrammesForProgramme (Guid programmeId);
         Task<ClientProgramme> CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);
         Task<ClientProgramme> CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
 		Task Update (params ClientProgramme[] clientProgrammes);
