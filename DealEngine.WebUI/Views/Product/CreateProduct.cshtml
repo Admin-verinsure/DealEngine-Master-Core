@@ -90,6 +90,7 @@
                 </div>
 
                 <div class="form-group">
+                    @Html.LabelFor(m => m.Settings.SelectedDocuments, "Clone Documents")
                     @Html.ListBoxFor(m => m.Settings.SelectedDocuments, Model.Settings.Documents, new { @class = "form-control"})
                 </div>
                 <div class="form-group">
@@ -100,9 +101,9 @@
                 </div>
                 @if (Model.Settings.SelectedInsuranceProgramme != null)
                 {
-            <div class="form-group">
-                @Html.DropDownListFor(m => m.Settings.SelectedInsuranceProgramme, Model.Settings.InsuranceProgrammes, new { @class = "form-control", @required = "required" })                
-            </div>
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.Settings.SelectedInsuranceProgramme, Model.Settings.InsuranceProgrammes, new { @class = "form-control", @required = "required" })                
+                    </div>
                 }
             </form>
         </div>

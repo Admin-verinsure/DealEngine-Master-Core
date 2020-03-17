@@ -1069,8 +1069,7 @@ namespace DealEngine.WebUI.Controllers
 
             model.Settings.InformationSheets = new List<SelectListItem>
                 {
-                    new SelectListItem { Text = "Select Information Sheet", Value = "" },
-                    new SelectListItem { Text = "New Information Sheet", Value = "1" }
+                    new SelectListItem { Text = "Select Information Sheet", Value = "" }
                 };
 
             var templates = await _informationService.GetAllTemplates();
@@ -1105,7 +1104,7 @@ namespace DealEngine.WebUI.Controllers
                 programme.LastModifiedBy = user;
                 programme.LastModifiedOn = DateTime.UtcNow;
 
-                //await _programmeService.Update(programme);
+                await _programmeService.Update(programme);
 
                 //return Content("../Product/CreateProduct");
                 return NoContent();
