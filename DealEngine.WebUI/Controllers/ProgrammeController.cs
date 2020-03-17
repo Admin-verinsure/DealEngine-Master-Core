@@ -1106,7 +1106,6 @@ namespace DealEngine.WebUI.Controllers
 
                 await _programmeService.Update(programme);
 
-                //return Content("../Product/CreateProduct");
                 return NoContent();
             }
             catch(Exception ex)

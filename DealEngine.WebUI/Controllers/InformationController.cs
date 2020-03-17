@@ -2868,14 +2868,15 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabOne(string[] Territories, bool IsTradingOutsideNZ, string ClientInformationSheetId)
+        public async Task<IActionResult> SaveRevenueDataTabOne(IFormCollection form)
         {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+                var sheetId = form["ClientInformationSheetId"];
+                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId));
                 List<TerritoryTemplate> territoryTemplates = new List<TerritoryTemplate>();
                 if (sheet.RevenueData == null)
                 {
@@ -2896,14 +2897,14 @@ namespace DealEngine.WebUI.Controllers
                 var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("New Zealand");
                 territoryTemplates.Add(territorytemplateNZ);
 
-                foreach (var territoryId in Territories)
-                {
-                    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
-                    if (territorytemplate.Location != territorytemplateNZ.Location)
-                    {
-                        territoryTemplates.Add(territorytemplate);
-                    }
-                }
+                //foreach (var territoryId in Territories)
+                //{
+                //    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
+                //    if (territorytemplate.Location != territorytemplateNZ.Location)
+                //    {
+                //        territoryTemplates.Add(territorytemplate);
+                //    }
+                //}
 
                 foreach (var terr in territoryTemplates)
                 {

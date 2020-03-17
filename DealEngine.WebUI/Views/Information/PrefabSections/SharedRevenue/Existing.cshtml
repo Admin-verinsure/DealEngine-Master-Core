@@ -29,7 +29,7 @@
                         @foreach (var territoryData in Model.RevenueData.Territories)
                         {
                             <th scope="row">
-                                <input class="form-control" readonly type="number" name="@territoryData.Id" id="@territoryData.Id" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                                <input class="form-control" readonly type="number" form="revenue" name="@territoryData.Id" id="@territoryData.Id" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
                             </th>
                         }
                     </tr>
@@ -51,7 +51,7 @@
                         @foreach (var businessActivityData in Model.RevenueData.Activities)
                         {
                             <th scope="row">
-                                <input class="form-control" type="number" readonly name="@businessActivityData.Id" id="@businessActivityData.Id" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                                <input class="form-control" type="number" readonly form="revenue" name="@businessActivityData.Id" id="@businessActivityData.Id" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
                             </th>
                         }
                     </tr>
@@ -66,7 +66,7 @@
         <div class="container-fluid">
             <div class="form-group" id="sharedRevenueTerritories" name="sharedRevenueTerritories">
                 <label for="SharedTerritories">Select Territories</label>
-                <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
+                <select data-placeholder="Click here to select Territories" form="revenue1" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
                     @foreach (var territory in Model.Territories)
                     {
                         <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
@@ -90,7 +90,7 @@
                             @foreach (var territoryData in Model.RevenueData.Territories)
                             {
                                 <th scope="row">
-                                    <input class="form-control" type="number" name="@territoryData.TerritoryTemplateId" id="@territoryData.TerritoryTemplateId" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                                    <input class="form-control" type="number" form="revenue1" name="@territoryData.TerritoryTemplateId" id="@territoryData.TerritoryTemplateId" maxlength="3" value="@territoryData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
                                 </th>
                             }
                         </tr>
@@ -107,13 +107,25 @@
     <div class="tab-pane active" id="RevenueTabs2" role="tabpanel">
         <div class="container-fluid">
             <div class="form-group">
-                <label for="totalRevenue">Enter Fee Income</label>
-                <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                <div class="row">
+                    <div class="col-1">
+                        <label for="currentYear">Estimate of current year</label>
+                        <input id="currentYear" name="currentYear" type="number" class="form-control" form="revenue" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                    </div>
+                    <div class="col-2">
+                        <label for="lastFinancialYear">Last completed financial year</label>
+                        <input id="lastFinancialYear" name="lastFinancialYear" type="number" form="revenue" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                    </div>
+                    <div class="col-3">
+                        <label for="nextFincialYear">Estimate of next financial year</label>
+                        <input id="nextFincialYear" name="nextFincialYear" type="number" form="revenue" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                    </div>
+                </div>                
             </div>
 
             <div class="form-group">
                 <label for="sharedRevenueActivities">Select Activites</label>
-                <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                <select id="sharedRevenueActivities" name="sharedRevenueActivities" form="revenue" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
                     @foreach (var ou in Model.Activities)
                     {
                         <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
@@ -138,7 +150,7 @@
                                 @foreach (var businessActivityData in Model.RevenueData.Activities)
                                 {
                                     <th scope="row">
-                                        <input class="form-control" type="number" name="@businessActivityData.BusinessActivityTemplate" id="@businessActivityData.BusinessActivityTemplate" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                                        <input class="form-control" type="number" form="revenue" name="@businessActivityData.BusinessActivityTemplate" id="@businessActivityData.BusinessActivityTemplate" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
                                     </th>
                                 }
                             </tr>
@@ -148,7 +160,7 @@
             </div>
             <div class="form-group">
                 <div class="footer" id="submitTab4">
-                    <input type="submit" value="Submit" class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('oldSummary')">
+                    <button class="btn btn-success" id="btnSharedRevenueSubmit" onclick="SaveRevenueTabTwo('oldSummary')">Submit</button>
                 </div>
                 <div class="footer" id="additionalInfomation" style="display:none">
                     <button class="btn btn-primary" onclick="SaveRevenueTabTwo('additionalInfo')">Submit To Save</button>
