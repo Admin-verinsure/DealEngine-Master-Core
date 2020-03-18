@@ -1495,7 +1495,7 @@ namespace DealEngine.WebUI.Controllers
                     if (milestone != null)
                     {
                         var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                        var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
+                        var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Not Started" && a.DateDeleted == null);
                         if (advisory != null)
                         {
                             advisoryDesc = advisory.Description;
