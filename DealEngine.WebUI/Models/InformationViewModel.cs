@@ -252,7 +252,9 @@ namespace DealEngine.WebUI.Models
         public bool IsTradingOutsideNZ { get; set; }
         public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> Activities { get; set; }
-        public decimal TotalRevenue { get; set; }
+        public decimal NextFincialYear { get; set; }
+        public decimal CurrentYear { get; set; }
+        public decimal LastFinancialYear { get; set; }
         public RevenueByActivity RevenueData { get; set; }
         public AdditionalActivityInformation AdditionalInformation { get; set; }
     }

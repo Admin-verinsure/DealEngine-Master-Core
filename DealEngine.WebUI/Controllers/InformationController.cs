@@ -1852,10 +1852,12 @@ namespace DealEngine.WebUI.Controllers
         {
             RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
             var clientProgramme = sheet.Programme;
+
             var territoryList = new List<TerritoryTemplate>();
-            var businessActivityList = new List<BusinessActivityTemplate>();
-            var sharedTerritoryCountList = 0;
-            var sharedRevenueCountList = 0;
+            var nzTemplate = await _territoryService.GetTerritoryTemplateByName("New Zealand");
+            territoryList.Add(nzTemplate);
+
+            var businessActivityList = new List<BusinessActivityTemplate>(); 
             List<SelectListItem> territoryTemplates = new List<SelectListItem>();
             List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
 
@@ -1863,93 +1865,113 @@ namespace DealEngine.WebUI.Controllers
             {
                 if (sheet.RevenueData.Territories.Count > 0)
                 {
-                    foreach (Territory territory in sheet.RevenueData.Territories)
+                    foreach(var territory in sheet.RevenueData.Territories)
                     {
-                        var territoryTemplate = await _territoryService.GetTerritoryTemplateById(territory.TerritoryTemplateId);
-                        if (territoryTemplate != null)
+                        var template = await _territoryService.GetTerritoryTemplateById(territory.TerritoryTemplateId);
+                        territoryList.Add(template);
+
+                        territoryTemplates.Add(new SelectListItem
                         {
-                            territoryList.Add(territoryTemplate);
+                            Value = template.Id.ToString(),
+                            Text = template.Location,
+                            Selected = true
+                        });
+
+                    }
+                    foreach(var template in clientProgramme.BaseProgramme.TerritoryTemplates)
+                    {
+                        if (!territoryList.Contains(template))
+                        {
+                            territoryTemplates.Add(new SelectListItem
+                            {
+                                Value = template.Id.ToString(),
+                                Text = template.Location,
+                                Selected = false
+                            });
                         }
                     }
-                    sharedTerritoryCountList = territoryList.Count;
+                }
+                else
+                {
+                    foreach (var territory in territoryList)
+                    {
+                        territoryTemplates.Add(new SelectListItem
+                        {
+                            Value = territory.Id.ToString(),
+                            Text = territory.Location,
+                            Selected = false
+                        });
+
+                    }
                 }
 
                 if (sheet.RevenueData.Activities.Count > 0)
                 {
-                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
+                    foreach (var ba in sheet.RevenueData.Activities)
                     {
-                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(businessActivity.BusinessActivityTemplate);
-                        if(businessActivityTemplate != null)
+                        var template = await _businessActivityService.GetBusinessActivityTemplate(ba.BusinessActivityTemplate);
+                        businessActivityList.Add(template);
+                        businessActivityTemplates.Add(new SelectListItem
                         {
-                            businessActivityList.Add(businessActivityTemplate);
-                        }                        
+                            Value = ba.Id.ToString(),
+                            Text = ba.Description,
+                            Selected = true
+                        });
                     }
-                    sharedRevenueCountList = businessActivityList.Count;
+                    foreach (var template in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+                    {
+                        if (!businessActivityList.Contains(template))
+                        {
+                            businessActivityTemplates.Add(new SelectListItem
+                            {
+                                Value = template.Id.ToString(),
+                                Text = template.Description,
+                                Selected = false
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+                    {
+                        businessActivityTemplates.Add(new SelectListItem
+                        {
+                            Value = bat.Id.ToString(),
+                            Text = bat.Description,
+                            Selected = false
+                        });
+                    }
                 }
 
                 revenueByActivityViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityInformation>(sheet.RevenueData.AdditionalActivityInformation);
-                revenueByActivityViewModel.TotalRevenue = sheet.RevenueData.TotalRevenue;
+                revenueByActivityViewModel.CurrentYear = sheet.RevenueData.CurrentYear;
+                revenueByActivityViewModel.NextFincialYear = sheet.RevenueData.NextFinancialYear;
+                revenueByActivityViewModel.LastFinancialYear = sheet.RevenueData.LastFinancialYear;
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
-
-            foreach (TerritoryTemplate territoryTemplate in clientProgramme.BaseProgramme.TerritoryTemplates)
+            else
             {
-                if (!territoryList.Contains(territoryTemplate))
-                {
-                    territoryList.Add(territoryTemplate);
-                }
-            }
-
-            foreach (BusinessActivityTemplate businessActivityTemplate in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-            {
-                if (!businessActivityList.Contains(businessActivityTemplate))
-                {
-                    businessActivityList.Add(businessActivityTemplate);
-                }
-            }
-
-            foreach (var businessActivityTemplate in businessActivityList)
-            {
-                if (businessActivityList.IndexOf(businessActivityTemplate) <= sharedTerritoryCountList)
-                {
-                    businessActivityTemplates.Add(new SelectListItem
-                    {
-                        Value = businessActivityTemplate.Id.ToString(),
-                        Text = businessActivityTemplate.Description,
-                        Selected = true
-                    });
-                }
-                else
-                {
-                    businessActivityTemplates.Add(new SelectListItem
-                    {
-                        Value = businessActivityTemplate.Id.ToString(),
-                        Text = businessActivityTemplate.Description,
-                        Selected = false
-                    });
-                }
-            }
-
-            foreach (var territoryTemplate in territoryList)
-            {
-                if (territoryList.IndexOf(territoryTemplate) <= sharedTerritoryCountList)
+                foreach (var territory in territoryList)
                 {
                     territoryTemplates.Add(new SelectListItem
                     {
-                        Value = territoryTemplate.Id.ToString(),
-                        Text = territoryTemplate.Location,
-                        Selected = true
+                        Value = territory.Id.ToString(),
+                        Text = territory.Location,
+                        Selected = false
                     });
+
                 }
-                else
+                foreach(var bat in businessActivityList)
                 {
-                    territoryTemplates.Add(new SelectListItem
+                    businessActivityTemplates.Add(new SelectListItem
                     {
-                        Value = territoryTemplate.Id.ToString(),
-                        Text = territoryTemplate.Location,
+                        Value = bat.Id.ToString(),
+                        Text = bat.Description,
                         Selected = false
                     });
                 }
+
             }
 
             revenueByActivityViewModel.Territories = territoryTemplates;
@@ -2876,8 +2898,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var sheetId = form["ClientInformationSheetId"];
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId));
-                List<TerritoryTemplate> territoryTemplates = new List<TerritoryTemplate>();
+                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId[0]));                
                 if (sheet.RevenueData == null)
                 {
                     sheet.RevenueData = new RevenueByActivity(user);
@@ -2894,28 +2915,25 @@ namespace DealEngine.WebUI.Controllers
                     sheet.RevenueData.Territories.Clear();
                 }
 
-                var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("New Zealand");
-                territoryTemplates.Add(territorytemplateNZ);
-
-                //foreach (var territoryId in Territories)
-                //{
-                //    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
-                //    if (territorytemplate.Location != territorytemplateNZ.Location)
-                //    {
-                //        territoryTemplates.Add(territorytemplate);
-                //    }
-                //}
-
-                foreach (var terr in territoryTemplates)
+                var territoryForm = form["form"];
+                var territoryFormString = territoryForm[0];
+                var territorySplit = territoryFormString.Split("&");
+                foreach(var str in territorySplit)
                 {
-                    var newTerritory = new Territory(user);
-                    newTerritory.Location = terr.Location;
-                    newTerritory.TerritoryTemplateId = terr.Id;
-                    await _territoryService.AddTerritory(newTerritory);
-                    sheet.RevenueData.Territories.Add(newTerritory);
+                    var strSpit = str.Split('=');
+                    if(strSpit[0] != "Territories")
+                    {
+                        var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(strSpit[0]));
+                        var newTerritory = new Territory(user);
+                        newTerritory.Location = territorytemplate.Location;
+                        newTerritory.Pecentage = decimal.Parse(strSpit[1]);
+                        newTerritory.TerritoryTemplateId = territorytemplate.Id;
+                        await _territoryService.AddTerritory(newTerritory);
+                        sheet.RevenueData.Territories.Add(newTerritory);
+                    }                               
                 }
-
                 await _clientInformationService.UpdateInformation(sheet);
+
                 return Json("OK");
             }
             catch (Exception ex)
@@ -2926,14 +2944,15 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabTwo(string[] BusinessActivities, string ClientInformationSheetId)
+        public async Task<IActionResult> SaveRevenueDataTabTwo(IFormCollection form)
         {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+                var sheetId = form["ClientInformationSheetId"];
+                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId[0]));
                 if (sheet.RevenueData == null)
                 {
                     sheet.RevenueData = new RevenueByActivity(user);
@@ -2942,7 +2961,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
                     {
-                        businessActivity.RevenueByActivities.Clear();
                         businessActivity.DateDeleted = DateTime.Now;
                         businessActivity.DeletedBy = user;
                         await _businessActivityService.UpdateBusinessActivity(businessActivity);
@@ -2950,23 +2968,42 @@ namespace DealEngine.WebUI.Controllers
                     sheet.RevenueData.Activities.Clear();
                 }
 
-                foreach (var baId in BusinessActivities)
+                var activityForm = form["form"];
+                var activityFormString = activityForm[0];
+                var activitySplit = activityFormString.Split("&");
+                foreach (var str in activitySplit)
                 {
-                    var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(baId));
-                    var newBusinessActivity = new BusinessActivity(user)
+                    var strSpit = str.Split('=');
+                    if (strSpit[0] == "currentYear")
                     {
-                        AnzsciCode = businessActivityTemplate.AnzsciCode,
-                        Classification = businessActivityTemplate.Classification,
-                        Description = businessActivityTemplate.Description,
-                        BusinessActivityTemplate = businessActivityTemplate.Id
-                    };
-
-                    if (!sheet.RevenueData.Activities.Contains(newBusinessActivity))
+                        sheet.RevenueData.CurrentYear = decimal.Parse(strSpit[1]);
+                    }
+                    else if (strSpit[0] == "lastFinancialYear")
                     {
+                        sheet.RevenueData.LastFinancialYear = decimal.Parse(strSpit[1]);
+                    }
+                    else if (strSpit[0] == "nextFinancialYear")
+                    {
+                        sheet.RevenueData.NextFinancialYear = decimal.Parse(strSpit[1]);
+                    }
+                    else if (strSpit[0] == "sharedRevenueActivities")
+                    {
+                        
+                    }
+                    else
+                    {
+                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(strSpit[0]));
+                        var newBusinessActivity = new BusinessActivity(user)
+                        {
+                            AnzsciCode = businessActivityTemplate.AnzsciCode,
+                            Classification = businessActivityTemplate.Classification,
+                            Description = businessActivityTemplate.Description,
+                            BusinessActivityTemplate = businessActivityTemplate.Id,
+                            Pecentage = decimal.Parse(strSpit[1])
+                        };
                         await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
                         sheet.RevenueData.Activities.Add(newBusinessActivity);
-                        newBusinessActivity.RevenueByActivities.Add(sheet.RevenueData);
-                    }
+                    }                    
                 }
 
                 await _clientInformationService.UpdateInformation(sheet);
@@ -2977,111 +3014,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabThree(string TableSerialised, string ClientInformationSheetId)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-                if (sheet.RevenueData == null)
-                {
-                    throw new Exception("Please complete Territories Tab");
-                }
-                if (TableSerialised.Length == 6)
-                {
-                    foreach (var saveTerritory in sheet.RevenueData.Territories)
-                    {
-                        string[] valueId = TableSerialised.Split('=');
-                        if (valueId[0] == saveTerritory.Location)
-                        {
-                            saveTerritory.Pecentage = decimal.Parse(valueId[1]);
-                            await _territoryService.UpdateTerritory(saveTerritory);
-                        }
-                    }
-                }
-                else
-                {
-                    Guid NZId = Guid.Empty;
-                    var runningPercentage = 0;
-                    foreach (var saveTerritory in sheet.RevenueData.Territories)
-                    {
-                        string[] tableRow = TableSerialised.Split('&');
-                        foreach (var str in tableRow)
-                        {
-                            string[] valueId = str.Split('=');
-                            var territoryTemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(valueId[0]));
-                            if (territoryTemplate.Location == saveTerritory.Location)
-                            {
-                                var percentage = int.Parse(valueId[1]);
-                                runningPercentage += percentage;
-                                saveTerritory.Pecentage = percentage;
-                                await _territoryService.UpdateTerritory(saveTerritory);
-                            }
-                            if (saveTerritory.Location == "New Zealand")
-                            {
-                                NZId = saveTerritory.Id;
-                            }
-                        }
-                    }
-                    if (runningPercentage != 100)
-                    {
-                        var nzTerritory = await _territoryService.GetTerritoryById(NZId);
-                        nzTerritory.Pecentage = (100 - runningPercentage);
-                        await _territoryService.UpdateTerritory(nzTerritory);
-                    }
-                }
-
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabFour(string TableSerialised, string ClientInformationSheetId, string TotalRevenue)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
-                if (sheet.RevenueData == null)
-                {
-                    throw new Exception("Please complete Activities Tab");
-                }
-                sheet.RevenueData.TotalRevenue = decimal.Parse(TotalRevenue);
-                string[] tableRow = TableSerialised.Split('&');
-                foreach (var saveActivity in sheet.RevenueData.Activities)
-                {
-                    foreach (var str in tableRow)
-                    {
-                        string[] valueId = str.Split('=');
-                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(valueId[0]));
-                        if (businessActivityTemplate.AnzsciCode == saveActivity.AnzsciCode)
-                        {
-                            saveActivity.Pecentage = decimal.Parse(valueId[1]);
-                            await _businessActivityService.UpdateBusinessActivity(saveActivity);
-                        }
-                    }
-                }
-                await _clientInformationService.UpdateInformation(sheet);
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        }        
 
         [HttpPost]
         public async Task<IActionResult> SaveRevenueDataTabFive(IFormCollection form)

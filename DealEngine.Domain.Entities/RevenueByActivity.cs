@@ -11,12 +11,15 @@ namespace DealEngine.Domain.Entities
 			: base (createdBy)
 		{
             Territories = new List<Territory>();
-            Activities = new List<BusinessActivity>();
-		}
+            Activities = new List<BusinessActivity>(); 
+
+        }
 
 		public virtual IList<Territory> Territories { get; set; }
 		public virtual IList<BusinessActivity> Activities { get; set; }
-        public virtual decimal TotalRevenue { get; set; }
+        public virtual decimal CurrentYear { get; set; }
+        public virtual decimal LastFinancialYear { get; set; }
+        public virtual decimal NextFinancialYear { get; set; }
         public virtual AdditionalActivityInformation AdditionalActivityInformation { get; set; }
     }
 

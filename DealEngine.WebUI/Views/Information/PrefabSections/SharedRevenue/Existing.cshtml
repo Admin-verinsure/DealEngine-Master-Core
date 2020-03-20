@@ -11,8 +11,20 @@
 <div id="" class="tab-content">
     <div class="tab-pane active" id="RevenueTabs0" role="tabpanel">
         <div class="form-group">
-            <label for="SharedTotalRevenue">Fee Income</label>
-            <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="10000" required>
+            <div class="row">
+                <div class="col-3">
+                    <label for="sharedcurrentYear">Estimate of current year</label>
+                    <input id="sharedcurrentYear" name="sharedcurrentYear" type="number" class="form-control" readonly value="@Model.CurrentYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                </div>
+                <div class="col-3">
+                    <label for="sharedlastFinancialYear">Last completed financial year</label>
+                    <input id="sharedlastFinancialYear" name="sharedlastFinancialYear" type="number" readonly class="form-control" value="@Model.LastFinancialYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$">
+                </div>
+                <div class="col-3">
+                    <label for="sharednextFinancialYear">Estimate of next financial year</label>
+                    <input id="sharednextFinancialYear" name="sharednextFinancialYear" type="number" readonly class="form-control" value="@Model.NextFincialYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$">
+                </div>
+            </div>            
         </div>
         <div class="form-group">
             <table id="ListSharedRevenueTerritories" class="table">
@@ -108,24 +120,24 @@
         <div class="container-fluid">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-1">
+                    <div class="col-3">
                         <label for="currentYear">Estimate of current year</label>
-                        <input id="currentYear" name="currentYear" type="number" class="form-control" form="revenue" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
-                    </div>
-                    <div class="col-2">
-                        <label for="lastFinancialYear">Last completed financial year</label>
-                        <input id="lastFinancialYear" name="lastFinancialYear" type="number" form="revenue" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                        <input id="currentYear" name="currentYear" type="number" class="form-control" form="revenue2" value="@Model.CurrentYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
                     </div>
                     <div class="col-3">
-                        <label for="nextFincialYear">Estimate of next financial year</label>
-                        <input id="nextFincialYear" name="nextFincialYear" type="number" form="revenue" class="form-control" value="@Model.TotalRevenue.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                        <label for="lastFinancialYear">Last completed financial year</label>
+                        <input id="lastFinancialYear" name="lastFinancialYear" type="number" form="revenue2" class="form-control" value="@Model.LastFinancialYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" >
+                    </div>
+                    <div class="col-3">
+                        <label for="nextFinancialYear">Estimate of next financial year</label>
+                        <input id="nextFinancialYear" name="nextFinancialYear" type="number" form="revenue2" class="form-control" value="@Model.NextFincialYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" >
                     </div>
                 </div>                
             </div>
 
             <div class="form-group">
                 <label for="sharedRevenueActivities">Select Activites</label>
-                <select id="sharedRevenueActivities" name="sharedRevenueActivities" form="revenue" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                <select id="sharedRevenueActivities" name="sharedRevenueActivities" form="revenue2" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
                     @foreach (var ou in Model.Activities)
                     {
                         <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
@@ -150,7 +162,7 @@
                                 @foreach (var businessActivityData in Model.RevenueData.Activities)
                                 {
                                     <th scope="row">
-                                        <input class="form-control" type="number" form="revenue" name="@businessActivityData.BusinessActivityTemplate" id="@businessActivityData.BusinessActivityTemplate" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
+                                        <input class="form-control" type="number" form="revenue2" name="@businessActivityData.BusinessActivityTemplate" id="@businessActivityData.BusinessActivityTemplate" maxlength="3" value="@businessActivityData.Pecentage.ToString("0.00").Replace(".00", String.Empty)">
                                     </th>
                                 }
                             </tr>
