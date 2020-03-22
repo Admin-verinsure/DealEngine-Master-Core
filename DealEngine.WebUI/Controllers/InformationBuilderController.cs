@@ -82,28 +82,6 @@ namespace DealEngine.WebUI.Controllers
 			return View (new ExperimentalInfoBuilderViewModel());
 		}
 
-        //[HttpGet]
-        //public async Task<IActionResult> SectionBuilder()
-        //{
-        //    // //  _informationItemRepository.FindAll().Where(p => p.infor)
-        //    InformationSection informationSection = _informationSectionRepository.GetById(new Guid("3b2ba8c1-48bc-4ec2-b8ef-aaa200bc5376"));
-        //    InformationItemViewModel model = new InformationItemViewModel();
-        //    var options = new List<SelectListItem>();
-        //    //informationSection.InformationTemplate
-        //    foreach (var item in informationSection.Items)
-        //    {
-        //        //if (item.Type == "TEXTBOX")
-        //        //{
-        //        options.Add(new SelectListItem { Text = item.Type, Value = "nz" });
-        //        // }
-        //    }
-        //        model.Options = options;
-
-        //        //     // _templateRepository.GetById(new Guid("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
-
-        //        return View(model);
-        //}
-
 
 
         [HttpPost]

@@ -11,7 +11,7 @@
                     <ul class="nav nav-tabs step-anchor">
                         <li class="nav-item active"><a href="#programme1" class="nav-link">1<br><small>Programme</small></a></li>
                         <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Product</small></a></li>
-                        <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Submit</small></a></li>
+                        <li class="nav-item"><a href="#programme3" class="nav-link">3<br><small>Templates</small></a></li>
                     </ul>
 
                     <div class="sw-container tab-content">
@@ -22,7 +22,7 @@
                             @await Html.PartialAsync("../Product/CreateProduct", Model.ProductViewModel)
                         </div>
                         <div id="programme3" class="tab-pane step-content">
-                            <p>fin</p>
+                            @await Html.PartialAsync("../Information/InformationTemplates/CreateInformationTemplate", Model.InformationBuilderViewModel)
                         </div>
                     </div>
                 </div>

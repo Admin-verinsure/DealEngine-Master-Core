@@ -8,7 +8,7 @@ namespace DealEngine.Domain.Entities
         protected InformationTemplate()
 			: base (null)
         {
-            _sections = new List<InformationSection>();
+            Sections = new List<InformationSection>();
         }
 
         public InformationTemplate(User createdBy, string name, IList<InformationSection> sections = null)
@@ -17,24 +17,22 @@ namespace DealEngine.Domain.Entities
             Name = name;
 
             if (sections == null)
-                _sections = new List<InformationSection>();
+                Sections = new List<InformationSection>();
             else
-                _sections = sections;
+                Sections = sections;
         }
-
-        IList<InformationSection> _sections;
 
         public virtual string Name { get; protected set; }
 
-        public virtual IList<InformationSection> Sections {  get { return _sections; } set { _sections = value; }   }
+        public virtual IList<InformationSection> Sections {  get; set; }
 
 		public virtual Product Product { get; set; }
 
         public virtual IList<InformationSection> AddSection(InformationSection section)
         {
-            _sections.Add(section);
+            Sections.Add(section);
 
-            return _sections;
+            return Sections;
         }
     }
 

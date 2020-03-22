@@ -359,7 +359,7 @@ namespace DealEngine.WebUI.Controllers
                         Email = user.Email,
                         UserName = user.UserName
                     };
-                    await _userManager.CreateAsync(deUser, password);
+                    var result = await _userManager.CreateAsync(deUser, password);
                     var hasRole = await _roleManager.RoleExistsAsync("Client");
                     if (hasRole)
                     {

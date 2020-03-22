@@ -9,7 +9,6 @@ namespace DealEngine.Domain.Entities
 {
     public class InformationSection : EntityBase, IAggregateRoot
     {
-        private IList<InformationItem> _items;
 
 		public virtual string Name { get; protected set; }
 
@@ -19,15 +18,12 @@ namespace DealEngine.Domain.Entities
 
 		public virtual InformationTemplate InformationTemplate { get; set; }
 
-		public virtual IList<InformationItem> Items {
-			get { return _items; }
-			set { _items = value; }
-		}
+		public virtual IList<InformationItem> Items { get; set; }
 
         protected InformationSection()
 			: base (null)
         {
-            _items = new List<InformationItem>();
+            Items = new List<InformationItem>();
         }
 
         public InformationSection(User createdBy, string name, IList<InformationItem> items = null)
@@ -36,16 +32,16 @@ namespace DealEngine.Domain.Entities
             Name = name;
 
             if (items == null)
-                _items = new List<InformationItem>();
+                Items = new List<InformationItem>();
             else
-                _items = items;
+                Items = items;
         }
 
         public virtual IList<InformationItem> AddItem(InformationItem item)
         {
-            _items.Add(item);
+            Items.Add(item);
 
-            return _items;
+            return Items;
         }
 
 

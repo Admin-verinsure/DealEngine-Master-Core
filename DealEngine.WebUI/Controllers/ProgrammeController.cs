@@ -1026,7 +1026,16 @@ namespace DealEngine.WebUI.Controllers
         {
             ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
             model.ProductViewModel = await GetProductViewModel();
+            model.InformationBuilderViewModel = await GetInformationBuilderViewModel();
             return View(model);
+        }
+
+        private async Task<InformationBuilderViewModel> GetInformationBuilderViewModel()
+        {
+            InformationBuilderViewModel model = new InformationBuilderViewModel();
+            model.InformationTemplates = await _informationService.GetAllTemplates();
+
+            return model;
         }
 
         private async Task<ProductViewModel> GetProductViewModel()
@@ -1067,11 +1076,6 @@ namespace DealEngine.WebUI.Controllers
             foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
                 model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
 
-            model.Settings.InformationSheets = new List<SelectListItem>
-                {
-                    new SelectListItem { Text = "Select Information Sheet", Value = "" }
-                };
-
             var templates = await _informationService.GetAllTemplates();
             foreach (var template in templates)
                 model.Settings.InformationSheets.Add(
@@ -1080,7 +1084,7 @@ namespace DealEngine.WebUI.Controllers
                         Text = template.Name,
                         Value = template.Id.ToString()
                     }
-                );
+                    );
 
             model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
             model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
@@ -1104,7 +1108,7 @@ namespace DealEngine.WebUI.Controllers
                 programme.LastModifiedBy = user;
                 programme.LastModifiedOn = DateTime.UtcNow;
 
-                await _programmeService.Update(programme);
+                //await _programmeService.Update(programme);
 
                 return NoContent();
             }

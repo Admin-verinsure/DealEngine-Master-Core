@@ -52,6 +52,7 @@ namespace DealEngine.WebUI.Models.Programme
         public decimal TaxRate { get; set; }
         public DateTime StopAgreementDateTime { get; set; }
         public ProductViewModel ProductViewModel { get; set; }
+        public InformationBuilderViewModel InformationBuilderViewModel { get; set; }
 
     }
 }
