@@ -13,10 +13,6 @@ namespace DealEngine.WebUI.Models.ProductModels
 
 		public ProductRisksVM Risks { get; set; }
 
-		//public RiskEntityViewModel [] Risks { get; set; }
-
-		public ProductInformationSheetVM InformationSheet { get; set; }
-
         public TerritoryViewModel territoryBuilderVM { get; set; }
 
         public ProductSettingsVM Settings { get; set; }
@@ -27,7 +23,6 @@ namespace DealEngine.WebUI.Models.ProductModels
 		{
 			Description = new ProductDescriptionVM ();
 			Risks = new ProductRisksVM ();
-			InformationSheet = new ProductInformationSheetVM ();
 			Settings = new ProductSettingsVM ();
 			Parties = new ProductPartiesVM ();
 		}
@@ -99,18 +94,6 @@ namespace DealEngine.WebUI.Models.ProductModels
 			InformationSheets = new List<SelectListItem> ();
 			PossibleOwnerOrganisations = new List<SelectListItem> ();
 			InsuranceProgrammes = new List<SelectListItem> ();
-		}
-	}
-
-	public class ProductInformationSheetVM
-	{
-		public IEnumerable<SelectListItem> InformationSheets { get; set; }
-
-		public Guid SelectedInformationSheet { get; set; }
-
-		public ProductInformationSheetVM ()
-		{
-			InformationSheets = new List<SelectListItem> ();
 		}
 	}
 

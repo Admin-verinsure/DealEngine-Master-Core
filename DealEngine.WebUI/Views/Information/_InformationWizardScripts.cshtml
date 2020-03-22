@@ -1858,95 +1858,48 @@ function showAccordionPanel(id, panelNo) {
                 url: '@Url.Action("SaveRevenueDataTabOne", "Information")',
                 type: "POST",
                 data: postData
-            })
-                .done(function (Data) {
-                    isvalid = SaveRevenueTabThree();
-                    if (isvalid) {                        
+                })
+                    .done(function (Data) {
                         SetCurrentTab('RevenueTabs2');
-                    }
-                });
+                    });
             }
         }
-        @*
-        if (isvalid) {
-        var territories = GetTerritoriesForRevenue('value');
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-        var clientInformationSheetId = $('#AnswerSheetId').val();
-        
-        var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
-            
-        }*@
-
     }
 
     function SaveRevenueTabTwo(type) {
-        event.preventDefault();        
-        if (ValidateSharedRevenueForm(3)) {
-            var businessActivities = GetActivitiesForRevenue('value');
+        event.preventDefault();
+        var form = document.getElementById('revenue2');
+        form.classList.add('was-validated');
+        if (form.checkValidity() === false) {
+            return;
+        }
+        if (ValidateSharedRevenueForm(2)) {
+            form = $('#revenue2').serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { BusinessActivities: businessActivities, ClientInformationSheetId: clientInformationSheetId }
-
+            var postData = { form, ClientInformationSheetId: clientInformationSheetId }
             $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabTwo", "Information")',
                 type: "POST",
                 data: postData
             })
-            .done(function (Data) {
-                if (SaveRevenueTabFour()) {                    
+                .done(function (Data) {
                     if (type == 'additionalInfo') {
                         SetCurrentTab('RevenueTabs3');
                     } else if (type == 'newSummary') {
                         BuildRevenueOverview();
                         SetCurrentTab('RevenueTabs4');
                     } else {
+                        debugger;
                         BuildRevenueOverview();
                         SetCurrentTab('RevenueTabs0');
                     }
-                }
-            });
-        }
-    }
-
-    function SaveRevenueTabThree() {        
-        if (ValidateSharedRevenueForm(2)) {            
-            var tableSerialised = $("#sharedRevenueTerritoriesTable :input").serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId }
-
-            $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
-                type: "POST",
-                data: postData
-            })
-                .done(function (Data) {                    
                 });
-
-            return true;
         }
-        return false;
     }
-
-    function SaveRevenueTabFour() {
-        if (ValidateSharedRevenueForm(4)) {
-            var tableSerialised = $("#sharedRevenueActivityTable :input").serialize();
-            var clientInformationSheetId = $('#AnswerSheetId').val();
-            var totalRevenue = $('#totalRevenue').val();
-
-            var postData = { TableSerialised: tableSerialised, ClientInformationSheetId: clientInformationSheetId, TotalRevenue: totalRevenue };
-            $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabFour", "Information")',
-                type: "POST",
-                data: postData
-            })
-            return true;
-        }
-        return false;
-    }
-
 
     function SaveRevenueTabFive(type) {
         event.preventDefault();
-        if (ValidateSharedRevenueForm(5)) {
+        if (ValidateSharedRevenueForm(3)) {
             debugger;
             var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
@@ -2091,31 +2044,14 @@ function showAccordionPanel(id, panelNo) {
                 if (tradingOutsideNZValue == 'true') {
                     if (territories.length == 0) {
                         alert("Please select territories.");
-                        window.setTimeout(function () {
-                            document.getElementById('SharedTerritories_chosen').focus();
-                        }, 0);
-                        document.getElementById("sharedRevenueTerritories").focus();
-                        document.getElementById("SharedTerritories").focus();
-                        document.sharedRevenueForm.SharedTerritories_chosen.focus();
-                        document.sharedRevenueForm.sharedRevenueTerritories.focus();
                         return false;
                     }
                 }
-                else {
-                    if (territories.length == 0) {
-                        alert("Please select territories.");
-                        window.setTimeout(function () {
-                            document.getElementById('SharedTerritories_chosen').focus();
-                        }, 0);
-                        document.getElementById("sharedRevenueTerritories").focus();
-                        document.getElementById("SharedTerritories").focus();
-                        document.sharedRevenueForm.SharedTerritories_chosen.focus();
-                        document.sharedRevenueForm.sharedRevenueTerritories.focus();
-                        return false;
-                    }
+                if (territories.length == 0) {
+                    alert("Please select territories.");
+                    return false;
                 }
-            }
-            else if (i == 2) {
+
                 var arr = ValidateTable("sharedRevenueTerritoriesTable");
                 var totalSharedRevenue = 0;
 
@@ -2126,11 +2062,11 @@ function showAccordionPanel(id, panelNo) {
                 if (totalSharedRevenue != 100) {
                     alert("Percentage calculation does not equal to 100%");
                     return false;
-                }                
+                }   
             }
-            else if (i == 3) {
+            else if (i == 2) {
                 var businessActivities = GetActivitiesForRevenue('value');
-                var revenueTotal = parseInt(document.getElementById("totalRevenue").value);
+                var revenueTotal = parseInt(document.getElementById("currentYear").value);
 
                 if (revenueTotal <= 0) {
                     alert("Please enter a fee income greater than '0'");
@@ -2145,8 +2081,6 @@ function showAccordionPanel(id, panelNo) {
                     alert("Please select activities.");
                     return false;
                 }
-            }
-            else if (i == 4) {
                 var arr = ValidateTable("sharedRevenueActivityTable");
                 var totalSharedRevenue = 0;
 
@@ -2158,9 +2092,8 @@ function showAccordionPanel(id, panelNo) {
                     alert("Percentage calculation does not equal to 100%");
                     return false;
                 }
-
             }
-            else if (i == 5) {
+            else if (i == 3) {
                 var activitiesStr = GetActivitiesForRevenue('text');
 
                 activitiesStr.forEach(function (item) {                    
@@ -2289,7 +2222,9 @@ function showAccordionPanel(id, panelNo) {
 
         CopyTableValues("sharedRevenueTerritoriesTable", "ListSharedRevenueTerritories");
         CopyTableValues("sharedRevenueActivityTable", "ListSharedRevenueActivities");
-        document.getElementById("SharedTotalRevenue").value = $('#totalRevenue').val();
+        document.getElementById("sharedcurrentYear").value = $('#currentYear').val();
+        document.getElementById("sharedlastFinancialYear").value = $('#lastFinancialYear').val();
+        document.getElementById("sharednextFinancialYear").value = $('#nextFinancialYear').val();
     }
 
     function UpdateSharedRevenue() {
@@ -2461,9 +2396,10 @@ function showAccordionPanel(id, panelNo) {
                 revenueTable = $('#sharedRevenueTerritoriesTable');
                 formName = "revenue1";
             }
-        } else if(typeof revenueTable === 'undefined') {
-             listc = [ 'Revenue Breakdown' ];
-             revenueTable = $('#sharedRevenueActivityTable');
+        } else if (typeof revenueTable === 'undefined') {
+            listc = ['Revenue Breakdown'];
+            revenueTable = $('#sharedRevenueActivityTable');
+            formName = "revenue2";
         }
 
         if (revenueTable != null) {
@@ -2484,18 +2420,19 @@ function showAccordionPanel(id, panelNo) {
             if (lista.length == 0) {
                 lista = ['New Zealand'];
                 listb = ['New Zealand'];
-            } else {
-                var hasNZ = false;
-                lista.forEach(function (terrName, Index) {
-                    if (terrName == 'New Zealand') {
-                        hasNZ = true;
-                    }
-                });
-
-                if (hasNZ == false) {
-                    lista.push('New Zealand');
-                }
             }
+            //else {
+            //    var hasNZ = false;
+            //    lista.forEach(function (terrName, Index) {
+            //        if (terrName == 'New Zealand') {
+            //            hasNZ = true;
+            //        }
+            //    });
+
+            //    if (hasNZ == false) {
+            //        lista.push('New Zealand');
+            //    }
+            //}
             }
         var header = $('<tr>');
         header.append($('<th>'));
