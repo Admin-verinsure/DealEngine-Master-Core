@@ -10,7 +10,6 @@ namespace DealEngine.Domain.Entities
         public virtual string Name { get; set; }
         public virtual Organisation Owner { get; protected set; }
         public virtual IList<Product> Products { get; protected set; }
-        public virtual IList<SubProduct> SubProducts { get; protected set; }
         public virtual IList<TerritoryTemplate> TerritoryTemplates { get; set; }
         public virtual IList<BusinessActivityTemplate> BusinessActivityTemplates { get; set; }
         public virtual IList<SharedDataRoleTemplate> SharedDataRoleTemplates { get; set; }
@@ -31,7 +30,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool StopAgreement { get; set; }
         public virtual DateTime StopAgreementDateTime { get; set; }
         public virtual string StopAgreementMessage { get; set; }
-        public virtual string SubsystemtMessage { get; set; }
+        public virtual string SubsystemMessage { get; set; }
         public virtual string NoPaymentRequiredMessage { get; set; }
         public virtual bool AllowUsesChange { get; set; }
         public virtual bool CalculateCancelTerm { get; set; }
@@ -56,7 +55,7 @@ namespace DealEngine.Domain.Entities
             SharedDataRoleTemplates = new List<SharedDataRoleTemplate>();
             BusinessActivityTemplates = new List<BusinessActivityTemplate>();
             TerritoryTemplates = new List<TerritoryTemplate>();
-            Products = new List<Product>();
+            Products = new List<Product>();            
             EmailTemplates = new List<EmailTemplate>();
             ClientProgrammes = new List<ClientProgramme>();
             Merchants = new List<Merchant>();

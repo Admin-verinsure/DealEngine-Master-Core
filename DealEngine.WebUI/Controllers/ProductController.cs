@@ -7,7 +7,7 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -305,6 +305,7 @@ namespace DealEngine.WebUI.Controllers
 				throw new Exception ("Form has not been completed");
 			}
 
+			Programme programme = null;
 			User user = null;
 			try {
                 user = await CurrentUser();
@@ -363,18 +364,23 @@ namespace DealEngine.WebUI.Controllers
                     Guid programmeId = Guid.Empty;
                     if (Guid.TryParse(model.Settings.SelectedInsuranceProgramme, out programmeId))
                     {
-                        Programme programme = await _programmeService.GetProgrammeById(programmeId);
-                        programme.Products.Add(product);
+                        programme = await _programmeService.GetProgrammeById(programmeId);                        
                     }
-                }
+				}
+				else
+				{
+					var programmeList = await _programmeService.GetAllProgrammes();
+					programme = programmeList.LastOrDefault();
+				}
+				programme.Products.Add(product);
 
-                if (baseProduct != null)
+				if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-				//await _productService.CreateProduct(product);
+                await _productService.CreateProduct(product);
 
 				return NoContent();
-                return Redirect ("~/Product/MyProducts");
+                //return Redirect ("~/Product/MyProducts");
 				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
 			}
 			catch(Exception ex)

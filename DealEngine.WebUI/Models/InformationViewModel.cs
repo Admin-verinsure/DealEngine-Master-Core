@@ -90,6 +90,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
         public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
+        public IList<string> Wizardsteps { get; set; }
     }
 
     public class InformationSectionViewModel

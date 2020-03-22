@@ -201,10 +201,12 @@
                        ValidateDNO();
                    }
                }
+               postData = { clientInformationId: clientInformationSheet }
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
+                   data: postData
+                   //data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
                        $("#agreementView").load(url, function () {                           
@@ -215,7 +217,6 @@
                    });
 
            } else if (stepNumber === 1) {
-               //ValidateCoverOption();
                var status = $('#Status').val();
                if (confirm("This will submit the information sheet. You cannot make changes after submitting this information sheet except by arrangement with your Broker. Continue?")) {
                }
@@ -266,8 +267,8 @@
 
                $.ajax({
                    url: '@Url.Action("QuoteToAgree", "Information")',
-                   type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
+                   type: "GET",
+                   data: postdata
                })
                    .done(function (url) {
                        $("#agreementDeclarationView").load(url, function () {
@@ -300,7 +301,7 @@
                $.ajax({
                    url: '@Url.Action("PaymentInformation", "Information")',
                    type: "POST",
-                   data: $("#tab1 :input").serialize({ json: true })
+                   data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
                        $("#pxpaymentView").load(url, function () {
@@ -321,7 +322,7 @@
                }
 
                var AnswerSheetId = $('#AnswerSheetId').val();
-               var array = $("#tab2 :input").serializeArray();
+               var array = $("#tab_2 :input").serializeArray();
                var ids = [];
                $.each(array, function (i, pair) {
                    ids.push(pair.value);
@@ -505,8 +506,8 @@
         if (ui.oldPanel != null) {
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",
-                data: $("#tab1 :input").serialize({ json:true })
+                type: "POST",                
+                data: $("#tab_1 :input").serialize({ json:true })
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');
@@ -1842,14 +1843,18 @@ function showAccordionPanel(id, panelNo) {
 
     function SaveRevenueTabOne() {
         event.preventDefault();
-        var isvalid = ValidateSharedRevenueForm(1);
-        if (isvalid) {
-        var territories = GetTerritoriesForRevenue('value');
-        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
-        var clientInformationSheetId = $('#AnswerSheetId').val();
-        
-        var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
-            $.ajax({
+        var form = document.getElementById('revenue1');
+        form.classList.add('was-validated');
+        if (form.checkValidity() === false) {
+            return;
+        }
+        else {
+            var isvalid = ValidateSharedRevenueForm(1);
+            if (isvalid) {                
+                form = $('#revenue1').serialize();
+                var clientInformationSheetId = $('#AnswerSheetId').val();
+                var postData = { form, ClientInformationSheetId: clientInformationSheetId }
+                $.ajax({
                 url: '@Url.Action("SaveRevenueDataTabOne", "Information")',
                 type: "POST",
                 data: postData
@@ -1860,7 +1865,17 @@ function showAccordionPanel(id, panelNo) {
                         SetCurrentTab('RevenueTabs2');
                     }
                 });
+            }
         }
+        @*
+        if (isvalid) {
+        var territories = GetTerritoriesForRevenue('value');
+        var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
+        var clientInformationSheetId = $('#AnswerSheetId').val();
+        
+        var postData = { Territories: territories, IsTradingOutsideNZ: tradingOutsideNZValue, ClientInformationSheetId: clientInformationSheetId }
+            
+        }*@
 
     }
 
@@ -2009,7 +2024,6 @@ function showAccordionPanel(id, panelNo) {
         }
         else {
             for (var i = 0; i <= showTabs; i++) {         
-                debugger;
                 tabList.children[i].hidden = false;
             }
         }
@@ -2285,6 +2299,7 @@ function showAccordionPanel(id, panelNo) {
         $('#revenueTab3').show();
         $('#revenueTab4').show();
         $('#revenueTab5').show();
+        ValidateSharedRevenueForm(0);
         SetCurrentTab('RevenueTabs1');
     }
 
@@ -2438,11 +2453,13 @@ function showAccordionPanel(id, panelNo) {
 
     function BuildRevenuesTable(TableType, Table) {
         var revenueTable = Table;
-        var listc = [ 'Breakdown' ];
+        var listc = ['Breakdown'];
+        var formName = "";
         if (TableType == 'true') {
             listc = [ 'Territory Breakdown' ];
             if (typeof revenueTable === 'undefined') {
                 revenueTable = $('#sharedRevenueTerritoriesTable');
+                formName = "revenue1";
             }
         } else if(typeof revenueTable === 'undefined') {
              listc = [ 'Revenue Breakdown' ];
@@ -2495,7 +2512,7 @@ function showAccordionPanel(id, panelNo) {
                     row.append($('<td>').append(
                         $('<section>').append(
                         $('<label>', { class: 'input'}).append(
-                            $('<input>', { type: 'number', class: 'form-control', name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
+                            $('<input>', { type: 'number', class: 'form-control', form: formName, name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
                             ))));
                 });
                 count++;
@@ -7223,7 +7240,7 @@ async: true
             $.ajax({
                 type: "POST",
                 url: '@Url.ActionLink("GeneratePxPayment", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true }),
+                data: $("#tab_1 :input").serialize({ json: true }),
                 complete: function (data) {
                     window.location = data.responseJSON.url;
                 },
@@ -7233,7 +7250,7 @@ async: true
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("GenerateEGlobal", "Agreement")',
-                data: $("#tab1 :input").serialize({ json: true })
+                data: $("#tab_1 :input").serialize({ json: true })
 
             })
                 .done(function (url) {
@@ -7254,7 +7271,7 @@ async: true
         $.ajax({
             url: '@Url.Action("ByPassPayment", "Agreement")',
             type: "Post",
-            data: $("#tab1 :input").serialize({ json: true }),
+            data: $("#tab_1 :input").serialize({ json: true }),
             async: true
         }).done(function (data) {
                window.location.href = data.url;

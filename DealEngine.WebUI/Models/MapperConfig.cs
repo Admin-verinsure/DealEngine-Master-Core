@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using DealEngine.Domain.Entities;
 using DealEngine.WebUI.Controllers;
 
+
 namespace DealEngine.WebUI.Models
 {
     public static class MapperConfig
@@ -74,6 +75,45 @@ namespace DealEngine.WebUI.Models
             // Policy
             CreateMap<RiskCategory, InsuranceRiskCategory>().ReverseMap();
             CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
+
+            //subsystem            
+            CreateMap<InformationTemplate, SubInformationTemplate>()
+                .ForMember(dest => dest.BaseInformationTemplate, map => map.Ignore())
+                .ForMember(dest => dest.Sections, map => map.Ignore())
+                .ForMember(dest => dest.Name, map => map.MapFrom(t => t.Name + " Sub"))
+                .ForMember(dest => dest.Id, map => map.Ignore());
+            CreateMap<ClientInformationSheet, SubClientInformationSheet>()
+                .ForMember(dest => dest.BaseClientInformationSheet, map => map.Ignore())
+                .ForMember(dest => dest.Id, map => map.Ignore())
+                .ForMember(dest => dest.SubClientInformationSheets, map => map.Ignore())
+                .ForMember(dest => dest.Answers, map => map.Ignore())
+                .ForMember(dest => dest.ClaimNotifications, map => map.Ignore())
+                .ForMember(dest => dest.ReferenceId, map => map.Ignore())
+                .ForMember(dest => dest.PreviousInformationSheet, map => map.Ignore())
+                .ForMember(dest => dest.NextInformationSheet, map => map.Ignore())
+                .ForMember(dest => dest.BusinessContracts, map => map.Ignore())
+                .ForMember(dest => dest.Organisation, map => map.Ignore())
+                .ForMember(dest => dest.ClaimNotifications, map => map.Ignore());                
+            CreateMap<ClientProgramme, SubClientProgramme>()
+                .ForMember(dest => dest.BaseClientProgramme, map => map.Ignore())                             
+                .ForMember(dest => dest.EGlobalClientStatus, map => map.Ignore())
+                .ForMember(dest => dest.SubClientProgrammes, map => map.Ignore())
+                .ForMember(dest => dest.ChangeReason, map => map.Ignore())
+                .ForMember(dest => dest.Products, map => map.Ignore())
+                .ForMember(dest => dest.Products, map => map.Ignore())
+                .ForMember(dest => dest.Payment, map => map.Ignore())
+                .ForMember(dest => dest.InformationSheet, map => map.Ignore())
+                .ForMember(dest => dest.ClientAgreementEGlobalResponses, map => map.Ignore())
+                .ForMember(dest => dest.ClientAgreementEGlobalSubmissions, map => map.Ignore())
+                .ForMember(dest => dest.Id, map => map.Ignore());
+            CreateMap<InformationSection, InformationSection>()                
+                .ForMember(dest => dest.Id, map => map.Ignore());
+
+            //clonesystem
+            CreateMap<ClientInformationSheet, ClientInformationSheet>()
+                .ForMember(dest => dest.Id, map => map.Ignore());
+            CreateMap<ClientProgramme, ClientProgramme>()
+                .ForMember(dest => dest.Id, map => map.Ignore());
         }
     }
 

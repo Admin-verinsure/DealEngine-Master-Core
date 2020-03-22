@@ -17,6 +17,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<RiskCover> RiskCategoriesCovered { get; set; }
         //[Obsolete ("No longer required with the new Programme implementation")]
         public virtual InformationTemplate InformationTemplate { get; set; }
+        public virtual InformationTemplate SubInformationTemplate { get; set; }
         public virtual IList<InformationSection> SharedViews { get; set; }
         public virtual IList<InformationSection> UniqueQuestions { get; set; }
         public virtual IList<Document> Documents { get; set; }
@@ -83,56 +84,9 @@ namespace DealEngine.Domain.Entities
         }
     }
 
-    public class SubProduct : Product
-    {
-        public virtual Product BaseProduct { get; set; }
-        protected SubProduct() : this(null) { }
-        public SubProduct(Product baseProduct)
-        {
-            BaseProduct = baseProduct;
-            Id = Guid.NewGuid();
-        }
-
-        public virtual void CopyProduct(Product product)
-        {
-            Name = product.Name;
-            CreatorCompany = product.CreatorCompany;
-            OriginalProductId = product.OriginalProductId;
-            OwnerCompany = product.OwnerCompany;
-            InvoiceId = product.InvoiceId;
-            Description = product.Description;
-            Languages = product.Languages;
-            RiskCategoriesCovered = product.RiskCategoriesCovered;
-            SharedViews = product.SharedViews;
-            UniqueQuestions = product.UniqueQuestions;
-            Documents = product.Documents;
-            Public = product.Public;
-            IsBaseProduct = product.IsBaseProduct;
-            ProductNotes = product.ProductNotes;
-            DefaultBrokerage = product.DefaultBrokerage;
-            Published = product.Published;
-            Active = product.Active;
-            EnableBreachProfDuty = product.EnableBreachProfDuty;
-            BreachProfDuty = product.BreachProfDuty;
-            ShowCurrency = product.ShowCurrency;
-            AvailableOnQuote = product.AvailableOnQuote;
-            DefaultEnableBrokerFee = product.DefaultEnableBrokerFee;
-            DefaultBrokerFee = product.DefaultBrokerFee;
-            TaxRate = product.TaxRate;
-            OrderNumber = product.OrderNumber;
-            ProductClassOfBusinessAlias = product.ProductClassOfBusinessAlias;
-            Rules = product.Rules;
-            Endorsements = product.Endorsements;
-            DefaultInceptionDate = product.DefaultInceptionDate;
-            DefaultExpiryDate = product.DefaultExpiryDate;
-            EmailTemplates = product.EmailTemplates;
-            ChildProducts = product.ChildProducts;
-            UnderwritingModuleCode = product.UnderwritingModuleCode;
-            UnderwritingEnabled = product.UnderwritingEnabled;
-            IsMasterProduct = product.IsMasterProduct;
-            IsMultipleOption = product.IsMultipleOption;
-            IsOptionalProduct = product.IsOptionalProduct;
-            OptionalProductRequiredAnswer = product.OptionalProductRequiredAnswer;
-        }
-    }
+    //public class SubProduct : Product
+    //{
+    //    public virtual Product BaseProduct { get; set; }
+    //    public SubProduct() { }
+    //}
 }

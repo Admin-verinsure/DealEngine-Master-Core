@@ -10,5 +10,6 @@ namespace DealEngine.Services.Interfaces
         Task<List<RiskCategory>> GetAllRiskCategories();
         Task AddRiskCategory(RiskCategory risk);
         Task<RiskCategory> GetRiskCategoryById(Guid Id);
+        Task<List<RiskCategory>> CreateAllRiskCategories();
     }
 }

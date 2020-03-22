@@ -19,11 +19,12 @@ using Microsoft.Extensions.Logging;
 
 namespace DealEngine.WebUI.Controllers
 {
-	//[Authorize]
+	[Authorize]
     public class FileController : BaseController
     {		
 		IUnitOfWork _unitOfWork;
 		IFileService _fileService;
+        IProgrammeService _programmeService;
 		IMapperSession<SystemDocument> _documentRepository;
 		IMapperSession<Image> _imageRepository;
         IMapperSession<Product> _productRepository;
@@ -35,6 +36,7 @@ namespace DealEngine.WebUI.Controllers
 
 		public FileController(
             ILogger<FileController> logger,
+            IProgrammeService programmeService,
             IApplicationLoggingService applicationLoggingService,
             IUserService userRepository, 
             IUnitOfWork unitOfWork, 
@@ -45,6 +47,7 @@ namespace DealEngine.WebUI.Controllers
             )
 			: base (userRepository)
 		{
+            _programmeService = programmeService;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _unitOfWork = unitOfWork;
@@ -52,31 +55,6 @@ namespace DealEngine.WebUI.Controllers
 			_documentRepository = documentRepository;
 			_imageRepository = imageRepository;
             _productRepository = productRepository;
-        }
-
-		[HttpGet]
-		[AllowAnonymous]
-		public async Task<IActionResult> Image(string id)
-		{
-
-            //string uploadFolder = "~/App_Data/uploads/";
-            //var serverPath = System.IO.Path.Combine(uploadFolder, fileName);
-            //var file = File(Server.MapPath(fileName),
-            //    System.Net.Mime.MediaTypeNames.Application.Octet,
-            //    System.IO.Path.GetFileName(fileName));
-            //return file;
-
-            //if (string.IsNullOrWhiteSpace(id))
-            //    return new HttpNotFoundResult();
-
-            //string extension = Path.GetExtension(fileName).ToLower();
-            //string mediaType = (extension == "jpeg" || extension == "jpg") ? MediaTypeNames.Image.Jpeg :
-            //    (extension == "gif") ? MediaTypeNames.Image.Gif :
-            //    (extension == "tiff") ? MediaTypeNames.Image.Tiff : MediaTypeNames.Application.Octet;
-            throw new Exception("This method needs to be re-written");
-            Image img = await _fileService.GetImage(id);
-            return File(img.Contents, img.ContentType, img.Name);
-
         }
 
 		[HttpGet]
@@ -121,8 +99,18 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ProductIndex(string Programme)
+        {
+            var productList = new List<Product>();
+            var programme = await _programmeService.GetProgramme(Guid.Parse(Programme));
+            productList = programme.Products.ToList();
+
+            return View(productList);
+        }
+
 		[HttpGet]
-		public async Task<IActionResult> CreateDocument (string id)
+		public async Task<IActionResult> CreateDocument (string id, string productId)
 		{
 			DocumentViewModel model = new DocumentViewModel ();
             User user = null;
@@ -147,6 +135,7 @@ namespace DealEngine.WebUI.Controllers
                 model.Description = document.Description;
                 model.DocumentType = document.DocumentType;
                 model.Content = _fileService.FromBytes(document.Contents);
+                model.ProductId = productId;
 
                 return View(model);
             }
@@ -161,37 +150,35 @@ namespace DealEngine.WebUI.Controllers
 		public async Task<IActionResult> CreateDocument (DocumentViewModel model)
 		{
             User user = null;
+            SystemDocument document = null;
+            Product product = null;
             try
-            {
+            {                
                 user = await CurrentUser();
                 if (model.DocumentId != Guid.Empty)
                 {
-                    SystemDocument document = await _documentRepository.GetByIdAsync(model.DocumentId);
+                    document = await _documentRepository.GetByIdAsync(model.DocumentId);
                     if (document != null)
                     {
-                        using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                        {
-                            document.Name = model.Name;
-                            document.DocumentType = model.DocumentType;
-                            document.Description = model.Description;
-                            document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
-                            document.LastModifiedBy = user;
-                            document.LastModifiedOn = DateTime.UtcNow;
-                            await uow.Commit();
-                        }
+                        document.DateDeleted = DateTime.Now;
+                        await _documentRepository.AddAsync(document);
                     }
 
                 }
-                else
-                {
-                    SystemDocument document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
-                    document.Description = model.Description;
-                    document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
-                    document.OwnerOrganisation = user.PrimaryOrganisation;
-                    document.IsTemplate = true;
-                    await _documentRepository.AddAsync(document);
-                }
+                
+                document = new SystemDocument(user, model.Name, MediaTypeNames.Text.Html, model.DocumentType);
+                document.Description = model.Description;
+                document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
+                document.OwnerOrganisation = user.PrimaryOrganisation;
+                document.IsTemplate = true;
 
+                if (model.ProductId != null)
+                {
+                    product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
+                    product.Documents.Add(document);
+                    await _productRepository.AddAsync(product);
+                }
+                
                 return View(model);
             }
             catch (Exception ex)
@@ -202,18 +189,27 @@ namespace DealEngine.WebUI.Controllers
         }
 
 		[HttpGet]
-		public async Task<IActionResult> ManageDocuments ()
+		public async Task<IActionResult> ManageDocuments(string productId)
 		{
 			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
             User user = null;
             try
             {
                 user = await CurrentUser();
-                var docs = _documentRepository.FindAll().Where(d => user.Organisations.Contains(d.OwnerOrganisation) && !d.DateDeleted.HasValue);
+                List<SystemDocument> docs = _documentRepository.FindAll().Where(d => d.DateDeleted == null && user.PrimaryOrganisation == d.OwnerOrganisation).ToList();
 
                 if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
                 {
-                    docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
+                    //docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
+                    if(productId != null)
+                    {
+                        var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
+                        docs = products.Documents.ToList();
+                    }
+                    else
+                    {
+                        productId = "";
+                    }
                 }
 
                 foreach (SystemDocument doc in docs)
@@ -246,6 +242,16 @@ namespace DealEngine.WebUI.Controllers
                                 documentType = "Invoice";
                                 break;
                             }
+                        case 5:
+                            {
+                                documentType = "Advisory";
+                                break;
+                            }
+                        case 6:
+                            {
+                                documentType = "Sub-Certificate";
+                                break;
+                            }
                         default:
                             {
                                 throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
@@ -255,10 +261,10 @@ namespace DealEngine.WebUI.Controllers
                     models.Add(new DocumentInfoViewModel
                     {
                         DisplayName = doc.Name,
-                        //ProductName = product.Name,
+                        ProductId = productId,
                         Type = documentType,
                         Owner = doc.OwnerOrganisation.Name,
-                        Id = doc.Id
+                        Id = doc.Id,
                     });
                 }
 

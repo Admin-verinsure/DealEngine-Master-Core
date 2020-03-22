@@ -857,7 +857,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
-                InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 user = await CurrentUser();
                 model.AnswerSheetId = sheet.Id;
                 model.OrganisationId = sheet.Owner.Id;
@@ -1054,7 +1054,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-                InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.Id = Id;
                 model.ClientProgrammeID = clientProgramme.Id;
                 ViewBag.Title = "View Information Sheet ";
@@ -1077,7 +1077,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
-                InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 model.AnswerSheetId = sheet.Id;
                 model.IsChange = sheet.IsChange;
                 model.SectionView = name;
@@ -1476,15 +1476,26 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
-                ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
-                ClientInformationSheet sheet = clientProgramme.InformationSheet;
-                InformationViewModel model = await GetInformationViewModel(clientProgramme.BaseProgramme.Id);
+                var clientProgramme = await _programmeService.GetClientProgramme(id);
+                var sheet = clientProgramme.InformationSheet;
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);
 
                 model.AnswerSheetId = sheet.Id;
                 model.IsChange = sheet.IsChange;
                 model.Id = id;
                 model.SheetStatus = sheet.Status;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
+
+                //testing dynamic wizard here
+                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
+                if (isSubsystem)
+                {
+                    model.Wizardsteps = LoadWizardsteps("Subsystem");
+                }
+                else
+                {
+                    model.Wizardsteps = LoadWizardsteps("Standard");
+                }
 
                 user = await CurrentUser();
 
@@ -1756,6 +1767,26 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        private IList<string> LoadWizardsteps(string wizardType)
+        {
+            IList<string> steps = new List<string>();
+            //convert this to load from the DB?
+            if(wizardType == "Standard")
+            {
+                steps.Add("Details");
+                steps.Add("Steptwo");                
+            }
+            else if(wizardType == "Subsystem")
+            {
+                steps.Add("Details");
+                steps.Add("Quote");
+                steps.Add("Declaration");
+                steps.Add("Payment");
+                steps.Add("Documents");
+            }
+            return steps;
+        }
+
         private async Task<SharedRoleViewModel> GetSharedRoleViewModel(ClientInformationSheet sheet)
         {
             SharedRoleViewModel sharedRoleViewModel = new SharedRoleViewModel();
@@ -2003,18 +2034,15 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
+                if (sheet == null)
+                    return Json("Failure");
+                
+                using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
-                    ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
-                    if (sheet == null)
-                        return Json("Failure");
-
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        await _clientInformationService.SaveAnswersFor(sheet, collection);
-                        await _clientInformationService.UpdateInformation(sheet);
-                        await uow.Commit();
-                    }
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
+                    await _clientInformationService.UpdateInformation(sheet);
+                    await uow.Commit();
                 }
 
                 return Json("Success");
@@ -2354,20 +2382,19 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitInformation(IFormCollection collection)
+        public async Task<IActionResult> SubmitInformation(string clientInformationId)
         {
-            Guid sheetId = Guid.Empty;
             ClientInformationSheet sheet = null;
             User user = null;
             
             try
             {
-                user = await CurrentUser();
-                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
-                {                    
-                    sheet = await _clientInformationService.GetInformation(sheetId);
+                user = await CurrentUser();           
+                sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationId));
+                var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
+                if (isBaseSheet)
+                {
                     var programme = sheet.Programme.BaseProgramme;
-
                     var reference = await _referenceService.GetLatestReferenceId();
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2380,15 +2407,20 @@ namespace DealEngine.WebUI.Controllers
                             //sheet.Status = "Submitted";
                             await uow.Commit();
                         }
-
                     }
+
                     foreach (ClientAgreement agreement in sheet.Programme.Agreements)
                     {
                         await _referenceService.CreateClientAgreementReference(agreement.ReferenceId, agreement.Id);
                     }
+
+                    return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
+                }
+                else
+                {
+                    return Redirect("/Information/QuoteToAgree?id=" + sheet.Programme.Id);
                 }
 
-                return Content("/Agreement/ViewAgreement/" + sheet.Programme.Id);
             }
             catch (Exception ex)
             {
@@ -2397,36 +2429,33 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> QuoteToAgree(IFormCollection collection)
+        [HttpGet]
+        public async Task<IActionResult> QuoteToAgree(string id)
         {
-            Guid sheetId = Guid.Empty;
-            ClientInformationSheet sheet = null;
+            Guid sheetId = Guid.Empty;            
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+                var clientProgramme = await _programmeService.GetClientProgrammebyId(Guid.Parse(id));
+                var sheet = clientProgramme.InformationSheet;
+                if (sheet.Status != "Submitted" && sheet.Status != "Bound")
                 {
-                    sheet = await _clientInformationService.GetInformation(sheetId);
-                    if (sheet.Status != "Submitted" && sheet.Status != "Bound")
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
-                        {
-                            sheet.Status = "Submitted";
-                            sheet.SubmitDate = DateTime.UtcNow;
-                            sheet.SubmittedBy = user;
-                            await uow.Commit();
-                        }
-
+                        sheet.Status = "Submitted";
+                        sheet.SubmitDate = DateTime.UtcNow;
+                        sheet.SubmittedBy = user;
+                        await uow.Commit();
                     }
+
+                }
                     //sheet owner is null
                     //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
                     //send out information sheet submission notification email
                     //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                }
-
+                
                 return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
             }
             catch (Exception ex)
@@ -2839,14 +2868,15 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabOne(string[] Territories, bool IsTradingOutsideNZ, string ClientInformationSheetId)
+        public async Task<IActionResult> SaveRevenueDataTabOne(IFormCollection form)
         {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(ClientInformationSheetId));
+                var sheetId = form["ClientInformationSheetId"];
+                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId));
                 List<TerritoryTemplate> territoryTemplates = new List<TerritoryTemplate>();
                 if (sheet.RevenueData == null)
                 {
@@ -2867,14 +2897,14 @@ namespace DealEngine.WebUI.Controllers
                 var territorytemplateNZ = await _territoryService.GetTerritoryTemplateByName("New Zealand");
                 territoryTemplates.Add(territorytemplateNZ);
 
-                foreach (var territoryId in Territories)
-                {
-                    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
-                    if (territorytemplate.Location != territorytemplateNZ.Location)
-                    {
-                        territoryTemplates.Add(territorytemplate);
-                    }
-                }
+                //foreach (var territoryId in Territories)
+                //{
+                //    var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(territoryId));
+                //    if (territorytemplate.Location != territorytemplateNZ.Location)
+                //    {
+                //        territoryTemplates.Add(territorytemplate);
+                //    }
+                //}
 
                 foreach (var terr in territoryTemplates)
                 {
@@ -3169,14 +3199,14 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        public async Task<InformationViewModel> GetInformationViewModel(Guid programmeId)
+        public async Task<InformationViewModel> GetInformationViewModel(ClientProgramme clientProgramme)
         {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgramme(programmeId);
+                Programme programme = clientProgramme.BaseProgramme;
                 InformationViewModel model = new InformationViewModel
                 {
                     Name = programme.Name,
@@ -3186,34 +3216,44 @@ namespace DealEngine.WebUI.Controllers
                 Product product = null;
                 if (programme.Products.Count > 1)
                 {
-                    foreach (var prod in programme.Products.Where(progp => progp.IsMasterProduct))
-                    {
-                        product = prod;
-                    }
+                    product = programme.Products.FirstOrDefault(progp => progp.IsMasterProduct);
                 }
                 else
                 {
                     product = programme.Products.FirstOrDefault();
                 }
 
-                List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(product.Id);
+                InformationTemplate informationTemplate;
                 List<InformationSection> sections = new List<InformationSection>();
-                foreach (var template in informationTemplate)
+                var isSubsystem = await _programmeService.IsBaseClass(clientProgramme);
+                if (!isSubsystem)
                 {
-                    sections = await _informationSectionService.GetInformationSectionsbyTemplateId(template.Id);
-                    foreach (var section in sections)
+                    informationTemplate = product.SubInformationTemplate;
+                }
+                else
+                {
+                    //remove after checking with ray
+                    if (product.InformationTemplate == null)
                     {
-                        section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
+                        informationTemplate = await _informationTemplateService.GetTemplatebyProduct(product.Id);
+                        product.InformationTemplate = informationTemplate;
+                        await _productService.UpdateProduct(product);                        
                     }
-
-                    foreach (var section in template.Sections)
-                    {
-                        section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
-                    }
-                   (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(template).Sections);
-
+                    informationTemplate = product.InformationTemplate;
+                }
+                sections = await _informationSectionService.GetInformationSectionsbyTemplateId(informationTemplate.Id);
+                foreach (var section in sections)
+                {
+                    section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
                 }
 
+                foreach (var section in informationTemplate.Sections)
+                {
+                    section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
+                }
+                
+                (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(informationTemplate).Sections);
+                               
                 model.Section = sections;
                 return model;
             }
@@ -3232,7 +3272,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
-                InformationViewModel model = await GetInformationViewModel(sheet.Programme.Id);
+                InformationViewModel model = await GetInformationViewModel(sheet.Programme);
                 model.Sections = model.Sections.OrderBy(sec => sec.Position);
                 model.Status = sheet.Status;
                 model.AnswerSheetId = sheet.Id;

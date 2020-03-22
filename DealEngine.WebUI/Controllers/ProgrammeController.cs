@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using System.Threading.Tasks;
 using DealEngine.Infrastructure.Payment.EGlobalAPI;
 using Microsoft.Extensions.Logging;
@@ -534,7 +534,7 @@ namespace DealEngine.WebUI.Controllers
                                     //render docs invoice
                                     if (template.DocumentType == 4)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                         agreement.Documents.Add(renderedDoc);
                                         documents.Add(renderedDoc);
@@ -1024,28 +1024,95 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProgramme()
         {
-            return View();
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            model.ProductViewModel = await GetProductViewModel();
+            return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ViewProgrammes()
+        private async Task<ProductViewModel> GetProductViewModel()
         {
-            ProgrammeListModel model = new ProgrammeListModel();
+            User user = null;
+
+            user = await CurrentUser();
+            ProductViewModel model = new ProductViewModel();
+            model.Description = new ProductDescriptionVM
+            {
+                CreatorOrganisation = user.PrimaryOrganisation.Id,
+                OwnerOrganisation = user.PrimaryOrganisation.Id,
+                // TODO - load this from db
+                Languages = new List<SelectListItem> {
+                    new SelectListItem { Text = "English (NZ)", Value = "nz" },
+                    new SelectListItem { Text = "English (US)", Value = "uk" },
+                    new SelectListItem { Text = "English (UK)", Value = "us" },
+                    new SelectListItem { Text = "German", Value = "de" },
+                    new SelectListItem { Text = "French", Value = "fr" },
+                    new SelectListItem { Text = "Chinese", Value = "cn" }
+                },
+                BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
+            };
+
+            model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
+
+            var productList = await _productService.GetAllProducts();
+            foreach (Product product in productList.Where(p => p.IsMasterProduct))
+            {
+                model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
+            }
+
+            var riskList = await _riskCategoryService.GetAllRiskCategories();
+            foreach (RiskCategory risk in riskList)
+                model.Risks.Add(new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
+
+            // set product settings
+            foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
+                model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
+
+            model.Settings.InformationSheets = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Select Information Sheet", Value = "" }
+                };
+
+            var templates = await _informationService.GetAllTemplates();
+            foreach (var template in templates)
+                model.Settings.InformationSheets.Add(
+                    new SelectListItem
+                    {
+                        Text = template.Name,
+                        Value = template.Id.ToString()
+                    }
+                );
+
+            model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
+            model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
+
+            return model;
+        }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProgramme(IFormCollection collection)
+        {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                var programmes = await _programmeService.GetAllProgrammes();
-                programmes.Where(p => p.IsPublic || p.Owner == user.PrimaryOrganisation);
-                model.Programmes = programmes;
-                return View(model);
+                Programme programme = new Programme(user);
+                programme.Name = collection["programmeName"];
+                programme.TaxRate = decimal.Parse(collection["TaxRate"]);
+                programme.PolicyNumberPrefixString = collection["PolicyNumberPrefixString"];
+                programme.LastModifiedBy = user;
+                programme.LastModifiedOn = DateTime.UtcNow;
+
+                await _programmeService.Update(programme);
+
+                return NoContent();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+                return BadRequest();
+            }                
         }
 
         [HttpPost]

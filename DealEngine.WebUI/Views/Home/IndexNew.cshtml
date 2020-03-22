@@ -143,7 +143,12 @@
                                         <tr>
                                             <th>Product Name</th>
                                             <th>Languages</th>
-                                            <th></th>
+                                            <th>
+                                                @if (User.IsInRole("TCUser"))
+                                                {
+                                                    <a href="/Programme/CreateProgramme" class="btn btn-sm btn-success">Create</a>
+                                                }
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>

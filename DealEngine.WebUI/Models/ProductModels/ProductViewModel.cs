@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace DealEngine.WebUI.Models.Product
+namespace DealEngine.WebUI.Models.ProductModels
 {
 
 	public class ProductViewModel : BaseViewModel

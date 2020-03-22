@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using AutoMapper;
 
 namespace DealEngine.Services.Impl
 {
@@ -16,8 +17,11 @@ namespace DealEngine.Services.Impl
         IClientInformationService _clientInformationService;
         IInformationTemplateService _informationTemplateService;
         IInformationSectionService _informationSectionService;
+        IMapper _mapper;
 
         public SubsystemService(
+            IMapper mapper,
+            IProductService productService,
             IInformationSectionService informationSectionService,
             IOrganisationService organisationService,
             IUserService userService,
@@ -25,6 +29,8 @@ namespace DealEngine.Services.Impl
             IClientInformationService clientInformationService,
             IInformationTemplateService informationTemplateService)
         {
+            _mapper = mapper;
+            _productService = productService;
             _informationSectionService = informationSectionService;
             _informationTemplateService = informationTemplateService;
             _programmeService = programmeService;
@@ -37,37 +43,71 @@ namespace DealEngine.Services.Impl
         {
             var principalOrganisations = await _organisationService.GetOrganisationPrincipals(sheet);
             var clientProgramme = await _programmeService.GetClientProgrammebyId(clientProgrammeId);
-            foreach (var org in principalOrganisations)
+            try
             {
-                //var subInformationTemplate = await CreateSubInformationTemplate(sheet);
-                var user = await _userService.GetUserByOrganisation(org);
-                var subProduct = await CreateSubProduct(clientProgramme);
-                var subClientProgramme = await CreateSubClientProgramme(clientProgramme, org);                          
-                var subsheet = await CreateSubInformationSheet(subClientProgramme, sheet);                
-            }            
+                await SubInformationTemplate(clientProgramme);
+                foreach (var org in principalOrganisations)
+                {
+                    var subClientProgramme = await CreateSubClientProgramme(clientProgramme, sheet, org);
+                    var subClientSheet = await CreateSubInformationSheet(subClientProgramme, sheet, org);
+                    sheet.SubClientInformationSheets.Add(subClientSheet);
+                }
+                sheet.Status = "Started";                
+                await _clientInformationService.UpdateInformation(sheet);
+            }
+            catch(Exception ex)
+            {
+                Exception subSystem = new Exception("Subsystem Failed", ex);                
+                throw subSystem;
+            }
         }
 
-        private async Task<SubClientInformationSheet> CreateSubInformationSheet(SubClientProgramme subClientProgramme, ClientInformationSheet sheet)
+        private async Task<SubClientInformationSheet> CreateSubInformationSheet(SubClientProgramme subClientProgramme, ClientInformationSheet sheet, Organisation organisation)
         {
-            var subSheet = await _clientInformationService.IssueSubInformationFor(subClientProgramme);
-            sheet.SubClientInformationSheets.Add(subSheet);            
-            await _clientInformationService.UpdateInformation(sheet);
+            try
+            {
+                var subSheet = await _clientInformationService.IssueSubInformationFor(sheet);
+                subSheet.BaseClientInformationSheet = sheet;
+                subSheet.Programme = subClientProgramme;
+                subSheet.Status = "Not Started";
+                subSheet.Owner = organisation;
+                await _clientInformationService.UpdateInformation(subSheet);
+                
+                subClientProgramme.InformationSheet = subSheet;
+                await _programmeService.Update(subClientProgramme);
 
-            return subSheet;
+                return subSheet;
+
+            }
+            catch (Exception ex)
+            {
+                Exception subSystem = new Exception("Create Sub Information Failed", ex);
+                throw subSystem;
+            }
         }
 
-        private async Task<SubClientProgramme> CreateSubClientProgramme(ClientProgramme clientProgramme, Organisation org)
+        private async Task<SubClientProgramme> CreateSubClientProgramme(ClientProgramme clientProgramme, ClientInformationSheet sheet, Organisation org)
         {
-            var subClientProgramme = await _programmeService.CreateSubClientProgrammeFor(clientProgramme.Id, org);
-            clientProgramme.SubClientProgrammes.Add(subClientProgramme);
-            await _programmeService.Update(clientProgramme);
+            try
+            {
+                var subClientProgramme = await _programmeService.CreateSubClientProgrammeFor(clientProgramme.Id);
+                subClientProgramme.InformationSheet = sheet;
+                subClientProgramme.Owner = org;
+                clientProgramme.SubClientProgrammes.Add(subClientProgramme);
+                await _programmeService.Update(clientProgramme);
 
-            return subClientProgramme;
+                return subClientProgramme;
+            }
+            catch (Exception ex)
+            {
+                Exception subSystem = new Exception("Create Sub ClientProgramme Failed", ex);
+                throw subSystem;
+            }
         }
 
-        private async Task<SubProduct> CreateSubProduct(ClientProgramme clientProgramme)
+        private async Task SubInformationTemplate(ClientProgramme clientProgramme)
         {
-            SubProduct subProduct = null;
+            SubInformationTemplate subInformationTemplate = null;
             Product prod = null;
             try
             {                
@@ -76,42 +116,42 @@ namespace DealEngine.Services.Impl
                     foreach (var prodMaster in clientProgramme.BaseProgramme.Products.Where(progp => progp.IsMasterProduct))
                     {
                         prod = prodMaster;
-                        subProduct = new SubProduct(prod);
                         break;
                     }
                 }
                 else
                 {
                     prod = clientProgramme.BaseProgramme.Products.FirstOrDefault();
-                    subProduct = new SubProduct(prod); 
                 }
-                subProduct.CopyProduct(prod);
-                List<InformationTemplate> informationTemplate = await _informationTemplateService.GetAllTemplatesbyproduct(subProduct.BaseProduct.Id);                
-                if (informationTemplate.Count > 1)
-                {
-                    throw new Exception("informationTemplate cannot have a count higher than 1");
-                }
-                var template = informationTemplate.FirstOrDefault();
-                List<InformationSection> sections = new List<InformationSection>();
-                InformationTemplate subInfomationSheet = new InformationTemplate(template.CreatedBy, template.Name);
                 
-                sections = await _informationSectionService.GetInformationSectionsbyTemplateId(template.Id);
-                //search any section using a where statement
+                SubInformationTemplate subInfomationTemplate = _mapper.Map<SubInformationTemplate>(prod.InformationTemplate);                
+                subInfomationTemplate.BaseInformationTemplate = prod.InformationTemplate;
+                List<InformationSection> sections = new List<InformationSection>();                 
+                
+                sections = await _informationSectionService.GetInformationSectionsbyTemplateId(subInfomationTemplate.BaseInformationTemplate.Id);
+                
                 foreach (var section in sections)
                 {
                     section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
                 }
-                                               
-                subInfomationSheet.Sections = sections.Where(s => s.Position == 1 || s.Position == 2 || s.Position == 15).ToList();
-                subProduct.InformationTemplate = subInfomationSheet;
-                await _productService.AddSubProduct(subProduct);
+                //search any section using a where statement     
+                int count = 1;
+                var selectSections = sections.Where(s => s.Position == 1 || s.Position == 15).ToList();
+                foreach(var section in selectSections)
+                {
+                    var newSection = _mapper.Map<InformationSection>(section);
+                    newSection.Position = count;
+                    subInfomationTemplate.Sections.Add(newSection);
+                }
+                
+                prod.SubInformationTemplate = subInfomationTemplate;
+                await _productService.UpdateProduct(prod);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-            }       
-
-            return subProduct;
+                Exception subSystem = new Exception("Create Sub Template Failed", ex);
+                throw subSystem;
+            }
         }
     }
 }

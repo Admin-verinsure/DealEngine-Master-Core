@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
+using AutoMapper;
 
 namespace DealEngine.Services.Impl
 {
@@ -14,12 +15,15 @@ namespace DealEngine.Services.Impl
 		IMapperSession<Programme> _programmeRepository;
 		IMapperSession<ClientProgramme> _clientProgrammeRepository;        
         IReferenceService _referenceService;
+        IMapper _mapper;
 
         public ProgrammeService (IMapperSession<Programme> programmeRepository, 
             IMapperSession<ClientProgramme> clientProgrammeRepository, 
-            IReferenceService referenceService
+            IReferenceService referenceService,
+            IMapper mapper
             )
-        {            
+        {
+            _mapper = mapper;
             _programmeRepository = programmeRepository;
 			_clientProgrammeRepository = clientProgrammeRepository;
             _referenceService = referenceService;
@@ -55,8 +59,8 @@ namespace DealEngine.Services.Impl
             var clientList = new List<ClientProgramme>();
             foreach (var client in list)
             {
-                var objectType = client.GetType();
-                if (!objectType.IsSubclassOf(typeof(ClientProgramme)))
+                var isBaseClass = await IsBaseClass(client);
+                if (isBaseClass)
                 {
                     clientList.Add(client);
                 }
@@ -72,8 +76,8 @@ namespace DealEngine.Services.Impl
 				return null;
             foreach(var client in programme.ClientProgrammes)
             {
-                var objectType = client.GetType();
-                if(!objectType.IsSubclassOf(typeof(ClientProgramme)))                
+                var isBaseClass = await IsBaseClass(client);
+                if (isBaseClass)
                 {
                     clientList.Add(client);
                 }
@@ -82,7 +86,17 @@ namespace DealEngine.Services.Impl
             return clientList;
 		}
 
-		public async Task<Programme> GetProgramme(Guid id)
+        public async Task<bool> IsBaseClass(ClientProgramme client)
+        {
+            var objectType = client.GetType();
+            if (!objectType.IsSubclassOf(typeof(ClientProgramme)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<Programme> GetProgramme(Guid id)
 		{
 			return await _programmeRepository.GetByIdAsync(id);
 		}
@@ -109,13 +123,14 @@ namespace DealEngine.Services.Impl
 		public async Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser,ChangeReason changeReason)
 		{
 			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
-			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser);
-            newClientProgramme.ChangeReason = changeReason;
-			newClientProgramme.InformationSheet.Programme = newClientProgramme;
-            newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
-            newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
-            newClientProgramme.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
-            newClientProgramme.ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
+			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForUpdate (cloningUser, _mapper);
+            newClientProgramme = _mapper.Map<ClientProgramme>(clientProgramme);
+   //         newClientProgramme.ChangeReason = changeReason;
+			//newClientProgramme.InformationSheet.Programme = newClientProgramme;
+   //         newClientProgramme.BrokerContactUser = clientProgramme.BrokerContactUser;
+   //         newClientProgramme.EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
+   //         newClientProgramme.EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
+   //         newClientProgramme.ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
             var reference = await _referenceService.GetLatestReferenceId();
             newClientProgramme.InformationSheet.ReferenceId = reference;
             newClientProgramme.InformationSheet.IsChange = true;
@@ -127,7 +142,7 @@ namespace DealEngine.Services.Impl
 		public async Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser)
 		{
 			ClientProgramme newClientProgramme = await CreateClientProgrammeFor(clientProgramme.BaseProgramme, cloningUser, clientProgramme.Owner);
-			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser);
+			newClientProgramme.InformationSheet = clientProgramme.InformationSheet.CloneForRenewal (cloningUser, _mapper);
 			newClientProgramme.InformationSheet.Programme = newClientProgramme;
 
 			return newClientProgramme;
@@ -201,17 +216,15 @@ namespace DealEngine.Services.Impl
             return await _clientProgrammeRepository.FindAll().Where(c => c.Owner.Name.Contains(insuredName)).ToListAsync();
         }
 
-        public async Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId, Organisation organisation)
+        public async Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId)
         {
             var programme = await GetClientProgrammebyId(programmeId);
-            return await CreateSubClientProgrammeFor(programme, organisation);
+            return await CreateSubClientProgrammeFor(programme);
         }
 
-        public async Task<SubClientProgramme> CreateSubClientProgrammeFor(ClientProgramme programme, Organisation organisation)
+        public async Task<SubClientProgramme> CreateSubClientProgrammeFor(ClientProgramme programme)
         {
-            SubClientProgramme subClientProgramme = new SubClientProgramme(programme);
-            subClientProgramme.CopyClientProgramme(programme, organisation);
-            await Update(subClientProgramme);
+            SubClientProgramme subClientProgramme = _mapper.Map<SubClientProgramme>(programme);                        
             return subClientProgramme;
         }
 
@@ -228,6 +241,23 @@ namespace DealEngine.Services.Impl
         public async Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId)
         {
             return (SubClientProgramme)await _clientProgrammeRepository.GetByIdAsync(subClientProgrammeId);
+        }
+
+        public async Task<bool> SubsystemCompleted(ClientProgramme clientProgramme)
+        {            
+            foreach(var subClient in clientProgramme.SubClientProgrammes)
+            {
+                if (subClient.InformationSheet.Status != "Submitted")
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public async Task Update(Programme programmes)
+        {
+            await _programmeRepository.UpdateAsync(programmes);
         }
     }
 }
