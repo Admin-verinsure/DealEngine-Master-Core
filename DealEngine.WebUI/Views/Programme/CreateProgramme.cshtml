@@ -22,7 +22,7 @@
                             @await Html.PartialAsync("../Product/CreateProduct", Model.ProductViewModel)
                         </div>
                         <div id="programme3" class="tab-pane step-content">
-                            @await Html.PartialAsync("../Information/InformationTemplates/CreateInformationTemplate", Model.InformationBuilderViewModel)
+                            @await Html.PartialAsync("../InformationTemplate/CreateInformationTemplate", Model.InformationBuilderViewModel)
                         </div>
                     </div>
                 </div>
@@ -95,6 +95,36 @@
             });
 
         });
+
+        function AddQuestion() {
+            var selected = document.getElementById('questiontype').value;
+            debugger;
+            if (selected == "") {
+                return;
+            }
+            var form = document.getElementById('questionform');
+            form.classList.add('was-validated');
+            if (form.checkValidity() === false) {
+                throw "stop process";
+            }
+            else {
+                form.submit();
+            }
+        }
+
+        function DisplayTemplate() {
+            var selected = document.getElementById('questiontype').value;
+            debugger;
+            if (selected == 'dropdownTemplate') {
+                document.getElementById(selected).classList.toggle("invisible", false);
+                document.getElementById(selected).classList.toggle("visible", true);
+            }
+        }
+
+        function AddDropdownInput() {
+            document.getElementById('dropdownTemplate').innerHTML
+            debugger;
+        }
 
     </script>
 }

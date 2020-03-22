@@ -13,7 +13,7 @@ using DealEngine.WebUI.Models;
 
 namespace DealEngine.WebUI.Controllers
 {
-    public class InformationBuilderController : BaseController
+    public class InformationTemplateController : BaseController
     {
         IInformationBuilderService _informationBuilderService;
 		IMapper _mapper;		
@@ -21,7 +21,7 @@ namespace DealEngine.WebUI.Controllers
         ILogger _logger;
         IApplicationLoggingService _applicationLoggingService;
 
-		public InformationBuilderController(
+		public InformationTemplateController(
             IInformationTemplateService informationTemplateService,
             IUserService userService,
             IMapper mapper,
