@@ -36,6 +36,8 @@ namespace DealEngine.Domain.Entities
         public virtual string OtherActivitiesTextId { get; set; }
         public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
         public virtual int ValuationBoolId { get; set; }
+        public virtual string OtherProjectManagementTextId { get; set; }
+        public virtual string NonProjectManagementTextId { get; set; }
 
         protected AdditionalActivityInformation() : this(null) { }
 

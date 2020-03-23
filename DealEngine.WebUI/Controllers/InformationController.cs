@@ -1861,11 +1861,11 @@ namespace DealEngine.WebUI.Controllers
             List<SelectListItem> territoryTemplates = new List<SelectListItem>();
             List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
 
-            if (sheet.RevenueData != null)
+            if (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0)
             {
                 if (sheet.RevenueData.Territories.Count > 0)
                 {
-                    foreach(var territory in sheet.RevenueData.Territories)
+                    foreach (var territory in sheet.RevenueData.Territories)
                     {
                         var template = await _territoryService.GetTerritoryTemplateById(territory.TerritoryTemplateId);
                         territoryList.Add(template);
@@ -1878,7 +1878,7 @@ namespace DealEngine.WebUI.Controllers
                         });
 
                     }
-                    foreach(var template in clientProgramme.BaseProgramme.TerritoryTemplates)
+                    foreach (var template in clientProgramme.BaseProgramme.TerritoryTemplates)
                     {
                         if (!territoryList.Contains(template))
                         {
@@ -1913,8 +1913,8 @@ namespace DealEngine.WebUI.Controllers
                         businessActivityList.Add(template);
                         businessActivityTemplates.Add(new SelectListItem
                         {
-                            Value = ba.Id.ToString(),
-                            Text = ba.Description,
+                            Value = template.Id.ToString(),
+                            Text = template.Description,
                             Selected = true
                         });
                     }
@@ -1944,7 +1944,42 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                revenueByActivityViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityInformation>(sheet.RevenueData.AdditionalActivityInformation);
+                if(sheet.RevenueData.AdditionalActivityInformation != null)
+                {
+                    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel
+                    {
+                        CanterburyEarthquakeRebuildWorkId = sheet.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId,
+                        ValuationTextId = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId,
+                        OtherActivitiesTextId = sheet.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId,
+                        ValuationTextId2 = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId2,
+                        InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
+                        OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
+                        NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
+                    };
+
+                    if(sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId != null)
+                        revenueByActivityViewModel.AdditionalInformation.ValuationBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId.ToString()).Selected = true;
+
+                    if (sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId != null)
+                        revenueByActivityViewModel.AdditionalInformation.InspectionReportBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId.ToString()).Selected = true;
+
+                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId != null)
+                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId.ToString()).Selected = true;
+
+                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 != null)
+                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId2.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2.ToString()).Selected = true;
+
+                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 != null)
+                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId3.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3.ToString()).Selected = true;
+
+                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 != null)
+                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId4.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4.ToString()).Selected = true;
+                }
+                else
+                {
+                    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
+                }
+
                 revenueByActivityViewModel.CurrentYear = sheet.RevenueData.CurrentYear;
                 revenueByActivityViewModel.NextFincialYear = sheet.RevenueData.NextFinancialYear;
                 revenueByActivityViewModel.LastFinancialYear = sheet.RevenueData.LastFinancialYear;
@@ -1952,6 +1987,7 @@ namespace DealEngine.WebUI.Controllers
             }
             else
             {
+                territoryList.AddRange(clientProgramme.BaseProgramme.TerritoryTemplates);
                 foreach (var territory in territoryList)
                 {
                     territoryTemplates.Add(new SelectListItem
@@ -1962,7 +1998,7 @@ namespace DealEngine.WebUI.Controllers
                     });
 
                 }
-                foreach(var bat in businessActivityList)
+                foreach(var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
                 {
                     businessActivityTemplates.Add(new SelectListItem
                     {
@@ -1973,7 +2009,7 @@ namespace DealEngine.WebUI.Controllers
                 }
 
             }
-
+            revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
             revenueByActivityViewModel.Territories = territoryTemplates;
             revenueByActivityViewModel.Activities = businessActivityTemplates.OrderBy(ba => ba.Text).ToList();
 
@@ -2986,7 +3022,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         sheet.RevenueData.NextFinancialYear = decimal.Parse(strSpit[1]);
                     }
-                    else if (strSpit[0] == "sharedRevenueActivities")
+                    else if (strSpit[0] == "Activities")
                     {
                         
                     }
@@ -3017,7 +3053,7 @@ namespace DealEngine.WebUI.Controllers
         }        
 
         [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabFive(IFormCollection form)
+        public async Task<IActionResult> SaveRevenueDataTabThree(IFormCollection form)
         {
             User user = null;
 
@@ -3027,7 +3063,7 @@ namespace DealEngine.WebUI.Controllers
                 var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
                 var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
                 var additionalInformation = new AdditionalActivityInformation(user);
-                var serialisedAdditionalInformationTableFormString = form["SerialisedAdditionalInformationTable"].ToString();
+                var serialisedAdditionalInformationTableFormString = form["form"].ToString();
                 var FormString = serialisedAdditionalInformationTableFormString.Split('&');
 
                 if (sheet.RevenueData == null)
@@ -3044,81 +3080,93 @@ namespace DealEngine.WebUI.Controllers
                         switch (questionSplit[0])
                         {
                             case "InspectionReportTextId":
-                                if(questionSplit[1] != "")
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.InspectionReportTextId = questionSplit[1];
-                                }                                
+                                }
                                 break;
                             case "InspectionReportBoolId":
-                                if(int.Parse(questionSplit[1]) != 0)
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.InspectionReportBoolId = int.Parse(questionSplit[1]);
-                                }                                
+                                }
                                 break;
                             case "ValuationTextId":
-                                if(questionSplit[1] != "")
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.ValuationTextId = questionSplit[1];
-                                }                                
+                                }
                                 break;
                             case "ValuationTextId2":
                                 if (questionSplit[1] != "")
                                 {
                                     additionalInformation.ValuationTextId2 = questionSplit[1];
                                 }
-                                
+
                                 break;
                             case "ValuationBoolId":
-                                if (int.Parse(questionSplit[1]) != 0)
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.ValuationBoolId = int.Parse(questionSplit[1]);
-                                }                                
+                                }
                                 break;
                             case "SchoolsDesignWorkBoolId":
-                                if(int.Parse(questionSplit[1]) != 0)
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.SchoolsDesignWorkBoolId = int.Parse(questionSplit[1]);
-                                }                                
+                                }
                                 break;
                             case "SchoolsDesignWorkBoolId2":
-                                if(int.Parse(questionSplit[1]) != 0)
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.SchoolsDesignWorkBoolId2 = int.Parse(questionSplit[1]);
-                                }                                
+                                }
                                 break;
                             case "SchoolsDesignWorkBoolId3":
-                                if (int.Parse(questionSplit[1]) != 0)
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.SchoolsDesignWorkBoolId3 = int.Parse(questionSplit[1]);
-                                }                                
+                                }
                                 break;
                             case "SchoolsDesignWorkBoolId4":
-                                if(int.Parse(questionSplit[1]) != 0)
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.SchoolsDesignWorkBoolId4 = int.Parse(questionSplit[1]);
-                                }                                
+                                }
                                 break;
                             case "OtherActivitiesTextId":
                                 if (questionSplit[1] != "")
                                 {
                                     additionalInformation.OtherActivitiesTextId = questionSplit[1];
-                                }                                
+                                }
                                 break;
                             case "CanterburyEarthquakeRebuildWorkId":
-                                if(questionSplit[1] != "")
+                                if (questionSplit[1] != "")
                                 {
                                     additionalInformation.CanterburyEarthquakeRebuildWorkId = questionSplit[1];
-                                }                                
+                                }
+                                break;
+                            case "OtherProjectManagementTextId":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.OtherProjectManagementTextId = questionSplit[1];
+                                }
+                                break;
+                            case "NonProjectManagementTextId":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.NonProjectManagementTextId = questionSplit[1];
+                                }
                                 break;
                             default:
                                 throw new Exception("Add more form question 'cases'");
                         }
-                    
-                    }                    
-                    catch (Exception ex) 
+
+                    }
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
-                    }                                            
+                    }
                 }
 
                 sheet.RevenueData.AdditionalActivityInformation = additionalInformation;

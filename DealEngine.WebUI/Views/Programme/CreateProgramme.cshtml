@@ -95,28 +95,43 @@
         });
 
         function AddQuestion() {
-            var selected = document.getElementById('questiontype').value;
+            //var form = document.getElementById('questionform');
+            //form.classList.add('was-validated');
+            //if (form.checkValidity() === false) {
+            //    throw "stop process";
+            //}
+            //else {
+            //    form.submit();
+            var hasConditional = document.getElementById('conditionalquestion');
+            var selectlist = document.getElementById('questiontype');
+            var table = document.getElementById('questiontable');
+            table.classList.toggle("invisible", false);
+            table.classList.toggle("visible", true);
+
+            var row = table.insertRow();
+            var cell = row.insertCell();
+            var cell2 = row.insertCell();
+            var cell3 = row.insertCell();
+            
+            var questiontype = selectlist.options[selectlist.selectedIndex].text;
             debugger;
-            if (selected == "") {
-                return;
-            }
-            var form = document.getElementById('questionform');
-            form.classList.add('was-validated');
-            if (form.checkValidity() === false) {
-                throw "stop process";
-            }
-            else {
-                form.submit();
-            }
+            cell.innerHTML = questiontype;
+            cell2.innerHTML = 'delete button';
+            cell3.innerHTML = 'add conditional question';
+            
+           // }
         }
 
         function DisplayTemplate() {
             var selected = document.getElementById('questiontype').value;
-            debugger;
             if (selected == 'dropdownTemplate') {
                 document.getElementById(selected).classList.toggle("invisible", false);
                 document.getElementById(selected).classList.toggle("visible", true);
             }
+            //else {
+            //    document.getElementById(selected).classList.toggle("invisible", true);
+            //    document.getElementById(selected).classList.toggle("visible", false);
+            //}
         }
 
         function AddDropdownInput() {

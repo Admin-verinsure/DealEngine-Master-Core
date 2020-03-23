@@ -1,7 +1,7 @@
 ﻿@model DealEngine.WebUI.Models.InformationBuilderViewModel
 
 <div id="content" class="container">
-    <form class="needs-validation">
+    <form class="needs-validation" id="templateform">
         <div class="card">
             <div class="card-header">
                 <span class="widget-icon">
@@ -10,7 +10,6 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-
                     <div class="accordion" id="accordion">
                         <div class="card">
                             <div class="card-header" id="createtemplate">
@@ -25,18 +24,27 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group">
-                                            <input placeholder="Template Name" type="text" id="templatename" required class="form-control" />
+                                            <input placeholder="Template Name" type="text" id="templatename" class="form-control" form="templateform" />
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#questionmodal"> Add Question</button>
                                         </div>
                                     </div>
-                                    <table id="questiontable">
-                                        <thead>
+                                    <table id="questiontable" class="table invisible">
+                                        <thead class="thead-dark">
                                             <tr>
                                                 <th>
-                                                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#questionmodal"> Add Question</button>
+                                                    Question Type
+                                                </th>
+                                                <th>
+                                                    Remove Question
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr>
+
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -78,17 +86,16 @@
                                     </div>
                                 }
                             </div>
-
                         </div>
                     </div>
                 </div>
-
-
+            </div>
+        </div>
     </form>
 </div>
 <div class="modal fade" id="questionmodal" tabindex="-1" role="dialog" aria-labelledby="questionmodalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form class="needs-validation" action="../InformationBuilder/CreateProduct" id="questionform">
+        <form class="needs-validation" id="questionform">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
@@ -99,7 +106,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="dropdown">
-                            <select id="questiontype" class="custom-select" onchange="DisplayTemplate()">
+                            <select id="questiontype" class="custom-select" onchange="DisplayTemplate()" validationMessage="test">
                                 <option value="" selected>Question Type</option>
                                 <option value="textTemplate">Text</option>
                                 <option value="dropdownTemplate">Drop Down</option>
@@ -109,23 +116,36 @@
                     </div>
                     <div class="form-group">
                         <input placeholder="Enter Question" type="text" id="question" required class="form-control" />
+                    </div>
+                    <div class="invisible form-group" id="dropdownTemplate">
+                        <div class="form-group">
+                            <input placeholder="Enter dropdown value" type="text" id="dropdownvalue" required class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input placeholder="Enter dropdown value" type="text" id="dropdownvalue2" required class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input placeholder="Enter dropdown value" type="text" id="dropdownvalue3" required class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input placeholder="Enter dropdown value" type="text" id="dropdownvalue4" required class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="QuestionReferUnderwriting">
                             <input class="form-group" type="checkbox" id="QuestionReferUnderwriting" required />
                             Refer Underwriting
                         </label>
-                    </div>
-                    <div class="invisible form-group" id="dropdownTemplate">
-                        <div class="row">
-                            <input placeholder="Enter dropdown value" type="text" id="dropdownvalue" required class="form-control" />
-                        </div>
-                        <div class="row">
-                            <button class="btn btn-sm btn-primary" onclick="AddDropdownInput()"> Add another value</button>
-                        </div>
+
+                        <label for="conditionalquestion">
+                            <input class="form-group" type="checkbox" id="conditionalquestion" required />
+                            Question has a further conditional question
+                        </label>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="AddQuestion()">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="AddQuestion()">Submit Question</button>
                 </div>
             </div>
         </form>

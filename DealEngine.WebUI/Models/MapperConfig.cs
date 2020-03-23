@@ -36,7 +36,7 @@ namespace DealEngine.WebUI.Models
             CreateMap<InformationBuilder, InformationBuilderViewModel>().ReverseMap();
 
             // Information
-            CreateMap<AdditionalActivityInformation, RevenueByActivityViewModel>();
+            CreateMap<AdditionalActivityViewModel, RevenueByActivityViewModel>();
             CreateMap<InformationTemplate, InformationViewModel>();
             CreateMap<InformationSection, InformationSectionViewModel>();
             CreateMap<InformationItem, InformationItemViewModel>()

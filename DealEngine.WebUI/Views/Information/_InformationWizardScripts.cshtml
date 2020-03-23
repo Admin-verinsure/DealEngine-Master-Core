@@ -1897,27 +1897,24 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-    function SaveRevenueTabFive(type) {
+    function SaveRevenueTabThree() {
         event.preventDefault();
+        var form = document.getElementById('revenue3');
+        form.classList.add('was-validated');
+        if (form.checkValidity() === false) {
+            return;
+        }
         if (ValidateSharedRevenueForm(3)) {
-            debugger;
-            var serialisedAdditionalInformationTable = $('#addtionalActivityInformationContainer').serialize();
+            form = $('#revenue3').serialize();
             var clientInformationSheetId = $('#AnswerSheetId').val();
-            var postData = { SerialisedAdditionalInformationTable: serialisedAdditionalInformationTable, ClientInformationSheetId: clientInformationSheetId };
-
+            var postData = {form, ClientInformationSheetId: clientInformationSheetId };
             $.ajax({
-                url: '@Url.Action("SaveRevenueDataTabFive", "Information")',
+                url: '@Url.Action("SaveRevenueDataTabThree", "Information")',
                 type: "POST",
                 data: postData
             })
                 .done(function (Data) {
-                    BuildRevenueOverview();
-                    if (type == 'newSummary') {
-                        SetCurrentTab('RevenueTabs4');
-                    } else {
-                        debugger;
-                        SetCurrentTab('RevenueTabs0');
-                    }
+                    location.reload();
                 });
         }
     }
@@ -1942,13 +1939,28 @@ function showAccordionPanel(id, panelNo) {
                 $('#submitTab4').hide();
                 $('#additionalInfomation').show();
             }
-            if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {
+            if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {
                 $('#SchoolsDesignWork').show();
                 $('#submitTab4').hide();
                 $('#additionalInfomation').show();
             }
             if (item.trim() === "Canterbury Earthquake Rebuild Work") {
                 $('#CanterburyEarthquakeRebuildWork').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Other Project Management Activities") {
+                $('#OtherProjectManagement').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Non Project Management Activities") {
+                $('#NonProjectManagement').show();
+                $('#submitTab4').hide();
+                $('#additionalInfomation').show();
+            }
+            if (item.trim() === "Contruction") {
+                $('#Contruction').show();
                 $('#submitTab4').hide();
                 $('#additionalInfomation').show();
             }
@@ -2031,6 +2043,9 @@ function showAccordionPanel(id, panelNo) {
                 $('#Valuation').hide();
                 $('#OtherActivities').hide();
                 $('#additionalActivitySubmit').hide();
+                $('#OtherProjectManagement').hide();
+                $('#NonProjectManagement').hide();
+                $('#Construction').hide();
 
                 var activitiesStr = GetActivitiesForRevenue('value');
                 if (activitiesStr.length != 0) {                    
@@ -2100,65 +2115,54 @@ function showAccordionPanel(id, panelNo) {
                     if (item.trim() === "Other Work not listed above") {
                         if (document.getElementById("OtherActivitiesTextId").value == "") {
                             alert("Please provide details");
-                            document.getElementById("OtherActivitiesTextId").focus();
                             return false;
                         }
                     }
                     if (item.trim() === "Inspection Reports") {
                         if (document.getElementById("InspectionReportTextId").value == "") {
                             alert("Please provide details");
-                            document.getElementById("InspectionReportTextId").focus();
                             return false;
                         }
-                        if (document.getElementById("InspectionReportBoolId").selectedIndex == 0) {
+                        if (document.getElementById("InspectionReportBoolId").value === '') {
                             alert("Please select an option");
-                            document.getElementById("InspectionReportBoolId").focus();
                             return false;
                         }
                     }
                     if (item.trim() === "Valuations") {
                         if (document.getElementById("ValuationTextId").value == "") {
                             alert("Please provide details");
-                            document.getElementById("ValuationTextId").focus();
                             return false;
                         }
                         if(document.getElementById("ValuationTextId2").value == "") {
                             alert("Please provide details");
-                            document.getElementById("ValuationTextId2").focus();
                             return false;
                         }
-                        if (document.getElementById("ValuationBoolId").selectedIndex == 0) {
+                        if (document.getElementById("ValuationBoolId").value === '') {
                             alert("Please select an option");
-                            document.getElementById("ValuationBoolId").focus();
                             return false;
                         }
                     }
-                    if (item.trim() === "Architecture - Schools MOE" || item === "Architecture - Schools - Non MOE") {                        
-                        if (document.getElementById("SchoolsDesignWorkBoolId").selectedIndex == 0) {
+                    if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {                        
+                        if (document.getElementById("SchoolsDesignWorkBoolId").value === '') {
                             alert("Please select an option");
-                            //document.getElementById("SchoolsDesignWorkBoolId").focus();
                             return false;
                         }
-                        if (document.getElementById("SchoolsDesignWorkBoolId2").selectedIndex == 0) {
-                            alert("Please select an option");
-                            document.getElementById("SchoolsDesignWorkBoolId2").focus();
+                        if (document.getElementById("SchoolsDesignWorkBoolId2").value === '') {
+                            alert("Please select an option");                            
                             return false;
                         }
-                        if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex == 0) {
+                        if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex === '') {
                             alert("Please select an option");
-                            document.getElementById("SchoolsDesignWorkBoolId3").focus();
                             return false;
                         }
-                        if (document.getElementById("SchoolsDesignWorkBoolId4").selectedIndex == 0) {
+                        if (document.getElementById("SchoolsDesignWorkBoolId4").value === '') {
                             alert("Please select an option");
-                            document.getElementById("SchoolsDesignWorkBoolId4").focus();
                             return false;
                         }
                     }
                     if (item.trim() === "Canterbury Earthquake Rebuild Work") {
                         if (document.getElementById("CanterburyEarthquakeRebuildWorkId").value == "") {
                             alert("Please provide details");
-                            document.addtionalActivityInformationContainer.CanterburyEarthquakeRebuildWorkId.focus();
                             return false;
                         }
                     }

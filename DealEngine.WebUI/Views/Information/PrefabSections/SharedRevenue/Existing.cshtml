@@ -137,7 +137,7 @@
 
             <div class="form-group">
                 <label for="sharedRevenueActivities">Select Activites</label>
-                <select id="sharedRevenueActivities" name="sharedRevenueActivities" form="revenue2" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                <select id="sharedRevenueActivities" name="Activities" form="revenue2" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
                     @foreach (var ou in Model.Activities)
                     {
                         <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
@@ -182,7 +182,7 @@
     </div>
     <div class="tab-pane active" id="RevenueTabs3" role="tabpanel">
         <div class="container-fluid">
-            @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model)
+            @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model.AdditionalInformation)
         </div>
     </div>
     </div>
