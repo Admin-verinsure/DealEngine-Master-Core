@@ -3158,13 +3158,43 @@ namespace DealEngine.WebUI.Controllers
                                     additionalInformation.NonProjectManagementTextId = questionSplit[1];
                                 }
                                 break;
+                            case "ConstructionCommercial":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionCommercial = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
+                            case "ConstructionDwellings":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionDwellings = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
+                            case "ConstructionIndustrial":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionIndustrial = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
+                            case "ConstructionInfrastructure":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionInfrastructure = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
+                            case "ConstructionSchool":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionSchool = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
                             default:
                                 throw new Exception("Add more form question 'cases'");
                         }
 
                     }
                     catch (Exception ex)
-                    {
+                    {                        
                         Console.WriteLine(ex.Message);
                     }
                 }

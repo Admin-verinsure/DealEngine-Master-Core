@@ -331,6 +331,11 @@ namespace DealEngine.WebUI.Models
         public virtual string InspectionReportTextId { get; set; }
         public virtual string OtherProjectManagementTextId { get; set; }
         public virtual string NonProjectManagementTextId { get; set; }
+        public decimal ConstructionCommercial { get; set; }
+        public decimal ConstructionDwellings { get; set; }
+        public decimal ConstructionIndustrial { get; set; }
+        public decimal ConstructionInfrastructure { get; set; }
+        public decimal ConstructionSchool { get; set; }
     }
 
     public class SharedRoleViewModel

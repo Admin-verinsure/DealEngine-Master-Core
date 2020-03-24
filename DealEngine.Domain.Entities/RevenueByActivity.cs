@@ -38,6 +38,11 @@ namespace DealEngine.Domain.Entities
         public virtual int ValuationBoolId { get; set; }
         public virtual string OtherProjectManagementTextId { get; set; }
         public virtual string NonProjectManagementTextId { get; set; }
+        public virtual decimal ConstructionCommercial { get; set; }
+        public virtual decimal ConstructionDwellings { get; set; }
+        public virtual decimal ConstructionIndustrial { get; set; }
+        public virtual decimal ConstructionInfrastructure { get; set; }
+        public virtual decimal ConstructionSchool { get; set; }
 
         protected AdditionalActivityInformation() : this(null) { }
 

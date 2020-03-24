@@ -1922,6 +1922,7 @@ function showAccordionPanel(id, panelNo) {
     function ShowAdditionalInfomation() {
         $('#additionalActivitySubmit').show();
         var activitiesStr = GetActivitiesForRevenue('text');
+        debugger;
 
         activitiesStr.forEach(function (item) {
             if (item.trim() === "Other Work not listed above") {
@@ -1959,8 +1960,8 @@ function showAccordionPanel(id, panelNo) {
                 $('#submitTab4').hide();
                 $('#additionalInfomation').show();
             }
-            if (item.trim() === "Contruction") {
-                $('#Contruction').show();
+            if (item.trim() === "Construction") {
+                $('#Construction').show();
                 $('#submitTab4').hide();
                 $('#additionalInfomation').show();
             }
