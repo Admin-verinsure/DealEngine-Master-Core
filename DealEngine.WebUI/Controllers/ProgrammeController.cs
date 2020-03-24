@@ -41,8 +41,10 @@ namespace DealEngine.WebUI.Controllers
         IMapper _mapper;
         IHttpClientService _httpClientService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
+        IImportService _importService;
 
         public ProgrammeController(
+            IImportService importService,
             IOrganisationService organisationService,
             IRiskCoverService riskCoverService,
             IRiskCategoryService riskCategoryService,
@@ -65,6 +67,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _productService = productService;
             _logger = logger;
@@ -192,19 +195,21 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProgrammeActivities(string ProgrammeId, bool IsPublic, string[] Activities)
+        public async Task<IActionResult> CreateActivityTemplates(IFormCollection form)
         {
             User user = null;
             try
             {
-                user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProgrammeId));
-                foreach (string str in Activities)
+                var programmeId = form["ActivityAttach.SelectedProgramme"].ToString();
+                var templateIds = form["Builder.Activities"].ToArray().ToList();
+                var isPublic = bool.Parse(form["Builder.Ispublic"].ToString());
+                Programme programme = await _programmeService.GetProgramme(Guid.Parse(programmeId));
+                foreach (var id in templateIds)
                 {
-                    BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(str));                    
+                    BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(id));
                     await _programmeService.AttachProgrammeToActivities(programme, businessActivityTemplate);
                 }
-                
+
                 return Ok(); 
             }
             catch (Exception ex)
@@ -222,12 +227,10 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                var busActivityList = await _busActivityService.GetBusinessActivitiesTemplate();
-                if (busActivityList.Count == 0)
-                {
-                    return Redirect("~/Error/Error404");
-                }
-
+                //reupload everytime
+                var busActivityList = await _busActivityService.GetBusinessActivitiesTemplates();
+                await _importService.ImportActivities(user);                
+                busActivityList = await _busActivityService.GetBusinessActivitiesTemplates();
                 var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
                 var actClassTwo = await _busActivityService.GetBusinessActivitiesByClassification(2);
                 var actClassThree = await _busActivityService.GetBusinessActivitiesByClassification(3);
@@ -260,7 +263,7 @@ namespace DealEngine.WebUI.Controllers
 
                 List<SelectListItem> proglist = new List<SelectListItem>();
                 var programmeList = await _programmeService.GetAllProgrammes();
-                foreach (Programme prog in programmeList.Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
+                foreach (Programme prog in programmeList)
                 {
                     proglist.Add(new SelectListItem
                     {
@@ -268,37 +271,12 @@ namespace DealEngine.WebUI.Controllers
                         Text = prog.Name,
                         Value = prog.Id.ToString(),
                     });
-
                 }
 
                 model.ActivityAttach = new ActivityAttachVM()
                 {
                     BaseProgList = proglist
                 };
-
-                ActivityListViewModel almodel = new ActivityListViewModel();
-                almodel.ProgrammeList = new List<Programme>();
-                almodel.BusinessActivityList = new List<BusinessActivityTemplate>();
-
-                var programmeList1 = await _programmeService.GetAllProgrammes();
-                var progList = programmeList1.Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToList();
-                if (user.PrimaryOrganisation.IsTC)
-                {
-                    progList = programmeList1.Where(d => !d.DateDeleted.HasValue).ToList();
-                }
-
-                var busActList = await _busActivityService.GetBusinessActivitiesTemplate();
-                if (progList.Count != 0)
-                {
-                    almodel.ProgrammeList = progList;
-                }
-
-                if (busActList.Count != 0)
-                {
-                    almodel.BusinessActivityList = busActList;
-                }
-
-                model.ActivityListViewModel = almodel;
 
                 return View(model);
             }

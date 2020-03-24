@@ -1861,7 +1861,7 @@ namespace DealEngine.WebUI.Controllers
             List<SelectListItem> territoryTemplates = new List<SelectListItem>();
             List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
 
-            if (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0)
+            if (sheet.RevenueData!= null && (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0))
             {
                 if (sheet.RevenueData.Territories.Count > 0)
                 {

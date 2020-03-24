@@ -11,8 +11,7 @@ namespace DealEngine.WebUI.Models.Programme
     {
         public ActivityBuilderVM Builder { get; set; }
         public ActivityAttachVM ActivityAttach { get; set; }
-        public ActivityModal ActivityCreate { get; set; }
-        public ActivityListViewModel ActivityListViewModel { get; set; }
+        public ActivityModal ActivityCreate { get; set; }        
         public Guid Id { get; set; }
     };
 

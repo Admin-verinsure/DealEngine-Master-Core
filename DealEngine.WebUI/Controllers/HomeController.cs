@@ -637,8 +637,11 @@ namespace DealEngine.WebUI.Controllers
                     //    }
                     //}
                 }
-
-                model = await GetClientProgrammeListModel(user, clientList);                                                
+                model = await GetClientProgrammeListModel(user, clientList);
+                if (clientList.Count == 0)
+                {
+                    model.ProgrammeId = programme.Id.ToString();
+                }
 
                 return View(model);
             }

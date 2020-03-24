@@ -9,7 +9,7 @@ namespace DealEngine.Services.Interfaces
     public interface IBusinessActivityService
     {
         Task<List<BusinessActivityTemplate>> GetBusinessActivitiesByClassification (int classification);
-        Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplate();
+        Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplates();
         //Task<BusinessActivityTemplate> GetBusinessActivitiesTemplate(BusinessActivityTemplate businessActivity);
         Task<BusinessActivity> GetBusinessActivity(Guid Id);
         Task<BusinessActivityTemplate> GetBusinessActivityTemplate(Guid Id);
@@ -19,6 +19,7 @@ namespace DealEngine.Services.Interfaces
         Task CreateBusinessActivityTemplate(BusinessActivityTemplate businessActivity);
         Task CreateBusinessActivity(BusinessActivity newBusinessActivity);
         Task<BusinessActivityTemplate> GetBusinessActivityTemplateByCode(string anzsciCode);
+        Task RemoveBusinessActivity(BusinessActivityTemplate businessActivityTemplate);
     }
     
 }
