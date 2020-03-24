@@ -1536,7 +1536,11 @@ namespace DealEngine.WebUI.Controllers
 
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);               
                 model.SharedRoleViewModel = sharedRoleViewModel;
-                RevenueByActivityViewModel revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);                
+                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
+                if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0) 
+                {
+                    revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
+                }
                 model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
                 var boats = new List<BoatViewModel>();
@@ -1986,7 +1990,7 @@ namespace DealEngine.WebUI.Controllers
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
             else
-            {
+            {                
                 territoryList.AddRange(clientProgramme.BaseProgramme.TerritoryTemplates);
                 foreach (var territory in territoryList)
                 {

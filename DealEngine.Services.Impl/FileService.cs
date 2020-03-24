@@ -639,7 +639,11 @@ namespace DealEngine.Services.Impl
                     DataRow dr = dt.NewRow();
 
                     dr["Endorsement Name"] = ClientAgreementEndorsement.Name;
-                    dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
+                    if(agreement.ClientInformationSheet.Product != null)
+                    {
+                        dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
+                    }
+                    
                     dr["Endorsement Text"] = ClientAgreementEndorsement.Value;
 
                     dt.Rows.Add(dr);
