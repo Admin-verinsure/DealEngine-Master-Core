@@ -378,9 +378,11 @@
         $('#Boattabs').tabs();
         $('#SharedRevenue').tabs();
         $('#SharedRole').tabs();
+        $('#PMINZNamedPartiestabs').tabs();        
         $('#registeredtrailertabs').tabs();
         $('#Landtabs').tabs();
         $('#Claimtabs').tabs();
+        $('#CEASPrincipaltabs').tabs();
         $('#BoatUsetabs').tabs();
         $('#NamedPartiestabs').tabs();
         $('#BusinessContracttabs').tabs();
@@ -436,6 +438,9 @@
             maxDate: "+30d",
             dateFormat: "dd/mm/yy",
             minDate: 0
+        });
+         $('.Birthdate').datepicker({
+            dateFormat: "dd/mm/yy",
         });
 
         $('.Startdate').datepicker({
