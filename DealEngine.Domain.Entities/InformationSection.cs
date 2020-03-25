@@ -10,7 +10,7 @@ namespace DealEngine.Domain.Entities
     public class InformationSection : EntityBase, IAggregateRoot
     {
 
-		public virtual string Name { get; protected set; }
+		public virtual string Name { get; set; }
 
 		public virtual string CustomView { get; set; }
 

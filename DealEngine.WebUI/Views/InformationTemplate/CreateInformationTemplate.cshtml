@@ -25,8 +25,10 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="form-group">
-                                                <input placeholder="Template Name" type="text" name="templatename" id="templatename" class="form-control" form="templateform" />
+                                                <input placeholder="Template Name" type="text" name="templatename" id="templatename" class="form-control" form="templateform" required />
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="form-group">
                                                 <a class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#questionmodal"> Add Question</a>
                                             </div>
@@ -51,6 +53,7 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
                                     @for (int x = 0; x < Model.InformationTemplates.Count(); x++)
                                     {
                                         <div class="card">
@@ -70,13 +73,11 @@
                                                             {
                                                                 <tr>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input" type="checkbox" value="" id="@Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Id" name="@Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Id">
-                                                                                <label class="form-check-label" for="@Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Id">
-                                                                                    Add Section: @Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Name
+                                                                        <div class="form-check">
+                                                                                <input class="form-check-input" type="checkbox" name="existingtemplates" id="existingtemplates" value="@Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Id" form="templateform" />
+                                                                                <label class="form-check-input-label" for="existingtemplates">
+                                                                                    @Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Name
                                                                                 </label>
-                                                                            </div>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -89,7 +90,6 @@
                                     }
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
                                 <input class="custom-control-input form-control" type="checkbox" name="questionreferunderwriting" id="questionreferunderwriting" form="templateform" />
-                                <label class="custom-control-label" for="QuestionReferUnderwriting">Refer Underwriting</label>
+                                <label class="custom-control-label" for="questionreferunderwriting">Refer Underwriting</label>
                             </div>
                         </div>
                         <div class="form-group">

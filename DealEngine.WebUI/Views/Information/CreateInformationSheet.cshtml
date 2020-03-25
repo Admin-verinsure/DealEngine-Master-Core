@@ -1,0 +1,93 @@
+﻿    
+<div id="content" class="container">
+        <div class="card">
+            <div class="card-header">
+                <span class="widget-icon">
+                    <h2><i class="fa fa-list-alt"></i> Information Sheet </h2>
+                </span>
+            </div>
+            <div class="card-body">
+                <form class="needs-validation" id="informationform" action="../Information/CreateInformationSheet" method="post">
+                    <div class="form-group">                        
+                        <label class="required">Organisation Type</label>
+                        <div class="form-check">
+                            <label class="form-check-input-label">
+                                Private
+                                <input class="form-check-input" type="radio" name="cgradioselect" id="vown1" value="Private" checked="checked" onclick="vesselOwnUpdate()">
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-input-label">
+                                Company
+                                <input class="form-check-input" type="radio" name="cgradioselect" id="vown2" value="Company" onclick="vesselOwnUpdate()">
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-input-label">
+                                Trust
+                                <input class="form-check-input" type="radio" name="cgradioselect" id="vown3" value="Trust" onclick="vesselOwnUpdate()">
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-input-label">
+                                Partnership
+                                <input class="form-check-input" type="radio" name="cgradioselect" id="vown4" value="Partnership" onclick="vesselOwnUpdate()">
+                            </label>
+                        </div>
+                        <p class="validationContainer" id="validateOrgType"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">
+                            Organisation Name
+                            <input class="form-control input-lg" placeholder="Enter Organisation Name" type="text" name="fname" id="UISorgname">
+                        </label>
+                        <p class="validationContainer" id="validateOrgName"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">
+                            First Name
+                            <input class="form-control input-lg" placeholder="Enter First Name" type="text" name="fname" id="UISfname">
+                        </label>
+                        <p class="validationContainer" id="validateFirstName"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">
+                            Last Name
+                            <input class="form-control input-lg" placeholder="Enter Last Name" type="text" name="lname" id="UISlname">
+                        </label>
+                        <p class="validationContainer" id="validateLastName"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">
+                            Email
+                            <input class="form-control input-lg" placeholder="Enter Email" type="text" name="email" id="UISEmail">
+                        </label>
+                        <p class="validationContainer" id="validateEmail"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">
+                            Membership Number
+                            <input class="form-control input-lg" placeholder="Enter Membership Number" type="text" name="memno" id="UISMembershipno">
+                        </label>
+                        <p class="validationContainer" id="validateMembershyipNo"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">
+                            Mobile Phone
+                            <input class="form-control input-lg" placeholder="Enter Mobile Number" type="text" name="mphon" id="UISmphon" aria-required="true" aria-invalid="false" maxlength="14">
+                        </label>
+                        <p class="validationContainer" id="validateMobileNo"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+</div>
+
+
+
+
+
+
+

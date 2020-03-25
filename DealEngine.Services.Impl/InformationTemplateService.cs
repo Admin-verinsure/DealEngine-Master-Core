@@ -67,5 +67,15 @@ namespace DealEngine.Services.Impl
 
 			return template;
 		}
+
+        public async Task UpdateInformationTemplate(InformationTemplate informationTemplate)
+        {
+            await _informationTemplateRepository.UpdateAsync(informationTemplate);
+        }
+
+        public async Task CreateInformationTemplate(InformationTemplate informationTemplate)
+        {
+            await _informationTemplateRepository.AddAsync(informationTemplate);
+        }
     }
 }

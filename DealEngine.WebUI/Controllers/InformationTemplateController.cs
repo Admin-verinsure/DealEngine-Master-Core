@@ -18,8 +18,12 @@ namespace DealEngine.WebUI.Controllers
         IInformationTemplateService _informationTemplateService;
         ILogger<InformationTemplateController> _logger;
         IApplicationLoggingService _applicationLoggingService;
+        IInformationSectionService _informationSectionService;
+        IProductService _productService;
 
 		public InformationTemplateController(
+            IProductService productService,
+            IInformationSectionService informationSectionService,
             IInformationTemplateService informationTemplateService,
             IUserService userService,
             IMapper mapper,
@@ -28,6 +32,8 @@ namespace DealEngine.WebUI.Controllers
             )
 			: base (userService)
         {
+            _productService = productService;
+            _informationSectionService = informationSectionService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
             _informationTemplateService = informationTemplateService;
@@ -87,18 +93,23 @@ namespace DealEngine.WebUI.Controllers
             try
             {                
                 user = await CurrentUser();
-
+                InformationTemplate informationTemplate;
                 if (!string.IsNullOrWhiteSpace(form["templatename"]))
                 {
                     title = form["templatename"];
                 }
+                if (!string.IsNullOrWhiteSpace(form["templateId"]))
+                {
+                    informationTemplate = await _informationTemplateService.GetTemplate(Guid.Parse(form["templateId"]));
+                }
+                else
+                {
+                    informationTemplate = new InformationTemplate(user, title, null);
+                    informationTemplate.Name = title;
+                    //await _informationTemplateService.CreateInformationTemplate(informationTemplate);
+                }
 
-                InformationTemplate informationTemplate = new InformationTemplate(user, title, null);
-                var template = Guid.NewGuid();
-                informationTemplate.Id = template;
-                InformationSection section = new InformationSection(user, title, null);
-                var sectionId = Guid.NewGuid();
-                section.Id = sectionId;
+                InformationSection section = new InformationSection(user, title, null);                
                 InformationItem item;
                 List<DropdownListOption> ddOptions = new List<DropdownListOption>();
                 string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
@@ -145,7 +156,8 @@ namespace DealEngine.WebUI.Controllers
                 catch (Exception ex)
                 {
                     item.Required = false;
-                }
+                }                
+                //await _informationSectionService.CreateNewSection(section);                
 
                 return Json(new { templateId = informationTemplate.Id, sectionId = section.Id }); 
             }
@@ -154,7 +166,6 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return Json(new { Result = true });
             }
-
         }
 
 
@@ -164,69 +175,46 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
             try
             {
-                //if (!ModelState.IsValid)
-                //{
-                //    return View(form);
-                //}
+                var form = HttpContext.Request.Form;
                 user = await CurrentUser();
-                //InformationTemplate informationTemplate = new InformationTemplate(user, model.Title, null);
-
-                //foreach (var page in model.Pages)
+                var templateId = form["templateId"];
+                var templateName = form["templatename"];
+                InformationTemplate informationTemplate;
+                if (!string.IsNullOrWhiteSpace(templateId))
+                {
+                    informationTemplate = await _informationTemplateService.GetTemplate(Guid.Parse(templateId));
+                }
+                else
+                {
+                    informationTemplate = new InformationTemplate(user, "", null);
+                }
+                var existingTemplates = form["existingtemplates"].ToList();                 
+                var sectionList = form["sectionId"].ToList();
+                //for(int i = 0; i < sectionList.Count; i++)
                 //{
-                //    InformationSection section = new InformationSection(user, page.Title, null);
-
-                //    for (int i = 0; i < page.Questions.Count(); i++)
-                //    {
-                //        var question = page.Questions.ElementAt(i);
-                //        InformationItem item = null;
-                //        string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
-                //        string randomId = informationTemplate.Name;
-                //        randomId = randomId + question.QuestionTitle.Substring(question.QuestionTitle.Length - 5);
-                //        //var ques = question.QuestionTitle.Substring(question.QuestionTitle.Length - 6);
-                //        switch (question.QuestionType)
-                //        {
-                //            case "text":
-                //                item = new TextboxItem(user, randomName, question.QuestionTitle, randomId, 10, "TEXTBOX");
-                //                break;
-                //            case "radiobutton":
-
-                //                break;
-                //            case "dropdown":
-                //                List<DropdownListOption> ddOptions = new List<DropdownListOption>();
-                //                ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
-                //                for (int j = 0; j < question.OptionsArray.Length; j++)
-                //                    ddOptions.Add(new DropdownListOption(user, question.OptionsArray[j], j.ToString()));
-                //                item = new DropdownListItem(user, randomName, question.QuestionTitle, randomId, 10, "DROPDOWNLIST", ddOptions, "");
-                //                break;
-                //            case "mvRegPanelTemplate":
-                //                section.CustomView = "ICIBHianzMotor";
-                //                break;
-                //            case "mvUnRegPanelTemplate":
-                //                section.CustomView = "ICIBHianzPlant";
-                //                break;
-                //            default:
-                //                throw new Exception("Unable to map element (" + question.QuestionType + ")");
-                //        }
-                //        item.EditorId = question.EditorId;
-                //        item.ItemOrder = i;
-                //        // set flags
-                //        if (item != null)
-                //        {
-                //            item.NeedsReview = question.NeedsReview;
-                //            item.ReferUnderwriting = question.ReferUnderWriting;
-                //            item.Required = question.Required;
-                //            item.NeedsMilestone = question.NeedsMilestone;
-                //        }
-
-                //        section.AddItem(item);
-                        
-                //    }
+                //    var section = await _informationSectionService.GetSection(Guid.Parse(sectionList.ElementAt(i)));
+                //    section.Name = templateName;
+                //    section.Position = i + 2;
                 //    informationTemplate.AddSection(section);
                 //}
 
-                //await _informationTemplateService.CreateInformationTemplate(user, informationTemplate.Name, informationTemplate.Sections);
-                return Json(new { Result = true });
+                //foreach(var existingId in existingTemplates)
+                //{
+                //    var template = await _informationTemplateService.GetTemplate(Guid.Parse(existingId));
+                //    foreach(var section in template.Sections)
+                //    {
+                //        informationTemplate.AddSection(section);
+                //    }
+                //}
 
+                //informationTemplate.Name = templateName;
+                var products = await _productService.GetAllProducts();
+                var product = products.LastOrDefault();
+                //product.InformationTemplate = informationTemplate;
+                //await _informationTemplateService.UpdateInformationTemplate(informationTemplate);
+                //await _productService.UpdateProduct(product);
+                
+                return NoContent();
             }
             catch (Exception ex)
             {

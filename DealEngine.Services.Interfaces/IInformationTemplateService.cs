@@ -14,5 +14,7 @@ namespace DealEngine.Services.Interfaces
         Task<InformationTemplate> GetTemplatebyProduct(Guid productId);
         Task<InformationTemplate> AddProductTo(Guid templateId, Product product);
         Task<InformationTemplate> AddProductTo(InformationTemplate informationTemplate, Product product);
+        Task UpdateInformationTemplate(InformationTemplate informationTemplate);
+        Task CreateInformationTemplate(InformationTemplate informationTemplate);
     }
 }

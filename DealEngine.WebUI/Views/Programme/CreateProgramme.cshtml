@@ -12,7 +12,8 @@
                         <li class="nav-item active"><a href="#programme1" class="nav-link">1<br><small>Programme</small></a></li>
                         <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Product</small></a></li>
                         <li class="nav-item"><a href="#programme3" class="nav-link">3<br><small>Templates</small></a></li>
-                        <li class="nav-item"><a href="#programme4" class="nav-link">3<br><small>Submit</small></a></li>
+                        <li class="nav-item"><a href="#programme4" class="nav-link">3<br><small>Information Sheet</small></a></li>
+                        <li class="nav-item"><a href="#programme5" class="nav-link">3<br><small>Submit</small></a></li>
                     </ul>
 
                     <div class="sw-container tab-content">
@@ -26,6 +27,9 @@
                             @await Html.PartialAsync("../InformationTemplate/CreateInformationTemplate", Model.InformationBuilderViewModel)
                         </div>
                         <div id="programme4" class="tab-pane step-content">
+                            @await Html.PartialAsync("../Information/CreateInformationSheet")
+                        </div>
+                        <div id="programme5" class="tab-pane step-content">
                             <p>submit</p>
                         </div>
                     </div>
@@ -97,14 +101,14 @@
                     else if (stepNumber == 2) {
                         var form = document.getElementById('templateform');
                         form.classList.add('was-validated');
-                        if (form.checkValidity() === false) {
-                            debugger;
-                            throw "stop process";
-                        }
-                        else {
-                            debugger;
+                        //if (form.checkValidity() === false) {
+                        //    debugger;
+                        //    throw "stop process";
+                        //}
+                        //else {
+                        //    debugger;
                             form.submit();
-                        }
+                        //}
                     }
                 }
             });
@@ -147,7 +151,17 @@
 
             CreateInput("sectionId", sectionId);            
             document.getElementById('templateId').value = templateId;
+            CreateTableRow();            
 
+            //may reset name
+            var templatename = document.getElementById('templatename').value;
+            document.getElementById("templateform").reset();
+            document.getElementById('templatename').value = templatename;
+
+            $('#questionmodal').modal('hide')
+        }
+
+        function CreateTableRow() {
             var hasConditional = document.getElementById('conditionalquestion').checked;                        
             var selectlist = document.getElementById('questiontype');
             var table = document.getElementById('questiontable');
@@ -163,19 +177,10 @@
             cell.innerHTML = questiontype;
             cell2.innerHTML = 'delete button';
 
-            //may reset name
-            var templatename = document.getElementById('templatename').value;
-            document.getElementById("templateform").reset();
-            document.getElementById('templatename').value = templatename;
-
             if (hasConditional === true) {
-                debugger;
                 cell3.innerHTML = '<a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#conditionalquestionmodal' + sectionId + '"> Add conditional question</a>';
-                debugger;
                 CreateConditionalModal(sectionId);
-                debugger;
             }
-            debugger;
         }
 
         function DisplayTemplate() {
@@ -192,7 +197,6 @@
 
         function AddDropdownInput() {
             document.getElementById('dropdownTemplate').innerHTML
-            debugger;
         }
 
     </script>

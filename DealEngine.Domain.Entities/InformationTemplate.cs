@@ -22,7 +22,7 @@ namespace DealEngine.Domain.Entities
                 Sections = sections;
         }
 
-        public virtual string Name { get; protected set; }
+        public virtual string Name { get; set; }
 
         public virtual IList<InformationSection> Sections {  get; set; }
 
