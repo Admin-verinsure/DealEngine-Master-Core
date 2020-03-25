@@ -109,7 +109,14 @@ namespace DealEngine.Services.Impl
                 new NZACSDOUWModule(),
                 new NZACSPLUWModule(),
                 new NZACSCLUWModule(),
-                
+                new CEASPIUWModule(),
+                new CEASSLUWModule(),
+                new CEASELUWModule(),
+                new CEASEDUWModule(),
+                new CEASDOUWModule(),
+                new CEASPLUWModule(),
+                new CEASCLUWModule(),
+
             };
             return modules;
         }
