@@ -12,6 +12,7 @@
                         <li class="nav-item active"><a href="#programme1" class="nav-link">1<br><small>Programme</small></a></li>
                         <li class="nav-item"><a href="#programme2" class="nav-link">2<br><small>Product</small></a></li>
                         <li class="nav-item"><a href="#programme3" class="nav-link">3<br><small>Templates</small></a></li>
+                        <li class="nav-item"><a href="#programme4" class="nav-link">3<br><small>Submit</small></a></li>
                     </ul>
 
                     <div class="sw-container tab-content">
@@ -24,6 +25,9 @@
                         <div id="programme3" class="tab-pane step-content">
                             @await Html.PartialAsync("../InformationTemplate/CreateInformationTemplate", Model.InformationBuilderViewModel)
                         </div>
+                        <div id="programme4" class="tab-pane step-content">
+                            <p>submit</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -35,6 +39,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+
             $('#smartwizardprogramme').smartWizard({
                 selected: 0,  // Initial selected step, 0 = first step
                 keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
@@ -89,20 +94,61 @@
                             form.submit();
                         }
                     }
+                    else if (stepNumber == 2) {
+                        var form = document.getElementById('templateform');
+                        form.classList.add('was-validated');
+                        if (form.checkValidity() === false) {
+                            debugger;
+                            throw "stop process";
+                        }
+                        else {
+                            debugger;
+                            form.submit();
+                        }
+                    }
                 }
             });
 
         });
 
+        function CreateInput(name, id) {
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");            
+            input.setAttribute("name", name);
+            input.setAttribute("value", id);            
+            document.getElementById("templateform").appendChild(input);
+        }
+
+        function CreateConditionalModal(id) {
+            var modal = document.createElement("div");
+            var clonemodal = document.getElementById("questionmodal");
+            var node = clonemodal.childNodes[1].cloneNode(true);
+            modal.appendChild(node);
+            modal.setAttribute("class", "modal fade");
+            modal.id = 'conditionalquestionmodal' + id;
+            document.getElementById("templateform").appendChild(modal);
+        }
+
         function AddQuestion() {
-            //var form = document.getElementById('questionform');
-            //form.classList.add('was-validated');
-            //if (form.checkValidity() === false) {
-            //    throw "stop process";
-            //}
-            //else {
-            //    form.submit();
-            var hasConditional = document.getElementById('conditionalquestion');
+            var templateId = "";
+            var sectionId = "";
+                     
+            $.ajax({ // make an AJAX request
+                type: "POST",
+                url: '..@Url.Action("CreateSection", "InformationTemplate")', // it's the URL of your component B
+                data: $("#templateform").serialize(), // serializes the form's elements
+                async: false,
+                success: function (data)                
+                {                    
+                    templateId = data.templateId;
+                    sectionId = data.sectionId;                    
+                }
+            });
+
+            CreateInput("sectionId", sectionId);            
+            document.getElementById('templateId').value = templateId;
+
+            var hasConditional = document.getElementById('conditionalquestion').checked;                        
             var selectlist = document.getElementById('questiontype');
             var table = document.getElementById('questiontable');
             table.classList.toggle("invisible", false);
@@ -114,12 +160,22 @@
             var cell3 = row.insertCell();
             
             var questiontype = selectlist.options[selectlist.selectedIndex].text;
-            debugger;
             cell.innerHTML = questiontype;
             cell2.innerHTML = 'delete button';
-            cell3.innerHTML = 'add conditional question';
-            
-           // }
+
+            //may reset name
+            var templatename = document.getElementById('templatename').value;
+            document.getElementById("templateform").reset();
+            document.getElementById('templatename').value = templatename;
+
+            if (hasConditional === true) {
+                debugger;
+                cell3.innerHTML = '<a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#conditionalquestionmodal' + sectionId + '"> Add conditional question</a>';
+                debugger;
+                CreateConditionalModal(sectionId);
+                debugger;
+            }
+            debugger;
         }
 
         function DisplayTemplate() {

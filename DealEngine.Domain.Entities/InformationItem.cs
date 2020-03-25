@@ -42,18 +42,13 @@ namespace DealEngine.Domain.Entities
 
 		public virtual bool Required { get; set; }
 
-        public virtual bool ProgrammeId { get; set; }
-        public virtual bool ProgrammeName { get; set; }
-
-        public virtual string EditorId { get; set; }
-
-		//public virtual InformationItemConditional Conditional { get; set; }
+		public virtual InformationItemConditional Conditional { get; set; }
 
         public virtual IList<DropdownListItem> droplistItems { get; set; }
 
-        // Add locality later
+		// Add locality later
 
-    }
+	}
 
     public class DropdownListItem : InformationItem
 	{
@@ -234,13 +229,14 @@ namespace DealEngine.Domain.Entities
 		}
 	}
 
-	//public class InformationItemConditional : ValueObject
-	//{
-	//	public virtual string TriggerValue { get; set; }
+	public class InformationItemConditional : InformationItem
+	{
+		protected InformationItemConditional() : base(null, null, null, null, 0, null) { }
 
-	//	public virtual int VisibilityOnTrigger { get; set; }
-
-	//	public virtual IList<InformationItem> Targets { get; set; }
-	//}
+		public InformationItemConditional(User createdBy, string name, string label, string id, int width, string itemType)
+			: base(createdBy, name, label, id, width, itemType)
+		{
+		}
+	}
 
 }

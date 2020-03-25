@@ -32,9 +32,6 @@ namespace DealEngine.WebUI.Models
             // Home
             //CreateMap<UserTask, TaskItem>().ReverseMap();
 
-            // InformationBuilder
-            CreateMap<InformationBuilder, InformationBuilderViewModel>().ReverseMap();
-
             // Information
             CreateMap<AdditionalActivityViewModel, RevenueByActivityViewModel>();
             CreateMap<InformationTemplate, InformationViewModel>();

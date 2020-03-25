@@ -1012,7 +1012,6 @@ namespace DealEngine.WebUI.Controllers
         {
             InformationBuilderViewModel model = new InformationBuilderViewModel();
             model.InformationTemplates = await _informationService.GetAllTemplates();
-
             return model;
         }
 
