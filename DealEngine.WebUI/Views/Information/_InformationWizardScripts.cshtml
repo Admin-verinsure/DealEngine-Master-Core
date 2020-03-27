@@ -372,6 +372,7 @@
         });
 
         $('#Principaltabs').tabs();
+        $('#ceasprojecttabs').tabs();
         $(".chosen-select").chosen({ width: "95%" });
         $('#Nonregisteredtabs').tabs();
         $('#tabs').tabs();
@@ -2706,7 +2707,9 @@ function showAccordionPanel(id, panelNo) {
     };
 
 
-    function ValidateClaim(tabId, tableId, currenttab) {
+    function ValidateClaim(event,tabId, tableId, currenttab) {
+        debugger;
+        event.preventDefault();
         var claimTitle = $('#ClaimTitle').val();
         var claimDescription = $('#ClaimDescription').val();
         var claimStatus = $('#ClaimStatus').val();
@@ -2718,7 +2721,30 @@ function showAccordionPanel(id, panelNo) {
         var claimDateOfLoss = $('#ClaimDateOfLoss').val();
         var claimNotifiedDate = $('#ClaimNotifiedDate').val();
         var claimEstimateInsuredLiability = $('#ClaimEstimateInsuredLiability').val();
+        var avaiprod = $('#PrimaryPolicyprod').val();
+        var avaiorg = $('#ResponsiblePrincipal').val();
+
         var result = true;
+        debugger;
+         if (avaiprod == "") {
+            $('#validatePrimaryPolicyprod').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validatePrimaryPolicyprod').html("<font></font>");
+        }
+
+
+        if (avaiorg == "") {
+            $('#validateResponsiblePrincipal').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#validateResponsiblePrincipal').html("<font></font>");
+        }
+
         if (claimEstimateInsuredLiability == "") {
             $('#validateClaimEstimateInsuredLiability').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2815,7 +2841,7 @@ function showAccordionPanel(id, panelNo) {
             return result;
         }
         if (result1) {
-            AddClaim(event,tabId, tableId);
+            AddClaim(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#validateClaimEstimateInsuredLiability').html("<font color='red'>Please enter the number.</font>")
@@ -2825,6 +2851,7 @@ function showAccordionPanel(id, panelNo) {
 
 
     function ValidateAddClaim(event, tabId, tableId, currenttab) {
+
          event.preventDefault();
         var claimTitle = $('#AddClaimTitle').val();
         var claimDescription = $('#AddClaimDescription').val();
@@ -2837,8 +2864,30 @@ function showAccordionPanel(id, panelNo) {
         var claimDateOfLoss = $('#AddClaimDateOfLoss').val();
         var claimNotifiedDate = $('#AddClaimNotifiedDate').val();
         var claimEstimateInsuredLiability = $('#AddClaimEstimateInsuredLiability').val();
+        var avaiprod = $('#AddPrimaryPolicyprod').val();
+        var avaiorg = $('#AddResponsiblePrincipal').val();
+
         var result = true;
         debugger;
+         if (avaiprod == "") {
+            $('#AddvalidatePrimaryPolicyprod').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#AddvalidatePrimaryPolicyprod').html("<font></font>");
+        }
+
+
+        if (avaiorg == "") {
+            $('#AddvalidateResponsiblePrincipal').html("<font color='red'>Field is required</font>")
+            if (result) {
+                result = false;
+            }
+        } else {
+            $('#AddvalidateResponsiblePrincipal').html("<font></font>");
+        }
+
         if (claimEstimateInsuredLiability == "") {
             $('#AddvalidateClaimEstimateInsuredLiability').html("<font color='red'>Field is required</font>")
             if (result) {
@@ -2936,7 +2985,7 @@ function showAccordionPanel(id, panelNo) {
         }
 
         if (result1) {
-            AddClaim(event,tabId, tableId);
+            AddClaim(tabId, tableId);
             SetCurrentTab(currenttab);
         } else {
             $('#AddvalidateClaimEstimateInsuredLiability').html("<font color='red'>Please enter the number.</font>")
@@ -2944,9 +2993,9 @@ function showAccordionPanel(id, panelNo) {
         }
     }
 
-function AddClaim(event,tabId, tableId) {
+    function AddClaim( tabId, tableId) {
+        debugger;
     var informationId = $('#AnswerSheetId').serialize();
-            event.preventDefault();
 
     $.ajax({
         // change back once mono decides to fix
@@ -2972,7 +3021,8 @@ function AddClaim(event,tabId, tableId) {
     });
 };
 
-function EditClaim(claimId, tableId) {
+    function EditClaim(claimId, tableId) {
+        debugger;
     var _sheetId = $('#AnswerSheetId').val();
             event.preventDefault();
 
@@ -2989,7 +3039,8 @@ function EditClaim(claimId, tableId) {
             data: postData,
             async: true
         })
-    .done(function (data) {
+            .done(function (data) {
+                debugger;
         $('#ClaimId').val(data.claimId);
         $('#ClaimTitle').val(data.claimTitle);
         $('#ClaimDescription').val(data.claimDescription);
@@ -3006,6 +3057,8 @@ function EditClaim(claimId, tableId) {
         $('#ClaimInsurerReference').val(data.claimInsurerReference);
         $('#ClaimPaid').val(data.claimPaid);
         $('#ClaimReserve').val(data.claimReserve);
+        $('#PrimaryPolicyprod').val(data.selectedClaimProducts);
+        $('#ResponsiblePrincipal').val(data.selectedResponsiblePrincipal);
         $('#ClaimNotes').val(data.claimNotes);
         UpdateChosen();
     });

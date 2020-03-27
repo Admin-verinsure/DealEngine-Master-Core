@@ -244,6 +244,42 @@
                             </label>
                         </section>
 
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Primary Policy Product</label>
+                            <label class="input form-group">
+
+                                <select data-placeholder="Choose Primary Policy Product..." id="PrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
+
+                                    @foreach (var bwloc in Model.ClaimProducts)
+                                    {
+                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                    }
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validatePrimaryPolicyprod"></p>
+
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Responsible Principal</label>
+                            <label class="input form-group">
+
+                                <select data-placeholder="Choose Responsible Principal..." id="ResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
+
+                                    @foreach (var bwloc in Model.AvailableOrganisations)
+                                    {
+                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                    }
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateResponsiblePrincipal"></p>
+
+
+                        </section>
+
                     </div>
 
                     <!-- 3rd row -->
@@ -403,6 +439,43 @@
                             <p class="validationContainer" id="AddvalidateClaimEstimateInsuredLiability"></p>
 
                         </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Primary Policy Product</label>
+                            <label class="input form-group">
+
+                                <select data-placeholder="Choose Primary Policy Product..." id="AddPrimaryPolicyprod" name="SelectedClaimProducts" class="form-control b">
+
+                                    @foreach (var bwloc in Model.ClaimProducts)
+                                    {
+                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                    }
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="AddvalidatePrimaryPolicyprod"></p>
+
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Responsible Principal</label>
+                            <label class="input form-group">
+
+                                <select data-placeholder="Choose Responsible Principal..." id="AddResponsiblePrincipal" name="SelectedResponsiblePrincipal" class="form-control b">
+
+                                    @foreach (var bwloc in Model.AvailableOrganisations)
+                                    {
+                                        <option value="@bwloc.Value"> @bwloc.Text</option>
+                                    }
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="AddvalidateResponsiblePrincipal"></p>
+
+
+                        </section>
+
 
                     </div>
 

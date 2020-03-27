@@ -3909,12 +3909,16 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+                ClientProgramme clientProgramme =  sheet.Programme;
                 ClaimNotification claim = sheet.ClaimNotifications.FirstOrDefault(c => c.Id == claimId);
                 if (claim != null)
                 {
                     model = ClaimViewModel.FromEntity(claim);
                     model.AnswerSheetId = answerSheetId;
                 }
+                var claimProducts = new List<Product>();
+                List<SelectListItem> ClaimProducts = new List<SelectListItem>();
+               
                 return Json(model);
             }
             catch (Exception ex)
@@ -4137,6 +4141,68 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> AddCEASProject(BusinessContractViewModel model)
+        {
+            User user = null;
+
+            try
+            {
+                if (model == null)
+                    throw new ArgumentNullException(nameof(model));
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+                if (sheet == null)
+                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+
+                BusinessContract businessContract = await _businessContractService.GetBusinessContractById(model.BusinessContractId);
+                if (businessContract == null)
+                    businessContract = model.ToEntity(user);
+                model.UpdateEntity(businessContract);
+
+                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                {
+                    sheet.BusinessContracts.Add(businessContract);
+                    await uow.Commit();
+                }
+
+                model.BusinessContractId = businessContract.Id;
+
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCEASProject(Guid answerSheetId, Guid CEASProjectId)
+        {
+            BusinessContractViewModel model = new BusinessContractViewModel();
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+                BusinessContract businessContract = sheet.BusinessContracts.FirstOrDefault(bc => bc.Id == CEASProjectId);
+                if (businessContract != null)
+                {
+                    model = BusinessContractViewModel.FromEntity(businessContract);
+                    model.AnswerSheetId = answerSheetId;
+                }
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> GetBusinessContract(Guid answerSheetId, Guid businessContractId)
         {
             BusinessContractViewModel model = new BusinessContractViewModel();
@@ -4160,6 +4226,68 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Getceasprojects(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                          string searchField, string searchString, string searchOper, string filters)
+        {
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+                if (sheet == null)
+                    throw new Exception("No valid information for id " + informationId);
+
+                var businessContracts = sheet.BusinessContracts.Where(bc => bc.Removed == removed && bc.DateDeleted == null).ToList();
+
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            businessContracts = businessContracts.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            businessContracts = businessContracts.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            businessContracts = businessContracts.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                businessContracts = businessContracts.ToList();
+
+                XDocument document = null;
+                JqGridViewModel model = new JqGridViewModel();
+                model.Page = 1;
+                model.TotalRecords = businessContracts.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+
+                    BusinessContract businessContract = businessContracts[i];
+                    JqGridRow row = new JqGridRow(businessContract.Id);
+                    row.AddValues(businessContract.Id, businessContract.ContractTitle, businessContract.ProjectDescription, businessContract.Fees,  businessContract.Id);
+                    model.AddRow(row);
+                }
+
+                // convert model to XDocument for rendering
+                document = model.ToXml();
+                return Xml(document);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetBusinessContracts(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,

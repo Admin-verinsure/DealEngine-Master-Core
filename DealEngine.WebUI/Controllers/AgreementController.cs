@@ -1452,9 +1452,9 @@ namespace DealEngine.WebUI.Controllers
                         if (milestone != null)
                         {
                             var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                            var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status – Referred" && a.DateDeleted == null);
+                            var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status – Referred" && a.DateDeleted == null);
                             var userTaskList = await _taskingService.GetUserTasksByMilestone(milestone);
-                            var userTask = userTaskList.FirstOrDefault(t => t.Activity.Name == "Agreement Status – Referred" && t.DateDeleted == null);
+                            var userTask = userTaskList.LastOrDefault(t => t.Activity.Name == "Agreement Status – Referred" && t.DateDeleted == null);
                             if (userTask != null)
                             {
                                 userTask.IsActive = true;
@@ -1695,7 +1695,7 @@ namespace DealEngine.WebUI.Controllers
                 if (milestone != null)
                 {
                     var advisoryList = await _advisoryService.GetAdvisorysByMilestone(milestone);
-                    var advisory = advisoryList.FirstOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
+                    var advisory = advisoryList.LastOrDefault(a => a.Activity.Name == "Agreement Status - Declined" && a.DateDeleted == null);
                     if (advisory != null)
                     {
                         advisoryDesc = advisory.Description;

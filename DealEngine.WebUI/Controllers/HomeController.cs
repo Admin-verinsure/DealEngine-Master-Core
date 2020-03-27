@@ -480,42 +480,46 @@ namespace DealEngine.WebUI.Controllers
             {
                 foreach (ClientProgramme client in clientList.OrderBy(cp => cp.DateCreated).OrderBy(cp => cp.Owner.Name))
                 {
-                    model.ProgrammeId = client.BaseProgramme.Id.ToString();
-                    string status = client.InformationSheet.Status;
-                    string referenceId = client.InformationSheet.ReferenceId;
-                    bool nextInfoSheet = false;
-                    bool programmeAllowUsesChange = false;
-
-                    if (client.BaseProgramme.AllowUsesChange)
+                    if (client.InformationSheet != null)
                     {
-                        programmeAllowUsesChange = true;
+                        model.ProgrammeId = client.BaseProgramme.Id.ToString();
+                        string status = client.InformationSheet.Status;
+                        string referenceId = client.InformationSheet.ReferenceId;
+                        bool nextInfoSheet = false;
+                        bool programmeAllowUsesChange = false;
+
+                        if (client.BaseProgramme.AllowUsesChange)
+                        {
+                            programmeAllowUsesChange = true;
+                        }
+
+                        if (null != client.InformationSheet.NextInformationSheet)
+                        {
+                            nextInfoSheet = true;
+                        }
+
+                        string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
+                        string localDateSubmitted = null;
+
+                        if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
+                        {
+                            localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
+                        }
+
+                        deals.Add(new DealItem
+                        {
+                            Id = client.Id.ToString(),
+                            Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
+                            NextInfoSheet = nextInfoSheet,
+                            ProgrammeAllowUsesChange = programmeAllowUsesChange,
+                            LocalDateCreated = localDateCreated,
+                            LocalDateSubmitted = localDateSubmitted,
+                            Status = status,
+                            ReferenceId = referenceId,// Move into ClientProgramme?
+                            SubClientProgrammes = client.SubClientProgrammes
+                        });
                     }
 
-                    if (null != client.InformationSheet.NextInformationSheet)
-                    {
-                        nextInfoSheet = true;
-                    }
-
-                    string localDateCreated = LocalizeTime(client.InformationSheet.DateCreated.GetValueOrDefault(), "dd/MM/yyyy h:mm tt");
-                    string localDateSubmitted = null;
-
-                    if (client.InformationSheet.Status != "Not Started" && client.InformationSheet.Status != "Started")
-                    {
-                        localDateSubmitted = LocalizeTime(client.InformationSheet.SubmitDate, "dd/MM/yyyy h:mm tt");
-                    }
-
-                    deals.Add(new DealItem
-                    {
-                        Id = client.Id.ToString(),
-                        Name = client.BaseProgramme.Name + " for " + client.Owner.Name,
-                        NextInfoSheet = nextInfoSheet,
-                        ProgrammeAllowUsesChange = programmeAllowUsesChange,
-                        LocalDateCreated = localDateCreated,
-                        LocalDateSubmitted = localDateSubmitted,
-                        Status = status,
-                        ReferenceId = referenceId,// Move into ClientProgramme?
-                        SubClientProgrammes = client.SubClientProgrammes
-                    });
                 }
             }
             else
@@ -635,8 +639,9 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model = await GetClientProgrammeListModel(user, clientList);
-                model.ProgrammeId = ""+id;
 
+                model.ProgrammeId = id.ToString();
+                                
                 return View(model);
             }
             catch (Exception ex)
