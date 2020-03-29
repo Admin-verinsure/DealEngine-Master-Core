@@ -972,7 +972,7 @@ namespace DealEngine.WebUI.Controllers
 
                 }
 
-                var availableProducts = new List<ProductItem>();
+                //var availableProducts = new List<ProductItem>();
                 // TODO verify that this is no longer needed with the Programme Implementation
                 //foreach (var otherSheet in _clientInformationService.GetAllInformationFor (sheet.Owner)) {
                 //	// skip any information sheet that has been renewed or updated
@@ -1001,7 +1001,7 @@ namespace DealEngine.WebUI.Controllers
                 model.Buildings = buildings;
                 model.WaterLocations = waterLocations;
                 model.InterestedParties = interestedParties;
-                model.AvailableProducts = availableProducts;
+                //model.AvailableProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
 
@@ -1264,7 +1264,7 @@ namespace DealEngine.WebUI.Controllers
                         waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
                     }
 
-                    var availableProducts = new List<ProductItem>();
+                    var availableProducts = new List<SelectListItem>();
 
 
                     var userDetails = _mapper.Map<UserDetailsVM>(await CurrentUser());
@@ -1283,7 +1283,7 @@ namespace DealEngine.WebUI.Controllers
                     model.Buildings = buildings;
                     model.WaterLocations = waterLocations;
                     model.InterestedParties = interestedParties;
-                    model.AvailableProducts = availableProducts;
+                    model.ClaimProducts = availableProducts;
                     model.OrganisationDetails = organisationDetails;
                     model.UserDetails = userDetails;
 
@@ -1714,7 +1714,33 @@ namespace DealEngine.WebUI.Controllers
                     waterLocations.Add(WaterLocationViewModel.FromEntity(sheet.WaterLocations.ElementAtOrDefault(i)));
                 }
 
-                var availableProducts = new List<ProductItem>();
+                var availableProducts = new List<SelectListItem>();
+
+                foreach (Product  product in clientProgramme.BaseProgramme.Products)
+                {
+                    availableProducts.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Value = "" + product.Id,
+                        Text = product.Name
+                    });
+                }
+
+                var availableorganisation = new List<SelectListItem>();
+
+                foreach (Organisation organisation in  await _organisationService.GetOrganisationPrincipals(sheet))
+                {
+                    availableorganisation.Add(new SelectListItem
+                    {
+                        Selected = false,
+                        Value = "" + organisation.Id,
+                        Text = organisation.Name
+                    });
+                }
+                model.AvailableOrganisations = availableorganisation;
+
+                model.AllVehicles = vehicles;
+
                 var userDetails = _mapper.Map<UserDetailsVM>(user);
                 userDetails.PostalAddress = user.Address;
                 userDetails.StreetAddress = user.Address;
@@ -1738,7 +1764,9 @@ namespace DealEngine.WebUI.Controllers
                 //model.Buildings.
                 model.WaterLocations = waterLocations;
                 //model.InterestedParties = interestedParties;
-                model.AvailableProducts = availableProducts;
+
+
+                model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
                 model.UserDetails = userDetails;
                 model.Status = sheet.Status;

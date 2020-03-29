@@ -1,0 +1,645 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+@using System.Linq
+
+<div class="padding-10">
+    <div id="proposalcreate-form" class="smart-form" novalidate="novalidate">
+
+        @*@tabs.Tab("List All")
+            @tabs.Tab("Edit")
+            @tabs.Tab("Add")*@
+        <div id="PMINZNamedPartiestabs">
+            <ul id="tab" class="nav nav-tabs">
+                <li class="nav nav-tabs active"> <a href="#PMINZNamedPartyTabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#PMINZNamedPartyTabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#PMINZNamedPartyTabs3"> Add </a> </li>
+            </ul>
+
+            <div id="PMINZNamedPartyTabs1" class="tab-content">
+                <fieldset>
+                    <div class="row">
+                        <section class="col col-xs-12">
+                            @*<script src="~/jquery/jquery.min.js"></script>*@
+                            <script type="text/javascript">
+                                $(window).on('load',function () {
+                            $("#PMINZNamedParties").jqGrid({
+                                url: "/Services/GetNamedParties?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
+						        datatype: "xml",
+                                mtype: "GET",
+                                async: true,
+                                colNames: ["","Organisation Name","Organisation Type"],
+                                colModel: [
+                                    {
+                                        name: "update", align: 'center', search: false, formatter: function (cellvalue, options, rowobject) {
+                                            return ('<button onclick="EditPMINZNamedParties(\'bu\', \'' + cellvalue + '\'); SetCurrentTab(\'PMINZNamedPartyTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>' );
+                                        }
+                                    },
+                                    { name: "OrganisationName", align: 'center' },
+                                    { name: "OrganisationType", align: 'center' }
+
+								],
+						        autowidth: true,
+                                pager: "#pagerNamedParty",
+						        rowNum: 10,
+						        rowList: [10, 20, 30],
+                                sortname: "Name",
+						        sortorder: "desc",
+						        viewrecords: true,
+						        gridview: true,
+						        autoencode: true
+						    });
+						    $("#PMINZNamedParties").jqGrid('navGrid',
+						    	'#pagerNamedParty',
+						    	{edit: false, add: false, del: false},
+						    	//options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// edit options
+						    	{height:280,reloadAfterSubmit:false},
+						    	// add options
+						    	{reloadAfterSubmit:false},
+						    	// del options
+						    	{sopt:['eq','bw','cn']}
+						    	// search options
+						    );
+						});
+                            </script>
+                            <table id="PMINZNamedParties"><tr><td></td></tr></table>
+                            <div id="PMINZNamedParty"></div>
+                        </section>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="PMINZNamedPartyTabs2" class="tab-content">
+                <fieldset id="fieldset">
+                    <input id="PMINZNamedPartyOrganisationId" class="b" name="ID" type="hidden" >
+                    <!-- 1st row -->
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="PMINZPartyNamesec" style="display:none">
+                            <label class="label required">Parties to be insured (i.e. Applicant Name including any company or trading  entity names): Name</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="OrganisationName" id="PMINZPartyName" name="PartyName" placeholder="Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validatepartyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="PMINZOrganisationTypesec" style="display:none">
+                            <label class="label required">Entity Type</label>
+                            <label class="input w100">
+                                <select class="form-control oper" id="PMINZOrganisationType" name="OrganisationTypeName" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Patnership">Partnership</option>
+                                    <option value="Company">Limited Liability</option>
+                                    <option value="Person - Individual">Sole Trader</option>
+
+                                </select>
+                            </label>
+
+                            <p class="validationContainer" id="validateEntityType"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="profafflisec" style="display:none">
+                            <label class="label required">Does the business hold any professional affiliations or memberships with any professional bodies (other than PMINZ)?:</label>
+                            <label class="input w100">
+                                <select class="form-control oper" id="PMINZProfaffiliation" name="isaffiliation" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validatePMINZProfaffiliation"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 " id="profdetailssec" style="display:none">
+                            <label class="label cgmodalLabel required">If "Yes", please provide details of the business 'Professional Affiliations' (other than PMINZ):</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="PartyName" id="PMINZProfaffiliationdetails" name="affiliationdetails" placeholder="Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validatePMINZProfaffiliationdetails"></p>
+                        </section>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <h3><b>Project Management Personnel</b></h3>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label>Please list all project managers, including all directors, employees and contractors, and provide PMI membership details for each (complete all fields marked with a * for each row):</label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">First name:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="FirstName" id="PMINZFirstName" name="FirstName" placeholder="First Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validatePMINZFirstName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Last name:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="LastName" id="PMINZLastName" name="LastName" placeholder="Last Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validatePMINZLastName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Qualifications:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Qualifications" id="PMINZQualifications" name="Qualifications" placeholder="Qualifications" value="">
+                            </label>
+                            <p class="validationContainer" id="partyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Professional Affiliations:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="ProfAffiliation" id="PMINZProfAffiliation" name="ProfAffiliation" placeholder="Professional Affiliations" value="">
+                            </label>
+                            <p class="validationContainer" id="partyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Job title:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="JobTitle" id="PMINZJobTitle" name="JobTitle" placeholder="Job Title Name" value="">
+                            </label>
+                            <p class="validationContainer" id="partyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Email:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Email" id="PMINZEmail" name="Email" placeholder="E-mail" value="">
+                            </label>
+                            <p class="validationContainer" id="partyemail"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Relation to insured entity:</label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" onchange="EditInsuredEntity('PMINZInsuredEntity')" id="PMINZInsuredEntity" name="InsuredEntityRelation" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Director">Director</option>
+                                    <option value="Employee">Employee</option>
+                                    <option value="Contractor">Contractor</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validatePMINZInsuredEntity"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="isContractorInsuredsec" style="display:none">
+                            <label class="label required">Does this contractor carry their own insurance ? </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" onchange="ContractorInsuredSelected('PMINZIsContractorInsured')" id="PMINZIsContractorInsured" name="IsContractorInsured" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="partyphone"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="isInsuredrequiredsec" style="display:none">
+                            <label class="label required">Does this contractor require to be insured under this policy ? </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="PMINZIsInsuredRequired" name="IsInsuredRequired" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="partyphone"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Do you have a current membership (i.e. not expired)? :</label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="PMINZCurrentMembership" name="CurrentMembershipNo" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validatePMINZCurrentMembership"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">PMI certification? </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="PMINZPMICert" name="PMICert" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validatePMINZPMICert"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Certification Type: </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="PMINZCertType" name="CertType" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="PMP">PMP</option>
+                                    <option value="CAPM">CAPM</option>
+                                    <option value="ProjectDirector">Project Director</option>
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validatePMINZCertType"></p>
+
+                        </section>
+
+
+
+                    </div>
+
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            <button onclick="EditPMINZNamedParty(event, '#PMINZNamedPartyTabs2', '#PMINZNamedParties', 'PMINZNamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+                            <button onclick="ClearBoats(event,'#PMINZNamedPartyTabs2','PMINZNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+
+                        </section>
+                    </div>
+
+                </fieldset>
+            </div>
+            <div id="PMINZNamedPartyTabs3" class="tab-content">
+                <fieldset id="fieldset">
+                    <input id="AddPMINZNamedPartyOrganisationId" class="b" name="ID" type="hidden">
+                    <!-- 1st row -->
+                    <div class="row">
+                        @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <label class="label required">Parties to be insured (i.e. Applicant Name including any company or trading  entity names): Name</label>
+            <label class="input">
+                <i></i>
+                <input data-type="TEXTBOX" data-name="OrganisationName" id="AddPMINZPartyName" name="OrganisationName" placeholder="Name" value="">
+            </label>
+            <p class="validationContainer" id="partyname"></p>
+
+        </section>*@
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <h3><b>Project Management Personnel</b></h3>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label>Please list all project managers, including all directors, employees and contractors, and provide PMI membership details for each (complete all fields marked with a * for each row):</label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">First name:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="FirstName" id="AddPMINZFirstName" name="FirstName" placeholder="First Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddPMINZFirstName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Last name:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="LastName" id="AddPMINZLastName" name="LastName" placeholder="Last Name" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddPMINZLastName"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Qualifications:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Qualifications" id="AddPMINZQualifications" name="Qualifications" placeholder="Qualifications" value="">
+                            </label>
+                            <p class="validationContainer" id="partyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Professional Affiliations:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="ProfAffiliation" id="AddPMINZProfAffiliation" name="ProfAffiliation" placeholder="Professional Affiliations" value="">
+                            </label>
+                            <p class="validationContainer" id="partyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Job title:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="JobTitle" id="AddPMINZJobTitle" name="JobTitle" placeholder="Job Title Name" value="">
+                            </label>
+                            <p class="validationContainer" id="partyname"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Email:</label>
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Email" id="AddPMINZEmail" name="Email" placeholder="E-mail" value="">
+                            </label>
+                            <p class="validationContainer" id="partyemail"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Relation to insured entity:</label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" onchange="AddEditInsuredEntity('AddPMINZInsuredEntity')" id="AddPMINZInsuredEntity" name="InsuredEntityRelation" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="Director">Director</option>
+                                    <option value="Employee">Employee</option>
+                                    <option value="Contractor">Contractor</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddPMINZInsuredEntity"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddisContractorInsuredsec" style="display:none">
+                            <label class="label required">Does this contractor carry their own insurance ? </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" onchange="AddContractorInsuredSelected('AddPMINZIsContractorInsured')" id="AddPMINZIsContractorInsured" name="IsContractorInsured" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="partyphone"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="AddisInsuredrequiredsec" style="display:none">
+                            <label class="label required">Does this contractor require to be insured under this policy ? </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="AddPMINZIsInsuredRequired" name="IsInsuredRequired" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="partyphone"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Do you have a current membership (i.e. not expired)? :</label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="AddPMINZCurrentMembership" name="CurrentMembershipNo" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddPMINZCurrentMembership"></p>
+
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">PMI certification? </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="AddPMINZPMICert" name="PMICert" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="validateAddPMINZPMICert"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Certification Type: </label>
+
+                            <label class="input w100">
+                                <select class="form-control oper" id="AddPMINZCertType" name="CertType" required>
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="PMP">PMP</option>
+                                    <option value="CAPM">CAPM</option>
+                                    <option value="ProjectDirector">Project Director</option>
+
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="partyphone"></p>
+
+                        </section>
+
+
+
+                    </div>
+                    <div class="row" id="update">
+                        <section class="col col-xs-12">
+                            <button onclick="AddPMINZNamedParty(event,'#PMINZNamedPartyTabs3', '#PMINZNamedParties','PMINZNamedPartyTabs1')" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                            <button onclick="ClearBoats(event,'#PMINZNamedPartyTabs3','PMINZNamedPartyTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Add</button>
+
+                        </section>
+                    </div>
+
+                </fieldset>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    function EditPMINZNamedParties(classId, PMINZNamedPartyId) {
+        debugger;
+        event.preventDefault();
+        var _sheetId = $('#AnswerSheetId').val();
+        var postData = {
+		'partyID': PMINZNamedPartyId,
+            'answerSheetId': _sheetId
+        };
+        $.ajax({
+            url: '@Url.Action("GetPMINZNamedParties", "Services")',
+            type: "Post",
+            data: postData
+        })
+            .done(function (data) { 
+                     debugger;
+             if (data.type == "Owner") {
+                 $('#PMINZOrganisationTypesec').show();
+                 $('#profafflisec').show();
+                 $('#profdetailssec').show(); 
+                 $('#PMINZPartyNamesec').show();
+                 $('#PMINZPartyName').val(data.partyName);
+                 $('#PMINZOrganisationType').val(data.PMINZOrganisationType);
+                 $('#PMINZProfaffiliation').val(isaffiliation);
+                 $('#PMINZPartyName').val(organisationName);
+
+             } else {
+                 $('#PMINZOrganisationTypesec').hide();
+                 $('#profafflisec').hide();
+                 $('#profdetailssec').hide();  
+                 $('#PMINZPartyName').val('');
+                 $('#PMINZOrganisationType').val('');
+             }
+                 $('#PMINZProfaffiliationdetails').val(data.affiliationdetails);
+                 $('#PMINZFirstName').val(data.firstName);
+                 $('#PMINZLastName').val("" + data.lastName);
+                 $('#PMINZQualifications').val(data.qualifications);
+                 $('#PMINZEmail').val(data.email);
+                 $('#PMINZJobTitle').val(data.jobTitle);
+                 $('#PMINZInsuredEntity').val(data.insuredEntityRelation);
+                 $('#PMINZProfAffiliation').val(data.profAffiliation);  
+                 $('#PMINZPMICert').val(data.pmiCert);
+                    $('#PMINZCertType').val(data.certType);
+
+                    if (data.insuredEntityRelation == "Contractor") {
+                     debugger;
+                        $('#isContractorInsuredsec').show();
+                        $('#PMINZIsContractorInsured').val(data.isContractorInsured);
+                     } else {
+                     $('#isContractorInsuredsec').hide();
+                     $('#isInsuredrequiredsec').hide();
+                    };
+                     if (!data.isContractorInsured) {
+                             debugger;
+                         $('#isInsuredrequiredsec').show();
+                         $('#PMINZIsInsuredRequired').val(data.isInsuredRequired);
+                     } else {
+                         $('#IsInsuredRequiredsec').val('');
+                         $('#IsContractorInsuredsec').val('');
+                         $('#isContractorInsuredsec').hide();
+                         $('#isInsuredrequiredsec').hide();
+                    };
+                 UpdateChosen();
+             
+         });
+    };
+
+    function EditInsuredEntity(InsuredEntity) {
+        var editInsuredEntitySelected = document.getElementById(InsuredEntity);
+        var jhj = editInsuredEntitySelected.options[editInsuredEntitySelected.selectedIndex].value;
+        if (editInsuredEntitySelected.options[editInsuredEntitySelected.selectedIndex].value == "Contractor") {
+            debugger;
+            $('#isContractorInsuredsec').show();
+
+        } else {
+            $('#IsInsuredRequired').val('');
+            $('#IsContractorInsured').val('');
+
+            $('#isContractorInsuredsec').hide();
+            $('#isInsuredrequiredsec').hide();
+
+        }
+    }
+
+     function ContractorInsuredSelected(IsContractorInsured) {
+        var isContractorInsuredselected = document.getElementById(IsContractorInsured);
+        if (isContractorInsuredselected.options[isContractorInsuredselected.selectedIndex].value == "false") {
+            debugger;
+            $('#isInsuredrequiredsec').show();
+        } else {
+             $('#IsInsuredRequiredsec').val('');
+            $('#IsContractorInsuredsec').val('');
+              $('#isContractorInsuredsec').hide();
+              $('#isInsuredrequiredsec').hide();
+
+        }
+    }
+
+     function AddEditInsuredEntity(InsuredEntity) {
+        var editInsuredEntitySelected = document.getElementById(InsuredEntity);
+        if (editInsuredEntitySelected.options[editInsuredEntitySelected.selectedIndex].value == "Contractor") {
+            debugger;
+            $('#AddisContractorInsuredsec').show();
+
+        } else {
+            $('#AddisContractorInsuredsec').hide();
+            $('#AddisInsuredrequiredsec').hide();
+
+        }
+    }
+
+     function AddContractorInsuredSelected(IsContractorInsured) {
+        var isContractorInsuredselected = document.getElementById(IsContractorInsured);
+        if (isContractorInsuredselected.options[isContractorInsuredselected.selectedIndex].value == "false") {
+            debugger;
+            $('#AddisInsuredrequiredsec').show();
+        }else {
+            $('#AddisInsuredrequiredsec').hide();
+            $('#AddisContractorInsuredsec').hide();
+
+        }
+    }
+    
+    function AddPMINZNamedParty(event, tabId, tableId, currenttab) {
+        debugger;
+        event.preventDefault();
+        var informationId = $('#AnswerSheetId').serialize();
+        var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        $.ajax({
+            url: '@Url.Action("AddPMINZNamedParty", "Services")',
+            type: "POST",
+            data: proddata
+        })
+            .done(function (data) { 
+                        debugger;
+                SetCurrentTab(currenttab);
+                 $(tableId).trigger('reloadGrid');
+                $(tabId + " :input").val("");
+                $('#IsInsuredRequired').val('');
+                $('#IsContractorInsured').val('');
+                $('#isContractorInsuredsec').hide();
+                $('#isInsuredrequiredsec').hide();
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                alert("There was an error while trying to save the Vehicle.");
+            });
+    };
+
+    function EditPMINZNamedParty(event, tabId, tableId, currenttab) {
+                debugger;
+        event.preventDefault();
+        var informationId = $('#AnswerSheetId').serialize();
+        var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        $.ajax({
+            url: '@Url.Action("EditPMINZNamedParty", "Services")',
+            type: "POST",
+            data: proddata
+        })
+            .done(function (data) {  
+                        debugger;
+                SetCurrentTab(currenttab);
+                 $(tableId).trigger('reloadGrid');
+                $(tabId + " :input").val("");
+                $('#IsInsuredRequired').val('');
+            $('#IsContractorInsured').val('');
+              $('#isContractorInsuredsec').hide();
+              $('#isInsuredrequiredsec').hide();
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                alert("There was an error while trying to save the Vehicle.");
+            });
+    };
+</script>

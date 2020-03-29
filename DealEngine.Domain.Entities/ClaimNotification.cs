@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DealEngine.Domain.Entities.Abstracts;
 
+
 namespace DealEngine.Domain.Entities
 {
     public class ClaimNotification : EntityBase, IAggregateRoot
@@ -136,6 +137,9 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
+        //public List<SelectListItem> InterestedPartyList { get; set; }
+        public virtual string SelectedClaimProducts { get; set; }
+        public virtual string SelectedResponsiblePrincipal { get; set; }
 
         public virtual bool Removed
         {

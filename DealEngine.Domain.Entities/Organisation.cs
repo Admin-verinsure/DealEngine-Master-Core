@@ -134,6 +134,13 @@ namespace DealEngine.Domain.Entities
             get; 
             set; 
         }
+
+        public virtual DateTime DateofBirth
+        {
+            get;
+            set;
+        }
+
         public virtual IList<Boat> Boat
         {
             get;
@@ -169,13 +176,28 @@ namespace DealEngine.Domain.Entities
         public virtual string Qualifications { get; set; }
         public virtual bool IsNZIAmember { get; set; }
         public virtual string NZIAmembership { get; set; }
+        public virtual string CPEngQualified { get; set; }
         public virtual bool IsADNZmember { get; set; }
+        public virtual string IsIPENZmember { get; set; }
         public virtual string YearofPractice { get; set; }
         public virtual string PrevPractice { get; set; }
         public virtual string Type { get; set; }
+        public virtual string PMICert { get; set; }
+        public virtual string CertType { get; set; }
         public virtual bool IsLPBCategory3 { get; set; }
+        public virtual bool IsContractorInsured { get; set; }
+        public virtual bool IsInsuredRequired { get; set; }
+
         public virtual bool IsOtherdirectorship { get; set; }
+        public virtual string InsuredEntityRelation { get; set; }
+
         public virtual string Othercompanyname { get; set; }
+        public virtual bool isaffiliation { get; set; }
+        public virtual string affiliationdetails { get; set; }
+        public virtual string ProfAffiliation { get; set; }
+        public virtual string JobTitle { get; set; }
+        public virtual string PartyName { get; set; }
+        public virtual string CurrentMembershipNo { get; set; }
 
 
         public virtual IList<Programme> Programmes
