@@ -14,7 +14,7 @@ namespace DealEngine.WebUI.Controllers
 {
     public class InformationTemplateController : BaseController
     {
-		IMapper _mapper;		
+        IInformationItemService _informationItemService;
         IInformationTemplateService _informationTemplateService;
         ILogger<InformationTemplateController> _logger;
         IApplicationLoggingService _applicationLoggingService;
@@ -22,68 +22,104 @@ namespace DealEngine.WebUI.Controllers
         IProductService _productService;
 
 		public InformationTemplateController(
+            IInformationItemService informationItemService,
             IProductService productService,
             IInformationSectionService informationSectionService,
             IInformationTemplateService informationTemplateService,
             IUserService userService,
-            IMapper mapper,
             ILogger<InformationTemplateController> logger,
             IApplicationLoggingService applicationLoggingService
             )
 			: base (userService)
         {
+            _informationItemService = informationItemService;
             _productService = productService;
             _informationSectionService = informationSectionService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
-            _informationTemplateService = informationTemplateService;
-			_mapper = mapper;			
+            _informationTemplateService = informationTemplateService;			
         }
 
-        // GET: InformationBuilder
-        [HttpGet]
-        public async Task<IActionResult> Index()
+        [HttpPost]
+        public async Task<IActionResult> CreateConditionalItem(IFormCollection form)
         {
-            return View(new InformationBuilderViewModel());
-        }        
 
-		[HttpGet]
-        public PartialViewResult _QuestionsPartialView()
-        {
-            return PartialView();
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                var itemId = form["ItemId"];
+                var conditionalform = form["Form"].ToString();
+                var formsplit = conditionalform.Split('&').ToList();
+                var item = await _informationItemService.GetItemById(Guid.Parse(itemId));
+
+                InformationItemConditional itemConditional = null;
+                List<DropdownListOption> ddOptions = new List<DropdownListOption>();
+                string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
+                if (formsplit.Contains("questiontype=textTemplate"))
+                {
+                    var question = formsplit.ElementAt(4);
+                    var split = question.Split('=');
+                    itemConditional = (InformationItemConditional)await _informationItemService.CreateTextboxItem(user, randomName, split[1], 10, "TEXTBOX");
+                }
+                else if (formsplit.Contains("questiontype=dropdownTemplate"))
+                {
+                    var question = formsplit.ElementAt(4);
+                    var split = question.Split('=');
+                    ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
+                    var options = form["dropdownvalue"].ToList();
+                    for (int j = 0; j < options.Count; j++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(options.ElementAt(j)))
+                        {
+                            ddOptions.Add(new DropdownListOption(user, options.ElementAt(j), j.ToString()));
+                        }
+                    }
+                    itemConditional = (InformationItemConditional)await _informationItemService.CreateDropdownListItem(user, randomName, form["question"], item.Name, ddOptions, 10, "DROPDOWNLIST");
+                }
+                else if (formsplit.Contains("questiontype=yesNoTemplate"))
+                {
+                    var question = formsplit.ElementAt(4);
+                    var split = question.Split('=');
+                    ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
+                    ddOptions.Add(new DropdownListOption(user, "Yes", "0"));
+                    ddOptions.Add(new DropdownListOption(user, "No", "1"));
+                    itemConditional = (InformationItemConditional)await _informationItemService.CreateDropdownListItem(user, randomName, form["question"], item.Name, ddOptions, 10, "DROPDOWNLIST");
+                }
+
+                try
+                {
+                    var on = form["questionreferunderwriting"];
+                    itemConditional.ReferUnderwriting = true;
+                }
+                catch (Exception ex)
+                {
+                    itemConditional.ReferUnderwriting = false;
+                }
+                try
+                {
+                    var on = form["Required"];
+                    itemConditional.Required = true;
+                }
+                catch (Exception ex)
+                {
+                    itemConditional.Required = false;
+                }
+
+                item.Conditional = itemConditional;
+
+                await _informationItemService.UpdateItem(item);
+
+
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return Json(new { Result = true });
+            }
+
+            return NoContent();
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateInformationSheet(InformationBuilderViewModel model)
-        //{            
-        //    InformationBuilder builder;
-        //    User user = null;
-        //    try
-        //    {
-        //        user = await CurrentUser();
-        //        if (!model.Id.HasValue)
-        //            builder = _informationBuilderService.CreateNewInformation(model.Name);
-        //        else
-        //            throw new Exception("The Id contained a value should have been null");
-
-        //        model = _mapper.Map<InformationBuilder, InformationBuilderViewModel>(builder);
-
-        //        return PartialView("_QuestionsPartialView", model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-        //}
-
-		[HttpGet]
-		public async Task<IActionResult> StagingBuilder ()
-		{
-			await _informationTemplateService.GetTemplate(new Guid ("95e8d973-4516-4e34-892a-a8be00f8ef3f"));
-
-			return View (new ExperimentalInfoBuilderViewModel());
-		}
 
         [HttpPost]
         public async Task<IActionResult> CreateSection(IFormCollection form)
@@ -106,60 +142,16 @@ namespace DealEngine.WebUI.Controllers
                 {
                     informationTemplate = new InformationTemplate(user, title, null);
                     informationTemplate.Name = title;
-                    //await _informationTemplateService.CreateInformationTemplate(informationTemplate);
+                    await _informationTemplateService.CreateInformationTemplate(informationTemplate);
                 }
 
-                InformationSection section = new InformationSection(user, title, null);                
-                InformationItem item;
-                List<DropdownListOption> ddOptions = new List<DropdownListOption>();
-                string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
-                switch (form["questiontype"])
-                {
-                    case "textTemplate":
-                        item = new TextboxItem(user, randomName, form["question"], title, 10, "TEXTBOX");
-                        break;
-                    case "yesNoTemplate":                        
-                        ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
-                        ddOptions.Add(new DropdownListOption(user, "Yes", "1"));
-                        ddOptions.Add(new DropdownListOption(user, "No", "2"));
-                        item = new DropdownListItem(user, randomName, form["question"], title, 10, "DROPDOWNLIST", ddOptions, "");
-                        break;
-                    case "dropdownTemplate":
-                        ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
-                        var options = form["dropdownvalue"].ToList();
-                        for(int j = 0; j < options.Count; j++)
-                        {
-                            if (!string.IsNullOrWhiteSpace(options.ElementAt(j)))
-                            {
-                                ddOptions.Add(new DropdownListOption(user, options.ElementAt(j), j.ToString()));
-                            }
-                        }
-                        item = new DropdownListItem(user, randomName, form["question"], title, 10, "DROPDOWNLIST", ddOptions, "");
-                        break;
-                    default:
-                        throw new Exception("Unable to map element (" + form["questiontype"] + ")");
-                }
-                try
-                {
-                    var on = form["questionreferunderwriting"];
-                    item.ReferUnderwriting = true;
-                }
-                catch (Exception ex)
-                {
-                    item.ReferUnderwriting = false;
-                }
-                try
-                {
-                    var on = form["Required"];
-                    item.Required = true;
-                }
-                catch (Exception ex)
-                {
-                    item.Required = false;
-                }                
-                //await _informationSectionService.CreateNewSection(section);                
+                InformationSection section = new InformationSection(user, title, null);
+                var item = await _informationItemService.CreateItemFromForm(form, user, title);
 
-                return Json(new { templateId = informationTemplate.Id, sectionId = section.Id }); 
+                section.AddItem(item);
+                await _informationSectionService.CreateNewSection(section);
+
+                return Json(new { templateId = informationTemplate.Id, sectionId = section.Id, itemId = item.Id });
             }
             catch (Exception ex)
             {
@@ -190,30 +182,34 @@ namespace DealEngine.WebUI.Controllers
                 }
                 var existingTemplates = form["existingtemplates"].ToList();                 
                 var sectionList = form["sectionId"].ToList();
-                //for(int i = 0; i < sectionList.Count; i++)
-                //{
-                //    var section = await _informationSectionService.GetSection(Guid.Parse(sectionList.ElementAt(i)));
-                //    section.Name = templateName;
-                //    section.Position = i + 2;
-                //    informationTemplate.AddSection(section);
-                //}
+                for (int i = 0; i < sectionList.Count; i++)
+                {
+                    var section = await _informationSectionService.GetSection(Guid.Parse(sectionList.ElementAt(i)));
+                    section.Name = templateName;
+                    section.Position = i + 2;
+                    informationTemplate.AddSection(section);
+                }
 
-                //foreach(var existingId in existingTemplates)
-                //{
-                //    var template = await _informationTemplateService.GetTemplate(Guid.Parse(existingId));
-                //    foreach(var section in template.Sections)
-                //    {
-                //        informationTemplate.AddSection(section);
-                //    }
-                //}
+                foreach (var existingId in existingTemplates)
+                {
+                    var template = await _informationTemplateService.GetTemplate(Guid.Parse(existingId));
+                    if(template != null)
+                    {
+                        foreach (var section in template.Sections)
+                        {
+                            informationTemplate.AddSection(section);
+                        }
+                    }                    
+                }
 
-                //informationTemplate.Name = templateName;
+                informationTemplate.Name = templateName;
                 var products = await _productService.GetAllProducts();
                 var product = products.LastOrDefault();
-                //product.InformationTemplate = informationTemplate;
-                //await _informationTemplateService.UpdateInformationTemplate(informationTemplate);
-                //await _productService.UpdateProduct(product);
-                
+                informationTemplate.Product = product;
+                product.InformationTemplate = informationTemplate;
+                await _informationTemplateService.UpdateInformationTemplate(informationTemplate);
+                await _productService.UpdateProduct(product);
+
                 return NoContent();
             }
             catch (Exception ex)

@@ -5,11 +5,6 @@ using DealEngine.Domain.Entities;
 
 namespace DealEngine.WebUI.Models
 {
-    public class InformationViewAllViewModel : BaseViewModel
-    {
-        public IEnumerable<InformationViewModel> InformationTemplates { get; set; }
-    }
-
     public class InformationViewModel : BaseViewModel
     {
         public Guid Id { get; set; }
@@ -133,7 +128,8 @@ namespace DealEngine.WebUI.Models
 
         public string Name { get; set; }
 
-        public string Control { get; set; }
+        public string ControlType { get; set; }
+        public string Class { get; set; }
 
         public string Label { get; set; }
 

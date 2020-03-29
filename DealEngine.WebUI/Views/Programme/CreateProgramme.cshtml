@@ -110,6 +110,18 @@
                             form.submit();
                         //}
                     }
+                    else if (stepNumber == 3) {
+                        var form = document.getElementById('informationform');
+                        form.classList.add('was-validated');
+                        if (form.checkValidity() === false) {
+                            debugger;
+                            throw "stop process";
+                        }
+                        else {
+                            debugger;
+                            form.submit();
+                        }
+                    }
                 }
             });
 
@@ -123,45 +135,71 @@
             document.getElementById("templateform").appendChild(input);
         }
 
-        function CreateConditionalModal(id) {
-            var modal = document.createElement("div");
+        function AddConditionalQuestion(itemId) {            
+            var model = $("#templateform").serialize();
+            var postdata = { form : model, ItemId: itemId };
+            $.ajax({ // make an AJAX request
+                type: "POST",
+                url: '..@Url.Action("CreateConditionalItem", "InformationTemplate")', // it's the URL of your component B
+                data: postdata, // serializes the form's elements
+                async: false,
+                success: function (data)                
+                {                                        
+                }
+            });
+
+            $('#conditionalquestionmodal' + sectionid).modal('hide');
+        }
+
+        function CreateConditionalModal(id) {            
             var clonemodal = document.getElementById("questionmodal");
+            var questionfooter = document.getElementById('questionmodalfooter');
+            var backup = clonemodal.innerHTML;
+            var conditional = "AddConditionalQuestion('" + id.toString() + "')";
+            debugger;
+            questionfooter.innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+                '<button type="button" class="btn btn-primary" onclick=' + conditional +'> Submit Query</button > ';
+            questionfooter.id = 'condtional'+id;
+            debugger;
+            var modal = document.createElement("div");            
             var node = clonemodal.childNodes[1].cloneNode(true);
+                        
             modal.appendChild(node);
             modal.setAttribute("class", "modal fade");
             modal.id = 'conditionalquestionmodal' + id;
             document.getElementById("templateform").appendChild(modal);
+
+            clonemodal.innerHTML = backup;
         }
 
         function AddQuestion() {
             var templateId = "";
             var sectionId = "";
+            var itemId = "";
+            var model = $("#templateform").serialize();
                      
             $.ajax({ // make an AJAX request
                 type: "POST",
                 url: '..@Url.Action("CreateSection", "InformationTemplate")', // it's the URL of your component B
-                data: $("#templateform").serialize(), // serializes the form's elements
+                data: model, // serializes the form's elements
                 async: false,
                 success: function (data)                
                 {                    
                     templateId = data.templateId;
-                    sectionId = data.sectionId;                    
+                    sectionId = data.sectionId;           
+                    itemId = data.itemId;
                 }
             });
 
             CreateInput("sectionId", sectionId);            
             document.getElementById('templateId').value = templateId;
-            CreateTableRow();            
+            CreateTableRow(itemId);            
 
-            //may reset name
-            var templatename = document.getElementById('templatename').value;
-            document.getElementById("templateform").reset();
-            document.getElementById('templatename').value = templatename;
-
-            $('#questionmodal').modal('hide')
+            //may reset modal
+            $('#questionmodal').modal('hide');
         }
 
-        function CreateTableRow() {
+        function CreateTableRow(itemId) {
             var hasConditional = document.getElementById('conditionalquestion').checked;                        
             var selectlist = document.getElementById('questiontype');
             var table = document.getElementById('questiontable');
@@ -178,8 +216,8 @@
             cell2.innerHTML = 'delete button';
 
             if (hasConditional === true) {
-                cell3.innerHTML = '<a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#conditionalquestionmodal' + sectionId + '"> Add conditional question</a>';
-                CreateConditionalModal(sectionId);
+                cell3.innerHTML = '<a class="btn btn-sm btn-primary text-light" data-toggle="modal" data-target="#conditionalquestionmodal' + itemId + '"> Add conditional question</a>';
+                CreateConditionalModal(itemId);
             }
         }
 

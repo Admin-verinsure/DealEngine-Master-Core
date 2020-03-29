@@ -19,7 +19,7 @@ namespace DealEngine.WebUI.Controllers
 {
     [Authorize]
     public class InformationController : BaseController
-    {        
+    {
         IProgrammeService _programmeService;
         IEmailTemplateService _emailTemplateService;
         IApplicationLoggingService _applicationLoggingService;
@@ -46,16 +46,18 @@ namespace DealEngine.WebUI.Controllers
         IMilestoneService _milestoneService;
         IAdvisoryService _advisoryService;
         IOrganisationService _organisationService;
-        IInsuranceAttributeService _insuranceAttributeService;                
+        IInsuranceAttributeService _insuranceAttributeService;
         IBusinessActivityService _businessActivityService;
         IRevenueActivityService _revenueActivityService;
         IProductService _productService;
         IMapper _mapper;
         IMapperSession<DropdownListItem> _IDropdownListItem;
-        IClientInformationAnswerService _clientInformationAnswer;       
+        IClientInformationAnswerService _clientInformationAnswer;
+        IOrganisationTypeService _organisationTypeService;
 
 
-        public InformationController(            
+        public InformationController(
+            IOrganisationTypeService organisationTypeService,
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<InformationController> logger,
@@ -69,7 +71,7 @@ namespace DealEngine.WebUI.Controllers
             IUserService userService,
             ITerritoryService territoryService,
             IInformationItemService informationItemService,
-            IChangeProcessService changeProcessService,            
+            IChangeProcessService changeProcessService,
             IFileService fileService,
             IEmailService emailService,
             IMilestoneService milestoneService,
@@ -82,9 +84,9 @@ namespace DealEngine.WebUI.Controllers
             IUWMService uWMService,
             IReferenceService referenceService,
             IProductService productService,
-            ITaskingService taskingService,                            
-            ISharedDataRoleService sharedDataRoleService,            
-            IUnitOfWork unitOfWork,            
+            ITaskingService taskingService,
+            ISharedDataRoleService sharedDataRoleService,
+            IUnitOfWork unitOfWork,
             IProgrammeService programmeService,
             IBusinessActivityService businessActivityService,
             IClientInformationAnswerService clientInformationAnswer,
@@ -92,7 +94,8 @@ namespace DealEngine.WebUI.Controllers
             IMapper mapper
             )
             : base(userService)
-        {            
+        {
+            _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
@@ -100,18 +103,18 @@ namespace DealEngine.WebUI.Controllers
             _insuranceAttributeService = insuranceAttributeService;
             _organisationService = organisationService;
             _appSettingService = appSettingService;
-            _sharedDataRoleService = sharedDataRoleService;            
+            _sharedDataRoleService = sharedDataRoleService;
             _territoryService = territoryService;
             _advisoryService = advisoryService;
             _activityService = activityService;
             _userService = userService;
-            _changeProcessService = changeProcessService;            
+            _changeProcessService = changeProcessService;
             _productService = productService;
             _informationItemService = informationItemService;
             _informationSectionService = informationSectionService;
             _clientInformationAnswer = clientInformationAnswer;
             _informationTemplateService = informationTemplateService;
-            _clientAgreementService = clientAgreementService;            
+            _clientAgreementService = clientAgreementService;
             _clientAgreementTermService = clientAgreementTermService;
             _clientAgreementMVTermService = clientAgreementMVTermService;
             _clientAgreementRuleService = clientAgreementRuleService;
@@ -124,38 +127,11 @@ namespace DealEngine.WebUI.Controllers
             _businessActivityService = businessActivityService;
             _IDropdownListItem = dropdownListItem;
             _programmeService = programmeService;
-            _unitOfWork = unitOfWork;            
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _emailService = emailService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetProgrammes()
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                InformationBuilderViewModel model = new InformationBuilderViewModel();
-                var template = new List<InformationTemplate>();
-
-
-                var informationTemplate = await _informationTemplateService.GetAllTemplates();
-                foreach (var temp in informationTemplate)
-                {
-                    if (temp.Name != "Coast Guard")
-                        template.Add(temp);
-                }
-
-                model.InformationTemplates = template;
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
 
 
         [HttpGet]
@@ -183,652 +159,567 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SectionBuilder(Guid SectionId)
-        {
-            Information model = new Information();
-            User user = null;
-            var Litems = new List<InformationItems>();
-
-            try
-            {
-                user = await CurrentUser();
-                InformationSection section = _informationSectionService.GetAllSections().FirstOrDefault(t => t.Id == SectionId);
-                foreach (var item in section.Items)
-                {
-                    var list = new List<DropdownList>();
-                    foreach (var dropdown in item.droplistItems)
-                    {
-                        foreach (var option in dropdown.Options)
-                        {
-                            list.Add(new DropdownList(option.Text, option.Value));
-
-                        }
-                    }
-                    Litems.Add(new InformationItems()
-                    {
-                        Id = SectionId,
-                        Type = item.Type,
-                        Label = item.Label,
-                        option = list,
-                        ControlId = item.ControlId
-                    });
-                }
-
-                return Json(Litems);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-
-
-        [HttpPost]
-        public async Task<IActionResult> SectionBuilder1(Guid SectionId)
-        {
-            InformationViewModel model = new InformationViewModel();
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                InformationSection section = await _informationSectionService.GetSection(SectionId);
-
-
-                model.AnswerSheetId = Guid.Parse("fd442ea1-353d-4f98-86cd-aab200d933f4");
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<InformationViewModel> LoadTemplate()
-        {
-            var model = new InformationViewModel();
-            model.Name = "Wellness and Health Associated Professionals";
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-
-                // Important Notices
-                var noticeItems = new List<InformationItemViewModel>();
-                noticeItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _importantNotices });
-                var importantNoticeSection = new InformationSectionViewModel() { Name = "Important Notices", Items = noticeItems };
-
-                // Applicant     
-                var itemList = new List<InformationItemViewModel>();
-
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "First Name", Name = "fname", Width = 3, Type = ItemType.TEXTBOX });
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Last Name", Name = "lname", Width = 3, Type = ItemType.TEXTBOX });
-                itemList.Add(new InformationItemViewModel() { Control = "email", Icon = "icon-prepend fa fa-envelope-o", Label = "E-mail", Name = "email", Width = 6, Type = ItemType.TEXTBOX });
-                itemList.Add(null);
-
-                itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-phone", Label = "Phone", Name = "phone", Width = 3, Type = ItemType.TEXTBOX });
-                itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-fax", Label = "Fax", Name = "fax", Width = 3, Type = ItemType.TEXTBOX });
-                itemList.Add(null);
-
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Postal Address", Name = "paddress", Width = 6, Type = ItemType.TEXTBOX });
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Street Address", Name = "saddress", Width = 6, Type = ItemType.TEXTBOX });
-                itemList.Add(null);
-
-                var applicantSection = new InformationSectionViewModel() { Name = "Applicant", Items = itemList };
-
-
-                // Parties
-                var partiesitemList = new List<InformationItemViewModel>();
-
-                partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Insured", Name = "nameofinsured", Width = 6, Type = ItemType.TEXTBOX });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Note: employees, subagents and business partners who are actively involved in providing services to your clients need their own Insurance cover and must complete their own declaration.", Width = 12 });
-                partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-book", Label = "Qualifications and date obtained", Name = "qualifications", Width = 6, Type = ItemType.TEXTBOX });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-                partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-briefcase", Label = "Company Name (if applicable)", Name = "companyname", Width = 6, Type = ItemType.TEXTBOX });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-
-                var companytypeoptions = new List<SelectListItem>();
-                companytypeoptions.Add(new SelectListItem() { Text = "Private Limited Liability Company", Value = "1" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Public Listed Company", Value = "2" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Public Unlisted Company", Value = "3" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Co-operative/Mutual", Value = "4" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Partnership", Value = "5" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Sole Trader", Value = "6" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Trust", Value = "7" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Charitable Trust", Value = "8" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Incorporated/Unincorporated Society", Value = "9" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Other", Value = "10" });
-                partiesitemList.Add(new InformationItemViewModel() { Label = "Company Type", Name = "companytypeoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = companytypeoptions, Value = "1" });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Insurer:", Width = 3 });
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[InsurerCompany]]", Width = 9 });
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Broker:", Width = 3 });
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[BrokerCompany]]", Width = 9 });
-
-                var partiesSection = new InformationSectionViewModel() { Name = "Parties", Items = partiesitemList };
-
-                // Business Activities
-                var businessactivitiesitemList = new List<InformationItemViewModel>();
-
-                var associationoptions = new List<SelectListItem>();
-                associationoptions.Add(new SelectListItem() { Text = "Wellness and Health Associated Professionals", Value = "1" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Association you hold a membership with", Name = "associationoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = associationoptions });
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-dollar", Label = "Gross income excluding GST (before payment of any franchise fees, expenses or tax)", Name = "grossincome", Width = 6, Type = ItemType.TEXTBOX });
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(null);
-                var businessactivitiesoptions = new List<SelectListItem>();
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Massage Therapies", Value = "1" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Accupuncture", Value = "2" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Aura Soma", Value = "3" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Chinese Cupping", Value = "4" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Chios", Value = "5" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Colour Therapy", Value = "6" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Crystal Therapy", Value = "7" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Dry Needling", Value = "8" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Emotional Freedom Technique", Value = "9" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Facials", Value = "10" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Flower Essences", Value = "11" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Herbal Medicine", Value = "12" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Mediumship", Value = "13" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Motivational Interviewing", Value = "14" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Naturopathy", Value = "15" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Neural Integration Systems (Neurolink)", Value = "16" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Neurostructural Integration Technique (NST)", Value = "17" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Ortho-Bionomy", Value = "18" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Personal Training", Value = "19" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Pilates Teaching", Value = "20" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Polarity", Value = "21" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Scenar Therapy", Value = "22" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Soul Midwiving", Value = "23" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Sound Therapy/Music Therapy", Value = "24" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Supervision", Value = "25" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Theta Healing", Value = "26" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Visceral Manipulation", Value = "27" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Yoga Teacher", Value = "28" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Neuro Linguistic Programming", Value = "29" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Reflexology", Value = "30" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Reiki", Value = "31" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Thai traditional Massage", Value = "32" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Other", Value = "33" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Please indicate which therapies you practice:", Name = "businessactivitiesoptions", Width = 6, Type = ItemType.PERCENTAGEBREAKDOWN, DefaultText = "Select", Options = businessactivitiesoptions });
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(null);
-                var overseasworkoptions = new List<SelectListItem>();
-                overseasworkoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                overseasworkoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Do you currently perform work outside of NZ, or expect to perform work outside NZ in the next twelve months?", Name = "overseasworkoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = overseasworkoptions });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-comment", Label = "Details of work you expect to perform outside of NZ in the next twelve months", Name = "overseasworkdesc", Width = 6, Type = ItemType.TEXTBOX });
-
-                var businessactivitiesSection = new InformationSectionViewModel() { Name = "Business Activities", Items = businessactivitiesitemList };
-
-                // People Risk
-                var peopleriskitemList = new List<InformationItemViewModel>();
-
-                var peoplerisk1options = new List<SelectListItem>();
-                peoplerisk1options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                peoplerisk1options.Add(new SelectListItem() { Text = "No", Value = "2" });
-                peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you currently have insurance for key person, shareholder protection or other related people risk covers, i.e.income protection?", Name = "peoplerisk1options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk1options });
-                peopleriskitemList.Add(null);
-                peopleriskitemList.Add(null);
-
-                var peoplerisk2options = new List<SelectListItem>();
-                peoplerisk2options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                peoplerisk2options.Add(new SelectListItem() { Text = "No", Value = "2" });
-                peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you have key people in your business whom are vital to the ongoing performance of the company?", Name = "peoplerisk2options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk2options });
-                peopleriskitemList.Add(null);
-                peopleriskitemList.Add(null);
-
-                var peoplerisk3options = new List<SelectListItem>();
-                peoplerisk3options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                peoplerisk3options.Add(new SelectListItem() { Text = "No", Value = "2" });
-                peopleriskitemList.Add(new InformationItemViewModel() { Label = "Would you like one of our qualified advisers to contact you to discuss key person and relevant people risk covers?", Name = "peoplerisk3options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk3options });
-                peopleriskitemList.Add(null);
-                peopleriskitemList.Add(null);
-
-                var peopleriskSection = new InformationSectionViewModel() { Name = "People Risk", Items = peopleriskitemList };
-
-                // Insurance History
-                var insurancehistoryitemList = new List<InformationItemViewModel>();
-
-                var insurancehistoryoptions = new List<SelectListItem>();
-                insurancehistoryoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                insurancehistoryoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
-                insurancehistoryitemList.Add(new InformationItemViewModel() { Label = "In relation to the cover being applied for, have you ever had any insurance declined or cancelled; renewal refused; special conditions imposed; excess imposed; or claim rejected?", Name = "insurancehistoryoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = insurancehistoryoptions });
-                insurancehistoryitemList.Add(null);
-                insurancehistoryitemList.Add(null);
-
-                var insurancehistorySection = new InformationSectionViewModel() { Name = "Insurance History", Items = insurancehistoryitemList };
-
-                // Avaliable Cover
-                var avaliablecoveritemList = new List<InformationItemViewModel>();
-                avaliablecoveritemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _avaliableCover });
-                var avaliablecoverSection = new InformationSectionViewModel() { Name = "Avaliable Cover", Items = avaliablecoveritemList };
-
-                // Declaration
-                var declarationItems = new List<InformationItemViewModel>();
-                declarationItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _declaration });
-                var declarationSection = new InformationSectionViewModel() { Name = "Declaration", Items = declarationItems };
-
-                var sections = new List<InformationSectionViewModel>();
-
-                sections.Add(importantNoticeSection);
-                sections.Add(applicantSection);
-                sections.Add(partiesSection);
-                sections.Add(businessactivitiesSection);
-                sections.Add(peopleriskSection);
-                sections.Add(insurancehistorySection);
-                sections.Add(avaliablecoverSection);
-                sections.Add(declarationSection);
-
-                model.Sections = sections;
-
-                return model;
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                throw ex;
-            }
-        }
-
-        [HttpGet]
-        public async Task<InformationViewModel> LoadHianzTemplate()
-        {
-            InformationViewModel model = new InformationViewModel();
-            model.Name = "HIANZ Motor Vehicle";
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                // Applicant     
-                var appItemList = new List<InformationItemViewModel>();
-
-                appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-user", Label = "First Name", Name = "fname", Width = 3, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Last Name", Name = "lname", Width = 3, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Control = "email", Icon = "icon-prepend fa fa-envelope-o", Label = "E-mail", Name = "email", Width = 6, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                appItemList.Add(new InformationItemViewModel { Control = "tel", Icon = "icon-prepend fa fa-phone", Label = "Phone", Name = "phone", Width = 3, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Control = "tel", Icon = "icon-prepend fa fa-fax", Label = "Fax", Name = "fax", Width = 3, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Postal Address", Name = "paddress", Width = 6, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Street Address", Name = "saddress", Width = 6, Type = ItemType.TEXTBOX });
-                appItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                // Organisation Location     
-                var locItemList = new List<InformationItemViewModel>();
-                string organisation = user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Name;
-                locItemList.Add(new InformationItemViewModel { Label = "Organisation Name:", Width = 4, Type = ItemType.LABEL });
-                locItemList.Add(new InformationItemViewModel { Label = organisation, Width = 8, Type = ItemType.LABEL });
-                locItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                string organisationLocation = user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.CommonName + "<br />" +
-                    user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Street + "<br />" +
-                    user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Suburb + "<br />" +
-                    user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Postcode + "<br />" +
-                    user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.City + "<br />" +
-                    user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Country;
-                locItemList.Add(new InformationItemViewModel { Label = "Organisation Location:", Width = 4, Type = ItemType.LABEL });
-                locItemList.Add(new InformationItemViewModel { Label = organisationLocation, Width = 8, Type = ItemType.LABEL });
-                locItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                // Registered MV     
-                var regItemList = new List<InformationItemViewModel>();
-                string regVehicle = "regvehicle";
-                regItemList.Add(new InformationItemViewModel { Label = "Add Vehicle", Name = regVehicle + "TableResult", Width = 6, Type = ItemType.MOTORVEHICLELIST });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                regItemList.Add(new InformationItemViewModel { Control = "text", Label = "Registration Number", Name = regVehicle, Width = 5, Type = ItemType.TEXTBOX });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-                regItemList.Add(new InformationItemViewModel { Label = "Search", Width = 1, Type = ItemType.JSBUTTON, Value = "SearchMotorVehicle(this, '#" + regVehicle + "');" });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                regItemList.Add(new InformationItemViewModel { Label = "Year:", Width = 2, Type = ItemType.LABEL });
-                regItemList.Add(new InformationItemViewModel { Label = "<span id=\"" + regVehicle + "Year\"></span>", Width = 2, Type = ItemType.LABEL });
-                regItemList.Add(new InformationItemViewModel { Label = "Make:", Width = 2, Type = ItemType.LABEL });
-                regItemList.Add(new InformationItemViewModel { Label = "<span id=\"" + regVehicle + "Make\"></span>", Width = 2, Type = ItemType.LABEL });
-                regItemList.Add(new InformationItemViewModel { Label = "Model:", Width = 2, Type = ItemType.LABEL });
-                regItemList.Add(new InformationItemViewModel { Label = "<span id=\"" + regVehicle + "Model\"></span>", Width = 2, Type = ItemType.LABEL });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                regItemList.Add(new InformationItemViewModel { Control = "text", Label = "Estimated Market Value", Name = regVehicle + "TBMarketValue", Width = 4, Type = ItemType.TEXTBOX });
-                regItemList.Add(new InformationItemViewModel { Control = "text", Label = "Fleet Number", Name = regVehicle + "TBFleetNo", Width = 4, Type = ItemType.TEXTBOX });
-                var areaOperationsOptions = new List<SelectListItem> {
-                new SelectListItem { Text = "-- Select --", Value = "" },
-                new SelectListItem { Text = "Auckland", Value = "1" },
-                new SelectListItem { Text = "Wellington", Value = "2" },
-                new SelectListItem { Text = "Rest of North Island", Value = "3" },
-                new SelectListItem { Text = "Christchurch", Value = "4" },
-                new SelectListItem { Text = "Rest of South Island", Value = "5" }
-            };
-                regItemList.Add(new InformationItemViewModel { Label = "Area of Operation", Name = regVehicle + "DDAreaOp", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = areaOperationsOptions });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                var vehicleTypeOptions = new List<SelectListItem> {
-                new SelectListItem { Text = "-- Select --", Value = "" },
-                new SelectListItem { Text = "Registered Vehicle", Value = "1" },
-                new SelectListItem { Text = "Registered Towed", Value = "2" },
-                new SelectListItem { Text = "Registered Plant", Value = "3" },
-                new SelectListItem { Text = "Static Vehicle", Value = "5"}
-            };
-                regItemList.Add(new InformationItemViewModel { Label = "Type of Vehicle", Name = regVehicle + "DDVehicleType", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleTypeOptions });
-                var vehicleUsageOptions = new List<SelectListItem> {
-                new SelectListItem { Text = "-- Select --", Value = "" },
-                new SelectListItem { Text = "Car and Truck Rental Service", Value = "1" },
-                new SelectListItem { Text = "General Business Use", Value = "2" },
-                new SelectListItem { Text = "Static Vehicle", Value = "3"}
-            };
-                regItemList.Add(new InformationItemViewModel { Label = "Use", Name = regVehicle + "DDUsage", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleUsageOptions });
-                var vehicleSubUsageOptions = new List<SelectListItem> {
-                new SelectListItem { Text = "-- Select --", Value = "" },
-                new SelectListItem { Text = "Company", Value = "1" },
-                new SelectListItem { Text = "Private", Value = "2" },
-                new SelectListItem { Text = "Rental", Value = "3" },
-                new SelectListItem { Text = "Underage Private (under 25 years)", Value = "4" },
-                new SelectListItem { Text = "Static Vehicle", Value = "5"}
-            };
-                regItemList.Add(new InformationItemViewModel { Label = "Sub use", Name = regVehicle + "DDSubUse", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleSubUsageOptions });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                //var interestedParties = new List<SelectListItem> {
-                //	new SelectListItem { Text = "ANZ Bank", Value = "1" },
-                //	new SelectListItem { Text = "ASB Bank", Value = "2" },
-                //	new SelectListItem { Text = "BNZ Bank", Value = "3" }
-                //};
-                var interestedParties = new List<SelectListItem>();
-                var organisationList = await _organisationService.GetAllOrganisations();
-                foreach (Organisation org in organisationList.Where(o => o.OrganisationType.Name == "financial"))
-                    interestedParties.Add(new SelectListItem { Text = org.Name, Value = org.Id.ToString() });
-
-                regItemList.Add(new InformationItemViewModel { Label = "Interested Parties", Name = regVehicle + "Parties", Width = 6, Type = ItemType.MULTISELECT, Options = interestedParties });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-                regItemList.Add(new InformationItemViewModel { Control = "textarea", Label = "Notes", Name = regVehicle + "Notes", Width = 6, Type = ItemType.TEXTAREA });
-                regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-                regItemList.Add(new InformationItemViewModel { Label = "Add Vehicle", Name = regVehicle + "Add", Width = 1, Type = ItemType.JSBUTTON, Value = "AddMotorVehicle(this, '#" + regVehicle + "', '#" + regVehicle + "TableResult');" });
-
-                // Unregistered MV/Plant/Other
-                var otherItemList = new List<InformationItemViewModel>();
-                string othervehicle = "othervehicle";
-                otherItemList.Add(new InformationItemViewModel { Label = "Add Vehicle", Name = othervehicle + "TableResult", Width = 6, Type = ItemType.STATICVEHICLEPLANTLIST });
-                otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Year", Name = othervehicle + "Year", Width = 4, Type = ItemType.TEXTBOX });
-                otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Make", Name = othervehicle + "Make", Width = 4, Type = ItemType.TEXTBOX });
-                otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Model", Name = othervehicle + "Model", Width = 4, Type = ItemType.TEXTBOX });
-                otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Estimated Market Value", Name = othervehicle + "TBMarketValue", Width = 4, Type = ItemType.TEXTBOX });
-                otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Fleet Number", Name = othervehicle + "TBFleetNo", Width = 4, Type = ItemType.TEXTBOX });
-                otherItemList.Add(new InformationItemViewModel { Label = "Area of Operation", Name = othervehicle + "DDAreaOp", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = areaOperationsOptions });
-                otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                var otherVehicleTypeOptions = new List<SelectListItem> {
-                new SelectListItem { Text = "-- Select --", Value = "" },
-                new SelectListItem { Text = "Non-Registered Plant", Value = "4" },
-                new SelectListItem { Text = "Static Vehicle", Value = "5"}
-            };
-                otherItemList.Add(new InformationItemViewModel { Label = "Type of Vehicle", Name = othervehicle + "DDVehicleType", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = otherVehicleTypeOptions });
-                otherItemList.Add(new InformationItemViewModel { Label = "Use", Name = othervehicle + "DDUsage", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleUsageOptions });
-                otherItemList.Add(new InformationItemViewModel { Label = "Sub use", Name = othervehicle + "DDSubUse", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleSubUsageOptions });
-                otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-
-                otherItemList.Add(new InformationItemViewModel { Label = "Interested Parties", Name = othervehicle + "Parties", Width = 6, Type = ItemType.MULTISELECT, Options = interestedParties });
-                otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-                otherItemList.Add(new InformationItemViewModel { Control = "textarea", Label = "Notes", Name = othervehicle + "Notes", Width = 6, Type = ItemType.TEXTAREA });
-                otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
-                otherItemList.Add(new InformationItemViewModel { Label = "Add Unplated Vehicle/Plant", Name = othervehicle + "Add", Width = 1, Type = ItemType.JSBUTTON, Value = "AddMotorVehicle(this, '#" + othervehicle + "', '#" + othervehicle + "TableResult');" });
-
-                // set sections
-                model.Sections = new List<InformationSectionViewModel> {
-                new InformationSectionViewModel { Items = appItemList, Name = "You" },
-                //new InformationSectionViewModel { Items = locItemList, Name = "Location" },
-                new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Organisational Units", CustomView = "ICIBHianzOU" },
-                new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Location", CustomView = "ICIBHianzLocation" },
-                new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Registered Vehicles", CustomView = "ICIBHianzMotor" },
-                new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Other Vehicles/Mobile Plant", CustomView = "ICIBHianzPlant" }
-                //new InformationSectionViewModel { Items = regItemList, Name = "Registered Vehicles" },
-				//new InformationSectionViewModel { Items = otherItemList, Name = "Other Vehicles/Mobile Plant" }
-			};
-
-                return model;
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                throw ex;
-            }
-        }
-
-        [HttpGet]
-        public async Task<InformationViewModel> LoadTestData()
-        {
-            var model = new InformationViewModel();
-            User user = null;
-            model.Name = "Wellness and Health Associated Professionals";
-
-            try
-            {
-                user = await CurrentUser();
-                // Important Notices
-                var noticeItems = new List<InformationItemViewModel>();
-                noticeItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _importantNotices });
-                var importantNoticeSection = new InformationSectionViewModel() { Name = "Important Notices", Items = noticeItems };
-
-                // Applicant     
-                var itemList = new List<InformationItemViewModel>();
-
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "First Name", Name = "fname", Width = 3, Type = ItemType.TEXTBOX, Value = "ApplicantFirstName" });
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Last Name", Name = "lname", Width = 3, Type = ItemType.TEXTBOX, Value = "ApplicantLastName" });
-                itemList.Add(new InformationItemViewModel() { Control = "email", Icon = "icon-prepend fa fa-envelope-o", Label = "E-mail", Name = "email", Width = 6, Type = ItemType.TEXTBOX, Value = "TestApplicant@DealEngine.com" });
-                itemList.Add(null);
-
-                itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-phone", Label = "Phone", Name = "phone", Width = 3, Type = ItemType.TEXTBOX, Value = "091234567" });
-                itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-fax", Label = "Fax", Name = "fax", Width = 3, Type = ItemType.TEXTBOX, Value = "091234568" });
-                itemList.Add(null);
-
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Postal Address", Name = "paddress", Width = 6, Type = ItemType.TEXTBOX, Value = "1 Queen St, CBD, Auckland" });
-                itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Street Address", Name = "saddress", Width = 6, Type = ItemType.TEXTBOX });
-                itemList.Add(null);
-
-                var applicantSection = new InformationSectionViewModel() { Name = "Applicant", Items = itemList };
-
-
-                // Parties
-                var partiesitemList = new List<InformationItemViewModel>();
-
-                partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Insured", Name = "nameofinsured", Width = 6, Type = ItemType.TEXTBOX, Value = "TestClientName" });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Note: employees, subagents and business partners who are actively involved in providing services to your clients need their own Insurance cover and must complete their own declaration.", Width = 12 });
-                partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-book", Label = "Qualifications and date obtained", Name = "qualifications", Width = 6, Type = ItemType.TEXTBOX });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-                partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-briefcase", Label = "Company Name (if applicable)", Name = "companyname", Width = 6, Type = ItemType.TEXTBOX, Value = "TestClientCompany" });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-
-                var companytypeoptions = new List<SelectListItem>();
-                companytypeoptions.Add(new SelectListItem() { Text = "Private Limited Liability Company", Value = "1" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Public Listed Company", Value = "2" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Public Unlisted Company", Value = "3" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Co-operative/Mutual", Value = "4" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Partnership", Value = "5" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Sole Trader", Value = "6" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Trust", Value = "7" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Charitable Trust", Value = "8" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Incorporated/Unincorporated Society", Value = "9" });
-                companytypeoptions.Add(new SelectListItem() { Text = "Other", Value = "10" });
-                partiesitemList.Add(new InformationItemViewModel() { Label = "Company Type", Name = "companytypeoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = companytypeoptions, Value = "1" });
-                partiesitemList.Add(null);
-                partiesitemList.Add(null);
-
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Insurer:", Width = 3 });
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[InsurerCompany]]", Width = 9 });
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Broker:", Width = 3 });
-                partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[BrokerCompany]]", Width = 9 });
-
-                var partiesSection = new InformationSectionViewModel() { Name = "Parties", Items = partiesitemList };
-
-                // Business Activities
-                var businessactivitiesitemList = new List<InformationItemViewModel>();
-
-                var associationoptions = new List<SelectListItem>();
-                associationoptions.Add(new SelectListItem() { Text = "Wellness and Health Associated Professionals", Value = "1" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Association you hold a membership with", Name = "associationoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = associationoptions, Value = "1" });
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-dollar", Label = "Gross income excluding GST (before payment of any franchise fees, expenses or tax)", Name = "grossincome", Width = 6, Type = ItemType.TEXTBOX, Value = "$10,000" });
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(null);
-                var businessactivitiesoptions = new List<SelectListItem>();
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Massage Therapies", Value = "1" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Accupuncture", Value = "2" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Aura Soma", Value = "3" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Chinese Cupping", Value = "4" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Chios", Value = "5" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Colour Therapy", Value = "6" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Crystal Therapy", Value = "7" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Dry Needling", Value = "8" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Emotional Freedom Technique", Value = "9" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Facials", Value = "10" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Flower Essences", Value = "11" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Herbal Medicine", Value = "12" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Mediumship", Value = "13" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Motivational Interviewing", Value = "14" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Naturopathy", Value = "15" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Neural Integration Systems (Neurolink)", Value = "16" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Neurostructural Integration Technique (NST)", Value = "17" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Ortho-Bionomy", Value = "18" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Personal Training", Value = "19" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Pilates Teaching", Value = "20" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Polarity", Value = "21" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Scenar Therapy", Value = "22" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Soul Midwiving", Value = "23" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Sound Therapy/Music Therapy", Value = "24" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Supervision", Value = "25" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Theta Healing", Value = "26" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Visceral Manipulation", Value = "27" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Yoga Teacher", Value = "28" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Neuro Linguistic Programming", Value = "29" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Reflexology", Value = "30" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Reiki", Value = "31" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Thai traditional Massage", Value = "32" });
-                businessactivitiesoptions.Add(new SelectListItem() { Text = "Other", Value = "33" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Please indicate which therapies you practice:", Name = "businessactivitiesoptions", Width = 6, Type = ItemType.PERCENTAGEBREAKDOWN, DefaultText = "Select", Options = businessactivitiesoptions });
-                businessactivitiesitemList.Add(null);
-                businessactivitiesitemList.Add(null);
-                var overseasworkoptions = new List<SelectListItem>();
-                overseasworkoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                overseasworkoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Do you currently perform work outside of NZ, or expect to perform work outside NZ in the next twelve months?", Name = "overseasworkoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = overseasworkoptions, Value = "2" });
-                businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-comment", Label = "Details of work you expect to perform outside of NZ in the next twelve months", Name = "overseasworkdesc", Width = 6, Type = ItemType.TEXTBOX });
-
-                var businessactivitiesSection = new InformationSectionViewModel() { Name = "Business Activities", Items = businessactivitiesitemList };
-
-                // People Risk
-                var peopleriskitemList = new List<InformationItemViewModel>();
-
-                var peoplerisk1options = new List<SelectListItem>();
-                peoplerisk1options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                peoplerisk1options.Add(new SelectListItem() { Text = "No", Value = "2" });
-                peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you currently have insurance for key person, shareholder protection or other related people risk covers, i.e.income protection?", Name = "peoplerisk1options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk1options, Value = "2" });
-                peopleriskitemList.Add(null);
-                peopleriskitemList.Add(null);
-
-                var peoplerisk2options = new List<SelectListItem>();
-                peoplerisk2options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                peoplerisk2options.Add(new SelectListItem() { Text = "No", Value = "2" });
-                peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you have key people in your business whom are vital to the ongoing performance of the company?", Name = "peoplerisk2options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk2options, Value = "2" });
-                peopleriskitemList.Add(null);
-                peopleriskitemList.Add(null);
-
-                var peoplerisk3options = new List<SelectListItem>();
-                peoplerisk3options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                peoplerisk3options.Add(new SelectListItem() { Text = "No", Value = "2" });
-                peopleriskitemList.Add(new InformationItemViewModel() { Label = "Would you like one of our qualified advisers to contact you to discuss key person and relevant people risk covers?", Name = "peoplerisk3options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk3options, Value = "2" });
-                peopleriskitemList.Add(null);
-                peopleriskitemList.Add(null);
-
-                var peopleriskSection = new InformationSectionViewModel() { Name = "People Risk", Items = peopleriskitemList };
-
-                // Insurance History
-                var insurancehistoryitemList = new List<InformationItemViewModel>();
-
-                var insurancehistoryoptions = new List<SelectListItem>();
-                insurancehistoryoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
-                insurancehistoryoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
-                insurancehistoryitemList.Add(new InformationItemViewModel() { Label = "In relation to the cover being applied for, have you ever had any insurance declined or cancelled; renewal refused; special conditions imposed; excess imposed; or claim rejected?", Name = "insurancehistoryoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = insurancehistoryoptions, Value = "2" });
-                insurancehistoryitemList.Add(null);
-                insurancehistoryitemList.Add(null);
-
-                var insurancehistorySection = new InformationSectionViewModel() { Name = "Insurance History", Items = insurancehistoryitemList };
-
-                // Avaliable Cover
-                var avaliablecoveritemList = new List<InformationItemViewModel>();
-                avaliablecoveritemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _avaliableCover });
-                var avaliablecoverSection = new InformationSectionViewModel() { Name = "Avaliable Cover", Items = avaliablecoveritemList };
-
-                // Declaration
-                var declarationItems = new List<InformationItemViewModel>();
-                declarationItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _declaration });
-                var declarationSection = new InformationSectionViewModel() { Name = "Declaration", Items = declarationItems };
-
-                var sections = new List<InformationSectionViewModel>();
-
-                sections.Add(importantNoticeSection);
-                sections.Add(applicantSection);
-                sections.Add(partiesSection);
-                sections.Add(businessactivitiesSection);
-                sections.Add(peopleriskSection);
-                sections.Add(insurancehistorySection);
-                sections.Add(avaliablecoverSection);
-                sections.Add(declarationSection);
-
-                model.Sections = sections;
-
-                return model;
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                throw ex;
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ViewAll()
-        {
-            InformationViewAllViewModel model = new InformationViewAllViewModel();
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                IEnumerable<InformationTemplate> templates = await _informationTemplateService.GetAllTemplates();
-                model.InformationTemplates = _mapper.Map<List<InformationViewModel>>(templates);
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //[HttpGet]
+        //public async Task<InformationViewModel> LoadTemplate()
+        //{
+        //    var model = new InformationViewModel();
+        //    model.Name = "Wellness and Health Associated Professionals";
+        //    User user = null;
+        //    try
+        //    {
+        //        user = await CurrentUser();
+
+        //        // Important Notices
+        //        var noticeItems = new List<InformationItemViewModel>();
+        //        noticeItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _importantNotices });
+        //        var importantNoticeSection = new InformationSectionViewModel() { Name = "Important Notices", Items = noticeItems };
+
+        //        // Applicant     
+        //        var itemList = new List<InformationItemViewModel>();
+
+        //        itemList.Add(new InformationItemViewModel() { ControlType = "text", Icon = "icon-prepend fa fa-user", Label = "First Name", Name = "fname", Width = 3, Type = ItemType.TEXTBOX });
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Last Name", Name = "lname", Width = 3, Type = ItemType.TEXTBOX });
+        //        itemList.Add(new InformationItemViewModel() { Control = "email", Icon = "icon-prepend fa fa-envelope-o", Label = "E-mail", Name = "email", Width = 6, Type = ItemType.TEXTBOX });
+        //        itemList.Add(null);
+
+        //        itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-phone", Label = "Phone", Name = "phone", Width = 3, Type = ItemType.TEXTBOX });
+        //        itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-fax", Label = "Fax", Name = "fax", Width = 3, Type = ItemType.TEXTBOX });
+        //        itemList.Add(null);
+
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Postal Address", Name = "paddress", Width = 6, Type = ItemType.TEXTBOX });
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Street Address", Name = "saddress", Width = 6, Type = ItemType.TEXTBOX });
+        //        itemList.Add(null);
+
+        //        var applicantSection = new InformationSectionViewModel() { Name = "Applicant", Items = itemList };
+
+
+        //        // Parties
+        //        var partiesitemList = new List<InformationItemViewModel>();
+
+        //        partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Insured", Name = "nameofinsured", Width = 6, Type = ItemType.TEXTBOX });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Note: employees, subagents and business partners who are actively involved in providing services to your clients need their own Insurance cover and must complete their own declaration.", Width = 12 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-book", Label = "Qualifications and date obtained", Name = "qualifications", Width = 6, Type = ItemType.TEXTBOX });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-briefcase", Label = "Company Name (if applicable)", Name = "companyname", Width = 6, Type = ItemType.TEXTBOX });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+
+        //        var companytypeoptions = new List<SelectListItem>();
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Private Limited Liability Company", Value = "1" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Public Listed Company", Value = "2" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Public Unlisted Company", Value = "3" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Co-operative/Mutual", Value = "4" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Partnership", Value = "5" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Sole Trader", Value = "6" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Trust", Value = "7" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Charitable Trust", Value = "8" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Incorporated/Unincorporated Society", Value = "9" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Other", Value = "10" });
+        //        partiesitemList.Add(new InformationItemViewModel() { Label = "Company Type", Name = "companytypeoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = companytypeoptions, Value = "1" });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Insurer:", Width = 3 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[InsurerCompany]]", Width = 9 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Broker:", Width = 3 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[BrokerCompany]]", Width = 9 });
+
+        //        var partiesSection = new InformationSectionViewModel() { Name = "Parties", Items = partiesitemList };
+
+        //        // Business Activities
+        //        var businessactivitiesitemList = new List<InformationItemViewModel>();
+
+        //        var associationoptions = new List<SelectListItem>();
+        //        associationoptions.Add(new SelectListItem() { Text = "Wellness and Health Associated Professionals", Value = "1" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Association you hold a membership with", Name = "associationoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = associationoptions });
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-dollar", Label = "Gross income excluding GST (before payment of any franchise fees, expenses or tax)", Name = "grossincome", Width = 6, Type = ItemType.TEXTBOX });
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(null);
+        //        var businessactivitiesoptions = new List<SelectListItem>();
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Massage Therapies", Value = "1" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Accupuncture", Value = "2" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Aura Soma", Value = "3" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Chinese Cupping", Value = "4" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Chios", Value = "5" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Colour Therapy", Value = "6" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Crystal Therapy", Value = "7" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Dry Needling", Value = "8" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Emotional Freedom Technique", Value = "9" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Facials", Value = "10" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Flower Essences", Value = "11" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Herbal Medicine", Value = "12" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Mediumship", Value = "13" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Motivational Interviewing", Value = "14" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Naturopathy", Value = "15" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Neural Integration Systems (Neurolink)", Value = "16" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Neurostructural Integration Technique (NST)", Value = "17" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Ortho-Bionomy", Value = "18" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Personal Training", Value = "19" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Pilates Teaching", Value = "20" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Polarity", Value = "21" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Scenar Therapy", Value = "22" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Soul Midwiving", Value = "23" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Sound Therapy/Music Therapy", Value = "24" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Supervision", Value = "25" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Theta Healing", Value = "26" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Visceral Manipulation", Value = "27" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Yoga Teacher", Value = "28" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Neuro Linguistic Programming", Value = "29" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Reflexology", Value = "30" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Reiki", Value = "31" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Thai traditional Massage", Value = "32" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Other", Value = "33" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Please indicate which therapies you practice:", Name = "businessactivitiesoptions", Width = 6, Type = ItemType.PERCENTAGEBREAKDOWN, DefaultText = "Select", Options = businessactivitiesoptions });
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(null);
+        //        var overseasworkoptions = new List<SelectListItem>();
+        //        overseasworkoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        overseasworkoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Do you currently perform work outside of NZ, or expect to perform work outside NZ in the next twelve months?", Name = "overseasworkoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = overseasworkoptions });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-comment", Label = "Details of work you expect to perform outside of NZ in the next twelve months", Name = "overseasworkdesc", Width = 6, Type = ItemType.TEXTBOX });
+
+        //        var businessactivitiesSection = new InformationSectionViewModel() { Name = "Business Activities", Items = businessactivitiesitemList };
+
+        //        // People Risk
+        //        var peopleriskitemList = new List<InformationItemViewModel>();
+
+        //        var peoplerisk1options = new List<SelectListItem>();
+        //        peoplerisk1options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        peoplerisk1options.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you currently have insurance for key person, shareholder protection or other related people risk covers, i.e.income protection?", Name = "peoplerisk1options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk1options });
+        //        peopleriskitemList.Add(null);
+        //        peopleriskitemList.Add(null);
+
+        //        var peoplerisk2options = new List<SelectListItem>();
+        //        peoplerisk2options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        peoplerisk2options.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you have key people in your business whom are vital to the ongoing performance of the company?", Name = "peoplerisk2options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk2options });
+        //        peopleriskitemList.Add(null);
+        //        peopleriskitemList.Add(null);
+
+        //        var peoplerisk3options = new List<SelectListItem>();
+        //        peoplerisk3options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        peoplerisk3options.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        peopleriskitemList.Add(new InformationItemViewModel() { Label = "Would you like one of our qualified advisers to contact you to discuss key person and relevant people risk covers?", Name = "peoplerisk3options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk3options });
+        //        peopleriskitemList.Add(null);
+        //        peopleriskitemList.Add(null);
+
+        //        var peopleriskSection = new InformationSectionViewModel() { Name = "People Risk", Items = peopleriskitemList };
+
+        //        // Insurance History
+        //        var insurancehistoryitemList = new List<InformationItemViewModel>();
+
+        //        var insurancehistoryoptions = new List<SelectListItem>();
+        //        insurancehistoryoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        insurancehistoryoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        insurancehistoryitemList.Add(new InformationItemViewModel() { Label = "In relation to the cover being applied for, have you ever had any insurance declined or cancelled; renewal refused; special conditions imposed; excess imposed; or claim rejected?", Name = "insurancehistoryoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = insurancehistoryoptions });
+        //        insurancehistoryitemList.Add(null);
+        //        insurancehistoryitemList.Add(null);
+
+        //        var insurancehistorySection = new InformationSectionViewModel() { Name = "Insurance History", Items = insurancehistoryitemList };
+
+        //        // Avaliable Cover
+        //        var avaliablecoveritemList = new List<InformationItemViewModel>();
+        //        avaliablecoveritemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _avaliableCover });
+        //        var avaliablecoverSection = new InformationSectionViewModel() { Name = "Avaliable Cover", Items = avaliablecoveritemList };
+
+        //        // Declaration
+        //        var declarationItems = new List<InformationItemViewModel>();
+        //        declarationItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _declaration });
+        //        var declarationSection = new InformationSectionViewModel() { Name = "Declaration", Items = declarationItems };
+
+        //        var sections = new List<InformationSectionViewModel>();
+
+        //        sections.Add(importantNoticeSection);
+        //        sections.Add(applicantSection);
+        //        sections.Add(partiesSection);
+        //        sections.Add(businessactivitiesSection);
+        //        sections.Add(peopleriskSection);
+        //        sections.Add(insurancehistorySection);
+        //        sections.Add(avaliablecoverSection);
+        //        sections.Add(declarationSection);
+
+        //        model.Sections = sections;
+
+        //        return model;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        throw ex;
+        //    }
+        //}
+
+   //     [HttpGet]
+   //     public async Task<InformationViewModel> LoadHianzTemplate()
+   //     {
+   //         InformationViewModel model = new InformationViewModel();
+   //         model.Name = "HIANZ Motor Vehicle";
+   //         User user = null;
+
+   //         try
+   //         {
+   //             user = await CurrentUser();
+   //             // Applicant     
+   //             var appItemList = new List<InformationItemViewModel>();
+
+   //             appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-user", Label = "First Name", Name = "fname", Width = 3, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Last Name", Name = "lname", Width = 3, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Control = "email", Icon = "icon-prepend fa fa-envelope-o", Label = "E-mail", Name = "email", Width = 6, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             appItemList.Add(new InformationItemViewModel { Control = "tel", Icon = "icon-prepend fa fa-phone", Label = "Phone", Name = "phone", Width = 3, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Control = "tel", Icon = "icon-prepend fa fa-fax", Label = "Fax", Name = "fax", Width = 3, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Postal Address", Name = "paddress", Width = 6, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Street Address", Name = "saddress", Width = 6, Type = ItemType.TEXTBOX });
+   //             appItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             // Organisation Location     
+   //             var locItemList = new List<InformationItemViewModel>();
+   //             string organisation = user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Name;
+   //             locItemList.Add(new InformationItemViewModel { Label = "Organisation Name:", Width = 4, Type = ItemType.LABEL });
+   //             locItemList.Add(new InformationItemViewModel { Label = organisation, Width = 8, Type = ItemType.LABEL });
+   //             locItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             string organisationLocation = user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.CommonName + "<br />" +
+   //                 user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Street + "<br />" +
+   //                 user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Suburb + "<br />" +
+   //                 user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Postcode + "<br />" +
+   //                 user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.City + "<br />" +
+   //                 user.Organisations.FirstOrDefault(uo => uo.OrganisationType.Name == "superuser").Location.Country;
+   //             locItemList.Add(new InformationItemViewModel { Label = "Organisation Location:", Width = 4, Type = ItemType.LABEL });
+   //             locItemList.Add(new InformationItemViewModel { Label = organisationLocation, Width = 8, Type = ItemType.LABEL });
+   //             locItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             // Registered MV     
+   //             var regItemList = new List<InformationItemViewModel>();
+   //             string regVehicle = "regvehicle";
+   //             regItemList.Add(new InformationItemViewModel { Label = "Add Vehicle", Name = regVehicle + "TableResult", Width = 6, Type = ItemType.MOTORVEHICLELIST });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             regItemList.Add(new InformationItemViewModel { Control = "text", Label = "Registration Number", Name = regVehicle, Width = 5, Type = ItemType.TEXTBOX });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+   //             regItemList.Add(new InformationItemViewModel { Label = "Search", Width = 1, Type = ItemType.JSBUTTON, Value = "SearchMotorVehicle(this, '#" + regVehicle + "');" });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             regItemList.Add(new InformationItemViewModel { Label = "Year:", Width = 2, Type = ItemType.LABEL });
+   //             regItemList.Add(new InformationItemViewModel { Label = "<span id=\"" + regVehicle + "Year\"></span>", Width = 2, Type = ItemType.LABEL });
+   //             regItemList.Add(new InformationItemViewModel { Label = "Make:", Width = 2, Type = ItemType.LABEL });
+   //             regItemList.Add(new InformationItemViewModel { Label = "<span id=\"" + regVehicle + "Make\"></span>", Width = 2, Type = ItemType.LABEL });
+   //             regItemList.Add(new InformationItemViewModel { Label = "Model:", Width = 2, Type = ItemType.LABEL });
+   //             regItemList.Add(new InformationItemViewModel { Label = "<span id=\"" + regVehicle + "Model\"></span>", Width = 2, Type = ItemType.LABEL });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             regItemList.Add(new InformationItemViewModel { Control = "text", Label = "Estimated Market Value", Name = regVehicle + "TBMarketValue", Width = 4, Type = ItemType.TEXTBOX });
+   //             regItemList.Add(new InformationItemViewModel { Control = "text", Label = "Fleet Number", Name = regVehicle + "TBFleetNo", Width = 4, Type = ItemType.TEXTBOX });
+   //             var areaOperationsOptions = new List<SelectListItem> {
+   //             new SelectListItem { Text = "-- Select --", Value = "" },
+   //             new SelectListItem { Text = "Auckland", Value = "1" },
+   //             new SelectListItem { Text = "Wellington", Value = "2" },
+   //             new SelectListItem { Text = "Rest of North Island", Value = "3" },
+   //             new SelectListItem { Text = "Christchurch", Value = "4" },
+   //             new SelectListItem { Text = "Rest of South Island", Value = "5" }
+   //         };
+   //             regItemList.Add(new InformationItemViewModel { Label = "Area of Operation", Name = regVehicle + "DDAreaOp", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = areaOperationsOptions });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             var vehicleTypeOptions = new List<SelectListItem> {
+   //             new SelectListItem { Text = "-- Select --", Value = "" },
+   //             new SelectListItem { Text = "Registered Vehicle", Value = "1" },
+   //             new SelectListItem { Text = "Registered Towed", Value = "2" },
+   //             new SelectListItem { Text = "Registered Plant", Value = "3" },
+   //             new SelectListItem { Text = "Static Vehicle", Value = "5"}
+   //         };
+   //             regItemList.Add(new InformationItemViewModel { Label = "Type of Vehicle", Name = regVehicle + "DDVehicleType", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleTypeOptions });
+   //             var vehicleUsageOptions = new List<SelectListItem> {
+   //             new SelectListItem { Text = "-- Select --", Value = "" },
+   //             new SelectListItem { Text = "Car and Truck Rental Service", Value = "1" },
+   //             new SelectListItem { Text = "General Business Use", Value = "2" },
+   //             new SelectListItem { Text = "Static Vehicle", Value = "3"}
+   //         };
+   //             regItemList.Add(new InformationItemViewModel { Label = "Use", Name = regVehicle + "DDUsage", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleUsageOptions });
+   //             var vehicleSubUsageOptions = new List<SelectListItem> {
+   //             new SelectListItem { Text = "-- Select --", Value = "" },
+   //             new SelectListItem { Text = "Company", Value = "1" },
+   //             new SelectListItem { Text = "Private", Value = "2" },
+   //             new SelectListItem { Text = "Rental", Value = "3" },
+   //             new SelectListItem { Text = "Underage Private (under 25 years)", Value = "4" },
+   //             new SelectListItem { Text = "Static Vehicle", Value = "5"}
+   //         };
+   //             regItemList.Add(new InformationItemViewModel { Label = "Sub use", Name = regVehicle + "DDSubUse", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleSubUsageOptions });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             //var interestedParties = new List<SelectListItem> {
+   //             //	new SelectListItem { Text = "ANZ Bank", Value = "1" },
+   //             //	new SelectListItem { Text = "ASB Bank", Value = "2" },
+   //             //	new SelectListItem { Text = "BNZ Bank", Value = "3" }
+   //             //};
+   //             var interestedParties = new List<SelectListItem>();
+   //             var organisationList = await _organisationService.GetAllOrganisations();
+   //             foreach (Organisation org in organisationList.Where(o => o.OrganisationType.Name == "financial"))
+   //                 interestedParties.Add(new SelectListItem { Text = org.Name, Value = org.Id.ToString() });
+
+   //             regItemList.Add(new InformationItemViewModel { Label = "Interested Parties", Name = regVehicle + "Parties", Width = 6, Type = ItemType.MULTISELECT, Options = interestedParties });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+   //             regItemList.Add(new InformationItemViewModel { Control = "textarea", Label = "Notes", Name = regVehicle + "Notes", Width = 6, Type = ItemType.TEXTAREA });
+   //             regItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+   //             regItemList.Add(new InformationItemViewModel { Label = "Add Vehicle", Name = regVehicle + "Add", Width = 1, Type = ItemType.JSBUTTON, Value = "AddMotorVehicle(this, '#" + regVehicle + "', '#" + regVehicle + "TableResult');" });
+
+   //             // Unregistered MV/Plant/Other
+   //             var otherItemList = new List<InformationItemViewModel>();
+   //             string othervehicle = "othervehicle";
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Add Vehicle", Name = othervehicle + "TableResult", Width = 6, Type = ItemType.STATICVEHICLEPLANTLIST });
+   //             otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Year", Name = othervehicle + "Year", Width = 4, Type = ItemType.TEXTBOX });
+   //             otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Make", Name = othervehicle + "Make", Width = 4, Type = ItemType.TEXTBOX });
+   //             otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Model", Name = othervehicle + "Model", Width = 4, Type = ItemType.TEXTBOX });
+   //             otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Estimated Market Value", Name = othervehicle + "TBMarketValue", Width = 4, Type = ItemType.TEXTBOX });
+   //             otherItemList.Add(new InformationItemViewModel { Control = "text", Label = "Fleet Number", Name = othervehicle + "TBFleetNo", Width = 4, Type = ItemType.TEXTBOX });
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Area of Operation", Name = othervehicle + "DDAreaOp", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = areaOperationsOptions });
+   //             otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             var otherVehicleTypeOptions = new List<SelectListItem> {
+   //             new SelectListItem { Text = "-- Select --", Value = "" },
+   //             new SelectListItem { Text = "Non-Registered Plant", Value = "4" },
+   //             new SelectListItem { Text = "Static Vehicle", Value = "5"}
+   //         };
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Type of Vehicle", Name = othervehicle + "DDVehicleType", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = otherVehicleTypeOptions });
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Use", Name = othervehicle + "DDUsage", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleUsageOptions });
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Sub use", Name = othervehicle + "DDSubUse", Width = 4, Type = ItemType.DROPDOWNLIST, DefaultText = "-- Select --", Options = vehicleSubUsageOptions });
+   //             otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Interested Parties", Name = othervehicle + "Parties", Width = 6, Type = ItemType.MULTISELECT, Options = interestedParties });
+   //             otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+   //             otherItemList.Add(new InformationItemViewModel { Control = "textarea", Label = "Notes", Name = othervehicle + "Notes", Width = 6, Type = ItemType.TEXTAREA });
+   //             otherItemList.Add(new InformationItemViewModel { Type = ItemType.SECTIONBREAK });
+   //             otherItemList.Add(new InformationItemViewModel { Label = "Add Unplated Vehicle/Plant", Name = othervehicle + "Add", Width = 1, Type = ItemType.JSBUTTON, Value = "AddMotorVehicle(this, '#" + othervehicle + "', '#" + othervehicle + "TableResult');" });
+
+   //             // set sections
+   //             model.Sections = new List<InformationSectionViewModel> {
+   //             new InformationSectionViewModel { Items = appItemList, Name = "You" },
+   //             //new InformationSectionViewModel { Items = locItemList, Name = "Location" },
+   //             new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Organisational Units", CustomView = "ICIBHianzOU" },
+   //             new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Location", CustomView = "ICIBHianzLocation" },
+   //             new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Registered Vehicles", CustomView = "ICIBHianzMotor" },
+   //             new InformationSectionViewModel { Items = new List<InformationItemViewModel>(), Name = "Other Vehicles/Mobile Plant", CustomView = "ICIBHianzPlant" }
+   //             //new InformationSectionViewModel { Items = regItemList, Name = "Registered Vehicles" },
+			//	//new InformationSectionViewModel { Items = otherItemList, Name = "Other Vehicles/Mobile Plant" }
+			//};
+
+   //             return model;
+   //         }
+   //         catch (Exception ex)
+   //         {
+   //             await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+   //             throw ex;
+   //         }
+   //     }
+
+        //[HttpGet]
+        //public async Task<InformationViewModel> LoadTestData()
+        //{
+        //    var model = new InformationViewModel();
+        //    User user = null;
+        //    model.Name = "Wellness and Health Associated Professionals";
+
+        //    try
+        //    {
+        //        user = await CurrentUser();
+        //        // Important Notices
+        //        var noticeItems = new List<InformationItemViewModel>();
+        //        noticeItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _importantNotices });
+        //        var importantNoticeSection = new InformationSectionViewModel() { Name = "Important Notices", Items = noticeItems };
+
+        //        // Applicant     
+        //        var itemList = new List<InformationItemViewModel>();
+
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "First Name", Name = "fname", Width = 3, Type = ItemType.TEXTBOX, Value = "ApplicantFirstName" });
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Last Name", Name = "lname", Width = 3, Type = ItemType.TEXTBOX, Value = "ApplicantLastName" });
+        //        itemList.Add(new InformationItemViewModel() { Control = "email", Icon = "icon-prepend fa fa-envelope-o", Label = "E-mail", Name = "email", Width = 6, Type = ItemType.TEXTBOX, Value = "TestApplicant@DealEngine.com" });
+        //        itemList.Add(null);
+
+        //        itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-phone", Label = "Phone", Name = "phone", Width = 3, Type = ItemType.TEXTBOX, Value = "091234567" });
+        //        itemList.Add(new InformationItemViewModel() { Control = "tel", Icon = "icon-prepend fa fa-fax", Label = "Fax", Name = "fax", Width = 3, Type = ItemType.TEXTBOX, Value = "091234568" });
+        //        itemList.Add(null);
+
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Postal Address", Name = "paddress", Width = 6, Type = ItemType.TEXTBOX, Value = "1 Queen St, CBD, Auckland" });
+        //        itemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-location-arrow ", Label = "Street Address", Name = "saddress", Width = 6, Type = ItemType.TEXTBOX });
+        //        itemList.Add(null);
+
+        //        var applicantSection = new InformationSectionViewModel() { Name = "Applicant", Items = itemList };
+
+
+        //        // Parties
+        //        var partiesitemList = new List<InformationItemViewModel>();
+
+        //        partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-user", Label = "Insured", Name = "nameofinsured", Width = 6, Type = ItemType.TEXTBOX, Value = "TestClientName" });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Note: employees, subagents and business partners who are actively involved in providing services to your clients need their own Insurance cover and must complete their own declaration.", Width = 12 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-book", Label = "Qualifications and date obtained", Name = "qualifications", Width = 6, Type = ItemType.TEXTBOX });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-briefcase", Label = "Company Name (if applicable)", Name = "companyname", Width = 6, Type = ItemType.TEXTBOX, Value = "TestClientCompany" });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+
+        //        var companytypeoptions = new List<SelectListItem>();
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Private Limited Liability Company", Value = "1" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Public Listed Company", Value = "2" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Public Unlisted Company", Value = "3" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Co-operative/Mutual", Value = "4" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Partnership", Value = "5" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Sole Trader", Value = "6" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Trust", Value = "7" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Charitable Trust", Value = "8" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Incorporated/Unincorporated Society", Value = "9" });
+        //        companytypeoptions.Add(new SelectListItem() { Text = "Other", Value = "10" });
+        //        partiesitemList.Add(new InformationItemViewModel() { Label = "Company Type", Name = "companytypeoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = companytypeoptions, Value = "1" });
+        //        partiesitemList.Add(null);
+        //        partiesitemList.Add(null);
+
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Insurer:", Width = 3 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[InsurerCompany]]", Width = 9 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "Broker:", Width = 3 });
+        //        partiesitemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = "[[BrokerCompany]]", Width = 9 });
+
+        //        var partiesSection = new InformationSectionViewModel() { Name = "Parties", Items = partiesitemList };
+
+        //        // Business Activities
+        //        var businessactivitiesitemList = new List<InformationItemViewModel>();
+
+        //        var associationoptions = new List<SelectListItem>();
+        //        associationoptions.Add(new SelectListItem() { Text = "Wellness and Health Associated Professionals", Value = "1" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Association you hold a membership with", Name = "associationoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = associationoptions, Value = "1" });
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-dollar", Label = "Gross income excluding GST (before payment of any franchise fees, expenses or tax)", Name = "grossincome", Width = 6, Type = ItemType.TEXTBOX, Value = "$10,000" });
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(null);
+        //        var businessactivitiesoptions = new List<SelectListItem>();
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Massage Therapies", Value = "1" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Accupuncture", Value = "2" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Aura Soma", Value = "3" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Chinese Cupping", Value = "4" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Chios", Value = "5" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Colour Therapy", Value = "6" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Crystal Therapy", Value = "7" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Dry Needling", Value = "8" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Emotional Freedom Technique", Value = "9" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Facials", Value = "10" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Flower Essences", Value = "11" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Herbal Medicine", Value = "12" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Mediumship", Value = "13" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Motivational Interviewing", Value = "14" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Naturopathy", Value = "15" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Neural Integration Systems (Neurolink)", Value = "16" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Neurostructural Integration Technique (NST)", Value = "17" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Ortho-Bionomy", Value = "18" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Personal Training", Value = "19" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Pilates Teaching", Value = "20" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Polarity", Value = "21" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Scenar Therapy", Value = "22" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Soul Midwiving", Value = "23" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Sound Therapy/Music Therapy", Value = "24" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Supervision", Value = "25" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Theta Healing", Value = "26" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Visceral Manipulation", Value = "27" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Yoga Teacher", Value = "28" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Neuro Linguistic Programming", Value = "29" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Reflexology", Value = "30" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Reiki", Value = "31" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Thai traditional Massage", Value = "32" });
+        //        businessactivitiesoptions.Add(new SelectListItem() { Text = "Other", Value = "33" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Please indicate which therapies you practice:", Name = "businessactivitiesoptions", Width = 6, Type = ItemType.PERCENTAGEBREAKDOWN, DefaultText = "Select", Options = businessactivitiesoptions });
+        //        businessactivitiesitemList.Add(null);
+        //        businessactivitiesitemList.Add(null);
+        //        var overseasworkoptions = new List<SelectListItem>();
+        //        overseasworkoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        overseasworkoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Label = "Do you currently perform work outside of NZ, or expect to perform work outside NZ in the next twelve months?", Name = "overseasworkoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = overseasworkoptions, Value = "2" });
+        //        businessactivitiesitemList.Add(new InformationItemViewModel() { Control = "text", Icon = "icon-prepend fa fa-comment", Label = "Details of work you expect to perform outside of NZ in the next twelve months", Name = "overseasworkdesc", Width = 6, Type = ItemType.TEXTBOX });
+
+        //        var businessactivitiesSection = new InformationSectionViewModel() { Name = "Business Activities", Items = businessactivitiesitemList };
+
+        //        // People Risk
+        //        var peopleriskitemList = new List<InformationItemViewModel>();
+
+        //        var peoplerisk1options = new List<SelectListItem>();
+        //        peoplerisk1options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        peoplerisk1options.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you currently have insurance for key person, shareholder protection or other related people risk covers, i.e.income protection?", Name = "peoplerisk1options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk1options, Value = "2" });
+        //        peopleriskitemList.Add(null);
+        //        peopleriskitemList.Add(null);
+
+        //        var peoplerisk2options = new List<SelectListItem>();
+        //        peoplerisk2options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        peoplerisk2options.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        peopleriskitemList.Add(new InformationItemViewModel() { Label = "Do you have key people in your business whom are vital to the ongoing performance of the company?", Name = "peoplerisk2options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk2options, Value = "2" });
+        //        peopleriskitemList.Add(null);
+        //        peopleriskitemList.Add(null);
+
+        //        var peoplerisk3options = new List<SelectListItem>();
+        //        peoplerisk3options.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        peoplerisk3options.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        peopleriskitemList.Add(new InformationItemViewModel() { Label = "Would you like one of our qualified advisers to contact you to discuss key person and relevant people risk covers?", Name = "peoplerisk3options", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = peoplerisk3options, Value = "2" });
+        //        peopleriskitemList.Add(null);
+        //        peopleriskitemList.Add(null);
+
+        //        var peopleriskSection = new InformationSectionViewModel() { Name = "People Risk", Items = peopleriskitemList };
+
+        //        // Insurance History
+        //        var insurancehistoryitemList = new List<InformationItemViewModel>();
+
+        //        var insurancehistoryoptions = new List<SelectListItem>();
+        //        insurancehistoryoptions.Add(new SelectListItem() { Text = "Yes", Value = "1" });
+        //        insurancehistoryoptions.Add(new SelectListItem() { Text = "No", Value = "2" });
+        //        insurancehistoryitemList.Add(new InformationItemViewModel() { Label = "In relation to the cover being applied for, have you ever had any insurance declined or cancelled; renewal refused; special conditions imposed; excess imposed; or claim rejected?", Name = "insurancehistoryoptions", Width = 6, Type = ItemType.DROPDOWNLIST, DefaultText = "Select", Options = insurancehistoryoptions, Value = "2" });
+        //        insurancehistoryitemList.Add(null);
+        //        insurancehistoryitemList.Add(null);
+
+        //        var insurancehistorySection = new InformationSectionViewModel() { Name = "Insurance History", Items = insurancehistoryitemList };
+
+        //        // Avaliable Cover
+        //        var avaliablecoveritemList = new List<InformationItemViewModel>();
+        //        avaliablecoveritemList.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _avaliableCover });
+        //        var avaliablecoverSection = new InformationSectionViewModel() { Name = "Avaliable Cover", Items = avaliablecoveritemList };
+
+        //        // Declaration
+        //        var declarationItems = new List<InformationItemViewModel>();
+        //        declarationItems.Add(new InformationItemViewModel() { Type = ItemType.LABEL, Label = _declaration });
+        //        var declarationSection = new InformationSectionViewModel() { Name = "Declaration", Items = declarationItems };
+
+        //        var sections = new List<InformationSectionViewModel>();
+
+        //        sections.Add(importantNoticeSection);
+        //        sections.Add(applicantSection);
+        //        sections.Add(partiesSection);
+        //        sections.Add(businessactivitiesSection);
+        //        sections.Add(peopleriskSection);
+        //        sections.Add(insurancehistorySection);
+        //        sections.Add(avaliablecoverSection);
+        //        sections.Add(declarationSection);
+
+        //        model.Sections = sections;
+
+        //        return model;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        throw ex;
+        //    }
+        //}
 
         // GET: Information
         [HttpGet]
@@ -878,7 +769,7 @@ namespace DealEngine.WebUI.Controllers
                             else
                                 sheet.AddAnswer(item.Name, "");
                         }
-                    await uow.Commit().ConfigureAwait(false);
+                    await uow.Commit();
                 }
 
                 var boats = new List<BoatViewModel>();
@@ -1329,12 +1220,12 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
-                
+
                 foreach (ClientAgreement agreement in clientProgramme.Agreements.Where(a => a.Product.IsMultipleOption == true && a.DateDeleted == null))
                 {
                     productname.Add(agreement.Product.Name);
                 }
-                
+
                 return Json(productname);
             }
             catch (Exception ex)
@@ -1364,7 +1255,7 @@ namespace DealEngine.WebUI.Controllers
                                 term.Bound = false;
                                 await uow.Commit();
                             }
-                        }                        
+                        }
                     }
                 }
 
@@ -1430,7 +1321,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
-            }            
+            }
         }
 
         [HttpPost]
@@ -1476,9 +1367,18 @@ namespace DealEngine.WebUI.Controllers
 
             try
             {
+                user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
                 var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
+                model.SharedRoleViewModel = sharedRoleViewModel;
+                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
+                if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0)
+                {
+                    revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
+                }
+                model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
                 model.AnswerSheetId = sheet.Id;
                 model.IsChange = sheet.IsChange;
@@ -1496,9 +1396,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.Wizardsteps = LoadWizardsteps("Standard");
                 }
-
-                user = await CurrentUser();
-
+               
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
@@ -1515,6 +1413,16 @@ namespace DealEngine.WebUI.Controllers
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
+                        foreach (var section in model.Sections)
+                            foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
+                            {
+                                var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
+                                if (answer != null)
+                                    item.Value = answer.Value;
+                                else
+                                    sheet.AddAnswer(item.Name, "");
+                            }                        
+
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
@@ -1531,23 +1439,12 @@ namespace DealEngine.WebUI.Controllers
                         if (answer != null)
                             model.Sections.ElementAtOrDefault(i).Items.ElementAtOrDefault(j).Value = answer.Value;
                     }
-
                 }
-
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);               
-                model.SharedRoleViewModel = sharedRoleViewModel;
-                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
-                if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0) 
-                {
-                    revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
-                }
-                model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
                 var boats = new List<BoatViewModel>();
-                for (var i = 0; i < sheet.Boats.Count(); i++)
+                foreach (var b in sheet.Boats)
                 {
-                    boats.Add(BoatViewModel.FromEntity(sheet.Boats.ElementAtOrDefault(i)));
-
+                    boats.Add(BoatViewModel.FromEntity(b));
                 }
 
                 model.Boats = boats;
@@ -1712,9 +1609,9 @@ namespace DealEngine.WebUI.Controllers
                 {
                     foreach (var org in IA.IAOrganisations)
                     {
-                            if ( org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
-                            org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
-                            {
+                        if (org.OrganisationType.Name == "Corporation – Limited liability" || org.OrganisationType.Name == "Corporation – Unlimited liability" || org.OrganisationType.Name == "Corporation – Public-Listed" ||
+                        org.OrganisationType.Name == "Corporation – Public Unlisted" || org.OrganisationType.Name == "Corporation – Overseas" || org.OrganisationType.Name == "Incorporated Society")
+                        {
                             OrganisationViewModel ovm = _mapper.Map<OrganisationViewModel>(org);
                             ovm.OrganisationName = org.Name;
                             MarinaLocations.Add(ovm);
@@ -1775,12 +1672,12 @@ namespace DealEngine.WebUI.Controllers
         {
             IList<string> steps = new List<string>();
             //convert this to load from the DB?
-            if(wizardType == "Standard")
+            if (wizardType == "Standard")
             {
                 steps.Add("Details");
-                steps.Add("Steptwo");                
+                steps.Add("Steptwo");
             }
-            else if(wizardType == "Subsystem")
+            else if (wizardType == "Subsystem")
             {
                 steps.Add("Details");
                 steps.Add("Quote");
@@ -1805,7 +1702,7 @@ namespace DealEngine.WebUI.Controllers
                 foreach (var sharedRole in sheet.SharedDataRoles)
                 {
                     var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateByRoleName(sharedRole.Name);
-                    if(sharedRoleTemplate != null)
+                    if (sharedRoleTemplate != null)
                     {
                         roleList.Add(sharedRoleTemplate);
                     }
@@ -1828,9 +1725,9 @@ namespace DealEngine.WebUI.Controllers
                 }
             }
 
-            foreach(var template in roleList)
+            foreach (var template in roleList)
             {
-                if(roleList.IndexOf(template) <= roleListCount)
+                if (roleList.IndexOf(template) <= roleListCount)
                 {
                     sharedRoles.Add(new SelectListItem
                     {
@@ -1861,11 +1758,11 @@ namespace DealEngine.WebUI.Controllers
             var nzTemplate = await _territoryService.GetTerritoryTemplateByName("New Zealand");
             territoryList.Add(nzTemplate);
 
-            var businessActivityList = new List<BusinessActivityTemplate>(); 
+            var businessActivityList = new List<BusinessActivityTemplate>();
             List<SelectListItem> territoryTemplates = new List<SelectListItem>();
             List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
 
-            if (sheet.RevenueData!= null && (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0))
+            if (sheet.RevenueData != null && (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0))
             {
                 if (sheet.RevenueData.Territories.Count > 0)
                 {
@@ -1948,7 +1845,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                if(sheet.RevenueData.AdditionalActivityInformation != null)
+                if (sheet.RevenueData.AdditionalActivityInformation != null)
                 {
                     revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel
                     {
@@ -1961,7 +1858,7 @@ namespace DealEngine.WebUI.Controllers
                         NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
                     };
 
-                    if(sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId != null)
+                    if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId != null)
                         revenueByActivityViewModel.AdditionalInformation.ValuationBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId.ToString()).Selected = true;
 
                     if (sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId != null)
@@ -1990,7 +1887,7 @@ namespace DealEngine.WebUI.Controllers
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
             else
-            {                
+            {
                 territoryList.AddRange(clientProgramme.BaseProgramme.TerritoryTemplates);
                 foreach (var territory in territoryList)
                 {
@@ -2002,7 +1899,7 @@ namespace DealEngine.WebUI.Controllers
                     });
 
                 }
-                foreach(var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
+                foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
                 {
                     businessActivityTemplates.Add(new SelectListItem
                     {
@@ -2099,7 +1996,7 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");
-                
+
                 using (var uow = _unitOfWork.BeginUnitOfWork())
                 {
                     await _clientInformationService.SaveAnswersFor(sheet, collection);
@@ -2448,10 +2345,10 @@ namespace DealEngine.WebUI.Controllers
         {
             ClientInformationSheet sheet = null;
             User user = null;
-            
+
             try
             {
-                user = await CurrentUser();           
+                user = await CurrentUser();
                 sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationId));
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
                 if (isBaseSheet)
@@ -2494,7 +2391,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> QuoteToAgree(string id)
         {
-            Guid sheetId = Guid.Empty;            
+            Guid sheetId = Guid.Empty;
             User user = null;
 
             try
@@ -2513,11 +2410,11 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                    //sheet owner is null
-                    //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                    //send out information sheet submission notification email
-                    //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                
+                //sheet owner is null
+                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                //send out information sheet submission notification email
+                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+
                 return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
             }
             catch (Exception ex)
@@ -2609,144 +2506,136 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateDemoUIS()
-        {
-            User user = null;
+        //[HttpPost]
+        //public async Task<IActionResult> CreateDemoUIS()
+        //{
+        //    User user = null;
 
-            try
-            {
-                var demoData = await LoadTemplate();
-                user = await CurrentUser();
-                List<InformationSection> informationSections = new List<InformationSection>();
+        //    try
+        //    {
+        //        var demoData = null;//await LoadTemplate();
+        //        user = await CurrentUser();
+        //        List<InformationSection> informationSections = new List<InformationSection>();
 
-                foreach (var section in demoData.Sections)
-                {
+        //        foreach (var section in demoData.Sections)
+        //        {
 
-                    // Update section Id in view model
-                    // See Above temporaraly
+        //            // Update section Id in view model
+        //            // See Above temporaraly
 
-                    List<InformationItem> items = new List<InformationItem>();
+        //            List<InformationItem> items = new List<InformationItem>();
 
-                    //Loop through Questions
-                    foreach (var item in section.Items)
-                    {
-                        using (var uow = _unitOfWork.BeginUnitOfWork())
-                        {
-                            // Create Information Item
-
-
-                            if (item != null)
-                            {
-                                string itemTypeName = Enum.GetName(typeof(ItemType), item.Type);
-                                InformationItem newItem = null;
-
-                                switch (item.Type)
-                                {
-                                    case ItemType.TEXTAREA:
-                                    case ItemType.TEXTBOX:
-                                        var textboxItem = await _informationItemService.CreateTextboxItem(user, item.Name, item.Label, item.Width, itemTypeName) as TextboxItem;
-                                        items.Add(textboxItem);
-                                        item.Id = textboxItem.Id;
-                                        break;
-
-                                    case ItemType.LABEL:
-                                        var labelItem = await _informationItemService.CreateLabelItem(user, item.Name, item.Label, item.Width, itemTypeName) as LabelItem;
-                                        items.Add(labelItem);
-                                        item.Id = labelItem.Id;
-                                        break;
-
-                                    case ItemType.PERCENTAGEBREAKDOWN:
-                                    case ItemType.DROPDOWNLIST:
-                                        //Mapper.CreateMap<SelectListItem, DropdownListOption>();
-                                        //Mapper.CreateMap<DropdownListOption, SelectListItem>()
-                                        var options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-                                        var newDropdownList = await _informationItemService.CreateDropdownListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as DropdownListItem;
-                                        //newDropdownList.AddItems(options);
-                                        items.Add(newDropdownList);
-                                        item.Id = newDropdownList.Id;
-                                        break;
-
-                                    case ItemType.MULTISELECT:
-                                        options = _mapper.Map<IList<DropdownListOption>>(item.Options);
-                                        var multiselectList = await _informationItemService.CreateMultiselectListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as MultiselectListItem;
-                                        items.Add(multiselectList);
-                                        item.Id = multiselectList.Id;
-                                        break;
-
-                                    case ItemType.JSBUTTON:
-                                        newItem = await _informationItemService.CreateJSButtonItem(user, item.Name, item.Label, item.Width, itemTypeName, item.Value) as JSButtonItem;
-                                        break;
-
-                                    case ItemType.SUBMITBUTTON:
-                                        newItem = await _informationItemService.CreateSubmitButtonItem(user, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
-                                        break;
-
-                                    //case ItemType.SECTIONBREAK:
-                                    //    var terminatorItem = await _informationItemService.CreateSectionBreakItem(CurrentUser, itemTypeName);
-                                    //    items.Add(terminatorItem);
-                                    //    break;
+        //            //Loop through Questions
+        //            foreach (var item in section.Items)
+        //            {
+        //                using (var uow = _unitOfWork.BeginUnitOfWork())
+        //                {
+        //                    // Create Information Item
 
 
-                                    case ItemType.STATICVEHICLEPLANTLIST:
-                                    case ItemType.MOTORVEHICLELIST:
-                                        var motorVehicleListItem = await _informationItemService.CreateMotorVehicleListItem(user, item.Name, item.Label, item.Width, itemTypeName) as MotorVehicleListItem;
-                                        items.Add(motorVehicleListItem);
-                                        item.Id = motorVehicleListItem.Id;
-                                        break;
+        //                    if (item != null)
+        //                    {
+        //                        string itemTypeName = Enum.GetName(typeof(ItemType), item.Type);
+        //                        InformationItem newItem = null;
 
-                                    default:
-                                        newItem = null;
-                                        break;
-                                }
+        //                        switch (item.Type)
+        //                        {
+        //                            case ItemType.TEXTAREA:
+        //                            case ItemType.TEXTBOX:
+        //                                var textboxItem = await _informationItemService.CreateTextboxItem(user, item.Name, item.Label, item.Width, itemTypeName) as TextboxItem;
+        //                                items.Add(textboxItem);
+        //                                item.Id = textboxItem.Id;
+        //                                break;
 
-                                if (newItem != null)
-                                {
-                                    items.Add(newItem);
-                                    item.Id = newItem.Id;
-                                    newItem = null;
-                                }
+        //                            case ItemType.LABEL:
+        //                                var labelItem = await _informationItemService.CreateLabelItem(user, item.Name, item.Label, item.Width, itemTypeName) as LabelItem;
+        //                                items.Add(labelItem);
+        //                                item.Id = labelItem.Id;
+        //                                break;
+
+        //                            case ItemType.PERCENTAGEBREAKDOWN:
+        //                            case ItemType.DROPDOWNLIST:
+        //                                //Mapper.CreateMap<SelectListItem, DropdownListOption>();
+        //                                //Mapper.CreateMap<DropdownListOption, SelectListItem>()
+        //                                var options = _mapper.Map<IList<DropdownListOption>>(item.Options);
+        //                                var newDropdownList = await _informationItemService.CreateDropdownListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as DropdownListItem;
+        //                                //newDropdownList.AddItems(options);
+        //                                items.Add(newDropdownList);
+        //                                item.Id = newDropdownList.Id;
+        //                                break;
+
+        //                            //case ItemType.MULTISELECT:
+        //                            //    options = _mapper.Map<IList<DropdownListOption>>(item.Options);
+        //                            //    var multiselectList = await _informationItemService.CreateMultiselectListItem(user, item.Name, item.Label, item.DefaultText, options, item.Width, itemTypeName) as MultiselectListItem;
+        //                            //    items.Add(multiselectList);
+        //                            //    item.Id = multiselectList.Id;
+        //                            //    break;
+
+        //                            case ItemType.JSBUTTON:
+        //                                newItem = await _informationItemService.CreateJSButtonItem(user, item.Name, item.Label, item.Width, itemTypeName, item.Value) as JSButtonItem;
+        //                                break;
+
+        //                            case ItemType.SUBMITBUTTON:
+        //                                newItem = await _informationItemService.CreateSubmitButtonItem(user, item.Name, item.Label, item.Width, itemTypeName) as SubmitButtonItem;
+        //                                break;
+
+        //                            //case ItemType.SECTIONBREAK:
+        //                            //    var terminatorItem = await _informationItemService.CreateSectionBreakItem(CurrentUser, itemTypeName);
+        //                            //    items.Add(terminatorItem);
+        //                            //    break;
+
+        //                            default:
+        //                                newItem = null;
+        //                                break;
+        //                        }
+
+        //                        if (newItem != null)
+        //                        {
+        //                            items.Add(newItem);
+        //                            item.Id = newItem.Id;
+        //                            newItem = null;
+        //                        }
 
 
-                                // Update Inforamtion Item ID in view model
-                                // For now see code above, Will fix later with Domain Model
-                            }
-                            await uow.Commit();
-                        }
+        //                        // Update Inforamtion Item ID in view model
+        //                        // For now see code above, Will fix later with Domain Model
+        //                    }
+        //                    await uow.Commit();
+        //                }
 
-                    }
+        //            }
 
-                    using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        // Create New Section
+        //            using (var uow = _unitOfWork.BeginUnitOfWork())
+        //            {
+        //                // Create New Section
 
-                        InformationSection informationSection = await _informationSectionService.CreateNewSection(user, section.Name, items);
-                        informationSection.CustomView = section.CustomView;
-                        informationSections.Add(informationSection);
+        //                InformationSection informationSection = await _informationSectionService.CreateNewSection(user, section.Name, items);
+        //                informationSection.CustomView = section.CustomView;
+        //                informationSections.Add(informationSection);
 
-                        section.Id = informationSection.Id;
-                        await uow.Commit();
-                    }
+        //                section.Id = informationSection.Id;
+        //                await uow.Commit();
+        //            }
 
-                }
+        //        }
 
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    InformationTemplate template = await _informationTemplateService.CreateInformationTemplate(user, demoData.Name, informationSections);
+        //        using (var uow = _unitOfWork.BeginUnitOfWork())
+        //        {
+        //            InformationTemplate template = await _informationTemplateService.CreateInformationTemplate(user, demoData.Name, informationSections);
 
-                    demoData.Id = template.Id;
+        //            demoData.Id = template.Id;
 
-                    await uow.Commit();
-                }
+        //            await uow.Commit();
+        //        }
 
-                return Json(demoData);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        //        return Json(demoData);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+        //        return RedirectToAction("Error500", "Error");
+        //    }
+        //}
 
         [HttpGet]
         public async Task<IActionResult> IssueDemoUIS(string id)
@@ -2770,34 +2659,6 @@ namespace DealEngine.WebUI.Controllers
                     await uow.Commit();
                 }
                 return Redirect("~/Home/Index");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> IssueUISForProduct(Guid id)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                InformationTemplate infoTemplate = await _informationTemplateService.GetTemplate(id);
-                if (infoTemplate == null)
-                    throw new Exception("Insurance Product " + id + " lacks question set");
-
-                ClientInformationSheet cis = null;
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    cis = await _clientInformationService.IssueInformationFor(user, user.PrimaryOrganisation, infoTemplate);
-                    await uow.Commit();
-                }
-
-                return Redirect("/Information/StartInformation/" + cis.Id);
             }
             catch (Exception ex)
             {
@@ -2852,18 +2713,18 @@ namespace DealEngine.WebUI.Controllers
                     {
                         string[] valueId = str.Split('=');
                         var sharedRoleTemplate = await _sharedDataRoleService.GetSharedRoleTemplateById(Guid.Parse(valueId[0]));
-                        if(sharedRoleTemplate != null)
+                        if (sharedRoleTemplate != null)
                         {
                             if (sharedRoleTemplate.Name == sharedRole.Name)
                             {
-                                sharedRole.Count = int.Parse(valueId[1]);                                
+                                sharedRole.Count = int.Parse(valueId[1]);
                             }
                         }
                         else
                         {
                             if (valueId[0] == sharedRole.Id.ToString())
                             {
-                                sharedRole.Count = int.Parse(valueId[1]);                                
+                                sharedRole.Count = int.Parse(valueId[1]);
                             }
                         }
                         await _sharedDataRoleService.UpdateSharedRole(sharedRole);
@@ -2938,7 +2799,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var sheetId = form["ClientInformationSheetId"];
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId[0]));                
+                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId[0]));
                 if (sheet.RevenueData == null)
                 {
                     sheet.RevenueData = new RevenueByActivity(user);
@@ -2958,10 +2819,10 @@ namespace DealEngine.WebUI.Controllers
                 var territoryForm = form["form"];
                 var territoryFormString = territoryForm[0];
                 var territorySplit = territoryFormString.Split("&");
-                foreach(var str in territorySplit)
+                foreach (var str in territorySplit)
                 {
                     var strSpit = str.Split('=');
-                    if(strSpit[0] != "Territories")
+                    if (strSpit[0] != "Territories")
                     {
                         var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(strSpit[0]));
                         var newTerritory = new Territory(user);
@@ -2970,7 +2831,7 @@ namespace DealEngine.WebUI.Controllers
                         newTerritory.TerritoryTemplateId = territorytemplate.Id;
                         await _territoryService.AddTerritory(newTerritory);
                         sheet.RevenueData.Territories.Add(newTerritory);
-                    }                               
+                    }
                 }
                 await _clientInformationService.UpdateInformation(sheet);
 
@@ -3028,7 +2889,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                     else if (strSpit[0] == "Activities")
                     {
-                        
+
                     }
                     else
                     {
@@ -3043,7 +2904,7 @@ namespace DealEngine.WebUI.Controllers
                         };
                         await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
                         sheet.RevenueData.Activities.Add(newBusinessActivity);
-                    }                    
+                    }
                 }
 
                 await _clientInformationService.UpdateInformation(sheet);
@@ -3054,7 +2915,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }        
+        }
 
         [HttpPost]
         public async Task<IActionResult> SaveRevenueDataTabThree(IFormCollection form)
@@ -3198,7 +3059,7 @@ namespace DealEngine.WebUI.Controllers
 
                     }
                     catch (Exception ex)
-                    {                        
+                    {
                         Console.WriteLine(ex.Message);
                     }
                 }
@@ -3252,7 +3113,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         informationTemplate = await _informationTemplateService.GetTemplatebyProduct(product.Id);
                         product.InformationTemplate = informationTemplate;
-                        await _productService.UpdateProduct(product);                        
+                        await _productService.UpdateProduct(product);
                     }
                     informationTemplate = product.InformationTemplate;
                 }
@@ -3266,9 +3127,9 @@ namespace DealEngine.WebUI.Controllers
                 {
                     section.Items = section.Items.OrderBy(i => i.ItemOrder).ToList();
                 }
-                
+
                 (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(informationTemplate).Sections);
-                               
+
                 model.Section = sections;
                 return model;
             }
@@ -3315,7 +3176,7 @@ namespace DealEngine.WebUI.Controllers
         {
             var clientAgreement = await _clientAgreementService.GetAgreement(Guid.Parse(ClientAgreement));
             var programme = clientAgreement.ClientInformationSheet.Programme.BaseProgramme;
-            
+
 
             EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendAgreementOnlineAcceptanceInstructions");
             if (emailTemplate != null)
@@ -3328,15 +3189,167 @@ namespace DealEngine.WebUI.Controllers
             return await RedirectToLocal();
         }
 
-        IEnumerable<InformationSectionViewModel> GetCommonPanels()
+        [HttpPost]
+        public async Task<IActionResult> CreateInformationSheet(IFormCollection form)
         {
-            List<InformationSectionViewModel> sections = new List<InformationSectionViewModel>
+            User currentUser = null;
+            //Add User, Organisation, Information Sheet, Quick Term saving process here
+            string organisationName = null;
+            string ouname = null;
+            string orgTypeName = null;
+
+            try
             {
+                var orgType = form["cgradioselect"];
+                var orgName = form["fname"].ToList().First();
+                var firstName = form["fname"].ToList().Last();
+                var lastName = form["lname"];                
+                var mobilePhone = form["mphon"];
+                var programmeList = await _programmeService.GetAllProgrammes();
+                var programme = programmeList.LastOrDefault();
+                var email = form["email"];
+                var membershipNumber = form["memno"];
 
-            };
-            return sections;
+                currentUser = await CurrentUser();
+                if (orgType == "Private") //orgType = "Private", "Company", "Trust", "Partnership"
+                {
+                    organisationName = firstName + " " + lastName;
+                    ouname = "Home";
+                }
+                else
+                {
+                    organisationName = orgName;
+                    ouname = "Head Office";
+                }
+                switch (orgType)
+                {
+                    case "Private":
+                        {
+                            orgTypeName = "Person - Individual";
+                            break;
+                        }
+                    case "Company":
+                        {
+                            orgTypeName = "Corporation – Limited liability";
+                            break;
+                        }
+                    case "Trust":
+                        {
+                            orgTypeName = "Trust";
+                            break;
+                        }
+                    case "Partnership":
+                        {
+                            orgTypeName = "Partnership";
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception(string.Format("Invalid Organisation Type: ", orgType));
+                        }
+                }
+                string phonenumber = null;
+
+                phonenumber = mobilePhone;
+
+                OrganisationType organisationType = null;
+                organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
+                if (organisationType == null)
+                {
+                    organisationType = await _organisationTypeService.CreateNewOrganisationType(null, orgTypeName);
+                }
+                Organisation organisation = null;
+                organisation = await _organisationService.GetOrganisationByEmail(email);
+                organisation = new Organisation(null, Guid.NewGuid(), organisationName, organisationType);
+                organisation.Phone = phonenumber;
+                organisation.Email = email;
+                await _organisationService.CreateNewOrganisation(organisation);
+                User user = null;
+                User user2 = null;
+
+                try
+                {
+                    user = await _userService.GetUserByEmail(email);
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
+                    var username = user.FirstName;
+                }
+                catch (Exception ex)
+                {
+                    string username = firstName + "_" + lastName;
+
+                    try
+                    {
+                        user2 = await _userService.GetUser(username);
+
+                        if (user2 != null && user == user2)
+                        {
+                            Random random = new Random();
+                            int randomNumber = random.Next(10, 99);
+                            username = username + randomNumber.ToString();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // create personal organisation
+                        //var personalOrganisation = new Organisation (CurrentUser(), Guid.NewGuid (), personalOrganisationName, new OrganisationType (CurrentUser(), "personal"));
+                        //_organisationService.CreateNewOrganisation (personalOrganisation);
+                        // create user object
+                        user = new User(null, Guid.NewGuid(), username);
+                        user.FirstName = firstName;
+                        user.LastName = lastName;
+                        user.FullName = firstName + " " + lastName;
+                        user.Email = email;
+                        user.MobilePhone = mobilePhone;
+                        user.Password = "";
+                        //user.Organisations.Add (personalOrganisation);
+                        // save the new user
+                        // creates a new user in the system along with a default organisation
+                        await _userService.Create(user);
+                        //Console.WriteLine ("Created User " + user.FullName);
+                    }
+                }
+                finally
+                {
+                    if (!user.Organisations.Contains(organisation))
+                        user.Organisations.Add(organisation);
+
+                    user.SetPrimaryOrganisation(organisation);
+                    await _userService.Update(user);
+                    
+                    var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+                    var reference = await _referenceService.GetLatestReferenceId();
+                    var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                    await _referenceService.CreateClientInformationReference(sheet);
+                    
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        OrganisationalUnit ou = new OrganisationalUnit(user, ouname);
+                        organisation.OrganisationalUnits.Add(ou);
+                        clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                        if (!string.IsNullOrWhiteSpace(membershipNumber))
+                        {
+                            clientProgramme.ClientProgrammeMembershipNumber = membershipNumber;
+                        }
+                        sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                        try
+                        {                                
+                            await uow.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message);
+                        }                        
+                    }                    
+                }
+                return NoContent();
+            }                          
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, currentUser, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }            
         }
-
 
         // Important Notices - CK Editor
 
