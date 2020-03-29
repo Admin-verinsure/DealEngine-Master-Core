@@ -48,6 +48,9 @@ namespace DealEngine.WebUI.Models
         public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
 
         public IEnumerable<ProductItem> AvailableProducts { get; set; }
+        public IEnumerable<SelectListItem> ClaimProducts { get; set; }
+        public IEnumerable<SelectListItem> AvailableOrganisations { get; set; }
+
 
         public OrganisationDetailsVM OrganisationDetails { get; set; }
 
@@ -86,6 +89,7 @@ namespace DealEngine.WebUI.Models
         public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
         public IList<string> Wizardsteps { get; set; }
+
     }
 
     public class InformationSectionViewModel

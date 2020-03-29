@@ -18,7 +18,7 @@ namespace DealEngine.Domain.Entities
         public virtual string Fees { get; set; }
         public virtual string ContractType { get; set; }
         public virtual string MembershipNumber { get; set; }
-
+      
         public virtual ClientInformationSheet ClientInformationSheet
         {
             get;

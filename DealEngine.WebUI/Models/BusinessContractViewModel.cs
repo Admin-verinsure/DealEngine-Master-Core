@@ -14,6 +14,9 @@ namespace DealEngine.WebUI.Models
         public string Year { get; set; }
 
         public string ContractTitle { get; set; }
+        public string ProjectDescription { get; set; }
+        public string MajorResponsibilities { get; set; }
+        public string ProjectDuration { get; set; }
 
         public string ConstructionValue { get; set; }
 
@@ -34,7 +37,9 @@ namespace DealEngine.WebUI.Models
             businessContract.ContractTitle = ContractTitle;
             businessContract.ConstructionValue = ConstructionValue;
             businessContract.Fees = Fees;
-            businessContract.ContractType = ContractType;
+            businessContract.ProjectDescription = ProjectDescription;
+            businessContract.MajorResponsibilities = MajorResponsibilities;
+            businessContract.ProjectDuration = ProjectDuration;
             return businessContract;
         }
 
@@ -47,6 +52,9 @@ namespace DealEngine.WebUI.Models
                 ConstructionValue = businessContract.ConstructionValue,
                 ContractTitle = businessContract.ContractTitle,
                 ContractType = businessContract.ContractType,
+                ProjectDescription = businessContract.ProjectDescription,
+                MajorResponsibilities = businessContract.MajorResponsibilities,
+                ProjectDuration = businessContract.ProjectDuration,
                 Fees = businessContract.Fees,
             };
             return model;
