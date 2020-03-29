@@ -116,6 +116,7 @@ namespace DealEngine.Services.Impl
                 new CEASDOUWModule(),
                 new CEASPLUWModule(),
                 new CEASCLUWModule(),
+                new PMINZPIUWModule(),
 
             };
             return modules;
