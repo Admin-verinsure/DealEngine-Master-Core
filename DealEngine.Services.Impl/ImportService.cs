@@ -441,6 +441,104 @@ namespace DealEngine.Services.Impl
                 await _businessActivityService.CreateBusinessActivityTemplate(businessActivity);
             }
         }
+
+        public async Task ImportCEASServiceIndividuals(User CreatedUser)
+        {
+            var userFileName = @"C:\tmp\ceas\CEASPrincipals2019.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = false;
+            string line;
+            using (reader = new StreamReader(userFileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var email = "";
+                    var username = "";
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    try
+                    {
+                        username = parts[3].Replace(" ", string.Empty) + parts[2].Replace(" ", string.Empty);
+                        if (string.IsNullOrWhiteSpace(parts[4]))
+                        {
+                            email = username + "@DealEngine.com";
+                        }
+                        else
+                        {
+                            email = parts[4];
+                        }
+                        
+                        organisation = await _organisationService.GetOrganisationByEmail(email);
+
+                        if (organisation == null)
+                        {
+                            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, email);
+                            await _organisationService.CreateNewOrganisation(organisation);
+                        }
+                        
+                        user = await _userService.GetUserByEmail(email);
+                        
+                        if (user == null)
+                        {
+                            user = new User(currentUser, Guid.NewGuid(), username);
+                        }
+
+                        user.FirstName = parts[3];
+                        user.LastName = parts[2];
+                        user.FullName = parts[1];
+                        user.Email = email;
+                        user.Address = "";
+                        user.Phone = "12345";
+
+                        if (!user.Organisations.Contains(organisation))
+                            user.Organisations.Add(organisation);
+                        user.SetPrimaryOrganisation(organisation);
+
+                        await _userService.ApplicationCreateUser(user);
+
+                        var programme = await _programmeService.GetProgramme(programmeID);
+                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                        var reference = await _referenceService.GetLatestReferenceId();
+                        var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                        await _referenceService.CreateClientInformationReference(sheet);
+
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+
+                            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                            clientProgramme.ClientProgrammeMembershipNumber = parts[0];
+                            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                            try
+                            {
+                                await uow.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception(ex.Message);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
     }
 }
 
