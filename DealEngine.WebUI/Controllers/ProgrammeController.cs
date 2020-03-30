@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using DealEngine.WebUI.Models;
 using DealEngine.WebUI.Models.Programme;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using System.Threading.Tasks;
 using DealEngine.Infrastructure.Payment.EGlobalAPI;
 using Microsoft.Extensions.Logging;
@@ -41,8 +41,10 @@ namespace DealEngine.WebUI.Controllers
         IMapper _mapper;
         IHttpClientService _httpClientService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
+        IImportService _importService;
 
         public ProgrammeController(
+            IImportService importService,
             IOrganisationService organisationService,
             IRiskCoverService riskCoverService,
             IRiskCategoryService riskCategoryService,
@@ -65,6 +67,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _productService = productService;
             _logger = logger;
@@ -192,19 +195,21 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProgrammeActivities(string ProgrammeId, bool IsPublic, string[] Activities)
+        public async Task<IActionResult> CreateActivityTemplates(IFormCollection form)
         {
             User user = null;
             try
             {
-                user = await CurrentUser();
-                Programme programme = await _programmeService.GetProgramme(Guid.Parse(ProgrammeId));
-                foreach (string str in Activities)
+                var programmeId = form["ActivityAttach.SelectedProgramme"].ToString();
+                var templateIds = form["Builder.Activities"].ToArray().ToList();
+                var isPublic = bool.Parse(form["Builder.Ispublic"].ToString());
+                Programme programme = await _programmeService.GetProgramme(Guid.Parse(programmeId));
+                foreach (var id in templateIds)
                 {
-                    BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(str));                    
+                    BusinessActivityTemplate businessActivityTemplate = await _busActivityService.GetBusinessActivityTemplate(Guid.Parse(id));
                     await _programmeService.AttachProgrammeToActivities(programme, businessActivityTemplate);
                 }
-                
+
                 return Ok(); 
             }
             catch (Exception ex)
@@ -222,12 +227,10 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                var busActivityList = await _busActivityService.GetBusinessActivitiesTemplate();
-                if (busActivityList.Count == 0)
-                {
-                    return Redirect("~/Error/Error404");
-                }
-
+                //reupload everytime
+                var busActivityList = await _busActivityService.GetBusinessActivitiesTemplates();
+                await _importService.ImportActivities(user);                
+                busActivityList = await _busActivityService.GetBusinessActivitiesTemplates();
                 var actClassOne = await _busActivityService.GetBusinessActivitiesByClassification(1);
                 var actClassTwo = await _busActivityService.GetBusinessActivitiesByClassification(2);
                 var actClassThree = await _busActivityService.GetBusinessActivitiesByClassification(3);
@@ -260,7 +263,7 @@ namespace DealEngine.WebUI.Controllers
 
                 List<SelectListItem> proglist = new List<SelectListItem>();
                 var programmeList = await _programmeService.GetAllProgrammes();
-                foreach (Programme prog in programmeList.Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id))
+                foreach (Programme prog in programmeList)
                 {
                     proglist.Add(new SelectListItem
                     {
@@ -268,37 +271,12 @@ namespace DealEngine.WebUI.Controllers
                         Text = prog.Name,
                         Value = prog.Id.ToString(),
                     });
-
                 }
 
                 model.ActivityAttach = new ActivityAttachVM()
                 {
                     BaseProgList = proglist
                 };
-
-                ActivityListViewModel almodel = new ActivityListViewModel();
-                almodel.ProgrammeList = new List<Programme>();
-                almodel.BusinessActivityList = new List<BusinessActivityTemplate>();
-
-                var programmeList1 = await _programmeService.GetAllProgrammes();
-                var progList = programmeList1.Where(p => p.IsPublic == true || p.Owner.Id == user.PrimaryOrganisation.Id).ToList();
-                if (user.PrimaryOrganisation.IsTC)
-                {
-                    progList = programmeList1.Where(d => !d.DateDeleted.HasValue).ToList();
-                }
-
-                var busActList = await _busActivityService.GetBusinessActivitiesTemplate();
-                if (progList.Count != 0)
-                {
-                    almodel.ProgrammeList = progList;
-                }
-
-                if (busActList.Count != 0)
-                {
-                    almodel.BusinessActivityList = busActList;
-                }
-
-                model.ActivityListViewModel = almodel;
 
                 return View(model);
             }
@@ -534,7 +512,7 @@ namespace DealEngine.WebUI.Controllers
                                     //render docs invoice
                                     if (template.DocumentType == 4)
                                     {
-                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement);
+                                        SystemDocument renderedDoc = await _fileService.RenderDocument(user, template, agreement, null);
                                         renderedDoc.OwnerOrganisation = agreement.ClientInformationSheet.Owner;
                                         agreement.Documents.Add(renderedDoc);
                                         documents.Add(renderedDoc);
@@ -1024,28 +1002,98 @@ namespace DealEngine.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProgramme()
         {
-            return View();
+            ProgrammeInfoViewModel model = new ProgrammeInfoViewModel();
+            model.ProductViewModel = await GetProductViewModel();
+            model.InformationBuilderViewModel = await GetInformationBuilderViewModel();
+            return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ViewProgrammes()
+        private async Task<InformationBuilderViewModel> GetInformationBuilderViewModel()
         {
-            ProgrammeListModel model = new ProgrammeListModel();
+            InformationBuilderViewModel model = new InformationBuilderViewModel();
+            model.InformationTemplates = await _informationService.GetAllTemplates();
+            return model;
+        }
+
+        private async Task<ProductViewModel> GetProductViewModel()
+        {
+            User user = null;
+
+            user = await CurrentUser();
+            ProductViewModel model = new ProductViewModel();
+            model.Description = new ProductDescriptionVM
+            {
+                CreatorOrganisation = user.PrimaryOrganisation.Id,
+                OwnerOrganisation = user.PrimaryOrganisation.Id,
+                // TODO - load this from db
+                Languages = new List<SelectListItem> {
+                    new SelectListItem { Text = "English (NZ)", Value = "nz" },
+                    new SelectListItem { Text = "English (US)", Value = "uk" },
+                    new SelectListItem { Text = "English (UK)", Value = "us" },
+                    new SelectListItem { Text = "German", Value = "de" },
+                    new SelectListItem { Text = "French", Value = "fr" },
+                    new SelectListItem { Text = "Chinese", Value = "cn" }
+                },
+                BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
+            };
+
+            model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
+
+            var productList = await _productService.GetAllProducts();
+            foreach (Product product in productList.Where(p => p.IsMasterProduct))
+            {
+                model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
+            }
+
+            var riskList = await _riskCategoryService.GetAllRiskCategories();
+            foreach (RiskCategory risk in riskList)
+                model.Risks.Add(new RiskEntityViewModel { Insured = risk.Name, Id = risk.Id, CoverAll = false, CoverLoss = false, CoverInterruption = false, CoverThirdParty = false });
+
+            // set product settings
+            foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
+                model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
+
+            var templates = await _informationService.GetAllTemplates();
+            foreach (var template in templates)
+                model.Settings.InformationSheets.Add(
+                    new SelectListItem
+                    {
+                        Text = template.Name,
+                        Value = template.Id.ToString()
+                    }
+                    );
+
+            model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
+            model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
+
+            return model;
+        }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProgramme(IFormCollection collection)
+        {
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                var programmes = await _programmeService.GetAllProgrammes();
-                programmes.Where(p => p.IsPublic || p.Owner == user.PrimaryOrganisation);
-                model.Programmes = programmes;
-                return View(model);
+                Programme programme = new Programme(user);
+                programme.Name = collection["programmeName"];
+                programme.TaxRate = decimal.Parse(collection["TaxRate"]);
+                programme.PolicyNumberPrefixString = collection["PolicyNumberPrefixString"];
+                programme.LastModifiedBy = user;
+                programme.LastModifiedOn = DateTime.UtcNow;
+
+                //await _programmeService.Update(programme);
+
+                return NoContent();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
+                return BadRequest();
+            }                
         }
 
         [HttpPost]

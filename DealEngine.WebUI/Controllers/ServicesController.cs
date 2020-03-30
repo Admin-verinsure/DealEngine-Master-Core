@@ -16,6 +16,7 @@ using DealEngine.WebUI.Helpers;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Linq.Dynamic;
+using Newtonsoft.Json;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -4897,5 +4898,6 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }            
         }
+
     }
 }

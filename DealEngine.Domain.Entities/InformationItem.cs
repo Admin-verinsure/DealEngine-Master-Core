@@ -12,19 +12,20 @@ namespace DealEngine.Domain.Entities
 	{
 		protected InformationItem () : base (null) { }
 
-		public InformationItem (User createdBy, string name, string label,string id, int width, string itemType)
+		public InformationItem (User createdBy, string name, string label, string controlType, int width, string itemType)
 			: base (createdBy)
 		{
 			Name = name;
 			Label = label;
 			Width = width;
 			Type = itemType;
-            ControlId = id;
-        }
+
+			DropdownList = new List<DropdownListItem>();
+		}
 
       
         public virtual string Name { get; protected set; }
-        public virtual string ControlId { get; protected set; }
+        public virtual string ControlType { get; set; }
 
         public virtual string Label { get; protected set; }
 
@@ -41,19 +42,12 @@ namespace DealEngine.Domain.Entities
         public virtual bool ReferUnderwriting { get; set; }
 
 		public virtual bool Required { get; set; }
+		public virtual InformationItemConditional Conditional { get; set; }
+        public virtual IList<DropdownListItem> DropdownList { get; set; }
 
-        public virtual bool ProgrammeId { get; set; }
-        public virtual bool ProgrammeName { get; set; }
+		// Add locality later
 
-        public virtual string EditorId { get; set; }
-
-		//public virtual InformationItemConditional Conditional { get; set; }
-
-        public virtual IList<DropdownListItem> droplistItems { get; set; }
-
-        // Add locality later
-
-    }
+	}
 
     public class DropdownListItem : InformationItem
 	{
@@ -62,9 +56,9 @@ namespace DealEngine.Domain.Entities
 			options = new List<DropdownListOption> ();
 		}
 
-		public DropdownListItem (User createdBy, string name, string label,string id, int width, string itemType, IList<DropdownListOption> options, string defaultText = "")
-			: base (createdBy, name, label,id, width, itemType)
-		{
+		public DropdownListItem (User createdBy, string name, string label, string controlType, int width, string itemType, IList<DropdownListOption> options, string defaultText = "")
+			: base (createdBy, name, label, controlType, width, itemType)
+		{		
 
 			if (options == null)
 				this.options = new List<DropdownListOption> ();
@@ -112,8 +106,8 @@ namespace DealEngine.Domain.Entities
 
         }
 
-        public TextboxItem(User createdBy, string name, string label,string id, int width, string itemType) :
-            base(createdBy, name, label,id, width, itemType)
+        public TextboxItem(User createdBy, string name, string label,string controlType, int width, string itemType) :
+            base(createdBy, name, label, controlType, width, itemType)
         {
 
         }
@@ -234,13 +228,14 @@ namespace DealEngine.Domain.Entities
 		}
 	}
 
-	//public class InformationItemConditional : ValueObject
-	//{
-	//	public virtual string TriggerValue { get; set; }
+	public class InformationItemConditional : InformationItem
+	{
+		protected InformationItemConditional() : base(null, null, null, null, 0, null) { }
 
-	//	public virtual int VisibilityOnTrigger { get; set; }
-
-	//	public virtual IList<InformationItem> Targets { get; set; }
-	//}
+		public InformationItemConditional(User createdBy, string name, string label, string id, int width, string itemType)
+			: base(createdBy, name, label, id, width, itemType)
+		{
+		}
+	}
 
 }

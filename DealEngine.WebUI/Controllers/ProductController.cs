@@ -7,7 +7,7 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -162,18 +162,6 @@ namespace DealEngine.WebUI.Controllers
 				foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
 					model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
 
-				model.Settings.InformationSheets = new List<SelectListItem>();
-				model.Settings.InformationSheets.Add(new SelectListItem { Text = "Select Information Sheet", Value = "" });
-				var templates = await _informationService.GetAllTemplates();
-				foreach (var template in templates)
-					model.Settings.InformationSheets.Add(
-						new SelectListItem
-						{
-							Text = template.Name,
-							Value = template.Id.ToString()
-						}
-					);
-
 				model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
 				model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
 				// loop over all non personal organisations and add them, excluding our own since its already added
@@ -305,6 +293,7 @@ namespace DealEngine.WebUI.Controllers
 				throw new Exception ("Form has not been completed");
 			}
 
+			Programme programme = null;
 			User user = null;
 			try {
                 user = await CurrentUser();
@@ -348,34 +337,27 @@ namespace DealEngine.WebUI.Controllers
 					}
 				}
 
-				if (model.Description.SelectedBaseProduct != Guid.Empty.ToString ()) {
-					// temp, remove once the question builder is intergrated into the product builder
-					Guid informationTemplateId = Guid.Empty;
-					if (Guid.TryParse (model.Settings.SelectedInformationSheet, out informationTemplateId)) {
-						var sheet = await _informationService.GetTemplate (informationTemplateId);
-						if (sheet == null)
-							throw new Exception ("No UIS Template found for id " + informationTemplateId);
-                        await _informationService.AddProductTo (sheet.Id, product);
-					}
-				}
-
 				if (!string.IsNullOrEmpty (model.Settings.SelectedInsuranceProgramme)) {
                     Guid programmeId = Guid.Empty;
                     if (Guid.TryParse(model.Settings.SelectedInsuranceProgramme, out programmeId))
                     {
-                        Programme programme = await _programmeService.GetProgrammeById(programmeId);
-                        programme.Products.Add(product);
+                        programme = await _programmeService.GetProgrammeById(programmeId);                        
                     }
-                }
+				}
+				else
+				{
+					var programmeList = await _programmeService.GetAllProgrammes();
+					programme = programmeList.LastOrDefault();
+				}
+				programme.Products.Add(product);
 
-                if (baseProduct != null)
+				if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-				//await _productService.CreateProduct(product);
+                //await _productService.CreateProduct(product);
 
 				return NoContent();
-                return Redirect ("~/Product/MyProducts");
-				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
+
 			}
 			catch(Exception ex)
 			{

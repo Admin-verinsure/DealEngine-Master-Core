@@ -6,6 +6,7 @@ using NHibernate.Linq;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DealEngine.Services.Impl
 {
@@ -383,6 +384,7 @@ namespace DealEngine.Services.Impl
         public async Task ImportActivities(User user)
         {
             var fileName = "C:\\tmp\\anzsic06completeclassification.csv";
+            var currentTemplateList = await _businessActivityService.GetBusinessActivitiesTemplates();
             List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
 
             using (StreamReader reader = new StreamReader(fileName))
@@ -425,7 +427,11 @@ namespace DealEngine.Services.Impl
 
                     if (ba.AnzsciCode != null)
                     {
-                        BAList.Add(ba);
+                        var test = currentTemplateList.Where(bat => bat.AnzsciCode == ba.AnzsciCode).ToList();
+                        if(test.Count == 0)
+                        {
+                            BAList.Add(ba);
+                        }
                     }
                 }
             }

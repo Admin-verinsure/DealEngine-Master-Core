@@ -26,94 +26,50 @@
                         </button>
                     </h2>
                 </div>
-
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div class="card-body">
-                        @await Html.PartialAsync("BusinessActivityList", Model.ActivityListViewModel)
-                    </div>
-                    @if (User.HasClaim("EditActivities", "EditActivities"))
-                    {
-                        <div class="card-footer">
-                            <input class="btn btn-primary" type="button" value="Add Custom Business Activity" href="#myActivityModal">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="UploadFileId" aria-describedby="inputGroupFileAddon01" onchange="UploadFile()">
-                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                            </div>
-                        </div>
-
-                    }
-
-                </div>
                 @if (User.HasClaim("EditActivities", "EditActivities"))
                 {
                     <div class="card">
                         <div class="card-header" id="headingTwo">
                             <h2 class="mb-0">
-                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <button class="btn btn-link show" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                     Add Business Activity to Programme
                                 </button>
                             </h2>
                         </div>
                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                             <div class="card-body">
-                                <form action="#" id="wizard-1" role="form" data-toggle="validator" method="post" accept-charset="utf-8" novalidate="true">
+                                <form id="activityform" class="needs-validation">
                                     <div id="smartwizard" class="sw-main sw-theme-circles">
                                         <ul class="nav nav-tabs step-anchor">
                                             <li class="nav-item active"><a href="#tab1" class="nav-link">1<br><small>Edit</small></a></li>
                                             <li class="nav-item"><a href="#tab2" class="nav-link">2<br><small>Submit</small></a></li>
-                                            <li class="nav-item"><a href="#tab3" class="nav-link">2<br><small>Confirm</small></a></li>
-
                                         </ul>
-                                        <div class="tab-content">
-                                            @* Tab 1 *@
-                                            @Html.DisplayFor(m => m.Builder)
-                                            @* Tab 2 *@
-                                            @Html.DisplayFor(m => m.ActivityAttach)
-                                            @*Tab 3*@
-                                            @* Tab 4 *@
-
-                                            <div class="tab-pane" id="tab2">
-                                                <br />
-                                                <h3><strong>Setup </strong> - Programme Activities</h3>
-
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <div class="form-group">
-                                                            <label><strong>InclorExcl</strong></label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon"><i class="fa fa-file-text fa-lg fa-fw"></i></span>
-                                                                @Html.DropDownListFor(m => m.ActivityAttach.SelectedProgramme, Model.ActivityAttach.BaseProgList)
-
-                                                            </div>
-                                                        </div>
+                                        <div class="sw-container tab-content">
+                                            <div class="tab-pane" id="tab1">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h3><strong>Setup </strong> - New Business Activity</h3>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        @Html.DisplayFor(m => m.Builder)
+                                                        @Html.DisplayFor(m => m.ActivityAttach)
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="tab3" class="tab-pane step-content">
-                                                <div>
-                                                    <div class="page-body">
-                                                        <div class="head">
-                                                            <h3 style="align-content:center">Activity Has Been Saved</h3>
-                                                            <a class="btn btn-success btn-sm" href="@Url.Action("ActivityBuilder", "Programme")"><i class="fa fa-arrow-circle-left"></i>Back </a>
-
-                                                        </div>
+                                                    <div id="tab2" class="tab-pane">
+                                                        <h3 style="align-content:center">Activity Has Been Saved</h3>
+                                                        <a class="btn btn-success btn-sm" href="@Url.Action("ActivityBuilder", "Programme")"><i class="fa fa-arrow-circle-left"></i>Back </a>
                                                     </div>
-
                                                 </div>
-
                                             </div>
-                                        </div>
-                                    </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
+                    </div>                                
                 }
-
             </div>
         </div>
     </div>
-</div>
 
 <div id="myActivityModal" class="modal" role="dialog">
 
@@ -235,33 +191,14 @@
 
 
 @section pagespecific {
-    <script src="~/bootstrap-multiselect/js/bootstrap-multiselect.min.js"></script>
-    <link href="~/css/bootstrap-chosen.css" rel="stylesheet" />
+    @*<script src="~/bootstrap-multiselect/js/bootstrap-multiselect.min.js"></script>
+    <link href="~/css/bootstrap-chosen.css" rel="stylesheet" />*@
     <script src="~/smartwizard/js/jquery.smartWizard.min.js" defer></script>
     <link href="~/smartwizard/cc/smart_wizard_theme_circles.css" rel="stylesheet" />
     <script type="text/javascript">
 
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
 
-        function UploadFile() {
-            debugger;
-            var fakePath = $('#UploadFileId').val();
-            var file = fakePath.replace("\fakepath\\", "");
-            debugger;
-            var postData = { FileName: file };
-            debugger;
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("UploadDataFiles", "Programme")',
-                data: postData
-            })
-                .done(function (json) {
-                })
-                .fail(function (err, ajaxOptions, thrownError) {
-                    debugger;
-                });
-
-        }
 
         function ShowActivityModel() {
             $("#myActivityModal").modal("show");
@@ -371,28 +308,15 @@
 
 
         $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-            event.preventDefault();
-            if (stepNumber === 1 && stepDirection != "Backwards") {
-
-                var activities = [];
-                $('#Activities option:selected').each(function (index) {
-                    activities.push($(this).val());
-                });
-
-                var isOn = $('#Builder_Ispublic').val();
-                var isPublic = true;
-                if (isOn != "On") {
-                    isPublic = false;
-                }
-
-                var programmeId = $('#ActivityAttach_SelectedProgramme').val();
-
-                var postData = { ProgrammeId: programmeId, IsPublic: isPublic, Activities: activities }
+            event.preventDefault();            
+            if (stepNumber === 0 && stepDirection != "Backwards") {
+                var form = $('#activityform').serialize();
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("CreateProgrammeActivities", "Programme")',
-                    data: postData
+                    url: '@Url.Action("CreateActivityTemplates", "Programme")',
+                    data: form
+
                 })
                     .done(function (json) {
                         //var model = JSON.parse(json);

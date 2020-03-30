@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace DealEngine.WebUI.Models.Product
+namespace DealEngine.WebUI.Models.ProductModels
 {
 
 	public class ProductViewModel : BaseViewModel
@@ -12,10 +12,6 @@ namespace DealEngine.WebUI.Models.Product
 		public ProductDescriptionVM Description { get; set; }
 
 		public ProductRisksVM Risks { get; set; }
-
-		//public RiskEntityViewModel [] Risks { get; set; }
-
-		public ProductInformationSheetVM InformationSheet { get; set; }
 
         public TerritoryViewModel territoryBuilderVM { get; set; }
 
@@ -27,7 +23,6 @@ namespace DealEngine.WebUI.Models.Product
 		{
 			Description = new ProductDescriptionVM ();
 			Risks = new ProductRisksVM ();
-			InformationSheet = new ProductInformationSheetVM ();
 			Settings = new ProductSettingsVM ();
 			Parties = new ProductPartiesVM ();
 		}
@@ -99,18 +94,6 @@ namespace DealEngine.WebUI.Models.Product
 			InformationSheets = new List<SelectListItem> ();
 			PossibleOwnerOrganisations = new List<SelectListItem> ();
 			InsuranceProgrammes = new List<SelectListItem> ();
-		}
-	}
-
-	public class ProductInformationSheetVM
-	{
-		public IEnumerable<SelectListItem> InformationSheets { get; set; }
-
-		public Guid SelectedInformationSheet { get; set; }
-
-		public ProductInformationSheetVM ()
-		{
-			InformationSheets = new List<SelectListItem> ();
 		}
 	}
 

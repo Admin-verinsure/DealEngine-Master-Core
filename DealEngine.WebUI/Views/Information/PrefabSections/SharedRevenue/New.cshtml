@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
                     <label for="SharedTerritories">Select Territories</label>
-                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
+                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" form="revenue1" required>
                         @foreach (var territory in Model.Territories)
                         {
                             <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
@@ -47,13 +47,25 @@
         <div class="container-fluid">
             <form class="client-form">
                 <div class="form-group">
-                    <label for="totalRevenue">Enter Fee Income</label>
-                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="currentYear">Estimate of current year</label>
+                            <input id="currentYear" name="currentYear" type="number" class="form-control" form="revenue2" placeholder="$" required>
+                        </div>
+                        <div class="col-3">
+                            <label for="lastFinancialYear">Last completed financial year</label>
+                            <input id="lastFinancialYear" name="lastFinancialYear" type="number" form="revenue2" class="form-control"  placeholder="$">
+                        </div>
+                        <div class="col-3">
+                            <label for="nextFinancialYear">Estimate of next financial year</label>
+                            <input id="nextFinancialYear" name="nextFinancialYear" type="number" form="revenue2" class="form-control" placeholder="$">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="sharedRevenueActivities">Select Activites</label>
-                    <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                    <select id="sharedRevenueActivities" form="revenue2" name="Activities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
                         @foreach (var ou in Model.Activities)
                         {
                             <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
@@ -81,7 +93,7 @@
 
 <div id="RevenueTabs3" class="tab-content">
     <div class="container-fluid">
-        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model)        
+        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model.AdditionalInformation)        
     </div>
 </div>
 <div id="RevenueTabs4" class="tab-content">

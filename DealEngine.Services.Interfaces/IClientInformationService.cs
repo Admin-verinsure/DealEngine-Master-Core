@@ -19,7 +19,8 @@ namespace DealEngine.Services.Interfaces
         Task UpdateInformation (ClientInformationSheet sheet);
 		Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection);
         Task<List<ClientInformationSheet>> FindByBoatName(string searchValue);
-        Task<SubClientInformationSheet> IssueSubInformationFor(SubClientProgramme subClientProgramme);
+        Task<SubClientInformationSheet> IssueSubInformationFor(ClientInformationSheet clientInformationSheet);
+        Task<bool> IsBaseClass(ClientInformationSheet sheet);
     }
 }
 

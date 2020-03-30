@@ -641,7 +641,7 @@ namespace DealEngine.WebUI.Controllers
                 model = await GetClientProgrammeListModel(user, clientList);
 
                 model.ProgrammeId = id.ToString();
-                                
+
                 return View(model);
             }
             catch (Exception ex)

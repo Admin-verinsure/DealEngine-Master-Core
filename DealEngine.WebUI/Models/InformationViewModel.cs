@@ -5,11 +5,6 @@ using DealEngine.Domain.Entities;
 
 namespace DealEngine.WebUI.Models
 {
-    public class InformationViewAllViewModel : BaseViewModel
-    {
-        public IEnumerable<InformationViewModel> InformationTemplates { get; set; }
-    }
-
     public class InformationViewModel : BaseViewModel
     {
         public Guid Id { get; set; }
@@ -93,7 +88,8 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
         public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
-       
+        public IList<string> Wizardsteps { get; set; }
+
     }
 
     public class InformationSectionViewModel
@@ -121,7 +117,7 @@ namespace DealEngine.WebUI.Models
 
         public int Position { get; set; }
     }
-    
+
     public class MilestoneAdvisoryVM
     {
         public Guid Id { get; set; }
@@ -136,7 +132,8 @@ namespace DealEngine.WebUI.Models
 
         public string Name { get; set; }
 
-        public string Control { get; set; }
+        public string ControlType { get; set; }
+        public string Class { get; set; }
 
         public string Label { get; set; }
 
@@ -249,15 +246,96 @@ namespace DealEngine.WebUI.Models
             return model;
         }
     }
-   
+
     public class RevenueByActivityViewModel
     {
         public bool IsTradingOutsideNZ { get; set; }
         public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> Activities { get; set; }
-        public decimal TotalRevenue { get; set; }
+        public decimal NextFincialYear { get; set; }
+        public decimal CurrentYear { get; set; }
+        public decimal LastFinancialYear { get; set; }
         public RevenueByActivity RevenueData { get; set; }
-        public AdditionalActivityInformation AdditionalInformation { get; set; }
+        public AdditionalActivityViewModel AdditionalInformation { get; set; }
+    }
+
+    public class AdditionalActivityViewModel
+    {
+        public AdditionalActivityViewModel()
+        {
+            InspectionReportBoolId = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+            ValuationBoolId = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+            SchoolsDesignWorkBoolId = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+            SchoolsDesignWorkBoolId2 = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+            SchoolsDesignWorkBoolId3 = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+            SchoolsDesignWorkBoolId4 = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }        
+        public virtual IList<SelectListItem> InspectionReportBoolId { get; set; }
+        public virtual IList<SelectListItem> ValuationBoolId { get; set; }
+        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId { get; set; }
+        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId2 { get; set; }
+        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId3 { get; set; }
+        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId4 { get; set; }
+        public virtual string ValuationTextId { get; set; }
+        public virtual string ValuationTextId2 { get; set; }
+        public virtual string OtherActivitiesTextId { get; set; }
+        public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
+        public virtual string InspectionReportTextId { get; set; }
+        public virtual string OtherProjectManagementTextId { get; set; }
+        public virtual string NonProjectManagementTextId { get; set; }
+        public decimal ConstructionCommercial { get; set; }
+        public decimal ConstructionDwellings { get; set; }
+        public decimal ConstructionIndustrial { get; set; }
+        public decimal ConstructionInfrastructure { get; set; }
+        public decimal ConstructionSchool { get; set; }
     }
 
     public class SharedRoleViewModel

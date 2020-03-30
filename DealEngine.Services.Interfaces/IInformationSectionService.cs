@@ -11,9 +11,7 @@ namespace DealEngine.Services.Interfaces
         Task<InformationSection> CreateNewSection(User createdBy, string name, IList<InformationItem> items);
         IQueryable<InformationSection> GetAllSections();
         Task<InformationSection> GetSection(Guid Id);
-
         Task<List<InformationSection>> GetInformationSectionsbyTemplateId(Guid Id);
-
-
+        Task CreateNewSection(InformationSection section);
     }
 }

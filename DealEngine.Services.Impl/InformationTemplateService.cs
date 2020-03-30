@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
 using DealEngine.Infrastructure.FluentNHibernate;
 using DealEngine.Services.Interfaces;
+using AutoMapper;
 
 namespace DealEngine.Services.Impl
 {
     public class InformationTemplateService : IInformationTemplateService
     {
-        //private InformationTemplateFactory _informationTemplateFactory;
         private IMapperSession<InformationTemplate> _informationTemplateRepository;
 
-        public InformationTemplateService(IMapperSession<InformationTemplate> informationTemplateRepository)
+        public InformationTemplateService(
+            IMapperSession<InformationTemplate> informationTemplateRepository)
         {
             _informationTemplateRepository = informationTemplateRepository;
         }
@@ -30,11 +31,6 @@ namespace DealEngine.Services.Impl
         public async Task<InformationTemplate> GetTemplatebyProduct(Guid productId)
         {
             return await _informationTemplateRepository.FindAll().SingleOrDefaultAsync(I => I.Product.Id== productId );
-        }
-
-        public async Task<List<InformationTemplate>> GetAllTemplatesbyproduct(Guid productId)
-        {
-            return await _informationTemplateRepository.FindAll().Where(I => I.Product.Id == productId).ToListAsync();
         }
 
         public async Task<List<InformationTemplate>> GetAllTemplates()
@@ -71,5 +67,15 @@ namespace DealEngine.Services.Impl
 
 			return template;
 		}
+
+        public async Task UpdateInformationTemplate(InformationTemplate informationTemplate)
+        {
+            await _informationTemplateRepository.UpdateAsync(informationTemplate);
+        }
+
+        public async Task CreateInformationTemplate(InformationTemplate informationTemplate)
+        {
+            await _informationTemplateRepository.AddAsync(informationTemplate);
+        }
     }
 }

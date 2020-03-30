@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
 
-namespace DealEngine.WebUI.Models.Product
+namespace DealEngine.WebUI.Models.ProductModels
 {
     public class SectionViewModel : BaseViewModel
     {

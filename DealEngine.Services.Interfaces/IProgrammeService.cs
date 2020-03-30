@@ -17,6 +17,7 @@ namespace DealEngine.Services.Interfaces
         Task<ClientProgramme> CreateClientProgrammeFor (Guid programmeId, User creatingUser, Organisation owner);
         Task<ClientProgramme> CreateClientProgrammeFor (Programme programme, User creatingUser, Organisation owner);
 		Task Update (params ClientProgramme[] clientProgrammes);
+        Task Update(Programme programmes);
         Task<ClientProgramme> CloneForUpdate (ClientProgramme clientProgramme, User cloningUser, ChangeReason changeReason);
         Task<ClientProgramme> CloneForRewenal (ClientProgramme clientProgramme, User cloningUser);
         Task AttachProgrammeToActivities(Programme programme, BusinessActivityTemplate businessActivityTemplate);
@@ -29,9 +30,11 @@ namespace DealEngine.Services.Interfaces
         Task AddBusinessContractByMembership(BusinessContract businessContract);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
         Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
-        Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId, Organisation organisation);
+        Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId);
         Task<bool> HasProgrammebyMembership(string membershipNumber);
         Task<SubClientProgramme> GetSubClientProgrammebyId(Guid subClientProgrammeId);
+        Task<bool> IsBaseClass(ClientProgramme clientProgramme);
+        Task<bool> SubsystemCompleted(ClientProgramme clientProgramme);
     }
 }
 
