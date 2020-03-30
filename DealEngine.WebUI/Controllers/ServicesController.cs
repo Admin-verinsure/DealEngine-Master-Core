@@ -2786,7 +2786,7 @@ namespace DealEngine.WebUI.Controllers
                         if (orgTypeName == "Person - Individual")
                         {
                             userdb = await _userService.GetUserByEmail(organisation.Email);
-                            if (userdb == null)
+                            if (userdb != null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
