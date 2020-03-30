@@ -332,7 +332,7 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
-        public async Task ImportAOEServiceBusinessContract(User CreatedUser)
+        public async Task ImportAOEServiceContract(User CreatedUser)
         {
             var currentUser = CreatedUser;
             StreamReader reader;
@@ -372,7 +372,6 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
-
         public async Task ImportAOEService(User user)
         {
             //await ImportAOEServiceIndividuals(user);
@@ -531,6 +530,87 @@ namespace DealEngine.Services.Impl
                                 throw new Exception(ex.Message);
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+        public async Task ImportCEASServiceClaims(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            ClaimNotification claimNotification;
+            bool readFirstLine = false;
+            string line;
+
+           //var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
+            var claimFileName = @"C:\tmp\ceas\CEASClaims2019.csv";
+            using (reader = new StreamReader(claimFileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    try
+                    {
+                        line = reader.ReadLine();
+                        string[] parts = line.Split(',');
+                        claimNotification = new ClaimNotification(currentUser);
+                        claimNotification.ClaimMembershipNumber = parts[2];
+                        claimNotification.ClaimTitle = parts[3];
+                        claimNotification.ClaimReference = parts[4];
+                        claimNotification.ClaimNotifiedDate = DateTime.Parse(parts[5]);
+                        claimNotification.Claimant = parts[6];
+                        claimNotification.ClaimStatus = parts[8];
+
+                        await _programmeService.AddClaimNotificationByMembership(claimNotification);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+        public async Task ImportCEASServiceContract(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            BusinessContract businessContract;
+            bool readFirstLine = false;
+            string line;            
+            
+            var contractFileName = @"C:\tmp\ceas\CEASContracts2019.csv";
+
+            using (reader = new StreamReader(contractFileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        businessContract = new BusinessContract(currentUser);
+                        businessContract.MembershipNumber = parts[6];
+                        businessContract.ContractTitle = parts[0];
+                        businessContract.ProjectDescription = parts[1];
+                        businessContract.Year = parts[5];
+                        businessContract.ConstructionValue = parts[4];
+                        businessContract.Fees = parts[3];
+                        businessContract.MajorResponsibilities = parts[2];
+
+                        await _programmeService.AddBusinessContractByMembership(businessContract);
                     }
                     catch (Exception ex)
                     {
