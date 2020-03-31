@@ -38,91 +38,10 @@ namespace DealEngine.WebUI.Controllers
             _applicationLoggingService = applicationLoggingService;
             _logger = logger;
             _informationTemplateService = informationTemplateService;			
-        }
+        }       
 
         [HttpPost]
-        public async Task<IActionResult> CreateConditionalItem(IFormCollection form)
-        {
-
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                var itemId = form["ItemId"];
-                var conditionalform = form["Form"].ToString();
-                var formsplit = conditionalform.Split('&').ToList();
-                var item = await _informationItemService.GetItemById(Guid.Parse(itemId));
-
-                InformationItemConditional itemConditional = null;
-                List<DropdownListOption> ddOptions = new List<DropdownListOption>();
-                string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
-                if (formsplit.Contains("questiontype=textTemplate"))
-                {
-                    var question = formsplit.ElementAt(4);
-                    var split = question.Split('=');
-                    itemConditional = (InformationItemConditional)await _informationItemService.CreateTextboxItem(user, randomName, split[1], 10, "TEXTBOX");
-                }
-                else if (formsplit.Contains("questiontype=dropdownTemplate"))
-                {
-                    var question = formsplit.ElementAt(4);
-                    var split = question.Split('=');
-                    ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
-                    var options = form["dropdownvalue"].ToList();
-                    for (int j = 0; j < options.Count; j++)
-                    {
-                        if (!string.IsNullOrWhiteSpace(options.ElementAt(j)))
-                        {
-                            ddOptions.Add(new DropdownListOption(user, options.ElementAt(j), j.ToString()));
-                        }
-                    }
-                    itemConditional = (InformationItemConditional)await _informationItemService.CreateDropdownListItem(user, randomName, form["question"], item.Name, ddOptions, 10, "DROPDOWNLIST");
-                }
-                else if (formsplit.Contains("questiontype=yesNoTemplate"))
-                {
-                    var question = formsplit.ElementAt(4);
-                    var split = question.Split('=');
-                    ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
-                    ddOptions.Add(new DropdownListOption(user, "Yes", "0"));
-                    ddOptions.Add(new DropdownListOption(user, "No", "1"));
-                    itemConditional = (InformationItemConditional)await _informationItemService.CreateDropdownListItem(user, randomName, form["question"], item.Name, ddOptions, 10, "DROPDOWNLIST");
-                }
-
-                try
-                {
-                    var on = form["questionreferunderwriting"];
-                    itemConditional.ReferUnderwriting = true;
-                }
-                catch (Exception ex)
-                {
-                    itemConditional.ReferUnderwriting = false;
-                }
-                try
-                {
-                    var on = form["Required"];
-                    itemConditional.Required = true;
-                }
-                catch (Exception ex)
-                {
-                    itemConditional.Required = false;
-                }
-
-                item.Conditional = itemConditional;
-
-                await _informationItemService.UpdateItem(item);
-
-
-            }
-            catch(Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return Json(new { Result = true });
-            }
-
-            return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateSection(IFormCollection form)
+        public async Task<IActionResult> CreateItem(IFormCollection form)
         {
             User user = null;
             string title = "_Template";
