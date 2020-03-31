@@ -1118,6 +1118,7 @@ namespace DealEngine.WebUI.Controllers
                     programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
                     programme.HasSubsystemEnabled = model.HasSubsystemEnabled;
                     programme.StopAgreement = model.StopAgreement;
+                    programme.Claim = "";
                     if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
                     {
                         programme.Claim = model.ProgrammeClaim;
