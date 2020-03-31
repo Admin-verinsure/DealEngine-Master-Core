@@ -10,19 +10,24 @@ namespace DealEngine.Services.Impl
 {
     public class ClaimService : IClaimService
     {
-        IMapperSession<Claim> _claimsRepository;
+        IMapperSession<Domain.Entities.Claim> _claimsRepository;
 
-        public ClaimService(IMapperSession<Claim> claimsRepository)
+        public ClaimService(IMapperSession<Domain.Entities.Claim> claimsRepository)
         {
             _claimsRepository = claimsRepository;
         }
 
-        public async Task<List<Claim>> GetClaimsAllClaimsList()
+        public async Task AddClaim(Domain.Entities.Claim claim)
+        {
+            await _claimsRepository.AddAsync(claim);
+        }
+
+        public async Task<List<Domain.Entities.Claim>> GetClaimsAllClaimsList()
         {
             return await _claimsRepository.FindAll().ToListAsync();
         }
 
-        public async Task<Claim> GetTemplateByName(string claimName)
+        public async Task<Domain.Entities.Claim> GetTemplateByName(string claimName)
         {
             return await _claimsRepository.FindAll().FirstOrDefaultAsync(c => c.Value == claimName);
         }
