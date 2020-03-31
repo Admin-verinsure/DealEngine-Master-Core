@@ -1,12 +1,5 @@
 ﻿@model DealEngine.WebUI.Models.Authorization.AuthorizeViewModel
 <div class="container-fluid">
-
-    <div class="alert alert-warning alert-dismissible fade show" role="alert" id="Success">
-        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
     <div class="row">
         <div class="accordion container" id="accordionExample">
             <div class="card">
@@ -37,17 +30,18 @@
                                     @await Html.PartialAsync("AddRoleForm", Model)
                                 </div>
                             </form>
-                    </div>
-                    <div class="card-body">
-                        <div class="container" id="UpdateRoleForm" style="display:none">
-                            @await Html.PartialAsync("UpdateRoleForm", Model)
                         </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-primary" onclick="AddRole()">Add</button>
-                            <button type="button" class="btn btn-primary" onclick="EditRole()">Update/Edit</button>
-                            <button type="button" class="btn btn-primary">Delete</button>
+                        <div class="card-body">
+                            <div class="container" id="UpdateRoleForm" style="display:none">
+                                @await Html.PartialAsync("UpdateRoleForm", Model)
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="AddRole()">Add</button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="EditRole()">Update/Edit</button>
+                                <button type="button" class="btn btn-primary btn-sm">Delete</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,20 +62,30 @@
                                     Claims
                                 </div>
                                 <div class="card-body">
-                                    <div class="container" id="claimList">
-                                        @await Html.PartialAsync("GetClaimList", Model)
-                                    </div>
+                                    <form class="needs-validation" action="CreateClaim" method="post" id="claimform">
+                                        <div class="form-group">
+                                            <div class="col-3">
+                                                <input type="text" class="form-control" name="type" placeholder="Enter Claim Type" form="claimform"/>
+                                            </div>
+                                            <div class="col-3">
+                                                <input type="text" class="form-control" name="value" placeholder="Enter Claim Value" form="claimform"/>
+                                            </div>                                                                                       
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-sm" form="claimform">Submit Query</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
             </div>
             <div class="card">
                 <div class="card-header" id="headingfour">
                     <h2 class="mb-0">
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
-                            Add User Role 
+                            Add User Role
                         </button>
                     </h2>
                 </div>
@@ -93,7 +97,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-primary" onclick="AddRoleToUser()">Add User Permissions</button>                            
+                            <button type="button" class="btn btn-primary" onclick="AddRoleToUser()">Add User Permissions</button>
                             <button type="button" class="btn btn-primary">Delete</button>
                         </div>
                     </div>
@@ -102,6 +106,7 @@
         </div>
     </div>
 </div>
+
 
 @section pagespecific {
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -194,7 +199,7 @@
 
         function AddRoleToUser() {
             $('#AddRoleToUserForm').show();
-        }        
+        }
 
         function EditRole() {
             $('#AddRoleForm').hide();
