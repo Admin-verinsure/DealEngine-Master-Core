@@ -97,15 +97,15 @@
                        return false;
 
                    }
-                   else if (!validatePMINZPI() && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                       //$("#Vessel").trigger("click");
-                       window.alert("Please Add Claims Experience to proceed for policy. ");
+                   //else if (!validatePMINZPIfields() && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   //    //$("#Vessel").trigger("click");
+                   //    window.alert("Please Add Claims Experience to proceed for policy. ");
 
-                       $("#more").trigger("click");
-                       $("[id='Claims Experience / Insurance History']").trigger("click");
-                       return false;
+                   //    $("#more").trigger("click");
+                   //    $("[id='PMINZ Professional Indemnity']").trigger("click");
+                   //    return false;
 
-                   }
+                   //}
 
                    if ($('#CompanyName').val() === "AON") {
                        var nextbutton = document.getElementsByClassName("next");
@@ -677,7 +677,7 @@
         })
     });
 
-    function validatePMINZPI() {
+    function validatePMINZPIfields() {
         debugger;
           var pminzPI1 = $('#PMINZPI1').val();
           var pminzPI2 = $('#PMINZPI2').val();
