@@ -42,11 +42,6 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
-        public virtual string reference
-        {
-            get;
-            protected set;
-        }
         public virtual Product Product
         {
             get;

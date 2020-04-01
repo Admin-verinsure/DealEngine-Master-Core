@@ -43,6 +43,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool ReferUnderwriting { get; set; }
 
 		public virtual bool Required { get; set; }
+		public virtual Rule Rule { get; set; }
 		public virtual IList<InformationItem> ConditionalList { get; set; }
         public virtual IList<DropdownListItem> DropdownList { get; set; }
 

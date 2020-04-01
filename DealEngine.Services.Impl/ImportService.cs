@@ -19,17 +19,21 @@ namespace DealEngine.Services.Impl
         IClientInformationService _clientInformationService;
         IUnitOfWork _unitOfWork;
         IOrganisationTypeService _organisationTypeService;
-        IMapperSession<Organisation> _organisationRepository;
         IBusinessActivityService _businessActivityService;
         IInsuranceAttributeService _InsuranceAttributeService;
 
-        public ImportService(IOrganisationService organisationService, IUserService userService,
-            IProgrammeService programmeService, IReferenceService referenceService, IClientInformationService clientInformationService,
-            IUnitOfWork unitOfWork, IOrganisationTypeService organisationTypeService, IInsuranceAttributeService insuranceAttributeService,
-            IMapperSession<Organisation> organisationRepository, IBusinessActivityService businessActivityService)
+        public ImportService(
+            IOrganisationService organisationService, 
+            IUserService userService,
+            IProgrammeService programmeService, 
+            IReferenceService referenceService, 
+            IClientInformationService clientInformationService,
+            IUnitOfWork unitOfWork, 
+            IOrganisationTypeService organisationTypeService, 
+            IInsuranceAttributeService insuranceAttributeService,
+            IBusinessActivityService businessActivityService)
         {
             _businessActivityService = businessActivityService;
-            _organisationRepository = organisationRepository;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
             _organisationService = organisationService;
