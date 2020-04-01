@@ -2849,6 +2849,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.PrevPractice = model.prevPractice;
                             organisation.IsOtherdirectorship = model.IsOtherdirectorship;
                             organisation.Othercompanyname = model.Othercompanyname;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
                             organisation.Activities = model.Activities;
                             organisation.Email = userdb.Email;
                             organisation.Type = model.Type;

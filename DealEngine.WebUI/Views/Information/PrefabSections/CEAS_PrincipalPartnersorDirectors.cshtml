@@ -117,7 +117,8 @@
 
                             </section>
 
-                          
+
+                           
 
                             <div class="hidden" id="CEASEditOrgnamesec">
 
@@ -281,14 +282,43 @@
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Organisation Type</label>
                                 <label class="input">
-                                    <select id="CEASEditPrincial30"  class="form-control b" name="OrganisationTypeName">
+                                    <select id="CEASEditPrincial30" class="form-control b" name="OrganisationTypeName">
                                         <option value="Person - Individual" selected="selected">Private</option>
-                                      
+
                                     </select>
                                 </label>
                                 @*<p class="validationContainer" id="ValidateCEASEditPrincial14"></p>*@
 
                             </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditPrincial19sec">
+                                <label class="label required">This Person has retired or deceased ?</label>
+                                <label class="input">
+                                    <select id="CEASEditPrincial19" onchange="EditPrincipal19Selected('CEASEditPrincial19')" class="form-control b" name="IsRetiredorDecieved">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="ValidateEditPrincial19"></p>
+
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditDateofRetirementSec">
+                                <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASEditPrincial15" type="text">
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditDateofDeceasedSec">
+                                <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASEditPrincial16" type="text">
+                                </label>
+                            </section>
+
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="EditIndividual1">
                                 <label class="label required">First Name</label>
@@ -322,21 +352,21 @@
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Date of Birth</label>
                                 @*<div class="row">*@
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input ">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="DateofBirth" placeholder="Effective Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASEditPrincial22" type="text" required>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-html="true"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
-                                    </section>
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="DateofBirth" placeholder="Birth Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASEditPrincial22" type="text" required>
+                                    </label>
+                                </section>
+                                <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle"
+                                       data-placement="bottom"
+                                       data-html="true"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
+                                </section>
                                 @*</div>*@
                                 <p class="validationContainer" id="validateCEASEditPrincial22"></p>
                             </section>
@@ -626,6 +656,38 @@
 
                             </section>
 
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASAddPrincial19sec">
+                                <label class="label required">This Person has retired or deceased ?</label>
+                                <label class="input">
+                                    <select id="CEASAddPrincial19" onchange="Principal19Selected('CEASAddPrincial19')" class="form-control b" name="IsRetiredorDecieved">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="ValidateCEASAddPrincial19"></p>
+
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASAddDateofRetirementSec">
+                                <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASAddPrincial15" type="text">
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASAddDateofDeceasedSec">
+                                <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASAddPrincial16" type="text">
+                                </label>
+                            </section>
+
+
+
+
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="EditIndividual1">
                                 <label class="label required">First Name</label>
                                 <label class="input">
@@ -660,7 +722,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input ">
                                             <i class="icon-append fa fa-calendar"></i>
-                                            <input name="DateofBirth" placeholder="Effective Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASAddPrincial22" type="text" required>
+                                            <input name="DateofBirth" placeholder="Birth Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASAddPrincial22" type="text" required>
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -875,12 +937,12 @@
             $('#CEASAddPrincial14').val('');
             $('#CEASAddPrincial17').val('');
             $('#CEASAddPrincial18').val('');
-         
+            $('#CEASAddPrincial19sec').removeClass('hidden');
+            $('#CEASAddPrincial28').removeClass('hidden');         
 
         } else {
              $('#AddCEASPrincipalsec').hide();
             $('#AddNotPrincipalsec').show();
-            
             $('#CEASAddPrincial28').val('');
             $('#CEASAddPrincial29').val('');
             $('#CEASAddPrincial21').val('');
@@ -890,6 +952,11 @@
             $('#CEASAddPrincial25').val('');
             $('#CEASAddPrincial26').val('');
             $('#CEASAddPrincial27').val('');
+            $('#CEASAddPrincial28').addClass('hidden');         
+            $('#CEASAddPrincial19sec').addClass('hidden');
+            $('#CEASAddPrincial15').val('');
+            $('#CEASEAddPrincial16').val('');
+
         }
     }
 
@@ -974,6 +1041,7 @@
          if (principalSelected.options[principalSelected.selectedIndex].value == "Principal") {
              $('#EditCEASPrincipalsec').show();
              $('#EditNotPrincipalsec').hide();
+             $('#CEASEditPrincial19sec').removeClass('hidden');
 
             //$('#AddIndividualPrincipal').removeClass('hidden');
             //$('#AddIndividual1').removeClass('hidden');
@@ -1004,8 +1072,12 @@
             $('#CEASEditIndividual2').addClass('hidden');
             $('#CEASEditIndividual3').addClass('hidden');
             $('#CEASEditPrincial19sec').addClass('hidden');
+            $('#CEASEditDateofRetirementSec').addClass('hidden');
+            $('#CEASEditDateofDeceasedSec').addClass('hidden');
             $('#CEASEditPrincial15').val('');
             $('#CEASEditPrincial16').val('');
+            $('#CEASEditPrincial19').val('');
+
         }
     }
 
@@ -1091,7 +1163,12 @@
                      $('#CEASEditPrincial25').val(data.cpEngQualified);
                      $('#CEASEditPrincial26').val(data.yearofPractice);
                      $('#CEASEditPrincial27').val(data.prevPractice);
-                    $('#CEASEditPrincial14').val(data.organisationTypeName);
+                     $('#CEASEditPrincial14').val(data.organisationTypeName);
+                     $('#CEASEditPrincial19sec').removeClass('hidden');
+                     $('#CEASEditPrincial19').val(""+data.isRetiredorDecieved);
+                     $('#CEASEditPrincial15').val(data.dateofRetirement);
+                     $('#CEASEditPrincial16').val(data.dateofDeceased);
+                     EditPrincipal19Selected('CEASEditPrincial19')
 
                  } else {
                      $('#CEASPrincipalPartnersId').val(data.id);
@@ -1107,45 +1184,21 @@
                      $('#CEASEditPrincial25').val('');
                      $('#CEASEditPrincial26').val('');
                      $('#CEASEditPrincial27').val('');
-
-                      $('#CEASEditPrincial14').val(data.organisationTypeName);
+                     $('#CEASEditPrincial19sec').addClass('hidden');
+                     $('#CEASEditPrincial14').val(data.organisationTypeName);
                      $('#CEASEditPrincial19').val(data.isNZIAmember);
                      $('#CEASEditPrincial17').val(data.organisationName);
                      $('#CEASEditPrincial18').val(data.activities);
+                     $('#CEASEditPrincial19').val('');
+                     $('#CEASEditPrincial15').val('');
+                     $('#CEASEditPrincial16').val('');
+
                  }
 
                  $('#PrincipalPartnersId').val(data.id);
                  $('#CEASEditPrincial13').val(data.type);
                  EditPrincipal13Selected('CEASEditPrincial13');
-                 //if (data.type != "Principal") {
-                 //    $('#CEASEditPrincial14').val(data.organisationTypeName);
-                 //    EditPrincipal14Selected('CEASEditPrincial14');
-                 //} else {
-                 //    $('#CEASEditPrincial19sec').removeClass('hidden');
-
-                 //}
-                 //$('#CEASEditPrincial5').val("" + data.isNZIAmember);
-                 //CEASEditPrincipal1Selected('CEASEditPrincial5');
-                 //$('#CEASEditPrincial7').val("" + data.isADNZmember);
-                 //CEASEditPrincipal2Selected('CEASEditPrincial7');
-                 //$('#CEASEditPrincial11').val("" + data.isOtherdirectorship);
-                 //CEASEditPrincipal3Selected('CEASEditPrincial11');
-                 //$('#CEASEditPrincial1').val(data.firstName);
-                 //$('#CEASEditPrincial2').val(data.lastName);
-                 //$('#CEASEditPrincial4').val(data.qualifications);
-                 //$('#CEASEditPrincial3').val(data.email);
-                 //$('#CEASEditPrincial6').val(data.nziAmembership);
-                 //$('#CEASEditPrincial9').val(data.yearofPractice);
-                 //$('#CEASEditPrincial10').val(data.prevPractice);
-                 //$('#CEASEditPrincial12').val(data.othercompanyname);
-                 //if ($('#CEASEditPrincial19').val() == "true") {
-                 //    $('#CEASEditDateofRetirementSec').removeClass('hidden');
-                 //    $('#CEASEditDateofDeceasedSec').removeClass('hidden');
-                 //    $('#CEASEditPrincial15').val(data.dateofRetirement);
-                 //    $('#CEASEditPrincial16').val(data.dateofDeceased);
-                 //}
-                 //$('#CEASEditPrincial17').val(data.organisationName);
-                 //$('#CEASEditPrincial18').val(data.activities);
+               
                  UpdateChosen();
              }
          });
@@ -1182,6 +1235,17 @@
                         $(validator).html("<i></i>");
                     }
                 }
+
+                 if ($('#CEASEditPrincial19').val() == '') {
+                     $('#ValidateCEASEditPrincial19').html("<font color='red'>Field is required</font>")
+                        if (validity) {
+                            validity = false;
+                        }else {
+                               $('#ValidateCEASEditPrincial19').html("<i></i>");
+                        }
+
+                 }
+                
             } else {
 
                    if ($('#CEASEditPrincial14').val() == '') {
@@ -1350,6 +1414,18 @@
                         $(validator).html("<i></i>");
                     }
                 }
+
+                if ($('#CEASAddPrincial19').val() == '') {
+                     $('#ValidateCEASAddPrincial19').html("<font color='red'>Field is required</font>")
+                        if (validity) {
+                            validity = false;
+                        }else {
+                               $('#ValidateCEASAddPrincial19').html("<i></i>");
+                        }
+
+                }
+                
+
             } else {
 
                    if ($('#CEASAddPrincial14').val() == '') {
