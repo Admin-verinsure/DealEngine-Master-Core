@@ -47,6 +47,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool UsesEGlobal { get; set; }
 
         public virtual string PolicyNumberPrefixString { get; set; }
+        public virtual string Claim { get; set; }
 
         protected Programme() : this(null) { }
 

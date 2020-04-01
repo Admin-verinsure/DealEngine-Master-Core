@@ -6,9 +6,9 @@ namespace DealEngine.Services.Interfaces
 {
 	public interface IClaimService 
     {
-        Task<Claim> GetTemplateByName(string claimName);
-        Task<List<Claim>> GetClaimsAllClaimsList();
-
+        Task<Domain.Entities.Claim> GetTemplateByName(string claimName);
+        Task<List<Domain.Entities.Claim>> GetClaimsAllClaimsList();
+        Task AddClaim(Domain.Entities.Claim claim);
     }
 }
 

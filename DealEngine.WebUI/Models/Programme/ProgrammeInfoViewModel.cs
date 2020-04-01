@@ -40,6 +40,7 @@ namespace DealEngine.WebUI.Models.Programme
         public string EGlobalClientNumber { get; set; }
         public string EGlobalClientStatus { get; set; }
         public string EGlobalCustomDescription { get; set; }
+        public string ProgrammeClaim { get; set; }
         public bool HasEGlobalCustomDescription { get; set; }
         public bool EGlobalIsActiveOrNot { get; set; }        
         public bool IsPublic { get; set; }

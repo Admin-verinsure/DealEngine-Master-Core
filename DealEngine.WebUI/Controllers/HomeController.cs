@@ -158,7 +158,8 @@ namespace DealEngine.WebUI.Controllers
                             Deals = deals,
                             Name = programme.Name,
                             Languages = languages,
-                            ProgrammeId = programme.Id.ToString()
+                            ProgrammeId = programme.Id.ToString(),
+                            ProgrammeClaim = programme.Claim
                         });
                     }
 
