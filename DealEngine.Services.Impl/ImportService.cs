@@ -382,7 +382,7 @@ namespace DealEngine.Services.Impl
 
         public async Task ImportActivities(User user)
         {
-            string workingDirectory = Environment.CurrentDirectory;            
+            string workingDirectory = "/tmp";            
             var fileName = workingDirectory+ "/ImportData/anzsic06completeclassification.csv";
             var currentTemplateList = await _businessActivityService.GetBusinessActivitiesTemplates();
             List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
@@ -558,7 +558,7 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line
-            string workingDirectory = Environment.CurrentDirectory;
+            string workingDirectory = "/tmp";
             var fileName = workingDirectory + "/ImportData/CEASPrincipals2019Example.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
