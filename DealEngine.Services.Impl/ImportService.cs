@@ -382,7 +382,8 @@ namespace DealEngine.Services.Impl
 
         public async Task ImportActivities(User user)
         {
-            var fileName = "C:\\tmp\\anzsic06completeclassification.csv";
+            string workingDirectory = Environment.CurrentDirectory;            
+            var fileName = workingDirectory+ "\\ImportData\\anzsic06completeclassification.csv";
             var currentTemplateList = await _businessActivityService.GetBusinessActivitiesTemplates();
             List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
 
@@ -443,8 +444,8 @@ namespace DealEngine.Services.Impl
         public async Task ImportCEASServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line
-            //var userFileName = "C:\\tmp\\testclientdata\\NZACSUsers2018.csv";
-            var userFileName = @"C:\tmp\ceas\TestData\CEASIndividuals2019Example.csv";
+            string workingDirectory = Environment.CurrentDirectory;
+            var fileName = workingDirectory + "\\ImportData\\CEASIndividuals2019Example.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
             StreamReader reader;
@@ -453,7 +454,7 @@ namespace DealEngine.Services.Impl
             bool readFirstLine = false;
             string line;
             string email;
-            using (reader = new StreamReader(userFileName))
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
@@ -557,11 +558,11 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line
-            //var principalsFileName = "C:\\tmp\\testclientdata\\NZACSPrincipals2018.csv";
-            var principalsFileName = @"C:\tmp\ceas\TestData\CEASPrincipals2019Example.csv";
+            string workingDirectory = Environment.CurrentDirectory;
+            var fileName = workingDirectory + "\\ImportData\\CEASPrincipals2019Example.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
-            using (reader = new StreamReader(principalsFileName))
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
@@ -673,10 +674,9 @@ namespace DealEngine.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;
-
-           //var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
-            var claimFileName = @"C:\tmp\ceas\TestData\CEASClaims2019Example.csv";
-            using (reader = new StreamReader(claimFileName))
+            string workingDirectory = Environment.CurrentDirectory;
+            var fileName = workingDirectory + "\\ImportData\\CEASClaims2019Example.csv";
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
@@ -712,11 +712,11 @@ namespace DealEngine.Services.Impl
             StreamReader reader;
             BusinessContract businessContract;
             bool readFirstLine = false;
-            string line;            
-            
-            var contractFileName = @"C:\tmp\ceas\TestData\CEASContracts2019Example.csv";
+            string line;
+            string workingDirectory = Environment.CurrentDirectory;
+            var fileName = workingDirectory + "\\ImportData\\CEASContracts2019Example.csv";
 
-            using (reader = new StreamReader(contractFileName))
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
