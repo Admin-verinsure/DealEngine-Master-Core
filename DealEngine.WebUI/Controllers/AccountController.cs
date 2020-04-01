@@ -316,7 +316,7 @@ namespace DealEngine.WebUI.Controllers
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
                 string resultMessage = "";
-                IdentityUser deUser;
+                IdentityUser deUser;                
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
