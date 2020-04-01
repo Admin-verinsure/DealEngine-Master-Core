@@ -129,7 +129,8 @@ namespace DealEngine.WebUI.Models
         public string CurrentUserIsInsurer { get; set; }
 
         public string CurrentUserIsTC { get; set; }
-    }
+		public string ProgrammeClaim { get; set; }
+	}
 
 	public class TaskItem : BaseViewModel
     {

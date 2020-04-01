@@ -187,13 +187,11 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsLPBCategory3 { get; set; }
         public virtual bool IsContractorInsured { get; set; }
         public virtual bool IsInsuredRequired { get; set; }
-
         public virtual bool IsOtherdirectorship { get; set; }
         public virtual string InsuredEntityRelation { get; set; }
-
-        public virtual string Othercompanyname { get; set; }
-        public virtual bool isaffiliation { get; set; }
-        public virtual string affiliationdetails { get; set; }
+        public virtual string OtherCompanyname { get; set; }
+        public virtual bool IsAffiliation { get; set; }
+        public virtual string AffiliationDetails { get; set; }
         public virtual string ProfAffiliation { get; set; }
         public virtual string JobTitle { get; set; }
         public virtual string PartyName { get; set; }

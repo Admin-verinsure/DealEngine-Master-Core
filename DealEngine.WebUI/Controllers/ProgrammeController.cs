@@ -42,8 +42,10 @@ namespace DealEngine.WebUI.Controllers
         IHttpClientService _httpClientService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
         IImportService _importService;
+        IClaimService _claimService;
 
         public ProgrammeController(
+            IClaimService claimService,
             IImportService importService,
             IOrganisationService organisationService,
             IRiskCoverService riskCoverService,
@@ -67,6 +69,7 @@ namespace DealEngine.WebUI.Controllers
             )
             : base (userRepository)
         {
+            _claimService = claimService;
             _importService = importService;
             _applicationLoggingService = applicationLoggingService;
             _productService = productService;
@@ -742,7 +745,7 @@ namespace DealEngine.WebUI.Controllers
                 clientviewmodel.Email = programme.Owner.Email;
                 clientviewmodel.Phone = programme.Owner.Phone;
                 clientviewmodel.OwnerId = OwnerId;
-                clientviewmodel.ProgramId = programmeId;
+                clientviewmodel.ProgramId = programmeId;                
                 clientviewmodel.Id = Id;
 
                 ViewBag.Title = "Term Sheet Template ";
@@ -983,6 +986,7 @@ namespace DealEngine.WebUI.Controllers
                 model.StopAgreement = programme.StopAgreement;
                 model.PolicyNumberPrefixString = programme.PolicyNumberPrefixString;
                 model.HasSubsystemEnabled = programme.HasSubsystemEnabled;
+                model.ProgrammeClaim = programme.Claim;
 
                 return View("EditProgramme", model);
             }
@@ -1113,7 +1117,14 @@ namespace DealEngine.WebUI.Controllers
                     programme.TaxRate = model.TaxRate;
                     programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
                     programme.HasSubsystemEnabled = model.HasSubsystemEnabled;
-                    programme.StopAgreement = model.StopAgreement;                    
+                    programme.StopAgreement = model.StopAgreement;
+                    programme.Claim = "";
+                    if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
+                    {
+                        programme.Claim = model.ProgrammeClaim;
+                        Claim claim = new Claim(programme.Claim, programme.Claim);
+                        await _claimService.AddClaim(claim);
+                    }
                     if (model.StopAgreement)
                     {
                         programme.StopAgreementDateTime = DateTime.UtcNow;

@@ -147,26 +147,17 @@ namespace DealEngine.WebUI.Models
 
         public IEnumerable<SelectListItem> Options { get; set; }
 
+        public IList<InformationItem> ConditionalList { get; set; }
+
         public string Value { get; set; }
 
-        public IEnumerable<LabelPersentageViewModel> LabelPercentageValue { get; set; }
-
-        public virtual InformationItemConditionalViewModel Conditional { get; set; }
+        public IEnumerable<LabelPersentageViewModel> LabelPercentageValue { get; set; }        
 
         public InformationItemViewModel()
         {
             Options = new List<SelectListItem>();
         }
 
-    }
-
-    public class InformationItemConditionalViewModel
-    {
-        public virtual string TriggerValue { get; set; }
-
-        public virtual int VisibilityOnTrigger { get; set; }
-
-        public virtual IEnumerable<InformationItemViewModel> Targets { get; set; }
     }
 
     public enum ItemType

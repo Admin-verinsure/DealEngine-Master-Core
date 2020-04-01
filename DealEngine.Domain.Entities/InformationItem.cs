@@ -21,6 +21,7 @@ namespace DealEngine.Domain.Entities
 			Type = itemType;
 
 			DropdownList = new List<DropdownListItem>();
+			ConditionalList = new List<InformationItem>();
 		}
 
       
@@ -42,7 +43,7 @@ namespace DealEngine.Domain.Entities
         public virtual bool ReferUnderwriting { get; set; }
 
 		public virtual bool Required { get; set; }
-		public virtual InformationItemConditional Conditional { get; set; }
+		public virtual IList<InformationItem> ConditionalList { get; set; }
         public virtual IList<DropdownListItem> DropdownList { get; set; }
 
 		// Add locality later
@@ -225,16 +226,6 @@ namespace DealEngine.Domain.Entities
 		public virtual void Remove (Vehicle vehicle)
 		{
 			Vehicles.Remove (vehicle);
-		}
-	}
-
-	public class InformationItemConditional : InformationItem
-	{
-		protected InformationItemConditional() : base(null, null, null, null, 0, null) { }
-
-		public InformationItemConditional(User createdBy, string name, string label, string id, int width, string itemType)
-			: base(createdBy, name, label, id, width, itemType)
-		{
 		}
 	}
 

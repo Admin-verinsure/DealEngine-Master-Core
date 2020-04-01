@@ -78,25 +78,24 @@ namespace DealEngine.Services.Impl
 			return infoItem;
 		}
 
-        public async Task<InformationItem> CreateItemFromForm(IFormCollection form, User user, string title)
+        public async Task<InformationItem> CreateItem(string title, User user, string questiontype, string question, List<string> options)
         {
             InformationItem item;
             List<DropdownListOption> ddOptions = new List<DropdownListOption>();
             string randomName = System.IO.Path.GetRandomFileName().Replace(".", "");
-            switch (form["questiontype"])
+            switch (questiontype)
             {
                 case "textTemplate":
-                    item = await CreateTextboxItem(user, randomName, form["question"], 10, "TEXTBOX");
+                    item = await CreateTextboxItem(user, randomName, question, 10, "TEXTBOX");
                     break;
                 case "yesNoTemplate":
                     ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
                     ddOptions.Add(new DropdownListOption(user, "Yes", "0"));
                     ddOptions.Add(new DropdownListOption(user, "No", "1"));
-                    item = await CreateDropdownListItem(user, randomName, form["question"], title, ddOptions, 10, "DROPDOWNLIST");
+                    item = await CreateDropdownListItem(user, randomName, question, title, ddOptions, 10, "DROPDOWNLIST");
                     break;
                 case "dropdownTemplate":
                     ddOptions.Add(new DropdownListOption(user, "-- Select --", ""));
-                    var options = form["dropdownvalue"].ToList();
                     for (int j = 0; j < options.Count; j++)
                     {
                         if (!string.IsNullOrWhiteSpace(options.ElementAt(j)))
@@ -104,11 +103,21 @@ namespace DealEngine.Services.Impl
                             ddOptions.Add(new DropdownListOption(user, options.ElementAt(j), j.ToString()));
                         }
                     }
-                    item = await CreateDropdownListItem(user, randomName, form["question"], title, ddOptions, 10, "DROPDOWNLIST");
+                    item = await CreateDropdownListItem(user, randomName, question, title, ddOptions, 10, "DROPDOWNLIST");
                     break;
                 default:
-                    throw new Exception("Unable to map element (" + form["questiontype"] + ")");
+                    throw new Exception("Unable to map element (" + questiontype + ")");
             }
+            return item;
+        }
+
+        public async Task<InformationItem> CreateItemFromForm(IFormCollection form, User user, string title)
+        {
+            InformationItem item;            
+            var questiontype = form["questiontype"];
+            var question = form["question"];
+            var options = form["dropdownvalue"].ToList();
+            item = await CreateItem(title, user, questiontype, question, options);
             try
             {
                 var on = form["questionreferunderwriting"];
@@ -126,6 +135,19 @@ namespace DealEngine.Services.Impl
             catch (Exception ex)
             {
                 item.Required = false;
+            }
+            try
+            {
+                var on = form["conditional"];
+                questiontype = form["conditionalquestiontype"];
+                question = form["conditionalquestion"];
+                options = form["conditionaldropdownvalue"].ToList();
+                var conditionalquestion = await CreateItem(title, user, questiontype, question, options);
+                item.ConditionalList.Add(conditionalquestion);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             return item;
