@@ -14,6 +14,7 @@ namespace DealEngine.Services.Interfaces
         Task ImportActivities(User user);
         Task ImportCEASServiceIndividuals(User user);
         Task ImportCEASServiceClaims(User user);
-        Task ImportCEASServiceContract(User user);        
+        Task ImportCEASServiceContract(User user);
+        Task ImportCEASServicePrincipals(User user);
     }
 }
