@@ -41,9 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl250klimitminpremium", "sl500klimitminpremium", "sl1millimitminpremium",
-            //    "sl250klimitunder6employeerate", "sl500klimitunder6employeerate", "sl1millimitunder6employeerate", "sl250klimit6to10employeerate", "sl500klimit6to10employeerate",
-            //    "sl1millimit6to10employeerate", "sl250klimitover10employeerate", "sl500klimitover10employeerate", "sl1millimitover10employeerate");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl5millimitpremium", "sl10millimitpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -62,29 +60,34 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit250k = 250000;
-            decimal TermPremium250k = 0m;
-            decimal TermBrokerage250k = 0m;
-
-
+            int TermLimit5mil = 5000000;
+            decimal TermPremium5mil = rates["sl5millimitpremium"];
+            decimal TermBrokerage5mil = 0m;
+            int TermLimit10mil = 10000000;
+            decimal TermPremium10mil = rates["sl10millimitpremium"];
+            decimal TermBrokerage10mil = 0m;
             int TermExcess = 0;
-            int employeenumber = 0;
 
+            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage;
+            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage;
 
-            //Return terms based on the limit options
+            ClientAgreementTerm termsl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit5mil, TermExcess);
+            termsl5millimitoption.TermLimit = TermLimit5mil;
+            termsl5millimitoption.Premium = TermPremium5mil;
+            termsl5millimitoption.Excess = TermExcess;
+            termsl5millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl5millimitoption.Brokerage = TermBrokerage5mil;
+            termsl5millimitoption.DateDeleted = null;
+            termsl5millimitoption.DeletedBy = null;
 
-            TermExcess = 500;
-
-            //TermPremium250k = GetPremiumFor(rates, employeenumber, TermLimit250k);
-            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit250k, TermExcess);
-            termsl250klimitoption.TermLimit = TermLimit250k;
-            termsl250klimitoption.Premium = TermPremium250k;
-            termsl250klimitoption.Excess = TermExcess;
-            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
-            termsl250klimitoption.Brokerage = TermBrokerage250k;
-            termsl250klimitoption.DateDeleted = null;
-            termsl250klimitoption.DeletedBy = null;
-
+            ClientAgreementTerm termsl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit10mil, TermExcess);
+            termsl10millimitoption.TermLimit = TermLimit10mil;
+            termsl10millimitoption.Premium = TermPremium10mil;
+            termsl10millimitoption.Excess = TermExcess;
+            termsl10millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl10millimitoption.Brokerage = TermBrokerage10mil;
+            termsl10millimitoption.DateDeleted = null;
+            termsl10millimitoption.DeletedBy = null;
 
             ////Referral points per agreement
 

@@ -41,9 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            //IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl1millimitincomeunder1milpremium", "pl2millimitincomeunder1milpremium", "pl3millimitincomeunder1milpremium", "pl4millimitincomeunder1milpremium", "pl5millimitincomeunder1milpremium",
-            //    "pl1millimitincome1milto3milpremium", "pl2millimitincome1milto3milpremium", "pl3millimitincome1milto3milpremium", "pl4millimitincome1milto3milpremium", "pl5millimitincome1milto3milpremium",
-            //    "pl1millimitincome3milto5milpremium", "pl2millimitincome3milto5milpremium", "pl3millimitincome3milto5milpremium", "pl4millimitincome3milto5milpremium", "pl5millimitincome3milto5milpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "pl2millimitpremium", "pl5millimitpremium", "pl10millimitpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -62,28 +60,47 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = 0m;
-            decimal TermBrokerage1mil = 0m;
-
-
+            int TermLimit2mil = 2000000;
+            decimal TermPremium2mil = rates["pl2millimitpremium"];
+            decimal TermBrokerage2mil = 0m;
+            int TermLimit5mil = 5000000;
+            decimal TermPremium5mil = rates["pl5millimitpremium"];
+            decimal TermBrokerage5mil = 0m;
+            int TermLimit10mil = 10000000;
+            decimal TermPremium10mil = rates["pl10millimitpremium"];
+            decimal TermBrokerage10mil = 0m;
             int TermExcess = 0;
-            decimal feeincome = 0;
 
-            //Return terms based on the limit options
+            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage;
+            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage;
+            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage;
 
-            TermExcess = 500;
+            ClientAgreementTerm termpl2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit2mil, TermExcess);
+            termpl2millimitoption.TermLimit = TermLimit2mil;
+            termpl2millimitoption.Premium = TermPremium2mil;
+            termpl2millimitoption.Excess = TermExcess;
+            termpl2millimitoption.BrokerageRate = agreement.Brokerage;
+            termpl2millimitoption.Brokerage = TermBrokerage2mil;
+            termpl2millimitoption.DateDeleted = null;
+            termpl2millimitoption.DeletedBy = null;
 
-            //TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
-            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit1mil, TermExcess);
-            termsl1millimitoption.TermLimit = TermLimit1mil;
-            termsl1millimitoption.Premium = TermPremium1mil;
-            termsl1millimitoption.Excess = TermExcess;
-            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
-            termsl1millimitoption.Brokerage = TermBrokerage1mil;
-            termsl1millimitoption.DateDeleted = null;
-            termsl1millimitoption.DeletedBy = null;
+            ClientAgreementTerm termpl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit5mil, TermExcess);
+            termpl5millimitoption.TermLimit = TermLimit5mil;
+            termpl5millimitoption.Premium = TermPremium5mil;
+            termpl5millimitoption.Excess = TermExcess;
+            termpl5millimitoption.BrokerageRate = agreement.Brokerage;
+            termpl5millimitoption.Brokerage = TermBrokerage5mil;
+            termpl5millimitoption.DateDeleted = null;
+            termpl5millimitoption.DeletedBy = null;
 
+            ClientAgreementTerm termpl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "PL", TermLimit10mil, TermExcess);
+            termpl10millimitoption.TermLimit = TermLimit10mil;
+            termpl10millimitoption.Premium = TermPremium10mil;
+            termpl10millimitoption.Excess = TermExcess;
+            termpl10millimitoption.BrokerageRate = agreement.Brokerage;
+            termpl10millimitoption.Brokerage = TermBrokerage10mil;
+            termpl10millimitoption.DateDeleted = null;
+            termpl10millimitoption.DeletedBy = null;
 
 
             ////Referral points per agreement
