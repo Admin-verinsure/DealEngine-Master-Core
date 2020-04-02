@@ -55,8 +55,7 @@ namespace DealEngine.Services.Impl
                 if(territory == null)
                 {
                     await CreateTerritoryTemplate("NZ");
-                }
-
+                }                
             }
 
             return await _territoryTemplateRepository.FindAll().FirstOrDefaultAsync(t => t.Location == LocationName);
