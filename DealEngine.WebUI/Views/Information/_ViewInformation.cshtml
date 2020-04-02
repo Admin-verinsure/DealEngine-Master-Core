@@ -136,6 +136,15 @@
                                                     break;
 
                                             }
+                                            @if (item.ConditionalList.Count != 0)
+                                            {
+                                                <label class="label">@item.ConditionalList.FirstOrDefault().Label</label>
+                                                <label class="input">
+                                                    <i class="@item.Icon"></i>
+                                                    <input data-id="@item.ConditionalList.FirstOrDefault().Id" data-type="@item.ConditionalList.FirstOrDefault().Type" data-name="@item.ConditionalList.FirstOrDefault().Name"
+                                                           id="@item.ConditionalList.FirstOrDefault().Name" type="@item.ConditionalList.FirstOrDefault().ControlType" name="@item.ConditionalList.FirstOrDefault().Name" placeholder="@item.ConditionalList.FirstOrDefault().Label" value="@item.Value" />
+                                                </label>
+                                            }
                                         </section>
                                                 }
                                                 else
@@ -144,7 +153,7 @@
                                                 }
                                             }
 
-                                            <button onclick="AddSection(informationSection.Id)" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>
+                                            @*<button onclick="AddSection(informationSection.Id)" class="btn-sm AddupdateBoat" id="updateBoat">Add</button>*@
                                             @*<button onclick="ClearBoats(event,'#boatTabs3','boatTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
                                         }
                                     </div>

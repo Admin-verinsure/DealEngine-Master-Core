@@ -1,0 +1,454 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+<div class="padding-10">
+    <div id="PIForm" class="smart-form" novalidate="novalidate">
+        <fieldset id="PMINZ_ProfessionalIndemnity">
+            <div class="row">
+
+
+                <div class="panel-body" id="@Model.Id body">
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                Do you or have you acted in the capacity of an Engineer to the Contract?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI1" onchange="validatePMINZPI('PMINZPI1')" class="form-control rmv editable" name="Claimexp1">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI1"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="PMINZP1Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI1Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI1Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                Do you engage in any Component Specification activities and or design ( not including design management activities)?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI2" onchange="validatePMINZPI('PMINZPI2')" class="form-control rmv editable" name="Claimexp1">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI2"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="PMINZPI2Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI2Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI2Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                    <label class="label cgmodalLabel">Contracting Services</label>
+
+
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Please select the areas you provide contracting services from the following:
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="PMINZPI4">
+                                <input type="checkbox" name="contractingservices"  value="Networksecurity"> Network security<br>
+                                <input type="checkbox" name="contractingservices"  value="onlinestocktrading"> On-line stock trading<br>
+                                <input type="checkbox" name="contractingservices" value="fundsmanagementandinvestment"> Funds management / investment and financial advisingy<br>
+                                <input type="checkbox" name="contractingservices" value="manufacturingcontrolprocess"> Manufacturing control processes<br>
+                                <input type="checkbox" name="contractingservices" value="oilandgas"> Oil & gas<br>
+                                <input type="checkbox" name="contractingservices" value="Mining"> Mining<br>
+                                <input type="checkbox" name="contractingservices" value="Medical"> Medical<br>
+                                <input type="checkbox" name="contractingservices" value="Defence"> Defence<br>
+                                <input type="checkbox" name="contractingservices" value="None"> None of the above<br>
+
+                            <p class="validationContainer" id="ValidatePMINZPI3"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="PMINZPI3Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI3Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI3Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <label class="label cgmodalLabel">Insurance History</label>
+
+                        <label class="label cgmodalLabel">Have you ever had any:</label>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                a) insurance declined or cancelled;
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI4" onchange="validatePMINZPI('PMINZPI4')" class="form-control rmv editable" name="Claimexp1">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI4"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="PMINZPI4Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide more details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI4Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI4Details"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                b) renewal refused;
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI5" onchange="validatePMINZPI('PMINZPI5')" class="form-control rmv editable" name="Claimexp2">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI5"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+                            <div class="row hidden " id="PMINZPI5Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide more details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI5Details"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI5Details"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                c) special conditions imposed;
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI6" onchange="validatePMINZPI('PMINZPI6')" class="form-control rmv editable" name="Claimexp3">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI6"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+                            <div class="row hidden" id="PMINZPI6Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide more details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI6Details"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI6Details"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                c) excess imposed;
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI7" onchange="validatePMINZPI('PMINZPI7')" class="form-control rmv editable" name="Claimexp3">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI7"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+                            <div class="row hidden" id="PMINZPI7Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide more details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI7Details"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI7Details"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                            <label class="label required">
+                                c) claim rejected?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <label class="input">
+                                <select id="PMINZPI8" onchange="validatePMINZPI('PMINZPI8')" class="form-control rmv editable" name="Claimexp3">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidatePMINZPI8"></p>
+
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-10 col-md-10 col-lg-10">
+
+                            <div class="row hidden" id="PMINZPI8Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                    <div class="form-group col col-6">
+                                        <label><strong>You have answered "Yes" </strong>, please provide more details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI8Details"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidatePMINZPI8Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+
+
+                </div>
+            </div>
+
+            @*<button onclick="ValidateProfessionalIndemnity(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
+            <button onclick="$('#StatutoryLiability1').val('');$('#StatutoryLiability2').val(''); event.preventDefault();" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
+
+        </fieldset>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+
+        $.ajax({
+            url: '@Url.Action("GetProfessionalIdemnity", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                var count = 0;
+                for (var i = 0; i < data.length - 4; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
+                        }
+                    }
+                }
+                if (data[0] != "" && valid == "true") {                    
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                        }                        
+                    }
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
+
+    var clientInformationSheet = $('#AnswerSheetId').val();
+
+    function ProfessionalIndemnitySelected(ProfessionalIndemnity) {        
+        var professionalIndemnity = document.getElementById(ProfessionalIndemnity);
+        var vhh = professionalIndemnity.options[professionalIndemnity.selectedIndex].value;
+
+        if (professionalIndemnity.options[professionalIndemnity.selectedIndex].value == "false") {
+            $('#ProfessionalInsuranceSec').removeClass('hidden');
+        } else {
+            $('#ProfessionalIndemnity8').val('');
+            $('#ProfessionalIndemnity9').val('');
+            $('#ProfessionalIndemnity10').val('');
+            $('#ProfessionalIndemnity11').val('');
+            $('#ProfessionalInsuranceSec').addClass('hidden');
+        }
+    }
+
+    function ValidateProfessionalIndemnity() {
+        event.preventDefault();
+        var validity = true;
+        for (var index = 1; index <= 7; index++) {
+            var addPrincial = "#ProfessionalIndemnity" + index;
+            var value = $(addPrincial).val();
+            var validator = "#ValidateProfessionalIndemnity" + index;
+
+            if (value == "") {
+                $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                $(validator).html("<i></i>");
+            }
+        }
+
+        for (var index = 8; index <= 11; index++) {
+            var addPrincial = "#ProfessionalIndemnity" + index;
+            var value = $(addPrincial).val();
+            var validator = "#ValidateProfessionalIndemnity" + index;
+
+            if (value == "" && $('#ProfessionalIndemnity7').val() == "false") {
+                $(validator).html("<font color='red'>Field is required</font>")
+                if (validity) {
+                    validity = false;
+                }
+            } else {
+                $(validator).html("<i></i>");
+            }
+        }
+
+        return validity;
+    };
+
+    function ShowAdditionalInfo(selected) {
+        var value = $("#" + selected).val();
+        if(value == "true")
+        alert ("Please use the  Notification Panel below to notify of this potential claim");
+    };
+
+    function SaveProfessionalIndemnity() {
+        var ProfessionalIndemnity = new Array(11);
+        for (var i = 0; i < ProfessionalIndemnity.length; i++) {
+            ProfessionalIndemnity[i] = new Array(2);
+        }
+        for (var i = 1; i <= 11; i++) {
+            for (var j = 0; j < 2; j++) {
+                ProfessionalIndemnity[i - 1][0] = "ProfessionalIndemnity" + i;
+                var professionalIndemnity = "#ProfessionalIndemnity" + i;
+                ProfessionalIndemnity[i - 1][1] = $(professionalIndemnity).val();
+            }
+        }
+
+        var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
+        var success = false;
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                success = true;
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                success = false;
+                alert("Unable to save.");
+            });
+        return success;
+    }
+</script>
+
+
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>

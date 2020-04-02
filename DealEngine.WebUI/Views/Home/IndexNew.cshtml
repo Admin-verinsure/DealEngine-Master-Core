@@ -109,7 +109,7 @@
                                         {
                                             if (!string.IsNullOrWhiteSpace(item.ProgrammeClaim))
                                             {
-                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim))
+                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim) || User.IsInRole("TCUser"))
                                                 {
                                                     <tr>
                                                         <td>
@@ -177,21 +177,43 @@
                                     <tbody>
                                         @foreach (var item in Model.ProgrammeItems)
                                         {
-
-                                            <tr>
-                                                <td>
-                                                    @item.Name
-                                                </td>
-                                                <td>
-                                                    @foreach (var lang in item.Languages)
-                                                    {
-                                                        @lang.ToUpper()
-                                                    }
-                                                </td>
-                                                <td>
-                                                    <a class="btn btn-success btn-sm" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
-                                                </td>
-                                            </tr>
+                                            if (!string.IsNullOrWhiteSpace(item.ProgrammeClaim))
+                                            {
+                                                if (User.HasClaim(item.ProgrammeClaim, item.ProgrammeClaim) || User.IsInRole("TCUser"))
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @item.Name
+                                                        </td>
+                                                        <td>
+                                                            @foreach (var lang in item.Languages)
+                                                            {
+                                                                @lang.ToUpper()
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-success btn-sm" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @item.Name
+                                                    </td>
+                                                    <td>
+                                                        @foreach (var lang in item.Languages)
+                                                        {
+                                                            @lang.ToUpper()
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-success btn-sm" href="/Programme/TermSheetConfirguration/@item.ProgrammeId"><i class="fa fa-search"></i> View</a>
+                                                    </td>
+                                                </tr>
+                                            }
                                         }
                                     </tbody>
                                 </table>

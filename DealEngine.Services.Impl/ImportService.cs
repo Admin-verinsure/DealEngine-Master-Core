@@ -21,6 +21,7 @@ namespace DealEngine.Services.Impl
         IOrganisationTypeService _organisationTypeService;
         IBusinessActivityService _businessActivityService;
         IInsuranceAttributeService _InsuranceAttributeService;
+        private readonly string WorkingDirectory;
 
         public ImportService(
             IOrganisationService organisationService, 
@@ -31,8 +32,10 @@ namespace DealEngine.Services.Impl
             IUnitOfWork unitOfWork, 
             IOrganisationTypeService organisationTypeService, 
             IInsuranceAttributeService insuranceAttributeService,
+            IMapperSession<Organisation> organisationRepository, 
             IBusinessActivityService businessActivityService)
         {
+            WorkingDirectory = "C://tmp//ceas//"; //"/tmp/ImportData/"; 
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
@@ -385,8 +388,8 @@ namespace DealEngine.Services.Impl
         }
 
         public async Task ImportActivities(User user)
-        {
-            var fileName = "C:\\tmp\\anzsic06completeclassification.csv";
+        {                       
+            var fileName = WorkingDirectory + "anzsic06completeclassification.csv";
             var currentTemplateList = await _businessActivityService.GetBusinessActivitiesTemplates();
             List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
 
@@ -444,10 +447,10 @@ namespace DealEngine.Services.Impl
                 await _businessActivityService.CreateBusinessActivityTemplate(businessActivity);
             }
         }
-
         public async Task ImportCEASServiceIndividuals(User CreatedUser)
         {
-            var userFileName = @"C:\tmp\ceas\CEASPrincipals2019.csv";
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "CEASClients2019.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
             StreamReader reader;
@@ -455,12 +458,11 @@ namespace DealEngine.Services.Impl
             Organisation organisation = null;
             bool readFirstLine = false;
             string line;
-            using (reader = new StreamReader(userFileName))
+            string email;
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
-                    var email = "";
-                    var username = "";
                     //if has a title row
                     if (!readFirstLine)
                     {
@@ -471,37 +473,48 @@ namespace DealEngine.Services.Impl
                     string[] parts = line.Split(',');
                     user = null;
                     organisation = null;
+                    email = "";
                     try
                     {
-                        username = parts[3].Replace(" ", string.Empty) + parts[2].Replace(" ", string.Empty);
                         if (string.IsNullOrWhiteSpace(parts[4]))
                         {
-                            email = username + "@DealEngine.com";
+                            email = parts[8] + "@DealEngine.com";
+                            user = await _userService.GetUserByEmail(email);
                         }
                         else
                         {
                             email = parts[4];
                         }
-                        
+
                         organisation = await _organisationService.GetOrganisationByEmail(email);
 
-                        if (organisation == null)
-                        {
-                            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
-                            organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, email);
-                            await _organisationService.CreateNewOrganisation(organisation);
-                        }
-                        
-                        user = await _userService.GetUserByEmail(email);
-                        
                         if (user == null)
                         {
-                            user = new User(currentUser, Guid.NewGuid(), username);
+                            user = new User(currentUser, Guid.NewGuid(), parts[8]);
+                        }
+                        organisation = await _organisationService.GetOrganisationByEmail(email);
+                        if (parts[0] == "f")
+                        {
+                            if (organisation == null)
+                            {
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2] + " " + parts[3], organisationType, email);
+                                await _organisationService.CreateNewOrganisation(organisation);
+                            }
+                        }
+                        else
+                        { 
+                            if (organisation == null)
+                            {
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, parts[4]);
+                                await _organisationService.CreateNewOrganisation(organisation);
+                            }
                         }
 
                         user.FirstName = parts[3];
-                        user.LastName = parts[2];
-                        user.FullName = parts[1];
+                        user.LastName = parts[4];
+                        user.FullName = parts[3] + " " + parts[4];
                         user.Email = email;
                         user.Address = "";
                         user.Phone = "12345";
@@ -523,7 +536,7 @@ namespace DealEngine.Services.Impl
                         {
 
                             clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                            clientProgramme.ClientProgrammeMembershipNumber = parts[0];
+                            clientProgramme.ClientProgrammeMembershipNumber = parts[7];
                             sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                             try
                             {
@@ -542,17 +555,134 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+        public async Task ImportCEASServicePrincipals(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = false;
+            string line;
+            string email;
+            string userName;
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "CEASPrincipals2019.csv";
+            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
+            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    try
+                    {
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[1]);
+                        if (hasProgramme)
+                        {
+                            userName = parts[4].Replace(" ", string.Empty) + "_" + parts[3];
+
+                            if (string.IsNullOrWhiteSpace(parts[5]))
+                            {
+                                email = parts[2] + "@DealEngine.com";
+                            }
+                            else
+                            {
+                                email = parts[5];
+                            }
+
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2], organisationType, email);
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            organisation.NZIAmembership = parts[1];
+                            organisation.Email = email;
+                            organisation.Phone = "12345";
+
+                            if (!string.IsNullOrEmpty(parts[15]))
+                            {
+                                organisation.Qualifications = parts[15];
+                            }
+                            if (!string.IsNullOrEmpty(parts[11]))
+                            {
+                                organisation.IsIPENZmember = parts[11];
+                            }
+                            if (!string.IsNullOrEmpty(parts[12]))
+                            {
+                                organisation.CPEngQualified = parts[12];
+                            }                            
+
+                            using (var uom = _unitOfWork.BeginUnitOfWork())
+                            {
+                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                try
+                                {
+                                    await uom.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    await uom.Rollback();
+                                }
+                            }
+
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            await _programmeService.AddOrganisationByMembership(organisation);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user == null)
+                            {                                
+                                try
+                                {
+                                    user = await _userService.GetUser(userName);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    userName = userName + randomNumber.ToString();
+                                }
+                                user = new User(currentUser, Guid.NewGuid(), userName);
+                                user.FirstName = parts[4];
+                                user.LastName = parts[3];
+                                user.FullName = parts[4] + " " + parts[3];
+                                user.Email = email;
+                                user.Address = "Import Address";
+                                user.Phone = "12345";
+
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                user.SetPrimaryOrganisation(organisation);
+                                await _userService.ApplicationCreateUser(user);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+        }
         public async Task ImportCEASServiceClaims(User CreatedUser)
         {
             var currentUser = CreatedUser;
             StreamReader reader;
             ClaimNotification claimNotification;
             bool readFirstLine = false;
-            string line;
-
-           //var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
-            var claimFileName = @"C:\tmp\ceas\CEASClaims2019.csv";
-            using (reader = new StreamReader(claimFileName))
+            string line;            
+            var fileName = WorkingDirectory + "CEASClaims2019.csv";
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
@@ -588,11 +718,10 @@ namespace DealEngine.Services.Impl
             StreamReader reader;
             BusinessContract businessContract;
             bool readFirstLine = false;
-            string line;            
-            
-            var contractFileName = @"C:\tmp\ceas\CEASContracts2019.csv";
+            string line;
+            var fileName = WorkingDirectory + "CEASContracts2019.csv";
 
-            using (reader = new StreamReader(contractFileName))
+            using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
                 {
@@ -609,7 +738,7 @@ namespace DealEngine.Services.Impl
                         businessContract.MembershipNumber = parts[6];
                         businessContract.ContractTitle = parts[0];
                         businessContract.ProjectDescription = parts[1];
-                        businessContract.Year = parts[5];
+                        businessContract.ProjectDuration = parts[5];
                         businessContract.ConstructionValue = parts[4];
                         businessContract.Fees = parts[3];
                         businessContract.MajorResponsibilities = parts[2];

@@ -16,7 +16,7 @@ using DealEngine.WebUI.Helpers;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Linq.Dynamic;
-using Newtonsoft.Json;
+using AutoMapper;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -47,9 +47,11 @@ namespace DealEngine.WebUI.Controllers
         IBusinessContractService _businessContractService;
         IApplicationLoggingService _applicationLoggingService;
         ILogger<ServicesController> _logger;
+        IMapper _mapper;
 
 
         public ServicesController(
+            IMapper mapper,
             ILogger<ServicesController> logger,
             IApplicationLoggingService applicationLoggingService,
             IBusinessContractService businessContractService,
@@ -79,6 +81,7 @@ namespace DealEngine.WebUI.Controllers
 
             : base(userService)
         {
+            _mapper = mapper;
             _logger = logger;
             _applicationLoggingService = applicationLoggingService;
             _clientAgreementService = clientAgreementService;
@@ -2495,7 +2498,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.YearofPractice = model.YearofPractice;
                     organisation.PrevPractice = model.prevPractice;
                     organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                    organisation.Othercompanyname = model.Othercompanyname;
+                    organisation.OtherCompanyname = model.Othercompanyname;
                     organisation.Activities = model.Activities;
                     organisation.Email = userdb.Email;
                     organisation.Type = model.Type;
@@ -2662,21 +2665,22 @@ namespace DealEngine.WebUI.Controllers
                         organisationName = model.OrganisationName;
                     }
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
-                    organisation.Qualifications = model.Qualifications;
-                    organisation.IsNZIAmember = model.IsNZIAmember;
-                    organisation.NZIAmembership = model.NZIAmembership;
-                    organisation.IsADNZmember = model.IsADNZmember;
-                    organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
-                    organisation.IsLPBCategory3 = model.IsLPBCategory3;
-                    organisation.YearofPractice = model.YearofPractice;
-                    organisation.PrevPractice = model.prevPractice;
-                    organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                    organisation.Othercompanyname = model.Othercompanyname;
-                    organisation.Activities = model.Activities;
-                    organisation.Email = userdb.Email;
-                    organisation.Type = model.Type;
-                    organisation.IsIPENZmember = model.IsIPENZmember;
-                    organisation.CPEngQualified = model.CPEngQualified;
+                    organisation = _mapper.Map<Organisation>(model);
+                    //organisation.Qualifications = model.Qualifications;
+                    //organisation.IsNZIAmember = model.IsNZIAmember;
+                    //organisation.NZIAmembership = model.NZIAmembership;
+                    //organisation.IsADNZmember = model.IsADNZmember;
+                    //organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+                    //organisation.IsLPBCategory3 = model.IsLPBCategory3;
+                    //organisation.YearofPractice = model.YearofPractice;
+                    //organisation.PrevPractice = model.prevPractice;
+                    //organisation.IsOtherdirectorship = model.IsOtherdirectorship;
+                    //organisation.OtherCompanyname = model.Othercompanyname;
+                    //organisation.Activities = model.Activities;
+                    //organisation.Email = userdb.Email;
+                    //organisation.Type = model.Type;
+                    //organisation.IsIPENZmember = model.IsIPENZmember;
+                    //organisation.CPEngQualified = model.CPEngQualified;
                     if (model.DateofBirth != null)
                     {
                         organisation.DateofBirth = DateTime.Parse(LocalizeTime(DateTime.Parse(model.DateofBirth), "d"));
@@ -2787,7 +2791,7 @@ namespace DealEngine.WebUI.Controllers
                         if (orgTypeName == "Person - Individual")
                         {
                             userdb = await _userService.GetUserByEmail(organisation.Email);
-                            if (userdb == null)
+                            if (userdb != null)
                             {
                                 using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
                                 {
@@ -2848,7 +2852,9 @@ namespace DealEngine.WebUI.Controllers
                             organisation.YearofPractice = model.YearofPractice;
                             organisation.PrevPractice = model.prevPractice;
                             organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                            organisation.Othercompanyname = model.Othercompanyname;
+                            organisation.OtherCompanyname = model.Othercompanyname;
+                            organisation.IsRetiredorDecieved = model.IsRetiredorDecieved;
+
                             organisation.Activities = model.Activities;
                             organisation.Email = userdb.Email;
                             organisation.Type = model.Type;
@@ -2874,7 +2880,7 @@ namespace DealEngine.WebUI.Controllers
                             organisation.YearofPractice = model.YearofPractice;
                             organisation.PrevPractice = model.prevPractice;
                             organisation.IsOtherdirectorship = model.IsOtherdirectorship;
-                            organisation.Othercompanyname = model.Othercompanyname;
+                            organisation.OtherCompanyname = model.Othercompanyname;
                             organisation.Activities = model.Activities;
                             organisation.Email = userdb.Email;
                             organisation.Type = model.Type;
@@ -3028,8 +3034,8 @@ namespace DealEngine.WebUI.Controllers
                     }
                     organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
                     organisation.Qualifications = model.Qualifications;
-                    organisation.isaffiliation = model.isaffiliation;
-                    organisation.affiliationdetails = model.affiliationdetails;
+                    organisation.IsAffiliation = model.isaffiliation;
+                    organisation.AffiliationDetails = model.affiliationdetails;
                     organisation.ProfAffiliation = model.ProfAffiliation;
                     organisation.JobTitle = model.JobTitle;
                     organisation.Email = model.Email;
@@ -3191,8 +3197,8 @@ namespace DealEngine.WebUI.Controllers
                             organisation.ChangeOrganisationName(organisationName);
                             organisation.Qualifications = model.Qualifications;
                             organisation.Type = model.Type;
-                            organisation.isaffiliation = model.isaffiliation;
-                            organisation.affiliationdetails = model.affiliationdetails;
+                            organisation.IsAffiliation = model.isaffiliation;
+                            organisation.AffiliationDetails = model.affiliationdetails;
                             organisation.ProfAffiliation = model.ProfAffiliation;
                             organisation.JobTitle = model.JobTitle;
                             organisation.Email = model.Email;
@@ -3209,9 +3215,9 @@ namespace DealEngine.WebUI.Controllers
                             organisation = new Organisation(currentUser, Guid.NewGuid(), organisationName, organisationType, userdb.Email);
                             organisation.Qualifications = model.Qualifications;
                             organisation.Type = model.Type;
-                            organisation.isaffiliation = model.isaffiliation;
+                            organisation.IsAffiliation = model.isaffiliation;
                             organisation.PartyName = model.PartyName;
-                            organisation.affiliationdetails = model.affiliationdetails;
+                            organisation.AffiliationDetails = model.affiliationdetails;
                             organisation.ProfAffiliation = model.ProfAffiliation;
                             organisation.JobTitle = model.JobTitle;
                             organisation.Email = model.Email;
@@ -3268,8 +3274,8 @@ namespace DealEngine.WebUI.Controllers
                     model.LastName = userdb.LastName;
                     model.Email = org.Email;
                     model.Qualifications = org.Qualifications;
-                    model.isaffiliation = org.isaffiliation;
-                    model.affiliationdetails = org.affiliationdetails;
+                    model.isaffiliation = org.IsAffiliation;
+                    model.affiliationdetails = org.AffiliationDetails;
                     model.ProfAffiliation = org.ProfAffiliation;
                     model.JobTitle = org.JobTitle;
                     model.InsuredEntityRelation = org.InsuredEntityRelation;
@@ -3377,7 +3383,7 @@ namespace DealEngine.WebUI.Controllers
                     }
                     model.IsOtherdirectorship = org.IsOtherdirectorship;
                     model.IsRetiredorDecieved = org.IsRetiredorDecieved;
-                    model.Othercompanyname = org.Othercompanyname;
+                    model.Othercompanyname = org.OtherCompanyname;
                     model.Type = org.Type;
                     model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";

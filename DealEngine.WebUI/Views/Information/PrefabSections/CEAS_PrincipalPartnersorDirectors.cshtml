@@ -41,7 +41,7 @@
                                      {
                                          name: "update", align: 'center', width: 120, search: false, formatter: function (cellvalue, options, rowobject) {
 
-                                                        return ('<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'true\', \'#PrincipalDirectors\', \'#tblRemovedPrincipalDirectors\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                                        return ('<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'true\', \'#CEASPrincipalDirectors\', \'#tblCEASRemovedPrincipalDirectors\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                          }
                                      }
 								],
@@ -72,7 +72,7 @@
                             </script>
                             <table id="CEASPrincipalDirectors"><tr><td></td></tr></table>
                             <div id="CEASpagerNamedParty"></div>
-                        </section>ValidateCEASEditPrincipalDirectors
+                        </section>
                     </div>
                 </fieldset>
             </div>
@@ -80,11 +80,11 @@
                 <fieldset id="fieldset">
                     <input id="CEASPrincipalPartnersId" class="b" name="ID" type="hidden">
                     <!-- 1st row -->
-                    <div class="row">
+                    @*<div class="row">*@
                         <input data-type="TEXTBOX" data-name="sharedOrgName" id="CEASOwnerType" class="hidden" placeholder="Organisation Name" value="">
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Type</label>
+                            <label class=" label required">Type</label>
                             <label class="input">
                                 <select id="CEASEditPrincial13" onchange="EditPrincipal13Selected('CEASEditPrincial13')" class="form-control b" name="Type">
                                     <option selected="selected" value="">-- Select --</option>
@@ -117,7 +117,8 @@
 
                             </section>
 
-                          
+
+                           
 
                             <div class="hidden" id="CEASEditOrgnamesec">
 
@@ -281,14 +282,43 @@
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Organisation Type</label>
                                 <label class="input">
-                                    <select id="CEASEditPrincial30"  class="form-control b" name="OrganisationTypeName">
+                                    <select id="CEASEditPrincial30" class="form-control b" name="OrganisationTypeName">
                                         <option value="Person - Individual" selected="selected">Private</option>
-                                      
+
                                     </select>
                                 </label>
                                 @*<p class="validationContainer" id="ValidateCEASEditPrincial14"></p>*@
 
                             </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditPrincial19sec">
+                                <label class="label required">This Person has retired or deceased ?</label>
+                                <label class="input">
+                                    <select id="CEASEditPrincial19" onchange="EditPrincipal19Selected('CEASEditPrincial19')" class="form-control b" name="IsRetiredorDecieved">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="ValidateEditPrincial19"></p>
+
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditDateofRetirementSec">
+                                <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASEditPrincial15" type="text">
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASEditDateofDeceasedSec">
+                                <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASEditPrincial16" type="text">
+                                </label>
+                            </section>
+
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="EditIndividual1">
                                 <label class="label required">First Name</label>
@@ -299,6 +329,7 @@
                                 <p class="validationContainer" id="ValidateCEASEditPrincial28"></p>
 
                             </section>
+
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="EditIndividual2">
                                 <label class="label required">Last Name</label>
                                 <label class="input">
@@ -320,23 +351,23 @@
                             </section>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">Date of Birth</label>
-                                <div class="row">
-                                    <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                        <label class="input ">
-                                            <i class="icon-append fa fa-calendar"></i>
-                                            <input name="DateofBirth" placeholder="Effective Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASEditPrincial22" type="text" required>
-                                        </label>
-                                    </section>
-                                    <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                                        <i id="elem" href="#"
-                                           class="fa fa-question-circle"
-                                           data-placement="bottom"
-                                           data-html="true"
-                                           data-container="body"
-                                           data-toggle="popover"
-                                           data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
-                                    </section>
-                                </div>
+                                @*<div class="row">*@
+                                <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <label class="input ">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input name="DateofBirth" placeholder="Birth Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASEditPrincial22" type="text" required>
+                                    </label>
+                                </section>
+                                <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                    <i id="elem" href="#"
+                                       class="fa fa-question-circle"
+                                       data-placement="bottom"
+                                       data-html="true"
+                                       data-container="body"
+                                       data-toggle="popover"
+                                       data-content="Pick the date from which you require insurance for <b>This Vessel </b>"></i>
+                                </section>
+                                @*</div>*@
                                 <p class="validationContainer" id="validateCEASEditPrincial22"></p>
                             </section>
 
@@ -407,7 +438,7 @@
                             <button onclick="ClearBoats(event,'#CEASPrincipaltabs2','CEASPrincipaltabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
 
-                    </div>
+                    </@*div*@>
                 </fieldset>
 
             </div>
@@ -415,10 +446,10 @@
                 <fieldset id="fieldset">
                     <input id="CEASAddPrincipalPartnersId" class="b" name="ID" type="hidden">
                     <!-- 1st row -->
-                    <div class="row">
+                    @*<div class="row">*@
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Type</label>
+                            <label class=" label required">Type</label>
                             <label class="input">
                                 <select id="CEASAddPrincial13" onchange="Principal13Selected('CEASAddPrincial13')" class="form-control b" name="Type">
                                     <option selected="selected" value="">-- Select --</option>
@@ -436,7 +467,7 @@
 
                         <div id="AddNotPrincipalsec" style="display:none">
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Organisation Type</label>
+                                <label class=" label required">Organisation Type</label>
                                 <label class="input">
                                     <select id="CEASAddPrincial14" onchange="Principal14Selected('CEASAddPrincial14')" class="form-control b" name="OrganisationTypeName">
                                         <option selected="selected" value="">-- Select --</option>
@@ -451,7 +482,7 @@
 
                             </section>
 
-                           
+
 
                             <div class="hidden" id="CEASOrgnamesec">
 
@@ -625,6 +656,38 @@
 
                             </section>
 
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASAddPrincial19sec">
+                                <label class="label required">This Person has retired or deceased ?</label>
+                                <label class="input">
+                                    <select id="CEASAddPrincial19" onchange="Principal19Selected('CEASAddPrincial19')" class="form-control b" name="IsRetiredorDecieved">
+                                        <option selected="selected" value="">-- Select --</option>
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </label>
+                                <p class="validationContainer" id="ValidateCEASAddPrincial19"></p>
+
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASAddDateofRetirementSec">
+                                <label class="label">Date of Retirement (Please Enter either Date of Retirement or Date of Deceased)</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofRetirement" placeholder="Date of Retirement" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASAddPrincial15" type="text">
+                                </label>
+                            </section>
+
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="CEASAddDateofDeceasedSec">
+                                <label class="label">Date of Deceased (Please Enter either Date of Deceased or Date of Retirement )</label>
+                                <label class="input">
+                                    <i></i>
+                                    <input name="DateofDeceased" placeholder="Date of Deceased" class="Startdate form-control rmv" data-dateformat="dd/mm/yy" id="CEASAddPrincial16" type="text">
+                                </label>
+                            </section>
+
+
+
+
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6" id="EditIndividual1">
                                 <label class="label required">First Name</label>
                                 <label class="input">
@@ -659,7 +722,7 @@
                                     <section class="col col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <label class="input ">
                                             <i class="icon-append fa fa-calendar"></i>
-                                            <input name="DateofBirth" placeholder="Effective Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASAddPrincial22" type="text" required>
+                                            <input name="DateofBirth" placeholder="Birth Date" class="Birthdate form-control b" data-dateformat="dd/mm/yy" id="CEASAddPrincial22" type="text" required>
                                         </label>
                                     </section>
                                     <section class="col col-xs-1 col-sm-1 col-md-1 col-lg-1">
@@ -742,7 +805,7 @@
                             <button onclick="ClearBoats(event,'#CEASPrincipaltabs3','CEASPrincipaltabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
                         </section>
 
-                    </div>
+                    @*</div>*@
 
                 </fieldset>
             </div>
@@ -764,7 +827,7 @@
 
                                     {
                                         name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
-                                            return '<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedPrincipalDirectors\', \'#PrincipalDirectors\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                            return '<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblCEASRemovedPrincipalDirectors\', \'#CEASPrincipalDirectors\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
 
                                         }
                                     },
@@ -781,7 +844,7 @@
                                 gridview: true,
                                 autoencode: true
                             });
-                            $("#tblRemovedPrincipalDirectors").jqGrid('navGrid',
+                            $("#tblCEASRemovedPrincipalDirectors").jqGrid('navGrid',
                                 '#CEASRemovedpagerNamedParty',
                                 { edit: false, add: false, del: false },
                                 //options
@@ -796,7 +859,7 @@
                                  );
                                 });
                             </script>
-                            <table id="tblRemovedPrincipalDirectors"><tr><td></td></tr></table>
+                            <table id="tblCEASRemovedPrincipalDirectors"><tr><td></td></tr></table>
                             <div id="CEASRemovedpagerNamedParty"></div>
                         </section>
                     </div>
@@ -839,6 +902,18 @@
             $('#CEASAddPrincial15').val('');
             $('#CEASAddPrincial16').val('');
 
+        }else {
+            $('#CEASOrgnamesec').removeClass('hidden');
+            $('#CEASAddPrincial1').val('');
+            $('#CEASAddPrincial2').val('');
+            $('#CEASAddPrincial3').val('');
+            $('#CEASAddIndividual1').addClass('hidden');
+            $('#CEASAddIndividual2').addClass('hidden');
+            $('#CEASAddIndividual3').addClass('hidden');
+            $('#CEASAddPrincial19sec').addClass('hidden');
+            $('#CEASAditPrincial15').val('');
+            $('#CEASAditPrincial16').val('');
+
         }
      }
     function Principal13Selected(PrincipalSelected) {
@@ -862,12 +937,12 @@
             $('#CEASAddPrincial14').val('');
             $('#CEASAddPrincial17').val('');
             $('#CEASAddPrincial18').val('');
-         
+            $('#CEASAddPrincial19sec').removeClass('hidden');
+            $('#CEASAddPrincial28').removeClass('hidden');         
 
         } else {
              $('#AddCEASPrincipalsec').hide();
             $('#AddNotPrincipalsec').show();
-            
             $('#CEASAddPrincial28').val('');
             $('#CEASAddPrincial29').val('');
             $('#CEASAddPrincial21').val('');
@@ -877,6 +952,11 @@
             $('#CEASAddPrincial25').val('');
             $('#CEASAddPrincial26').val('');
             $('#CEASAddPrincial27').val('');
+            $('#CEASAddPrincial28').addClass('hidden');         
+            $('#CEASAddPrincial19sec').addClass('hidden');
+            $('#CEASAddPrincial15').val('');
+            $('#CEASEAddPrincial16').val('');
+
         }
     }
 
@@ -940,6 +1020,18 @@
             $('#CEASEdittPrincial15').val('');
             $('#CEASEditPrincial16').val('');
 
+        }else {
+            $('#CEASEditOrgnamesec').removeClass('hidden');
+            $('#CEASEditPrincial1').val('');
+            $('#CEASEditPrincial2').val('');
+            $('#CEASEditPrincial3').val('');
+            $('#CEASEditIndividual1').addClass('hidden');
+            $('#CEASEditIndividual2').addClass('hidden');
+            $('#CEASEditIndividual3').addClass('hidden');
+            $('#CEASEditPrincial19sec').addClass('hidden');
+            $('#CEASEditPrincial15').val('');
+            $('#CEASEditPrincial16').val('');
+           
         }
      }
     function EditPrincipal13Selected(PrincipalSelected) {
@@ -949,6 +1041,7 @@
          if (principalSelected.options[principalSelected.selectedIndex].value == "Principal") {
              $('#EditCEASPrincipalsec').show();
              $('#EditNotPrincipalsec').hide();
+             $('#CEASEditPrincial19sec').removeClass('hidden');
 
             //$('#AddIndividualPrincipal').removeClass('hidden');
             //$('#AddIndividual1').removeClass('hidden');
@@ -967,23 +1060,24 @@
             $('#CEASEditPrincial3').val('');
             $('#CEASEditPrincial4').val('');
             $('#CEASEditPrincial5').val('');
-            $('#CEASEditPrincial6').val('');
             $('#CEASEditPrincial7').val('');
             $('#CEASEditPrincial8').val('');
             $('#CEASEditPrincial9').val('');
             $('#CEASEditPrincial10').val('');
             $('#CEASEditPrincial11').val('');
-            $('#CEASEditPrincial14').val('');
-            $('#CEASEditPrincial17').val('');
-            $('#CEASEditPrincial18').val('');
+           
             $('#CEASEditPrincial14').prop("disabled", false);
             $('#CEASEditIndividualPrincipal').addClass('hidden');
             $('#CEASEditIndividual1').addClass('hidden');
             $('#CEASEditIndividual2').addClass('hidden');
             $('#CEASEditIndividual3').addClass('hidden');
             $('#CEASEditPrincial19sec').addClass('hidden');
+            $('#CEASEditDateofRetirementSec').addClass('hidden');
+            $('#CEASEditDateofDeceasedSec').addClass('hidden');
             $('#CEASEditPrincial15').val('');
             $('#CEASEditPrincial16').val('');
+            $('#CEASEditPrincial19').val('');
+
         }
     }
 
@@ -1021,6 +1115,7 @@
 
 
     function EditPrincipalPartners(classId, boatUseId) {
+        debugger;
         event.preventDefault();
         var _sheetId = $('#AnswerSheetId').val();
         var postData = {
@@ -1035,16 +1130,20 @@
          .done(function (data) {             
              if (data.type == "Owner") {
                  $('#CEASPrincipalPartnersId').val(data.id);
+                 $('#EditNotPrincipalsec').show();
                  $('#CEASEditOrgnamesec').removeClass('hidden');
                  $('#CEASEditIndividual3').removeClass('hidden');
-                 $('#CEASOrgType').addClass('hidden');
-                 $('#CEASType').addClass('hidden');
-                                   
+                 $('#CEASEditPrincial17').val(data.organisationName);
+                 $('#CEASEditPrincial3').val(data.email);
+                 $('#CEASEditPrincial13').addClass('hidden');
+                 $('#CEASEditPrincial14').addClass('hidden');
+                 $('#CEASOwnerType').val(data.type);                                 
+                 $('#EditCEASPrincipalsec').hide();
              } else {
+                 $('#EditCEASPrincipalsec').show();
                  $('#CEASPrincipalPartnersId').val(data.id);
                  $('#CEASEditOrgnamesec').addClass('hidden');
                  $('#CEASEditIndividual3').addClass('hidden');
-
              }
 
              if (data.type != "Owner") {
@@ -1054,6 +1153,7 @@
                      $('#CEASPrincipalPartnersId').val(data.id);
                      $('#EditCEASPrincipalsec').show();
                      $('#EditNotPrincipalsec').hide();
+                     $('#CEASEditPrincial13').removeClass('hidden');
                      $('#CEASEditPrincial28').val(data.firstName);
                      $('#CEASEditPrincial29').val(data.lastName);
                      $('#CEASEditPrincial21').val(data.email);
@@ -1063,12 +1163,19 @@
                      $('#CEASEditPrincial25').val(data.cpEngQualified);
                      $('#CEASEditPrincial26').val(data.yearofPractice);
                      $('#CEASEditPrincial27').val(data.prevPractice);
+                     $('#CEASEditPrincial14').val(data.organisationTypeName);
+                     $('#CEASEditPrincial19sec').removeClass('hidden');
+                     $('#CEASEditPrincial19').val(""+data.isRetiredorDecieved);
+                     $('#CEASEditPrincial15').val(data.dateofRetirement);
+                     $('#CEASEditPrincial16').val(data.dateofDeceased);
+                     EditPrincipal19Selected('CEASEditPrincial19')
 
                  } else {
-                        $('#CEASPrincipalPartnersId').val(data.id);
-                      $('#EditCEASPrincipalsec').hide();
+                     $('#CEASPrincipalPartnersId').val(data.id);
+                     $('#EditCEASPrincipalsec').hide();
                      $('#EditNotPrincipalsec').show();
-                      $('#CEASEditPrincial28').val('');
+                     $('#CEASEditOrgnamesec').removeClass('hidden');
+                     $('#CEASEditPrincial28').val('');
                      $('#CEASEditPrincial29').val('');
                      $('#CEASEditPrincial21').val('');
                      $('#CEASEditPrincial22').val('');
@@ -1077,45 +1184,21 @@
                      $('#CEASEditPrincial25').val('');
                      $('#CEASEditPrincial26').val('');
                      $('#CEASEditPrincial27').val('');
-
-                      $('#CEASEditPrincial14').val(data.organisationTypeName);
+                     $('#CEASEditPrincial19sec').addClass('hidden');
+                     $('#CEASEditPrincial14').val(data.organisationTypeName);
                      $('#CEASEditPrincial19').val(data.isNZIAmember);
                      $('#CEASEditPrincial17').val(data.organisationName);
                      $('#CEASEditPrincial18').val(data.activities);
+                     $('#CEASEditPrincial19').val('');
+                     $('#CEASEditPrincial15').val('');
+                     $('#CEASEditPrincial16').val('');
+
                  }
 
                  $('#PrincipalPartnersId').val(data.id);
                  $('#CEASEditPrincial13').val(data.type);
                  EditPrincipal13Selected('CEASEditPrincial13');
-                 //if (data.type != "Principal") {
-                 //    $('#CEASEditPrincial14').val(data.organisationTypeName);
-                 //    EditPrincipal14Selected('CEASEditPrincial14');
-                 //} else {
-                 //    $('#CEASEditPrincial19sec').removeClass('hidden');
-
-                 //}
-                 //$('#CEASEditPrincial5').val("" + data.isNZIAmember);
-                 //CEASEditPrincipal1Selected('CEASEditPrincial5');
-                 //$('#CEASEditPrincial7').val("" + data.isADNZmember);
-                 //CEASEditPrincipal2Selected('CEASEditPrincial7');
-                 //$('#CEASEditPrincial11').val("" + data.isOtherdirectorship);
-                 //CEASEditPrincipal3Selected('CEASEditPrincial11');
-                 //$('#CEASEditPrincial1').val(data.firstName);
-                 //$('#CEASEditPrincial2').val(data.lastName);
-                 //$('#CEASEditPrincial4').val(data.qualifications);
-                 //$('#CEASEditPrincial3').val(data.email);
-                 //$('#CEASEditPrincial6').val(data.nziAmembership);
-                 //$('#CEASEditPrincial9').val(data.yearofPractice);
-                 //$('#CEASEditPrincial10').val(data.prevPractice);
-                 //$('#CEASEditPrincial12').val(data.othercompanyname);
-                 //if ($('#CEASEditPrincial19').val() == "true") {
-                 //    $('#CEASEditDateofRetirementSec').removeClass('hidden');
-                 //    $('#CEASEditDateofDeceasedSec').removeClass('hidden');
-                 //    $('#CEASEditPrincial15').val(data.dateofRetirement);
-                 //    $('#CEASEditPrincial16').val(data.dateofDeceased);
-                 //}
-                 //$('#CEASEditPrincial17').val(data.organisationName);
-                 //$('#CEASEditPrincial18').val(data.activities);
+               
                  UpdateChosen();
              }
          });
@@ -1152,6 +1235,17 @@
                         $(validator).html("<i></i>");
                     }
                 }
+
+                 if ($('#CEASEditPrincial19').val() == '') {
+                     $('#ValidateCEASEditPrincial19').html("<font color='red'>Field is required</font>")
+                        if (validity) {
+                            validity = false;
+                        }else {
+                               $('#ValidateCEASEditPrincial19').html("<i></i>");
+                        }
+
+                 }
+                
             } else {
 
                    if ($('#CEASEditPrincial14').val() == '') {
@@ -1194,6 +1288,7 @@
                 }
             };
         } else {
+            debugger;
              if ($('#CEASEditPrincial17').val() == '' && $('#CEASEditPrincial14').val() != "Person - Individual") {
                 $('#ValidateCEASEditPrincial17').html("<font color='red'>Field is required</font>")
                 if (validity) {
@@ -1202,14 +1297,7 @@
                     $('#ValidateCEASEditPrincia17').html("<i></i>");
                 }
             }
-            if ($('#EditPrincial18').val() == '' && $('#EditPrincial14').val() != "Person - Individual") {
-                $('#ValidateEditPrincial18').html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                } else {
-                    $('#ValidateEditPrincia18').html("<i></i>");
-                }
-            }
+          
             if ($('#CEASEditPrincial3').val() == '' && $('#CEASEditPrincial3').val() == 'true') {
                 $('#ValidateCEASEditPrincial3').html("<font color='red'>Field is required</font>")
                 if (validity) {
@@ -1230,9 +1318,9 @@
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
         var Orgname = $('#CEASEditPrincial17').val(); 
-      
+        var type = $('#CEASAddPrincial13').val();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&OrganisationName=" + Orgname ;
+        var proddata = proddata + "&OrganisationName=" + Orgname + "&Type=" + type;
         $.ajax({
             url: '@Url.Action("EditPrincipalDirectorsOwner", "Services")',
             type: "POST",
@@ -1264,8 +1352,10 @@
         var yearofPractice = $('#CEASEditPrincial26').val(); 
         var PrevPractice = $('#CEASEditPrincial27').val();
         var id = $('#CEASPrincipalPartnersId').val();
+                var type = $('#CEASEditPrincial13').val();
+
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-                var proddata = proddata + "&OrganisationName=" + Orgname + "&YearofPractice=" + yearofPractice + "&prevPractice=" + PrevPractice + "&ID=" + id;
+                var proddata = proddata + "&OrganisationName=" + Orgname + "&YearofPractice=" + yearofPractice + "&prevPractice=" + PrevPractice + "&ID=" + id + "&Type=" + type;
 
         var proddata = proddata ;
         $.ajax({
@@ -1296,6 +1386,7 @@
             });
     };
     function ValidateCEASPrincipalDirectors(event) {
+        debugger;
         event.preventDefault();
         var validity = true;
         if ($('#CEASAddPrincial13').val() == '') {
@@ -1323,6 +1414,18 @@
                         $(validator).html("<i></i>");
                     }
                 }
+
+                if ($('#CEASAddPrincial19').val() == '') {
+                     $('#ValidateCEASAddPrincial19').html("<font color='red'>Field is required</font>")
+                        if (validity) {
+                            validity = false;
+                        }else {
+                               $('#ValidateCEASAddPrincial19').html("<i></i>");
+                        }
+
+                }
+                
+
             } else {
 
                    if ($('#CEASAddPrincial14').val() == '') {
@@ -1357,17 +1460,26 @@
            
 
         if (validity) {
+             if ($('#CEASAddPrincial13').val() == "Principal") {
+                   AddPrincipalDirectors(event, '#AddCEASPrincipalsec', '#CEASPrincipalDirectors', 'CEASPrincipaltabs1');
+                } else {
+                   AddPrincipalDirectors(event, '#AddNotPrincipalsec', '#CEASPrincipalDirectors', 'CEASPrincipaltabs1');
+
+            }
 
             AddPrincipalDirectors(event, '#AddCEASPrincipalsec', '#CEASPrincipalDirectors', 'CEASPrincipaltabs1');
         }
     };
 
-    function AddPrincipalDirectors(event,tabId, tableId,currenttab) {        
+    function AddPrincipalDirectors(event, tabId, tableId, currenttab) {      
+        debugger;
         event.preventDefault();
         var informationId = $('#AnswerSheetId').serialize();
-        var type = $('#CEASAddPrincial13').val();
+        var type = $('#CEASAddPrincial13').val();      
+        var orgname = $('#CEASAddPrincial17').val();
+        var activities = $('#CEASAddPrincial18').val();
         var proddata = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
-        var proddata = proddata + "&Type=" + type;
+        var proddata = proddata + "&Type=" + type + "&OrganisationName=" +orgname + "&Activities=" + activities ;
         $.ajax({
             url: '@Url.Action("AddCEASPrincipalDirectors", "Services")',
             type: "POST",

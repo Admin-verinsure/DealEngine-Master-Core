@@ -164,7 +164,7 @@ namespace DealEngine.WebUI.Controllers
                 return RedirectToAction("Error500", "Error");
             }
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> AONImportPrincipals()
         {
@@ -173,6 +173,24 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 await _importService.ImportAOEServicePrincipals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CEASImportPrincipals()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportCEASServicePrincipals(user);
 
                 return RedirectToAction("Index", "Home");
             }

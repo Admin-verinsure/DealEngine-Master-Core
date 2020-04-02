@@ -1089,7 +1089,7 @@ namespace DealEngine.WebUI.Controllers
                 programme.LastModifiedBy = user;
                 programme.LastModifiedOn = DateTime.UtcNow;
 
-                //await _programmeService.Update(programme);
+                await _programmeService.Update(programme);
 
                 return NoContent();
             }
@@ -1118,6 +1118,7 @@ namespace DealEngine.WebUI.Controllers
                     programme.PolicyNumberPrefixString = model.PolicyNumberPrefixString;
                     programme.HasSubsystemEnabled = model.HasSubsystemEnabled;
                     programme.StopAgreement = model.StopAgreement;
+                    programme.Claim = "";
                     if (!string.IsNullOrWhiteSpace(model.ProgrammeClaim))
                     {
                         programme.Claim = model.ProgrammeClaim;

@@ -339,7 +339,7 @@
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="AddPrincial19sec">
                             <label class="label required">This Person has retired or deceased ?</label>
                             <label class="input">
-                                <select id="AddPrincial19" onchange="Principal19Selected('AddPrincial19')" class="form-control b" name="IsNZIAmember">
+                                <select id="AddPrincial19" onchange="Principal19Selected('AddPrincial19')" class="form-control b" name="IsRetiredorDecieved">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -646,6 +646,7 @@
             $('#AddPrincial14').val('');
             $('#AddPrincial17').val('');
             $('#AddPrincial18').val('');
+            $('#AddPrincial19').val('');
             $('#AddPrincial14').prop("disabled", false);
             $('#AddIndividualPrincipal').addClass('hidden');
             $('#AddIndividual1').addClass('hidden');
@@ -653,7 +654,10 @@
             $('#AddIndividual3').addClass('hidden');
             $('#AddPrincial19sec').addClass('hidden');
             $('#AddPrincial15').val('');
+            $('#AddDateofRetirementSec').addClass('hidden');
             $('#AddPrincial16').val('');
+            $('#AddDateofDeceasedSec').addClass('hidden');
+
         }
     }
 
@@ -753,6 +757,7 @@
             $('#EditPrincial14').val('');
             $('#EditPrincial17').val('');
             $('#EditPrincial18').val('');
+            $('#EditPrincial19').val('');
             $('#EditPrincial14').prop("disabled", false);
             $('#EditIndividualPrincipal').addClass('hidden');
             $('#EditIndividual1').addClass('hidden');
@@ -761,6 +766,8 @@
             $('#EditIndividual3').addClass('hidden');
             $('#EditPrincial15').val('');
             $('#EditPrincial16').val('');
+            $('#EditDateofRetirementSec').addClass('hidden');
+            $('#EditDateofDeceasedSec').addClass('hidden');
 
         }
     }

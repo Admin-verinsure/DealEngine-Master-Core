@@ -19,7 +19,11 @@ namespace DealEngine.Services.Impl
 
         public async Task AddClaim(Domain.Entities.Claim claim)
         {
-            await _claimsRepository.AddAsync(claim);
+            var isclaim = await GetTemplateByName(claim.Value);
+            if(isclaim == null)
+            {
+                await _claimsRepository.AddAsync(claim);
+            }            
         }
 
         public async Task<List<Domain.Entities.Claim>> GetClaimsAllClaimsList()
