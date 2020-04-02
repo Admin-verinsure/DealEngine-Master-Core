@@ -1089,7 +1089,7 @@ namespace DealEngine.WebUI.Controllers
                 programme.LastModifiedBy = user;
                 programme.LastModifiedOn = DateTime.UtcNow;
 
-                //await _programmeService.Update(programme);
+                await _programmeService.Update(programme);
 
                 return NoContent();
             }
