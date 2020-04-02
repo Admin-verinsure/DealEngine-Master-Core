@@ -354,7 +354,7 @@ namespace DealEngine.WebUI.Controllers
 				if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
-                await _productService.CreateProduct(product);
+                //await _productService.CreateProduct(product);
 
 				return NoContent();
 
