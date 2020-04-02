@@ -37,7 +37,7 @@ namespace DealEngine.WebUI.Controllers
         ISharedDataRoleService _sharedDataRoleService;
         IFileService _fileService;
         IEmailService _emailService;
-        IRuleService _RuleService;
+        IRuleService _ruleService;
         IMapper _mapper;
         IHttpClientService _httpClientService;
         IEGlobalSubmissionService _eGlobalSubmissionService;
@@ -84,7 +84,7 @@ namespace DealEngine.WebUI.Controllers
             _documentRepository = documentRepository;            
             _programmeService = programmeService;
             _unitOfWork = unitOfWork;
-            _RuleService = ruleService;
+            _ruleService = ruleService;
             _fileService = fileService;
             _emailService = emailService;
             _mapper = mapper;
@@ -896,7 +896,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                Rule Rule = await _RuleService.GetRuleByID(rule.ClientAgreementRuleID);
+                Rule Rule = await _ruleService.GetRuleByID(rule.ClientAgreementRuleID);
                 if (Rule != null)
                 {
                     try
@@ -1016,6 +1016,7 @@ namespace DealEngine.WebUI.Controllers
         {
             InformationBuilderViewModel model = new InformationBuilderViewModel();
             model.InformationTemplates = await _informationService.GetAllTemplates();
+            model.Rules = await _ruleService.GetAllRules();
             return model;
         }
 
@@ -1089,7 +1090,7 @@ namespace DealEngine.WebUI.Controllers
                 programme.LastModifiedBy = user;
                 programme.LastModifiedOn = DateTime.UtcNow;
 
-                await _programmeService.Update(programme);
+                //await _programmeService.Update(programme);
 
                 return NoContent();
             }
