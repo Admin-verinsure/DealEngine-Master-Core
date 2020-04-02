@@ -444,8 +444,8 @@ namespace DealEngine.Services.Impl
         public async Task ImportCEASServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line
-            string workingDirectory = "/tmp";
-            var fileName = workingDirectory + "/ImportData/CEASIndividuals2019.csv";
+            string workingDirectory = "C://tmp";
+            var fileName = workingDirectory + "//CEASIndividuals2019.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
             StreamReader reader;
@@ -459,11 +459,11 @@ namespace DealEngine.Services.Impl
                 while (!reader.EndOfStream)
                 {
                     //if has a title row
-                    //if (!readFirstLine)
-                    //{
-                    //    line = reader.ReadLine();
-                    //    readFirstLine = true;
-                    //}
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
                     line = reader.ReadLine();
                     string[] parts = line.Split(',');
                     user = null;
@@ -471,7 +471,7 @@ namespace DealEngine.Services.Impl
                     email = "";
                     try
                     {
-                        if (!string.IsNullOrWhiteSpace(parts[4]))
+                        if (string.IsNullOrWhiteSpace(parts[4]))
                         {
                             email = parts[8] + "@DealEngine.com";
                             user = await _userService.GetUserByEmail(email);
@@ -485,7 +485,7 @@ namespace DealEngine.Services.Impl
 
                         if (user == null)
                         {
-                            user = new User(currentUser, Guid.NewGuid(), parts[7]);
+                            user = new User(currentUser, Guid.NewGuid(), parts[8]);
                         }
                         organisation = await _organisationService.GetOrganisationByEmail(email);
                         if (parts[0] == "f")
@@ -531,7 +531,7 @@ namespace DealEngine.Services.Impl
                         {
 
                             clientProgramme.BrokerContactUser = programme.BrokerContactUser;
-                            clientProgramme.ClientProgrammeMembershipNumber = parts[8];
+                            clientProgramme.ClientProgrammeMembershipNumber = parts[7];
                             sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
                             try
                             {
@@ -561,8 +561,8 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line
-            string workingDirectory = "/tmp";
-            var fileName = workingDirectory + "/ImportData/CEASPrincipals2019.csv";
+            string workingDirectory = "C://tmp";
+            var fileName = workingDirectory + "//CEASPrincipals2019.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
@@ -677,8 +677,8 @@ namespace DealEngine.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;
-            string workingDirectory = "/tmp";
-            var fileName = workingDirectory + "/ImportData/CEASClaims2019.csv";
+            string workingDirectory = "C://tmp";
+            var fileName = workingDirectory + "//CEASClaims2019.csv";
             using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
@@ -716,8 +716,8 @@ namespace DealEngine.Services.Impl
             BusinessContract businessContract;
             bool readFirstLine = false;
             string line;
-            string workingDirectory = "/tmp";
-            var fileName = workingDirectory + "/ImportData/CEASContracts2019.csv";
+            string workingDirectory = "C://tmp";
+            var fileName = workingDirectory + "//CEASContracts2019.csv";
 
             using (reader = new StreamReader(fileName))
             {
