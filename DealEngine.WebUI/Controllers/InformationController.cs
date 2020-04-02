@@ -1915,9 +1915,8 @@ namespace DealEngine.WebUI.Controllers
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
             else
-            {
-                territoryList.AddRange(clientProgramme.BaseProgramme.TerritoryTemplates);
-                foreach (var territory in territoryList)
+            {                
+                foreach (var territory in clientProgramme.BaseProgramme.TerritoryTemplates)
                 {
                     territoryTemplates.Add(new SelectListItem
                     {
