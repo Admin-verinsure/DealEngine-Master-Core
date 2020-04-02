@@ -36,7 +36,7 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository, 
             IBusinessActivityService businessActivityService)
         {
-            WorkingDirectory = "C://tmp//ceas//"; //"/tmp/ImportData/"; 
+            WorkingDirectory = "C://tmp//"; //"/tmp/ImportData/"; 
             _businessActivityService = businessActivityService;
             _organisationRepository = organisationRepository;
             _InsuranceAttributeService = insuranceAttributeService;
