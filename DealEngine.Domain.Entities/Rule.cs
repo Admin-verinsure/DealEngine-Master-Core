@@ -48,18 +48,6 @@ namespace DealEngine.Domain.Entities
             protected set;
         }
 
-        public virtual InformationTemplate InformationTemplate
-        {
-            get;
-            protected set;
-        }
-
-        public virtual Question Question
-        {
-            get;
-            protected set;
-        }
-
         public virtual int OrderNumber
         {
             get;

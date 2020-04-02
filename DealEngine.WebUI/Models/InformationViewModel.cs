@@ -150,6 +150,7 @@ namespace DealEngine.WebUI.Models
         public IList<InformationItem> ConditionalList { get; set; }
 
         public string Value { get; set; }
+        public Rule Rule { get; set; }
 
         public IEnumerable<LabelPersentageViewModel> LabelPercentageValue { get; set; }        
 

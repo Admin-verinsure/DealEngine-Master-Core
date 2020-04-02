@@ -10,10 +10,10 @@ namespace DealEngine.Domain.Entities
 {
 	public class InformationItem : EntityBase, IAggregateRoot
 	{
-		protected InformationItem () : base (null) { }
+		protected InformationItem() : base(null) { }
 
-		public InformationItem (User createdBy, string name, string label, string controlType, int width, string itemType)
-			: base (createdBy)
+		public InformationItem(User createdBy, string name, string label, string controlType, int width, string itemType)
+			: base(createdBy)
 		{
 			Name = name;
 			Label = label;
@@ -24,11 +24,11 @@ namespace DealEngine.Domain.Entities
 			ConditionalList = new List<InformationItem>();
 		}
 
-      
-        public virtual string Name { get; protected set; }
-        public virtual string ControlType { get; set; }
 
-        public virtual string Label { get; protected set; }
+		public virtual string Name { get; protected set; }
+		public virtual string ControlType { get; set; }
+
+		public virtual string Label { get; protected set; }
 
 		public virtual int Width { get; protected set; }
 
@@ -38,12 +38,12 @@ namespace DealEngine.Domain.Entities
 
 		public virtual bool NeedsReview { get; set; }
 
-        public virtual bool NeedsMilestone { get; set; }
+		public virtual bool NeedsMilestone { get; set; }
 
-        public virtual bool ReferUnderwriting { get; set; }
+		public virtual bool ReferUnderwriting { get; set; }
 
 		public virtual bool Required { get; set; }
-		public virtual Rule Rule { get; set; }
+		public virtual Rule Rule {get; set;}		
 		public virtual IList<InformationItem> ConditionalList { get; set; }
         public virtual IList<DropdownListItem> DropdownList { get; set; }
 
