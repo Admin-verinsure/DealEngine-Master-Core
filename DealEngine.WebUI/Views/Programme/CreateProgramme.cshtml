@@ -54,7 +54,7 @@
                 backButtonSupport: true, // Enable the back button support
                 useURLhash: true, // Enable selection of the step based on url hash
                 lang: {  // Language variables
-                    next: 'Next',
+                    next: 'Save and Continue',
                     previous: 'Previous'
                 },
                 toolbarSettings: {
@@ -160,7 +160,10 @@
             });
 
             $("#questionsectionwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
-                if (stepDirection == "forward") {                                   
+                if (stepDirection == "forward") {
+                    if (stepNumber == 0) {
+                        CreateQuestionType();
+                    }
                     if (stepNumber == 2) {
                         AddQuestion();
                         //form.classList.add('was-validated');
@@ -176,31 +179,58 @@
 
         });
 
+        function CreateQuestionType() {
+            var type = document.getElementById('questiontype').value;
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");            
+            input.setAttribute("name", "questiontypeinput");
+            input.setAttribute("value", type);            
+            document.getElementById("questionmodalbody").appendChild(input);
+        }
+
         function TriggerInput(trigger) {            
             if (trigger === "textTemplate") {
-                var input = document.getElementById('question');
+                var input = document.createElement("input");
                 input.id = 'triggeranswer';
                 input.name = 'triggeranswer';
                 input.value = "";
+                input.placeholder = "Enter Trigger Value";
+                input.classList.add("form-control");
                 return input;
             }
-            else if (questionvalue === "dropdownTemplate") {
+            else if (trigger === "dropdownTemplate") {
                 var valueobjs = document.getElementsByName('dropdownvalue');
                 var select = document.createElement("SELECT");
+                var option = document.createElement("option");
+                option.text = 'Enter Trigger Value';
+                option.selected = true;
+                select.options.add(option);
                 for (var i = 0; i < valueobjs.length; i++) {
-                    select.options.add(valueobjs[i].value);
+                    var option = document.createElement("option");
+                    option.text = valueobjs[i].value;
+                    select.options.add(option);
                 }
                 select.id = 'triggeranswer';
                 select.name = 'triggeranswer';
+                select.classList.add("custom-select");
                 return select;
             }
             else {
                 var valueobjs = document.getElementsByName('dropdownvalue');
-                var select = document.createElement("SELECT");                
-                select.options.add('Yes');
-                select.options.add('No');
+                var select = document.createElement("select"); 
+                var option = document.createElement("option");
+                option.text ='Yes';
+                select.options.add(option);
+                option = document.createElement("option");
+                option.text ='No';
+                select.options.add(option);
+                var option = document.createElement("option");
+                option.text = 'Enter Trigger Value';
+                option.selected = true;
+                select.options.add(option);
                 select.id = 'triggeranswer';
                 select.name = 'triggeranswer';
+                select.classList.add("custom-select");
                 return select;
             }
             return 
@@ -217,7 +247,7 @@
                 container.classList.toggle("invisible", true);
                 container.classList.toggle("visible", false);
             }
-            var trigger = document.getElementById('questiontype').value;
+            var trigger = document.getElementsByName('questiontypeinput').value;
             var child = TriggerInput(trigger);
             document.getElementById('trigger').appendChild(child);
         }
