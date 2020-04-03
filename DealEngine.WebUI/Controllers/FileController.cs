@@ -206,67 +206,71 @@ namespace DealEngine.WebUI.Controllers
                         var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
                         docs = products.Documents.ToList();
                     }
-                    else
-                    {
-                        productId = "";
-                    }
+
                 }
 
-                foreach (SystemDocument doc in docs)
+                if(docs.Count != 0)
                 {
-                    string documentType = "";
-                    switch (doc.DocumentType)
+                    foreach (SystemDocument doc in docs)
                     {
-                        case 0:
-                            {
-                                documentType = "Wording";
-                                break;
-                            }
-                        case 1:
-                            {
-                                documentType = "Certificate";
-                                break;
-                            }
-                        case 2:
-                            {
-                                documentType = "Schedule";
-                                break;
-                            }
-                        case 3:
-                            {
-                                documentType = "Payment Confirmation";
-                                break;
-                            }
-                        case 4:
-                            {
-                                documentType = "Invoice";
-                                break;
-                            }
-                        case 5:
-                            {
-                                documentType = "Advisory";
-                                break;
-                            }
-                        case 6:
-                            {
-                                documentType = "Sub-Certificate";
-                                break;
-                            }
-                        default:
-                            {
-                                throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
-                            }
+                        string documentType = "";
+                        switch (doc.DocumentType)
+                        {
+                            case 0:
+                                {
+                                    documentType = "Wording";
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    documentType = "Certificate";
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    documentType = "Schedule";
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    documentType = "Payment Confirmation";
+                                    break;
+                                }
+                            case 4:
+                                {
+                                    documentType = "Invoice";
+                                    break;
+                                }
+                            case 5:
+                                {
+                                    documentType = "Advisory";
+                                    break;
+                                }
+                            case 6:
+                                {
+                                    documentType = "Sub-Certificate";
+                                    break;
+                                }
+                            default:
+                                {
+                                    throw new Exception(string.Format("Can not get Document Type for document", doc.Id));
+                                }
+                        }
+                        //var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
+                        models.Add(new DocumentInfoViewModel
+                        {
+                            DisplayName = doc.Name,
+                            ProductId = productId,
+                            Type = documentType,
+                            Owner = doc.OwnerOrganisation.Name,
+                            Id = doc.Id,
+                        });
                     }
-                    //var product = _productRepository.FindAll().Where(prod => !prod.DateDeleted.HasValue && prod.Documents.Contains(doc)).First();
-                    models.Add(new DocumentInfoViewModel
-                    {
-                        DisplayName = doc.Name,
-                        ProductId = productId,
-                        Type = documentType,
-                        Owner = doc.OwnerOrganisation.Name,
-                        Id = doc.Id,
-                    });
                 }
+                else
+                {
+                    return RedirectToAction("CreateDocument");                    
+                }                
 
                 return View(models);
             }
