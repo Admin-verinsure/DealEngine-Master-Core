@@ -349,6 +349,7 @@ namespace DealEngine.WebUI.Controllers
 
         private async Task<SignInResult> DealEngineIdentityUserLogin(User user, string password)
         {
+            
             try
             {
                 IdentityUser deUser = await _userManager.FindByNameAsync(user.UserName);
@@ -366,7 +367,9 @@ namespace DealEngine.WebUI.Controllers
                         await _userManager.AddToRoleAsync(deUser, "Client");
                     }
                 }
-
+                else {
+                    await _userManager.AddPasswordAsync(deUser, password);
+                }
                 var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
                 if (identityResult.Succeeded)
                 {
@@ -379,6 +382,7 @@ namespace DealEngine.WebUI.Controllers
                         }
                     }
                 }
+
                 return identityResult;
             }
             catch(Exception ex)
