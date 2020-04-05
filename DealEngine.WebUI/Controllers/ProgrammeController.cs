@@ -17,10 +17,11 @@ using DealEngine.Infrastructure.Payment.EGlobalAPI;
 using Microsoft.Extensions.Logging;
 using DealEngine.WebUI.Helpers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DealEngine.WebUI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class ProgrammeController : BaseController
     {
         ILogger<ProgrammeController> _logger;
