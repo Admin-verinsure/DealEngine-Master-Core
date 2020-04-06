@@ -39,7 +39,7 @@
                             </label>
                         </td>
                     </tr>
-                    @if (Model.ProductViewModel == null)
+                    @if (User.IsInRole("TCUser"))
                     {
                 <tr class="table-light">
                     <td>

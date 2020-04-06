@@ -18,8 +18,7 @@ using Microsoft.AspNetCore.Http;
 #endregion
 
 namespace DealEngine.WebUI.Controllers
-{
-    //[Route("Home")]
+{    
     [Authorize]
     public class HomeController : BaseController
     {
