@@ -1,0 +1,77 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+    <form id="pminzepl" class="needs-validation" novalidate="novalidate">
+        <div class="form-group">
+            <label for="totalemployees">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
+            <input type="number" class="form-control" id="totalemployees" />
+        </div>
+        <div class="form-group">
+            <label for="iscovered">Are all employees covered by written employment contract?</label>
+            <select class="form-control" id="iscovered" name="islegaladvisorgroup" onchange="PminzOnChange(this.id, this.name)">
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+        <div class="form-group invisible" id="islegaladvisorgroup">
+            <label for="islegaladvisor">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
+            <select class="form-control" id="islegaladvisor" >
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="iscasualbasis">Do you utilise staff on a casual basis?</label>
+            <select class="form-control" id="iscasualbasis" name="isdefinedgroup" onchange="PminzOnChange(this.id, this.name)">
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+        <div class="form-group invisible" id="isdefinedgroup">
+            <label for="isdefined">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
+            <select class="form-control" id="isdefined">
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="hasmanual">Do you have a written human resources manual or equivalent written management guidelines?</label>
+            <select class="form-control" id="hasmanual">
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
+            <select class="form-control" id="ispostingnotices">
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
+            <select class="form-control" id="ispostingnotices">
+                <option selected="selected" value="">-- Select --</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>
+        </div>
+    </form>
+    <script type="text/javascript">
+        function PminzOnChange(valueId, Id) {
+            var value = document.getElementById(valueId).value;
+            if (value == "1") {
+                document.getElementById(Id).classList.toggle("invisible", false);
+                document.getElementById(Id).classList.toggle("visible", true);
+            } else {
+                document.getElementById(Id).classList.toggle("invisible", true);
+                document.getElementById(Id).classList.toggle("visible", false);
+            }
+            debugger;
+        }
+    </script>

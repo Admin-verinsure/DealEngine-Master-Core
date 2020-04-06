@@ -6,7 +6,6 @@ namespace DealEngine.Services.Interfaces
 {
     public interface IImportService
     { 
-        Task ImportAOEService(User user);
         Task ImportAOEServiceIndividuals(User user);
         Task ImportAOEServicePrincipals(User user);
         Task ImportAOEServiceContract(User user);
