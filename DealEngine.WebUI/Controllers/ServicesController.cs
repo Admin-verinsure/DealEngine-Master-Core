@@ -3386,7 +3386,7 @@ namespace DealEngine.WebUI.Controllers
                     model.IsOtherdirectorship = org.IsOtherdirectorship;
                     model.IsRetiredorDecieved = org.IsRetiredorDecieved;
                     model.Othercompanyname = org.OtherCompanyname;
-                    model.Type = org.Type;
+                    model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
                     model.DateofDeceased = (org.DateofDeceased > DateTime.MinValue) ? org.DateofDeceased.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     model.DateofRetirement = (org.DateofRetirement > DateTime.MinValue) ? org.DateofRetirement.ToTimeZoneTime(UserTimeZone).ToString("d", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "";
                     model.OrganisationName = org.Name;
