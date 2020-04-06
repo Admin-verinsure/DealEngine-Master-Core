@@ -2,59 +2,37 @@
 
     <form id="pminzepl" class="needs-validation" novalidate="novalidate">
         <div class="form-group">
-            <label for="totalemployees">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
-            <input type="number" class="form-control" id="totalemployees" />
+            <label for="totalemployees">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>            
+            @Html.TextBoxFor(m=>m.PMINZEPLViewModel.TotalEmployees, new { @class="form-control", @id="totalemployees", @type="number" })
+            @Html.ValidationMessageFor(m=>m.PMINZEPLViewModel.TotalEmployees, "Please enter a number")
         </div>
         <div class="form-group">
             <label for="iscovered">Are all employees covered by written employment contract?</label>
-            <select class="form-control" id="iscovered" name="islegaladvisorgroup" onchange="PminzOnChange(this.id, this.name)">
-                <option selected="selected" value="">-- Select --</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-            </select>
+            @Html.DropDownListFor(l=>l.PMINZEPLViewModel.CoveredOptions, Model.PMINZEPLViewModel.CoveredOptions, new { @class="form-control", id="iscovered", @onchange="PminzOnChange(this.id, this.name)" })
         </div>
-        <div class="form-group invisible" id="islegaladvisorgroup">
+        <div class="form-group invisible" id="PMINZEPLViewModel.CoveredOptions">
             <label for="islegaladvisor">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
-            <select class="form-control" id="islegaladvisor" >
-                <option selected="selected" value="">-- Select --</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-            </select>
+            @Html.DropDownListFor(l => l.PMINZEPLViewModel.LegalAdvisorOptions, Model.PMINZEPLViewModel.LegalAdvisorOptions, new { @class = "form-control", id = "islegaladvisor" })
         </div>
         <div class="form-group">
             <label for="iscasualbasis">Do you utilise staff on a casual basis?</label>
-            <select class="form-control" id="iscasualbasis" name="isdefinedgroup" onchange="PminzOnChange(this.id, this.name)">
-                <option selected="selected" value="">-- Select --</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-            </select>
+            @Html.DropDownListFor(l => l.PMINZEPLViewModel.CasualBasisOptions, Model.PMINZEPLViewModel.CasualBasisOptions, new { @class = "form-control", id = "iscasualbasis", @onchange = "PminzOnChange(this.id, this.name)" })
         </div>
-        <div class="form-group invisible" id="isdefinedgroup">
+        <div class="form-group invisible" id="PMINZEPLViewModel.CasualBasisOptions">
             <label for="isdefined">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
-            <select class="form-control" id="isdefined">
-                <option selected="selected" value="">-- Select --</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-            </select>
+            @Html.DropDownListFor(l => l.PMINZEPLViewModel.DefinedOptions, Model.PMINZEPLViewModel.DefinedOptions, new { @class = "form-control", id = "isdefined" })
         </div>
         <div class="form-group">
             <label for="hasmanual">Do you have a written human resources manual or equivalent written management guidelines?</label>
-            <select class="form-control" id="hasmanual">
-                <option selected="selected" value="">-- Select --</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-            </select>
+            @Html.DropDownListFor(l => l.PMINZEPLViewModel.ManualOptions, Model.PMINZEPLViewModel.ManualOptions, new { @class = "form-control", id = "hasmanual" })
         </div>
         <div class="form-group">
             <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
-            <select class="form-control" id="ispostingnotices">
-                <option selected="selected" value="">-- Select --</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-            </select>
+            @Html.DropDownListFor(l => l.PMINZEPLViewModel.PostingNoticesOptions, Model.PMINZEPLViewModel.PostingNoticesOptions, new { @class = "form-control", id = "hasmanual" })
         </div>
         <div class="form-group">
-            <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
+            <label for="ispostingnotices">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
+            @Html.DropDownListFor(l => l.PMINZEPLViewModel.StaffRedundancyOptions, Model.PMINZEPLViewModel.StaffRedundancyOptions, new { @class = "form-control", id = "hasmanual" })
             <select class="form-control" id="ispostingnotices">
                 <option selected="selected" value="">-- Select --</option>
                 <option value="1">Yes</option>
