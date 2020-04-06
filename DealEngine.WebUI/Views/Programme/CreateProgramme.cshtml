@@ -176,7 +176,38 @@
 
         });
 
+        function TriggerInput(trigger) {            
+            if (trigger === "textTemplate") {
+                var input = document.getElementById('question');
+                input.id = 'triggeranswer';
+                input.name = 'triggeranswer';
+                input.value = "";
+                return input;
+            }
+            else if (questionvalue === "dropdownTemplate") {
+                var valueobjs = document.getElementsByName('dropdownvalue');
+                var select = document.createElement("SELECT");
+                for (var i = 0; i < valueobjs.length; i++) {
+                    select.options.add(valueobjs[i].value);
+                }
+                select.id = 'triggeranswer';
+                select.name = 'triggeranswer';
+                return select;
+            }
+            else {
+                var valueobjs = document.getElementsByName('dropdownvalue');
+                var select = document.createElement("SELECT");                
+                select.options.add('Yes');
+                select.options.add('No');
+                select.id = 'triggeranswer';
+                select.name = 'triggeranswer';
+                return select;
+            }
+            return 
+        }
+
         function ToggleContent() {
+
             var checked = document.getElementById('conditional').checked;            
             var container = document.getElementById('conditionalcontent')
             if (checked === true) {
@@ -186,6 +217,9 @@
                 container.classList.toggle("invisible", true);
                 container.classList.toggle("visible", false);
             }
+            var trigger = document.getElementById('questiontype').value;
+            var child = TriggerInput(trigger);
+            document.getElementById('trigger').appendChild(child);
         }
 
         function CreateInput(name, id) {
@@ -268,8 +302,7 @@
         }
 
         function DisplayTemplate() {
-            var selected = document.getElementById('questiontype').value;
-            debugger;
+            var selected = document.getElementById('questiontype').value;            
             if (selected == 'dropdownTemplate') {
                 document.getElementById("dropdownTemplate").classList.toggle("invisible", false);
                 document.getElementById("dropdownTemplate").classList.toggle("visible", true);

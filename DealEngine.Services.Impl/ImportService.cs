@@ -22,12 +22,21 @@ namespace DealEngine.Services.Impl
         IMapperSession<Organisation> _organisationRepository;
         IBusinessActivityService _businessActivityService;
         IInsuranceAttributeService _InsuranceAttributeService;
+        private readonly string WorkingDirectory;
 
-        public ImportService(IOrganisationService organisationService, IUserService userService,
-            IProgrammeService programmeService, IReferenceService referenceService, IClientInformationService clientInformationService,
-            IUnitOfWork unitOfWork, IOrganisationTypeService organisationTypeService, IInsuranceAttributeService insuranceAttributeService,
-            IMapperSession<Organisation> organisationRepository, IBusinessActivityService businessActivityService)
+        public ImportService(
+            IOrganisationService organisationService, 
+            IUserService userService,
+            IProgrammeService programmeService, 
+            IReferenceService referenceService, 
+            IClientInformationService clientInformationService,
+            IUnitOfWork unitOfWork, 
+            IOrganisationTypeService organisationTypeService, 
+            IInsuranceAttributeService insuranceAttributeService,
+            IMapperSession<Organisation> organisationRepository, 
+            IBusinessActivityService businessActivityService)
         {
+            WorkingDirectory = "/tmp/"; //"/tmp/ImportData/"; 
             _businessActivityService = businessActivityService;
             _organisationRepository = organisationRepository;
             _InsuranceAttributeService = insuranceAttributeService;
@@ -381,9 +390,8 @@ namespace DealEngine.Services.Impl
         }
 
         public async Task ImportActivities(User user)
-        {
-            string workingDirectory = "/tmp";            
-            var fileName = workingDirectory+ "/ImportData/anzsic06completeclassification.csv";
+        {                       
+            var fileName = WorkingDirectory + "anzsic06completeclassification.csv";
             var currentTemplateList = await _businessActivityService.GetBusinessActivitiesTemplates();
             List<BusinessActivityTemplate> BAList = new List<BusinessActivityTemplate>();
 
@@ -443,9 +451,8 @@ namespace DealEngine.Services.Impl
         }
         public async Task ImportCEASServiceIndividuals(User CreatedUser)
         {
-            //addresses need to be on one line
-            string workingDirectory = "C://tmp";
-            var fileName = workingDirectory + "//CEASIndividuals2019.csv";
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "CEASClients2019.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
             StreamReader reader;
@@ -560,9 +567,8 @@ namespace DealEngine.Services.Impl
             string line;
             string email;
             string userName;
-            //addresses need to be on one line
-            string workingDirectory = "C://tmp";
-            var fileName = workingDirectory + "//CEASPrincipals2019.csv";
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "CEASPrincipals2019.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
@@ -676,9 +682,8 @@ namespace DealEngine.Services.Impl
             StreamReader reader;
             ClaimNotification claimNotification;
             bool readFirstLine = false;
-            string line;
-            string workingDirectory = "C://tmp";
-            var fileName = workingDirectory + "//CEASClaims2019.csv";
+            string line;            
+            var fileName = WorkingDirectory + "CEASClaims2019.csv";
             using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
@@ -716,8 +721,7 @@ namespace DealEngine.Services.Impl
             BusinessContract businessContract;
             bool readFirstLine = false;
             string line;
-            string workingDirectory = "C://tmp";
-            var fileName = workingDirectory + "//CEASContracts2019.csv";
+            var fileName = WorkingDirectory + "CEASContracts2019.csv";
 
             using (reader = new StreamReader(fileName))
             {
