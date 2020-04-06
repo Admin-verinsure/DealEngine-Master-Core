@@ -2145,6 +2145,41 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> GetPMINZProfessionalIdemnity(Guid ClientInformationSheet)
+        {
+            String[][] ProfessionalIndemnityAnswer = new String[20][];
+            var count = 0;
+            String[] ProfessionalIndemnity;
+            User user = null;
+
+            try
+            {
+                user = await CurrentUser();
+                foreach (var answer in _clientInformationAnswer.GetAllSheetAns().Result.Where(c => c.ClientInformationSheet.Id == ClientInformationSheet && (c.ItemName == "PMINZPI1" || c.ItemName == "PMINZPI2" || c.ItemName == "PMINZPI3" || c.ItemName == "PMINZPI4" || c.ItemName == "PMINZPI5" || c.ItemName == "PMINZPI6"
+                                                                                                                                                         || c.ItemName == "PMINZPI7"  || c.ItemName == "PMINZPI8" || c.ItemName == "PMINZPI9" || c.ItemName == "PMINZPI10" || c.ItemName == "PMINZPI11" || c.ItemName == "PMINZPI12"
+                                                                                                                                                         || c.ItemName == "PMINZPI13" || c.ItemName == "PMINZPI14" || c.ItemName == "PMINZPI5" || c.ItemName == "PMINZPI6" || c.ItemName == "PMINZPI17" || c.ItemName == "PMINZPI18" || c.ItemName == "PMINZPI19" || c.ItemName == "PMINZPI20")))
+                {
+                    ProfessionalIndemnity = new String[3];
+                    for (var i = 0; i < 1; i++)
+                    {
+                        ProfessionalIndemnity[i] = answer.ItemName;
+                        ProfessionalIndemnity[i + 1] = answer.Value;
+                        ProfessionalIndemnity[i + 2] = answer.ClaimDetails;
+                    }
+                    ProfessionalIndemnityAnswer[count] = ProfessionalIndemnity;
+                    count++;
+                }
+                return Json(ProfessionalIndemnityAnswer);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> GetEmployerLiability(Guid ClientInformationSheet)
         {
             String[][] GeneralLiabilityAnwers = new String[6][];
@@ -2316,6 +2351,60 @@ namespace DealEngine.WebUI.Controllers
                                     await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
                                 }
                             }
+                        }
+                        await uow.Commit();
+                    }
+                }
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePMINZPIAnswer(List<string[]> Answers, Guid ClientInformationSheet)
+        {
+            ClientInformationSheet sheet = null;
+            User user = null;
+
+            try
+            {
+                foreach (var item in Answers)
+                {
+                    using (var uow = _unitOfWork.BeginUnitOfWork())
+                    {
+                        if (item[1] != null)
+                        {
+                            //for (var x = 0; x < item.Length - 1; x++)
+                           // {
+
+                                
+                                ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
+                                if (answer != null)
+                                {
+                                    answer.Value = item[1];
+                                    if(item.Length > 2)
+                                    answer.ClaimDetails = item[2];
+                                    //answer.ClaimDetails = item[2];
+                                }
+                                else
+                                {
+                                    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
+                                    if (item.Length > 2)
+                                    {
+                                        await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
+                                    }
+                                    else
+                                    {
+                                        await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+
+                                    }
+
+                                }
+                            //}
                         }
                         await uow.Commit();
                     }

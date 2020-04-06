@@ -487,7 +487,8 @@ namespace DealEngine.WebUI.Controllers
                 model.TotalRecords = organisations.Count;
                 model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
                 JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
-                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner", sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
+
                 model.AddRow(row1);
                 int offset = rows * (page - 1);
                 for (int i = offset; i < offset + rows; i++)
@@ -3042,6 +3043,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.InsuredEntityRelation = model.InsuredEntityRelation;
                     organisation.IsContractorInsured = model.IsContractorInsured;
                     organisation.IsInsuredRequired = model.IsInsuredRequired;
+                    organisation.IsCurrentMembership = model.IsCurrentMembership;
                     organisation.PMICert = model.PMICert;
                     organisation.CertType = model.CertType;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);

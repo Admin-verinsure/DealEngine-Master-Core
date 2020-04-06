@@ -67,6 +67,7 @@ namespace DealEngine.WebUI.Models
         public  string JobTitle { get; set; }
         public string InsuredEntityRelation { get; set; }
         public bool IsContractorInsured { get; set; }
+        public bool IsCurrentMembership { get; set; }
         public bool IsInsuredRequired { get; set; }
         public string PMICert { get; set; }
         public string PartyName { get; set; }

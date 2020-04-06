@@ -97,15 +97,22 @@
                        return false;
 
                    }
-                   //else if (!validatePMINZPIfields() && informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                   //    //$("#Vessel").trigger("click");
-                   //    window.alert("Please Add Claims Experience to proceed for policy. ");
+                   else if (!(informationsheetstatus != "Submitted" && informationsheetstatus != "Bound")) {
+                       //$("#Vessel").trigger("click");
 
-                   //    $("#more").trigger("click");
-                   //    $("[id='PMINZ Professional Indemnity']").trigger("click");
-                   //    return false;
+                       if (document.querySelector("[id='PMINZ Professional Indemnity']") !== null) {
 
-                   //}
+                          // if (!validatePMINZPIfields()) {
+                          // window.alert("Please Add Professional Indemnity to proceed for policy. ");
+                          // $("#more").trigger("click");
+                          // $("[id='PMINZ Professional Indemnity']").trigger("click");
+                          // return false;
+                          //} else {
+                           SavePMINZProfessionalIndemnity();
+                         // }
+                       }
+
+                   }
 
                    if ($('#CompanyName').val() === "AON") {
                        var nextbutton = document.getElementsByClassName("next");
@@ -138,8 +145,10 @@
                            });
                    }
 
+
                  
                }
+
                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                    if (document.querySelector('[id="Professional Indemnity"]') !== null) {
                        if (!ValidateProfessionalIndemnity()) {
@@ -152,6 +161,20 @@
                        }
                    }
                }
+
+               //if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+               //    if (document.querySelector("id='PMINZ Professional Indemnity']") !== null) {
+               //        if (!ValidateProfessionalIndemnity()) {
+               //            window.alert("Please Add Professional Indemnity to proceed for policy. ");
+               //            $("#more").trigger("click");
+               //            $("[id='PMINZ Professional Indemnity']").trigger("click");
+               //            return false;
+               //        } else {
+               //            SaveProfessionalIndemnity();
+               //        }
+               //    }
+               //}
+
                if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
                    if (!ValidateStatutory()) {
                        window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
@@ -677,142 +700,7 @@
         })
     });
 
-    function validatePMINZPIfields() {
-        debugger;
-          var pminzPI1 = $('#PMINZPI1').val();
-          var pminzPI2 = $('#PMINZPI2').val();
-          var pminzPI3 = $('#PMINZPI3').val();
-          var pminzPI4 = $('#PMINZPI4').val();
-          var pminzPI5 = $('#PMINZPI5').val();
-          var pminzPI6 = $('#PMINZPI6').val();
-          var pminzPI7 = $('#PMINZPI7').val();
-          var pminzPI8 = $('#PMINZPI8').val();
-          var validity = true;
-
-
-        for (var ind = 1; ind <= 8; ind++) {
-            var jh = $('#PMINZPI' + ind + '\'');
-            var jkhj = jh.val();
-            var PMINZPIVal = $('#PMINZPI' + ind + '\'').val();
-            if (  PMINZPIVal == "") {
-
-                 $('#ValidatePMINZPI'+ ind + '\'').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            if (PMINZPIVal == "true" && $("#PMINZPI"+ind+"Details").val() == "") {
-                $("#ValidatePMINZPI"+ind+"Details").html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (PMINZPIVal == "false") {
-                    $("#ValidatePMINZPI"+ind+"Details").val("");
-                }
-               
-            }
-            }
-        }
-
-        if (claim1 == "") {
-            $('#ValidateClaimcond1').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            if (claim1 == "true" && $("#Claimexp1Details").val() == "") {
-                $('#ValidateClaimDetails1').html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (claim1 == "false") {
-                    $('#Claimexp1Details').val("");
-                }
-                $('#ValidateClaimcond1').html("<i></i>");
-                $('#ValidateClaimDetails1').html("<i></i>");
-            }
-        }
-        if (claim2 == "") {
-            $('#ValidateClaimcond2').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            if (claim2 == "true" && $("#Claimexp2Details").val() == "") {
-                $('#ValidateClaimDetails2').html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (claim2 == "false") {
-                    $('#Claimexp2Details').val("");
-                }
-                $('#ValidateClaimcond2').html("<i></i>");
-                $('#ValidateClaimDetails2').html("<i></i>");
-            }
-        }
-        if (claim3 == "") {
-            $('#ValidateClaimcond3').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            if (claim3 == "true" && $("#Claimexp3Details").val() == "") {
-                $('#ValidateClaimDetails3').html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (claim3 == "false") {
-                    $('#Claimexp3Details').val("");
-                }
-                $('#ValidateClaimcond3').html("<i></i>");
-                $('#ValidateClaimDetails3').html("<i></i>");
-            }
-        }
-        if (claim4 == "") {
-            $('#ValidateClaimcond4').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            if (claim4 == "true" && $("#Claimexp4Details").val() == "") {
-                $('#ValidateClaimDetails4').html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (claim4 == "false") {
-                    $('#Claimexp4Details').val("");
-                }
-                $('#ValidateClaimcond4').html("<i></i>");
-                $('#ValidateClaimDetails4').html("<i></i>");
-            }
-        }
-        if (claim5 == "") {
-            $('#ValidateClaimcond5').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            if (claim5 == "true" && $("#Claimexp5Details").val() == "") {
-                $('#ValidateClaimDetails5').html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (claim5 == "false") {
-                    $('#Claimexp5Details').val("");
-                }
-                $('#ValidateClaimcond5').html("<i></i>");
-                $('#ValidateClaimDetails5').html("<i></i>");
-            }
-        }
-        return validity;
-    }
-
+    
     function validateClaim(claim1, claim2, claim3, claim4, claim5) {
         var validity = true;
         if (claim1 == "") {
@@ -987,16 +875,19 @@
     }
 
     function validatePMINZPI(PMINZPI) {
-        debugger;
 
           var pMINZPI = document.getElementById(PMINZPI);
-
-        if (pMINZPI.options[claim.selectedIndex].value == "true") {
+          var sec = "#" + PMINZPI + "Sec";
+        if (pMINZPI.options[pMINZPI.selectedIndex].value == "true" ) {
+           
             $("#" + PMINZPI + "Sec").removeClass('hidden');
         } else {
             $("#" + PMINZPI + "Sec").addClass('hidden');
+            $("#" + PMINZPI + "Details").val("");
 
         }
+
+
 
     }
 
