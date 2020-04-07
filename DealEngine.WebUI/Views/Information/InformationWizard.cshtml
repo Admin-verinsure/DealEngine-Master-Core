@@ -16,14 +16,14 @@
                             <h2>Get Insurance</h2>
                         </header>
 
-                        @Html.HiddenFor(m => m.AnswerSheetId)
-                        @Html.HiddenFor(m => m.Status)
-                        @Html.HiddenFor(m => m.AgreementStatus)
-                        @Html.HiddenFor(m => m.Id)
+                        @Html.HiddenFor(m => m.ClientInformationSheet.Id)
+                        @Html.HiddenFor(m => m.ClientInformationSheet.Status)
+                        @Html.HiddenFor(m => m.ClientAgreement)
+                        @Html.HiddenFor(m => m.ClientProgramme.Id)
                         @Html.HiddenFor(m => m.ListProductName)
                     <div role="content">
                         <!-- widget content -->
-                        @if (Model.Status == "Submitted")
+                        @if (Model.ClientInformationSheet.Status == "Submitted")
                         {
 
                             <div class="alert alert-warning">
@@ -988,7 +988,7 @@
                                                 </div>
                                             </div>
                                             <div class="col col-12">
-                                                <a href="~/Agreement/SendPolicyDocuments/@Model.AnswerSheetId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-envelope"></i> Send Policy Documents</a>
+                                                <a href="~/Agreement/SendPolicyDocuments/@Model.ClientInformationSheet.Id" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-envelope"></i> Send Policy Documents</a>
                                             </div>
                                         </div>
                                     }
@@ -1138,7 +1138,7 @@
                 $("#getDetailsModal").modal('show');
             }
             
-            if ("@Model.Status" == "Submitted") {
+            if ("@Model.ClientInformationSheet.Status" == "Submitted") {
                 if (document.getElementById('fieldset') != null) {
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {
@@ -1148,7 +1148,7 @@
                 //$('.btn').addClass("hidden");
             }
 
-            var clientInformationSheet = $('#AnswerSheetId').val();
+            var clientInformationSheet = $('#InformationViewModel.InformationSheet.Id').val();
             var postData = { ClientInformationSheet: clientInformationSheet };
 
             $.ajax({

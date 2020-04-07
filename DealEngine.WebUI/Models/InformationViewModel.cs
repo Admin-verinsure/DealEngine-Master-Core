@@ -7,16 +7,12 @@ namespace DealEngine.WebUI.Models
 {
     public class InformationViewModel : BaseViewModel
     {
-        public Guid Id { get; set; }
-        public Guid AnswerSheetId { get; set; }
-        public Boolean IsChange { get; set; }
+        public ClientProgramme ClientProgramme { get; set; }
+        public ClientInformationSheet ClientInformationSheet { get; set; }
+        public ClientAgreement ClientAgreement { get; set; }
         public string CompanyName { get; set; }
-        public string Name { get; set; }
-        public string AgreementStatus { get; set; }
-        public string Status { get; set; }
-        public string SheetStatus { get; set; }
+        public string Name { get; set; }                   
         public string SectionView { get; set; }
-        public IEnumerable<String> UserRole { get; set; }
         public List<InformationSection> Section { get; set; }
         public List<string> ListProductName { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
@@ -29,7 +25,6 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<OrganisationalUnitViewModel> OrganisationalUnits { get; set; }
         public IEnumerable<LocationViewModel> Locations { get; set; }
         public IEnumerable<OrganisationViewModel> InterestedParties { get; set; }
-        public Guid OrganisationId { get; set; }
         public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
         public IEnumerable<SelectListItem> ClaimProducts { get; set; }
         public IEnumerable<SelectListItem> AvailableOrganisations { get; set; }
@@ -48,9 +43,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<BoatUseViewModel> BoatUse { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
-        public string Advisory { get; set; }
-        //public IEnumerable<SectionBuilderViewModel> SectionBuilder { get; set; }
-        public Guid ClientProgrammeID { get; set; }
+        public string Advisory { get; set; }        
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
         public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }

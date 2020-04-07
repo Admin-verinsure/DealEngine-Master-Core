@@ -750,8 +750,8 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 user = await CurrentUser();
-                model.AnswerSheetId = sheet.Id;
-                model.OrganisationId = sheet.Owner.Id;
+                model.ClientInformationSheet = sheet;
+                model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -945,9 +945,8 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-                InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                model.Id = Id;
-                model.ClientProgrammeID = clientProgramme.Id;
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);                
+                model.ClientProgramme = clientProgramme;
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
             }
@@ -969,16 +968,12 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                model.AnswerSheetId = sheet.Id;
-                model.IsChange = sheet.IsChange;
+                model.ClientInformationSheet = sheet;                
                 model.SectionView = name;
-                model.Id = id;
-                model.ClientProgrammeID = clientProgramme.Id;
+                model.ClientProgramme = clientProgramme;                
                 user = await CurrentUser();
                 try
-                {
-
-                    model.OrganisationId = clientProgramme.Owner.Id;
+                {                   
 
                     foreach (var section in model.Sections)
                         foreach (var item in section.Items)
@@ -1366,10 +1361,8 @@ namespace DealEngine.WebUI.Controllers
                 }
                 model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
-                model.AnswerSheetId = sheet.Id;
-                model.IsChange = sheet.IsChange;
-                model.Id = id;
-                model.SheetStatus = sheet.Status;
+                model.ClientInformationSheet = sheet;
+                model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
 
                 //testing dynamic wizard here
@@ -1415,7 +1408,6 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model.Advisory = advisoryDesc;
-                model.OrganisationId = clientProgramme.Owner.Id;
 
                 for (var i = 0; i < model.Sections.Count(); i++)
                 {
@@ -1614,7 +1606,7 @@ namespace DealEngine.WebUI.Controllers
 
                 var availableProducts = new List<SelectListItem>();
 
-                foreach (Product  product in clientProgramme.BaseProgramme.Products)
+                foreach (Product product in clientProgramme.BaseProgramme.Products)
                 {
                     availableProducts.Add(new SelectListItem
                     {
@@ -1645,10 +1637,6 @@ namespace DealEngine.WebUI.Controllers
                 userDetails.FirstName = user.FirstName;
                 userDetails.Email = user.Email;
 
-                var roles = new List<String>();
-
-                model.UserRole = roles;
-
                 var organisationDetails = new OrganisationDetailsVM
                 {
                     Name = sheet.Owner.Name,
@@ -1666,8 +1654,7 @@ namespace DealEngine.WebUI.Controllers
 
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;
-                model.Status = sheet.Status;
+                model.UserDetails = userDetails;                
 
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
@@ -3260,10 +3247,8 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 InformationViewModel model = await GetInformationViewModel(sheet.Programme);
-                model.Sections = model.Sections.OrderBy(sec => sec.Position);
-                model.Status = sheet.Status;
-                model.AnswerSheetId = sheet.Id;
-                model.OrganisationId = sheet.Owner.Id;
+                model.Sections = model.Sections.OrderBy(sec => sec.Position);                
+                model.ClientInformationSheet = sheet;                
 
                 foreach (var section in model.Sections)
                     foreach (var item in section.Items)
