@@ -162,6 +162,7 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
+        public virtual bool IsCurrentMembership { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual string Description { get; set; }

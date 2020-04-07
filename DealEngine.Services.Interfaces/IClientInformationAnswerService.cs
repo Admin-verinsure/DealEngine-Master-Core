@@ -14,6 +14,8 @@ namespace DealEngine.Services.Interfaces
 
         Task<ClientInformationAnswer> CreateNewSheetAns(string ClaimName, string value, ClientInformationSheet InformationSheetID);
 
+        Task<ClientInformationAnswer> CreateNewSheetPMINZAns(string ClaimName, string value, string claimdetails, ClientInformationSheet InformationSheetID);
+        
         Task<ClientInformationAnswer> GetClaimHistoryByName(string ClaimName, Guid InformationSheetID);
 
         Task<ClientInformationAnswer> GetSheetAnsByName(string ClaimName, Guid InformationSheetID);
