@@ -302,7 +302,7 @@ namespace DealEngine.WebUI.Models
             HasEPLOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = ""},
+                { Text = "-- Select --", Value = ""},
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -311,7 +311,7 @@ namespace DealEngine.WebUI.Models
             CoveredOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -320,7 +320,7 @@ namespace DealEngine.WebUI.Models
             LegalAdvisorOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -329,7 +329,7 @@ namespace DealEngine.WebUI.Models
             CasualBasisOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -338,7 +338,7 @@ namespace DealEngine.WebUI.Models
             DefinedOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -347,7 +347,7 @@ namespace DealEngine.WebUI.Models
             ManualOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -356,7 +356,7 @@ namespace DealEngine.WebUI.Models
             PostingNoticesOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
@@ -365,7 +365,7 @@ namespace DealEngine.WebUI.Models
             StaffRedundancyOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select Option --", Value = "" },
+                { Text = "-- Select --", Value = "" },
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
