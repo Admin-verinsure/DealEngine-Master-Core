@@ -125,8 +125,7 @@ namespace DealEngine.Services.Impl
             {
                 foreach (string value in collection[key])
                 {
-                    //break the collection into objects
-                    var genObj = collection[key].ToString().Split('.');
+                    //break the collection into objects                    
                     sheet.AddAnswer(key, value);
                 }
             }

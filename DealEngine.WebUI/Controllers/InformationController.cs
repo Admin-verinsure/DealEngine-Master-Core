@@ -2001,7 +2001,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheetId = Guid.Parse(collection["AnswerSheetId"]);
+                sheetId = Guid.Parse(collection["ClientInformationSheet.Id"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");
