@@ -82,78 +82,88 @@
 
                 <fieldset id="fieldset">
                     <input id="EditCEASProjectId" name="BusinessContractId" type="hidden" />
-                    <div class="row">
 
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">
-                                Your Client (i.e. Employer)
-                            </label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ContractTitle" id="EditCEASContractTitle" name="ContractTitle" placeholder="Your Client (i.e. Employer)" value="">
-                            </label>
-                            <p class="validationContainer" id="validateCEASEditContractTitle"></p>
-
+                            <label class="label required">Description of Project:</label>
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">The Project Description</label>
                             <label class="input">
                                 <i></i>
-                                <input data-type="TEXTBOX" data-name="ProjectDescription" id="EditCEASProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
+                                <input data-type="TEXTBOX" data-name="ProjectDescription" id="EditProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
                             </label>
-                            <p class="validationContainer" id="validateEditCEASProjectDescription"></p>
+                            <p class="validationContainer" id="validateEditProjectDescription"></p>
 
                         </section>
+                    </section>
 
-                    </div>
 
-                    <div class="row">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">Fees Earned:</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" data-name="Fees" id="EditFees" name="Fees" placeholder="Your Earned Fees" value="">
+                                </label>
+                                <p class="validationContainer" id="validateEditFees"></p>
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Your Major Responsibilities</label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="MajorResponsibilities" id="EditCEASMajorResponsibilities" name="MajorResponsibilities" placeholder="Your Major Responsibilities" value="">
-                            </label>
-                            <p class="validationContainer" id="validateEditCEASMajorResponsibilities"></p>
+                            </section>
                         </section>
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Your Earned Fees</label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="Fees" id="EditCEASFees" name="Fees" placeholder="Your Earned Fees" value="">
-                            </label>
-                            <p class="validationContainer" id="validateEditCEASFees"></p>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
+                                <label class="label">
+                                    Contract Value:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="EditContractValue" name="ConstructionValue" placeholder="$ Amount of Cover" value="" required>
+                                </label>
+
+                                <p class="validationContainer" id="validateEditContractValue"></p>
+                            </section>
                         </section>
 
-                    </div>
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
-                    <div class="row">
+                                <label class="label">
+                                    Duration (Months):
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label">
-                                The Construction Value (if any)
-                            </label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ConstructionValue" id="EditCEASConstructionValue" name="ConstructionValue" placeholder="The Construction Value (if any)" value="">
-                            </label>
-                            <p class="validationContainer" id="validateEditCEASConstructionValue"></p>
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" data-name="Fees" id="EditDuration" name="ProjectDuration" placeholder="Your Earned Fees" value="">
+                                </label>
+
+                                <p class="validationContainer" id="validateEditDuration"></p>
+                            </section>
                         </section>
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">The period of duration of your services</label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ProjectDuration" id="EditCEASProjectDuration" name="ProjectDuration" placeholder="The period of duration of your services" value="">
-                            </label>
-                            <p class="validationContainer" id="validateEditCEASProjectDuration"></p>
 
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">Your Major Responsibilities</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <input type="checkbox" name="ProjectDirector" value="Networksecurity"> Proj. Director<br>
+                                <input type="checkbox" name="ProjectManager" value="onlinestocktrading"> Proj. Manager<br>
+                                <input type="checkbox" name="ProjectCoordinator" value="fundsmanagementandinvestment"> Proj. Coordinator/Administrator<br>
+                                <input type="checkbox" name="ProjectEngineer" value="manufacturingcontrolprocess"> Proj. Engineers<br>
+
+                            </section>
+
+                            <p class="validationContainer" id="validateEditMajorResponsibilities"></p>
                         </section>
-
-                    </div>
 
 
                     <div class="row" id="update">
@@ -170,78 +180,93 @@
 
                 <fieldset id="fieldset">
                     <input id="CEASProjectId" name="BusinessContractId" type="hidden" />
-                    <div class="row">
 
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">
-                                Your Client (i.e. Employer)
-                            </label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ContractTitle" id="AddCEASContractTitle" name="ContractTitle" placeholder="Your Client (i.e. Employer)" value="">
-                            </label>
-                            <p class="validationContainer" id="validateCEASAddContractTitle"></p>
-
+                            <label class="label required">Description of Project:</label>
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">The Project Description</label>
                             <label class="input">
                                 <i></i>
-                                <input data-type="TEXTBOX" data-name="ProjectDescription" id="AddCEASProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
+                                <input data-type="TEXTBOX" data-name="ProjectDescription" id="AddProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
                             </label>
-                            <p class="validationContainer" id="validateAddCEASProjectDescription"></p>
+                            <p class="validationContainer" id="validateAddProjectDescription"></p>
 
                         </section>
+                    </section>
 
-                    </div>
 
-                    <div class="row">
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="label required">Fees Earned:</label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="input">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Fees" id="AddFees" name="Fees" placeholder="Your Earned Fees" value="">
+                            </label>
+                            <p class="validationContainer" id="validateAddFees"></p>
 
+                        </section>
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                            <label class="label">
+                                Contract Value:
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                            <label class="input form-group">
+                                <i></i>
+                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="AddContractValue" name="ConstructionValue" placeholder="$ Amount of Cover" value="" required>
+                            </label>
+
+                            <p class="validationContainer" id="validateAddContractValue"></p>
+                        </section>
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                            <label class="label">
+                                Duration (Months):
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                            <label class="input form-group">
+                                <i></i>
+                                <input data-type="TEXTBOX" data-name="Fees" id="AddDuration" name="ProjectDuration" placeholder="Your Earned Fees" value="">
+                            </label>
+
+                            <p class="validationContainer" id="validateAddDuration"></p>
+                        </section>
+                    </section>
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">Your Major Responsibilities</label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="MajorResponsibilities" id="AddCEASMajorResponsibilities" name="MajorResponsibilities" placeholder="Your Major Responsibilities" value="">
-                            </label>
-                            <p class="validationContainer" id="validateAddCEASMajorResponsibilities"></p>
                         </section>
-
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Your Earned Fees</label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="Fees" id="AddCEASFees" name="Fees" placeholder="Your Earned Fees" value="">
-                            </label>
-                            <p class="validationContainer" id="validateAddCEASFees"></p>
+                            <input type="checkbox" name="ProjectDirector" value="Networksecurity"> Proj. Director<br>
+                            <input type="checkbox" name="ProjectManager" value="onlinestocktrading"> Proj. Manager<br>
+                            <input type="checkbox" name="ProjectCoordinator" value="fundsmanagementandinvestment"> Proj. Coordinator/Administrator<br>
+                            <input type="checkbox" name="ProjectEngineer" value="manufacturingcontrolprocess"> Proj. Engineers<br>
 
                         </section>
 
-                    </div>
+                        <p class="validationContainer" id="validateAddMajorResponsibilities"></p>
+                    </section>
 
-                    <div class="row">
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label">
-                                The Construction Value (if any)
-                            </label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ConstructionValue" id="AddCEASConstructionValue" name="ConstructionValue" placeholder="The Construction Value (if any)" value="">
-                            </label>
-                            <p class="validationContainer" id="validateAddCEASConstructionValue"></p>
-                        </section>
+                   
 
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">The period of duration of your services</label>
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ProjectDuration" id="AddCEASProjectDuration" name="ProjectDuration" placeholder="The period of duration of your services" value="">
-                            </label>
-                            <p class="validationContainer" id="validateAddCEASProjectDuration"></p>
 
-                        </section>
-
-                    </div>
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
@@ -433,7 +458,7 @@
         }
     }
 
-      function ValidateAddCEASProject(event,tabId, tableId,currenttab) {
+      function AddBusinessContract(event,tabId, tableId,currenttab) {
         debugger;
                           event.preventDefault();
 
