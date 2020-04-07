@@ -1193,22 +1193,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CloseAdvisory(MilestoneAdvisoryVM milestoneAdvisoryVM)
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _milestoneService.CloseMileTask(milestoneAdvisoryVM.Id, milestoneAdvisoryVM.Method);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+
         [HttpPost]
         public async Task<IActionResult> GetProductName(Guid id)
         {
@@ -1374,6 +1359,7 @@ namespace DealEngine.WebUI.Controllers
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 model.SharedRoleViewModel = sharedRoleViewModel;
                 RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
+                model.PMINZEPLViewModel = await GetPMINZEPLViewModel(sheet);
                 if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0)
                 {
                     revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
@@ -1396,7 +1382,38 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.Wizardsteps = LoadWizardsteps("Standard");
                 }
-               
+
+                //build models from answers
+                foreach(var answer in sheet.Answers) 
+                {
+                    try
+                    {
+                        var split = answer.ItemName.Split('.').ToList();
+                        if (split.Count > 1)
+                        {
+                            var modelsetmethod = model.GetType().GetProperty(split.FirstOrDefault()).PropertyType.GetProperty(split.LastOrDefault());
+                            modelsetmethod.SetValue(null, answer.Value);
+                        }                        
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("");
+                    }
+                }
+
+
+                foreach (var section in model.Sections)
+                    foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
+                    {                        
+                        var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
+                        if (answer != null)
+                        {
+                            item.Value = answer.Value;
+                        }
+                        else
+                            sheet.AddAnswer(item.Name, "");
+                    }
+
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
@@ -1412,17 +1429,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        foreach (var section in model.Sections)
-                            foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
-                            {
-                                var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-                                if (answer != null)
-                                    item.Value = answer.Value;
-                                else
-                                    sheet.AddAnswer(item.Name, "");
-                            }                        
-
+                    {                                
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
@@ -1696,6 +1703,14 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        private async Task<PMINZEPLViewModel> GetPMINZEPLViewModel(ClientInformationSheet sheet)
+        {
+            PMINZEPLViewModel model = new PMINZEPLViewModel();
+
+
+            return model;
+        }
+
         private IList<string> LoadWizardsteps(string wizardType)
         {
             IList<string> steps = new List<string>();
@@ -1918,13 +1933,16 @@ namespace DealEngine.WebUI.Controllers
             {                
                 foreach (var territory in clientProgramme.BaseProgramme.TerritoryTemplates)
                 {
+                    territoryList.Add(territory);
+                }
+                foreach(var template in territoryList)
+                {
                     territoryTemplates.Add(new SelectListItem
                     {
-                        Value = territory.Id.ToString(),
-                        Text = territory.Location,
+                        Value = template.Id.ToString(),
+                        Text = template.Location,
                         Selected = false
                     });
-
                 }
                 foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
                 {
@@ -2020,6 +2038,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
+                sheetId = Guid.Parse(collection["AnswerSheetId"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");

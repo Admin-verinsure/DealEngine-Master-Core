@@ -19,7 +19,6 @@ namespace DealEngine.Services.Impl
         IClientInformationService _clientInformationService;
         IUnitOfWork _unitOfWork;
         IOrganisationTypeService _organisationTypeService;
-        IMapperSession<Organisation> _organisationRepository;
         IBusinessActivityService _businessActivityService;
         IInsuranceAttributeService _InsuranceAttributeService;
         private readonly string WorkingDirectory;
@@ -36,9 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository, 
             IBusinessActivityService businessActivityService)
         {
-            WorkingDirectory = "/tmp/"; //"/tmp/ImportData/"; 
+            WorkingDirectory = "C://tmp//"; //"/tmp/ImportData/"; 
             _businessActivityService = businessActivityService;
-            _organisationRepository = organisationRepository;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
             _organisationService = organisationService;
@@ -169,7 +167,7 @@ namespace DealEngine.Services.Impl
 
             //addresses need to be on one line
             //var principalsFileName = "C:\\tmp\\testclientdata\\NZACSPrincipals2018.csv";
-            var principalsFileName = "/tmp/NZACSPrincipals2018.csv";
+            var principalsFileName = WorkingDirectory + "NZACSPrincipals2018.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             if (organisationType == null)
@@ -310,7 +308,7 @@ namespace DealEngine.Services.Impl
             string line;
 
             //var claimFileName = "C:\\tmp\\testclientdata\\NZACSClaimsData2018.csv";
-            var claimFileName = "/tmp/NZACSClaimsData2018.csv";
+            var claimFileName = WorkingDirectory + "nzacs//NZACSClaimsData2018.csv";
             using (reader = new StreamReader(claimFileName))
             {
                 while (!reader.EndOfStream)
@@ -350,7 +348,7 @@ namespace DealEngine.Services.Impl
             string line;
             //special characters /,/
             //var contractFileName = "C:\\tmp\\testclientdata\\NZACSContractorsPrincipals2018.csv";
-            var contractFileName = "/tmp/NZACSContractorsPrincipals2018.csv";
+            var contractFileName = WorkingDirectory + "nzacs//NZACSContractorsPrincipals2018.csv";
 
             using (reader = new StreamReader(contractFileName))
             {
@@ -381,14 +379,6 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
-        public async Task ImportAOEService(User user)
-        {
-            //await ImportAOEServiceIndividuals(user);
-            //await ImportAOEServicePrincipals(user);
-            //await ImportAOEServiceClaims(user);
-            //await ImportAOEServiceBusinessContract(user);
-        }
-
         public async Task ImportActivities(User user)
         {                       
             var fileName = WorkingDirectory + "anzsic06completeclassification.csv";
@@ -452,7 +442,7 @@ namespace DealEngine.Services.Impl
         public async Task ImportCEASServiceIndividuals(User CreatedUser)
         {
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "CEASClients2019.csv";
+            var fileName = WorkingDirectory + "ceas//CEASClients2019.csv";
             var currentUser = CreatedUser;
             Guid programmeID = Guid.Parse("48ce028d-1fcb-4f3b-881b-9fd769b87643");
             StreamReader reader;
@@ -568,7 +558,7 @@ namespace DealEngine.Services.Impl
             string email;
             string userName;
             //addresses need to be on one line            
-            var fileName = WorkingDirectory + "CEASPrincipals2019.csv";
+            var fileName = WorkingDirectory + "ceas//CEASPrincipals2019.csv";
             var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("Principal");
             var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
             using (reader = new StreamReader(fileName))
@@ -683,7 +673,7 @@ namespace DealEngine.Services.Impl
             ClaimNotification claimNotification;
             bool readFirstLine = false;
             string line;            
-            var fileName = WorkingDirectory + "CEASClaims2019.csv";
+            var fileName = WorkingDirectory + "ceas//CEASClaims2019.csv";
             using (reader = new StreamReader(fileName))
             {
                 while (!reader.EndOfStream)
@@ -721,7 +711,7 @@ namespace DealEngine.Services.Impl
             BusinessContract businessContract;
             bool readFirstLine = false;
             string line;
-            var fileName = WorkingDirectory + "CEASContracts2019.csv";
+            var fileName = WorkingDirectory + "ceas//CEASContracts2019.csv";
 
             using (reader = new StreamReader(fileName))
             {

@@ -1,0 +1,110 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+    <form id="pminzepl" class="needs-validation" novalidate="novalidate">
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-6">
+                    <label for="HasEPL">Would you like Employment Practices Liability Insurance?</label>
+                </div>
+                <div class="col-6">
+                    @Html.DropDownListFor(l => l.PMINZEPLViewModel.HasEPLOptions, Model.PMINZEPLViewModel.HasEPLOptions, new { @class = "form-control", id = "HasEPL", @onchange = "PminzOnChange(this.id, this.name)", @required = "re" })
+                </div>
+            </div>
+        </div>
+        <div class="invisible" id="PMINZEPLViewModel.HasEPLOptions">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="totalemployees">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="iscovered">Are all employees covered by written employment contract?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.CoveredOptions, Model.PMINZEPLViewModel.CoveredOptions, new { @class = "form-control", id = "iscovered", @onchange = "PminzOnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group invisible" id="PMINZEPLViewModel.CoveredOptions">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="islegaladvisor">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.LegalAdvisorOptions, Model.PMINZEPLViewModel.LegalAdvisorOptions, new { @class = "form-control", id = "islegaladvisor" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="iscasualbasis">Do you utilise staff on a casual basis?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.CasualBasisOptions, Model.PMINZEPLViewModel.CasualBasisOptions, new { @class = "form-control", id = "iscasualbasis", @onchange = "PminzOnChange(this.id, this.name)" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group invisible" id="PMINZEPLViewModel.CasualBasisOptions">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="isdefined">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.DefinedOptions, Model.PMINZEPLViewModel.DefinedOptions, new { @class = "form-control", id = "isdefined" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="hasmanual">Do you have a written human resources manual or equivalent written management guidelines?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.ManualOptions, Model.PMINZEPLViewModel.ManualOptions, new { @class = "form-control", id = "hasmanual" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.PostingNoticesOptions, Model.PMINZEPLViewModel.PostingNoticesOptions, new { @class = "form-control", id = "hasmanual" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="ispostingnotices">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
+                    </div>
+                    <div class="col-6">
+                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.StaffRedundancyOptions, Model.PMINZEPLViewModel.StaffRedundancyOptions, new { @class = "form-control", id = "hasmanual" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        function PminzOnChange(valueId, Id) {
+            var value = document.getElementById(valueId).value;
+            if (value == "1") {
+                document.getElementById(Id).classList.toggle("invisible", false);
+                document.getElementById(Id).classList.toggle("visible", true);
+            } else {
+                document.getElementById(Id).classList.toggle("invisible", true);
+                document.getElementById(Id).classList.toggle("visible", false);
+            }
+            debugger;
+        }
+    </script>

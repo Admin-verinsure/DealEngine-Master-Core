@@ -13,6 +13,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<InformationTemplate> InformationTemplates { get; set; }
         public InformationTemplate InformationTemplate { get; set; }
         public IEnumerable<InformationSectionViewModel> Sections { get; set; }
+        public IEnumerable<Rule> Rules { get; set; }
         public string Name { get; set; }
     }
 }

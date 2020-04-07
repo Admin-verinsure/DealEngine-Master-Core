@@ -119,6 +119,7 @@ namespace DealEngine.Services.Impl
                 new PMINZPIUWModule(),
                 new PMINZPLUWModule(),
                 new PMINZSLUWModule(),
+                new PMINZDOUWModule(),
                 new PMINZEDUWModule(),
                 new PMINZELUWModule(),
                 new PMINZCLUWModule(),

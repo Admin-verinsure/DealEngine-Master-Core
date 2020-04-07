@@ -97,22 +97,6 @@
                        return false;
 
                    }
-                   else if (!(informationsheetstatus != "Submitted" && informationsheetstatus != "Bound")) {
-                       //$("#Vessel").trigger("click");
-
-                       if (document.querySelector("[id='PMINZ Professional Indemnity']") !== null) {
-
-                          // if (!validatePMINZPIfields()) {
-                          // window.alert("Please Add Professional Indemnity to proceed for policy. ");
-                          // $("#more").trigger("click");
-                          // $("[id='PMINZ Professional Indemnity']").trigger("click");
-                          // return false;
-                          //} else {
-                           SavePMINZProfessionalIndemnity();
-                         // }
-                       }
-
-                   }
 
                    if ($('#CompanyName').val() === "AON") {
                        var nextbutton = document.getElementsByClassName("next");
@@ -235,6 +219,15 @@
                        ValidateDNO();
                    }
                }
+               //if (document.querySelector('pminzepl') !== null) {
+               //    var form = document.getElementById('pminzepl');
+               //    if (form.checkValidity() === false) {
+               //        window.alert("PMINZ placeholder");
+               //        $("#more").trigger("click");
+               //        $("[id='Directors and Officers Liability Insurance']").trigger("click");
+               //        return false;
+               //    }
+               //}
                postData = { clientInformationId: clientInformationSheet }
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
@@ -550,7 +543,8 @@
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
-                data: $("#tab_1 :input").serialize({ json:true })
+                //data: $("#tab_1 :input").serialize({ json:true })
+                data: $("#myForm").serialize({ json:true })
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');

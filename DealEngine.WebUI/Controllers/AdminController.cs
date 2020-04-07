@@ -226,7 +226,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportCEASServiceClaims(user);
+                await _importService.ImportAOEServiceClaims(user);
 
                 return RedirectToAction("Index", "Home");
             }
