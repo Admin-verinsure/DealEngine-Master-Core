@@ -302,7 +302,7 @@ namespace DealEngine.WebUI.Models
             HasEPLOptions = new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "Select Option", Value = "" },
+                { Text = "Select Option", Value = ""},
                 new SelectListItem
                 { Text = "Yes", Value = "1" },
                 new SelectListItem
