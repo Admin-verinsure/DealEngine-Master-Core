@@ -543,7 +543,8 @@
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
-                data: $("#tab_1 :input").serialize({ json:true })
+                //data: $("#tab_1 :input").serialize({ json:true })
+                data: $("#myForm").serialize({ json:true })
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');

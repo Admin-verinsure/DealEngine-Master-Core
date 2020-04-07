@@ -3,8 +3,14 @@
     <form id="pminzepl" class="needs-validation" novalidate="novalidate">
 
         <div class="form-group">
-            <label for="HasEPL">Would you like Employment Practices Liability Insurance?</label>
-            @Html.DropDownListFor(l => l.PMINZEPLViewModel.HasEPLOptions, Model.PMINZEPLViewModel.HasEPLOptions, new { @class = "form-control", id = "HasEPL", @onchange = "PminzOnChange(this.id, this.name)" })
+            <div class="row">
+                <div class="col-6">
+                    <label for="HasEPL">Would you like Employment Practices Liability Insurance?</label>
+                </div>
+                <div class="col-6">
+                    @Html.DropDownListFor(l => l.PMINZEPLViewModel.HasEPLOptions, Model.PMINZEPLViewModel.HasEPLOptions, new { @class = "form-control", id = "HasEPL", @onchange = "PminzOnChange(this.id, this.name)", @required = "re" })
+                </div>
+            </div>
         </div>
         <div class="invisible" id="PMINZEPLViewModel.HasEPLOptions">
             <div class="form-group">

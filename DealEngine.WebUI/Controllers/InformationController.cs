@@ -1382,7 +1382,38 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.Wizardsteps = LoadWizardsteps("Standard");
                 }
-               
+
+                //build models from answers
+                foreach(var answer in sheet.Answers) 
+                {
+                    try
+                    {
+                        var split = answer.ItemName.Split('.').ToList();
+                        if (split.Count > 1)
+                        {
+                            var modelsetmethod = model.GetType().GetProperty(split.FirstOrDefault()).PropertyType.GetProperty(split.LastOrDefault());
+                            modelsetmethod.SetValue(null, answer.Value);
+                        }                        
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("");
+                    }
+                }
+
+
+                foreach (var section in model.Sections)
+                    foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
+                    {                        
+                        var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
+                        if (answer != null)
+                        {
+                            item.Value = answer.Value;
+                        }
+                        else
+                            sheet.AddAnswer(item.Name, "");
+                    }
+
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
                 {
@@ -1398,17 +1429,7 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                     using (var uow = _unitOfWork.BeginUnitOfWork())
-                    {
-                        foreach (var section in model.Sections)
-                            foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
-                            {
-                                var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-                                if (answer != null)
-                                    item.Value = answer.Value;
-                                else
-                                    sheet.AddAnswer(item.Name, "");
-                            }                        
-
+                    {                                
                         sheet.Status = "Started";
                         await uow.Commit();
                     }
