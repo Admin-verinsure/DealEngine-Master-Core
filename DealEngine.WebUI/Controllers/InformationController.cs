@@ -1912,13 +1912,16 @@ namespace DealEngine.WebUI.Controllers
             {                
                 foreach (var territory in clientProgramme.BaseProgramme.TerritoryTemplates)
                 {
+                    territoryList.Add(territory);
+                }
+                foreach(var template in territoryList)
+                {
                     territoryTemplates.Add(new SelectListItem
                     {
-                        Value = territory.Id.ToString(),
-                        Text = territory.Location,
+                        Value = template.Id.ToString(),
+                        Text = template.Location,
                         Selected = false
                     });
-
                 }
                 foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
                 {
