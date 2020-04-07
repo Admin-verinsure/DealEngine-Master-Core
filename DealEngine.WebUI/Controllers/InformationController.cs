@@ -1684,8 +1684,10 @@ namespace DealEngine.WebUI.Controllers
 
         private async Task<PMINZEPLViewModel> GetPMINZEPLViewModel(ClientInformationSheet sheet)
         {
-            if()
-            return new PMINZEPLViewModel();
+            PMINZEPLViewModel model = new PMINZEPLViewModel();
+
+
+            return model;
         }
 
         private IList<string> LoadWizardsteps(string wizardType)
@@ -2012,6 +2014,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
+                sheetId = Guid.Parse(collection["AnswerSheetId"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");

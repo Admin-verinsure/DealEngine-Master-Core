@@ -299,6 +299,15 @@ namespace DealEngine.WebUI.Models
     {
         public PMINZEPLViewModel()
         {
+            HasEPLOptions = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "Select Option", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
             CoveredOptions = new List<SelectListItem>()
             {
                 new SelectListItem
@@ -363,6 +372,7 @@ namespace DealEngine.WebUI.Models
                 { Text = "No", Value = "2" }
             };
         }
+        public IList<SelectListItem> HasEPLOptions { get; set; }
         public int TotalEmployees { get; set; }
         public IList<SelectListItem> CoveredOptions { get; set; }
         public IList<SelectListItem> LegalAdvisorOptions { get; set; }
