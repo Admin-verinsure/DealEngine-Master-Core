@@ -245,7 +245,7 @@
                             </section>
                             <section class="col col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <label class="input form-group">
-                                    <select class="form-control" id="hasfruadextension">
+                                    <select class="form-control" onchange="CyberLiability('hasfruadextension')" id="hasfruadextension">
                                         <option selected="selected" value="">-- Select --</option>
                                         <option value="1">Yes</option>
                                         <option value="2">No</option>
@@ -255,7 +255,7 @@
 
                         </section>
 
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="hasproceduresec">
                             <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                                 <label class="label required">
                                     Do you have procedures for verifying destination bank accounts and/or any changes to destination bank account details, before funds are transferred?
@@ -273,7 +273,7 @@
                             </section>
 
                         </section>
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden" id="hasapprovedvendorssec">
                             <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
                                 <label class="label required">
                                     Do you hold an approved list of vendors and suppliers, including authorized contract people and contace details, which is checked when payments are made?
@@ -550,6 +550,20 @@
             $('#CyberLiabilitySec').addClass('hidden');
         }
     };
+
+    function CyberLiability(IsContractorInsured) {
+        var isContractorInsuredselected = document.getElementById(IsContractorInsured);
+        if (isContractorInsuredselected.options[isContractorInsuredselected.selectedIndex].value == "1") {
+            debugger;
+            $('#hasproceduresec').removeClass('hidden');
+            $('#hasapprovedvendorssec').removeClass('hidden');
+
+        } else {
+             $('#hasproceduresec').addClass('hidden');
+            $('#hasapprovedvendorssec').addClass('hidden');
+
+        }
+    }
 
     function CyberLiabilityInsurance2Selected(DNO) {
         var CyberLiability = document.getElementById(DNO);
