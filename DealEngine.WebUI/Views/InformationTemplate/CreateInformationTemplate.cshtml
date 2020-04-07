@@ -115,7 +115,8 @@
                         <ul class="nav nav-tabs step-anchor">
                             <li class="nav-item active"><a href="#question1" class="nav-link">1<br><small>Question</small></a></li>
                             <li class="nav-item"><a href="#question2" class="nav-link">2<br><small>Conditional Question</small></a></li>
-                            <li class="nav-item"><a href="#question3" class="nav-link">3<br><small>Submit</small></a></li>
+                            <li class="nav-item"><a href="#question3" class="nav-link">3<br><small>Rules</small></a></li>
+                            <li class="nav-item"><a href="#question4" class="nav-link">4<br><small>Submit</small></a></li>
                         </ul>
 
                         <div class="sw-container tab-content">
@@ -126,6 +127,9 @@
                                 @await Html.PartialAsync("../InformationTemplate/_ItemConditionalSection")
                             </div>
                             <div id="question3" class="tab-pane step-content">
+                                @await Html.PartialAsync("../InformationTemplate/_ItemRuleSection", Model)
+                            </div>
+                            <div id="question4" class="tab-pane step-content">
                                 <p>submit</p>
                             </div>
                         </div>

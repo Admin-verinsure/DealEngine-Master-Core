@@ -11,5 +11,6 @@ namespace DealEngine.Services.Interfaces
         Task AddRule(User createdBy, string name, string description, Product product, string value);
         Task<List<Rule>> GetAllRuleFor(Product product);
         Task<Rule> GetRuleByID(Guid Id);
+        Task<IEnumerable<Rule>> GetAllRules();
     }
 }

@@ -1193,22 +1193,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CloseAdvisory(MilestoneAdvisoryVM milestoneAdvisoryVM)
-        {
-            User user = null;
-            try
-            {
-                user = await CurrentUser();
-                await _milestoneService.CloseMileTask(milestoneAdvisoryVM.Id, milestoneAdvisoryVM.Method);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+
         [HttpPost]
         public async Task<IActionResult> GetProductName(Guid id)
         {
@@ -1374,6 +1359,7 @@ namespace DealEngine.WebUI.Controllers
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 model.SharedRoleViewModel = sharedRoleViewModel;
                 RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
+                model.PMINZEPLViewModel = await GetPMINZEPLViewModel(sheet);
                 if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0)
                 {
                     revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
@@ -1694,6 +1680,14 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        private async Task<PMINZEPLViewModel> GetPMINZEPLViewModel(ClientInformationSheet sheet)
+        {
+            PMINZEPLViewModel model = new PMINZEPLViewModel();
+
+
+            return model;
         }
 
         private IList<string> LoadWizardsteps(string wizardType)
@@ -2020,6 +2014,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
+                sheetId = Guid.Parse(collection["AnswerSheetId"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");

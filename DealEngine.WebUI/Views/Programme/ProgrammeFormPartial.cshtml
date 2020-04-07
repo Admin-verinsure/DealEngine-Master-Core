@@ -41,16 +41,56 @@
                     </tr>
                     @if (User.IsInRole("TCUser"))
                     {
-                <tr class="table-light">
-                    <td>
-                        <label class="label required"><strong>Permission Claim: </strong></label>
-                    </td>
-                    <td>
-                        <label class="input">
-                            @Html.TextBoxFor(m => m.ProgrammeClaim, new { @class = "form-control", @required = "required" })
-                        </label>
-                    </td>
-                </tr>
+                        <tr class="table-light">
+                            <td>
+                                <label class="label required"><strong>Declaration: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @Html.TextAreaFor(m => m.Declaration, new { @class = "form-control", @required = "required" })
+                                </label>
+                            </td>
+                        </tr>
+                        <tr class="table-light">
+                            <td>
+                                <label class="label required"><strong>Stop Agreement Message: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @Html.TextAreaFor(m => m.StopAgreementMessage, new { @class = "form-control", @required = "required" })
+                                </label>
+                            </td>
+                        </tr>
+                        <tr class="table-light">
+                            <td>
+                                <label class="label required"><strong>No Payment Required Message: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @Html.TextAreaFor(m => m.NoPaymentRequiredMessage, new { @class = "form-control", @required = "required" })
+                                </label>
+                            </td>
+                        </tr>
+                        <tr class="table-light">
+                            <td>
+                                <label class="label required"><strong>Broker user email: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @Html.DropDownListFor(m => m.Brokers, Model.Brokers, new { @class = "form-control", @required = "required" })
+                                </label>
+                            </td>
+                        </tr>
+                        <tr class="table-light">
+                            <td>
+                                <label class="label required"><strong>Permission Claim: </strong></label>
+                            </td>
+                            <td>
+                                <label class="input">
+                                    @Html.TextBoxFor(m => m.ProgrammeClaim, new { @class = "form-control", @required = "required" })
+                                </label>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                             </td>

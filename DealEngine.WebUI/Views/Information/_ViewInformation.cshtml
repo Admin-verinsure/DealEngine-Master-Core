@@ -51,7 +51,8 @@
                                                 var item = items.ElementAtOrDefault(i);
                                                 if (item.Type != ItemType.SECTIONBREAK)
                                                 {
-                                        <section class="col col-@item.Width">                                           
+                                        <section class="col col-@item.Width">
+
                                             @switch (item.Type)
                                             {
                                                 case ItemType.TEXTBOX:
@@ -59,7 +60,7 @@
                                                     <label class="input">
                                                         <i class="@item.Icon"></i>
                                                         <input data-id="@item.Id" data-type="@item.Type" data-name="@item.Name"
-                                                               id="@item.Name" type="@item.ControlType" name="@item.Name" placeholder="@item.Label" value="@item.Value" />
+                                                               id="@item.Name" type="@item.ControlType" name="@item.Name" placeholder="@item.Label" value="@item.Value" data-rule="@item.Rule" />
                                                     </label>
                                                     break;
 

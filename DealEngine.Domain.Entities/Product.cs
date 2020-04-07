@@ -26,12 +26,7 @@ namespace DealEngine.Domain.Entities
         public virtual string ProductNotes { get; set; }
         public virtual decimal DefaultBrokerage { get; set; }
         public virtual bool Published { get; set; }
-        public virtual bool Active { get; set; }
-        public virtual bool EnableBreachProfDuty { get; set; }
-        public virtual string BreachProfDuty { get; set; }
-        public virtual bool ShowCurrency { get; set; }
-        public virtual Country Country { get; set; }
-        public virtual bool AvailableOnQuote { get; set; }
+        public virtual bool Active { get; set; }        
         public virtual bool DefaultEnableBrokerFee { get; set; }
         public virtual decimal DefaultBrokerFee { get; set; }
         public virtual decimal TaxRate { get; set; }
