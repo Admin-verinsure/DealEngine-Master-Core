@@ -5,14 +5,14 @@
 
         <div id="ceasprojecttabs">
             <ul id="tab" class="nav nav-tabs">
-                <li class="nav nav-tabs active"> <a href="#ceasprojectTabs1"> List All </a> </li>
-                <li class="nav nav-tabs"> <a href="#ceasprojectTabs2"> Edit </a> </li>
-                <li class="nav nav-tabs"> <a href="#ceasprojectTabs3"> Add </a> </li>
-                <li class="nav nav-tabs"> <a href="#ceasprojectTabs4" Class="CEASProjectRemoved"> List Removed </a> </li>
+                <li class="nav nav-tabs active"> <a href="#pminzprojectTabs1"> List All </a> </li>
+                <li class="nav nav-tabs"> <a href="#pminzprojectTabs2"> Edit </a> </li>
+                <li class="nav nav-tabs"> <a href="#pminzprojectTabs3"> Add </a> </li>
+                <li class="nav nav-tabs"> <a href="#pminzprojectTabs4" Class="PMINZProjectRemoved"> List Removed </a> </li>
 
             </ul>
 
-            <div id="ceasprojectTabs1" class="tab-content">
+            <div id="pminzprojectTabs1" class="tab-content">
 
                 <fieldset>
                     <div class="row">
@@ -20,7 +20,7 @@
                             <script type="text/javascript">
 
                                 $(window).on('load',function () {
-                                        $("#tblceasproject").jqGrid({
+                                        $("#tblpminzproject").jqGrid({
                                             url: "/Services/Getceasprojects?informationId=@Model.AnswerSheetId&removed=false",
                                             datatype: "xml",
                                             mtype: "GET",
@@ -29,7 +29,7 @@
                                             colModel: [
                                                 {
                                                     name: "update", align: 'center',width:120, search: false, formatter: function (cellvalue, options, rowobject) {
-                                                        return ('<button onclick="EditCEASProject(\'' + cellvalue + '\', \'#tblceasproject\'); SetCurrentTab(\'ceasprojectTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
+                                                        return ('<button onclick="EditCEASProject(\'' + cellvalue + '\', \'#tblpminzproject\'); SetCurrentTab(\'pminzprojectTabs2\');" type="button" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></button>');
                                                     }
                                                 },
                                                 { name: "Your Client (i.e. Employer)", align: 'center', key: 'true' },
@@ -37,13 +37,13 @@
                                                 { name: "Your Earned Fees", align: 'center' },
                                                 {
                                                     name: "update", align: 'center',width:120, search: false, formatter: function (cellvalue, options, rowobject) {
-                                                        return ('<button onclick="SetCEASProjectRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblceasproject\', \'#tblRemovedCEASProject\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
+                                                        return ('<button onclick="SetCEASProjectRemovedStatus(\'' + cellvalue + '\', \'true\', \'#tblpminzproject\', \'#tblRemovedCEASProject\');" type="button"  class=" btn btn-danger btn-sm" id="trash"><span class="fa fa-trash"></span></button>');
                                                     }
                                                 }
                                             ],
                                             autowidth: true,
                                             shrinkToFit: true,
-                                            pager: "#pagerceasproject",
+                                            pager: "#pagerpminzproject",
                                             rowNum: 10,
                                             rowList: [10, 20, 30],
                                             sortname: "Your Client (i.e. Employer)",
@@ -52,8 +52,8 @@
                                             gridview: true,
                                             autoencode: true
                                         });
-                                        $("#tblceasproject").jqGrid('navGrid',
-                                            '#pagerceasproject',
+                                        $("#tblpminzproject").jqGrid('navGrid',
+                                            '#pagerpminzproject',
                                             { edit: false, add: false, del: false },
                                             //options
                                             { height: 280, reloadAfterSubmit: false },
@@ -70,33 +70,34 @@
                                 });
 
                             </script>
-                            <table id="tblceasproject"><tr><td></td></tr></table>
+                            <table id="tblpminzproject"><tr><td></td></tr></table>
 
-                            <div id="pagerceasproject"></div>
+                            <div id="pagerpminzproject"></div>
 
                         </section>
                     </div>
                 </fieldset>
             </div>
-            <div id="ceasprojectTabs2" class="tab-content">
+            <div id="pminzprojectTabs2" class="tab-content">
 
                 <fieldset id="fieldset">
-                    <input id="EditCEASProjectId" name="BusinessContractId" type="hidden" />
+                    <input id="EditPMINZProjectId" name="BusinessContractId" type="hidden" />
 
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Description of Project:</label>
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">Description of Project:</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" data-name="ProjectDescription" id="EditPMINZProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
+                                </label>
+                                <p class="validationContainer" id="validateEditProjectDescription"></p>
+
+                            </section>
                         </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ProjectDescription" id="EditProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
-                            </label>
-                            <p class="validationContainer" id="validateEditProjectDescription"></p>
-
-                        </section>
-                    </section>
 
 
                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -106,7 +107,8 @@
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="input">
                                     <i></i>
-                                    <input data-type="TEXTBOX" data-name="Fees" id="EditFees" name="Fees" placeholder="Your Earned Fees" value="">
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="EditPMINZFees" name="Fees" placeholder="$ Your Earned Fees" value="" required>
+
                                 </label>
                                 <p class="validationContainer" id="validateEditFees"></p>
 
@@ -124,7 +126,7 @@
 
                                 <label class="input form-group">
                                     <i></i>
-                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="EditContractValue" name="ConstructionValue" placeholder="$ Amount of Cover" value="" required>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="EditPMINZContractValue" name="ConstructionValue" placeholder="$ Contract Value" value="" required>
                                 </label>
 
                                 <p class="validationContainer" id="validateEditContractValue"></p>
@@ -142,7 +144,7 @@
 
                                 <label class="input form-group">
                                     <i></i>
-                                    <input data-type="TEXTBOX" data-name="Fees" id="EditDuration" name="ProjectDuration" placeholder="Your Earned Fees" value="">
+                                    <input data-type="TEXTBOX" data-name="Fees" id="EditPMINZDuration" name="ProjectDuration" placeholder="Duration in Months" value="">
                                 </label>
 
                                 <p class="validationContainer" id="validateEditDuration"></p>
@@ -155,136 +157,134 @@
                                 <label class="label required">Your Major Responsibilities</label>
                             </section>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <input type="checkbox" name="ProjectDirector" value="Networksecurity"> Proj. Director<br>
-                                <input type="checkbox" name="ProjectManager" value="onlinestocktrading"> Proj. Manager<br>
-                                <input type="checkbox" name="ProjectCoordinator" value="fundsmanagementandinvestment"> Proj. Coordinator/Administrator<br>
-                                <input type="checkbox" name="ProjectEngineer" value="manufacturingcontrolprocess"> Proj. Engineers<br>
+                                <input type="checkbox" id="EditPMINZProjectDirector" name="EditProjectDirector" value="true"> Proj. Director<br>
+                                <input type="checkbox" id="EditPMINZProjectManager" name="EditProjectManager" value="true"> Proj. Manager<br>
+                                <input type="checkbox" id="EditPMINZProjectCoordinator" name="EditProjectCoordinator" value="true"> Proj. Coordinator/Administrator<br>
+                                <input type="checkbox" id="EditPMINZProjectEngineer" name="EditProjectEngineer" value="true"> Proj. Engineers<br>
 
                             </section>
 
-                            <p class="validationContainer" id="validateEditMajorResponsibilities"></p>
                         </section>
 
+                    </div>
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateEditCEASProject(event,'#ceasprojectTabs2', '#tblceasproject','ceasprojectTabs1')" class="btn-sm updateBoat" id="updateceasproject">Update</button>
-                            <button onclick="ClearBoats(event,'#ceasprojectTabs2','ceasprojectTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
+                            <button onclick="ValidateEditPMINZProject(event,'#pminzprojectTabs2', '#tblpminzproject','pminzprojectTabs1')" class="btn-sm updateBoat" id="updateceasproject">Update</button>
+                            <button onclick="ClearBoats(event,'#pminzprojectTabs2','pminzprojectTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Cancel Update</button>
 
                         </section>
                     </div>
                 </fieldset>
             </div>
 
-            <div id="ceasprojectTabs3" class="tab-content">
+            <div id="pminzprojectTabs3" class="tab-content">
 
                 <fieldset id="fieldset">
-                    <input id="CEASProjectId" name="BusinessContractId" type="hidden" />
+                    <input id="PMINZProjectId" name="BusinessContractId" type="hidden" />
 
+                    <div class="row">
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">Description of Project:</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" data-name="ProjectDescription" id="AddPMINZProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
+                                </label>
+                                <p class="validationContainer" id="validateAddProjectDescription"></p>
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Description of Project:</label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="ProjectDescription" id="AddProjectDescription" name="ProjectDescription" placeholder="The Project Description" value="">
-                            </label>
-                            <p class="validationContainer" id="validateAddProjectDescription"></p>
-
-                        </section>
-                    </section>
-
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Fees Earned:</label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="input">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="Fees" id="AddFees" name="Fees" placeholder="Your Earned Fees" value="">
-                            </label>
-                            <p class="validationContainer" id="validateAddFees"></p>
-
-                        </section>
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
-                            <label class="label">
-                                Contract Value:
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
-                            <label class="input form-group">
-                                <i></i>
-                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="AddContractValue" name="ConstructionValue" placeholder="$ Amount of Cover" value="" required>
-                            </label>
-
-                            <p class="validationContainer" id="validateAddContractValue"></p>
-                        </section>
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
-                            <label class="label">
-                                Duration (Months):
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
-                            <label class="input form-group">
-                                <i></i>
-                                <input data-type="TEXTBOX" data-name="Fees" id="AddDuration" name="ProjectDuration" placeholder="Your Earned Fees" value="">
-                            </label>
-
-                            <p class="validationContainer" id="validateAddDuration"></p>
-                        </section>
-                    </section>
-
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <label class="label required">Your Major Responsibilities</label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                            <input type="checkbox" name="ProjectDirector" value="Networksecurity"> Proj. Director<br>
-                            <input type="checkbox" name="ProjectManager" value="onlinestocktrading"> Proj. Manager<br>
-                            <input type="checkbox" name="ProjectCoordinator" value="fundsmanagementandinvestment"> Proj. Coordinator/Administrator<br>
-                            <input type="checkbox" name="ProjectEngineer" value="manufacturingcontrolprocess"> Proj. Engineers<br>
-
+                            </section>
                         </section>
 
-                        <p class="validationContainer" id="validateAddMajorResponsibilities"></p>
-                    </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">Fees Earned:</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="input">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="AddPMINZFees" name="Fees" placeholder="$ Your Earned Fees" value="" required>
+
+                                </label>
+                                <p class="validationContainer" id="validateAddFees"></p>
+
+                            </section>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                <label class="label">
+                                    Contract Value:
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="AddPMINZContractValue" name="ConstructionValue" placeholder="$ Contract Value" value="" required>
+                                </label>
+
+                                <p class="validationContainer" id="validateAddContractValue"></p>
+                            </section>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                <label class="label">
+                                    Duration (Months):
+                                </label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                <label class="input form-group">
+                                    <i></i>
+                                    <input data-type="TEXTBOX" data-name="Fees" id="AddPMINZDuration" name="ProjectDuration" placeholder="Duration in Months" value="">
+                                </label>
+
+                                <p class="validationContainer" id="validateAddDuration"></p>
+                            </section>
+                        </section>
 
 
-                   
+                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label class="label required">Your Major Responsibilities</label>
+                            </section>
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <input type="checkbox" id="AddPMINZProjectDirector" name="AddProjectDirector" value="true"> Proj. Director<br>
+                                <input type="checkbox" id="AddPMINZProjectManager" name="AddProjectManager" value="true"> Proj. Manager<br>
+                                <input type="checkbox" id="AddPMINZProjectCoordinator" name="AddProjectCoordinator" value="true"> Proj. Coordinator/Administrator<br>
+                                <input type="checkbox" id="AddPMINZProjectEngineer" name="AddProjectEngineer" value="true"> Proj. Engineers<br>
 
+                            </section>
 
+                        </section>
+                       
+                    </div>
 
                     <div class="row" id="update">
                         <section class="col col-xs-12">
-                            <button onclick="ValidateAddCEASProject(event,'#ceasprojectTabs3', '#tblceasproject','ceasprojectTabs1')" class="btn-sm AddupdateBoat" id="updateBusinessContract">Add</button>
-                            <button onclick="ClearBoats(event,'#ceasprojectTabs3','ceasprojectTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
+                            <button onclick="ValidateAddPMINZProject(event,'#pminzprojectTabs3', '#tblpminzproject','pminzprojectTabs1')" class="btn-sm AddupdateBoat" id="updateBusinessContract">Add</button>
+                            <button onclick="ClearBoats(event,'#pminzprojectTabs3','pminzprojectTabs1')" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>
 
                         </section>
                     </div>
+
                 </fieldset>
             </div>
-            <div id="ceasprojectTabs4" class="tab-content">
+            <div id="pminzprojectTabs4" class="tab-content">
 
                 <fieldset>
                     <div class="row">
                         <section class="col col-xs-12">
                             <script type="text/javascript">
-                                $(".CEASProjectRemoved").click(function () {
-						    $("#tblRemovedCEASProject").jqGrid({
+                                $(".PMINZProjectRemoved").click(function () {
+						    $("#tblRemovedpminzProject").jqGrid({
 						        url: "/Services/Getceasprojects?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
                                 mtype: "GET",
@@ -293,14 +293,14 @@
                                 colModel: [
                                     {
                                         name: "update", align: 'center',width:60, search: false, formatter: function (cellvalue, options, rowobject)
-                                        { return '<button onclick="SetCEASProjectRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedCEASProject\', \'#tblCEASProject\'); SetCurrentTab(\'ceasprojectTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
+                                        { return '<button onclick="SetCEASProjectRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblRemovedCEASProject\', \'#tblpminzProject\'); SetCurrentTab(\'ceasprojectTabs1\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>'; }
                                     },
                                     { name: "Your Client (i.e. Employer)", align: 'center', key: 'true' },
                                     { name: "The Project Description", align: 'center' },
                                     { name: "Your Earned Fees", align: 'center' }
 								],
 						        autowidth: true,
-						        pager: "#pagerRemovedCeasProject",
+						        pager: "#pagerRemovedpminzProject",
 						        rowNum: 10,
 						        rowList: [10, 20, 30],
                                 sortname: "Your Client (i.e. Employer)",
@@ -309,8 +309,8 @@
 						        gridview: true,
 						        autoencode: true
 						    });
-						    $("#tblRemovedCEASProject").jqGrid('navGrid',
-						    	'#pagerRemovedCeasProject',
+						    $("#tblRemovedpminzProject").jqGrid('navGrid',
+						    	'#pagerRemovedpminzProject',
 						    	{edit: false, add: false, del: false},
 						    	//options
 						    	{height:280,reloadAfterSubmit:false},
@@ -324,8 +324,8 @@
 						    );
 						});
                             </script>
-                            <table id="tblRemovedCEASProject"><tr><td></td></tr></table>
-                            <div id="pagerRemovedCeasProject"></div>
+                            <table id="tblRemovedpminzProject"><tr><td></td></tr></table>
+                            <div id="pagerRemovedpminzProject"></div>
                         </section>
                     </div>
                 </fieldset>
@@ -345,111 +345,46 @@
     };
     
 
-      function ValidateEditCEASProject(event,tabId, tableId, currenttab) {
+      function ValidateEditPMINZProject(event,tabId, tableId, currenttab) {
         debugger;
-                event.preventDefault();
-
-        var contractTitle = $('#EditCEASContractTitle').val();
-        var projectDesc = $('#EditCEASProjectDescription').val();
-        var fees = $('#EditCEASFees').val();
-        var projectDuration = $('#EditCEASProjectDuration').val();
+            event.preventDefault();
+        var projectDesc = $('#EditPMINZProjectDescription').val();
+    
         var result = true;
        
-        if (contractTitle == "") {
-            $('#validateEditCEASContractTitle').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateEditCEASContractTitle').html("<font></font>");
-        }
         if (projectDesc == "") {
-            $('#validateEditCEASProjectDescription').html("<font color='red'>Field is required</font>")
+            $('#validateEditProjectDescription').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
             }
         } else {
-            $('#validateEditCEASProjectDescription').html("<font></font>");
+            $('#validateEditProjectDescription').html("<font></font>");
         }
-        if (fees == "") {
-            $('#validateEditCEASFees').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
+       
+        if (result) {
+            EditBusinessContract(event,tabId, tableId);
+            SetCurrentTab(currenttab);
         } else {
-            $('#validateEditCEASFees').html("<font></font>");
+            return result;
         }
-    
-        if (projectDuration == "") {
-            $('#validateEditCEASProjectDuration').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-          }
-        } else {
-            $('#validateEditCEASProjectDuration').html("<font></font>");
-        }
-
-          if (result) {
-              AddBusinessContract(tabId, tableId);
-              SetCurrentTab(currenttab);
-          } else {
-              return result;
-          }
       }
 
-    function ValidateAddCEASProject(event,tabId, tableId, currenttab) {
+    function ValidateAddPMINZProject(event,tabId, tableId, currenttab) {
         debugger;
                 event.preventDefault();
-
-
-        var contractTitle = $('#AddCEASContractTitle').val();
-        var projectDesc = $('#AddCEASProjectDescription').val();
-        var fees = $('#AddCEASFees').val();
-         //var contructionVal = $('#AddCEASConstructionValue').val();
-        var projectDuration = $('#AddCEASProjectDuration').val();
+        var projectDesc = $('#AddPMINZProjectDescription').val();
+    
         var result = true;
        
-        if (contractTitle == "") {
-            $('#validateAddCEASContractTitle').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateAddCEASContractTitle').html("<font></font>");
-        }
         if (projectDesc == "") {
-            $('#validateAddCEASProjectDescription').html("<font color='red'>Field is required</font>")
+            $('#validateAddProjectDescription').html("<font color='red'>Field is required</font>")
             if (result) {
                 result = false;
             }
         } else {
-            $('#validateAddCEASProjectDescription').html("<font></font>");
+            $('#validateAddProjectDescription').html("<font></font>");
         }
-        if (fees == "") {
-            $('#validateAddCEASFees').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateAddCEASFees').html("<font></font>");
-        }
-        //if (contructionVal == "") {
-        //    $('#validateAddCEASConstructionValue').html("<font color='red'>Field is required</font>")
-        //    if (result) {
-        //        result = false;
-        //    }
-        //} else {
-        //    $('#validateAddCEASConstructionValue').html("<font></font>");
-        //}
-        if (projectDuration == "") {
-            $('#validateAddCEASProjectDuration').html("<font color='red'>Field is required</font>")
-            if (result) {
-                result = false;
-            }
-        } else {
-            $('#validateAddCEASProjectDuration').html("<font></font>");
-        }
-
+       
         if (result) {
             AddBusinessContract(event,tabId, tableId);
             SetCurrentTab(currenttab);
@@ -463,12 +398,18 @@
                           event.preventDefault();
 
         var informationId = $('#AnswerSheetId').serialize();
-
+        var data = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        var projectDirector = document.querySelectorAll('input[name="AddProjectDirector"]:checked');
+        var projectManager = document.querySelectorAll('input[name="AddProjectManager"]:checked');
+        var projectCoordinator = document.querySelectorAll('input[name="AddProjectCoordinator"]:checked');
+        var projectEngineer = document.querySelectorAll('input[name="AddProjectEngineer"]:checked');
+        var proddata = data + "&ProjectDirector=" + projectDirector + "&ProjectManager=" + projectManager + "&ProjectCoordinator=" + projectCoordinator + "&ProjectEngineer=" + projectEngineer;
+           
         $.ajax({
 		// change back once mono decides to fix
 	    url: '@Url.Action("AddCEASProject", "Services")',
 	    type: "POST",
-	    data: $.grep([ $(tabId + " :input").serialize(), informationId ], Boolean).join("&")
+	    data: proddata
 	})
 	.done(function (data) {
 	     SetCurrentTab(currenttab);
@@ -480,6 +421,36 @@
 		alert("There was an error while trying to save the BusinessContract.");
 	});
     };
+
+     function EditBusinessContract(event,tabId, tableId,currenttab) {
+        debugger;
+                          event.preventDefault();
+
+        var informationId = $('#AnswerSheetId').serialize();
+        var data = $.grep([$(tabId + " :input").serialize(), informationId], Boolean).join("&");
+        var projectDirector = document.querySelectorAll('input[name="EditProjectDirector"]:checked');
+        var projectManager = document.querySelectorAll('input[name="EditProjectManager"]:checked');
+        var projectCoordinator = document.querySelectorAll('input[name="EditProjectCoordinator"]:checked');
+        var projectEngineer = document.querySelectorAll('input[name="EditProjectEngineer"]:checked');
+        var proddata = data + "&ProjectDirector=" + projectDirector + "&ProjectManager=" + projectManager + "&ProjectCoordinator=" + projectCoordinator + "&ProjectEngineer=" + projectEngineer;
+           
+        $.ajax({
+		// change back once mono decides to fix
+	    url: '@Url.Action("AddCEASProject", "Services")',
+	    type: "POST",
+	    data: proddata
+	})
+	.done(function (data) {
+	     SetCurrentTab(currenttab);
+		$(tableId).trigger( 'reloadGrid' );
+		$(tabId + " :input").val("");
+
+	})
+        .fail(function (jqXHR, textStatus) {
+		alert("There was an error while trying to save the BusinessContract.");
+	});
+    };
+
 
     function EditCEASProject(businessContractId, tableId) {
         debugger;
@@ -498,13 +469,17 @@
         })
             .done(function (data) {
                 debugger;
-        $('#EditCEASProjectId').val(data.businessContractId);
-        $('#EditCEASContractTitle').val(data.contractTitle);
-        $('#EditCEASFees').val(data.fees);
-        $('#EditCEASProjectDescription').val(data.projectDescription);
-        $('#EditCEASMajorResponsibilities').val(data.majorResponsibilities);
-        $('#EditCEASConstructionValue').val(data.constructionValue);
-        $('#EditCEASProjectDuration').val(data.projectDuration);
+                
+            $('#EditPMINZProjectId').val(data.businessContractId);
+
+        $('#EditPMINZProjectDescription').val(data.projectDescription);
+        $('#EditPMINZContractValue').val(data.constructionValue);
+        $('#EditPMINZFees').val(data.fees);
+        $('#EditPMINZDuration').val(data.projectDuration);
+        $('input[name="ProjectDirector"]').prop('checked', data.projectDirector);
+        $('input[name="ProjectManager"]').prop('checked', data.projectManager);
+        $('input[name="ProjectCoordinator"]').prop('checked', data.projectCoordinator);
+        $('input[name="ProjectEngineer"]').prop('checked', data.projectEngineer);
         $('#getDetailsModal').hide();
         UpdateChosen();
         });
