@@ -317,7 +317,7 @@
                         <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                             <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                <input type="checkbox" id="AddPMINZProjectDirector" name="MajorShareHolder" value="true"> Tick here if this party owns 10% of more of the insured's issued shares<br>
+                                <input type="checkbox" id="AddPMINZProjectDirector" name="MajorShareHolder" value="true"> Tick here if this party owns 10% or more of the insured's issued shares<br>
 
                             </section>
 
@@ -359,7 +359,7 @@
                                 <option value="PreviousConsultingBusiness">Previous Consulting Business</option>
                                 <option value="Mergers">Mergers</option>
                                 <option value="JointVenture">Joint Venture</option>
-                                <option value="MajorShareHolder">Major Share Holder</option>
+                                <option value="MajorShareHolder">Major Share Holder (Not being a PM)</option>
 
 
                             </select>
@@ -487,10 +487,11 @@
 
                             </section>
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Do you have a current membership (i.e. not expired)? :</label>
+                                <label class="label required">Do you have a current PMI membership (i.e. not expired)? :</label>
 
                                 <label class="input w100">
-                                    <select class="form-control oper" id="AddPMINZIsCurrentMembership" name="IsCurrentMembership" required>
+
+                                    <select class="form-control oper" onchange="Currenmembership('AddPMINZIsCurrentMembership')" id="AddPMINZIsCurrentMembership" name="IsCurrentMembership" required>
                                         <option selected="selected" value="">-- Select --</option>
                                         <option value="true">Yes</option>
                                         <option value="false">No</option>
@@ -499,20 +500,22 @@
                                 <p class="validationContainer" id="validateAddPMINZCurrentMembership"></p>
 
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 hidden" id="PMImembershipnoSec">
                                 <label class="label required">PMI membership no:</label>
 
                                 <label class="input w100">
-                                    <select class="form-control oper" id="AddPMINZCurrentMembership" name="CurrentMembershipNo" required>
+                                    <input data-type="TEXTBOX" data-name="CurrentMembershipNo" id="CurrentMembershipNo" name="CurrentMembershipNo" placeholder="Current Membership No" value="">
+
+                                    @*<select class="form-control oper" id="AddPMINZCurrentMembership" name="CurrentMembershipNo" required>
                                         <option selected="selected" value="">-- Select --</option>
                                         <option value="true">Yes</option>
                                         <option value="false">No</option>
-                                    </select>
+                                    </select>*@
                                 </label>
                                 <p class="validationContainer" id="validateAddPMINZCurrentMembership"></p>
 
                             </section>
-                            <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            @*<section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label class="label required">PMI certification? </label>
 
                                 <label class="input w100">
@@ -524,14 +527,15 @@
                                 </label>
                                 <p class="validationContainer" id="validateAddPMINZPMICert"></p>
 
-                            </section>
+                            </section>*@
 
                             <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label class="label required">Certification Type: </label>
+                                <label class="label required">PMI Certification Type: </label>
 
                                 <label class="input w100">
                                     <select class="form-control oper" id="AddPMINZCertType" name="CertType" required>
                                         <option selected="selected" value="">-- Select --</option>
+                                        <option value="Ordinary">Ordinary</option>
                                         <option value="PMP">PMP</option>
                                         <option value="CAPM">CAPM</option>
                                         <option value="ProjectDirector">Project Director</option>
@@ -545,7 +549,7 @@
                             <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                                 <section class="col col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <input type="checkbox" id="EditPMINZProjectDirector" name="MajorShareHolder" value="true"> Tick here if this party owns 10% of more of the insured's issued shares<br>
+                                    <input type="checkbox" id="EditPMINZProjectDirector" name="MajorShareHolder" value="true"> Tick here if this party owns 10% or more of the insured's issued shares<br>
 
                                 </section>
 
@@ -648,7 +652,21 @@
             $('#EditNonProjectPersonnelSec').removeClass('hidden');
             $("EditProjectPersonnelSec :input").val(""); //Clears form
         }
-    }
+      }
+
+     function Currenmembership(typeselected) {
+        var addTypeselected = document.getElementById(typeselected);
+        var jhj = addTypeselected.options[addTypeselected.selectedIndex].value;
+        if (addTypeselected.options[addTypeselected.selectedIndex].value == "true") {
+            debugger;
+            $('#PMImembershipnoSec').removeClass('hidden');
+
+        } else {
+            $('#PMImembershipnoSec').addClass('hidden');
+            $("CurrentMembershipNo :input").val(""); //Clears form
+        }
+      }
+
 
 
      function AddPMINZTypeSelected(typeselected) {
