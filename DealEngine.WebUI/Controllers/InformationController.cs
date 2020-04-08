@@ -1358,8 +1358,7 @@ namespace DealEngine.WebUI.Controllers
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 model.SharedRoleViewModel = sharedRoleViewModel;
-                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
-                model.PMINZEPLViewModel = await GetPMINZEPLViewModel(sheet);
+                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();                
                 if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0)
                 {
                     revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
@@ -1386,13 +1385,33 @@ namespace DealEngine.WebUI.Controllers
                 //build models from answers
                 foreach(var answer in sheet.Answers) 
                 {
+                    var value = 0;
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
                         if (split.Count > 1)
                         {
-                            var modelsetmethod = model.GetType().GetProperty(split.FirstOrDefault()).PropertyType.GetProperty(split.LastOrDefault());
-                            modelsetmethod.SetValue(null, answer.Value);
+                            
+                            var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
+                            var infomodel = modeltype.GetValue(model);                            
+                            var property = infomodel.GetType().GetProperty(split.LastOrDefault());
+
+                            switch (property.PropertyType.Name)
+                            {
+                                case "Int32":
+                                    int.TryParse(answer.Value, out value);
+                                    property.SetValue(infomodel, value);
+                                    break;
+                                case "IList`1":
+                                    var propertylist = (IList<SelectListItem>)property.GetValue(infomodel);
+                                    propertylist.FirstOrDefault(i => i.Value == answer.Value).Selected = true;
+                                    property.SetValue(infomodel, propertylist);
+                                    break;
+
+                                default:
+                                    property.SetValue(infomodel, answer.Value);
+                                    break;
+                            }
                         }                        
                     }
                     catch (Exception ex)
@@ -1703,14 +1722,6 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private async Task<PMINZEPLViewModel> GetPMINZEPLViewModel(ClientInformationSheet sheet)
-        {
-            PMINZEPLViewModel model = new PMINZEPLViewModel();
-
-
-            return model;
-        }
-
         private IList<string> LoadWizardsteps(string wizardType)
         {
             IList<string> steps = new List<string>();
@@ -1799,7 +1810,6 @@ namespace DealEngine.WebUI.Controllers
 
             var territoryList = new List<TerritoryTemplate>();
             var nzTemplate = await _territoryService.GetTerritoryTemplateByName("New Zealand");
-            territoryList.Add(nzTemplate);
 
             var businessActivityList = new List<BusinessActivityTemplate>();
             List<SelectListItem> territoryTemplates = new List<SelectListItem>();
@@ -1833,16 +1843,16 @@ namespace DealEngine.WebUI.Controllers
                                 Selected = false
                             });
                         }
-                    }
+                    }                    
                 }
                 else
-                {
-                    foreach (var territory in territoryList)
+                {                    
+                    foreach (var template in clientProgramme.BaseProgramme.TerritoryTemplates)
                     {
                         territoryTemplates.Add(new SelectListItem
                         {
-                            Value = territory.Id.ToString(),
-                            Text = territory.Location,
+                            Value = template.Id.ToString(),
+                            Text = template.Location,
                             Selected = false
                         });
 
@@ -1931,11 +1941,7 @@ namespace DealEngine.WebUI.Controllers
             }
             else
             {                
-                foreach (var territory in clientProgramme.BaseProgramme.TerritoryTemplates)
-                {
-                    territoryList.Add(territory);
-                }
-                foreach(var template in territoryList)
+                foreach(var template in clientProgramme.BaseProgramme.TerritoryTemplates)
                 {
                     territoryTemplates.Add(new SelectListItem
                     {
@@ -1956,6 +1962,17 @@ namespace DealEngine.WebUI.Controllers
 
             }
             revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
+
+            if (territoryTemplates.Where(sl=>sl.Text == nzTemplate.Location).ToList().Count == 0)
+            {
+                territoryTemplates.Add(new SelectListItem
+                {
+                    Value = nzTemplate.Id.ToString(),
+                    Text = nzTemplate.Location,
+                    Selected = false
+                });
+            }
+
             revenueByActivityViewModel.Territories = territoryTemplates;
             revenueByActivityViewModel.Activities = businessActivityTemplates.OrderBy(ba => ba.Text).ToList();
 
