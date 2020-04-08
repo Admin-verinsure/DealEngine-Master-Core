@@ -7,6 +7,10 @@ namespace DealEngine.WebUI.Models
 {
     public class InformationViewModel : BaseViewModel
     {
+        public InformationViewModel()
+        {
+            PMINZEPLViewModel = new PMINZEPLViewModel();
+        }
         public Guid Id { get; set; }
         public Guid AnswerSheetId { get; set; }
         public Boolean IsChange { get; set; }
@@ -371,8 +375,18 @@ namespace DealEngine.WebUI.Models
                 new SelectListItem
                 { Text = "No", Value = "2" }
             };
+            HasEPLIOptions = new List<SelectListItem>()
+            {
+                new SelectListItem
+                { Text = "-- Select Option --", Value = "" },
+                new SelectListItem
+                { Text = "Yes", Value = "1" },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
         }
         public IList<SelectListItem> HasEPLOptions { get; set; }
+        public IList<SelectListItem> HasEPLIOptions { get; set; }        
         public int TotalEmployees { get; set; }
         public IList<SelectListItem> CoveredOptions { get; set; }
         public IList<SelectListItem> LegalAdvisorOptions { get; set; }
