@@ -172,7 +172,6 @@
             var value = obj.value;
             var datarule = obj.getAttribute('data-rule');
             var dataid = obj.getAttribute('data-item');
-            debugger;
             obj.classList.remove("is-up");            
 
             if (value > 0) {
@@ -191,8 +190,6 @@
                     document.getElementById(Name).setAttribute("hidden", "");
                     if (datarule === "clear") {
                         ClearObject(dataid)
-                        //rule is clear - need a generic way to clear all types
-                        
                     }
                 }
             } catch {
@@ -203,7 +200,6 @@
         function ClearObject(Id) {
             var obj = document.getElementById(Id);
             var tag = obj.tagName;
-            debugger;
             //here we can define the changes per type
             if (tag == "SELECT") {                
                 for (var i = 0; i < obj.options.length; i++) {                    
@@ -215,6 +211,5 @@
                     obj.options[0].selected = true;
                 }
             }
-            debugger;
         }
     </script>
