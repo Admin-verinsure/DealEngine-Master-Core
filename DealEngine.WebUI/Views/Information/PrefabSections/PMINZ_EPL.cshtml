@@ -1,14 +1,18 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-    <form id="pminzepl" class="needs-validation" novalidate="novalidate">
-
+    <form id="PMINZEPLViewModel" class="needs-validation" >
         <div class="form-group">
             <div class="row">
                 <div class="col-6">
                     <label for="HasEPL">Would you like Employers Liability Insurance?</label>
                 </div>
                 <div class="col-6">
-                    @Html.DropDownListFor(l => l.PMINZEPLViewModel.HasEPLOptions, new List<SelectListItem>(Model.PMINZEPLViewModel.HasEPLOptions), new { @class = "form-control", id = "HasEPL", @onchange = "PminzOnChange(this.id, this.name)", @required = "required" })
+                    <select id="HasEPL" name="PMINZEPLViewModel.HasEPLOptions" class="custom-select" onchange="PminzOnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.PMINZEPLViewModel.HasEPLOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         </div>
@@ -19,7 +23,7 @@
                         <label for="totalemployees">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
                     </div>
                     <div class="col-6">
-                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number" })
+                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number",  onchange="PminzOnChange(this.id, this.name)", @required=""})
                     </div>
                 </div>
             </div>
@@ -29,7 +33,12 @@
                         <label for="HasEPLI">Would you like Employment Practices Liability Insurance?</label>
                     </div>
                     <div class="col-6">
-                        @Html.DropDownListFor(l => l.PMINZEPLViewModel.HasEPLIOptions, new List<SelectListItem>(Model.PMINZEPLViewModel.HasEPLOptions), new { @class = "form-control", id = "HasEPLI", @onchange = "PminzOnChange(this.id, this.name)", @required = "required" })
+                        <select id="HasEPLI" name="PMINZEPLViewModel.HasEPLIOptions" class="form-control" onchange="PminzOnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.PMINZEPLViewModel.HasEPLIOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>                        
                     </div>
                 </div>
             </div>
@@ -40,7 +49,12 @@
                             <label for="iscovered">Are all employees covered by written employment contract?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.CoveredOptions, Model.PMINZEPLViewModel.CoveredOptions, new { @class = "form-control", id = "iscovered", @onchange = "PminzOnChange(this.id, this.name)" })
+                            <select id="iscovered" name="PMINZEPLViewModel.CoveredOptions" class="form-control" onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.CoveredOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
@@ -50,7 +64,12 @@
                             <label for="islegaladvisor">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.LegalAdvisorOptions, Model.PMINZEPLViewModel.LegalAdvisorOptions, new { @class = "form-control", id = "islegaladvisor" })
+                            <select id="islegaladvisor" name="PMINZEPLViewModel.LegalAdvisorOptions" class="form-control" onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.LegalAdvisorOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
@@ -60,7 +79,12 @@
                             <label for="iscasualbasis">Do you utilise staff on a casual basis?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.CasualBasisOptions, Model.PMINZEPLViewModel.CasualBasisOptions, new { @class = "form-control", id = "iscasualbasis", @onchange = "PminzOnChange(this.id, this.name)" })
+                            <select id="iscasualbasis" name="PMINZEPLViewModel.CasualBasisOptions" class="form-control" onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.CasualBasisOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
@@ -70,7 +94,12 @@
                             <label for="isdefined">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.DefinedOptions, Model.PMINZEPLViewModel.DefinedOptions, new { @class = "form-control", id = "isdefined" })
+                            <select id="isdefined" name="PMINZEPLViewModel.DefinedOptions" class="form-control"  onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.DefinedOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
@@ -80,7 +109,12 @@
                             <label for="hasmanual">Do you have a written human resources manual or equivalent written management guidelines?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.ManualOptions, Model.PMINZEPLViewModel.ManualOptions, new { @class = "form-control", id = "hasmanual" })
+                            <select id="hasmanual" name="PMINZEPLViewModel.ManualOptions" class="form-control"  onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.ManualOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
@@ -90,17 +124,27 @@
                             <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.PostingNoticesOptions, Model.PMINZEPLViewModel.PostingNoticesOptions, new { @class = "form-control", id = "hasmanual" })
+                            <select id="ispostingnotices" name="PMINZEPLViewModel.PostingNoticesOptions" class="form-control"  onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.PostingNoticesOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
-                            <label for="ispostingnotices">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
+                            <label for="isconsulting">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(l => l.PMINZEPLViewModel.StaffRedundancyOptions, Model.PMINZEPLViewModel.StaffRedundancyOptions, new { @class = "form-control", id = "hasmanual" })
+                            <select id="isconsulting" name="PMINZEPLViewModel.StaffRedundancyOptions" class="form-control"  onchange="PminzOnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.PMINZEPLViewModel.StaffRedundancyOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>                            
                         </div>
                     </div>
                 </div>
@@ -109,13 +153,34 @@
     </form>
 
     <script type="text/javascript">
+
+        $(function () {
+            //triggereventsforform
+            var form = document.getElementById('PMINZEPLViewModel');
+            for (var i = 0; i < form.length; i++) {
+                PminzOnChange(form[i].id, form[i].name)       
+            }          
+        });
+
         function PminzOnChange(Id, Name) {
             var value = document.getElementById(Id).value;
-            if (value == "1") {
-                document.getElementById(Name).removeAttribute("hidden");  
-            } else {
-                document.getElementById(Name).setAttribute("hidden","");  
+            if (value > 0) {
+                document.getElementById(Id).classList.add("is-valid");
+                document.getElementById(Id).classList.remove("is-invalid");
             }
-            debugger;
+            else {
+                document.getElementById(Id).classList.remove("is-valid");
+                document.getElementById(Id).classList.add("is-invalid");
+            }
+
+            try {
+                if (value == "1") {
+                    document.getElementById(Name).removeAttribute("hidden");
+                } else {
+                    document.getElementById(Name).setAttribute("hidden", "");
+                }
+            } catch {
+                ////we expect this to fail for form elements with no change events but could use this later
+            }                    
         }
     </script>
