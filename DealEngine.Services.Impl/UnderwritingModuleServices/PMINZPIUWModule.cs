@@ -81,10 +81,115 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
 
-            int TermExcess = 0;
+            int TermExcess = 2000;
             decimal feeincome = 0;
 
+            decimal decBDSP = 0M;
+            decimal decCon = 0M;
+            decimal decDM = 0M;
+            decimal decFASA = 0M;
+            decimal decIT = 0M;
+            decimal decMOP = 0M;
+            decimal decPMTC = 0M;
+            decimal decRCIM = 0M;
+            decimal decTM = 0M;
+            decimal decOPMA = 0M;
+            decimal decNPMA = 0M;
+            decimal decOther = 0M;
+            decimal decSumActivity = 0M;
+            decimal decPRBDSP = 0M;
+            decimal decPRCon = 0M;
+            decimal decPRFASA = 0M;
+            decimal decPRIT = 0M;
+            decimal decPRMOP = 0M;
+            decimal decPROther = 0M;
+
+            decimal decPIBasePremium = 0M;
+
+            if (agreement.ClientInformationSheet.RevenueData != null)
+            {
+                foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
+                {
+                    if (uISTerritory.Location == "New Zealand") //New Zealand income only
+                    {
+                        feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
+                    }
+                }
+
+                foreach (var uISActivity in agreement.ClientInformationSheet.RevenueData.Activities)
+                {
+                    if (uISActivity.AnzsciCode == "M696210") //Business Development & Strategic Planning
+                    {
+                        decBDSP = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "E") //Construction
+                    {
+                        decCon = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696230") //Design Management
+                    {
+                        decDM = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696240") //Financial and Accounting Systems Analysis
+                    {
+                        decFASA = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696250") //Information Technology
+                    {
+                        decIT = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696260") //Manufacturing & Operational Processes
+                    {
+                        decMOP = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696270") //Project Management Teaching and Coaching
+                    {
+                        decPMTC = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696300") //Resource Consent and Implementation Management
+                    {
+                        decRCIM = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696400") //Telecommunications Management
+                    {
+                        decTM = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696500") //Other Project Management Activities
+                    {
+                        decOPMA = uISActivity.Pecentage;
+                    }
+                    else if (uISActivity.AnzsciCode == "M696600") //Non Project Management Activities
+                    {
+                        decNPMA = uISActivity.Pecentage;
+                    }
+
+                }
+
+                decOther = decPMTC + decOPMA + decDM + decTM + decRCIM;
+                decSumActivity = decBDSP + decCon + decIT + decMOP + decNPMA + decOther;
+
+                decPRBDSP = decBDSP / (decSumActivity - decNPMA) * decSumActivity;
+                decPRCon = decCon / (decSumActivity - decNPMA) * decSumActivity;
+                decPRFASA = decFASA / (decSumActivity - decNPMA) * decSumActivity;
+                decPRIT = decIT / (decSumActivity - decNPMA) * decSumActivity;
+                decPRMOP = decMOP / (decSumActivity - decNPMA) * decSumActivity;
+                decPROther = decOther / (decSumActivity - decNPMA) * decSumActivity;
+
+            }
+
             //TermPremium250k = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+
+            //if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            //{
+            //    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+            //    {
+            //        if (uisorg.IsADNZmember && !bolAnyADNZMember)
+            //        {
+            //            bolAnyADNZMember = true;
+            //        }
+            //    }
+            //}
+
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit250k, TermExcess);
             termsl250klimitoption.TermLimit = TermLimit250k;
             termsl250klimitoption.Premium = TermPremium250k;
