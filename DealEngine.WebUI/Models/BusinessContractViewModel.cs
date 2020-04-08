@@ -18,6 +18,10 @@ namespace DealEngine.WebUI.Models
         public string MajorResponsibilities { get; set; }
         public string ProjectDuration { get; set; }
 
+        public Boolean ProjectDirector { get; set; }
+        public Boolean ProjectManager { get; set; }
+        public Boolean ProjectCoordinator { get; set; }
+        public Boolean ProjectEngineer { get; set; }
         public string ConstructionValue { get; set; }
 
         public string Fees { get; set; }
@@ -39,6 +43,10 @@ namespace DealEngine.WebUI.Models
             businessContract.Fees = Fees;
             businessContract.ProjectDescription = ProjectDescription;
             businessContract.MajorResponsibilities = MajorResponsibilities;
+            businessContract.ProjectDirector = ProjectDirector;
+            businessContract.ProjectManager = ProjectManager;
+            businessContract.ProjectCoordinator = ProjectCoordinator;
+            businessContract.ProjectEngineer = ProjectEngineer;
             businessContract.ProjectDuration = ProjectDuration;
             return businessContract;
         }
@@ -54,7 +62,11 @@ namespace DealEngine.WebUI.Models
                 ContractType = businessContract.ContractType,
                 ProjectDescription = businessContract.ProjectDescription,
                 MajorResponsibilities = businessContract.MajorResponsibilities,
+                ProjectManager = businessContract.ProjectManager,
+                ProjectCoordinator = businessContract.ProjectCoordinator,
+                ProjectEngineer = businessContract.ProjectEngineer,
                 ProjectDuration = businessContract.ProjectDuration,
+                ProjectDirector = businessContract.ProjectDirector,
                 Fees = businessContract.Fees,
             };
             return model;
