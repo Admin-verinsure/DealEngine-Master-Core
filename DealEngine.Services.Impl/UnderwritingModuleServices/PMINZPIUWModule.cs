@@ -84,6 +84,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermExcess = 2000;
             decimal feeincome = 0;
 
+            int intordnumber = 0;
+            int intcapmnumber = 0;
+            int intpmpnumber = 0;
+            int intpdnumber = 0;
+
             decimal decBDSP = 0M;
             decimal decCon = 0M;
             decimal decDM = 0M;
@@ -105,6 +110,30 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal decPROther = 0M;
 
             decimal decPIBasePremium = 0M;
+
+            if (agreement.ClientInformationSheet.Organisation.Count > 0)
+            {
+                foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
+                {
+                    if (uisorg.CertType == "Ordinary")
+                    {
+                        intordnumber += 1;
+                    } 
+                    else if (uisorg.CertType == "PMP")
+                    {
+                        intpmpnumber += 1;
+                    }
+                    else if (uisorg.CertType == "CAPM")
+                    {
+                        intcapmnumber += 1;
+                    }
+                    else if (uisorg.CertType == "ProjectDirector")
+                    {
+                        intpdnumber += 1;
+                    }
+                }
+            }
+
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
@@ -177,18 +206,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
-            //TermPremium250k = GetPremiumFor(rates, feeincome, bolAnyADNZMember, TermLimit250k, TermExcess, schoolsactivitymoepercentage, schoolsactivitynonmoepercentage);
+            //decPIBasePremium = GetPIBasePremiumFor(rates, feeincome, decPRBDSP, decPRCon, decPRFASA, decPRIT, decPRMOP, decPROther);
 
-            //if (agreement.ClientInformationSheet.Organisation.Count > 0)
-            //{
-            //    foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
-            //    {
-            //        if (uisorg.IsADNZmember && !bolAnyADNZMember)
-            //        {
-            //            bolAnyADNZMember = true;
-            //        }
-            //    }
-            //}
+
 
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit250k, TermExcess);
             termsl250klimitoption.TermLimit = TermLimit250k;
@@ -285,6 +305,35 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 dict[name] = Convert.ToDecimal(agreement.ClientAgreementRules.FirstOrDefault(r => r.Name == name).Value);
 
             return dict;
+        }
+
+
+        decimal GetPIBasePremiumFor(IDictionary<string, decimal> rates, decimal feeincome, decimal decPRBDSP, decimal decPRCon, decimal decPRFASA, decimal decPRIT, decimal decPRMOP, decimal decPROther)
+        {
+            decimal pibasepremium = 0M;
+            decimal basepremiumOrd = 0M;
+            decimal basepremiumOrdCAPM = 0M;
+            decimal basepremiumOrdPMP = 0M;
+            decimal basepremiumOrdPD = 0M;
+            decimal minpremiumOrd = 0M;
+            decimal minpremiumOrdCAPM = 0M;
+            decimal minpremiumOrdPMP = 0M;
+            decimal minpremiumOrdPD = 0M;
+
+            basepremiumOrd = (feeincome * decPRIT / 100 * rates["piitcomponentrateord"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentrateord"] / 100) +
+                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentrateord"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentrateord"] / 100) +
+                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentrateord"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentrateord"] / 100);
+            minpremiumOrd = (decPRIT / 100 * rates["piitcomponentminpremiumord"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumord"] / 100) +
+                            (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumord"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumord"] / 100) +
+                            (decPRFASA / 100 * rates["pifinancialcomponentminpremiumord"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumord"] / 100);
+            basepremiumOrd = (basepremiumOrd > minpremiumOrd) ? basepremiumOrd : minpremiumOrd;
+
+
+
+
+
+
+            return pibasepremium;
         }
 
 
