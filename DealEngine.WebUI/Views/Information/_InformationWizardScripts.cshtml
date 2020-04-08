@@ -133,13 +133,13 @@
                  
                }
                //once prefab pages we can call all forms to validate for now hardcode the forms individually
-               //var forms = document.getElementsByClassName('needs-validation');
-               //for (var i = 0; i < forms.length; i++) {
-               //    if (forms[i].checkValidity() === false) {
-               //        event.preventDefault();
-               //        event.stopPropagation();
-               //    }
-               //}
+               var forms = document.getElementsByClassName('needs-validation');
+               for (var i = 0; i < forms.length; i++) {
+                   if (forms[i].checkValidity() === false) {
+                       event.preventDefault();
+                       event.stopPropagation();
+                   }
+               }
 
 
                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
@@ -465,6 +465,11 @@
                 formatCurrency($(this), "blur");
             },
         });
+
+        
+         $('.Calenderdate').datepicker({
+            dateFormat: "dd/mm/yy",
+         });
 
         $('.Effectivedate').datepicker({
             maxDate: "+30d",
