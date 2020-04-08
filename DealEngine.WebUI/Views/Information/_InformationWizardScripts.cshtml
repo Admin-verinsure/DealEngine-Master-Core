@@ -132,6 +132,15 @@
 
                  
                }
+               //once prefab pages we can call all forms to validate for now hardcode the forms individually
+               //var forms = document.getElementsByClassName('needs-validation');
+               //for (var i = 0; i < forms.length; i++) {
+               //    if (forms[i].checkValidity() === false) {
+               //        event.preventDefault();
+               //        event.stopPropagation();
+               //    }
+               //}
+
 
                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
                    if (document.querySelector('[id="Professional Indemnity"]') !== null) {
@@ -146,18 +155,18 @@
                    }
                }
 
-               //if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-               //    if (document.querySelector("id='PMINZ Professional Indemnity']") !== null) {
-               //        if (!ValidateProfessionalIndemnity()) {
-               //            window.alert("Please Add Professional Indemnity to proceed for policy. ");
-               //            $("#more").trigger("click");
-               //            $("[id='PMINZ Professional Indemnity']").trigger("click");
-               //            return false;
-               //        } else {
-               //            SaveProfessionalIndemnity();
-               //        }
-               //    }
-               //}
+               if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+                   if (document.querySelector("id='PMINZ Professional Indemnity']") !== null) {
+                       if (!ValidateProfessionalIndemnity()) {
+                           window.alert("Please Add Professional Indemnity to proceed for policy. ");
+                           $("#more").trigger("click");
+                           $("[id='PMINZ Professional Indemnity']").trigger("click");
+                           return false;
+                       } else {
+                           SaveProfessionalIndemnity();
+                       }
+                   }
+               }
 
                if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
                    if (!ValidateStatutory()) {
@@ -219,15 +228,7 @@
                        ValidateDNO();
                    }
                }
-               //if (document.querySelector('pminzepl') !== null) {
-               //    var form = document.getElementById('pminzepl');
-               //    if (form.checkValidity() === false) {
-               //        window.alert("PMINZ placeholder");
-               //        $("#more").trigger("click");
-               //        $("[id='Directors and Officers Liability Insurance']").trigger("click");
-               //        return false;
-               //    }
-               //}
+
                postData = { clientInformationId: clientInformationSheet }
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
@@ -543,8 +544,8 @@
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
-                //data: $("#tab_1 :input").serialize({ json:true })
-                data: $("#myForm").serialize({ json:true })
+                data: $("#tab_1 :input").serialize({ json:true })
+                //data: $("#myForm").serialize({ json:true })
             })
            .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');
