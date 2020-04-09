@@ -48,18 +48,35 @@ namespace DealEngine.WebUI.Models
 
         public string Qualifications { get; set; }
         public bool IsNZIAmember { get; set; }
+        public string IsIPENZmember { get; set; }
         public string NZIAmembership { get; set; }
         public string YearofPractice { get; set; }
         public string prevPractice { get; set; }
         public string Type { get; set; }
         public bool IsADNZmember { get; set; }
         public string DateofRetirement { get; set; }
+        public string CPEngQualified { get; set; }
         public string DateofDeceased { get; set; }
+        public string DateofBirth { get; set; }
         public bool IsLPBCategory3 { get; set; }
         public bool IsRetiredorDecieved { get; set; }
         public bool IsOtherdirectorship { get; set; }
         public string Othercompanyname { get; set; }
         public string Activities { get; set; }
+        public string ProfAffiliation { get; set; }
+        public  string JobTitle { get; set; }
+        public string InsuredEntityRelation { get; set; }
+        public bool IsContractorInsured { get; set; }
+        public bool IsCurrentMembership { get; set; }
+        public bool IsInsuredRequired { get; set; }
+        public string PMICert { get; set; }
+        public string PartyName { get; set; }
+        public string CertType { get; set; }
+        public bool isaffiliation { get; set; }
+        public  string affiliationdetails { get; set; }
+        public  string CurrentMembershipNo { get; set; }
+
+
         public virtual IList<OrganisationalUnit> OrganisationalUnits { get; set; }
 
 

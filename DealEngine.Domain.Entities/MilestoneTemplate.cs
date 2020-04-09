@@ -20,7 +20,7 @@ namespace DealEngine.Domain.Entities
 
     public class Activity : EntityBase, IAggregateRoot
     {
-        public Activity() : base(null) { }
+        public Activity() : base(null) { }        
         public Activity(string name) : base(null) { }
 
         public Activity(User createdBy)

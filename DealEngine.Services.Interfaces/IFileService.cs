@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DealEngine.Domain.Entities;
 
 namespace DealEngine.Services.Interfaces
@@ -21,11 +22,12 @@ namespace DealEngine.Services.Interfaces
 
         Task<Image> GetImage (string imageName);
 
-        Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement) where T : Document;
+        Task<T> RenderDocument<T> (User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformation) where T : Document;
 
 		byte [] ToBytes (string contents);
 		string FromBytes (byte [] bytes);
         Task<Document> GetDocumentByType(Organisation primaryOrganisation, int documentType);
+		Task<List<Document>> GetDocumentByOwner(Organisation Owner);
     }
 }
 

@@ -128,65 +128,12 @@ namespace DealEngine.Services.Impl
 			return await _imageRepository.FindAll().FirstOrDefaultAsync(i => i.Name == imageName);
 		}
 
-		public async Task<T> RenderDocument<T>(User renderedBy, T template, ClientAgreement agreement) where T : Document
+		public async Task<T> RenderDocument<T>(User renderedBy, T template, ClientAgreement agreement, ClientInformationSheet clientInformationSheet) where T : Document
 		{
 			Document doc = new Document (renderedBy, template.Name, template.ContentType, template.DocumentType);
 
 			// store all the fields to be merged
-			List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>> ();
-			mergeFields.Add (new KeyValuePair<string, string> ("[[InsuredName]]", agreement.InsuredName));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[NameOfInsured]]", agreement.InsuredName));
-            mergeFields.Add(new KeyValuePair<string, string>("[[Reference]]", agreement.ClientInformationSheet.ReferenceId));
-            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerName]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.FullName));
-            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerJobTitle]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.JobTitle));
-            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerPhone]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Phone));
-            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerEmail]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Email));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
-            mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
-            mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
-            //Eglobal merge fields
-            if (agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Count > 0)
-            {
-                EGlobalResponse eGlobalResponse = agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
-                if (eGlobalResponse != null)
-                {
-                    if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
-                    {
-                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
-                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
-                        mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
-                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
-                    }
-                }
-            }
-            //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
-            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
-            mergeFields.Add (new KeyValuePair<string, string> ("[[InceptionDate]]", agreement.InceptionDate.ToString ("dd/MM/yyyy")));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[ExpiryDate]]", agreement.ExpiryDate.ToString ("dd/MM/yyyy")));
-			if (agreement.Bound == true) {
-				mergeFields.Add (new KeyValuePair<string, string> ("[[BoundOrQuoteDate]]", agreement.BoundDate.ToString ("dd/MM/yyyy")));
-			} else {
-				mergeFields.Add (new KeyValuePair<string, string> ("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
-			}
-			mergeFields.Add (new KeyValuePair<string, string> ("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[QuoteDate]]", agreement.QuoteDate.ToString ("dd/MM/yyyy")));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[PolicyNumber]]", agreement.PolicyNumber));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[Brokerage]]", (agreement.Brokerage / 100).ToString ("P2", CultureInfo.CreateSpecificCulture("en-NZ"))));
-			mergeFields.Add (new KeyValuePair<string, string> ("[[AdministrationFee]]", agreement.BrokerFee.ToString ("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
-            if (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced")
-            {
-                if (agreement.ClientInformationSheet.Programme.Payment != null)
-                {
-                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardType));
-                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardNumber));
-                } else
-                {
-                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", "No Credit Card Payment"));
-                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", "No Credit Card Payment"));
-                }
-               
-            }
+			List<KeyValuePair<string, string>> mergeFields = GetMergeFields(agreement, clientInformationSheet);            
             NumberFormatInfo currencyFormat = new CultureInfo (CultureInfo.CurrentCulture.ToString ()).NumberFormat;
 			currencyFormat.CurrencyNegativePattern = 2;
 
@@ -548,43 +495,7 @@ namespace DealEngine.Services.Impl
                 //    strFinancialIP = strFinancialIPList + " is";
                 //}
                 //mergeFields.Add(new KeyValuePair<string, string>("[[FinancialIP]]", strBVInterestPartiesNamesList));
-            }
-
-
-            //Client Agreement Rule
-            if (agreement.ClientAgreementRules.Count > 0) {
-				if (agreement.ClientAgreementRules.FirstOrDefault (cr => cr.Name == "PaymentPremium") != null) {
-					string strPaymentPremium = agreement.ClientAgreementRules.FirstOrDefault (cr => cr.Name == "PaymentPremium").Value;
-					mergeFields.Add (new KeyValuePair<string, string> ("[[PremiumInclusive]]", strPaymentPremium));
-				}
-
-			} else {
-				mergeFields.Add (new KeyValuePair<string, string> ("[[PremiumInclusive]]", ""));
-			}
-
-			//Endorsements
-			if (agreement.ClientAgreementEndorsements.Count > 0) {
-				DataTable dt = new DataTable ();
-				dt.Columns.Add ("Endorsement Name");
-				dt.Columns.Add ("Product Name");
-				dt.Columns.Add ("Endorsement Text");
-
-				foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreement.ClientAgreementEndorsements) {
-					DataRow dr = dt.NewRow ();
-
-					dr ["Endorsement Name"] = ClientAgreementEndorsement.Name;
-					dr ["Product Name"] = agreement.ClientInformationSheet.Product.Name;
-					dr ["Endorsement Text"] = ClientAgreementEndorsement.Value;
-
-					dt.Rows.Add (dr);
-				}
-
-				dt.TableName = "EndorsementTable";
-
-				mergeFields.Add (new KeyValuePair<string, string> ("[[EndorsementTable]]", ConvertDataTableToHTML (dt)));
-			} else {
-				mergeFields.Add (new KeyValuePair<string, string> ("[[EndorsementTable]]", ""));
-			}
+            }            
 
 			// merge the configured merge feilds into the document
 			string content = FromBytes (template.Contents);
@@ -597,8 +508,161 @@ namespace DealEngine.Services.Impl
 			return (T)doc;
 		}
 
+        private List<KeyValuePair<string, string>> GetMergeFields(ClientAgreement agreement, ClientInformationSheet clientInformationSheet)
+        {
+            List<KeyValuePair<string, string>> mergeFields = new List<KeyValuePair<string, string>>();
+            mergeFields.Add(new KeyValuePair<string, string>("[[InsuredName]]", agreement.InsuredName));
+            mergeFields.Add(new KeyValuePair<string, string>("[[NameOfInsured]]", agreement.InsuredName));
+            mergeFields.Add(new KeyValuePair<string, string>("[[Reference]]", agreement.ClientInformationSheet.ReferenceId));
+            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerName]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.FullName));
+            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerJobTitle]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.JobTitle));
+            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerPhone]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Phone));
+            mergeFields.Add(new KeyValuePair<string, string>("[[BrokerEmail]]", agreement.ClientInformationSheet.Programme.BrokerContactUser.Email));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ClientBranchCode]]", agreement.ClientInformationSheet.Programme.EGlobalBranchCode));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ClientNumber]]", agreement.ClientInformationSheet.Programme.EGlobalClientNumber));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ClientProgrammeMembershipNumber]]", agreement.ClientInformationSheet.Programme.ClientProgrammeMembershipNumber));
+            mergeFields.Add(new KeyValuePair<string, string>("[[SubmissionDate]]", agreement.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+            if (clientInformationSheet != null)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[SubClientName]]", clientInformationSheet.Owner.Name));
+            }
+            //Eglobal merge fields
+            if (agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Count > 0)
+            {
+                EGlobalResponse eGlobalResponse = agreement.ClientInformationSheet.Programme.ClientAgreementEGlobalResponses.Where(er => er.DateDeleted == null && er.ResponseType == "update").OrderByDescending(er => er.VersionNumber).FirstOrDefault();
+                if (eGlobalResponse != null)
+                {
+                    if (agreement.MasterAgreement && (agreement.ReferenceId == eGlobalResponse.MasterAgreementReferenceID))
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceDate]]", eGlobalResponse.DateCreated.GetValueOrDefault().ToString("dd/MM/yyyy")));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[InvoiceReference]]", eGlobalResponse.InvoiceNumber.ToString()));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[CoverNo]]", eGlobalResponse.CoverNumber.ToString()));
+                        mergeFields.Add(new KeyValuePair<string, string>("[[Version]]", eGlobalResponse.VersionNumber.ToString()));
+                    }
+                }
+            }
 
-		public byte [] ToBytes (string contents)
+            foreach (var term in agreement.ClientAgreementTerms)
+            {
+
+                if (term.Bound)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[RetroactiveDate_{0}]]", term.SubTermType), ""));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundLimit_{0}]]", term.SubTermType), term.TermLimit.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundExcess_{0}]]", term.SubTermType), term.Excess.ToString("C0", CultureInfo.CreateSpecificCulture("en-NZ"))));
+
+                    if (agreement.ClientInformationSheet.IsChange && agreement.ClientInformationSheet.PreviousInformationSheet != null)
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumAdjustment_{0}]]", term.SubTermType), (term.PremiumDiffer - term.FSLDiffer).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremium_{0}]]", term.SubTermType), term.PremiumDiffer.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFee_{0}]]", term.SubTermType), (term.PremiumDiffer + agreement.BrokerFee).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundGST_{0}]]", term.SubTermType), ((term.PremiumDiffer) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFSL_{0}]]", term.SubTermType), term.FSLDiffer.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate)).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[CreditCardSurcharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (0.02m)).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.PremiumDiffer + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    }
+                    else
+                    {
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumAdjustment_{0}]]", term.SubTermType), (term.Premium - term.FSL).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremium_{0}]]", term.SubTermType), term.Premium.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFee_{0}]]", term.SubTermType), (term.Premium + agreement.BrokerFee).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundGST_{0}]]", term.SubTermType), ((term.Premium) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundFSL_{0}]]", term.SubTermType), term.FSL.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeInclGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate)).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[CreditCardSurcharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * 0.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclFeeCCSurchargeGST_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + 0.02m) * agreement.Product.TaxRate).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                        mergeFields.Add(new KeyValuePair<string, string>(string.Format("[[BoundPremiumInclGSTCreditCardCharge_{0}]]", term.SubTermType), ((term.Premium + agreement.BrokerFee) * (1 + agreement.Product.TaxRate) * 1.02m).ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+                    }
+                }
+            }
+            //mergeFields.Add(new KeyValuePair<string, string>("​[[InsuredPostalAddress]]", 
+            //    agreement.ClientInformationSheet.Owner.OrganisationalUnits.FirstOrDefault().Locations.FirstOrDefault().Street));//Address needs re-work
+            mergeFields.Add(new KeyValuePair<string, string>("[[InceptionDate]]", agreement.InceptionDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[ExpiryDate]]", agreement.ExpiryDate.ToString("dd/MM/yyyy")));
+            if (agreement.Bound == true)
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[BoundOrQuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+            }
+            mergeFields.Add(new KeyValuePair<string, string>("[[BoundDate]]", agreement.BoundDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[QuoteDate]]", agreement.QuoteDate.ToString("dd/MM/yyyy")));
+            mergeFields.Add(new KeyValuePair<string, string>("[[PolicyNumber]]", agreement.PolicyNumber));
+            mergeFields.Add(new KeyValuePair<string, string>("[[Brokerage]]", (agreement.Brokerage / 100).ToString("P2", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            mergeFields.Add(new KeyValuePair<string, string>("[[AdministrationFee]]", agreement.BrokerFee.ToString("C", CultureInfo.CreateSpecificCulture("en-NZ"))));
+            if (agreement.Status == "Bound" || agreement.Status == "Bound and invoice pending" || agreement.Status == "Bound and invoiced")
+            {
+                if (agreement.ClientInformationSheet.Programme.Payment != null)
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardType));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", agreement.ClientInformationSheet.Programme.Payment.CreditCardNumber));
+                }
+                else
+                {
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardType]]", "No Credit Card Payment"));
+                    mergeFields.Add(new KeyValuePair<string, string>("[[CreditCardNumber]]", "No Credit Card Payment"));
+                }
+
+            }
+
+            //Client Agreement Rule
+            if (agreement.ClientAgreementRules.Count > 0)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.Name == "PaymentPremium") != null)
+                {
+                    string strPaymentPremium = agreement.ClientAgreementRules.FirstOrDefault(cr => cr.Name == "PaymentPremium").Value;
+                    mergeFields.Add(new KeyValuePair<string, string>("[[PremiumInclusive]]", strPaymentPremium));
+                }
+
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[PremiumInclusive]]", ""));
+            }
+
+            //Endorsements
+            if (agreement.ClientAgreementEndorsements.Count > 0)
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Endorsement Name");
+                dt.Columns.Add("Product Name");
+                dt.Columns.Add("Endorsement Text");
+
+                foreach (ClientAgreementEndorsement ClientAgreementEndorsement in agreement.ClientAgreementEndorsements)
+                {
+                    DataRow dr = dt.NewRow();
+
+                    dr["Endorsement Name"] = ClientAgreementEndorsement.Name;
+                    if(agreement.ClientInformationSheet.Product != null)
+                    {
+                        dr["Product Name"] = agreement.ClientInformationSheet.Product.Name;
+                    }
+                    
+                    dr["Endorsement Text"] = ClientAgreementEndorsement.Value;
+
+                    dt.Rows.Add(dr);
+                }
+
+                dt.TableName = "EndorsementTable";
+
+                mergeFields.Add(new KeyValuePair<string, string>("[[EndorsementTable]]", ConvertDataTableToHTML(dt)));
+            }
+            else
+            {
+                mergeFields.Add(new KeyValuePair<string, string>("[[EndorsementTable]]", ""));
+            }
+
+
+            return mergeFields;
+        }
+
+        public byte [] ToBytes (string contents)
 		{
 			return System.Text.Encoding.UTF8.GetBytes (contents);
 		}
@@ -630,7 +694,12 @@ namespace DealEngine.Services.Impl
 			return html;
 		}
 
-		#endregion
-	}
+        public async Task<List<Document>> GetDocumentByOwner(Organisation Owner)
+        {
+            return await _documentRepository.FindAll().Where(d => d.OwnerOrganisation == Owner && d.DateDeleted == null).ToListAsync();
+        }
+
+        #endregion
+    }
 }
 

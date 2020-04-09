@@ -15,7 +15,6 @@ namespace DealEngine.Infrastructure.FluentNHibernate
         public NHibernateMapperSession(ISession session, ISessionFactory sessionFactory)
         {
             _sessionFactory = sessionFactory;
-
             _session = session;
         }
 

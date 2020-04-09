@@ -11,6 +11,7 @@ using IdentityUser = NHibernate.AspNetCore.Identity.IdentityUser;
 using Claim = System.Security.Claims.Claim;
 using NHibernate.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -226,6 +227,24 @@ namespace DealEngine.WebUI.Controllers
             }
 
         }
-       
+
+        [HttpPost]
+        public async Task<IActionResult> CreateClaim(IFormCollection form)
+        {
+            User user = null;
+            try
+            {
+                var claimvalue = form["value"];
+                var claimtype = form["type"];
+                Domain.Entities.Claim claim = new Domain.Entities.Claim(claimtype, claimvalue);
+                await _claimService.AddClaim(claim);                
+            }
+            catch(Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+                return NoContent();
+        }
     }
 }

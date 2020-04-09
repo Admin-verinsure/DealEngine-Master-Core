@@ -39,14 +39,14 @@ namespace DealEngine.Services.Impl
             }
         }
 
-        public async Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplate()
+        public async Task<List<BusinessActivityTemplate>> GetBusinessActivitiesTemplates()
         {
             return await _businessActivityTemplateRepository.FindAll().OrderBy(ba => ba.AnzsciCode).ToListAsync();            
         }
 
         public async Task<List<BusinessActivityTemplate>> GetBusinessActivitiesByClassification(int classification)
         {
-            var list = await GetBusinessActivitiesTemplate();
+            var list = await GetBusinessActivitiesTemplates();
             return list.Where(ba => ba.Classification == classification).ToList();
         }
 
@@ -81,6 +81,11 @@ namespace DealEngine.Services.Impl
         public async Task<BusinessActivityTemplate> GetBusinessActivityTemplateByCode(string anzsciCode)
         {
             return await _businessActivityTemplateRepository.FindAll().FirstOrDefaultAsync(bat => bat.AnzsciCode == anzsciCode);
+        }
+
+        public async Task RemoveBusinessActivity(BusinessActivityTemplate businessActivityTemplate)
+        {
+            await _businessActivityTemplateRepository.RemoveAsync(businessActivityTemplate);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 using DealEngine.Domain.Entities;
 using DealEngine.Services.Interfaces;
 using DealEngine.WebUI.Models;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
 using DealEngine.Infrastructure.FluentNHibernate;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -119,17 +119,11 @@ namespace DealEngine.WebUI.Controllers
 
 		// Proposal Element,
 		// Premium Element,
-                   		// Policy Element
-		[HttpGet]
-		public async Task<IActionResult> CreateProduct ()
-		{
-			return View ();
-		}
-
+        // Policy Element
 		// Can not create a product without different insurance elements existing
 		// Can only map and not add new elements
 		[HttpGet]
-		public async Task<IActionResult> CreateNew()
+		public async Task<IActionResult> CreateProduct()
 		{
 			User user = null;
 			try
@@ -152,11 +146,10 @@ namespace DealEngine.WebUI.Controllers
 					BaseProducts = new List<SelectListItem> { new SelectListItem { Text = "Select Base Product", Value = "" } }
 				};
 
-				//if (System.Web.Security.Roles.IsUserInRole ("superuser"))
 				model.Description.BaseProducts.Add(new SelectListItem { Text = "Set as base product", Value = Guid.Empty.ToString() });
 
 				var productList = await _productService.GetAllProducts();
-				foreach (Product product in productList.Where(p => p.IsBaseProduct))
+				foreach (Product product in productList.Where(p => p.IsMasterProduct))
 				{
 					model.Description.BaseProducts.Add(new SelectListItem { Text = product.Name, Value = product.Id.ToString() });
 				}
@@ -169,18 +162,6 @@ namespace DealEngine.WebUI.Controllers
 				foreach (Document doc in _documentRepository.FindAll().Where(d => d.OwnerOrganisation == user.PrimaryOrganisation))
 					model.Settings.Documents.Add(new SelectListItem { Text = doc.Name, Value = doc.Id.ToString() });
 
-				model.Settings.InformationSheets = new List<SelectListItem>();
-				model.Settings.InformationSheets.Add(new SelectListItem { Text = "Select Information Sheet", Value = "" });
-				var templates = await _informationService.GetAllTemplates();
-				foreach (var template in templates)
-					model.Settings.InformationSheets.Add(
-						new SelectListItem
-						{
-							Text = template.Name,
-							Value = template.Id.ToString()
-						}
-					);
-
 				model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = "Select Product Owner", Value = "" });
 				model.Settings.PossibleOwnerOrganisations.Add(new SelectListItem { Text = user.PrimaryOrganisation.Name, Value = user.PrimaryOrganisation.Id.ToString() });
 				// loop over all non personal organisations and add them, excluding our own since its already added
@@ -191,7 +172,6 @@ namespace DealEngine.WebUI.Controllers
 
 				var programmes = new List<Programme>();
 				var programmeList = await _programmeService.GetAllProgrammes();
-				//foreach (Programme programme in _programmeRepository.FindAll().Where(p => CurrentUser().Organisations.Contains(p.Owner)))
 				foreach (Programme programme in programmeList)
 					model.Settings.InsuranceProgrammes.Add(
 						new SelectListItem
@@ -206,7 +186,6 @@ namespace DealEngine.WebUI.Controllers
 					Brokers = new List<SelectListItem>(),
 					Insurers = new List<SelectListItem>()
 				};
-
 
 				return View(model);
 			}
@@ -307,13 +286,14 @@ namespace DealEngine.WebUI.Controllers
 
         [HttpPost]
 		//[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateNew(ProductViewModel model)
+		public async Task<IActionResult> CreateProduct(ProductViewModel model)
 		{
 			if (!ModelState.IsValid) {
 				ModelState.AddModelError ("", "Form has not been completed");
 				throw new Exception ("Form has not been completed");
 			}
 
+			Programme programme = null;
 			User user = null;
 			try {
                 user = await CurrentUser();
@@ -357,34 +337,27 @@ namespace DealEngine.WebUI.Controllers
 					}
 				}
 
-				if (model.Description.SelectedBaseProduct != Guid.Empty.ToString ()) {
-					// temp, remove once the question builder is intergrated into the product builder
-					Guid informationTemplateId = Guid.Empty;
-					if (Guid.TryParse (model.Settings.SelectedInformationSheet, out informationTemplateId)) {
-						var sheet = await _informationService.GetTemplate (informationTemplateId);
-						if (sheet == null)
-							throw new Exception ("No UIS Template found for id " + informationTemplateId);
-                        await _informationService.AddProductTo (sheet.Id, product);
-					}
-				}
-
 				if (!string.IsNullOrEmpty (model.Settings.SelectedInsuranceProgramme)) {
                     Guid programmeId = Guid.Empty;
                     if (Guid.TryParse(model.Settings.SelectedInsuranceProgramme, out programmeId))
                     {
-                        Programme programme = await _programmeService.GetProgrammeById(programmeId);
-                        programme.Products.Add(product);
+                        programme = await _programmeService.GetProgrammeById(programmeId);                        
                     }
-                }
+				}
+				else
+				{
+					var programmeList = await _programmeService.GetAllProgrammes();
+					programme = programmeList.LastOrDefault();
+				}
+				programme.Products.Add(product);
 
-                if (baseProduct != null)
+				if (baseProduct != null)
                     baseProduct.ChildProducts.Add(product);
 
                 await _productService.CreateProduct(product);
 
+				return NoContent();
 
-                return Redirect ("~/Product/MyProducts");
-				//return Content (string.Format("Your product [{0}] has been successfully created.", model.Description.Name));
 			}
 			catch(Exception ex)
 			{
@@ -533,7 +506,7 @@ namespace DealEngine.WebUI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CloneProduct (ProductViewModel model)
 		{
-			return await CreateNew(model);
+			return await CreateProduct(model);
 		}
 
 		[HttpGet]

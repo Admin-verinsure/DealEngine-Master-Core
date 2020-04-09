@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using DealEngine.Domain.Entities;
-using DealEngine.WebUI.Models.Product;
+using DealEngine.WebUI.Models.ProductModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace DealEngine.WebUI.Models.Programme
 {
@@ -35,6 +36,7 @@ namespace DealEngine.WebUI.Models.Programme
         public string EGlobalClientNumber { get; set; }
         public string EGlobalClientStatus { get; set; }
         public string EGlobalCustomDescription { get; set; }
+        public string ProgrammeClaim { get; set; }
         public bool HasEGlobalCustomDescription { get; set; }
         public bool EGlobalIsActiveOrNot { get; set; }        
         public bool IsPublic { get; set; }
@@ -42,7 +44,14 @@ namespace DealEngine.WebUI.Models.Programme
         public bool StopAgreement { get; set; }
         public bool HasSubsystemEnabled { get; set; }
         public decimal TaxRate { get; set; }
-        public DateTime StopAgreementDateTime { get; set; }                
+        public DateTime StopAgreementDateTime { get; set; }
+        public IList<SelectListItem> Brokers { get; set; }
+        public string Declaration { get; set; }
+        public string StopAgreementMessage { get; set; }
+        public string NoPaymentRequiredMessage { get; set; }
+        public ProductViewModel ProductViewModel { get; set; }
+        public InformationBuilderViewModel InformationBuilderViewModel { get; set; }
+
     }
 }
 

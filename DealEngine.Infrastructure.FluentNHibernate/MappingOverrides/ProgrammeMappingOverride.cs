@@ -12,7 +12,7 @@ namespace DealEngine.Infrastructure.FluentNHibernate.MappingOverrides
         {
             mapping.Map(x => x.Declaration).Length(4000);
             mapping.Map(x => x.StopAgreementMessage).Length(4000);
-            mapping.Map(x => x.SubsystemtMessage).Length(4000);
+            mapping.Map(x => x.SubsystemMessage).Length(4000);
             mapping.Map(x => x.NoPaymentRequiredMessage).Length(4000);
         }
     }

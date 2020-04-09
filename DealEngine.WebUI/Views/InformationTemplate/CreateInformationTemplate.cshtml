@@ -1,0 +1,153 @@
+﻿@model DealEngine.WebUI.Models.InformationBuilderViewModel
+
+<div id="content" class="container">
+    <form class="needs-validation" id="templateform" action="../InformationTemplate/CreateInformationTemplate" method="post">
+        <input id="templateId" name="templateId" type="hidden" value="">
+        <div class="card">
+            <div class="card-header">
+                <span class="widget-icon">
+                    <h2><i class="fa fa-list-alt"></i> Information Sheet Templates</h2>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="accordion" id="accordion">
+                        <div class="card">
+                            <div class="card-header" id="createtemplate">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#create" aria-expanded="true" aria-controls="create">
+                                        Create Template
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="create" class="collapse show" aria-labelledby="createtemplate" data-parent="#accordion">
+                                <div class="card-body" id="section">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <input placeholder="Template Name" type="text" name="templatename" id="templatename" class="form-control" form="templateform" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <a class="btn btn-sm btn-primary text-light" data-toggle="modal" data-target="#questionmodal"> Add Question</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <article id="sectionpreview" width="10"></article>
+                                        </div>
+                                    </div>
+                                    <table id="questiontable" class="table invisible">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>
+                                                    Question Type
+                                                </th>
+                                                <th>
+                                                    Remove Question
+                                                </th>
+                                                <th>
+                                                    Add Conditional Question
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            @for (int x = 0; x < Model.InformationTemplates.Count(); x++)
+                            {
+                                <div class="card">
+                                    <div class="card-header" id="heading_@Model.InformationTemplates.ElementAt(x).Id">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordion_@Model.InformationTemplates.ElementAt(x).Id" aria-expanded="true" aria-controls="accordion_@Model.InformationTemplates.ElementAt(x).Id">
+                                                @Model.InformationTemplates.ElementAt(x).Name
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <div id="accordion_@Model.InformationTemplates.ElementAt(x).Id" class="collapse" aria-labelledby="heading_@Model.InformationTemplates.ElementAt(x).Id" data-parent="#accordion">
+                                        <div class="card-body">
+                                            <table>
+                                                <tbody>
+                                                    @for (int i = 0; i < @Model.InformationTemplates.ElementAt(x).Sections.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="existingtemplates" id="existingtemplates" value="@Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Id" form="templateform" />
+                                                                    <label class="form-check-input-label" for="existingtemplates">
+                                                                        @Model.InformationTemplates.ElementAt(x).Sections.ElementAt(i).Name
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="modal fade" id="questionmodal" tabindex="-1" role="dialog" aria-labelledby="questionmodalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="questionmodalbody">
+                    <div id="questionsectionwizard" class="sw-main sw-theme-circles">
+                        <ul class="nav nav-tabs step-anchor">
+                            <li class="nav-item active"><a href="#question1" class="nav-link">1<br><small>Question</small></a></li>
+                            <li class="nav-item"><a href="#question2" class="nav-link">2<br><small>Conditional Question</small></a></li>
+                            <li class="nav-item"><a href="#question3" class="nav-link">3<br><small>Rules</small></a></li>
+                            <li class="nav-item"><a href="#question4" class="nav-link">4<br><small>Submit</small></a></li>
+                        </ul>
+
+                        <div class="sw-container tab-content">
+                            <div id="question1" class="tab-pane step-content">
+                                @await Html.PartialAsync("../InformationTemplate/_ItemSection")
+                            </div>
+                            <div id="question2" class="tab-pane step-content">
+                                @await Html.PartialAsync("../InformationTemplate/_ItemConditionalSection")
+                            </div>
+                            <div id="question3" class="tab-pane step-content">
+                                @await Html.PartialAsync("../InformationTemplate/_ItemRuleSection", Model)
+                            </div>
+                            <div id="question4" class="tab-pane step-content">
+                                <p>submit</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer" id="questionmodalfooter">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="questionModalButton" class="btn btn-primary" onclick="AddQuestion()" hidden>Submit Query</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

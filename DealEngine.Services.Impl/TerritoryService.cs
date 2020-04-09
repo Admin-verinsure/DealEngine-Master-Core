@@ -49,14 +49,13 @@ namespace DealEngine.Services.Impl
 
         public async Task<TerritoryTemplate> GetTerritoryTemplateByName(string LocationName)
         {
-            if(LocationName == "NZ")
+            if(LocationName == "New Zealand")
             {
                 var territory = await _territoryTemplateRepository.FindAll().FirstOrDefaultAsync(t => t.Location == LocationName);
                 if(territory == null)
                 {
-                    await CreateTerritoryTemplate("NZ");
-                }
-
+                    await CreateTerritoryTemplate("New Zealand");
+                }                
             }
 
             return await _territoryTemplateRepository.FindAll().FirstOrDefaultAsync(t => t.Location == LocationName);

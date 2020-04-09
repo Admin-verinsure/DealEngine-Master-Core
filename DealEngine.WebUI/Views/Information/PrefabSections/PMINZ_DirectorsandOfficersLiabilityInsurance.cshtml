@@ -1,0 +1,599 @@
+﻿@model DealEngine.WebUI.Models.InformationViewModel
+<div class="padding-10">
+    <div id="DNOForm" class="smart-form" novalidate="novalidate">
+        <fieldset id="DirectorsandOfficersLiabilityInsurance">
+            <div class="row">
+
+
+                <div class="panel-body" id="@Model.Id body">
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Would you like Directors' and Officers' Liability Insurance?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers1" onchange="DirectorsandOfficersLiabilityInsurance1Selected('DirectorsandOfficers1')" class="form-control rmv editable" name="DirectorsandOfficers1">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers1"></p>
+
+                        </section>
+
+                    </section>
+
+                  <div class="hidden" id="PMINZDNOSEC">
+                      <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                          <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                              <label class="label required">
+                                  Please enter the legal name of the Limited Liability company to be insured for Directors & Officers cover:
+                              </label>
+                          </section>
+                          <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                              <label class="input">
+                                  <select id="DirectorsandOfficers2" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers2')" class="form-control rmv editable" name="DirectorsandOfficers1">
+                                      <option selected="selected" value="">-- Select --</option>
+                                      <option value="true">Yes</option>
+                                      <option value="false">No</option>
+                                  </select>
+                              </label>
+                              <p class="validationContainer" id="ValidateDirectorsandOfficers2"></p>
+
+                          </section>
+
+                      </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Date Formed:
+                            </label>
+                        </section>
+                        <div class="row">
+                            <section class="col col-xs-10 col-sm-5 col-md-5 col-lg-5">
+                                <label class="input ">
+                                    <i class="icon-append fa fa-calendar"></i>
+                                    <input placeholder="Date Formed" class="Calenderdate form-control b" data-dateformat="dd/mm/yy" id="DirectorsandOfficers3" type="text" required>
+                                </label>
+                            </section>
+
+                        </div>
+                        <p class="validationContainer" id="ValidateDirectorsandOfficers3"></p>
+                    </section>
+
+                    <label><strong>Please advise the following information regarding your practice as at your last financial year end:</strong></label>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                $ Value of your total assets:
+                            </label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input form-group">
+                                <i></i>
+                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="DirectorsandOfficers4" name="DirectorsandOfficers4" placeholder="$ Amount of Cover" value="" required>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers4"></p>
+
+                        </section>
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                $ Value of youe total debt:
+                            </label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input form-group">
+                                <i></i>
+                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="DirectorsandOfficers5" name="DirectorsandOfficers4" placeholder="$ Amount of Cover" value="" required>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers5"></p>
+
+                        </section>
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                $ Value of shareholder equity:
+                            </label>
+                        </section>
+
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input form-group">
+                                <i></i>
+                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="DirectorsandOfficers6" name="DirectorsandOfficers5" placeholder="$ Amount of Cover" value="" required>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers6"></p>
+
+                        </section>
+
+                    </section>
+
+
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                AFTER ENQUIRY has there been, or is there now pending, any claim against any proposed Insured Person in their capacity as a director or officer of either the Practice or any other
+                                company, organisation, association or trust?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers7" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers7')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers7"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers7Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers7Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers7Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                AFTER ENQUIRY do any circustances  exist which might give rise to a claim against any proposed Insured Person?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers8" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers8')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers8"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers8Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers8Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers8Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                    
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Has there been any administrative or regulatory proceeding or official investigation regarding any activity of a Director or Officer?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers10" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers10')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers10"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers10Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers10Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers10Details"></p>
+
+                        </section>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Has the company or any Director or Officer ever been refused this type of cover, had a similar policy cancelled or renewal declined, or had special terms imposed?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers11" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers11')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers11"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers11Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers11Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers11Details"></p>
+
+                        </section>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Has any Director or Officer been employed or engaged by or otherwise involved in a Company that has been in receivership or liquidation?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers12" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers12')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers12"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers12Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers12Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers12Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Has any Director or Officer been involved in any criminal proceedings during the last five years?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" >
+                            <label class="input">
+                                <select id="DirectorsandOfficers13" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers13')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers13"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers13Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers13Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers13Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Is there now pending, or has there ever been any prosecution of any Director or Officer under the Fair Trading Act, Companies Act, Commerce Act,or any other NZ legislation or other similar overseas legislation?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers14" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers14')"  class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers14"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers14Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers14Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers14Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Are the Directors or Officers aware of any reason why the company will not be in the position to meet all financial obligations during the next twelve months?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
+                                <select id="DirectorsandOfficers15" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers15')"  class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers15"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers15Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers15Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers15Details"></p>
+
+                        </section>
+
+
+                    </section>
+
+                  </div>
+
+                </div>
+            </div>
+
+
+        </fieldset>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(window).on("load", function () {
+        var clientInformationSheet = $('#AnswerSheetId').val();
+        var postData = { ClientInformationSheet: clientInformationSheet };
+
+        $.ajax({
+            url: '@Url.Action("GetDirectorsandOfficersLiability", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                var valid = "true";
+                var count = 0;
+                for (var i = 0; i < data.length - 6; i++) {
+                    if (data[i] == null) {
+                        if (valid) {
+                            valid = "false";
+                        }
+                    }
+                }                
+                if (data[0] != "" && valid == "true") {
+                    for (var item = 0; item < data.length; item++){
+                        var arr = data[item];                        
+                        if (arr != null) {
+                            $('#' + arr[count]).val(arr[count + 1]);
+                            if ($('#DirectorsandOfficers1').val() == 'true') {
+                                $('#DirectorsandOfficersLiabilityInsurance2Sec').removeClass('hidden');
+                                $('#DirectorsandOfficersLiabilityInsurance3Sec').removeClass('hidden');
+                            } else {
+                                $('#DirectorsandOfficersLiabilityInsurance2Sec').addClass('hidden');
+                                $('#DirectorsandOfficersLiabilityInsurance3Sec').addClass('hidden');
+                            }
+                            if ($('#DirectorsandOfficers3').val() == 'false') {
+                                $('#DirectorsInsuranceSec').removeClass('hidden');
+                            } else {
+                                $('#DirectorsInsuranceSec').addClass('hidden');
+                            }
+                        }
+                    }
+                };
+            })
+            .fail(function (a, s, d) {
+                debugger;
+                alert("Unable to save.");
+            });
+    });
+
+    function DirectorsandOfficersLiabilityInsurance1Selected(DirectorsandOfficers) {       
+        var directorsandOfficers = document.getElementById(DirectorsandOfficers);
+
+        if (directorsandOfficers.options[directorsandOfficers.selectedIndex].value == "true") {
+            $('#PMINZDNOSEC').removeClass('hidden');
+        } else {
+            $('#PMINZDNOSEC').addClass('hidden');
+        }
+    }
+
+     function DirectorsandOfficersLiabilityInsuranceSelected(DirectorsandOfficers) {       
+        var directorsandOfficers = document.getElementById(DirectorsandOfficers);
+         var DNOsec = '#' + DirectorsandOfficers + 'Sec';
+        if (directorsandOfficers.options[directorsandOfficers.selectedIndex].value == "true") {
+            $(DNOsec).removeClass('hidden');
+        } else {
+           $(DNOsec).addClass('hidden');
+        }
+     }
+    
+
+    function ValidateDNOGeneral() {
+        var GLI1 = $('#DirectorsandOfficers1').val();
+        var GLI2 = $('#DirectorsandOfficers2').val();
+        var GLI3 = $('#DirectorsandOfficers3').val();
+        var validity = true;
+
+        if (GLI1 == "") {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<i></i>");
+        }
+        if (GLI2 == "" && GLI1 == 'true') {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<font color='red'>Field is required</font>")
+            if (validity) {
+                validity = false;
+            }
+        } else {
+            $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<i></i>");
+         }
+         if (GLI3 == "" && GLI1 == 'true') {
+             $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<font color='red'>Field is required</font>")
+             if (validity) {
+                 validity = false;
+             }
+         } else {
+             $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<i></i>");
+         }
+
+         for (var index = 4; index <= 7; index++) {
+             var employerLiabilityInsurance = "#DirectorsandOfficers" + index;
+             var value = $(employerLiabilityInsurance).val();
+             var validator = "#ValidateDirectorsandOfficersLiabilityInsurance" + index;
+
+             if (value == "" && ($('#DirectorsandOfficers3').val() == 'false')) {
+                 $(validator).html("<font color='red'>Field is required</font>")
+                 if (validity) {
+                     validity = false;
+                 }
+             } else {
+                 $(validator).html("<i></i>");
+             }
+         }
+        return validity;
+    };
+
+    function SaveDirectorsandOfficersLiability() {
+        var DirectorsandOfficers = new Array(7);
+
+        for (var i = 0; i < DirectorsandOfficers.length; i++) {
+            DirectorsandOfficers[i] = new Array(2);
+        }
+
+        for (var i = 1; i <= 7; i++) {
+            for (var j = 0; j < 2; j++) {
+                DirectorsandOfficers[i - 1][0] = "DirectorsandOfficers" + i;
+                var directorsandOfficers = "#DirectorsandOfficers" + i;
+                DirectorsandOfficers[i - 1][1] = $(directorsandOfficers).val();
+            }
+        }
+
+        var postData = { Answers: DirectorsandOfficers, ClientInformationSheet: clientInformationSheet };
+        $.ajax({
+            url: '@Url.Action("UpdateAnswer", "Information")',
+            type: "POST",
+            data: postData
+        })
+            .done(function (data) {
+                return true;
+            })
+            .fail(function (a, s, d) {
+                alert("Unable to save test.");
+            });
+    };
+
+</script>
+
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>

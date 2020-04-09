@@ -48,5 +48,9 @@ namespace DealEngine.Services.Impl
             return sections;
         }
 
+        public async Task CreateNewSection(InformationSection section)
+        {
+            await _informationSectionRepository.AddAsync(section);
+        }
     }
 }

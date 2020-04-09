@@ -7,7 +7,8 @@
     <li class="nav nav-tabs Summary" style="display:none" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Summary </a> </li>
 </ul>
 
-<div id="RevenueTabs1" class="tab-content">
+<div id="" class="tab-content">
+    <div id="RevenueTabs1" class="tab-pane active" role="tabpanel">
         <div class="container-fluid">
             <form class="client-form">
                 <div class="form-group">
@@ -24,7 +25,7 @@
                 </div>
                 <div class="form-group" id="sharedRevenueTerritories" name="sharedRevenueTerritories" style="display:none">
                     <label for="SharedTerritories">Select Territories</label>
-                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" required>
+                    <select data-placeholder="Click here to select Territories" id="SharedTerritories" name="Territories" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab1Button()" form="revenue1" required>
                         @foreach (var territory in Model.Territories)
                         {
                             <option selected="@territory.Selected" value="@territory.Value">@territory.Text</option>
@@ -42,18 +43,30 @@
                 </div>
             </form>
         </div>
-</div>
-<div id="RevenueTabs2" class="tab-content">
+    </div>
+    <div id="RevenueTabs2" class="tab-pane" role="tabpanel">
         <div class="container-fluid">
             <form class="client-form">
                 <div class="form-group">
-                    <label for="totalRevenue">Enter Fee Income</label>
-                    <input id="totalRevenue" name="totalRevenue" type="number" class="form-control" placeholder="$" required>
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="currentYear">Estimate of current year</label>
+                            <input id="currentYear" name="currentYear" type="number" class="form-control" form="revenue2" placeholder="$" required>
+                        </div>
+                        <div class="col-3">
+                            <label for="lastFinancialYear">Last completed financial year</label>
+                            <input id="lastFinancialYear" name="lastFinancialYear" type="number" form="revenue2" class="form-control" placeholder="$">
+                        </div>
+                        <div class="col-3">
+                            <label for="nextFinancialYear">Estimate of next financial year</label>
+                            <input id="nextFinancialYear" name="nextFinancialYear" type="number" form="revenue2" class="form-control" placeholder="$">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="sharedRevenueActivities">Select Activites</label>
-                    <select id="sharedRevenueActivities" name="sharedRevenueActivities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
+                    <select id="sharedRevenueActivities" form="revenue2" name="Activities" multiple class="col-6 chosen-select form-control b" onchange="ToggleSharedRevenueTab2Button()" data-placeholder="Click here to select Activities" required>
                         @foreach (var ou in Model.Activities)
                         {
                             <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
@@ -76,32 +89,45 @@
                 </div>
             </form>
 
-        </div>    
-</div>
-
-<div id="RevenueTabs3" class="tab-content">
-    <div class="container-fluid">
-        @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model)        
+        </div>
     </div>
-</div>
-<div id="RevenueTabs4" class="tab-content">
-    <form class="client-form">
-        <div class="form-group">
-            <label for="SharedTotalRevenue">Fee Income</label>
-            <input id="SharedTotalRevenue" name="SharedTotalRevenue" type="number" readonly class="form-control" required>
+
+    <div id="RevenueTabs3" class="tab-pane" role="tabpanel">
+        <div class="container-fluid">
+            @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/AdditionalQuestions.cshtml", Model.AdditionalInformation)
         </div>
-        <div class="form-group">
-            <table id="ListSharedRevenueTerritories" class="table">
-            </table>
-        </div>
-        <div class="form-group">
-            <table id="ListSharedRevenueActivities" class="table">
-            </table>
-        </div>
-        <div class="form-group">
-            <div class="footer" id="UpdateSharedActivity">
-                <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+    </div>
+    <div id="RevenueTabs4" class="tab-pane" role="tabpanel">
+        <form class="client-form">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-3">
+                        <label for="sharedcurrentYear">Estimate of current year</label>
+                        <input id="sharedcurrentYear" name="sharedcurrentYear" type="number" class="form-control" readonly value="@Model.CurrentYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$" required>
+                    </div>
+                    <div class="col-3">
+                        <label for="sharedlastFinancialYear">Last completed financial year</label>
+                        <input id="sharedlastFinancialYear" name="sharedlastFinancialYear" type="number" readonly class="form-control" value="@Model.LastFinancialYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$">
+                    </div>
+                    <div class="col-3">
+                        <label for="sharednextFinancialYear">Estimate of next financial year</label>
+                        <input id="sharednextFinancialYear" name="sharednextFinancialYear" type="number" readonly class="form-control" value="@Model.NextFincialYear.ToString("0.00").Replace(".00", String.Empty)" placeholder="$">
+                    </div>
+                </div>
             </div>
-        </div>
-    </form>
+            <div class="form-group">
+                <table id="ListSharedRevenueTerritories" class="table">
+                </table>
+            </div>
+            <div class="form-group">
+                <table id="ListSharedRevenueActivities" class="table">
+                </table>
+            </div>
+            <div class="form-group">
+                <div class="footer" id="UpdateSharedActivity">
+                    <button class="btn-primary btn" onclick="UpdateSharedRevenue()">Change</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

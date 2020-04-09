@@ -43,6 +43,10 @@ namespace DealEngine.WebUI.Models
 
         public string ClaimStatus { get; set; }
 
+        public string SelectedClaimProducts { get; set; }
+
+        public string SelectedResponsiblePrincipal { get; set; }
+
         public Guid OrganisationId { get; set; }
 
         public Guid[] ClaimProducts { get; set; }
@@ -67,6 +71,8 @@ namespace DealEngine.WebUI.Models
             claim.ClaimPolicyReference = ClaimPolicyReference;
             claim.ClaimBrokerReference = ClaimBrokerReference;
             claim.ClaimInsurerReference = ClaimInsurerReference;
+            claim.SelectedClaimProducts = SelectedClaimProducts;
+            claim.SelectedResponsiblePrincipal = SelectedResponsiblePrincipal;
             claim.ClaimInsurerName = ClaimInsurerName;
             claim.ClaimStatus = ClaimStatus;
             claim.ClaimNotes = ClaimNotes;
@@ -108,6 +114,8 @@ namespace DealEngine.WebUI.Models
                 ClaimInsurerReference = claim.ClaimInsurerReference,
                 ClaimInsurerName = claim.ClaimInsurerName,
                 ClaimStatus = claim.ClaimStatus,
+                SelectedClaimProducts = claim.SelectedClaimProducts,
+                SelectedResponsiblePrincipal = claim.SelectedResponsiblePrincipal,
                 ClaimProducts = claim.ClaimProducts.Select(p => p.Id).ToArray(),
                 ClaimNotes = claim.ClaimNotes,
                 ClaimDateOfLoss = (claim.ClaimDateOfLoss > DateTime.MinValue) ? claim.ClaimDateOfLoss.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("en-NZ")) : "",

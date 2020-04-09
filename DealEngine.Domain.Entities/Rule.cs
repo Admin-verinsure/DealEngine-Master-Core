@@ -42,24 +42,7 @@ namespace DealEngine.Domain.Entities
             set;
         }
 
-        public virtual string reference
-        {
-            get;
-            protected set;
-        }
         public virtual Product Product
-        {
-            get;
-            protected set;
-        }
-
-        public virtual InformationTemplate InformationTemplate
-        {
-            get;
-            protected set;
-        }
-
-        public virtual Question Question
         {
             get;
             protected set;

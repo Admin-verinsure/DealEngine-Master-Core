@@ -8,21 +8,23 @@ using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using NHibernate.Linq;
+using AutoMapper;
 
 namespace DealEngine.Services.Impl
 {
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
-        IMapperSession<SubClientInformationSheet> _customerSubInformationRepository;
         IMapperSession<Boat> _boatRepository;
+        IMapper _mapper;
 
-        public ClientInformationService(IMapperSession<ClientInformationSheet> customerInformationRepository, 
+        public ClientInformationService(
+            IMapperSession<ClientInformationSheet> customerInformationRepository, 
             IMapperSession<Boat> boatRepository,
-            IMapperSession<SubClientInformationSheet> customerSubInformationRepository
+            IMapper mapper
             )
         {
-            _customerSubInformationRepository = customerSubInformationRepository;
+            _mapper = mapper;
             _customerInformationRepository = customerInformationRepository;
             _boatRepository = boatRepository;
         }
@@ -58,11 +60,11 @@ namespace DealEngine.Services.Impl
             var sheetList = await _customerInformationRepository.FindAll().Where(s => owner.Organisations.Contains(s.Owner)).ToListAsync();
             foreach(var sheet in sheetList)
             {
-                var objectType = sheet.GetType();
-                if (!objectType.IsSubclassOf(typeof(ClientInformationSheet)))
+                var isBaseClass = await IsBaseClass(sheet);
+                if (isBaseClass)
                 {
                     list.Add(sheet);
-                }                
+                }
             }
             return list;
         }
@@ -73,8 +75,8 @@ namespace DealEngine.Services.Impl
             var sheetList = await _customerInformationRepository.FindAll().Where(s => s.Owner == owner).ToListAsync();
             foreach (var sheet in sheetList)
             {
-                var objectType = sheet.GetType();
-                if (!objectType.IsSubclassOf(typeof(ClientInformationSheet)))
+                var isBaseClass = await IsBaseClass(sheet);
+                if (isBaseClass)
                 {
                     list.Add(sheet);
                 }
@@ -88,13 +90,23 @@ namespace DealEngine.Services.Impl
             var sheetList = await _customerInformationRepository.FindAll().Where(s => s.ReferenceId == referenceId).ToListAsync();
             foreach (var sheet in sheetList)
             {
-                var objectType = sheet.GetType();
-                if (!objectType.IsSubclassOf(typeof(ClientInformationSheet)))
+                var isBaseClass = await IsBaseClass(sheet);
+                if (isBaseClass)
                 {
                     list.Add(sheet);
                 }
             }
             return list;
+        }
+
+        public async Task<bool> IsBaseClass(ClientInformationSheet sheet)
+        {
+            var objectType = sheet.GetType();
+            if (!objectType.IsSubclassOf(typeof(ClientInformationSheet)))
+            {
+                return true;
+            }
+            return false;
         }
 
         public async Task UpdateInformation(ClientInformationSheet sheet)
@@ -113,6 +125,8 @@ namespace DealEngine.Services.Impl
             {
                 foreach (string value in collection[key])
                 {
+                    //break the collection into objects
+                    //var genObj = collection[key].ToString().Split('.');
                     sheet.AddAnswer(key, value);
                 }
             }
@@ -147,16 +161,9 @@ namespace DealEngine.Services.Impl
             return clientList;
         }
 
-        public async Task<SubClientInformationSheet> IssueSubInformationFor(SubClientProgramme subClientProgramme)
+        public async Task<SubClientInformationSheet> IssueSubInformationFor(ClientInformationSheet clientInformationSheet)
         {
-            if (subClientProgramme.InformationSheet != null)
-                throw new Exception("ClientProgramme [" + subClientProgramme.Id + "] already has an InformationSheet assigned");
-
-            SubClientInformationSheet sheet = new SubClientInformationSheet(subClientProgramme.InformationSheet);
-            sheet.CopyClientInformationSheet(subClientProgramme);
-            subClientProgramme.InformationSheet = sheet;
-
-            await _customerSubInformationRepository.AddAsync(sheet);
+            SubClientInformationSheet sheet = _mapper.Map<SubClientInformationSheet>(clientInformationSheet);
             return sheet;
         }
     }

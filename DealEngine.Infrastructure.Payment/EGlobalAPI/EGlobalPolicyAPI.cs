@@ -1237,7 +1237,7 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI
                 EBixPolicy.GSTPremium += risk.GSTPremium;
                 EBixPolicy.LeviesA += risk.LeviesA;
                 EBixPolicy.LeviesB += risk.LeviesB;
-                EBixPolicy.CoyPremium += risk.CoyPremium;
+                EBixPolicy.CoyPremium += (risk.CoyPremium - risk.LeviesA - risk.LeviesB - risk.CEQuake);
                 EBixPolicy.GSTBrokerage += risk.GSTBrokerage;
             }
 
@@ -1264,8 +1264,8 @@ namespace DealEngine.Infrastructure.Payment.EGlobalAPI
             ep.BSCAmount = brokerFee;
 
             ep.BscGST = Math.Round(ep.BSCAmount * taxRate, 2);
-            ep.DueByClient = ep.CoyPremium + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
-            //ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            //ep.DueByClient = ep.CoyPremium + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
+            ep.DueByClient = ep.CoyPremium + ep.CEQuake + ep.LeviesA + ep.LeviesB + ep.BSCAmount + ep.GSTPremium + ep.BscGST;
             ep.SPCFee = Math.Round(ep.DueByClient * EGlobalPolicy.SurchargeRate, 2);
 
             decimal spcGST = Math.Round(ep.SPCFee * taxRate, 2);

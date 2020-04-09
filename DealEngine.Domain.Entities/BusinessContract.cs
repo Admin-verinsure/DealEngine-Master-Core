@@ -18,7 +18,10 @@ namespace DealEngine.Domain.Entities
         public virtual string Fees { get; set; }
         public virtual string ContractType { get; set; }
         public virtual string MembershipNumber { get; set; }
-
+        public virtual Boolean ProjectDirector { get; set; }
+        public virtual Boolean ProjectManager { get; set; }
+        public virtual Boolean ProjectCoordinator { get; set; }
+        public virtual Boolean ProjectEngineer { get; set; }
         public virtual ClientInformationSheet ClientInformationSheet
         {
             get;
@@ -34,7 +37,10 @@ namespace DealEngine.Domain.Entities
             get;
             set;
         }
-
+        public virtual string ProjectDescription { get; set; }
+        public virtual string MajorResponsibilities { get; set; }
+        public virtual string ProjectDuration { get; set; }
+        
         public virtual BusinessContract CloneForNewSheet(ClientInformationSheet newSheet)
         {
             if (ClientInformationSheet == newSheet)
@@ -48,6 +54,9 @@ namespace DealEngine.Domain.Entities
             newBusinessContract.ContractTitle = ContractTitle;
             newBusinessContract.ConstructionValue = ConstructionValue;
             newBusinessContract.OriginalBusinessContract = this;
+            newBusinessContract.ProjectDescription = ProjectDescription;
+            newBusinessContract.MajorResponsibilities = MajorResponsibilities;
+            newBusinessContract.ProjectDuration = ProjectDuration;
             return newBusinessContract;
         }
     }

@@ -43,6 +43,11 @@ namespace DealEngine.Services.Impl
             return await _ruleRepository.FindAll().Where(cagt => cagt.Product == product).ToListAsync();
         }
 
+        public async Task<IEnumerable<Rule>> GetAllRules()
+        {
+            return await _ruleRepository.FindAll().ToListAsync();
+        }
+
         public async Task<Rule> GetRuleByID(Guid Id)
         {
             return await _ruleRepository.GetByIdAsync(Id);

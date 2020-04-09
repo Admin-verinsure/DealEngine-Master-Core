@@ -12,6 +12,5 @@ namespace DealEngine.Services.Interfaces
         Task<Product> GetProductById(Guid Id);
         Task CreateProduct(Product product);
         Task UpdateProduct(Product product);
-        Task AddSubProduct(SubProduct subProduct);
     }
 }

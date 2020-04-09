@@ -315,20 +315,38 @@ namespace DealEngine.WebUI.Controllers
                 string password = viewModel.Password.Trim();
                 var user = await _userService.GetUser(userName);
                 int resultCode = -1;
-                string resultMessage = "";                
+                string resultMessage = "";
+                IdentityUser deUser;                
 
                 // Step 1 validate in  LDap 
                 _ldapService.Validate(userName, password, out resultCode, out resultMessage);
                 if (resultCode == 0)
                 {
-                    var result = await DealEngineIdentityUserLogin(user, password);
-                    if (result.Succeeded)
+                    var identityResult = await DealEngineIdentityUserLogin(user, password);
+                    if (identityResult.Succeeded)
                     {
-                        await _applicationLoggingService.LogInformation(_logger, new Exception("User [" + userName + "] has logged in"), user, HttpContext);
-                        return LocalRedirect("~/Home/Index");
-                    }                                                            
-                }
+                        deUser = await _userManager.FindByNameAsync(userName);
+                        var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
+                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
+                        {
+                            var hasRole = await _roleManager.RoleExistsAsync("Client");
+                            if (hasRole)
+                            {
+                                await _userManager.AddToRoleAsync(deUser, "Client");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        deUser = await _userManager.FindByNameAsync(userName);
+                        await _userManager.RemovePasswordAsync(deUser);
+                        await _userManager.AddPasswordAsync(deUser, password);
+                        await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
+                    }
 
+                    return LocalRedirect("~/Home/Index");
+                }
+                
                 ModelState.AddModelError(string.Empty, "We are unable to access your account with the username or password provided. You may have entered an incorrect password, or your account may be locked due to an extended period of inactivity. Please try entering your username or password again, or email support@DealEngine.com.");
                 return View(viewModel);
 
@@ -360,31 +378,17 @@ namespace DealEngine.WebUI.Controllers
                         Email = user.Email,
                         UserName = user.UserName
                     };
-                    await _userManager.CreateAsync(deUser, password);
+                    var result = await _userManager.CreateAsync(deUser, password);
                     var hasRole = await _roleManager.RoleExistsAsync("Client");
                     if (hasRole)
                     {
                         await _userManager.AddToRoleAsync(deUser, "Client");
                     }
                 }
-                else {
-                    await _userManager.AddPasswordAsync(deUser, password);
-                }
-                var identityResult = await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);
-                if (identityResult.Succeeded)
-                {
-                    if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC)
-                    {
-                        var hasRole = await _roleManager.RoleExistsAsync("Client");
-                        if (hasRole)
-                        {
-                            await _userManager.AddToRoleAsync(deUser, "Client");
-                        }
-                    }
-                }
 
-                return identityResult;
+                return await _signInManager.PasswordSignInAsync(deUser, password, true, lockoutOnFailure: false);                
             }
+            
             catch(Exception ex)
             {
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
@@ -410,6 +414,16 @@ namespace DealEngine.WebUI.Controllers
                     var result = await DealEngineIdentityUserLogin(user, password);
                     if (result.Succeeded)
                     {
+                        var deUser = await _userManager.FindByNameAsync(userName);
+                        var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
+                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
+                        {
+                            var hasRole = await _roleManager.RoleExistsAsync("Client");
+                            if (hasRole)
+                            {
+                                await _userManager.AddToRoleAsync(deUser, "Client");
+                            }
+                        }
                         MarshRsaAuthProvider rsaAuth = new MarshRsaAuthProvider(_logger, _httpClientService, _emailService);
                         MarshRsaUser rsaUser = rsaAuth.GetRsaUser(user.Email);
                         rsaUser.DevicePrint = "version%3D3%2E5%2E1%5F4%26pm%5Ffpua%3Dmozilla%2F5%2E0%20%28windows%20nt%2010%2E0%3B%20win64%3B%20x64%3B%20rv%3A68%2E0%29%20gecko%2F20100101%20firefox%2F68%2E0%7C5%2E0%20%28Windows%29%7CWin32%26pm%5Ffpsc%3D24%7C1920%7C1080%7C1050%26pm%5Ffpsw%3D%26pm%5Ffptz%3D12%26pm%5Ffpln%3Dlang%3Den%2DUS%7Csyslang%3D%7Cuserlang%3D%26pm%5Ffpjv%3D0%26pm%5Ffpco%3D1%26pm%5Ffpasw%3Dnpswf64%5F32%5F0%5F0%5F223%26pm%5Ffpan%3DNetscape%26pm%5Ffpacn%3DMozilla%26pm%5Ffpol%3Dtrue%26pm%5Ffposp%3D%26pm%5Ffpup%3D%26pm%5Ffpsaw%3D1920%26pm%5Ffpspd%3D24%26pm%5Ffpsbd%3D%26pm%5Ffpsdx%3D%26pm%5Ffpsdy%3D%26pm%5Ffpslx%3D%26pm%5Ffpsly%3D%26pm%5Ffpsfse%3D%26pm%5Ffpsui%3D%26pm%5Fos%3DWindows%26pm%5Fbrmjv%3D68%26pm%5Fbr%3DFirefox%26pm%5Finpt%3D%26pm%5Fexpt%3D";//viewModel.DevicePrint;

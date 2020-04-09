@@ -59,16 +59,19 @@
                                                                 <label class="btn btn-outline-primary">
                                                                     <input style="display:none;" type="radio" name="milestoneOptions" id="Advisory" onchange="PartialView('Advisory')"> Advisory
                                                                 </label>
-                                                                <label class="btn btn-outline-primary">
-                                                                    <input style="display:none;" type="radio" name="milestoneOptions" id="Email" onchange="PartialView('Email')"> Email
-                                                                </label>
-                                                                <label class="btn btn-outline-primary">
-                                                                    <input style="display:none;" type="radio" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
-                                                                </label>
+                                                                @if (User.IsInRole("TCUser"))
+                                                                {
+                                                                    <label class="btn btn-outline-primary">
+                                                                        <input style="display:none;" type="radio" name="milestoneOptions" id="Email" onchange="PartialView('Email')"> Email
+                                                                    </label>
+                                                                    <label class="btn btn-outline-primary">
+                                                                        <input style="display:none;" type="radio" name="milestoneOptions" id="Task" onchange="PartialView('Task')"> Task
+                                                                    </label>
+                                                                }
                                                                 @if (User.HasClaim("EditMilestones", "EditMilestones"))
                                                                 {
                                                                     <label class="btn btn-primary">
-                                                                        <input style="display:none;" type="button" name="options" id="option4" onchange="SaveStatus()"> Continue to save
+                                                                        <input style="display:none;" type="button" name="options" id="option4" onclick="SaveStatus()"> Continue to save
                                                                     </label>
                                                                 }
                                                             </div>
@@ -164,8 +167,6 @@
                 }
             })
         });
-
-        $('.datepicker').datepicker();
 
         function getActivityId() {
             return $('input[name=activityRadio]:checked').attr('id');

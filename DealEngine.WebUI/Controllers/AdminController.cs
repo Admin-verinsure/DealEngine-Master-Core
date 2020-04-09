@@ -112,6 +112,60 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CEASImportUsers()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportCEASServiceIndividuals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CEASImportClaims()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportCEASServiceClaims(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CEASImportContracts()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportCEASServiceContract(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+        
+        [HttpGet]
         public async Task<IActionResult> AONImportPrincipals()
         {
             User user = null;
@@ -130,13 +184,31 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CEASImportPrincipals()
+        {
+            User user = null;
+            try
+            {
+                user = await CurrentUser();
+                await _importService.ImportCEASServicePrincipals(user);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AONImportContracts()
         {
             User user = null;
             try
             {
                 user = await CurrentUser();
-                await _importService.ImportAOEServiceBusinessContract(user);
+                await _importService.ImportAOEServiceContract(user);
 
                 return RedirectToAction("Index", "Home");
             }

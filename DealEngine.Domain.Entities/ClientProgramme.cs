@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AutoMapper.Configuration.Annotations;
 using DealEngine.Domain.Entities.Abstracts;
 
 namespace DealEngine.Domain.Entities
 {
     public class ClientProgramme : EntityBase, IAggregateRoot
     {
-        public virtual Organisation Owner { get; protected set; }
-        public virtual Programme BaseProgramme { get; set; }
+        public virtual Organisation Owner { get; set; }
+        public virtual Programme BaseProgramme { get; set; }        
         public virtual ClientInformationSheet InformationSheet { get; set; }
         public virtual Payment Payment { get; set; }
         public virtual User BrokerContactUser { get; set; }
         public virtual ChangeReason ChangeReason { get; set; }
-        public virtual IDictionary<Product, bool> Products { get; set; }
-        public virtual IList<ClientAgreement> Agreements { get; protected set; }
-        public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }
-        public virtual IList<EGlobalResponse> ClientAgreementEGlobalResponses { get; set; }
+        public virtual IDictionary<Product, bool> Products { get; set; }        
+        public virtual IList<ClientAgreement> Agreements { get; protected set; }        
+        public virtual IList<EGlobalSubmission> ClientAgreementEGlobalSubmissions { get; set; }        
+        public virtual IList<EGlobalResponse> ClientAgreementEGlobalResponses { get; set; }        
         public virtual IList<SubClientProgramme> SubClientProgrammes { get; set; }       
         public virtual bool HasEGlobalCustomDescription { get; set; }
         public virtual string PaymentType { get; set; }
@@ -48,24 +49,7 @@ namespace DealEngine.Domain.Entities
     public class SubClientProgramme : ClientProgramme
     {
         public virtual ClientProgramme BaseClientProgramme { get; set; }
-        protected SubClientProgramme() : this(null) { }
-        public SubClientProgramme(ClientProgramme baseClientProgramme)            
-        {            
-            BaseClientProgramme = baseClientProgramme;
-        }
-        
-        public virtual void CopyClientProgramme(ClientProgramme clientProgramme, Organisation organisation)
-        {
-            Owner = organisation;            
-            BaseProgramme = clientProgramme.BaseProgramme;
-            BrokerContactUser = clientProgramme.BrokerContactUser;
-            PaymentType = clientProgramme.PaymentType;
-            EGlobalBranchCode = clientProgramme.EGlobalBranchCode;
-            EGlobalClientNumber = clientProgramme.EGlobalClientNumber;
-            EGlobalClientStatus = clientProgramme.EGlobalClientStatus;
-            EGlobalCustomDescription = clientProgramme.EGlobalCustomDescription;
-            ClientProgrammeMembershipNumber = clientProgramme.ClientProgrammeMembershipNumber;
-        }
+        public SubClientProgramme() { }       
     }
 }
 
