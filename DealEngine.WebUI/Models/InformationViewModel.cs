@@ -12,6 +12,7 @@ namespace DealEngine.WebUI.Models
             PMINZEPLViewModel = new PMINZEPLViewModel();
             CLIViewModel = new CLIViewModel();
             PMINZPIViewModel = new PMINZPIViewModel();
+            DAOLIViewModel = new DAOLIViewModel();
         }
         public string CompanyName { get; set; }
         public string Name { get; set; }                   
@@ -51,6 +52,7 @@ namespace DealEngine.WebUI.Models
         public PMINZEPLViewModel PMINZEPLViewModel { get; set; }
         public CLIViewModel CLIViewModel { get; set; }
         public PMINZPIViewModel PMINZPIViewModel { get; set; }
+        public DAOLIViewModel DAOLIViewModel { get; set; }
         public IList<string> Wizardsteps { get; set; }
         public ClientInformationSheet ClientInformationSheet { get; internal set; }
         public ClientProgramme ClientProgramme { get; internal set; }
@@ -398,6 +400,7 @@ namespace DealEngine.WebUI.Models
             HasNegotiateOptions = GetSelectListOptions();
             HasNoAgreementOptions = GetSelectListOptions();
             HasOwnPIOptions = GetSelectListOptions();
+            HasBoundContractOptions = GetSelectListOptions();
             HasEngagementLetterOptions = GetSelectListOptions();
             HasRecordedOptions = GetSelectListOptions();
             HasDiaryRecordOptions = GetSelectListOptions();
@@ -407,6 +410,10 @@ namespace DealEngine.WebUI.Models
             HasClaimsAgainstOptions = GetSelectListOptions();
             HasResponsibleOptions = GetSelectListOptions();
             HasClaimsAgainstOptions2 = GetSelectListOptions();
+            HasRefundOptions = GetSelectListOptions();
+            HasSuedOptions = GetSelectListOptions();
+            HasDisputeOptions = GetSelectListOptions();
+            HasPenaltyOptions = GetSelectListOptions();
         }
 
         private IList<SelectListItem> GetContractingServicesOptions()
@@ -482,16 +489,57 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasClaimsAgainstOptions { get; set; }
         public IList<SelectListItem> HasClaimsAgainstOptions2 { get; set; }
         public IList<SelectListItem> HasResponsibleOptions { get; set; }
-        
+        public IList<SelectListItem> HasRefundOptions { get; set; }
+        public IList<SelectListItem> HasSuedOptions { get; set; }
+        public IList<SelectListItem> HasDisputeOptions { get; set; }
+        public IList<SelectListItem> HasPenaltyOptions { get; set; }
+
+
         public string EngageDetails { get; set; }
         public string DisciplinaryDetails { get; set; }
         public string ClaimDetails { get; set; }
+        public string ClaimDetails2 { get; set; }        
         public string ResponsibleDetails { get; set; }
+        public string RefundDetails { get; set; }
+        public string SuedDetails { get; set; }
+        public string DisputeDetails { get; set; }
+        public string PenaltyDetails { get; set; }
+    }
 
+    public class DAOLIViewModel
+    {
+        public DAOLIViewModel()
+        {
+            HasDAOLIOptions = GetSelectListOptions();
+            HasClaimOptions = GetSelectListOptions();
+        }
+        
+        public IList<SelectListItem> HasDAOLIOptions { get; set; }
+        public IList<SelectListItem> HasClaimOptions { get; set; }
 
+        public int ShareholderTotal { get; set; }
+        public int AssetTotal { get; set; }
+        public int DebtTotal { get; set; }
+        public DateTime FormDate { get; set; }
+        public string CompanyNameDetails { get; set; }
+        public string ClaimDetails { get; set; }
 
-
-
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
 
     }
 }

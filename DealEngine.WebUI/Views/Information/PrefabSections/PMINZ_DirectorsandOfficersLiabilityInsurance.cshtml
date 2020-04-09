@@ -1,4 +1,141 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
+
+    <form id="DAOLIViewModel" class="needs-validation">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-6">
+                    <label for="HasDAOLI" class="label required">
+                        Would you like Directors' and Officers' Liability Insurance?
+                    </label>
+                </div>
+                <div class="col-6">
+                    <select id="HasDAOLI" name="DAOLIViewModel.HasDAOLIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.DAOLIViewModel.HasDAOLIOptions)
+                        {
+                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="DAOLIViewModel.HasDAOLIOptions" hidden>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="companyname" class="label required">
+                            Please enter the legal name of the Limited Liability company to be insured for Directors & Officers cover:
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.CompanyNameDetails, new { @class = "form-control", @id = "companyname", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="formdate" class="label required">
+                            Date Formed:
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.FormDate, new { @class = "Calenderdate form-control b" @data - dateformat = "dd/mm/yy", @id = "formdate", @type = "datetime", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <strong>Please advise the following information regarding your practice as at your last financial year end:</strong>
+                </label>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="assettotal" class="label required">
+                            $ Value of your total assets:
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.AssetTotal, new { @class = "form-control", @id = "assettotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="debttotal" class="label required">
+                            $ Value of youe total debt:
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.DebtTotal, new { @class = "form-control", @id = "debttotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="shareholdertotal" class="label required">
+                            $ Value of shareholder equity:
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.ShareholderTotal, new { @class = "form-control", @id = "shareholdertotal", @type = "number", onchange = "OnChange(this.id, this.name)", @required = "" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="hasclaim" class="label required">
+                            AFTER ENQUIRY has there been, or is there now pending, any claim against any proposed Insured Person in their capacity as a director or officer of either the Practice or any other
+                            company, organisation, association or trust?
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        <select id="hasclaim" name="DAOLIViewModel.HasClaimOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.DAOLIViewModel.HasClaimOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="hasclaim" class="label required">
+                            AFTER ENQUIRY has there been, or is there now pending, any claim against any proposed Insured Person in their capacity as a director or officer of either the Practice or any other
+                            company, organisation, association or trust?
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        <select id="hasclaim" name="DAOLIViewModel.HasClaimOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.DAOLIViewModel.HasClaimOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="DAOLIViewModel.HasClaimOptions" hidden>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="claimdetails" class="label required">
+                                <strong>You have answered "Yes" </strong>, please provide full details:
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @Html.TextAreaFor(m => m.DAOLIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 <div class="padding-10">
     <div id="DNOForm" class="smart-form" novalidate="novalidate">
         <fieldset id="DirectorsandOfficersLiabilityInsurance">
@@ -8,143 +145,17 @@
                 <div class="panel-body" id="@Model.ClientProgramme.Id body">
 
 
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                Would you like Directors' and Officers' Liability Insurance?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <label class="input">
-                                <select id="DirectorsandOfficers1" onchange="DirectorsandOfficersLiabilityInsurance1Selected('DirectorsandOfficers1')" class="form-control rmv editable" name="DirectorsandOfficers1">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers1"></p>
-
-                        </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">                        
 
                     </section>
 
-                  <div class="hidden" id="PMINZDNOSEC">
-                      <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                          <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                              <label class="label required">
-                                  Please enter the legal name of the Limited Liability company to be insured for Directors & Officers cover:
-                              </label>
-                          </section>
-                          <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                              <label class="input">
-                                  <select id="DirectorsandOfficers2" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers2')" class="form-control rmv editable" name="DirectorsandOfficers1">
-                                      <option selected="selected" value="">-- Select --</option>
-                                      <option value="true">Yes</option>
-                                      <option value="false">No</option>
-                                  </select>
-                              </label>
-                              <p class="validationContainer" id="ValidateDirectorsandOfficers2"></p>
-
-                          </section>
-
-                      </section>
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                Date Formed:
-                            </label>
-                        </section>
-                        <div class="row">
-                            <section class="col col-xs-10 col-sm-5 col-md-5 col-lg-5">
-                                <label class="input ">
-                                    <i class="icon-append fa fa-calendar"></i>
-                                    <input placeholder="Date Formed" class="Calenderdate form-control b" data-dateformat="dd/mm/yy" id="DirectorsandOfficers3" type="text" required>
-                                </label>
-                            </section>
-
-                        </div>
-                        <p class="validationContainer" id="ValidateDirectorsandOfficers3"></p>
-                    </section>
-
-                    <label><strong>Please advise the following information regarding your practice as at your last financial year end:</strong></label>
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                $ Value of your total assets:
-                            </label>
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <label class="input form-group">
-                                <i></i>
-                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="DirectorsandOfficers4" name="DirectorsandOfficers4" placeholder="$ Amount of Cover" value="" required>
-                            </label>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers4"></p>
-
-                        </section>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                $ Value of youe total debt:
-                            </label>
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <label class="input form-group">
-                                <i></i>
-                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="DirectorsandOfficers5" name="DirectorsandOfficers4" placeholder="$ Amount of Cover" value="" required>
-                            </label>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers5"></p>
-
-                        </section>
-
-                    </section>
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                $ Value of shareholder equity:
-                            </label>
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <label class="input form-group">
-                                <i></i>
-                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" id="DirectorsandOfficers6" name="DirectorsandOfficers5" placeholder="$ Amount of Cover" value="" required>
-                            </label>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers6"></p>
-
-                        </section>
-
-                    </section>
-
+                  <div class="hidden" id="PMINZDNOSEC">                                                                              
 
 
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
 
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                AFTER ENQUIRY has there been, or is there now pending, any claim against any proposed Insured Person in their capacity as a director or officer of either the Practice or any other
-                                company, organisation, association or trust?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <label class="input">
-                                <select id="DirectorsandOfficers7" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers7')" class="form-control rmv editable">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers7"></p>
-
-                        </section>
+                       
 
 
                         <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
