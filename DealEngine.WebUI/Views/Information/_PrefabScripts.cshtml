@@ -1,0 +1,61 @@
+﻿    <script type="text/javascript">
+
+        $(function () {
+            //triggereventsforform
+            var form = document.getElementById('PMINZEPLViewModel');
+            for (var i = 0; i < form.length; i++) {
+                var element = document.getElementById(form[i].id);
+                PminzOnChange(element.id, element.name)
+                //after first load change to default view
+                element.classList.remove("is-valid");
+                element.classList.remove("is-invalid")
+                element.classList.add("is-up");
+            }          
+        });
+
+        function OnChange(Id, Name) {            
+            var obj = document.getElementById(Id);
+            var value = obj.value;
+            var datarule = obj.getAttribute('data-rule');
+            var dataid = obj.getAttribute('data-item');
+            obj.classList.remove("is-up");            
+
+            if (value > 0) {
+                obj.classList.add("is-valid");
+                obj.classList.remove("is-invalid");
+            }
+            else {
+                obj.classList.remove("is-valid");
+                obj.classList.add("is-invalid");
+            }
+
+            try {
+                if (value == "1") {
+                    document.getElementById(Name).removeAttribute("hidden");
+                } else {
+                    document.getElementById(Name).setAttribute("hidden", "");
+                    if (datarule === "clear") {
+                        ClearObject(dataid)
+                    }
+                }
+            } catch {
+                ////we expect this to fail for form elements with no change events but could use this later
+            }                    
+        }
+
+        function ClearObject(Id) {
+            var obj = document.getElementById(Id);
+            var tag = obj.tagName;
+            //here we can define the changes per type
+            if (tag == "SELECT") {                
+                for (var i = 0; i < obj.options.length; i++) {                    
+                    if (obj.options[i].selected === true) {
+                        obj.options[i].selected = false;
+                    }
+                }
+                if (!obj.multiple) {
+                    obj.options[0].selected = true;
+                }
+            }
+        }
+    </script>

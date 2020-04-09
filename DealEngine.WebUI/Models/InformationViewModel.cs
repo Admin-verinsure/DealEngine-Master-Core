@@ -10,10 +10,9 @@ namespace DealEngine.WebUI.Models
         public InformationViewModel()
         {
             PMINZEPLViewModel = new PMINZEPLViewModel();
+            CLIViewModel = new CLIViewModel();
+            PMINZPIViewModel = new PMINZPIViewModel();
         }
-        public Guid Id { get; set; }
-        public Guid AnswerSheetId { get; set; }
-        public Boolean IsChange { get; set; }
         public string CompanyName { get; set; }
         public string Name { get; set; }                   
         public string SectionView { get; set; }
@@ -40,10 +39,8 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<BoatViewModel> Boats { get; set; }
         public List<SelectListItem> BoatUseslist { get; set; }
         public IEnumerable<OrganisationViewModel> MarinaLocations { get; set; }
-        public string[] SelectedBoatUse { get; set; }
         public List<SelectListItem> InterestedPartyList { get; set; }
         public List<SelectListItem> SkipperList { get; set; }
-        public string[] SelectedInterestedParty { get; set; }
         public IEnumerable<BoatUseViewModel> BoatUse { get; set; }
         public IEnumerable<ClaimViewModel> Claims { get; set; }
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
@@ -52,8 +49,12 @@ namespace DealEngine.WebUI.Models
         public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
         public PMINZEPLViewModel PMINZEPLViewModel { get; set; }
+        public CLIViewModel CLIViewModel { get; set; }
+        public PMINZPIViewModel PMINZPIViewModel { get; set; }
         public IList<string> Wizardsteps { get; set; }
-
+        public ClientInformationSheet ClientInformationSheet { get; internal set; }
+        public ClientProgramme ClientProgramme { get; internal set; }
+        public ClientAgreement ClientAgreement { get; internal set; }
     }
 
     public class InformationSectionViewModel
@@ -296,84 +297,28 @@ namespace DealEngine.WebUI.Models
     {
         public PMINZEPLViewModel()
         {
-            HasEPLOptions = new List<SelectListItem>()
+            HasEPLOptions = GetSelectListOptions();
+            CoveredOptions = GetSelectListOptions();
+            LegalAdvisorOptions = GetSelectListOptions();
+            CasualBasisOptions = GetSelectListOptions();
+            DefinedOptions = GetSelectListOptions();
+            ManualOptions = GetSelectListOptions();
+            PostingNoticesOptions = GetSelectListOptions();
+            StaffRedundancyOptions = GetSelectListOptions();
+            HasEPLIOptions = GetSelectListOptions();
+        }
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "-- Select --", Value = "0" },
+                {
+                    Text = "-- Select --", Value = "0"
+                },
                 new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            CoveredOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            LegalAdvisorOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            CasualBasisOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            DefinedOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            ManualOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            PostingNoticesOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            StaffRedundancyOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            HasEPLIOptions = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "-- Select --", Value = "0" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
+                {
+                    Text = "Yes", Value = "1"
+                },
                 new SelectListItem
                 { Text = "No", Value = "2" }
             };
@@ -388,5 +333,165 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> ManualOptions { get; set; }
         public IList<SelectListItem> PostingNoticesOptions { get; set; }
         public IList<SelectListItem> StaffRedundancyOptions { get; set; }
+    }
+    public class CLIViewModel
+    {
+        public CLIViewModel()
+        {
+            HasCLIOptions = GetSelectListOptions();
+            HasSecurityOptions = GetSelectListOptions();
+            HasAccessControlOptions = GetSelectListOptions();
+            HasProhibitAccessOptions = GetSelectListOptions();
+            HasBackupOptions = GetSelectListOptions();
+            HasDomiciledOperationOptions = GetSelectListOptions();
+            HasActivityOptions = GetSelectListOptions();
+            HasConfidencialOptions = GetSelectListOptions();
+            HasBreachesOptions = GetSelectListOptions();
+            HasCircumstanceOptions = GetSelectListOptions();
+            HasOptionalCLEOptions = GetSelectListOptions();
+            HasProceduresOptions = GetSelectListOptions();
+            HasApprovedVendorsOtions = GetSelectListOptions();
+            HasRenewalOptions = GetSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        public IList<SelectListItem> HasCLIOptions { get; set; }
+        public IList<SelectListItem> HasSecurityOptions { get; set; }        
+        public IList<SelectListItem> HasAccessControlOptions { get; set; }
+        public IList<SelectListItem> HasProhibitAccessOptions { get; set; }
+        public IList<SelectListItem> HasBackupOptions { get; set; }
+        public IList<SelectListItem> HasDomiciledOperationOptions { get; set; }
+        public IList<SelectListItem> HasActivityOptions { get; set; }
+        public IList<SelectListItem> HasConfidencialOptions { get; set; }
+        public IList<SelectListItem> HasBreachesOptions { get; set; }
+        public IList<SelectListItem> HasCircumstanceOptions { get; set; }
+        public IList<SelectListItem> HasOptionalCLEOptions { get; set; }
+        public IList<SelectListItem> HasProceduresOptions { get; set; }
+        public IList<SelectListItem> HasApprovedVendorsOtions { get; set; }
+        public IList<SelectListItem> HasRenewalOptions { get; set; }
+        public int CoverAmount { get; set; }
+        public DateTime? DateLapsed { get; set; }
+        public DateTime? RetroactiveDate { get; set; }
+        public string InsurerName { get; set; }        
+    }
+    public class PMINZPIViewModel
+    {
+        public PMINZPIViewModel()
+        {
+            ContractingServicesOptions = GetContractingServicesOptions();
+            HasStandardTermsOptions = GetSelectListOptions();
+            HasNegotiateOptions = GetSelectListOptions();
+            HasNoAgreementOptions = GetSelectListOptions();
+            HasOwnPIOptions = GetSelectListOptions();
+            HasEngagementLetterOptions = GetSelectListOptions();
+            HasRecordedOptions = GetSelectListOptions();
+            HasDiaryRecordOptions = GetSelectListOptions();
+            HasComplaintOptions = GetSelectListOptions();
+            HasEngageOptions = GetSelectListOptions();
+            HasDisciplinaryOptions = GetSelectListOptions();
+            HasClaimsAgainstOptions = GetSelectListOptions();
+            HasResponsibleOptions = GetSelectListOptions();
+            HasClaimsAgainstOptions2 = GetSelectListOptions();
+        }
+
+        private IList<SelectListItem> GetContractingServicesOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = " Network security", Value = "1"
+                },
+                new SelectListItem
+                { 
+                    Text = "On-line stock trading", Value = "2" 
+                },
+                new SelectListItem
+                {
+                    Text = "Funds management / investment and financial advisingy", Value = "3"
+                },
+                new SelectListItem
+                {
+                    Text = "Manufacturing control processes", Value = "4"
+                },
+                new SelectListItem
+                {
+                    Text = "Oil & gas", Value = "5"
+                },
+                new SelectListItem
+                {
+                    Text = "Mining", Value = "6"
+                },
+                new SelectListItem
+                {
+                    Text = "Medical", Value = "7"
+                },
+                new SelectListItem
+                {
+                    Text = "Defence", Value = "8"
+                },
+                new SelectListItem
+                {
+                    Text = "None of the above", Value = "10"
+                },
+            };
+        }
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
+            {
+                new SelectListItem
+                {
+                    Text = "-- Select --", Value = "0"
+                },
+                new SelectListItem
+                {
+                    Text = "Yes", Value = "1"
+                },
+                new SelectListItem
+                { Text = "No", Value = "2" }
+            };
+        }
+        public IList<SelectListItem> ContractingServicesOptions { get; set; }
+        public IList<SelectListItem> HasStandardTermsOptions { get; set; }
+        public IList<SelectListItem> HasNegotiateOptions { get; set; }
+        public IList<SelectListItem> HasNoAgreementOptions { get; set; }
+        public IList<SelectListItem> HasOwnPIOptions { get; set; }
+        public IList<SelectListItem> HasBoundContractOptions { get; set; }
+        public IList<SelectListItem> HasEngagementLetterOptions { get; set; }
+        public IList<SelectListItem> HasRecordedOptions { get; set; }
+        public IList<SelectListItem> HasDiaryRecordOptions { get; set; }
+        public IList<SelectListItem> HasComplaintOptions { get; set; }
+        public IList<SelectListItem> HasEngageOptions { get; set; }
+        public IList<SelectListItem> HasDisciplinaryOptions { get; set; }
+        public IList<SelectListItem> HasClaimsAgainstOptions { get; set; }
+        public IList<SelectListItem> HasClaimsAgainstOptions2 { get; set; }
+        public IList<SelectListItem> HasResponsibleOptions { get; set; }
+        
+        public string EngageDetails { get; set; }
+        public string DisciplinaryDetails { get; set; }
+        public string ClaimDetails { get; set; }
+        public string ResponsibleDetails { get; set; }
+
+
+
+
+
+
     }
 }

@@ -8,31 +8,17 @@ namespace DealEngine.WebUI.Models
     public class BoatUseViewModel : BaseViewModel
     {
         public Guid AnswerSheetId { get; set; }
-
         public Guid BoatUseId { get; set; }
-
         public string BoatUseCategory { get; set; }
-
         public string BoatUseLiveOnBoard { get; set; }
-
         public string BoatUseRace { get; set; }
-
         public string BoatUseRaceCategory { get; set; }
-
         public string BoatUseRaceUseSpinnakers { get; set; }
-
         public string BoatUseLiveNotes { get; set; }
         public string BoatUseRaceNotes { get; set; }
-
-
         public string BoatUseAdditionalNotes { get; set; }
-
-        //public Guid BoatUseBoat { get; set; }
-
         public string BoatUseEffectiveDate { get; set; }
-
         public string BoatUseCeaseDate { get; set; }
-
         public int BoatUseCeaseReason { get; set; }
 
         public BoatUse ToEntity(User creatingUser)
