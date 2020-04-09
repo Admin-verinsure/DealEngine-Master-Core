@@ -2372,19 +2372,43 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (item[1] != null)
                         {
+
+
                             for (var x = 0; x < item.Length - 1; x++)
                             {
                                 ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
+
                                 if (answer != null)
                                 {
                                     answer.Value = item[1];
+                                    if (item.Length > 2)
+                                        answer.ClaimDetails = item[2];
                                     //answer.ClaimDetails = item[2];
                                 }
                                 else
                                 {
                                     sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
-                                    await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                                    if (item.Length > 2)
+                                    {
+                                        await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
+                                    }
+                                    else
+                                    {
+                                        await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+
+                                    }
+
                                 }
+                                //if (answer != null)
+                                //{
+                                //    answer.Value = item[1];
+                                //    //answer.ClaimDetails = item[2];
+                                //}
+                                //else
+                                //{
+                                //    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
+                                //    await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                                //}
                             }
                         }
                         await uow.Commit();

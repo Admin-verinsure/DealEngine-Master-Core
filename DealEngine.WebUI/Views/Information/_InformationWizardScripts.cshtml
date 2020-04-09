@@ -156,7 +156,7 @@
                }
 
                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                   if (document.querySelector("id='PMINZ Professional Indemnity']") !== null) {
+                   if (document.querySelector('[id="PMINZ Professional Indemnity"]') !== null) {
                        if (!ValidateProfessionalIndemnity()) {
                            window.alert("Please Add Professional Indemnity to proceed for policy. ");
                            $("#more").trigger("click");
@@ -206,6 +206,16 @@
                        return false;
                    } else {
                        SaveDirectorsandOfficersLiability();                       
+                   }
+               }
+                 if (document.querySelector('[id="PMINZ DNO"]') !== null) {
+                   if (!ValidatePMINZDNOGeneral()) {
+                       window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
+                       $("#more").trigger("click");
+                       $("[id='PMINZ DNO']").trigger("click");
+                       return false;
+                   } else {
+                       SavePMINZDirectorsandOfficersLiability();                       
                    }
                }
                if (document.querySelector('[id="General Liability Insurance"]') !== null) {

@@ -80,7 +80,7 @@
                         <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                             <label class="input form-group">
                                 <i></i>
-                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency" data-name="StatutoryLiability3" id="DirectorsandOfficers4" name="DirectorsandOfficers4" placeholder="$ Amount of Cover" value="" required>
+                                <input class="form-control b" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency"  id="DirectorsandOfficers4" name="DirectorsandOfficers4" placeholder="$ Amount of Cover" value="" required>
                             </label>
                             <p class="validationContainer" id="ValidateDirectorsandOfficers4"></p>
 
@@ -214,6 +214,43 @@
                         </section>
                         <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                             <label class="input">
+                                <select id="DirectorsandOfficers9" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers9')" class="form-control rmv editable">
+                                    <option selected="selected" value="">-- Select --</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </label>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers9"></p>
+
+                        </section>
+
+
+                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
+
+                            <div class="row hidden" id="DirectorsandOfficers9Sec">
+                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
+                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers9Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="validationContainer" id="ValidateDirectorsandOfficers9Details"></p>
+
+                        </section>
+
+
+                    </section>
+                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
+                            <label class="label required">
+                                Has the company or any Director or Officer ever been refused this type of cover, had a similar policy cancelled or renewal declined, or had special terms imposed?
+                            </label>
+                        </section>
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <label class="input">
                                 <select id="DirectorsandOfficers10" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers10')" class="form-control rmv editable">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
@@ -246,7 +283,7 @@
 
                         <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
                             <label class="label required">
-                                Has the company or any Director or Officer ever been refused this type of cover, had a similar policy cancelled or renewal declined, or had special terms imposed?
+                                Has any Director or Officer been employed or engaged by or otherwise involved in a Company that has been in receivership or liquidation?
                             </label>
                         </section>
                         <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -278,15 +315,16 @@
 
 
                     </section>
+
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
 
                         <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
                             <label class="label required">
-                                Has any Director or Officer been employed or engaged by or otherwise involved in a Company that has been in receivership or liquidation?
+                                Has any Director or Officer been involved in any criminal proceedings during the last five years?
                             </label>
                         </section>
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" >
                             <label class="input">
                                 <select id="DirectorsandOfficers12" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers12')" class="form-control rmv editable">
                                     <option selected="selected" value="">-- Select --</option>
@@ -321,12 +359,12 @@
 
                         <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
                             <label class="label required">
-                                Has any Director or Officer been involved in any criminal proceedings during the last five years?
+                                Is there now pending, or has there ever been any prosecution of any Director or Officer under the Fair Trading Act, Companies Act, Commerce Act,or any other NZ legislation or other similar overseas legislation?
                             </label>
                         </section>
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" >
+                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
                             <label class="input">
-                                <select id="DirectorsandOfficers13" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers13')" class="form-control rmv editable">
+                                <select id="DirectorsandOfficers13" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers13')"  class="form-control rmv editable">
                                     <option selected="selected" value="">-- Select --</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
@@ -359,7 +397,7 @@
 
                         <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
                             <label class="label required">
-                                Is there now pending, or has there ever been any prosecution of any Director or Officer under the Fair Trading Act, Companies Act, Commerce Act,or any other NZ legislation or other similar overseas legislation?
+                                Are the Directors or Officers aware of any reason why the company will not be in the position to meet all financial obligations during the next twelve months?
                             </label>
                         </section>
                         <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
@@ -386,44 +424,6 @@
                                 </div>
                             </div>
                             <p class="validationContainer" id="ValidateDirectorsandOfficers14Details"></p>
-
-                        </section>
-
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                Are the Directors or Officers aware of any reason why the company will not be in the position to meet all financial obligations during the next twelve months?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <label class="input">
-                                <select id="DirectorsandOfficers15" onchange="DirectorsandOfficersLiabilityInsuranceSelected('DirectorsandOfficers15')"  class="form-control rmv editable">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers15"></p>
-
-                        </section>
-
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                            <div class="row hidden" id="DirectorsandOfficers15Sec">
-                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                        <textarea class="form-control" placeholder="More Details" rows="5" id="DirectorsandOfficers15Details"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="validationContainer" id="ValidateDirectorsandOfficers15Details"></p>
 
                         </section>
 
@@ -468,18 +468,18 @@
                         var arr = data[item];                        
                         if (arr != null) {
                             $('#' + arr[count]).val(arr[count + 1]);
-                            if ($('#DirectorsandOfficers1').val() == 'true') {
-                                $('#DirectorsandOfficersLiabilityInsurance2Sec').removeClass('hidden');
-                                $('#DirectorsandOfficersLiabilityInsurance3Sec').removeClass('hidden');
-                            } else {
-                                $('#DirectorsandOfficersLiabilityInsurance2Sec').addClass('hidden');
-                                $('#DirectorsandOfficersLiabilityInsurance3Sec').addClass('hidden');
-                            }
-                            if ($('#DirectorsandOfficers3').val() == 'false') {
-                                $('#DirectorsInsuranceSec').removeClass('hidden');
-                            } else {
-                                $('#DirectorsInsuranceSec').addClass('hidden');
-                            }
+                            //if ($('#DirectorsandOfficers1').val() == 'true') {
+                            //    $('#DirectorsandOfficersLiabilityInsurance2Sec').removeClass('hidden');
+                            //    $('#DirectorsandOfficersLiabilityInsurance3Sec').removeClass('hidden');
+                            //} else {
+                            //    $('#DirectorsandOfficersLiabilityInsurance2Sec').addClass('hidden');
+                            //    $('#DirectorsandOfficersLiabilityInsurance3Sec').addClass('hidden');
+                            //}
+                            //if ($('#DirectorsandOfficers3').val() == 'false') {
+                            //    $('#DirectorsInsuranceSec').removeClass('hidden');
+                            //} else {
+                            //    $('#DirectorsInsuranceSec').addClass('hidden');
+                            //}
                         }
                     }
                 };
@@ -510,44 +510,15 @@
         }
      }
     
-
-    function ValidateDNOGeneral() {
-        var GLI1 = $('#DirectorsandOfficers1').val();
-        var GLI2 = $('#DirectorsandOfficers2').val();
-        var GLI3 = $('#DirectorsandOfficers3').val();
+   
+    function ValidatePMINZDNOGeneral() {
         var validity = true;
-
-        if (GLI1 == "") {
-            $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            $('#ValidateDirectorsandOfficersLiabilityInsurance1').html("<i></i>");
-        }
-        if (GLI2 == "" && GLI1 == 'true') {
-            $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<font color='red'>Field is required</font>")
-            if (validity) {
-                validity = false;
-            }
-        } else {
-            $('#ValidateDirectorsandOfficersLiabilityInsurance2').html("<i></i>");
-         }
-         if (GLI3 == "" && GLI1 == 'true') {
-             $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<font color='red'>Field is required</font>")
-             if (validity) {
-                 validity = false;
-             }
-         } else {
-             $('#ValidateDirectorsandOfficersLiabilityInsurance3').html("<i></i>");
-         }
-
-         for (var index = 4; index <= 7; index++) {
+         for (var index = 1; index <= 4; index++) {
              var employerLiabilityInsurance = "#DirectorsandOfficers" + index;
              var value = $(employerLiabilityInsurance).val();
-             var validator = "#ValidateDirectorsandOfficersLiabilityInsurance" + index;
+             var validator = "#ValidateDirectorsandOfficers" + index;
 
-             if (value == "" && ($('#DirectorsandOfficers3').val() == 'false')) {
+             if (value == "" && $('#DirectorsandOfficers1').val() == 'true') {
                  $(validator).html("<font color='red'>Field is required</font>")
                  if (validity) {
                      validity = false;
@@ -555,23 +526,55 @@
              } else {
                  $(validator).html("<i></i>");
              }
+
          }
+
+         for (var index = 5; index <= 14; index++) {
+             var employerLiabilityInsurance = "DirectorsandOfficers" + index;
+             var value = $('#'+employerLiabilityInsurance).val();
+             var validator = "#ValidateDirectorsandOfficers" + index;
+
+             if (value == "" && ($('#DirectorsandOfficers1').val() == 'true')) {
+                 $(validator).html("<font color='red'>Field is required</font>")
+                 if (validity) {
+                     validity = false;
+                 }
+             } else {
+                 $(validator).html("<i></i>");
+             }
+
+             var Validator = '#Validate'+employerLiabilityInsurance  + 'Details';
+             if (value == "true" && $( '#'+employerLiabilityInsurance + 'Details').val() == "") {
+                   $(Validator).html("<font color='red'>Field is required</font>")
+                 if (validity) {
+                     validity = false;
+                 }
+             } else {
+                 $(Validator).html("<i></i>");
+             }
+
+         }
+
+    
         return validity;
     };
 
-    function SaveDirectorsandOfficersLiability() {
-        var DirectorsandOfficers = new Array(7);
+    function SavePMINZDirectorsandOfficersLiability() {
+        debugger;
+        var DirectorsandOfficers = new Array(14);
 
         for (var i = 0; i < DirectorsandOfficers.length; i++) {
-            DirectorsandOfficers[i] = new Array(2);
+            DirectorsandOfficers[i] = new Array(3);
         }
 
-        for (var i = 1; i <= 7; i++) {
-            for (var j = 0; j < 2; j++) {
+        for (var i = 1; i <= 14; i++) {
                 DirectorsandOfficers[i - 1][0] = "DirectorsandOfficers" + i;
-                var directorsandOfficers = "#DirectorsandOfficers" + i;
+            var directorsandOfficers = "#DirectorsandOfficers" + i;
+            var kjhkjh = $(directorsandOfficers).val();
                 DirectorsandOfficers[i - 1][1] = $(directorsandOfficers).val();
-            }
+                var directorsandOfficersDetails = directorsandOfficers + "Details";
+                DirectorsandOfficers[i - 1][2] = $(directorsandOfficersDetails).val();
+            
         }
 
         var postData = { Answers: DirectorsandOfficers, ClientInformationSheet: clientInformationSheet };
