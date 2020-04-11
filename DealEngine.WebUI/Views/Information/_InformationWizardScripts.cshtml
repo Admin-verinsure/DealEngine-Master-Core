@@ -53,6 +53,25 @@
            }
 
            if (stepNumber === 0) {
+               //once prefab pages we can call all forms to validate for now hardcode the forms individually
+               //var forms = document.getElementsByClassName('needs-validation');
+               var form = document.getElementById('PMINZEPLViewModel');
+               for (var i = 0; i < form.elements.length; i++) {
+                   //force the onchange here
+                   var element = document.getElementById(form[i].id);
+                   OnChange(element.id, element.Name);
+                   if (element.classList.contains("is-invalid")) {
+                       e.preventDefault();
+                       e.stopPropagation();
+                       element.scrollIntoView();
+                   }
+               }
+            //for (var i = 0; i < forms.length; i++) {
+            //    if (forms[i].checkValidity() === false) {
+            //           event.preventDefault();
+            //           event.stopPropagation();
+            //       }
+            //   }
 
                event.preventDefault();               
                if (stepDirection == "forward") {
@@ -128,18 +147,7 @@
                                alert("Unable to save.");
                            });
                    }
-
-
-                 
-               }
-               //once prefab pages we can call all forms to validate for now hardcode the forms individually
-               var forms = document.getElementsByClassName('needs-validation');
-               for (var i = 0; i < forms.length; i++) {
-                   if (forms[i].checkValidity() === false) {
-                       event.preventDefault();
-                       event.stopPropagation();
-                   }
-               }
+               }               
 
 
                if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
@@ -543,8 +551,9 @@
 
 
 
-    $("#accordion").on("accordionactivate", function (event, ui) {
-        if (ui.oldPanel != null) {
+        $("#accordion").on("accordionactivate", function (event, ui) {
+            debugger;
+        if (ui.oldPanel != null) {          
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                

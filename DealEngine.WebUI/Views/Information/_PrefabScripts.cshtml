@@ -1,25 +1,31 @@
 ﻿    <script type="text/javascript">
 
         $(function () {
-            //triggereventsforform
-            var form = document.getElementById('PMINZEPLViewModel');
-            for (var i = 0; i < form.length; i++) {
-                var element = document.getElementById(form[i].id);
-                PminzOnChange(element.id, element.name)
-                //after first load change to default view
-                element.classList.remove("is-valid");
-                element.classList.remove("is-invalid")
-                element.classList.add("is-up");
-            }          
+            //get all forms on load
+            var forms = document.getElementsByClassName('is-valid');
+            for (var f = 0; f < forms.length; f++) {
+                //get each element to validate
+                for (var e = 0; e < f.length; i++) {
+                    var element = document.getElementById(f[e].id);
+                    OnChange(element.id, element.name);
+                    //after first load change to default view
+                    element.classList.remove("is-valid");
+                    element.classList.remove("is-invalid");
+                    element.classList.add("is-up");
+                }
+                    forms[f].classList.remove("is-valid");
+                    forms[f].classList.add("needs-validation");
+            }                    
         });
 
         function OnChange(Id, Name) {            
             var obj = document.getElementById(Id);
             var value = obj.value;
-            var datarule = obj.getAttribute('data-rule');
-            var dataid = obj.getAttribute('data-item');
+            var dataRule = obj.getAttribute('data-rule');
+            var dataId = obj.getAttribute('data-item');
             obj.classList.remove("is-up");            
 
+            //validation
             if (value > 0) {
                 obj.classList.add("is-valid");
                 obj.classList.remove("is-invalid");
@@ -29,18 +35,39 @@
                 obj.classList.add("is-invalid");
             }
 
-            try {
-                if (value == "1") {
-                    document.getElementById(Name).removeAttribute("hidden");
+            //trigger
+            TriggerHandler(Name, value, dataRule, dataId)                          
+        }
+
+        function TriggerHandler(Name, Value, Rule, RuleId) {
+                        
+            if (Rule === "reverse") {
+                if (Value == "2") {
+                    Value = "1";
                 } else {
-                    document.getElementById(Name).setAttribute("hidden", "");
-                    if (datarule === "clear") {
-                        ClearObject(dataid)
+                    Value = "2";
+                }                
+            }
+            try {
+                if (Value === "1") {
+                    ShowElement(Name);              
+                } else {
+                    HideElement(Name);
+                    if (Rule === "clear") {                        
+                        ClearObject(RuleId);
                     }
                 }
             } catch {
                 ////we expect this to fail for form elements with no change events but could use this later
-            }                    
+            }      
+        }
+
+        function HideElement(id) {
+            document.getElementById(id).hidden = true;
+        }
+
+        function ShowElement(id) {
+            document.getElementById(id).hidden = false;
         }
 
         function ClearObject(Id) {
@@ -54,7 +81,7 @@
                     }
                 }
                 if (!obj.multiple) {
-                    obj.options[0].selected = true;
+                    obj.options[0].selected = true;                    
                 }
             }
         }
