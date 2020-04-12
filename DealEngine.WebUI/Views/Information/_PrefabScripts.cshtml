@@ -1,0 +1,124 @@
+﻿    <script type="text/javascript">
+
+        $(function () {
+            //get all forms on load
+            var forms = document.getElementsByClassName('is-valid');
+            for (var f = 0; f < forms.length; f++) {
+                //get each element to validate
+                for (var e = 0; e < forms[f].length; e++) {                    
+                    var element = document.getElementById(forms[f][e].id);
+                    OnChange(element.id, element.name);
+                    //after first load change to default view
+                    element.classList.remove("is-valid");
+                    element.classList.remove("is-invalid");
+                    element.classList.add("is-up");
+                }
+                    forms[f].classList.remove("is-valid");
+                    forms[f].classList.add("needs-validation");
+            }                    
+        });
+
+        function OnChange(Id, Name) {            
+            var obj = document.getElementById(Id);
+            var value = obj.value;
+            var dataRule = obj.getAttribute('data-rule');
+            var dataId = obj.getAttribute('data-item');
+            var Tag = obj.tagName;
+            obj.classList.remove("is-up");            
+
+            //validation
+            if (Tag == "SELECT") {
+                SelectValidation(obj, value);
+            } else if (Tag == "INPUT") {
+                InputValidation(obj, value);
+            }           
+            //trigger
+            TriggerHandler(Name, value, dataRule, dataId)                          
+        }
+
+        function InputValidation(obj, value) {
+            if (obj.type == "number") {
+                if (value >= 0) {
+                    obj.classList.add("is-valid");
+                    obj.classList.remove("is-invalid");
+                } else {
+                    obj.classList.remove("is-valid");
+                    obj.classList.add("is-invalid");
+                }
+            } else {
+                if (value != "") {
+                    obj.classList.add("is-valid");
+                    obj.classList.remove("is-invalid");
+                } else {
+                    obj.classList.remove("is-valid");
+                    obj.classList.add("is-invalid");
+                }
+            }
+            debugger;
+        }
+
+        function SelectValidation(obj, value) {
+            if (value > 0) {
+                obj.classList.add("is-valid");
+                obj.classList.remove("is-invalid");
+            }
+            else {
+                obj.classList.remove("is-valid");
+                obj.classList.add("is-invalid");
+            }
+        }
+
+        function TriggerHandler(Name, Value, Rule, RuleId) {
+                        
+            if (Rule === "reverse") {
+                if (Value == "2") {
+                    Value = "1";
+                } else {
+                    Value = "2";
+                }                
+            }
+            try {
+                if (Value === "1") {
+                    ShowElement(Name);              
+                } else {
+                    HideElement(Name);
+                    if (Rule === "clear") {            
+                        ClearObject(RuleId, Tag);
+                    }
+                }
+            } catch {
+                ////we expect this to fail for form elements with no change events but could use this later
+            }      
+        }
+
+        function HideElement(id) {
+            document.getElementById(id).hidden = true;
+        }
+
+        function ShowElement(id) {
+            document.getElementById(id).hidden = false;
+        }
+
+        function ClearObject(Id) {
+            var obj = document.getElementById(Id);
+            var Tag = obj.tagName;
+            //here we can define the changes per type
+            if (Tag == "SELECT") {                
+                for (var i = 0; i < obj.options.length; i++) {    
+                    if (obj.options[i].selected === true) {
+                        obj.options[i].selected = false;
+                    }
+                }
+                if (!obj.multiple) {
+                    obj.options[0].selected = true;                    
+                }                
+            }
+        }
+    </script>
+    <style>
+        .required:after {
+            content: " *";
+            color: red;
+            font-size: 20px;
+        }
+    </style>

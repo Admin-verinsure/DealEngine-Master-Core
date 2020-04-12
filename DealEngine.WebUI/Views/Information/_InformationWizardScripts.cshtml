@@ -41,8 +41,8 @@
 
        $("#smartwizard").on("leaveStep", function (e, anchorObject, stepNumber, stepDirection) {
 
-           var informationsheetstatus = $('#Status').val();
-           var clientInformationSheet = $('#AnswerSheetId').val();
+           var informationsheetstatus = $('#ClientInformationSheet_Status').val();
+           var clientInformationSheet = $('#ClientInformationSheet_Id').val();
 
            if (stepDirection == "backward") {
                var stepNumber = stepNumber - 2;
@@ -53,6 +53,29 @@
            }
 
            if (stepNumber === 0) {
+               //once prefab pages we can call all forms to validate for now hardcode the accordion header
+               var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
+               for (var f = 0; f < forms.length; f++) {
+                   for (var e = 0; e < forms[f].length; e++) {
+                       var element = document.getElementById(forms[f][e].id);
+                        OnChange(element.id, element.name);
+                        //hardcoded to find the div visibility
+                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
+                        if (element.classList.contains("is-invalid") && isHidden == false) {       
+                            //write a message here or stop the process                            
+                            event.preventDefault();
+                            event.stopPropagation();
+                            $("#more").trigger("click");
+                            var accordianId = forms[f].previousElementSibling.id;
+                            window.alert("Please complete this section " + accordianId);
+                            $("[id='" + accordianId +"']").trigger("click");
+                            element.scrollIntoView();
+                            throw accordianId + " incomplete";
+                        }
+                   }
+                   forms[f].classList.remove("needs-validation");
+                   forms[f].classList.add("was-validated");
+               }
 
                event.preventDefault();               
                if (stepDirection == "forward") {
@@ -128,106 +151,95 @@
                                alert("Unable to save.");
                            });
                    }
+               }               
 
 
-                 
-               }
-               //once prefab pages we can call all forms to validate for now hardcode the forms individually
-               var forms = document.getElementsByClassName('needs-validation');
-               for (var i = 0; i < forms.length; i++) {
-                   if (forms[i].checkValidity() === false) {
-                       event.preventDefault();
-                       event.stopPropagation();
-                   }
-               }
+               //if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+               //    if (document.querySelector('[id="Professional Indemnity"]') !== null) {
+               //        if (!ValidateProfessionalIndemnity()) {
+               //            window.alert("Please Add Professional Indemnity to proceed for policy. ");
+               //            $("#more").trigger("click");
+               //            $("[id='Professional Indemnity']").trigger("click");
+               //            return false;
+               //        } else {
+               //            SaveProfessionalIndemnity();
+               //        }
+               //    }
+               //}
 
+               //if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
+               //    if (document.querySelector("id='PMINZ Professional Indemnity']") !== null) {
+               //        if (!ValidateProfessionalIndemnity()) {
+               //            window.alert("Please Add Professional Indemnity to proceed for policy. ");
+               //            $("#more").trigger("click");
+               //            $("[id='PMINZ Professional Indemnity']").trigger("click");
+               //            return false;
+               //        } else {
+               //            SaveProfessionalIndemnity();
+               //        }
+               //    }
+               //}
 
-               if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                   if (document.querySelector('[id="Professional Indemnity"]') !== null) {
-                       if (!ValidateProfessionalIndemnity()) {
-                           window.alert("Please Add Professional Indemnity to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='Professional Indemnity']").trigger("click");
-                           return false;
-                       } else {
-                           SaveProfessionalIndemnity();
-                       }
-                   }
-               }
-
-               if (informationsheetstatus != "Submitted" && informationsheetstatus != "Bound") {
-                   if (document.querySelector("id='PMINZ Professional Indemnity']") !== null) {
-                       if (!ValidateProfessionalIndemnity()) {
-                           window.alert("Please Add Professional Indemnity to proceed for policy. ");
-                           $("#more").trigger("click");
-                           $("[id='PMINZ Professional Indemnity']").trigger("click");
-                           return false;
-                       } else {
-                           SaveProfessionalIndemnity();
-                       }
-                   }
-               }
-
-               if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
-                   if (!ValidateStatutory()) {
-                       window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
-                       $("#more").trigger("click");
-                       $("[id='Statutory Liability Insurance']").trigger("click");
-                       return false;
-                   } else {
-                       SaveStatutoryLiability();
-                   }
-               }
-               if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
-                   if (!ValidateEmployer()) {
-                       window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
-                       $("#more").trigger("click");
-                       $("[id='Employers Liability Insurance']").trigger("click");
-                       return false;
-                   } else {
-                       SaveEmployerLiabilityInsurance();
-                   }
-               }
-               if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
-                   if (!ValidatePractice()) {
-                       window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
-                       $("#more").trigger("click");
-                       $("[id='Employment Practices Liability Insurance']").trigger("click");
-                       return false;
-                   } else {
-                       SaveEmployerPracticesLiability();
-                   }
-               }
-               if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
-                   if (!ValidateDNOGeneral()) {
-                       window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
-                       $("#more").trigger("click");
-                       $("[id='Directors and Officers Liability Insurance']").trigger("click");
-                       return false;
-                   } else {
-                       SaveDirectorsandOfficersLiability();                       
-                   }
-               }
-               if (document.querySelector('[id="General Liability Insurance"]') !== null) {
-                   if (!ValidateGeneral()) {
-                       window.alert("Please Add General Liability Insurance to proceed for policy. ");
-                       $("#more").trigger("click");
-                       $("[id='General Liability Insurance']").trigger("click");
-                       return false;
-                   } else {
-                       SaveGeneralLiability();
-                   }
-               }
-               if (document.querySelector('[id="Cyber Liability Insurance"]') !== null) {
-                   if (!ValidateCyber()) {
-                       window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
-                       $("#more").trigger("click");
-                       $("[id='Cyber Liability Insurance']").trigger("click");
-                       return false;
-                   } else {
-                       ValidateDNO();
-                   }
-               }
+               //if (document.querySelector('[id="Statutory Liability Insurance"]') !== null) {
+               //    if (!ValidateStatutory()) {
+               //        window.alert("Please Add Statutory Liability Insurance to proceed for policy. ");
+               //        $("#more").trigger("click");
+               //        $("[id='Statutory Liability Insurance']").trigger("click");
+               //        return false;
+               //    } else {
+               //        SaveStatutoryLiability();
+               //    }
+               //}
+               //if (document.querySelector('[id="Employers Liability Insurance"]') !== null) {
+               //    if (!ValidateEmployer()) {
+               //        window.alert("Please Add Employers Liability Insurance to proceed for policy. ");
+               //        $("#more").trigger("click");
+               //        $("[id='Employers Liability Insurance']").trigger("click");
+               //        return false;
+               //    } else {
+               //        SaveEmployerLiabilityInsurance();
+               //    }
+               //}
+               //if (document.querySelector('[id="Employment Practices Liability Insurance"]') !== null) {
+               //    if (!ValidatePractice()) {
+               //        window.alert("Please Add Employment Practices Liability Insurance to proceed for policy. ");
+               //        $("#more").trigger("click");
+               //        $("[id='Employment Practices Liability Insurance']").trigger("click");
+               //        return false;
+               //    } else {
+               //        SaveEmployerPracticesLiability();
+               //    }
+               //}
+               //if (document.querySelector('[id="Directors and Officers Liability Insurance"]') !== null) {
+               //    if (!ValidateDNOGeneral()) {
+               //        window.alert("Please Add Directors and Officers Liability Insurance to proceed for policy. ");
+               //        $("#more").trigger("click");
+               //        $("[id='Directors and Officers Liability Insurance']").trigger("click");
+               //        return false;
+               //    } else {
+               //        SaveDirectorsandOfficersLiability();                       
+               //    }
+               //}
+               //if (document.querySelector('[id="General Liability Insurance"]') !== null) {
+               //    if (!ValidateGeneral()) {
+               //        window.alert("Please Add General Liability Insurance to proceed for policy. ");
+               //        $("#more").trigger("click");
+               //        $("[id='General Liability Insurance']").trigger("click");
+               //        return false;
+               //    } else {
+               //        SaveGeneralLiability();
+               //    }
+               //}
+               //if (document.querySelector('[id="Cyber Liability Insurance"]') !== null) {
+               //    if (!ValidateCyber()) {
+               //        window.alert("Please Add Cyber Liability Insurance to proceed for policy. ");
+               //        $("#more").trigger("click");
+               //        $("[id='Cyber Liability Insurance']").trigger("click");
+               //        return false;
+               //    } else {
+               //        ValidateDNO();
+               //    }
+               //}
 
                postData = { clientInformationId: clientInformationSheet }
                $.ajax({
@@ -488,11 +500,10 @@
 
         $('.alert').alert()
 
-     function showmore() {
-                var _sheetId = $('#AnswerSheetId').val();
-                $('#MarshCoastGuardMotor').on('load', 'Html.Partial("PrefabSections/CommonClaim" , _sheetId);');
-
-    };
+        function showmore() {
+            var _sheetId = $('#ClientInformationSheet_Id').val();
+            $('#MarshCoastGuardMotor').on('load', 'Html.Partial("PrefabSections/CommonClaim" , _sheetId);');
+        };
 
     function formatNumber(n) {
         return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -544,8 +555,34 @@
 
 
 
-    $("#accordion").on("accordionactivate", function (event, ui) {
-        if (ui.oldPanel != null) {
+        $("#accordion").accordion({
+            beforeActivate: function (e, ui) {
+                var currentform = ui.oldPanel[0];
+                if (currentform.classList.contains('needs-validation')) {                    
+                    for (var f = 0; f < currentform.length; f++) {
+                        var element = document.getElementById(currentform[f].id);
+                        OnChange(element.id, element.name);
+                        //hardcoded to find the div visibility
+                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
+                        if (element.classList.contains("is-invalid") && isHidden == false) {       
+                            //write a message here or stop the process
+
+                            //e.preventDefault();
+                            //e.stopPropagation();
+                            //element.scrollIntoView();
+                        }
+                        else {
+                            currentform[f].classList.remove("needs-validation");
+                            currentform[f].classList.add("was-validated");
+                        }
+                    }
+                }
+                
+            }
+        });
+
+        $("#accordion").on("accordionactivate", function (e, ui) {
+            if (ui.oldPanel != null) {          
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                

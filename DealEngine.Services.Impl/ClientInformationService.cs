@@ -123,12 +123,11 @@ namespace DealEngine.Services.Impl
 
             foreach (var key in collection.Keys)
             {
-                foreach (string value in collection[key])
-                {
-                    //break the collection into objects
-                    //var genObj = collection[key].ToString().Split('.');
-                    sheet.AddAnswer(key, value);
-                }
+                //foreach (string value in collection[key])
+                //{
+                    //break the collection into objects                    
+                    sheet.AddAnswer(key, collection[key]);
+                //}
             }
 
             // get activity/revenue data
