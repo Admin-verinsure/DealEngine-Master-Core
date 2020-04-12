@@ -69,17 +69,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil = 0m;
 
             int TermExcess = 0;
-            decimal feeincome = 0;
+            decimal feeincome = 0M;
+            decimal totalfeeincome = 0M;
+            int numberoffeeincome = 1;
             //Calculation
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
+                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYear > 0)
                 {
-                    if (uISTerritory.Location == "NZ") //NZ income only
-                    {
-                        feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
-                    }
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYear;
+                    numberoffeeincome += 1;
                 }
+                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYear > 0)
+                {
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYear;
+                    numberoffeeincome += 1;
+                }
+                feeincome = totalfeeincome / numberoffeeincome;
             }
 
             //Return terms based on the limit options
@@ -110,6 +117,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ////Referral points per agreement
             ////Not a renewal of an existing policy
             //uwrfnotrenewalcl(underwritingUser, agreement);
+            //Not a renewal of an existing policy
+            uwrclissue(underwritingUser, agreement, feeincome);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -262,6 +271,32 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DNO2").First().Value == "false")
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnotrenewalcl" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
+
+        void uwrclissue(User underwritingUser, ClientAgreement agreement, decimal feeincome)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrclissue") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrclissue").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrclissue").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrclissue").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrclissue").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    {
+                        if (feeincome > 10000000)
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status = "Pending";
                         }
                     }
                 }

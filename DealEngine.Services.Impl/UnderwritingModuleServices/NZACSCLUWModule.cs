@@ -77,7 +77,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil = 0m;
 
             int TermExcess = 0;
-            decimal feeincome = 0;
+            decimal feeincome = 0m;
             //Calculation
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
@@ -85,7 +85,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISTerritory.Location == "NZ") //NZ income only
                     {
-                        feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
+                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear * uISTerritory.Pecentage / 100;
                     }
                 }
             }
