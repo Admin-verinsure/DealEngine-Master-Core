@@ -1382,6 +1382,10 @@ namespace DealEngine.WebUI.Controllers
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
+                        if(split.LastOrDefault() == "FormDate")
+                        {
+                            Console.WriteLine("");
+                        }
                         if (split.Count > 1)
                         {
                             
@@ -1397,10 +1401,16 @@ namespace DealEngine.WebUI.Controllers
                                     break;
                                 case "IList`1":
                                     var propertylist = (IList<SelectListItem>)property.GetValue(infomodel);
-                                    propertylist.FirstOrDefault(i => i.Value == answer.Value).Selected = true;
+                                    var options = answer.Value.Split(',').ToList();
+                                    foreach(var option in options)
+                                    {
+                                        propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
+                                    }                                    
                                     property.SetValue(infomodel, propertylist);
                                     break;
-
+                                case "DateTime":
+                                    property.SetValue(infomodel, DateTime.Parse(answer.Value));
+                                    break;
                                 default:
                                     property.SetValue(infomodel, answer.Value);
                                     break;

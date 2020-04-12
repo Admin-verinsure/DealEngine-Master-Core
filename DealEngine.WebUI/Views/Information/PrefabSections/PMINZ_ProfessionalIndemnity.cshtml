@@ -8,7 +8,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hascontractingservices" name="PMINZEPLViewModel.ContractingServicesOptions" multiple class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hascontractingservices" name="PMINZPIViewModel.ContractingServicesOptions" multiple class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.ContractingServicesOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -29,7 +29,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasstardardterms" name="PMINZEPLViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasstardardterms" name="PMINZPIViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasStandardTermsOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -46,7 +46,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasnegotiate" name="PMINZEPLViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasnegotiate" name="PMINZPIViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasNegotiateOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -63,7 +63,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasnegotiate" name="PMINZEPLViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasnegotiate" name="PMINZPIViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasNoAgreementOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -85,7 +85,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasownPI" name="PMINZEPLViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasownPI" name="PMINZPIViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasOwnPIOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -102,7 +102,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasboundcontract" name="PMINZEPLViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasboundcontract" name="PMINZPIViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasBoundContractOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -110,52 +110,7 @@
                     </select>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-6">
-                    <label for="hasengagementletter" class="label required">
-                        Do you use an engagement letter?
-                    </label>
-                </div>
-                <div class="col-6">
-                    <select id="hasengagementletter" name="PMINZEPLViewModel.HasEngagementLetterOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.PMINZPIViewModel.HasEngagementLetterOptions)
-                        {
-                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                        }
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div id="PMINZEPLViewModel.HasEngagementLetterOptions" hidden>
-            <div class="form-group">
-                <label class="label">
-                    If "Yes", does your engagement letter include the following aspects:
-                </label>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="hasengagementletter" class="label required">
-                            a. identifies who the client is?
-                            b. the scope of the retainer?
-                            c. the responsibilities of both the project manager and client?
-                            d.the basis for charging and payment?
-                            e. a client acceptance of the terms and conditions?
-                        </label>
-                    </div>
-                    <div class="col-6">
-                        <select id="hasengagementletter" name="PMINZEPLViewModel.HasEngagementLetterOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.PMINZPIViewModel.HasEngagementLetterOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div>        
         <div class="form-group">
             <div class="row">
                 <div class="col-6">
@@ -164,7 +119,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasrecorded" name="PMINZEPLViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasrecorded" name="PMINZPIViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasRecordedOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -181,7 +136,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasdairyrecord" name="PMINZEPLViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasdairyrecord" name="PMINZPIViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasDiaryRecordOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -222,7 +177,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hascomplaint" name="PMINZEPLViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hascomplaint" name="PMINZPIViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasComplaintOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -239,7 +194,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasengage" name="PMINZEPLViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasengage" name="PMINZPIViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasEngageOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -248,7 +203,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasEngageOptions" hidden>
+        <div id="PMINZPIViewModel.HasEngageOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -270,7 +225,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasdisciplinary" name="PMINZEPLViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasdisciplinary" name="PMINZPIViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasDisciplinaryOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -279,7 +234,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasDisciplinaryOptions" hidden>
+        <div id="PMINZPIViewModel.HasDisciplinaryOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -301,7 +256,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasclaimsagainst" name="PMINZEPLViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasclaimsagainst" name="PMINZPIViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -310,7 +265,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasClaimsAgainstOptions" hidden>
+        <div id="PMINZPIViewModel.HasClaimsAgainstOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -332,7 +287,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasresponsible" name="PMINZEPLViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasresponsible" name="PMINZPIViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasResponsibleOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -341,7 +296,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasResponsibleOptions" hidden>
+        <div id="PMINZPIViewModel.HasResponsibleOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -363,7 +318,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasclaimsagainst2" name="PMINZEPLViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasclaimsagainst2" name="PMINZPIViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions2)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -372,7 +327,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasClaimsAgainstOptions2" hidden>
+        <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -395,7 +350,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasrefund" name="PMINZEPLViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasrefund" name="PMINZPIViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasRefundOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -404,7 +359,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasClaimsAgainstOptions2" hidden>
+        <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -426,7 +381,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hassued" name="PMINZEPLViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hassued" name="PMINZPIViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasSuedOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -435,7 +390,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasSuedOptions" hidden>
+        <div id="PMINZPIViewModel.HasSuedOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -457,7 +412,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="hasdispute" name="PMINZEPLViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="hasdispute" name="PMINZPIViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasDisputeOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -466,7 +421,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasDisputeOptions" hidden>
+        <div id="PMINZPIViewModel.HasDisputeOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">
@@ -488,7 +443,7 @@
                     </label>
                 </div>
                 <div class="col-6">
-                    <select id="haspenalty" name="PMINZEPLViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    <select id="haspenalty" name="PMINZPIViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZPIViewModel.HasPenaltyOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -497,7 +452,7 @@
                 </div>
             </div>
         </div>
-        <div id="PMINZEPLViewModel.HasPenaltyOptions" hidden>
+        <div id="PMINZPIViewModel.HasPenaltyOptions" hidden>
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">

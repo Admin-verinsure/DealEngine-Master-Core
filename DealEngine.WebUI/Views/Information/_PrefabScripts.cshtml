@@ -5,8 +5,8 @@
             var forms = document.getElementsByClassName('is-valid');
             for (var f = 0; f < forms.length; f++) {
                 //get each element to validate
-                for (var e = 0; e < f.length; i++) {
-                    var element = document.getElementById(f[e].id);
+                for (var e = 0; e < forms[f].length; e++) {                    
+                    var element = document.getElementById(forms[f][e].id);
                     OnChange(element.id, element.name);
                     //after first load change to default view
                     element.classList.remove("is-valid");
@@ -23,9 +23,41 @@
             var value = obj.value;
             var dataRule = obj.getAttribute('data-rule');
             var dataId = obj.getAttribute('data-item');
+            var Tag = obj.tagName;
             obj.classList.remove("is-up");            
 
             //validation
+            if (Tag == "SELECT") {
+                SelectValidation(obj, value);
+            } else if (Tag == "INPUT") {
+                InputValidation(obj, value);
+            }           
+            //trigger
+            TriggerHandler(Name, value, dataRule, dataId)                          
+        }
+
+        function InputValidation(obj, value) {
+            if (obj.type == "number") {
+                if (value >= 0) {
+                    obj.classList.add("is-valid");
+                    obj.classList.remove("is-invalid");
+                } else {
+                    obj.classList.remove("is-valid");
+                    obj.classList.add("is-invalid");
+                }
+            } else {
+                if (value != "") {
+                    obj.classList.add("is-valid");
+                    obj.classList.remove("is-invalid");
+                } else {
+                    obj.classList.remove("is-valid");
+                    obj.classList.add("is-invalid");
+                }
+            }
+            debugger;
+        }
+
+        function SelectValidation(obj, value) {
             if (value > 0) {
                 obj.classList.add("is-valid");
                 obj.classList.remove("is-invalid");
@@ -34,9 +66,6 @@
                 obj.classList.remove("is-valid");
                 obj.classList.add("is-invalid");
             }
-
-            //trigger
-            TriggerHandler(Name, value, dataRule, dataId)                          
         }
 
         function TriggerHandler(Name, Value, Rule, RuleId) {
@@ -53,8 +82,8 @@
                     ShowElement(Name);              
                 } else {
                     HideElement(Name);
-                    if (Rule === "clear") {                        
-                        ClearObject(RuleId);
+                    if (Rule === "clear") {            
+                        ClearObject(RuleId, Tag);
                     }
                 }
             } catch {
@@ -72,17 +101,17 @@
 
         function ClearObject(Id) {
             var obj = document.getElementById(Id);
-            var tag = obj.tagName;
+            var Tag = obj.tagName;
             //here we can define the changes per type
-            if (tag == "SELECT") {                
-                for (var i = 0; i < obj.options.length; i++) {                    
+            if (Tag == "SELECT") {                
+                for (var i = 0; i < obj.options.length; i++) {    
                     if (obj.options[i].selected === true) {
                         obj.options[i].selected = false;
                     }
                 }
                 if (!obj.multiple) {
                     obj.options[0].selected = true;                    
-                }
+                }                
             }
         }
     </script>

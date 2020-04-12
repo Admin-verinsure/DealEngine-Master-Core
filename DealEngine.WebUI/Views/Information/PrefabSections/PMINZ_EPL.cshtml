@@ -7,7 +7,7 @@
                     <label for="HasEPL" class="label required">Would you like Employers Liability Insurance?</label>
                 </div>
                 <div class="col-6">
-                    <select id="HasEPL" name="PMINZEPLViewModel.HasEPLOptions" class="custom-select" data-rule="clear" data-item="HasEPLI" onchange="OnChange(this.id, this.name)" required>
+                    <select id="HasEPL" name="PMINZEPLViewModel.HasEPLOptions" class="custom-select" data-rule="clear" data-item="hasEPLI" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZEPLViewModel.HasEPLOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -23,7 +23,7 @@
                         <label for="totalemployees" class="label required">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
                     </div>
                     <div class="col-6">
-                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number",  onchange="OnChange(this.id, this.name)", @required=""})
+                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number", onchange = "OnChange(this.id, this.name)" })
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                         <label for="hasEPLI" class="label required">Would you like Employment Practices Liability Insurance?</label>
                     </div>
                     <div class="col-6">
-                        <select id="hasEPLI" name="PMINZEPLViewModel.HasEPLIOptions" class="custom-select"  onchange="OnChange(this.id, this.name)" required>
+                        <select id="hasEPLI" name="PMINZEPLViewModel.HasEPLIOptions" class="custom-select"  onchange="OnChange(this.id, this.name)">
                             @foreach (var option in Model.PMINZEPLViewModel.HasEPLIOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -49,7 +49,7 @@
                             <label for="iscovered" class="label required">Are all employees covered by written employment contract?</label>
                         </div>
                         <div class="col-6">
-                            <select id="iscovered" name="PMINZEPLViewModel.CoveredOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="iscovered" name="PMINZEPLViewModel.CoveredOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.CoveredOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -64,7 +64,7 @@
                             <label for="islegaladvisor" class="label required">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
                         </div>
                         <div class="col-6">
-                            <select id="islegaladvisor" name="PMINZEPLViewModel.LegalAdvisorOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="islegaladvisor" name="PMINZEPLViewModel.LegalAdvisorOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.LegalAdvisorOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -79,7 +79,7 @@
                             <label for="iscasualbasis" class="label required">Do you utilise staff on a casual basis?</label>
                         </div>
                         <div class="col-6">
-                            <select id="iscasualbasis" name="PMINZEPLViewModel.CasualBasisOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="iscasualbasis" name="PMINZEPLViewModel.CasualBasisOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.CasualBasisOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -94,7 +94,7 @@
                             <label for="isdefined" class="label required">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
                         </div>
                         <div class="col-6">
-                            <select id="isdefined" name="PMINZEPLViewModel.DefinedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="isdefined" name="PMINZEPLViewModel.DefinedOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.DefinedOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -109,7 +109,7 @@
                             <label for="hasmanual" class="label required">Do you have a written human resources manual or equivalent written management guidelines?</label>
                         </div>
                         <div class="col-6">
-                            <select id="hasmanual" name="PMINZEPLViewModel.ManualOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="hasmanual" name="PMINZEPLViewModel.ManualOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.ManualOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -124,7 +124,7 @@
                             <label for="ispostingnotices" class="label required">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
                         </div>
                         <div class="col-6">
-                            <select id="ispostingnotices" name="PMINZEPLViewModel.PostingNoticesOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="ispostingnotices" name="PMINZEPLViewModel.PostingNoticesOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.PostingNoticesOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -139,7 +139,7 @@
                             <label for="isconsulting" class="label required">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
                         </div>
                         <div class="col-6">
-                            <select id="isconsulting" name="PMINZEPLViewModel.StaffRedundancyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="isconsulting" name="PMINZEPLViewModel.StaffRedundancyOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.StaffRedundancyOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -154,7 +154,7 @@
                             <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
                         </div>
                         <div class="col-6">
-                            <select id="hasmanagedprojects" name="PMINZEPLViewModel.HasManagedProjectOptions" data-rule="reverse" data-item='PMINZEPLViewModel.HasManagedProjectOptions' class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="hasmanagedprojects" name="PMINZEPLViewModel.HasManagedProjectOptions" data-rule="reverse" data-item='PMINZEPLViewModel.HasManagedProjectOptions' class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.HasManagedProjectOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -172,7 +172,7 @@
                                 </label>
                             </div>
                             <div class="col-6">
-                                @Html.TextAreaFor(m => m.PMINZEPLViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextAreaFor(m => m.PMINZEPLViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)"})
                             </div>
                         </div>
                     </div>

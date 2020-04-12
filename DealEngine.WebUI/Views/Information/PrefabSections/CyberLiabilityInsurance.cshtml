@@ -275,7 +275,7 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.EditorFor(m => m.CLIViewModel.DateLapsed, new { @class = "datepicker form-control b", @id = "datelapsed", @type = "datetime", onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.EditorFor(m => m.CLIViewModel.DateLapsed, new { @class = "Calenderdate form-control b", @id = "datelapsed", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -299,7 +299,7 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.EditorFor(m => m.CLIViewModel.RetroactiveDate, new { @class = "datepicker form-control b", @id = "retroactivedate", @type = "datetime", onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.EditorFor(m => m.CLIViewModel.RetroactiveDate, new { @class = "Calenderdate form-control b", @id = "retroactivedate", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>

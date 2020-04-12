@@ -1,6 +1,6 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-    <form id="DAOLIViewModel" class="needs-validation">
+    <form id="DAOLIViewModel" class="is-valid">
         <div class="form-group">
             <div class="row">
                 <div class="col-6">
@@ -39,7 +39,7 @@
                         </label>
                     </div>
                     <div class="col-6">
-                        @Html.TextBoxFor(m => m.DAOLIViewModel.FormDate, new { @class = "Calenderdate form-control b", @id = "formdate", @type = "datetime", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.FormDate, new { @class = "Calenderdate form-control b", @id = "formdate", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
@@ -101,39 +101,7 @@
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="hasclaim" class="label required">
-                            AFTER ENQUIRY has there been, or is there now pending, any claim against any proposed Insured Person in their capacity as a director or officer of either the Practice or any other
-                            company, organisation, association or trust?
-                        </label>
-                    </div>
-                    <div class="col-6">
-                        <select id="hasclaim" name="DAOLIViewModel.HasClaimOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.DAOLIViewModel.HasClaimOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div id="DAOLIViewModel.HasClaimOptions" hidden>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="claimdetails" class="label required">
-                                <strong>You have answered "Yes" </strong>, please provide full details:
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            @Html.TextAreaFor(m => m.DAOLIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </div>            
             <div class="form-group">
                 <div class="row">
                     <div class="col-6">

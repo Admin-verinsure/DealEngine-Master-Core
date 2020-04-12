@@ -53,25 +53,28 @@
            }
 
            if (stepNumber === 0) {
-               //once prefab pages we can call all forms to validate for now hardcode the forms individually
-               //var forms = document.getElementsByClassName('needs-validation');
-               var form = document.getElementById('PMINZEPLViewModel');
-               for (var i = 0; i < form.elements.length; i++) {
-                   //force the onchange here
-                   var element = document.getElementById(form[i].id);
-                   OnChange(element.id, element.Name);
-                   if (element.classList.contains("is-invalid")) {
-                       e.preventDefault();
-                       e.stopPropagation();
-                       element.scrollIntoView();
+               //once prefab pages we can call all forms to validate for now hardcode the accordion header
+               var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
+               for (var f = 0; f < forms.length; f++) {
+                   for (var e = 0; e < forms[f].length; e++) {
+                       var element = document.getElementById(forms[f][e].id);
+                        OnChange(element.id, element.name);
+                        //hardcoded to find the div visibility
+                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
+                        if (element.classList.contains("is-invalid") && isHidden == false) {       
+                            //write a message here or stop the process
+                            event.preventDefault();
+                            event.stopPropagation();
+                            $("#more").trigger("click");
+                            var accordianId = forms[f].previousElementSibling.id;
+                            $("[id='" + accordianId +"']").trigger("click");
+                            element.scrollIntoView();
+                            throw accordianId + " incomplete";
+                        }
                    }
+                   forms[f].classList.remove("needs-validation");
+                   forms[f].classList.add("was-validated");
                }
-            //for (var i = 0; i < forms.length; i++) {
-            //    if (forms[i].checkValidity() === false) {
-            //           event.preventDefault();
-            //           event.stopPropagation();
-            //       }
-            //   }
 
                event.preventDefault();               
                if (stepDirection == "forward") {
@@ -551,9 +554,34 @@
 
 
 
-        $("#accordion").on("accordionactivate", function (event, ui) {
-            debugger;
-        if (ui.oldPanel != null) {          
+        $("#accordion").accordion({
+            beforeActivate: function (e, ui) {
+                var currentform = ui.oldPanel[0];
+                if (currentform.classList.contains('needs-validation')) {                    
+                    for (var f = 0; f < currentform.length; f++) {
+                        var element = document.getElementById(currentform[f].id);
+                        OnChange(element.id, element.name);
+                        //hardcoded to find the div visibility
+                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
+                        if (element.classList.contains("is-invalid") && isHidden == false) {       
+                            //write a message here or stop the process
+
+                            //e.preventDefault();
+                            //e.stopPropagation();
+                            //element.scrollIntoView();
+                        }
+                        else {
+                            currentform[f].classList.remove("needs-validation");
+                            currentform[f].classList.add("was-validated");
+                        }
+                    }
+                }
+                
+            }
+        });
+
+        $("#accordion").on("accordionactivate", function (e, ui) {
+            if (ui.oldPanel != null) {          
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
