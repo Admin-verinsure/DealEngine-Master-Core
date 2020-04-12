@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "do500klimitminpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "do500klimitminpremium", "maximumassetsize");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -79,8 +79,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl500klimitoption.DateDeleted = null;
             termsl500klimitoption.DeletedBy = null;
 
-            ////Referral points per agreement
-
+            //Referral points per agreement
+            //Asset Size
+            uwrfassetsize(underwritingUser, agreement, rates);
+            //D&O Issues
+            uwrdoissue(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -166,7 +169,64 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
+        void uwrfassetsize(User underwritingUser, ClientAgreement agreement, IDictionary<string, decimal> rates)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfassetsize").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    {
+                        if (Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers4").First().Value) > rates["maximumassetsize"])
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
 
+        void uwrdoissue(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrdoissue") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrdoissue").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrdoissue").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrdoissue").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrdoissue").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    {
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers7").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers8").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers10").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers11").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers12").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers13").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers14").First().Value == "true" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers15").First().Value == "true")
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
+        }
 
 
     }

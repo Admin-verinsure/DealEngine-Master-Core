@@ -76,8 +76,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl500klimitoption.DeletedBy = null;
 
 
-            ////Referral points per agreement
-
+            //Referral points per agreement
+            //ED Issues
+            uwredissue(underwritingUser, agreement);
 
 
             //Update agreement status
@@ -162,6 +163,34 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 dict[name] = Convert.ToDecimal(agreement.ClientAgreementRules.FirstOrDefault(r => r.Name == name).Value);
 
             return dict;
+        }
+
+        void uwredissue(User underwritingUser, ClientAgreement agreement)
+        {
+            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null) == null)
+            {
+                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue") != null)
+                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Name,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Description,
+                        "",
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").Value,
+                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwredissue").OrderNumber));
+            }
+            else
+            {
+                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
+                {
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    {
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "false" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "false" || 
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.StaffRedundancyOptions").First().Value == "true") //this needs to be changed missing question in epl
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                    }
+                }
+            }
         }
 
 
