@@ -1,884 +1,569 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
-<div class="padding-10">
-    <div id="PIForm" class="smart-form" novalidate="novalidate">
-        <fieldset id="PMINZ_ProfessionalIndemnity">
-            <div class="row">
-
-
-                <div class="panel-body" id="@Model.Id body">
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                        <section class="col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                            <label class="label required">
-                                Please select the areas you provide contracting services from the following:
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-5 col-md-5 col-lg-5" id="PMINZPI1">
-                            <input type="checkbox" name="contractingservices" value="Networksecurity"> Network security<br>
-                            <input type="checkbox" name="contractingservices" value="onlinestocktrading"> On-line stock trading<br>
-                            <input type="checkbox" name="contractingservices" value="fundsmanagementandinvestment"> Funds management / investment and financial advisingy<br>
-                            <input type="checkbox" name="contractingservices" value="manufacturingcontrolprocess"> Manufacturing control processes<br>
-                            <input type="checkbox" name="contractingservices" value="oilandgas"> Oil & gas<br>
-                            <input type="checkbox" name="contractingservices" value="Mining"> Mining<br>
-                            <input type="checkbox" name="contractingservices" value="Medical"> Medical<br>
-                            <input type="checkbox" name="contractingservices" value="Defence"> Defence<br>
-                            <input type="checkbox" name="contractingservices" value="None"> None of the above<br>
-
-                            <p class="validationContainer" id="ValidatePMINZPI1"></p>
-
-                        </section>
-
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                            <div class="row hidden" id="PMINZPI1Sec">
-                                <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                        <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                        <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI1Details"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="validationContainer" id="ValidatePMINZPI1Details"></p>
-
-                        </section>
-
-
-                    </section>
-
-
-
-                    <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                        @*<label class="label cgmodalLabel">Insurance History</label>
-
-                <label class="label cgmodalLabel">Have you ever had any:</label>*@
-
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                            <label class="label required">
-                                Do you have standard terms upon which you supply your professional services?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <label class="input">
-                                <select id="PMINZPI2" onchange="validatePMINZPI('PMINZPI2')" class="form-control rmv editable">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidatePMINZPI2"></p>
-
-                        </section>
-
-
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                            <label class="label required">
-                                Do you ever negotiate contracts with your customers in which you accept liability for liquidated and/or consequential damages?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <label class="input">
-                                <select id="PMINZPI3" onchange="validatePMINZPI('PMINZPI3')" class="form-control rmv editable" name="Claimexp2">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidatePMINZPI3"></p>
-
-                        </section>
-
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                            <label class="label required">
-                                Do you ever commence any assignment/project where there is no written agreement or contract?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <label class="input">
-                                <select id="PMINZPI4" onchange="validatePMINZPI('PMINZPI4')" class="form-control rmv editable" name="Claimexp3">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidatePMINZPI4"></p>
-
-                        </section>
-
-
-                        <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <label class="label">
-                                When engaging consultants or contractors, do you ensure that those consultants/contractors:
-                            </label>
-                        </section>
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                            <label class="label required">
-                                Maintain their own professional indemnity insurance?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <label class="input">
-                                <select id="PMINZPI5" onchange="validatePMINZPI('PMINZPI5')" class="form-control rmv editable" name="Claimexp3">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidatePMINZPI5"></p>
-
-                        </section>
-
-
-
-                        <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                            <label class="label required">
-                                Are bound by contract to accept full responsibility for their own actions?
-                            </label>
-                        </section>
-                        <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <label class="input">
-                                <select id="PMINZPI6" onchange="validatePMINZPI('PMINZPI6')" class="form-control rmv editable" name="Claimexp3">
-                                    <option selected="selected" value="">-- Select --</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </label>
-                            <p class="validationContainer" id="ValidatePMINZPI6"></p>
-
-                        </section>
-
-                    </section>
-
-
-
-                </div>
-
-                
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Do you use an engagement letter?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI7" onchange="validatePMINZPI('PMINZPI7')" class="form-control rmv editable" name="Claimexp3">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                                <option value="Sometimes">Sometimes</option>
-                            </select>
-                        </label>
-
-                        <p class="validationContainer" id="ValidatePMINZPI7"></p>
-
-                    </section>
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI7Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label>If "Yes", does your engagement letter include the following aspects:</label>
-                                </div>
-
-                                <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                                    <label class="label required">
-                                        a. identifies who the client is?
-                                        b. the scope of the retainer?
-                                        c. the responsibilities of both the project manager and client?
-                                        d.the basis for charging and payment?
-                                        e. a client acceptance of the terms and conditions?
-                                    </label>
-                                </section>
-                                <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                    <label class="input">
-                                        <select id="PMINZPI7" onchange="validatePMINZPI('PMINZPI7')" class="form-control rmv editable" name="Claimexp3">
-                                            <option selected="selected" value="">-- Select --</option>
-                                            <option value="true">Yes</option>
-                                            <option value="false">No</option>
-                                            <option value="Sometimes">Sometimes</option>
-                                        </select>
-                                    </label>
-
-                                    <p class="validationContainer" id="ValidatePMINZPI7"></p>
-
-                                </section>
-
-
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI7Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Do you always record amended or additional instructions from your client?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI8" onchange="validatePMINZPI('PMINZPI8')" class="form-control rmv editable" name="Claimexp3">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                                <option value="Sometimes">Sometimes</option>
-                            </select>
-                        </label>
-
-                        <p class="validationContainer" id="ValidatePMINZPI8"></p>
-
-                    </section>
-
-
-
-
-                </section>
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Do you have a master diary system for recording all deadlines?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI9" onchange="validatePMINZPI('PMINZPI9')" class="form-control rmv editable" name="Claimexp3">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                                <option value="Sometimes">Sometimes</option>
-                            </select>
-                        </label>
-
-                        <p class="validationContainer" id="ValidatePMINZPI9"></p>
-
-                    </section>
-
-
-
-
-                </section>
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Do you have a complaints process that if a client complains, relevant factors are promptly considered and documents, including:
-                            .Documenting the complaint to the Client
-                            . Whether a conflict of interest has arisen
-                            . Whether you should notify your Broker/Insurer
-                            . Whether the complaint's impact can be minimised
-                            . Whether reputational risk ia a factor
-                            . Whether another party or the Client might have contributed to the problem
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI10" onchange="validatePMINZPI('PMINZPI10')" class="form-control rmv editable" name="Claimexp3">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                                <option value="Sometimes">Sometimes</option>
-                            </select>
-                        </label>
-
-                        <p class="validationContainer" id="ValidatePMINZPI10"></p>
-
-                    </section>
-
-
-
-
-                </section>
-
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Do you engage in any Component Specification activities and or design ( not including design management activities)?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI11" onchange="validatePMINZPI('PMINZPI11')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI11"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI11Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI11Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI11Details"></p>
-
-                    </section>
-
-
-                </section>
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Has any Partner,Principal,Director or staff member ever been the subject of disciplinary proceedings for professional misconduct?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI12" onchange="validatePMINZPI('PMINZPI12')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI12"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI12Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI12Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI12Details"></p>
-
-                    </section>
-
-
-                </section>
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI13" onchange="validatePMINZPI('PMINZPI13')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI13"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI13Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI13Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI13Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Have you or your sub-contractors been responsible for any delays or past due contracts?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI14" onchange="validatePMINZPI('PMINZPI14')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI14"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI14Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI14Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI14Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI15" onchange="validatePMINZPI('PMINZPI15')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI15"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI15Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI15Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI15Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Are any contracts currently past due acceptance?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI16" onchange="validatePMINZPI('PMINZPI16')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI16"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI16Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI16Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI16Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Within the past three years, have any customers withheld payments or requested a refund because your products or services did not meet the Customer's performance expectations
-                            or did not perform the compliance with your warranties or representations?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI17" onchange="validatePMINZPI('PMINZPI17')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI17"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI17Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI17Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI17Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Within the past three years, have you sued any customers for non-payment of contracts?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI18" onchange="validatePMINZPI('PMINZPI18')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI18"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI18Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI18Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI18Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Are you aware of any act, error or omission, unresolved contract dispute or any other circumstance aileging non-performance of contract or non-performance of your products or services?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI19" onchange="validatePMINZPI('PMINZPI19')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI19"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI19Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI19Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI19Details"></p>
-
-                    </section>
-
-
-                </section>
-
-                <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                        <label class="label required">
-                            Have you ever had a penalty imposed under the Health & Safety in Employment Act?
-                        </label>
-                    </section>
-                    <section class="col col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                        <label class="input">
-                            <select id="PMINZPI20" onchange="validatePMINZPI('PMINZPI20')" class="form-control rmv editable" name="Claimexp1">
-                                <option selected="selected" value="">-- Select --</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </label>
-                        <p class="validationContainer" id="ValidatePMINZPI20"></p>
-
-                    </section>
-
-                    <section class="col col-xs-12 col-sm-9 col-md-9 col-lg-9">
-
-                        <div class="row hidden" id="PMINZPI20Sec">
-                            <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group col col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                    <label><strong>You have answered "Yes" </strong>, please provide full details:</label>
-                                    <textarea class="form-control" placeholder="More Details" rows="5" id="PMINZPI20Details"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="validationContainer" id="ValidatePMINZPI20Details"></p>
-
-                    </section>
-
-
-                </section>
-
-
+<form id="PMINZPIViewModel" class="is-valid">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hascontractingservices" class="label required">
+                    Please select the areas you provide contracting services from the following:
+                </label>
             </div>
-
-            @*<button onclick="ValidateProfessionalIndemnity(); event.preventDefault();" class="btn-sm AddupdateBoat" id="updateBoat">Update</button>
-            <button onclick="$('#StatutoryLiability1').val('');$('#StatutoryLiability2').val(''); event.preventDefault();" class="btn-sm AddClearBoat" id="ClearBoat">Clear and Cancel</button>*@
-
-        </fieldset>
+            <div class="col-3">
+                <select id="hascontractingservices" name="PMINZPIViewModel.ContractingServicesOptions" multiple data-rule="contractingservice" data-item='PMINZPIViewModel.ContractingServicesOptions' class="chosen-select custom-select b" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.ContractingServicesOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
     </div>
-</div>
-
-
-<script type="text/javascript">
-
-    $(window).on("load", function () {
-        var clientInformationSheet = $('#AnswerSheetId').val();
-        var postData = { ClientInformationSheet: clientInformationSheet };
-
-        $.ajax({
-            url: '@Url.Action("GetPMINZProfessionalIdemnity", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                debugger;
-                var valid = "true";
-                var count = 0;
-                for (var i = 0; i < data.length - 4; i++) {
-                    if (data[i] == null) {
-                        if (valid) {
-                            valid = "false";
-                        }
+    <div id="PMINZPIViewModel.ContractingServicesOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="contractingservicesdetails" class="label required">
+                        Please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ContractingServicesDetails, new { @class = "form-control", @id = "contractingservicesdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="label">
+            <strong>Insurance History</strong><br />
+            <strong>Have you ever had any:</strong>
+        </label>
+        <div class="row">
+            <div class="col-9">
+                <label for="hasstardardterms" class="label required">
+                    Do you have standard terms upon which you supply your professional services?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasstardardterms" name="PMINZPIViewModel.HasStandardTermsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasStandardTermsOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                     }
-                }
-                if (data[0] != "" && valid == "true") {                    
-                    for (var item = 0; item < data.length; item++){
-                        var arr = data[item];
-                        if (arr != null) {
-                            if (arr[count] == "PMINZPI1") {
-                            var jhj = arr[count + 1].split(",");
-                                for (var kk = 0; kk < jhj.length; kk++) {
-                                    $('input[value='+jhj[kk]+']').prop('checked', true);
-                                }
-
-                                if (jhj.length > 0) {
-                                     $('#' + arr[count] + "Sec").removeClass('hidden');
-
-                                }
-                            } else {
-                                 $('#' + arr[count]).val(arr[count + 1]);
-                                 if (arr[count + 1] == "true") {
-                                 $('#' + arr[count] + "Sec").removeClass('hidden');
-                            }
-                           
-                            }
-                            $('#' + arr[count] + "Details").val(arr[count + 2]);
-                        }                        
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasnegotiate" class="label required">
+                    Do you ever negotiate contracts with your customers in which you accept liability for liquidated and/or consequential damages?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasnegotiate" name="PMINZPIViewModel.HasNegotiateOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasNegotiateOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                     }
-                };
-            })
-            .fail(function (a, s, d) {
-                alert("Unable to save.");
-            });
-    });
-
-    var clientInformationSheet = $('#AnswerSheetId').val();
-
-   function validatePMINZPIfields() {
-        debugger;
-          var validity = true;
-
-        for (var ind = 1; ind <= 20; ind++) {
-            if (ind == 1) continue;
-            var jh = '#PMINZPI' + ind;
-            //var jhtyt = '#PMINZPI' + ind ;
-            var jkhj = $(jh).val();
-            var PMINZPIVal = $('#PMINZPI' + ind ).val();
-            if (PMINZPIVal == "") {
-
-                $('#ValidatePMINZPI' + ind).html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-
-            } else {
-                 $('#ValidatePMINZPI' + ind).html("<i></i>");
-            }
-                
-            if (PMINZPIVal == "true" && $("#PMINZPI"+ind+"Details").val() == "") {
-                $("#ValidatePMINZPI"+ind+"Details").html("<font color='red'>Field is required</font>")
-                if (validity) {
-                    validity = false;
-                }
-            } else {
-                if (PMINZPIVal == "false") {
-                    $("#ValidatePMINZPI"+ind+"Details").val("");
-                }
-               
-            }
-
-            var elements = document.querySelectorAll('input[name="contractingservices"]:checked');
-            if (elements.length == 0) {
-                $("#ValidatePMINZPI3").html("<font color='red'>Field is required</font>")
-                 if (validity) {
-                    validity = false;
-                }
-
-                 $(PMINZPI3Sec).addClass('hidden');
-            } else {
-                   $("#ValidatePMINZPI3").html("<i></i>");
-                   $(PMINZPI3Sec).removeClass('hidden');
-            }
-
-            if (elements.length != 0 && $("#PMINZPI3Details").val() == "") {
-             $("#ValidatePMINZPI3Details").html("<font color='red'>Field is required</font>")
-                 if (validity) {
-                    validity = false;
-                }
-
-                 //$(PMINZPI3Sec).removeClass('hidden');
-            } else {
-                   $("#ValidatePMINZPI3Details").html("<i></i>");
-            }
-
-
-        }
-       
-        return validity;
-    }
-
-
-    function SavePMINZProfessionalIndemnity() {
-        debugger;                                                                                                                                                                                                                                                               
-        var ProfessionalIndemnity = new Array(20);
-        for (var i = 0; i < ProfessionalIndemnity.length; i++) {
-            ProfessionalIndemnity[i] = new Array(2);
-        }
-        for (var i = 1; i <= 20; i++) {
-            if (i == 1) {
-                 ProfessionalIndemnity[i - 1][0] = "PMINZPI" + i;
-                var professionalIndemnity = "#PMINZPI" + i;
-                var PIOptionSelected = document.querySelectorAll('input[name="contractingservices"]:checked');
-                var optionselected = new Array(PIOptionSelected.length);
-                for (var index = 0; index < PIOptionSelected.length; index++) {
-                    optionselected[index] =  PIOptionSelected[index].value ;
-                }
-                var stroptionsselected = optionselected.join();
-
-                ProfessionalIndemnity[i - 1][1] = stroptionsselected;
-                var PIDetails = "#PMINZPI" + i + "Details";
-                ProfessionalIndemnity[i - 1][2] = $(PIDetails).val();
-            }
-            if (i == 1) continue;
-            
-                ProfessionalIndemnity[i - 1][0] = "PMINZPI" + i;
-                var professionalIndemnity = "#PMINZPI" + i;
-                ProfessionalIndemnity[i - 1][1] = $(professionalIndemnity).val();
-                var PIDetails = "#PMINZPI" + i + "Details";
-                ProfessionalIndemnity[i - 1][2] = $(PIDetails).val();
-            
-        }
-
-
-        var postData = { Answers: ProfessionalIndemnity, ClientInformationSheet: clientInformationSheet };
-        var success = false;
-        $.ajax({
-            url: '@Url.Action("UpdatePMINZPIAnswer", "Information")',
-            type: "POST",
-            data: postData
-        })
-            .done(function (data) {
-                success = true;
-            })
-            .fail(function (a, s, d) {
-                success = false;
-                alert("Unable to save.");
-            });
-        return success;
-    }
-</script>
-
-
-<style>
-    .required:after {
-        content: " *";
-        color: red;
-        font-size: 20px;
-    }
-</style>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasnoagreementoptions" class="label required">
+                    Do you ever commence any assignment/project where there is no written agreement or contract?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasnoagreementoptions" name="PMINZPIViewModel.HasNoAgreementOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasNoAgreementOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="label">
+            When engaging consultants or contractors, do you ensure that those consultants/contractors:
+        </label>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasownPI" class="label required">
+                    Maintain their own professional indemnity insurance?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasownPI" name="PMINZPIViewModel.HasOwnPIOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasOwnPIOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasboundcontract" class="label required">
+                    Are bound by contract to accept full responsibility for their own actions?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasboundcontract" name="PMINZPIViewModel.HasBoundContractOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasBoundContractOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasrecorded" class="label required">
+                    Do you always record amended or additional instructions from your client?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasrecorded" name="PMINZPIViewModel.HasRecordedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasRecordedOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasdairyrecord" class="label required">
+                    Do you have a master diary system for recording all deadlines?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasdairyrecord" name="PMINZPIViewModel.HasDiaryRecordOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasDiaryRecordOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hascomplaint" class="label required">
+                    Do you have a complaints process that if a client complains, relevant factors are promptly considered and documents, including:
+                    <br />
+                    <span>
+                        Documenting the complaint to the Client
+                    </span>
+                    <br />
+                    <span>
+                        Whether a conflict of interest has arisen
+                    </span>
+                    <br />
+                    <span>
+                        Whether you should notify your Broker/Insurer
+                    </span>
+                    <br />
+                    <span>
+                        Whether the complaint's impact can be minimised
+                    </span>
+                    <br />
+                    <span>
+                        Whether reputational risk ia a factor
+                    </span>
+                    <br />
+                    <span>
+                        Whether another party or the Client might have contributed to the problem
+                    </span>
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hascomplaint" name="PMINZPIViewModel.HasComplaintOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasComplaintOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasengage" class="label required">
+                    Do you engage in any Component Specification activities and or design ( not including design management activities)?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasengage" name="PMINZPIViewModel.HasEngageOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasEngageOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasEngageOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="engagedetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.EngageDetails, new { @class = "form-control", @id = "engagedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasdisciplinary" class="label required">
+                    Has any Partner, Principal, Director or staff member ever been the subject of disciplinary proceedings for professional misconduct?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasdisciplinary" name="PMINZPIViewModel.HasDisciplinaryOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasDisciplinaryOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasDisciplinaryOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="disciplinarydetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.DisciplinaryDetails, new { @class = "form-control", @id = "disciplinarydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasclaimsagainst" class="label required">
+                    Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasclaimsagainst" name="PMINZPIViewModel.HasClaimsAgainstOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasClaimsAgainstOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="claimdetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails, new { @class = "form-control", @id = "claimdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasresponsible" class="label required">
+                    Have you or your sub-contractors been responsible for any delays or past due contracts?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasresponsible" name="PMINZPIViewModel.HasResponsibleOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasResponsibleOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasResponsibleOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="responsibledetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ResponsibleDetails, new { @class = "form-control", @id = "responsibledetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasclaimsagainst2" class="label required">
+                    Have any claims ever been made against you, your predecessors in business, or any present or former Partner, Principal, Director or Employee of the business?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasclaimsagainst2" name="PMINZPIViewModel.HasClaimsAgainstOptions2" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasClaimsAgainstOptions2)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="claimdetails2" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ClaimDetails2, new { @class = "form-control", @id = "claimdetails2", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasrefund" class="label required">
+                    Within the past three years, have any customers withheld payments or requested a refund because your products or services did not meet the Customer's performance expectations
+                    or did not perform the compliance with your warranties or representations?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasrefund" name="PMINZPIViewModel.HasRefundOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasRefundOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasClaimsAgainstOptions2" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="refunddetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.RefundDetails, new { @class = "form-control", @id = "refunddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hassued" class="label required">
+                    Within the past three years, have you sued any customers for non-payment of contracts?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hassued" name="PMINZPIViewModel.HasSuedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasSuedOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasSuedOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="sueddetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.SuedDetails, new { @class = "form-control", @id = "sueddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasdispute" class="label required">
+                    Are you aware of any act, error or omission, unresolved contract dispute or any other circumstance aileging non-performance of contract or non-performance of your products or services?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasdispute" name="PMINZPIViewModel.HasDisputeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasDisputeOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasDisputeOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="disputedetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.DisputeDetails, new { @class = "form-control", @id = "disputedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="haspenalty" class="label required">
+                    Have you ever had a penalty imposed under the Health & Safety in Employment Act?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="haspenalty" name="PMINZPIViewModel.HasPenaltyOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.PMINZPIViewModel.HasPenaltyOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasPenaltyOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="penaltydetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.PenaltyDetails, new { @class = "form-control", @id = "penaltydetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasengineer" class="label required">Do you or have you acted in the capacity of an Engineer to the Contract?</label>
+            </div>
+            <div class="col-3">
+                <select id="hasengineer" name="PMINZPIViewModel.HasEngineerOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                    @foreach (var option in Model.PMINZPIViewModel.HasEngineerOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasEngineerOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="engineerdetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.EngineerDetails, new { @class = "form-control", @id = "engineerdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                </div>
+            </div>
+        </div>
+    </div><div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasincludeddesign" class="label required">Do you engage in any Component Specification activities and or design (not including design management activities)?</label>
+            </div>
+            <div class="col-3">
+                <select id="hasincludeddesign" name="PMINZPIViewModel.HasIncludedDesignOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                    @foreach (var option in Model.PMINZPIViewModel.HasIncludedDesignOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasIncludedDesignOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="includeddesigndetails" class="label required">
+                        <strong>You have answered "Yes" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.IncludedDesignDetails, new { @class = "form-control", @id = "includeddesigndetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasmanagedprojects" class="label required">Have you managed any projects in the past three years?</label>
+            </div>
+            <div class="col-3">
+                <select id="hasmanagedprojects" name="PMINZPIViewModel.HasManagedProjectOptions" data-rule="reverse" data-item='PMINZPIViewModel.HasManagedProjectOptions' class="custom-select" onchange="OnChange(this.id, this.name)">
+                    @foreach (var option in Model.PMINZPIViewModel.HasManagedProjectOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="PMINZPIViewModel.HasManagedProjectOptions" hidden>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9">
+                    <label for="managedprojectdetails" class="label required">
+                        <strong>You have answered "No" </strong>, please provide full details:
+                    </label>
+                </div>
+                <div class="col-3">
+                    @Html.TextAreaFor(m => m.PMINZPIViewModel.ManagedProjectDetails, new { @class = "form-control", @id = "managedprojectdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

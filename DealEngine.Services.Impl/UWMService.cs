@@ -53,7 +53,7 @@ namespace DealEngine.Services.Impl
                 //Check if the cover is required
                 try
                 {
-                  if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "true")
+                  if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1")
                         continue;
                 }
                 catch(Exception ex)

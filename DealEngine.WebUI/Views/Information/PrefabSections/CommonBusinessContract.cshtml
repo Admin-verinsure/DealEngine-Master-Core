@@ -21,7 +21,7 @@
 
                                 $(window).on('load',function () {
                                         $("#tblBusinessContract").jqGrid({
-                                            url: "/Services/GetBusinessContracts?informationId=@Model.AnswerSheetId&removed=false",
+                                            url: "/Services/GetBusinessContracts?informationId=@Model.ClientInformationSheet.Id&removed=false",
                                             datatype: "xml",
                                             mtype: "GET",
                                             async: true,
@@ -251,7 +251,7 @@
                             <script type="text/javascript">
                                 $(".BusinessContractRemoved").click(function () {
 						    $("#tblRemovedBusinessContract").jqGrid({
-						        url: "/Services/GetBusinessContracts?informationId=@Model.AnswerSheetId&removed=true",
+						        url: "/Services/GetBusinessContracts?informationId=@Model.ClientInformationSheet.Id&removed=true",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

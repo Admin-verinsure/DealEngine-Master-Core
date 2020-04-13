@@ -126,6 +126,10 @@
             </tbody>
         </table>
     </div>
+    <div class="row-fluid">
+        <label for="@Model.ConstructionTextId"> Please provide your best estimate of a percentage breakdown of your revenue from each of the following industry activities:</label>
+        @Html.TextBoxFor(t => t.ConstructionTextId, new { @class = "form-control", @form = "revenue3", @placeholder = "" })
+    </div>
 </div>
 
 

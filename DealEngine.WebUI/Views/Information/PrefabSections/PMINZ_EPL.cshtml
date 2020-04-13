@@ -1,13 +1,13 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
-    <form id="PMINZEPLViewModel" class="needs-validation" >
+    <form id="PMINZEPLViewModel" class="is-valid">
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
-                    <label for="HasEPL">Would you like Employers Liability Insurance?</label>
+                <div class="col-9">
+                    <label for="HasEPL" class="label required">Would you like Employers Liability Insurance?</label>
                 </div>
-                <div class="col-6">
-                    <select id="HasEPL" name="PMINZEPLViewModel.HasEPLOptions" class="custom-select" onchange="PminzOnChange(this.id, this.name)" required>
+                <div class="col-3">
+                    <select id="HasEPL" name="PMINZEPLViewModel.HasEPLOptions" class="custom-select" data-rule="clear" data-item="hasEPLI" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.PMINZEPLViewModel.HasEPLOptions)
                         {
                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -19,168 +19,168 @@
         <div id="PMINZEPLViewModel.HasEPLOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
-                        <label for="totalemployees">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
+                    <div class="col-9">
+                        <label for="totalemployees" class="label required">How many employees do you have (please include full time and part time employees, but exclude contractors):</label>
                     </div>
-                    <div class="col-6">
-                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number",  onchange="PminzOnChange(this.id, this.name)", @required=""})
+                    <div class="col-3">
+                        @Html.TextBoxFor(m => m.PMINZEPLViewModel.TotalEmployees, new { @class = "form-control", @id = "totalemployees", @type = "number", onchange = "OnChange(this.id, this.name)" })
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
-                        <label for="HasEPLI">Would you like Employment Practices Liability Insurance?</label>
+                    <div class="col-9">
+                        <label for="hasEPLI" class="label required">Would you like Employment Practices Liability Insurance?</label>
                     </div>
-                    <div class="col-6">
-                        <select id="HasEPLI" name="PMINZEPLViewModel.HasEPLIOptions" class="custom-select" onchange="PminzOnChange(this.id, this.name)" required>
+                    <div class="col-3">
+                        <select id="hasEPLI" name="PMINZEPLViewModel.HasEPLIOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                             @foreach (var option in Model.PMINZEPLViewModel.HasEPLIOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                             }
-                        </select>                        
+                        </select>
                     </div>
                 </div>
             </div>
             <div id="PMINZEPLViewModel.HasEPLIOptions" hidden>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-6">
-                            <label for="iscovered">Are all employees covered by written employment contract?</label>
+                        <div class="col-9">
+                            <label for="iscovered" class="label required">Are all employees covered by written employment contract?</label>
                         </div>
-                        <div class="col-6">
-                            <select id="iscovered" name="PMINZEPLViewModel.CoveredOptions" class="custom-select" onchange="PminzOnChange(this.id, this.name)" required>
+                        <div class="col-3">
+                            <select id="iscovered" name="PMINZEPLViewModel.CoveredOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.CoveredOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
-                            </select>                            
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="form-group" id="PMINZEPLViewModel.CoveredOptions" hidden>
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="islegaladvisor">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
-                        </div>
-                        <div class="col-6">
-                            <select id="islegaladvisor" name="PMINZEPLViewModel.LegalAdvisorOptions" class="custom-select" onchange="PminzOnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.PMINZEPLViewModel.LegalAdvisorOptions)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                }
-                            </select>                            
+                <div id="PMINZEPLViewModel.CoveredOptions" hidden>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-9">
+                                <label for="islegaladvisor" class="label required">Were these contracts drawn up by a legal advisor or suitably qualified employment specialist?</label>
+                            </div>
+                            <div class="col-3">
+                                <select id="islegaladvisor" name="PMINZEPLViewModel.LegalAdvisorOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                                    @foreach (var option in Model.PMINZEPLViewModel.LegalAdvisorOptions)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </div>                
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-6">
-                            <label for="iscasualbasis">Do you utilise staff on a casual basis?</label>
+                        <div class="col-9">
+                            <label for="iscasualbasis" class="label required">Do you utilise staff on a casual basis?</label>
                         </div>
-                        <div class="col-6">
-                            <select id="iscasualbasis" name="PMINZEPLViewModel.CasualBasisOptions" class="custom-select" onchange="PminzOnChange(this.id, this.name)" required>
+                        <div class="col-3">
+                            <select id="iscasualbasis" name="PMINZEPLViewModel.CasualBasisOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.CasualBasisOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
-                            </select>                            
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="form-group" id="PMINZEPLViewModel.CasualBasisOptions" hidden>
-                    <div class="row">
-                        <div class="col-6">
-                            <label for="isdefined">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
-                        </div>
-                        <div class="col-6">
-                            <select id="isdefined" name="PMINZEPLViewModel.DefinedOptions" class="custom-select"  onchange="PminzOnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.PMINZEPLViewModel.DefinedOptions)
-                                {
-                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                                }
-                            </select>                            
+                <div id="PMINZEPLViewModel.CasualBasisOptions" hidden>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-9">
+                                <label for="isdefined" class="label required">Are such casual employees employed pursuant to a written contract clearly defining the temporary nature of their role?</label>
+                            </div>
+                            <div class="col-3">
+                                <select id="isdefined" name="PMINZEPLViewModel.DefinedOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                                    @foreach (var option in Model.PMINZEPLViewModel.DefinedOptions)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </div>                
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-6">
-                            <label for="hasmanual">Do you have a written human resources manual or equivalent written management guidelines?</label>
+                        <div class="col-9">
+                            <label for="hasmanual" class="label required">Do you have a written human resources manual or equivalent written management guidelines?</label>
                         </div>
-                        <div class="col-6">
-                            <select id="hasmanual" name="PMINZEPLViewModel.ManualOptions" class="custom-select"  onchange="PminzOnChange(this.id, this.name)" required>
+                        <div class="col-3">
+                            <select id="hasmanual" name="PMINZEPLViewModel.ManualOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.ManualOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
-                            </select>                            
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-6">
-                            <label for="ispostingnotices">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
+                        <div class="col-9">
+                            <label for="ispostingnotices" class="label required">Do you post all notices required by law in places conspicuous to all employees including potential employees?</label>
                         </div>
-                        <div class="col-6">
-                            <select id="ispostingnotices" name="PMINZEPLViewModel.PostingNoticesOptions" class="custom-select"  onchange="PminzOnChange(this.id, this.name)" required>
+                        <div class="col-3">
+                            <select id="ispostingnotices" name="PMINZEPLViewModel.PostingNoticesOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.PostingNoticesOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
-                            </select>                            
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-6">
-                            <label for="isconsulting">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
+                        <div class="col-9">
+                            <label for="isconsulting" class="label required">Do you consult with your legal advisor and/or a suitable qualified employment consultant prior to undertaking staff restructures or redundancies?</label>
                         </div>
-                        <div class="col-6">
-                            <select id="isconsulting" name="PMINZEPLViewModel.StaffRedundancyOptions" class="custom-select"  onchange="PminzOnChange(this.id, this.name)" required>
+                        <div class="col-3">
+                            <select id="isconsulting" name="PMINZEPLViewModel.StaffRedundancyOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
                                 @foreach (var option in Model.PMINZEPLViewModel.StaffRedundancyOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
-                            </select>                            
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="isinsuredclaim" class="label required"><strong>After enquiry,</strong> are you aware of any workplace incidents that have resulted in claims and/or complaints made against during the last 5 years whether insured or uninsured?</label>
+                        </div>
+                        <div class="col-3">
+                            <select id="isinsuredclaim" name="PMINZEPLViewModel.IsInsuredClaimOptions" class="custom-select" onchange="OnChange(this.id, this.name)">
+                                @foreach (var option in Model.PMINZEPLViewModel.IsInsuredClaimOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="PMINZPIViewModel.IsInsuredClaimOptions" hidden>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-9">
+                                <label for="insuredclaimdetails" class="label required">
+                                    <strong>You have answered "Yes" </strong>, please provide full details:
+                                </label>
+                            </div>
+                            <div class="col-3">
+                                @Html.TextAreaFor(m => m.PMINZEPLViewModel.InsuredClaimDetails, new { @class = "form-control", @id = "insuredclaimdetails", @type = "text", onchange = "OnChange(this.id, this.name)" })
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </form>
-
-    <script type="text/javascript">
-
-        $(function () {
-            //triggereventsforform
-            var form = document.getElementById('PMINZEPLViewModel');
-            for (var i = 0; i < form.length; i++) {
-                PminzOnChange(form[i].id, form[i].name)       
-            }          
-        });
-
-        function PminzOnChange(Id, Name) {
-            var value = document.getElementById(Id).value;
-            if (value > 0) {
-                document.getElementById(Id).classList.add("is-valid");
-                document.getElementById(Id).classList.remove("is-invalid");
-            }
-            else {
-                document.getElementById(Id).classList.remove("is-valid");
-                document.getElementById(Id).classList.add("is-invalid");
-            }
-
-            try {
-                if (value == "1") {
-                    document.getElementById(Name).removeAttribute("hidden");
-                } else {
-                    document.getElementById(Name).setAttribute("hidden", "");
-                }
-            } catch {
-                ////we expect this to fail for form elements with no change events but could use this later
-            }                    
-        }
-    </script>

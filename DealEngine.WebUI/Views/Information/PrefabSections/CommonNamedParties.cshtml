@@ -23,7 +23,7 @@
                             <script type="text/javascript">
                                 $(window).on('load',function () {
                             $("#NamedParties").jqGrid({
-                                url: "/Services/GetNamedParties?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
+                                url: "/Services/GetNamedParties?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=false&ceased=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

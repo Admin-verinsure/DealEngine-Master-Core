@@ -25,7 +25,7 @@
                             <script type="text/javascript">
                                 $(window).on('load',function () {
                             $("#PrincipalDirectors").jqGrid({
-                                url: "/Services/GetPrincipalPartners?informationId=@Model.AnswerSheetId&validated=true&removed=false&ceased=false",
+                                url: "/Services/GetPrincipalPartners?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=false&ceased=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
@@ -526,7 +526,7 @@
                             <script type="text/javascript">
                                  $(".PrincipalRemoved").click(function () {
                                $("#tblRemovedPrincipalDirectors").jqGrid({
-                                url: "/Services/GetDeletedPartners?informationId=@Model.AnswerSheetId&validated=true&removed=true&ceased=false",
+                                url: "/Services/GetDeletedPartners?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=true&ceased=false",
                                 datatype: "xml",
                                    mtype: "GET",
                                 async: true,

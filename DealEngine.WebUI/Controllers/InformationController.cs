@@ -750,8 +750,8 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 user = await CurrentUser();
-                model.AnswerSheetId = sheet.Id;
-                model.OrganisationId = sheet.Owner.Id;
+                model.ClientInformationSheet = sheet;
+                model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -945,9 +945,8 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(Id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
 
-                InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                model.Id = Id;
-                model.ClientProgrammeID = clientProgramme.Id;
+                InformationViewModel model = await GetInformationViewModel(clientProgramme);                
+                model.ClientProgramme = clientProgramme;
                 ViewBag.Title = "View Information Sheet ";
                 return View(model);
             }
@@ -969,16 +968,12 @@ namespace DealEngine.WebUI.Controllers
                 ClientProgramme clientProgramme = await _programmeService.GetClientProgramme(id);
                 ClientInformationSheet sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                model.AnswerSheetId = sheet.Id;
-                model.IsChange = sheet.IsChange;
+                model.ClientInformationSheet = sheet;                
                 model.SectionView = name;
-                model.Id = id;
-                model.ClientProgrammeID = clientProgramme.Id;
+                model.ClientProgramme = clientProgramme;                
                 user = await CurrentUser();
                 try
-                {
-
-                    model.OrganisationId = clientProgramme.Owner.Id;
+                {                   
 
                     foreach (var section in model.Sections)
                         foreach (var item in section.Items)
@@ -1364,11 +1359,10 @@ namespace DealEngine.WebUI.Controllers
                     revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
                 }
                 model.RevenueByActivityViewModel = revenueByActivityViewModel;
-
                 model.AnswerSheetId = sheet.Id;
-                model.IsChange = sheet.IsChange;
-                model.Id = id;
-                model.SheetStatus = sheet.Status;
+
+                model.ClientInformationSheet = sheet;
+                model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
 
                 //testing dynamic wizard here
@@ -1389,6 +1383,10 @@ namespace DealEngine.WebUI.Controllers
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
+                        if(split.LastOrDefault() == "FormDate")
+                        {
+                            Console.WriteLine("");
+                        }
                         if (split.Count > 1)
                         {
                             
@@ -1404,10 +1402,16 @@ namespace DealEngine.WebUI.Controllers
                                     break;
                                 case "IList`1":
                                     var propertylist = (IList<SelectListItem>)property.GetValue(infomodel);
-                                    propertylist.FirstOrDefault(i => i.Value == answer.Value).Selected = true;
+                                    var options = answer.Value.Split(',').ToList();
+                                    foreach(var option in options)
+                                    {
+                                        propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
+                                    }                                    
                                     property.SetValue(infomodel, propertylist);
                                     break;
-
+                                case "DateTime":
+                                    property.SetValue(infomodel, DateTime.Parse(answer.Value));
+                                    break;
                                 default:
                                     property.SetValue(infomodel, answer.Value);
                                     break;
@@ -1455,7 +1459,6 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model.Advisory = advisoryDesc;
-                model.OrganisationId = clientProgramme.Owner.Id;
 
                 for (var i = 0; i < model.Sections.Count(); i++)
                 {
@@ -1654,7 +1657,7 @@ namespace DealEngine.WebUI.Controllers
 
                 var availableProducts = new List<SelectListItem>();
 
-                foreach (Product  product in clientProgramme.BaseProgramme.Products)
+                foreach (Product product in clientProgramme.BaseProgramme.Products)
                 {
                     availableProducts.Add(new SelectListItem
                     {
@@ -1685,10 +1688,6 @@ namespace DealEngine.WebUI.Controllers
                 userDetails.FirstName = user.FirstName;
                 userDetails.Email = user.Email;
 
-                var roles = new List<String>();
-
-                model.UserRole = roles;
-
                 var organisationDetails = new OrganisationDetailsVM
                 {
                     Name = sheet.Owner.Name,
@@ -1706,8 +1705,7 @@ namespace DealEngine.WebUI.Controllers
 
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;
-                model.Status = sheet.Status;
+                model.UserDetails = userDetails;                
 
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
@@ -1909,6 +1907,7 @@ namespace DealEngine.WebUI.Controllers
                         InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
                         OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
                         NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
+                        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
                     };
 
                     if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
@@ -2055,7 +2054,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheetId = Guid.Parse(collection["AnswerSheetId"]);
+                sheetId = Guid.Parse(collection["ClientInformationSheet.Id"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");
@@ -3229,6 +3228,12 @@ namespace DealEngine.WebUI.Controllers
                                     additionalInformation.ConstructionSchool = decimal.Parse(questionSplit[1]);
                                 }
                                 break;
+                            case "ConstructionTextId":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionTextId = questionSplit[1];
+                                }
+                                break;
                             default:
                                 throw new Exception("Add more form question 'cases'");
                         }
@@ -3325,10 +3330,8 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 InformationViewModel model = await GetInformationViewModel(sheet.Programme);
-                model.Sections = model.Sections.OrderBy(sec => sec.Position);
-                model.Status = sheet.Status;
-                model.AnswerSheetId = sheet.Id;
-                model.OrganisationId = sheet.Owner.Id;
+                model.Sections = model.Sections.OrderBy(sec => sec.Position);                
+                model.ClientInformationSheet = sheet;                
 
                 foreach (var section in model.Sections)
                     foreach (var item in section.Items)
