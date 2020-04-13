@@ -180,11 +180,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "false" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "false" || 
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.StaffRedundancyOptions").First().Value == "true") //this needs to be changed missing question in epl
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "2" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "2" || 
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.StaffRedundancyOptions").First().Value == "1") //this needs to be changed missing question in epl
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "Pending";
                         }
