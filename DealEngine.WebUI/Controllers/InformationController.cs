@@ -1359,6 +1359,7 @@ namespace DealEngine.WebUI.Controllers
                     revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
                 }
                 model.RevenueByActivityViewModel = revenueByActivityViewModel;
+                model.AnswerSheetId = sheet.Id;
 
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
@@ -1906,6 +1907,7 @@ namespace DealEngine.WebUI.Controllers
                         InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
                         OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
                         NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
+                        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
                     };
 
                     if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
@@ -2369,19 +2371,43 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (item[1] != null)
                         {
+
+
                             for (var x = 0; x < item.Length - 1; x++)
                             {
                                 ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
+
                                 if (answer != null)
                                 {
                                     answer.Value = item[1];
+                                    if (item.Length > 2)
+                                        answer.ClaimDetails = item[2];
                                     //answer.ClaimDetails = item[2];
                                 }
                                 else
                                 {
                                     sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
-                                    await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                                    if (item.Length > 2)
+                                    {
+                                        await _clientInformationAnswer.CreateNewSheetPMINZAns(item[0], item[1], item[2], sheet);
+                                    }
+                                    else
+                                    {
+                                        await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+
+                                    }
+
                                 }
+                                //if (answer != null)
+                                //{
+                                //    answer.Value = item[1];
+                                //    //answer.ClaimDetails = item[2];
+                                //}
+                                //else
+                                //{
+                                //    sheet = await _clientInformationService.GetInformation(ClientInformationSheet);
+                                //    await _clientInformationAnswer.CreateNewSheetAns(item[0], item[1], sheet);
+                                //}
                             }
                         }
                         await uow.Commit();
@@ -3200,6 +3226,12 @@ namespace DealEngine.WebUI.Controllers
                                 if (questionSplit[1] != "")
                                 {
                                     additionalInformation.ConstructionSchool = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
+                            case "ConstructionTextId":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionTextId = questionSplit[1];
                                 }
                                 break;
                             default:
