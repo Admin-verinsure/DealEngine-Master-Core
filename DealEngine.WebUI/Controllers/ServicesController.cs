@@ -445,6 +445,76 @@ namespace DealEngine.WebUI.Controllers
         }
 
 
+        
+        [HttpGet]
+        public async Task<IActionResult> GetPminzNamedParties(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
+                                         string searchField, string searchString, string searchOper, string filters)
+        {
+            User user = null;
+            XDocument document = null;
+            JqGridViewModel model = new JqGridViewModel();
+
+            try
+            {
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(informationId);
+                if (sheet == null)
+                    throw new Exception("No valid information for id " + informationId);
+
+                var organisations = new List<Organisation>();
+                for (var i = 0; i < sheet.Organisation.Count; i++)
+                {
+                    organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
+                }
+
+                if (_search)
+                {
+                    switch (searchOper)
+                    {
+                        case "eq":
+                            organisations = organisations.Where(searchField + " = \"" + searchString + "\"").ToList();
+                            break;
+                        case "bw":
+                            organisations = organisations.Where(searchField + ".StartsWith(\"" + searchString + "\")").ToList();
+                            break;
+                        case "cn":
+                            organisations = organisations.Where(searchField + ".Contains(\"" + searchString + "\")").ToList();
+                            break;
+                    }
+                }
+                //organisations = organisations.OrderBy(sidx + " " + sord).ToList();
+                model.Page = page;
+                model.TotalRecords = organisations.Count;
+                model.TotalPages = ((model.TotalRecords - 1) / rows) + 1;
+                JqGridRow row1 = new JqGridRow(sheet.Owner.Id);
+                row1.AddValues(sheet.Owner.Id, sheet.Owner.Name, "Owner");
+
+                model.AddRow(row1);
+                int offset = rows * (page - 1);
+                for (int i = offset; i < offset + rows; i++)
+                {
+                    if (i == model.TotalRecords)
+                        break;
+                    Organisation organisation = organisations[i];
+                    JqGridRow row = new JqGridRow(organisation.Id);
+
+                    for (int x = 0; x < organisation.InsuranceAttributes.Count; x++)
+                    {
+                        row.AddValues(organisation.Id, organisation.Name, organisation.InsuranceAttributes[x].InsuranceAttributeName, organisation.Id);
+                    }
+                    model.AddRow(row);
+                }
+
+                document = model.ToXml();
+                return Xml(document);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetNamedParties(Guid informationId, bool removed, bool _search, string nd, int rows, int page, string sidx, string sord,
@@ -2932,38 +3002,44 @@ namespace DealEngine.WebUI.Controllers
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
                 if (sheet == null)
                     throw new Exception("Unable to save - No Client information for " + model.AnswerSheetId);
-                string orgTypeName = "Person - Individual";
+                string orgTypeName = "";
 
                 try
                 {
-                    //switch (model.OrganisationTypeName)
-                    //{
-                    //    case "Person - Individual":
-                    //        {
-                    //            orgTypeName = "Sole Trader";
-                    //            break;
-                    //        }
-                    //    case "Company":
-                    //        {
-                    //            orgTypeName = "Limited liability";
-                    //            break;
-                    //        }
+                    switch (model.OrganisationTypeName)
+                    {
+                        case "Person - Individual":
+                            {
+                                orgTypeName = "Person - Individual";
+                                break;
+                            }
+                        case "Corporation – Limited liability":
+                            {
+                                orgTypeName = "Corporation – Limited liability";
+                                break;
+                            }
+                        case "Trust":
+                            {
+                                orgTypeName = "Corporation – Limited liability";
+                                break;
+                            }
 
-                    //    case "Partnership":
-                    //        {
-                    //            orgTypeName = "Partnership";
-                    //            break;
-                    //        }
-                    //    default:
-                    //        {
-                    //            throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
-                    //        }
-                    //}
 
-                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
+                        case "Partnership":
+                            {
+                                orgTypeName = "Partnership";
+                                break;
+                            }
+                        default:
+                            {
+                                throw new Exception(string.Format("Invalid Organisation Type: ", orgTypeName));
+                            }
+                    }
+
+                    InsuranceAttribute insuranceAttribute = await _insuranceAttributeService.GetInsuranceAttributeByName(model.Type);
                     if (insuranceAttribute == null)
                     {
-                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, "project management personnel");
+                        insuranceAttribute = await _insuranceAttributeService.CreateNewInsuranceAttribute(currentUser, model.Type);
                     }
                     OrganisationType organisationType = await _organisationTypeService.GetOrganisationTypeByName(orgTypeName);
                     if (organisationType == null)
@@ -3045,6 +3121,7 @@ namespace DealEngine.WebUI.Controllers
                     organisation.IsInsuredRequired = model.IsInsuredRequired;
                     organisation.IsCurrentMembership = model.IsCurrentMembership;
                     organisation.PMICert = model.PMICert;
+                    organisation.CurrentMembershipNo = model.CurrentMembershipNo;
                     organisation.CertType = model.CertType;
                     organisation.InsuranceAttributes.Add(insuranceAttribute);
                     insuranceAttribute.IAOrganisations.Add(organisation);
@@ -3096,14 +3173,14 @@ namespace DealEngine.WebUI.Controllers
                     {
                         switch (model.OrganisationTypeName)
                         {
-                            case "Individual":
+                            case "Person - Individual":
                                 {
                                     orgTypeName = "Sole Trader";
                                     break;
                                 }
-                            case "Company":
+                            case "Corporation – Limited liability":
                                 {
-                                    orgTypeName = "Limited liability";
+                                    orgTypeName = "Corporation – Limited liability";
                                     break;
                                 }
                             
@@ -3286,7 +3363,11 @@ namespace DealEngine.WebUI.Controllers
                     model.IsInsuredRequired = org.IsInsuredRequired;
                     model.PMICert = org.PMICert;
                     model.CertType = org.CertType;
+                    model.OrganisationTypeName = org.OrganisationType.Name;
+                    model.Type = org.InsuranceAttributes.First().InsuranceAttributeName;
+                    model.IsCurrentMembership = org.IsCurrentMembership;
                     model.CurrentMembershipNo = org.CurrentMembershipNo;
+                    model.OrganisationName = org.Name;
                     model.AnswerSheetId = answerSheetId;
                 }
                 else
