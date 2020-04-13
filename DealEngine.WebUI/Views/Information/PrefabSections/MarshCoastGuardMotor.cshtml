@@ -25,7 +25,7 @@
                                 <script type="text/javascript">
                                 $(window).on('load',function () {
 						    $("#tblRegisteredMV").jqGrid({
-						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
+						        url: "/Services/GetVehicles?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=false&transfered=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
@@ -44,7 +44,7 @@
 						            { name: "SumInsured", align: 'center' },
 						            { name: "update", align: 'center', width:60, search: false, formatter: function(cellvalue, options, rowobject)
                                     {
-                                        return ('<button onclick="RemoveVehicle(\'' + cellvalue + '\', \'true\', \'#tblRegisteredMV\', \'#tblRemovedRegisteredMV\',\'@Model.Status\');" type="button"class=" btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>');
+                                        return ('<button onclick="RemoveVehicle(\'' + cellvalue + '\', \'true\', \'#tblRegisteredMV\', \'#tblRemovedRegisteredMV\',\'@Model.ClientInformationSheet.Status\');" type="button"class=" btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>');
 										}
 										//{ return '<button onclick="alert(&quot;'+cellvalue+'&quot;);" type="button">Edit</button>'; }
 									}
@@ -436,7 +436,7 @@
                                 <script type="text/javascript">
                                 $(".MotorRemoved").click(function () {
 						    $("#tblRemovedRegisteredMV").jqGrid({
-						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
+						        url: "/Services/GetVehicles?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=true&transfered=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

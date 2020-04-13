@@ -9,12 +9,12 @@
 
             <h1 class="page-title txt-color-blueDark">
                 <!-- PAGE HEADER -->
-                <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgrammeID"> Agreement</a>
+                <i class="fa-fw fa fa-home"></i><a href="~/Agreement/ViewAcceptedAgreement/@Model.ClientProgramme.Id"> Agreement</a>
                 > <span>View Client Information Sheet</span>
             </h1>
         </div>
         <span>
-            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgrammeID })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
+            <a onclick="location.href='@Url.Action("ViewAcceptedAgreement", "Agreement",new { Id =@Model.ClientProgramme.Id })'" style="color:dodgerblue;font-size:30px; cursor:pointer"> <span _ngcontent-c7="" class="icon-append fa fa-arrow-circle-left"></span>  </a>
         </span>
 
 
@@ -56,7 +56,7 @@
                                             @*<td onclick="accordionpartialView('@Section.CustomView','@Model.Id')" style="cursor:pointer" align="center"> @Section.Name </td>*@
 
 
-                                            <td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new { name = Section.CustomView , id = Model.Id})'" style="cursor:pointer" align="left">
+                                            <td onclick="location.href='@Url.Action("PartialViewProgramme", "Information",new { name = Section.CustomView , id = Model.ClientProgramme.Id})'" style="cursor:pointer" align="left">
                                                 @Section.Name
                                             </td>
 

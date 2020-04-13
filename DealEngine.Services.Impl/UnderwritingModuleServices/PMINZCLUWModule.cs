@@ -41,8 +41,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl500klimitincomeunder1milpremium", "cl500klimitincome1milto5milpremium", "cl500klimitincome5milto10milpremium",
-                "cl1millimitincomeunder1milpremium", "cl1millimitincome1milto5milpremium", "cl1millimitincome5milto10milpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium", 
+                "cl1millimitincomeunder500k", "cl1millimitincome500kto2andhalfmilpremium", "clsocialengineeringextpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -61,6 +61,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
+            int TermLimit250k = 250000;
+            decimal TermPremium250k = 0m;
+            decimal TermBrokerage250k = 0m;
             int TermLimit500k = 500000;
             decimal TermPremium500k = 0m;
             decimal TermBrokerage500k = 0m;
@@ -68,6 +71,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermPremium1mil = 0m;
             decimal TermBrokerage1mil = 0m;
 
+            decimal extpremium = 0m;
             int TermExcess = 0;
             decimal feeincome = 0M;
             decimal totalfeeincome = 0M;
@@ -93,10 +97,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 2500;
 
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.TotalEmployees").First().Value == "1")
+            {
+                extpremium = rates["clsocialengineeringextpremium"];
+            }
+
+            TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
+            ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);
+            termsl250klimitoption.TermLimit = TermLimit250k;
+            termsl250klimitoption.Premium = TermPremium250k + extpremium;
+            termsl250klimitoption.Excess = TermExcess;
+            termsl250klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl250klimitoption.Brokerage = TermBrokerage250k;
+            termsl250klimitoption.DateDeleted = null;
+            termsl250klimitoption.DeletedBy = null;
+
             TermPremium500k = GetPremiumFor(rates, feeincome, TermLimit500k);
             ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit500k, TermExcess);
             termsl500klimitoption.TermLimit = TermLimit500k;
-            termsl500klimitoption.Premium = TermPremium500k;
+            termsl500klimitoption.Premium = TermPremium500k + extpremium;
             termsl500klimitoption.Excess = TermExcess;
             termsl500klimitoption.BrokerageRate = agreement.Brokerage;
             termsl500klimitoption.Brokerage = TermBrokerage500k;
@@ -106,7 +125,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             TermPremium1mil = GetPremiumFor(rates, feeincome, TermLimit1mil);
             ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit1mil, TermExcess);
             termsl1millimitoption.TermLimit = TermLimit1mil;
-            termsl1millimitoption.Premium = TermPremium1mil;
+            termsl1millimitoption.Premium = TermPremium1mil + extpremium;
             termsl1millimitoption.Excess = TermExcess;
             termsl1millimitoption.BrokerageRate = agreement.Brokerage;
             termsl1millimitoption.Brokerage = TermBrokerage1mil;
@@ -117,8 +136,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ////Referral points per agreement
             ////Not a renewal of an existing policy
             //uwrfnotrenewalcl(underwritingUser, agreement);
-            //Not a renewal of an existing policy
-            uwrclissue(underwritingUser, agreement, feeincome);
+            ////Not a renewal of an existing policy
+            //uwrclissue(underwritingUser, agreement, feeincome);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -210,35 +229,39 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             switch (limitoption)
             {
+                case 250000:
+                    {
+                        if (feeincome >= 0 && feeincome <= 500000)
+                        {
+                            premiumoption = rates["cl250klimitincomeunder500k"];
+                        }
+                        else if (feeincome > 500000 && feeincome <= 2500000)
+                        {
+                            premiumoption = rates["cl250klimitincome500kto2andhalfmilpremium"];
+                        }
+                        break;
+                    }
                 case 500000:
                     {
-                        if (feeincome >= 0 && feeincome <= 1000000)
+                        if (feeincome >= 0 && feeincome <= 500000)
                         {
-                            premiumoption = rates["cl500klimitincomeunder1milpremium"];
+                            premiumoption = rates["cl500klimitincomeunder500k"];
                         }
-                        else if (feeincome > 1000000 && feeincome <= 5000000)
+                        else if (feeincome > 500000 && feeincome <= 2500000)
                         {
-                            premiumoption = rates["cl500klimitincome1milto5milpremium"];
-                        }
-                        else if (feeincome > 5000000 && feeincome <= 10000000)
-                        {
-                            premiumoption = rates["cl500klimitincome5milto10milpremium"];
+                            premiumoption = rates["cl500klimitincome500kto2andhalfmilpremium"];
                         }
                         break;
                     }
                 case 1000000:
                     {
-                        if (feeincome >= 0 && feeincome <= 1000000)
+                        if (feeincome >= 0 && feeincome <= 500000)
                         {
-                            premiumoption = rates["cl1millimitincomeunder1milpremium"];
+                            premiumoption = rates["cl1millimitincomeunder500k"];
                         }
-                        else if (feeincome > 1000000 && feeincome <= 5000000)
+                        else if (feeincome > 500000 && feeincome <= 2500000)
                         {
-                            premiumoption = rates["cl1millimitincome1milto5milpremium"];
-                        }
-                        else if (feeincome > 5000000 && feeincome <= 10000000)
-                        {
-                            premiumoption = rates["cl1millimitincome5milto10milpremium"];
+                            premiumoption = rates["cl1millimitincome500kto2andhalfmilpremium"];
                         }
                         break;
                     }
@@ -294,7 +317,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
                     {
-                        if (feeincome > 10000000)
+                        if (feeincome > 2500000)
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status = "Pending";
                         }

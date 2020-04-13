@@ -21,7 +21,7 @@
 
                                 $(window).on('load',function () {
                                         $("#tblpminzproject").jqGrid({
-                                            url: "/Services/Getceasprojects?informationId=@Model.AnswerSheetId&removed=false",
+                                            url: "/Services/Getceasprojects?informationId=@Model.ClientInformationSheet.Id&removed=false",
                                             datatype: "xml",
                                             mtype: "GET",
                                             async: true,
@@ -285,7 +285,7 @@
                             <script type="text/javascript">
                                 $(".PMINZProjectRemoved").click(function () {
 						    $("#tblRemovedpminzProject").jqGrid({
-						        url: "/Services/Getceasprojects?informationId=@Model.AnswerSheetId&removed=true",
+						        url: "/Services/Getceasprojects?informationId=@Model.ClientInformationSheet.Id&removed=true",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

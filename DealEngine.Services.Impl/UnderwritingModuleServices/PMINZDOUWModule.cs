@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "do500klimitminpremium", "maximumassetsize");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "do500klimitpremium", "maximumassetsize");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -61,7 +61,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.QuoteDate = DateTime.UtcNow;
 
             int TermLimit500k = 500000;
-            decimal TermPremium500K = rates["do500klimitminpremium"];
+            decimal TermPremium500K = rates["do500klimitpremium"];
             decimal TermBrokerage500k = 0m;
 
             int TermExcess = 0;
@@ -79,11 +79,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl500klimitoption.DateDeleted = null;
             termsl500klimitoption.DeletedBy = null;
 
-            //Referral points per agreement
-            //Asset Size
-            uwrfassetsize(underwritingUser, agreement, rates);
-            //D&O Issues
-            uwrdoissue(underwritingUser, agreement);
+            ////Referral points per agreement
+            ////Asset Size
+            //uwrfassetsize(underwritingUser, agreement, rates);
+            ////D&O Issues
+            //uwrdoissue(underwritingUser, agreement);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)

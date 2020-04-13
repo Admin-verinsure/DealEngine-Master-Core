@@ -232,14 +232,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int intexpiringlimit = 0;
             decimal decexpiringpremium = 0m;
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
-            {
-                intexpiringlimit = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
-            }
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
-            {
-                decexpiringpremium = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
-            }
+            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
+            //{
+            //    intexpiringlimit = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
+            //}
+            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
+            //{
+            //    decexpiringpremium = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
+            //}
 
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"]/100);
@@ -257,14 +257,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term1millimitoption.DateDeleted = null;
             term1millimitoption.DeletedBy = null;
 
-            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            {
-                bolrenewalpremiumslowerthanexpiring = true;
-            }
-            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            {
-                bolrenewalpremiumshigherthanexpiring = true;
-            }
+            //if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
+            //{
+            //    bolrenewalpremiumslowerthanexpiring = true;
+            //}
+            //if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 1000000 && (TermPremium1mil + TopupBrokerage1mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
+            //{
+            //    bolrenewalpremiumshigherthanexpiring = true;
+            //}
 
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = decPIBasePremium * (1 + rates["pi2millimitloadingrate"] / 100);
@@ -282,14 +282,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             term2millimitoption.DateDeleted = null;
             term2millimitoption.DeletedBy = null;
 
-            if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
-            {
-                bolrenewalpremiumslowerthanexpiring = true;
-            }
-            if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
-            {
-                bolrenewalpremiumshigherthanexpiring = true;
-            }
+            //if (!bolrenewalpremiumslowerthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) < (decexpiringpremium * (1 - rates["exppremthresholdgreaterthan"] / 100)))
+            //{
+            //    bolrenewalpremiumslowerthanexpiring = true;
+            //}
+            //if (!bolrenewalpremiumshigherthanexpiring && intexpiringlimit == 2000000 && (TermPremium2mil + TopupBrokerage2mil) > (decexpiringpremium * (1 + rates["exppremthresholdlessthan"] / 100)))
+            //{
+            //    bolrenewalpremiumshigherthanexpiring = true;
+            //}
 
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = decPIBasePremium * (1 + rates["pi5millimitloadingrate"] / 100);
@@ -316,27 +316,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 bolrenewalpremiumshigherthanexpiring = true;
             }
 
-            //Referral points per agreement
-            //Number of Personnel
-            uwrfnumberofpersonnel(underwritingUser, agreement, totalnumberofpersonnel, rates);
-            //Non PMINZ Members
-            uwrfnonpminzmembers(underwritingUser, agreement, bolnonpmimember);
-            //Other or Non PM Activities
-            uwrfotherornonpmactivities(underwritingUser, agreement, decOPMA, decNPMA);
-            //Operates Outside of NZ
-            uwrfoperatesoutsideofnz(underwritingUser, agreement, bolworkoutsidenz);
-            //High Fee Income
-            uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
-            //Contracting Services
-            uwrfcontractingservices(underwritingUser, agreement);
-            //Claims / Insurance History
-            uwrfpriorinsurance(underwritingUser, agreement);
-            //No Projects Managed
-            uwrfnoprojectsmanaged(underwritingUser, agreement);
-            //Renewal Premiums Lower than Expiring
-            uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
-            //Renewal Premiums Higher than Expiring
-            uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
+            ////Referral points per agreement
+            ////Number of Personnel
+            //uwrfnumberofpersonnel(underwritingUser, agreement, totalnumberofpersonnel, rates);
+            ////Non PMINZ Members
+            //uwrfnonpminzmembers(underwritingUser, agreement, bolnonpmimember);
+            ////Other or Non PM Activities
+            //uwrfotherornonpmactivities(underwritingUser, agreement, decOPMA, decNPMA);
+            ////Operates Outside of NZ
+            //uwrfoperatesoutsideofnz(underwritingUser, agreement, bolworkoutsidenz);
+            ////High Fee Income
+            //uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
+            ////Contracting Services
+            //uwrfcontractingservices(underwritingUser, agreement);
+            ////Claims / Insurance History
+            //uwrfpriorinsurance(underwritingUser, agreement);
+            ////No Projects Managed
+            //uwrfnoprojectsmanaged(underwritingUser, agreement);
+            ////Renewal Premiums Lower than Expiring
+            //uwrfrenewalpremiumslowerthanexpiring(underwritingUser, agreement, bolrenewalpremiumslowerthanexpiring);
+            ////Renewal Premiums Higher than Expiring
+            //uwrfrenewalpremiumshigherthanexpiring(underwritingUser, agreement, bolrenewalpremiumshigherthanexpiring);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
