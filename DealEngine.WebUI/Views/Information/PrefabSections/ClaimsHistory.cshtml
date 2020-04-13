@@ -2,18 +2,16 @@
 
     <form id="ClaimsHistoryViewModel" class="is-valid">
         <div class="form-group">
-            <div class="col-6">
-                <label class="label cgmodalLabel">1. HAVE YOU OR ANY PERSON OR ENTITY TO BE COVERED UNDER THE PROPOSED INSURANCE</label>
-            </div>
+            <label class="label cgmodalLabel">1. HAVE YOU OR ANY PERSON OR ENTITY TO BE COVERED UNDER THE PROPOSED INSURANCE</label>
         </div>
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     <label for="hasdamageloss" class="label required">
                         a) In the past five years experienced any loss or damage of $5,000 or more (whether a claim was made or not) which would have been covered by or is related to the type of insurance (including any companion covers) now being proposed?
                     </label>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <select id="hasdamageloss" name="ClaimsHistoryViewModel.HasDamageLossOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.ClaimsHistoryViewModel.HasDamageLossOptions)
                         {
@@ -26,12 +24,12 @@
         <div id="ClaimsHistoryViewModel.HasDamageLossOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-9">
                         <label for="damagelossdetails" class="label required">
                             <strong>You have answered "Yes" </strong>, please provide full details:
                         </label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         @Html.TextAreaFor(m => m.ClaimsHistoryViewModel.DamageLossDetails, new { @class = "form-control", @id = "damagelossdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
@@ -39,12 +37,12 @@
         </div>
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     <label for="haswithdrawn" class="label required">
                         b) Ever withdrawn a claim?
                     </label>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <select id="haswithdrawn" name="ClaimsHistoryViewModel.HasWithdrawnOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.ClaimsHistoryViewModel.HasWithdrawnOptions)
                         {
@@ -57,12 +55,12 @@
         <div id="ClaimsHistoryViewModel.HasWithdrawnOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-9">
                         <label for="withdrawndetails" class="label required">
                             <strong>You have answered "Yes" </strong>, please provide full details:
                         </label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         @Html.TextAreaFor(m => m.ClaimsHistoryViewModel.WithdrawnDetails, new { @class = "form-control", @id = "withdrawndetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
@@ -70,12 +68,12 @@
         </div>
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     <label for="hasrefused" class="label required">
                         c) Ever have insurance voided, refused, cancelled, renewal not offered, special conditions and/or premium imposed or a claim refused?
                     </label>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <select id="hasrefused" name="ClaimsHistoryViewModel.HasRefusedOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.ClaimsHistoryViewModel.HasRefusedOptions)
                         {
@@ -88,30 +86,28 @@
         <div id="ClaimsHistoryViewModel.HasRefusedOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-9">
                         <label for="refuseddetails" class="label required">
                             <strong>You have answered "Yes" </strong>, please provide full details:
                         </label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         @Html.TextAreaFor(m => m.ClaimsHistoryViewModel.RefusedDetails, new { @class = "form-control", @id = "refuseddetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-6">
-                <label class="label cgmodalLabel">1. HAVE YOU OR ANY PERSON OR ENTITY TO BE COVERED UNDER THE PROPOSED INSURANCE, OR ANY PERSON WHO MAY BENEFIT FROM THE PROPOSED INSURANCE:</label>
-            </div>
+            <label class="label cgmodalLabel">1. HAVE YOU OR ANY PERSON OR ENTITY TO BE COVERED UNDER THE PROPOSED INSURANCE, OR ANY PERSON WHO MAY BENEFIT FROM THE PROPOSED INSURANCE:</label>
         </div>
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     <label for="hasstatutoryoffence" class="label required">
-                        a) Ever been charged with, convicted of, or have a pending prosecution for any criminal or statutory offence? The answer to this question may be subjected to the provisions of the Criminal Records(Clean Slate)Act.
+                        a) Ever been charged with, convicted of, or have a pending prosecution for any criminal or statutory offence? The answer to this question may be subjected to the provisions of the Criminal Records (Clean Slate) Act.
                     </label>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <select id="hasstatutoryoffence" name="ClaimsHistoryViewModel.HasStatutoryOffenceOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.ClaimsHistoryViewModel.HasStatutoryOffenceOptions)
                         {
@@ -124,12 +120,12 @@
         <div id="ClaimsHistoryViewModel.HasStatutoryOffenceOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-9">
                         <label for="statutoryoffencedetails" class="label required">
                             <strong>You have answered "Yes" </strong>, please provide full details:
                         </label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         @Html.TextAreaFor(m => m.ClaimsHistoryViewModel.StatutoryOffenceDetails, new { @class = "form-control", @id = "statutoryoffencedetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
@@ -137,12 +133,12 @@
         </div>
         <div class="form-group">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     <label for="hasliquidation" class="label required">
                         b) Ever been bankrupt, gone into liquidation/receivership or been a director of a company that has gone into liquidation/receivership?
                     </label>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <select id="hasliquidation" name="ClaimsHistoryViewModel.HasLiquidationOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
                         @foreach (var option in Model.ClaimsHistoryViewModel.HasLiquidationOptions)
                         {
@@ -155,12 +151,12 @@
         <div id="ClaimsHistoryViewModel.HasLiquidationOptions" hidden>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-9">
                         <label for="liquidationdetails" class="label required">
                             <strong>You have answered "Yes" </strong>, please provide full details:
                         </label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         @Html.TextAreaFor(m => m.ClaimsHistoryViewModel.LiquidationDetails, new { @class = "form-control", @id = "liquidationdetails", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
