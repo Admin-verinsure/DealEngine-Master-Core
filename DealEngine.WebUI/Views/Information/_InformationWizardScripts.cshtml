@@ -2137,147 +2137,147 @@ function showAccordionPanel(id, panelNo) {
         return true;
     }
 
-    function ValidateSharedRevenueForm(tabs) {
-        for (var i = 0; i <= tabs; i++) {
-            if (i == 0) {
+    //function ValidateSharedRevenueForm(tabs) {
+    //    for (var i = 0; i <= tabs; i++) {
+    //        if (i == 0) {
                 
-                UpdateSharedRevenueView();
-                $('#submitTab4').show();
-                $('#additionalInfomation').hide();
-                $('#CanterburyEarthquakeRebuildWork').hide();
-                $('#SchoolsDesignWork').hide();
-                $('#InspectionReport').hide();
-                $('#Valuation').hide();
-                $('#OtherActivities').hide();
-                $('#additionalActivitySubmit').hide();
-                $('#OtherProjectManagement').hide();
-                $('#NonProjectManagement').hide();
-                $('#Construction').hide();
+    //            UpdateSharedRevenueView();
+    //            $('#submitTab4').show();
+    //            $('#additionalInfomation').hide();
+    //            $('#CanterburyEarthquakeRebuildWork').hide();
+    //            $('#SchoolsDesignWork').hide();
+    //            $('#InspectionReport').hide();
+    //            $('#Valuation').hide();
+    //            $('#OtherActivities').hide();
+    //            $('#additionalActivitySubmit').hide();
+    //            $('#OtherProjectManagement').hide();
+    //            $('#NonProjectManagement').hide();
+    //            $('#Construction').hide();
 
-                var activitiesStr = GetActivitiesForRevenue('value');
-                if (activitiesStr.length != 0) {                    
-                    ShowAdditionalInfomation();                                        
-                }
-            }
-            else if (i == 1) {
-                var territories = GetTerritoriesForRevenue('value');
-                var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
+    //            var activitiesStr = GetActivitiesForRevenue('value');
+    //            if (activitiesStr.length != 0) {                    
+    //                ShowAdditionalInfomation();                                        
+    //            }
+    //        }
+    //        else if (i == 1) {
+               var territories = GetTerritoriesForRevenue('value');
+    //            var tradingOutsideNZValue = $("input[name='tradingOption']:checked").val();
                 
-                if (tradingOutsideNZValue == 'true') {
-                    if (territories.length == 0) {
-                        alert("Please select territories.");
-                        return false;
-                    }
-                }
-                if (territories.length == 0) {
-                    alert("Please select territories.");
-                    return false;
-                }
+    //            if (tradingOutsideNZValue == 'true') {
+    //                if (territories.length == 0) {
+    //                    alert("Please select territories.");
+    //                    return false;
+    //                }
+    //            }
+    //            if (territories.length == 0) {
+    //                alert("Please select territories.");
+    //                return false;
+    //            }
 
-                var arr = ValidateTable("sharedRevenueTerritoriesTable");
-                var totalSharedRevenue = 0;
+    //            var arr = ValidateTable("sharedRevenueTerritoriesTable");
+    //            var totalSharedRevenue = 0;
 
-                for (var k = 0; k < arr.length; k++) {
-                    totalSharedRevenue += parseInt(arr[k]);
-                }
+    //            for (var k = 0; k < arr.length; k++) {
+    //                totalSharedRevenue += parseInt(arr[k]);
+    //            }
 
-                if (totalSharedRevenue != 100) {
-                    alert("Percentage calculation does not equal to 100%");
-                    return false;
-                }   
-            }
-            else if (i == 2) {
-                var businessActivities = GetActivitiesForRevenue('value');
-                var revenueTotal = parseInt(document.getElementById("currentYear").value);
+    //            if (totalSharedRevenue != 100) {
+    //                alert("Percentage calculation does not equal to 100%");
+    //                return false;
+    //            }   
+    //        }
+    //        else if (i == 2) {
+    //            var businessActivities = GetActivitiesForRevenue('value');
+    //            var revenueTotal = parseInt(document.getElementById("currentYear").value);
 
-                if (revenueTotal <= 0) {
-                    alert("Please enter a fee income greater than '0'");
-                    return false;
-                }
+    //            if (revenueTotal <= 0) {
+    //                alert("Please enter a fee income greater than '0'");
+    //                return false;
+    //            }
 
-                if (revenueTotal % 1 != 0) {
-                    alert("Please enter a fee income with no decimals");
-                    return false;
-                }
-                if (businessActivities.length == 0) {
-                    alert("Please select activities.");
-                    return false;
-                }
-                var arr = ValidateTable("sharedRevenueActivityTable");
-                var totalSharedRevenue = 0;
+    //            if (revenueTotal % 1 != 0) {
+    //                alert("Please enter a fee income with no decimals");
+    //                return false;
+    //            }
+    //            if (businessActivities.length == 0) {
+    //                alert("Please select activities.");
+    //                return false;
+    //            }
+    //            var arr = ValidateTable("sharedRevenueActivityTable");
+    //            var totalSharedRevenue = 0;
 
-                for (var l = 0; l < arr.length; l++) {
-                    totalSharedRevenue += parseInt(arr[l]);
-                }
+    //            for (var l = 0; l < arr.length; l++) {
+    //                totalSharedRevenue += parseInt(arr[l]);
+    //            }
 
-                if (totalSharedRevenue != 100) {
-                    alert("Percentage calculation does not equal to 100%");
-                    return false;
-                }
-            }
-            else if (i == 3) {
-                var activitiesStr = GetActivitiesForRevenue('text');
+    //            if (totalSharedRevenue != 100) {
+    //                alert("Percentage calculation does not equal to 100%");
+    //                return false;
+    //            }
+    //        }
+    //        else if (i == 3) {
+    //            var activitiesStr = GetActivitiesForRevenue('text');
 
-                activitiesStr.forEach(function (item) {                    
-                    if (item.trim() === "Other Work not listed above") {
-                        if (document.getElementById("OtherActivitiesTextId").value == "") {
-                            alert("Please provide details");
-                            return false;
-                        }
-                    }
-                    if (item.trim() === "Inspection Reports") {
-                        if (document.getElementById("InspectionReportTextId").value == "") {
-                            alert("Please provide details");
-                            return false;
-                        }
-                        if (document.getElementById("InspectionReportBoolId").value === '') {
-                            alert("Please select an option");
-                            return false;
-                        }
-                    }
-                    if (item.trim() === "Valuations") {
-                        if (document.getElementById("ValuationTextId").value == "") {
-                            alert("Please provide details");
-                            return false;
-                        }
-                        if(document.getElementById("ValuationTextId2").value == "") {
-                            alert("Please provide details");
-                            return false;
-                        }
-                        if (document.getElementById("ValuationBoolId").value === '') {
-                            alert("Please select an option");
-                            return false;
-                        }
-                    }
-                    if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {                        
-                        if (document.getElementById("SchoolsDesignWorkBoolId").value === '') {
-                            alert("Please select an option");
-                            return false;
-                        }
-                        if (document.getElementById("SchoolsDesignWorkBoolId2").value === '') {
-                            alert("Please select an option");                            
-                            return false;
-                        }
-                        if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex === '') {
-                            alert("Please select an option");
-                            return false;
-                        }
-                        if (document.getElementById("SchoolsDesignWorkBoolId4").value === '') {
-                            alert("Please select an option");
-                            return false;
-                        }
-                    }
-                    if (item.trim() === "Canterbury Earthquake Rebuild Work") {
-                        if (document.getElementById("CanterburyEarthquakeRebuildWorkId").value == "") {
-                            alert("Please provide details");
-                            return false;
-                        }
-                    }
-                });
-            }
-        }
-        return true;
-    }
+    //            activitiesStr.forEach(function (item) {                    
+    //                if (item.trim() === "Other Work not listed above") {
+    //                    if (document.getElementById("OtherActivitiesTextId").value == "") {
+    //                        alert("Please provide details");
+    //                        return false;
+    //                    }
+    //                }
+    //                if (item.trim() === "Inspection Reports") {
+    //                    if (document.getElementById("InspectionReportTextId").value == "") {
+    //                        alert("Please provide details");
+    //                        return false;
+    //                    }
+    //                    if (document.getElementById("InspectionReportBoolId").value === '') {
+    //                        alert("Please select an option");
+    //                        return false;
+    //                    }
+    //                }
+    //                if (item.trim() === "Valuations") {
+    //                    if (document.getElementById("ValuationTextId").value == "") {
+    //                        alert("Please provide details");
+    //                        return false;
+    //                    }
+    //                    if(document.getElementById("ValuationTextId2").value == "") {
+    //                        alert("Please provide details");
+    //                        return false;
+    //                    }
+    //                    if (document.getElementById("ValuationBoolId").value === '') {
+    //                        alert("Please select an option");
+    //                        return false;
+    //                    }
+    //                }
+    //                if (item.trim() === "Architecture - Schools MOE" || item.trim() === "Architecture - Schools - Non MOE") {                        
+    //                    if (document.getElementById("SchoolsDesignWorkBoolId").value === '') {
+    //                        alert("Please select an option");
+    //                        return false;
+    //                    }
+    //                    if (document.getElementById("SchoolsDesignWorkBoolId2").value === '') {
+    //                        alert("Please select an option");                            
+    //                        return false;
+    //                    }
+    //                    if (document.getElementById("SchoolsDesignWorkBoolId3").selectedIndex === '') {
+    //                        alert("Please select an option");
+    //                        return false;
+    //                    }
+    //                    if (document.getElementById("SchoolsDesignWorkBoolId4").value === '') {
+    //                        alert("Please select an option");
+    //                        return false;
+    //                    }
+    //                }
+    //                if (item.trim() === "Canterbury Earthquake Rebuild Work") {
+    //                    if (document.getElementById("CanterburyEarthquakeRebuildWorkId").value == "") {
+    //                        alert("Please provide details");
+    //                        return false;
+    //                    }
+    //                }
+    //            });
+    //        }
+    //    }
+    //    return true;
+    //}
 
     function CopyTableValues(currentTable, newTable) {
         

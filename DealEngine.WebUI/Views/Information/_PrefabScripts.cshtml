@@ -12,11 +12,13 @@
                 var form = document.getElementById(formIds[i]);
                 for (var e = 0; e < form.length; e++) {
                     var element = document.getElementById(form[e].id);
-                    OnChange(element.id, element.name);
-                    //after first load change to default view
-                    element.classList.remove("is-valid");
-                    element.classList.remove("is-invalid");
-                    element.classList.add("is-up");
+                    if (element != null) {
+                        OnChange(element.id, element.name);
+                        //after first load change to default view
+                        element.classList.remove("is-valid");
+                        element.classList.remove("is-invalid");
+                        element.classList.add("is-up");
+                    }
                 }
                 form.classList.remove("is-valid");
                 form.classList.add("needs-validation");
@@ -27,7 +29,7 @@
             var obj = document.getElementById(Id);
             var value = obj.value;
             var dataRule = obj.getAttribute('data-rule');
-            var dataId = obj.getAttribute('data-item');
+            var dataItem = obj.getAttribute('data-item');
             var Tag = obj.tagName;
             obj.classList.remove("is-up");            
 
@@ -37,9 +39,8 @@
             } else if (Tag == "INPUT") {
                 InputValidation(obj, value);
             }           
-            debugger;
             //trigger
-            TriggerHandler(Name, value, dataRule, dataId)                          
+            TriggerHandler(Name, value, dataRule, dataItem)              
         }
 
         function InputValidation(obj, value) {
@@ -81,12 +82,13 @@
                 }
         }
 
-        function TriggerHandler(Name, Value, Rule, RuleId) {                                                       
+        function TriggerHandler(Name, Value, Rule, DataItem) {                                                       
             try {
+                //all rules go here
                 DefaultRule(Value, Name);
                 if (Rule === "clear") {
                     if (Value == 2) {
-                        ClearObject(RuleId);
+                        ClearObject(DataItem);
                     }                    
                 }
                 if (Rule === "contractingservice") {
@@ -103,9 +105,59 @@
                     }
                     DefaultRule(Value, Name);
                 }
+                if (Rule === "BuildSharedTable") {
+                    BuildSharedTable(DataItem);
+                    Value = "1";
+                    DefaultRule(Value, Name);
+                }
+                if (Rule === "validatetable") {
+                    var tablevalues = document.getElementsByClassName(DataItem);
+                    debugger;
+                }
             } catch {
                 ////we expect this to fail for form elements with no change events but could use this later
             }      
+        }
+
+        function BuildSharedTable(DataItem) {  
+            var array = DataItem.split(',');
+            var territories = document.getElementById(array[0]);
+            var tableElement = document.getElementById(array[1]);
+
+            var tbdy = document.createElement('tbody');
+            for (var t = 0; t < territories.options.length;t++) {
+                if (territories.options[t].selected === true) {                                
+                    var tr = document.createElement('tr');
+                    var td1 = document.createElement('td');
+                    td1.appendChild(document.createTextNode(territories[t].text));
+                    tr.appendChild(td1);                    
+                    var td2 = document.createElement('td');
+                    td2.innerHTML = CreateSharedInput(territories.options[t]);
+                    tr.appendChild(td2);
+                }
+                tbdy.appendChild(tr);
+            }
+            tableElement.appendChild(tbdy);
+        }
+
+        function CreateSharedInput(element) {           
+            var input = document.createElement("input");
+            input.setAttribute("name", element.value);
+            input.setAttribute("id", element.text);
+            input.setAttribute("class", "form-control");
+            input.setAttribute("data-rule", "validatetable");
+            input.setAttribute("data-item", "validate" + element.parentElement.id);
+            input.setAttribute("onchange", "OnChange(this.id, this.name)");
+            return input.outerHTML;            
+        }
+
+        function SaveSharedRevenue() {
+            $.ajax({
+                url: '@Url.Action("SaveInformation", "Information")',
+                type: "POST",
+                data: $("#tab_1 :input").serialize({ json: true })
+                //data: $("#myForm").serialize({ json:true })
+            })
         }
 
         function HideElement(id) {
@@ -131,6 +183,64 @@
                 }                
             }
         }
+
+        function ValidateSharedRevenueForm(tab) {
+            var isValid = true;
+            var percentage = 0;
+            var hasItem = false;
+            if (tab == 1) {                
+                var territoryVals = document.querySelectorAll("[data-item='validateterritories']");
+                var territories = document.getElementById("territories");
+                for (var i = 0; i < territories.options.length; i++) {
+                    if (territories.options[i].selected === true) {
+                        hasItem = true;
+                    }
+                }
+                if (!hasItem) {
+                    isValid = false;
+                    alert("Please select territories.");
+                }
+                for (var v = 0; v < territoryVals.length; v++) {
+                    percentage += parseInt(territoryVals[v].value);
+                }
+                if (percentage != 100) {
+                    isValid = false;
+                    alert("Percentage calculation does not equal to 100%");
+                }
+            }
+            else if (tab == 2) {
+                var activityVals = document.querySelectorAll("[data-item='validateactivities']");
+                var activities = document.getElementById("activities");
+                var element;
+                for (var i = 0; i < activities.options.length; i++) {
+                    var additionalactivity = activities.options[i].innerText;
+                    if (activities.options[i].selected === true) {
+                        hasItem = true;
+                        element = document.getElementById("Additional" + additionalactivity.trim());
+                        if (element != null) {
+                            element.hidden = false;
+                        }
+                    } else {
+                        element = document.getElementById("Additional" + additionalactivity.trim());
+                        if (element != null) {
+                            element.hidden = true;
+                        }
+                    }
+                }
+                for (var v = 0; v < activityVals.length; v++) {
+                    percentage += parseInt(activityVals[v].value);
+                }
+                if (percentage != 100) {
+                    isValid = false;
+                    alert("Percentage calculation does not equal to 100%");
+                }
+            }
+            if (isValid) {
+                tab += 1;
+                SetCurrentTab('RevenueTabs' + tab);                
+            }
+        }
+
     </script>
     <style>
         .required:after {

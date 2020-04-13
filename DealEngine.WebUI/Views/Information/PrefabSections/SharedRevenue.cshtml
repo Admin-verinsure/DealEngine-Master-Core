@@ -1,14 +1,14 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
 
 <div id="SharedRevenue">
-    <form class="client-form" name="sharedRevenueForm">
-        @if (Model.RevenueByActivityViewModel.RevenueData != null)
+    
+        @*@if (Model.RevenueByActivityViewModel.RevenueData != null)
         {
             @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/Existing.cshtml", Model.RevenueByActivityViewModel)
         }
         else
-        {
+        {*@
             @await Html.PartialAsync("/Views/Information/PrefabSections/SharedRevenue/New.cshtml", Model.RevenueByActivityViewModel)
-        }
-    </form>
+        @*}*@
+
 </div>

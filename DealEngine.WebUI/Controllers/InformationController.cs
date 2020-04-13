@@ -1895,46 +1895,46 @@ namespace DealEngine.WebUI.Controllers
                     }
                 }
 
-                if (sheet.RevenueData.AdditionalActivityInformation != null)
-                {
-                    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel
-                    {
-                        CanterburyEarthquakeRebuildWorkId = sheet.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId,
-                        ValuationTextId = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId,
-                        OtherActivitiesTextId = sheet.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId,
-                        ValuationTextId2 = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId2,
-                        InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
-                        OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
-                        NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
-                        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
-                    };
+                //if (sheet.RevenueData.AdditionalActivityInformation != null)
+                //{
+                //    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel
+                //    {
+                //        CanterburyEarthquakeRebuildWorkId = sheet.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId,
+                //        ValuationTextId = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId,
+                //        OtherActivitiesTextId = sheet.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId,
+                //        ValuationTextId2 = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId2,
+                //        InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
+                //        OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
+                //        NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
+                //        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
+                //    };
 
-                    if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
-                        revenueByActivityViewModel.AdditionalInformation.ValuationBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId.ToString()).Selected = true;
+                //    if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
+                //        revenueByActivityViewModel.AdditionalInformation.ValuationBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId.ToString()).Selected = true;
 
-                    if (sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId > 0)
-                        revenueByActivityViewModel.AdditionalInformation.InspectionReportBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId.ToString()).Selected = true;
+                //    if (sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId > 0)
+                //        revenueByActivityViewModel.AdditionalInformation.InspectionReportBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId.ToString()).Selected = true;
 
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId.ToString()).Selected = true;
+                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId > 0)
+                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId.ToString()).Selected = true;
 
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId2.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2.ToString()).Selected = true;
+                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 > 0)
+                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId2.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2.ToString()).Selected = true;
 
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId3.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3.ToString()).Selected = true;
+                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 > 0)
+                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId3.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3.ToString()).Selected = true;
 
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId4.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4.ToString()).Selected = true;
-                }
-                else
-                {
-                    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
-                }
+                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 > 0)
+                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId4.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4.ToString()).Selected = true;
+                //}
+                //else
+                //{
+                //    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
+                //}
 
-                revenueByActivityViewModel.CurrentYear = sheet.RevenueData.CurrentYear;
-                revenueByActivityViewModel.NextFincialYear = sheet.RevenueData.NextFinancialYear;
-                revenueByActivityViewModel.LastFinancialYear = sheet.RevenueData.LastFinancialYear;
+                revenueByActivityViewModel.CurrentYearTotal = sheet.RevenueData.CurrentYear;
+                revenueByActivityViewModel.NextFincialYearTotal = sheet.RevenueData.NextFinancialYear;
+                revenueByActivityViewModel.LastFinancialYearTotal = sheet.RevenueData.LastFinancialYear;
                 revenueByActivityViewModel.RevenueData = sheet.RevenueData;
             }
             else

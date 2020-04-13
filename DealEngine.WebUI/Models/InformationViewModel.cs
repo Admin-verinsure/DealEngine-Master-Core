@@ -189,12 +189,11 @@ namespace DealEngine.WebUI.Models
 
     public class RevenueByActivityViewModel
     {
-        public bool IsTradingOutsideNZ { get; set; }
         public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> Activities { get; set; }
-        public decimal NextFincialYear { get; set; }
-        public decimal CurrentYear { get; set; }
-        public decimal LastFinancialYear { get; set; }
+        public decimal NextFincialYearTotal { get; set; }
+        public decimal CurrentYearTotal { get; set; }
+        public decimal LastFinancialYearTotal { get; set; }
         public RevenueByActivity RevenueData { get; set; }
         public AdditionalActivityViewModel AdditionalInformation { get; set; }
     }
@@ -203,80 +202,47 @@ namespace DealEngine.WebUI.Models
     {
         public AdditionalActivityViewModel()
         {
-            InspectionReportBoolId = new List<SelectListItem>()
+            HasInspectionReportOptions = GetSelectListOptions();
+            HasDisclaimerReportsOptions = GetSelectListOptions();
+            HasObservationServicesOptions = GetSelectListOptions();
+            HasRecommendedCladdingOptions = GetSelectListOptions();
+            HasStateSchoolOptions = GetSelectListOptions();
+            HasIssuedCertificatesOptions = GetSelectListOptions();
+        }    
+        private IList<SelectListItem> GetSelectListOptions()
+        {
+            return new List<SelectListItem>()
             {
                 new SelectListItem
-                { Text = "Select Option", Value = "" },
+                {
+                    Text = "-- Select --", Value = "0"
+                },
                 new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            ValuationBoolId = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId2 = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId3 = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
-                new SelectListItem
-                { Text = "No", Value = "2" }
-            };
-            SchoolsDesignWorkBoolId4 = new List<SelectListItem>()
-            {
-                new SelectListItem
-                { Text = "Select Option", Value = "" },
-                new SelectListItem
-                { Text = "Yes", Value = "1" },
+                {
+                    Text = "Yes", Value = "1"
+                },
                 new SelectListItem
                 { Text = "No", Value = "2" }
             };
         }
-        public virtual IList<SelectListItem> InspectionReportBoolId { get; set; }
-        public virtual IList<SelectListItem> ValuationBoolId { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId2 { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId3 { get; set; }
-        public virtual IList<SelectListItem> SchoolsDesignWorkBoolId4 { get; set; }
-        public virtual string ValuationTextId { get; set; }
-        public virtual string ValuationTextId2 { get; set; }
-        public virtual string OtherActivitiesTextId { get; set; }
-        public virtual string CanterburyEarthquakeRebuildWorkId { get; set; }
-        public virtual string InspectionReportTextId { get; set; }
-        public virtual string OtherProjectManagementTextId { get; set; }
-        public virtual string NonProjectManagementTextId { get; set; }
-        public decimal ConstructionCommercial { get; set; }
-        public decimal ConstructionDwellings { get; set; }
-        public decimal ConstructionIndustrial { get; set; }
-        public decimal ConstructionInfrastructure { get; set; }
-        public decimal ConstructionSchool { get; set; }
-        public string ConstructionTextId { get; set; }
+        public IList<SelectListItem> HasInspectionReportOptions { get; set; }
+        public IList<SelectListItem> HasDisclaimerReportsOptions { get; set; }
+        public IList<SelectListItem> HasObservationServicesOptions { get; set; }
+        public IList<SelectListItem> HasRecommendedCladdingOptions { get; set; }
+        public IList<SelectListItem> HasStateSchoolOptions { get; set; }
+        public IList<SelectListItem> HasIssuedCertificatesOptions { get; set; }
+        public string QualificationDetails { get; set; }
+        public string ValuationDetails { get; set; }
+        public string OtherDetails { get; set; }
+        public string RebuildDetails { get; set; }
+        public string InspectionReportDetails { get; set; }
+        public string OtherProjectManagementDetails { get; set; }
+        public string NonProjectManagementDetails { get; set; }
+        public decimal ConstructionCommercialDetails { get; set; }
+        public decimal ConstructionDwellingDetails { get; set; }
+        public decimal ConstructionIndustrialDetails { get; set; }
+        public decimal ConstructionInfrastructureDetails { get; set; }
+        public decimal ConstructionSchoolDetails { get; set; }        
     }
 
     public class SharedRoleViewModel
