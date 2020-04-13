@@ -1906,6 +1906,7 @@ namespace DealEngine.WebUI.Controllers
                         InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
                         OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
                         NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
+                        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
                     };
 
                     if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
@@ -3200,6 +3201,12 @@ namespace DealEngine.WebUI.Controllers
                                 if (questionSplit[1] != "")
                                 {
                                     additionalInformation.ConstructionSchool = decimal.Parse(questionSplit[1]);
+                                }
+                                break;
+                            case "ConstructionTextId":
+                                if (questionSplit[1] != "")
+                                {
+                                    additionalInformation.ConstructionTextId = questionSplit[1];
                                 }
                                 break;
                             default:

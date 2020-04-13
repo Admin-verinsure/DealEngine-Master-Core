@@ -55,26 +55,34 @@
            if (stepNumber === 0) {
                //once prefab pages we can call all forms to validate for now hardcode the accordion header
                var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
-               for (var f = 0; f < forms.length; f++) {
-                   for (var e = 0; e < forms[f].length; e++) {
-                       var element = document.getElementById(forms[f][e].id);
-                        OnChange(element.id, element.name);
-                        //hardcoded to find the div visibility
-                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
-                        if (element.classList.contains("is-invalid") && isHidden == false) {       
-                            //write a message here or stop the process                            
-                            event.preventDefault();
-                            event.stopPropagation();
-                            $("#more").trigger("click");
-                            var accordianId = forms[f].previousElementSibling.id;
-                            window.alert("Please complete this section " + accordianId);
-                            $("[id='" + accordianId +"']").trigger("click");
-                            element.scrollIntoView();
-                            throw accordianId + " incomplete";
-                        }
+               var formIds = [];
+               for (var i = 0; i < forms.length; i++) {
+                   formIds.push(forms[i].id);
+               }
+               for (var f = 0; f < formIds.length; f++) { 
+                   var form = document.getElementById(formIds[f]);
+                   for (var e = 0; e < form.length; e++) {
+                       var element = document.getElementById(form[e].id);
+                       if (element != null) {
+                           OnChange(element.id, element.name);
+                           //hardcoded to find the div visibility
+                           var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                           
+                           if (element.classList.contains("is-invalid") && isHidden == false) {
+                               //write a message here or stop the process
+                               debugger;
+                               event.preventDefault();
+                               event.stopPropagation();
+                               $("#more").trigger("click");
+                               var accordianId = form.previousElementSibling.id;
+                               window.alert("Please complete this section " + accordianId);
+                               $("[id='" + accordianId + "']").trigger("click");
+                               element.scrollIntoView();
+                               throw accordianId + " incomplete";
+                           }
+                       }
                    }
-                   forms[f].classList.remove("needs-validation");
-                   forms[f].classList.add("was-validated");
+                   form.classList.remove("needs-validation");
+                   form.classList.add("was-validated");
                }
 
                event.preventDefault();               
@@ -556,31 +564,32 @@
 
 
 
-        $("#accordion").accordion({
-            beforeActivate: function (e, ui) {
-                var currentform = ui.oldPanel[0];
-                if (currentform.classList.contains('needs-validation')) {                    
-                    for (var f = 0; f < currentform.length; f++) {
-                        var element = document.getElementById(currentform[f].id);
-                        OnChange(element.id, element.name);
-                        //hardcoded to find the div visibility
-                        var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
-                        if (element.classList.contains("is-invalid") && isHidden == false) {       
-                            //write a message here or stop the process
+        //$("#accordion").accordion({
+        //    beforeActivate: function (e, ui) {
+        //        var currentform = ui.oldPanel[0];
+        //        if (currentform.classList.contains('needs-validation')) {
+        //        }                
+        //            for (var f = 0; f < currentform.length; f++) {
+        //                var element = document.getElementById(currentform[f].id);
+        //                OnChange(element.id, element.name);
+        //                //hardcoded to find the div visibility
+        //                var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                        
+        //                if (element.classList.contains("is-invalid") && isHidden == false) {       
+        //                    //write a message here or stop the process
 
-                            //e.preventDefault();
-                            //e.stopPropagation();
-                            //element.scrollIntoView();
-                        }
-                        else {
-                            currentform[f].classList.remove("needs-validation");
-                            currentform[f].classList.add("was-validated");
-                        }
-                    }
-                }
+        //                    //e.preventDefault();
+        //                    //e.stopPropagation();
+        //                    //element.scrollIntoView();
+        //                }
+        //                else {
+        //                    currentform[f].classList.remove("needs-validation");
+        //                    currentform[f].classList.add("was-validated");
+        //                }
+        //            }
+        //        }
                 
-            }
-        });
+        //    }
+        //});
 
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {          
@@ -613,9 +622,9 @@
         }
     });
 
-    $('.datepicker').each(function () {
-        $('#'+this.id).datepicker();
-    });
+    //$('.datepicker').each(function () {
+    //    $('#'+this.id).datepicker();
+    //});
 
     $('.AddButton').click(function () {
           $('#Addipeffectivedatesection').addClass('hidden');

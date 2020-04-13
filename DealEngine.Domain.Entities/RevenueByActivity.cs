@@ -43,6 +43,7 @@ namespace DealEngine.Domain.Entities
         public virtual decimal ConstructionIndustrial { get; set; }
         public virtual decimal ConstructionInfrastructure { get; set; }
         public virtual decimal ConstructionSchool { get; set; }
+        public virtual string ConstructionTextId { get; set; }
 
         protected AdditionalActivityInformation() : this(null) { }
 
