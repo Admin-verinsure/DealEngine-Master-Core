@@ -1353,12 +1353,6 @@ namespace DealEngine.WebUI.Controllers
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 model.SharedRoleViewModel = sharedRoleViewModel;
-                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();                
-                if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0)
-                {
-                    revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
-                }
-                model.RevenueByActivityViewModel = revenueByActivityViewModel;
 
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
@@ -1382,13 +1376,12 @@ namespace DealEngine.WebUI.Controllers
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
-                        if(split.LastOrDefault() == "FormDate")
+                        if(split.FirstOrDefault() == "RevenueByActivityViewModel")
                         {
                             Console.WriteLine("");
                         }
                         if (split.Count > 1)
-                        {
-                            
+                        {                            
                             var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
                             var infomodel = modeltype.GetValue(model);                            
                             var property = infomodel.GetType().GetProperty(split.LastOrDefault());
@@ -1414,6 +1407,10 @@ namespace DealEngine.WebUI.Controllers
                                 default:
                                     property.SetValue(infomodel, answer.Value);
                                     break;
+                            }
+                            if(split.FirstOrDefault() == "RevenueByActivityViewModel")
+                            {
+
                             }
                         }                        
                     }
@@ -1799,183 +1796,7 @@ namespace DealEngine.WebUI.Controllers
             }
 
             return sharedRoleViewModel;
-        }
-        private async Task<RevenueByActivityViewModel> GetRevenueActivityViewModel(ClientInformationSheet sheet)
-        {
-            RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
-            var clientProgramme = sheet.Programme;
-
-            var territoryList = new List<TerritoryTemplate>();
-            var nzTemplate = await _territoryService.GetTerritoryTemplateByName("New Zealand");
-
-            var businessActivityList = new List<BusinessActivityTemplate>();
-            List<SelectListItem> territoryTemplates = new List<SelectListItem>();
-            List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
-
-            if (sheet.RevenueData != null && (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0))
-            {
-                if (sheet.RevenueData.Territories.Count > 0)
-                {
-                    foreach (var territory in sheet.RevenueData.Territories)
-                    {
-                        var template = await _territoryService.GetTerritoryTemplateById(territory.TerritoryTemplateId);
-                        territoryList.Add(template);
-
-                        territoryTemplates.Add(new SelectListItem
-                        {
-                            Value = template.Id.ToString(),
-                            Text = template.Location,
-                            Selected = true
-                        });
-
-                    }
-                    foreach (var template in clientProgramme.BaseProgramme.TerritoryTemplates)
-                    {
-                        if (!territoryList.Contains(template))
-                        {
-                            territoryTemplates.Add(new SelectListItem
-                            {
-                                Value = template.Id.ToString(),
-                                Text = template.Location,
-                                Selected = false
-                            });
-                        }
-                    }                    
-                }
-                else
-                {                    
-                    foreach (var template in clientProgramme.BaseProgramme.TerritoryTemplates)
-                    {
-                        territoryTemplates.Add(new SelectListItem
-                        {
-                            Value = template.Id.ToString(),
-                            Text = template.Location,
-                            Selected = false
-                        });
-
-                    }
-                }
-
-                if (sheet.RevenueData.Activities.Count > 0)
-                {
-                    foreach (var ba in sheet.RevenueData.Activities)
-                    {
-                        var template = await _businessActivityService.GetBusinessActivityTemplate(ba.BusinessActivityTemplate);
-                        businessActivityList.Add(template);
-                        businessActivityTemplates.Add(new SelectListItem
-                        {
-                            Value = template.Id.ToString(),
-                            Text = template.Description,
-                            Selected = true
-                        });
-                    }
-                    foreach (var template in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-                    {
-                        if (!businessActivityList.Contains(template))
-                        {
-                            businessActivityTemplates.Add(new SelectListItem
-                            {
-                                Value = template.Id.ToString(),
-                                Text = template.Description,
-                                Selected = false
-                            });
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-                    {
-                        businessActivityTemplates.Add(new SelectListItem
-                        {
-                            Value = bat.Id.ToString(),
-                            Text = bat.Description,
-                            Selected = false
-                        });
-                    }
-                }
-
-                //if (sheet.RevenueData.AdditionalActivityInformation != null)
-                //{
-                //    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel
-                //    {
-                //        CanterburyEarthquakeRebuildWorkId = sheet.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId,
-                //        ValuationTextId = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId,
-                //        OtherActivitiesTextId = sheet.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId,
-                //        ValuationTextId2 = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId2,
-                //        InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
-                //        OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
-                //        NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
-                //        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
-                //    };
-
-                //    if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
-                //        revenueByActivityViewModel.AdditionalInformation.ValuationBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId.ToString()).Selected = true;
-
-                //    if (sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId > 0)
-                //        revenueByActivityViewModel.AdditionalInformation.InspectionReportBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId.ToString()).Selected = true;
-
-                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId > 0)
-                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId.ToString()).Selected = true;
-
-                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 > 0)
-                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId2.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2.ToString()).Selected = true;
-
-                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 > 0)
-                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId3.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3.ToString()).Selected = true;
-
-                //    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 > 0)
-                //        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId4.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4.ToString()).Selected = true;
-                //}
-                //else
-                //{
-                //    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
-                //}
-
-                revenueByActivityViewModel.CurrentYearTotal = sheet.RevenueData.CurrentYear;
-                revenueByActivityViewModel.NextFincialYearTotal = sheet.RevenueData.NextFinancialYear;
-                revenueByActivityViewModel.LastFinancialYearTotal = sheet.RevenueData.LastFinancialYear;
-                revenueByActivityViewModel.RevenueData = sheet.RevenueData;
-            }
-            else
-            {                
-                foreach(var template in clientProgramme.BaseProgramme.TerritoryTemplates)
-                {
-                    territoryTemplates.Add(new SelectListItem
-                    {
-                        Value = template.Id.ToString(),
-                        Text = template.Location,
-                        Selected = false
-                    });
-                }
-                foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-                {
-                    businessActivityTemplates.Add(new SelectListItem
-                    {
-                        Value = bat.Id.ToString(),
-                        Text = bat.Description,
-                        Selected = false
-                    });
-                }
-
-            }
-            revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
-
-            if (territoryTemplates.Where(sl=>sl.Text == nzTemplate.Location).ToList().Count == 0)
-            {
-                territoryTemplates.Add(new SelectListItem
-                {
-                    Value = nzTemplate.Id.ToString(),
-                    Text = nzTemplate.Location,
-                    Selected = false
-                });
-            }
-
-            revenueByActivityViewModel.Territories = territoryTemplates;
-            revenueByActivityViewModel.Activities = businessActivityTemplates.OrderBy(ba => ba.Text).ToList();
-
-            return revenueByActivityViewModel;
-        }
+        }        
 
         [HttpGet]
         public async Task<IActionResult> Unlock(Guid id)
@@ -3239,7 +3060,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel
+                InformationViewModel model = new InformationViewModel(programme)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
@@ -3286,7 +3107,17 @@ namespace DealEngine.WebUI.Controllers
 
                 (model.Sections as List<InformationSectionViewModel>).InsertRange(model.Sections.Count(), _mapper.Map<InformationViewModel>(informationTemplate).Sections);
 
-                model.Section = sections;
+                //model.Section = new List<InformationSection>();
+                //foreach(var section in sections)
+                //{
+                //    model.Section.Add(new InformationSection(user, section.Name, section.Items) 
+                //    {
+                //        Id = section.Id,
+                //        CustomView = section.CustomView,
+                //        Position = section.Position
+                //    });
+                //}
+                
                 return model;
             }
             catch (Exception ex)

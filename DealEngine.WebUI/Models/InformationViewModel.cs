@@ -5,16 +5,20 @@ using DealEngine.Domain.Entities;
 
 namespace DealEngine.WebUI.Models
 {
+    
     public class InformationViewModel : BaseViewModel
     {
-        public InformationViewModel()
+        public InformationViewModel() { }
+        public InformationViewModel(Domain.Entities.Programme Programme)
         {
             PMINZEPLViewModel = new PMINZEPLViewModel();
             CLIViewModel = new CLIViewModel();
             PMINZPIViewModel = new PMINZPIViewModel();
             DAOLIViewModel = new DAOLIViewModel();
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
+            RevenueByActivityViewModel = new RevenueByActivityViewModel(Programme);
         }
+        public Domain.Entities.Programme Programme;
         public string CompanyName { get; set; }
         public string Name { get; set; }
         public string SectionView { get; set; }
@@ -189,12 +193,43 @@ namespace DealEngine.WebUI.Models
 
     public class RevenueByActivityViewModel
     {
+        public RevenueByActivityViewModel(Domain.Entities.Programme programme)
+        {
+            Territories = GetTerritories(programme);
+            Activities = GetActivities(programme);
+            AdditionalInformation = new AdditionalActivityViewModel();
+        }
+        private IList<SelectListItem> GetActivities(Domain.Entities.Programme programme)
+        {
+            Activities = new List<SelectListItem>();
+            foreach (var template in programme.BusinessActivityTemplates)
+            {
+                Activities.Add(new SelectListItem
+                {
+                    Text = template.Description,
+                    Value = template.AnzsciCode
+                });
+            }
+            return Activities;
+        }
+        private IList<SelectListItem> GetTerritories(Domain.Entities.Programme programme)
+        {
+            Territories = new List<SelectListItem>();
+            foreach (var template in programme.TerritoryTemplates)
+            {
+                Territories.Add(new SelectListItem
+                {
+                    Text = template.Location,
+                    Value = template.Id.ToString()
+                });
+            }
+            return Territories;            
+        }
         public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> Activities { get; set; }
         public decimal NextFincialYearTotal { get; set; }
         public decimal CurrentYearTotal { get; set; }
         public decimal LastFinancialYearTotal { get; set; }
-        public RevenueByActivity RevenueData { get; set; }
         public AdditionalActivityViewModel AdditionalInformation { get; set; }
     }
 

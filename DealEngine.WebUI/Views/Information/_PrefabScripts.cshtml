@@ -83,7 +83,7 @@
         }
 
         function TriggerHandler(Name, Value, Rule, DataItem) {                                                       
-            try {
+            try {                
                 //all rules go here
                 DefaultRule(Value, Name);
                 if (Rule === "clear") {
@@ -110,10 +110,14 @@
                     Value = "1";
                     DefaultRule(Value, Name);
                 }
-                if (Rule === "validatetable") {
-                    var tablevalues = document.getElementsByClassName(DataItem);
-                    debugger;
-                }
+                //if (Rule === "validatetable") {
+                //    var element = document.getElementById(Name);
+                //    if (element != null)
+                //    if (DataItem === "validateactivities") {
+                //        document.getElementById(Name).hidden = false;
+                //    }
+                    
+                //}
             } catch {
                 ////we expect this to fail for form elements with no change events but could use this later
             }      
@@ -123,7 +127,10 @@
             var array = DataItem.split(',');
             var territories = document.getElementById(array[0]);
             var tableElement = document.getElementById(array[1]);
-
+            if (tableElement.children.length > 0) {
+                tableElement.removeChild(tableElement.children[0]);
+            }
+            debugger;
             var tbdy = document.createElement('tbody');
             for (var t = 0; t < territories.options.length;t++) {
                 if (territories.options[t].selected === true) {                                
@@ -146,7 +153,7 @@
             input.setAttribute("id", element.text);
             input.setAttribute("class", "form-control");
             input.setAttribute("data-rule", "validatetable");
-            input.setAttribute("data-item", "validate" + element.parentElement.id);
+            input.setAttribute("data-item", "validatetable" + element.parentElement.id);
             input.setAttribute("onchange", "OnChange(this.id, this.name)");
             return input.outerHTML;            
         }
@@ -184,12 +191,23 @@
             }
         }
 
+        function ValidateTableValues(table) {
+            var percentage = 0;
+            for (var v = 0; v < table.length; v++) {
+                percentage += parseInt(table[v].value);
+            }
+            if (percentage != 100) {
+                alert("Percentage calculation does not equal to 100%");
+                return false;
+            }
+            return true;
+        }
+
         function ValidateSharedRevenueForm(tab) {
             var isValid = true;
-            var percentage = 0;
             var hasItem = false;
             if (tab == 1) {                
-                var territoryVals = document.querySelectorAll("[data-item='validateterritories']");
+                var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
                 var territories = document.getElementById("territories");
                 for (var i = 0; i < territories.options.length; i++) {
                     if (territories.options[i].selected === true) {
@@ -200,42 +218,36 @@
                     isValid = false;
                     alert("Please select territories.");
                 }
-                for (var v = 0; v < territoryVals.length; v++) {
-                    percentage += parseInt(territoryVals[v].value);
-                }
-                if (percentage != 100) {
-                    isValid = false;
-                    alert("Percentage calculation does not equal to 100%");
-                }
+                isValid = ValidateTableValues(territoryVals);
             }
             else if (tab == 2) {
-                var activityVals = document.querySelectorAll("[data-item='validateactivities']");
+                var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
                 var activities = document.getElementById("activities");
                 var element;
                 for (var i = 0; i < activities.options.length; i++) {
-                    var additionalactivity = activities.options[i].innerText;
+                    var additionalactivity = activities.options[i].value;
                     if (activities.options[i].selected === true) {
                         hasItem = true;
-                        element = document.getElementById("Additional" + additionalactivity.trim());
+                        element = document.getElementById(additionalactivity);
                         if (element != null) {
                             element.hidden = false;
                         }
                     } else {
-                        element = document.getElementById("Additional" + additionalactivity.trim());
+                        element = document.getElementById(additionalactivity);
                         if (element != null) {
                             element.hidden = true;
                         }
                     }
                 }
-                for (var v = 0; v < activityVals.length; v++) {
-                    percentage += parseInt(activityVals[v].value);
-                }
-                if (percentage != 100) {
-                    isValid = false;
-                    alert("Percentage calculation does not equal to 100%");
-                }
+                isValid = ValidateTableValues(activityVals);
             }
             if (isValid) {
+                $.ajax({
+                url: '@Url.Action("SaveInformation", "Information")',
+                type: "POST",
+                data: $("RevenueByActivityViewModel").serialize({ json: true })
+                //data: $("#myForm").serialize({ json:true })
+            })
                 tab += 1;
                 SetCurrentTab('RevenueTabs' + tab);                
             }

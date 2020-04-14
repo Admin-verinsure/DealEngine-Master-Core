@@ -4,7 +4,7 @@ using System.Linq;
 using DealEngine.Domain.Entities.Abstracts;
 
 namespace DealEngine.Domain.Entities
-{
+{    
     public class Programme : EntityBase, IAggregateRoot
     {
         public virtual string Name { get; set; }
@@ -80,8 +80,7 @@ namespace DealEngine.Domain.Entities
         {
             return Products.SelectMany((arg) => arg.Documents);
         }
-       
-	}
+    }
 
 }
 
