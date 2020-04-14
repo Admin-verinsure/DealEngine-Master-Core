@@ -136,8 +136,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             ////Referral points per agreement
             ////Not a renewal of an existing policy
             //uwrfnotrenewalcl(underwritingUser, agreement);
-            ////Not a renewal of an existing policy
-            //uwrclissue(underwritingUser, agreement, feeincome);
+            //Cyber Issue
+            uwrclissue(underwritingUser, agreement, feeincome);
 
             //Update agreement status
             if (agreement.ClientAgreementReferrals.Where(cref => cref.DateDeleted == null && cref.Status == "Pending").Count() > 0)
@@ -315,7 +315,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrclissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
                         if (feeincome > 2500000)
                         {
