@@ -76,9 +76,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             termsl500klimitoption.DeletedBy = null;
 
 
-            ////Referral points per agreement
-            ////ED Issues
-            //uwredissue(underwritingUser, agreement);
+            //Referral points per agreement
+            //ED Issues
+            uwredissue(underwritingUser, agreement);
 
 
             //Update agreement status
@@ -182,9 +182,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "2" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "2" || 
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.StaffRedundancyOptions").First().Value == "1") //this needs to be changed missing question in epl
+                        if ((agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "1" &&
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "2") || 
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.IsInsuredClaimOptions").First().Value == "1")
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "Pending";
                         }
