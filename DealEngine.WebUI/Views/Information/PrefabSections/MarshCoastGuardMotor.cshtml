@@ -25,7 +25,7 @@
                                 <script type="text/javascript">
                                 $(window).on('load',function () {
 						    $("#tblRegisteredMV").jqGrid({
-						        url: "/Services/GetVehicles?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=false&transfered=false",
+						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,
@@ -436,7 +436,7 @@
                                 <script type="text/javascript">
                                 $(".MotorRemoved").click(function () {
 						    $("#tblRemovedRegisteredMV").jqGrid({
-						        url: "/Services/GetVehicles?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=true&transfered=false",
+						        url: "/Services/GetVehicles?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

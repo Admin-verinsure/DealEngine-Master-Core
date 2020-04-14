@@ -37,7 +37,7 @@
                                 //});
                                 $(window).on('load',function () {
                                         $("#tblLocation").jqGrid({
-                                            url: "/Services/GetLocations?informationId=@Model.ClientInformationSheet.Id&removed=false",
+                                            url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=false",
                                             datatype: "xml",
                                             mtype: "GET",
                                             async: true,
@@ -317,7 +317,7 @@
                             <script type="text/javascript">
                                 $(".LocRemoved").click(function () {
 						    $("#tblRemovedLocation").jqGrid({
-						        url: "/Services/GetLocations?informationId=@Model.ClientInformationSheet.Id&removed=true",
+						        url: "/Services/GetLocations?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

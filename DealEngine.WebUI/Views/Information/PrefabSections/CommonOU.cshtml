@@ -18,7 +18,7 @@
                             <script type="text/javascript">
                                 $(window).on('load',function () {
 							    $("#tblOU").jqGrid({
-							        url: "/Services/GetOrganisationalUnits?informationId=@Model.ClientInformationSheet.Id",
+							        url: "/Services/GetOrganisationalUnits?informationId=@Model.AnswerSheetId",
 							        datatype: "xml",
                                     mtype: "GET",
                                     async: true,
