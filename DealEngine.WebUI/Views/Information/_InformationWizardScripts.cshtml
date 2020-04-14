@@ -2503,15 +2503,17 @@ function showAccordionPanel(id, panelNo) {
         var listc = ['Breakdown'];
         var formName = "";
         if (TableType == 'true') {
-            listc = [ 'Territory Breakdown' ];
+            listc = ['Territory Breakdown'];
             if (typeof revenueTable === 'undefined') {
                 revenueTable = $('#sharedRevenueTerritoriesTable');
                 formName = "revenue1";
             }
-        } else if (typeof revenueTable === 'undefined') {
+        } else {
             listc = ['Revenue Breakdown'];
-            revenueTable = $('#sharedRevenueActivityTable');
-            formName = "revenue2";
+            if (typeof revenueTable === 'undefined') {
+                revenueTable = $('#sharedRevenueActivityTable');
+                formName = "revenue2";
+            }
         }
 
         if (revenueTable != null) {
@@ -2545,7 +2547,7 @@ function showAccordionPanel(id, panelNo) {
             //        lista.push('New Zealand');
             //    }
             //}
-            }
+        }
         var header = $('<tr>');
         header.append($('<th>'));
         listc.forEach( function(countryName) {
@@ -2561,7 +2563,7 @@ function showAccordionPanel(id, panelNo) {
                     row.append($('<td>').append(
                         $('<section>').append(
                         $('<label>', { class: 'input'}).append(
-                            $('<input>', { type: 'number', class: 'form-control', form: formName, name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
+                            $('<input>', { type: 'number', class: 'form-control', form: formName, name: name, id: name,  max:'100', pattern:'^[0-9]$', placeholder: '%'}).attr("form", formName)
                             ))));
                 });
                 count++;

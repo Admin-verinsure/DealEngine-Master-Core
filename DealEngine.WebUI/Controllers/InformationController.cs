@@ -2998,7 +2998,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     var strSpit = str.Split('=');
                     if (strSpit[0] != "Territories")
-                    {
+                    {                        
                         var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(strSpit[0]));
                         var newTerritory = new Territory(user);
                         newTerritory.Location = territorytemplate.Location;

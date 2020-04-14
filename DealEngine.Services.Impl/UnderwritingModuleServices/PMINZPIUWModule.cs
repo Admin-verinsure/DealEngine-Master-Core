@@ -244,7 +244,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit1mil = 1000000;
             decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"]/100);
             decimal TermBrokerage1mil = 0m;
-            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage;
+            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
             decimal TopupBrokerage1mil = 0m;
             TopupBrokerage1mil = (TermBrokerage1mil > MinBrokerage) ? 0M : (MinBrokerage - TermBrokerage1mil);
 
@@ -269,7 +269,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit2mil = 2000000;
             decimal TermPremium2mil = decPIBasePremium * (1 + rates["pi2millimitloadingrate"] / 100);
             decimal TermBrokerage2mil = 0m;
-            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage;
+            TermBrokerage2mil = TermPremium2mil * agreement.Brokerage / 100;
             decimal TopupBrokerage2mil = 0m;
             TopupBrokerage2mil = (TermBrokerage2mil > MinBrokerage) ? 0M : (MinBrokerage - TermBrokerage2mil);
 
@@ -294,7 +294,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             int TermLimit5mil = 5000000;
             decimal TermPremium5mil = decPIBasePremium * (1 + rates["pi5millimitloadingrate"] / 100);
             decimal TermBrokerage5mil = 0m;
-            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage;
+            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage / 100;
             decimal TopupBrokerage5mil = 0m;
             TopupBrokerage5mil = (TermBrokerage5mil > MinBrokerage) ? 0M : (MinBrokerage - TermBrokerage5mil);
 
