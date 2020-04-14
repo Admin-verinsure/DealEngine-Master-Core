@@ -250,7 +250,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm term1millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit1mil, TermExcess);
             term1millimitoption.TermLimit = TermLimit1mil;
-            term1millimitoption.Premium = TermPremium1mil + TopupBrokerage1mil;
+            term1millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium1mil + TopupBrokerage1mil) / 10), 0) * 10;
             term1millimitoption.Excess = TermExcess;
             term1millimitoption.BrokerageRate = agreement.Brokerage;
             term1millimitoption.Brokerage = (TermBrokerage1mil > MinBrokerage) ? TermBrokerage1mil : MinBrokerage;
@@ -275,7 +275,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm term2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitoption.TermLimit = TermLimit2mil;
-            term2millimitoption.Premium = TermPremium2mil + TopupBrokerage2mil;
+            term2millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium2mil + TopupBrokerage2mil) / 10), 0) *10;
             term2millimitoption.Excess = TermExcess;
             term2millimitoption.BrokerageRate = agreement.Brokerage;
             term2millimitoption.Brokerage = (TermBrokerage2mil > MinBrokerage) ? TermBrokerage2mil : MinBrokerage;
@@ -300,7 +300,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm term5millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit5mil, TermExcess);
             term5millimitoption.TermLimit = TermLimit5mil;
-            term5millimitoption.Premium = TermPremium5mil + TopupBrokerage5mil;
+            term5millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium5mil + TopupBrokerage5mil) / 10), 0) * 10;
             term5millimitoption.Excess = TermExcess;
             term5millimitoption.BrokerageRate = agreement.Brokerage;
             term5millimitoption.Brokerage = (TermBrokerage5mil > MinBrokerage) ? TermBrokerage5mil : MinBrokerage;
@@ -441,9 +441,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 basepremiumOrd = (feeincome * decPRIT / 100 * rates["piitcomponentrateord"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentrateord"] / 100) +
                             (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentrateord"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentrateord"] / 100) +
                             (feeincome * decPRFASA / 100 * rates["pifinancialcomponentrateord"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentrateord"] / 100);
-                minpremiumOrd = (decPRIT / 100 * rates["piitcomponentminpremiumord"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumord"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumord"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumord"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumord"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumord"] / 100);
+                minpremiumOrd = (decPRIT / 100 * rates["piitcomponentminpremiumord"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumord"]) +
+                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumord"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumord"]) +
+                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumord"]) + (decPROther / 100 * rates["piothercomponentminpremiumord"]);
                 basepremiumOrd = (basepremiumOrd > minpremiumOrd) ? basepremiumOrd : minpremiumOrd;
             }
             if (intcapmnumber > 0)
@@ -451,9 +451,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 basepremiumCAPM = (feeincome * decPRIT / 100 * rates["piitcomponentratecapm"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratecapm"] / 100) +
                             (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratecapm"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratecapm"] / 100) +
                             (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratecapm"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratecapm"] / 100);
-                minpremiumCAPM = (decPRIT / 100 * rates["piitcomponentminpremiumcapm"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumcapm"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumcapm"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumcapm"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumcapm"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumcapm"] / 100);
+                minpremiumCAPM = (decPRIT / 100 * rates["piitcomponentminpremiumcapm"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumcapm"]) +
+                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumcapm"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumcapm"]) +
+                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumcapm"]) + (decPROther / 100 * rates["piothercomponentminpremiumcapm"]);
                 basepremiumCAPM = (basepremiumCAPM > minpremiumCAPM) ? basepremiumCAPM : minpremiumCAPM;
             }
             if (intpmpnumber > 0)
@@ -461,9 +461,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 basepremiumPMP = (feeincome * decPRIT / 100 * rates["piitcomponentratepmp"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratepmp"] / 100) +
                             (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratepmp"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratepmp"] / 100) +
                             (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratepmp"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratepmp"] / 100);
-                minpremiumPMP = (decPRIT / 100 * rates["piitcomponentminpremiumpmp"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpmp"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpmp"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpmp"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpmp"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumpmp"] / 100);
+                minpremiumPMP = (decPRIT / 100 * rates["piitcomponentminpremiumpmp"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpmp"]) +
+                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpmp"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpmp"]) +
+                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpmp"]) + (decPROther / 100 * rates["piothercomponentminpremiumpmp"]);
                 basepremiumPMP = (basepremiumPMP > minpremiumPMP) ? basepremiumPMP : minpremiumPMP;
             }
             if (intpdnumber > 0)
@@ -471,9 +471,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 basepremiumPD = (feeincome * decPRIT / 100 * rates["piitcomponentratepd"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratepd"] / 100) +
                             (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratepd"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratepd"] / 100) +
                             (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratepd"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratepd"] / 100);
-                minpremiumPD = (decPRIT / 100 * rates["piitcomponentminpremiumpd"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpd"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpd"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpd"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpd"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumpd"] / 100);
+                minpremiumPD = (decPRIT / 100 * rates["piitcomponentminpremiumpd"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpd"]) +
+                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpd"]) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpd"]) +
+                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpd"]) + (decPROther / 100 * rates["piothercomponentminpremiumpd"]);
                 basepremiumPD = (basepremiumPD > minpremiumPD) ? basepremiumPD : minpremiumPD;
             }
 
