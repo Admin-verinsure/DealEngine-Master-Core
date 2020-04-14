@@ -16,7 +16,6 @@ namespace DealEngine.Services.Interfaces
         Task<TerritoryTemplate> GetTerritoryTemplateById(Guid TerritoryTemplateId);
         Task<Territory> GetTerritoryById(Guid TerritoryId);
         Task<Territory> GetTerritoryByName(string Location);
-        Task<Territory> GetTerritoryByTemplateId(Guid Id);
         Task RemoveTerritory(Territory territory);
     }
 }

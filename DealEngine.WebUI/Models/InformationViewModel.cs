@@ -16,7 +16,7 @@ namespace DealEngine.WebUI.Models
             PMINZPIViewModel = new PMINZPIViewModel();
             DAOLIViewModel = new DAOLIViewModel();
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
-            RevenueByActivityViewModel = new RevenueByActivityViewModel(Programme);
+            RevenueDataViewModel = new RevenueDataViewModel(Programme);
         }
         public Domain.Entities.Programme Programme;
         public string CompanyName { get; set; }
@@ -52,7 +52,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<OrganisationViewModel> Operators { get; set; }
         public string Advisory { get; set; }
         public IEnumerable<BusinessContractViewModel> BusinessContracts { get; set; }
-        public RevenueByActivityViewModel RevenueByActivityViewModel { get; set; }
+        public RevenueDataViewModel RevenueDataViewModel { get; set; }
         public SharedRoleViewModel SharedRoleViewModel { get; set; }
         public ClaimsHistoryViewModel ClaimsHistoryViewModel { get; set; }
         public PMINZEPLViewModel PMINZEPLViewModel { get; set; }
@@ -191,9 +191,9 @@ namespace DealEngine.WebUI.Models
         }
     }
 
-    public class RevenueByActivityViewModel
+    public class RevenueDataViewModel
     {
-        public RevenueByActivityViewModel(Domain.Entities.Programme programme)
+        public RevenueDataViewModel(Domain.Entities.Programme programme)
         {
             Territories = GetTerritories(programme);
             Activities = GetActivities(programme);
@@ -227,7 +227,7 @@ namespace DealEngine.WebUI.Models
         }
         public IList<SelectListItem> Territories { get; set; }
         public IList<SelectListItem> Activities { get; set; }
-        public decimal NextFincialYearTotal { get; set; }
+        public decimal NextFinancialYearTotal { get; set; }
         public decimal CurrentYearTotal { get; set; }
         public decimal LastFinancialYearTotal { get; set; }
         public AdditionalActivityViewModel AdditionalInformation { get; set; }

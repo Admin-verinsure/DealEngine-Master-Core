@@ -26,7 +26,7 @@ namespace DealEngine.Domain.Entities
         public virtual IList<Organisation> Organisation { get; set; }
 		public virtual IList<SharedDataRole> SharedDataRoles { get; set; }        
         public virtual IList<SubClientInformationSheet> SubClientInformationSheets { get; set; }
-        public virtual RevenueByActivity RevenueData { get; set; }
+        public virtual RevenueData RevenueData { get; set; }
         //Not Started; Started; Submitted; Bound and pending payment; Bound and invoice pending; Bound and invoiced; Bound; Not Taken Up        
         public virtual string Status { get; set; }        
         public virtual string ReferenceId { get; set; }        
@@ -60,7 +60,8 @@ namespace DealEngine.Domain.Entities
             ClientInformationSheetAuditLogs = new List<AuditLog>();
             BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
-		}
+            RevenueData = new RevenueData(createdBy);
+        }
 
 		public ClientInformationSheet (User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
 			: this (createdBy)
@@ -187,6 +188,50 @@ namespace DealEngine.Domain.Entities
 
 		public virtual Product Product { get; set; }
 	}
+
+    public class RevenueData : EntityBase
+    {
+        protected RevenueData() : this(null) { }
+        public RevenueData(User createdBy) : base(createdBy)
+        {
+            Territories = new List<Territory>();
+            Activities = new List<BusinessActivity>();
+            AdditionalActivityInformation = new AdditionalActivityInformation(createdBy);
+        }
+        public virtual IList<Territory> Territories { get; set; }
+        public virtual IList<BusinessActivity> Activities { get; set; }
+        public virtual decimal NextFinancialYearTotal { get; set; }
+        public virtual decimal CurrentYearTotal { get; set; }
+        public virtual decimal LastFinancialYearTotal { get; set; }
+        public virtual AdditionalActivityInformation AdditionalActivityInformation { get; set; }
+    }
+
+    public class AdditionalActivityInformation : EntityBase
+    {
+        protected AdditionalActivityInformation() : this(null) { }
+        public AdditionalActivityInformation(User createdBy) : base(createdBy)
+        {
+        }
+
+        public virtual int HasInspectionReportOptions { get; set; }
+        public virtual int HasDisclaimerReportsOptions { get; set; }
+        public virtual int HasObservationServicesOptions { get; set; }
+        public virtual int HasRecommendedCladdingOptions { get; set; }
+        public virtual int HasStateSchoolOptions { get; set; }
+        public virtual int HasIssuedCertificatesOptions { get; set; }
+        public virtual string QualificationDetails { get; set; }
+        public virtual string ValuationDetails { get; set; }
+        public virtual string OtherDetails { get; set; }
+        public virtual string RebuildDetails { get; set; }
+        public virtual string InspectionReportDetails { get; set; }
+        public virtual string OtherProjectManagementDetails { get; set; }
+        public virtual string NonProjectManagementDetails { get; set; }
+        public virtual decimal ConstructionCommercialDetails { get; set; }
+        public virtual decimal ConstructionDwellingDetails { get; set; }
+        public virtual decimal ConstructionIndustrialDetails { get; set; }
+        public virtual decimal ConstructionInfrastructureDetails { get; set; }
+        public virtual decimal ConstructionSchoolDetails { get; set; }
+    }
 
     public class SubClientInformationSheet : ClientInformationSheet
     {

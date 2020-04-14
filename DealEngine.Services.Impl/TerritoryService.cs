@@ -76,11 +76,6 @@ namespace DealEngine.Services.Impl
             return await _territoryRepository.FindAll().FirstOrDefaultAsync(t => t.Location == location);
         }
 
-        public async Task<Territory> GetTerritoryByTemplateId(Guid Id)
-        {
-            return await _territoryRepository.FindAll().FirstOrDefaultAsync(t => t.TerritoryTemplateId == Id);
-        }
-
         public async Task RemoveTerritory(Territory territory)
         {
             await _territoryRepository.RemoveAsync(territory);

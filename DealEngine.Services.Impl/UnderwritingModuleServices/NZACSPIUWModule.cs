@@ -141,7 +141,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISTerritory.Location == "New Zealand") //New Zealand income only
                     {
-                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear * uISTerritory.Pecentage / 100;
+                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal * uISTerritory.Pecentage / 100;
                     }
 
                     ClientAgreementEndorsement clientAgreementEndorsement = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "USA / Canada Covered");

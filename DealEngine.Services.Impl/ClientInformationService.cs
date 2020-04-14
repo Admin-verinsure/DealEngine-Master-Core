@@ -131,11 +131,41 @@ namespace DealEngine.Services.Impl
             }
 
             // get activity/revenue data
-            var activityRevenue = collection.Keys.Where(s => s.StartsWith("actRevMat", StringComparison.CurrentCulture));
+            var activityRevenue = collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture));
             NameValueCollection activityRevenueData = new NameValueCollection();
             foreach (string key in activityRevenue)
+            {
+                var value = collection[key];
+
+                var modeltype = typeof(RevenueDataViewModel).GetProperty(split.FirstOrDefault());
+                var infomodel = modeltype.GetValue(model);
+                var property = infomodel.GetType().GetProperty(split.LastOrDefault());
+
+                switch (property.PropertyType.Name)
+                {
+                    case "Int32":
+                        int.TryParse(answer.Value, out value);
+                        property.SetValue(infomodel, value);
+                        break;
+                    case "IList`1":
+                        var propertylist = (IList<SelectListItem>)property.GetValue(infomodel);
+                        var options = answer.Value.Split(',').ToList();
+                        foreach (var option in options)
+                        {
+                            propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
+                        }
+                        property.SetValue(infomodel, propertylist);
+                        break;
+                    case "DateTime":
+                        property.SetValue(infomodel, DateTime.Parse(answer.Value));
+                        break;
+                    default:
+                        property.SetValue(infomodel, answer.Value);
+                        break;
+                }
+            }
                 activityRevenueData.Add(key, collection[key].FirstOrDefault());
-            //await SaveRevenueData(sheet, activityRevenueData, null);
+            await SaveRevenueData(sheet, activityRevenueData);
 
             // get shared data
             var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
@@ -147,6 +177,23 @@ namespace DealEngine.Services.Impl
             //ConfigureSharedData (sheet);
 
             // save data to shared data
+        }
+
+        private Task SaveRevenueData(ClientInformationSheet sheet, NameValueCollection activityRevenueData)
+        {
+            RevenueData revenueData;
+            try
+            {
+                revenueData = _mapper.Map<RevenueData>(activityRevenueData);
+            }
+            catch(Exception ex)
+            {
+                revenueData = null;
+                Console.WriteLine(ex.Message);
+            }
+            
+            sheet.RevenueData = revenueData;            
+            throw new NotImplementedException();
         }
 
         public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)

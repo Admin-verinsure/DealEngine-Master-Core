@@ -85,7 +85,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISTerritory.Location == "NZ") //NZ income only
                     {
-                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear * uISTerritory.Pecentage / 100;
+                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal * uISTerritory.Pecentage / 100;
                     }
                 }
             }

@@ -6,19 +6,12 @@ namespace DealEngine.Domain.Entities
 {
 	public class Territory : EntityBase, IAggregateRoot
     {
-
         public virtual decimal Pecentage { get; set; }
-        public virtual IList<RevenueByActivity> RevenueByActivities { get; set; }
         public virtual string Location { get; set; }
-        public virtual Guid TerritoryTemplateId { get; set; }
-
         protected Territory() : base (null) { }
 
-		public Territory (User createdBy)
-			: base (createdBy)
-		{
-            RevenueByActivities = new List<RevenueByActivity>();
-		}
+        public Territory(User createdBy)
+            : base(createdBy) { }
 	}
 }
 

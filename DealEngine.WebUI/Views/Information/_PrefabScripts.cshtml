@@ -139,7 +139,7 @@
                     td1.appendChild(document.createTextNode(territories[t].text));
                     tr.appendChild(td1);                    
                     var td2 = document.createElement('td');
-                    td2.innerHTML = CreateSharedInput(territories.options[t]);
+                    td2.innerHTML = CreateSharedInput(array[2], territories.options[t]);
                     tr.appendChild(td2);
                 }
                 tbdy.appendChild(tr);
@@ -147,9 +147,9 @@
             tableElement.appendChild(tbdy);
         }
 
-        function CreateSharedInput(element) {           
+        function CreateSharedInput(Id, element) {           
             var input = document.createElement("input");
-            input.setAttribute("name", element.value);
+            input.setAttribute("name", Id + "." + element.value);
             input.setAttribute("id", element.text);
             input.setAttribute("class", "form-control");
             input.setAttribute("data-rule", "validatetable");
@@ -158,7 +158,9 @@
             return input.outerHTML;            
         }
 
-        function SaveSharedRevenue() {
+        function SaveSharedRevenue() {            
+            var form = document.getElementById('myForm');
+            debugger;
             $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",
@@ -242,10 +244,11 @@
                 isValid = ValidateTableValues(activityVals);
             }
             if (isValid) {
+                var form = document.getElementById('myForm');
                 $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",
-                data: $("RevenueByActivityViewModel").serialize({ json: true })
+                data: $("#myForm").serialize({ json: true })
                 //data: $("#myForm").serialize({ json:true })
             })
                 tab += 1;
