@@ -117,6 +117,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            
+            agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
+            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
 
             string auditLogDetail = "PMINZ PL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

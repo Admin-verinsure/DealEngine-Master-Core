@@ -95,6 +95,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since DO policy first held";
+            agreement.TerritoryLimit = "Worldwide";
+            agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ DO UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

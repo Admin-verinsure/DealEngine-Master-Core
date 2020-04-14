@@ -151,6 +151,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since CL policy first held";
+            agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
+            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
