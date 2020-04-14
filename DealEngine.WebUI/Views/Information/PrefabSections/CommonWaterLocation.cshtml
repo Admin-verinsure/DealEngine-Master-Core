@@ -22,7 +22,7 @@
                     <script type="text/javascript">
 							$(document).ready(function () {
                                 $("#tblWaterLocation").jqGrid({
-							        url: "/Services/GetWaterLocations?informationId=@Model.ClientInformationSheet.Id&removed=false",
+							        url: "/Services/GetWaterLocations?informationId=@Model.AnswerSheetId&removed=false",
 							        datatype: "xml",
                                     mtype: "GET",
                                     async: true,
@@ -267,7 +267,7 @@
                     <script type="text/javascript">
 						$(document).ready(function () {
 						    $("#tblRemovedWaterLocation").jqGrid({
-						        url: "/Services/GetWaterLocations?informationId=@Model.ClientInformationSheet.Id&removed=true",
+						        url: "/Services/GetWaterLocations?informationId=@Model.AnswerSheetId&removed=true",
 						        datatype: "xml",
                                 mtype: "GET",
                                 async: true,

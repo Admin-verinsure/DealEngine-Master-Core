@@ -112,8 +112,8 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <label class=" label required nonOwnerSec">Organisation Type</label>
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnelSec">
+                        <label class=" label required nonOwnerSec ">Organisation Type</label>
                         <label class="input">
                             <select id="EditOrganisationType" onchange="EditPMINZOrgTyprselected('EditOrganisationType')" class="form-control b" name="OrganisationTypeName">
                                 <option selected="selected" value="">-- Select --</option>
@@ -344,7 +344,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 NonProjectPersonnelSec">
                         <label class=" label required">Organisation Type</label>
                         <label class="input">
                             <select id="AddOrgTypeName" onchange="AddOrgTypeSelected('AddOrgTypeName')" class="form-control b" name="OrganisationTypeName">
@@ -625,12 +625,12 @@
             $('.EditNonProjectPersonnel ').addClass('hidden');
             $('.nonOwnerSec').removeClass('hidden');
             $('.ProjectPersonnelSec').removeClass('hidden');
-
+            $('.privateorgtypesec').removeClass('hidden');
 
         } else {
             $('.OwnerSec ').removeClass('hidden');
            $('.ProjectPersonnelSec ').addClass('hidden');
-
+           $('.privateorgtypesec').addClass('hidden');
             $('.EditNonProjectPersonnel ').removeClass('hidden');
             $("EditProjectPersonnelSec :input").val(""); //Clears form
         }
@@ -686,8 +686,9 @@
          var addTypeselected = document.getElementById(typeselected);
          if ($('#AddPMINZType').val() == "project management personnel") {
              $('#ProjectPersonnelSec').removeClass('hidden');
+
          } else {
-              $('#ProjectPersonnelSec').addClass('hidden');
+             $('#ProjectPersonnelSec').addClass('hidden');
          }
 
          if (addTypeselected.options[addTypeselected.selectedIndex].value == "Person - Individual") {
@@ -717,9 +718,13 @@
             debugger;
             $('#ProjectPersonnelSec').removeClass('hidden');
             $('#NonProjectPersonnelSec').addClass('hidden');
+            $('.NonProjectPersonnelSec').addClass('hidden');
+            $('#OrganisationTypeNameSec').removeClass('hidden');
             $('#PMINZOrgName').val('');
 
         } else {
+            $('.NonProjectPersonnelSec').removeClass('hidden');
+            $('#OrganisationTypeNameSec').addClass('hidden');
             $('#ProjectPersonnelSec').addClass('hidden');
             $('#NonProjectPersonnelSec').removeClass('hidden');
             //$("ProjectPersonnelSec :input").val(""); //Clears form
