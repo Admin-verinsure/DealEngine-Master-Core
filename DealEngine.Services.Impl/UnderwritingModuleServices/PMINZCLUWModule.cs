@@ -97,7 +97,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 2500;
 
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.TotalEmployees").First().Value == "1")
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOtions").First().Value == "1")
             {
                 extpremium = rates["clsocialengineeringextpremium"];
             }
