@@ -17,6 +17,8 @@ namespace DealEngine.WebUI.Models
         }
         public string CompanyName { get; set; }
         public Guid AnswerSheetId { get; set; }
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
         public string SectionView { get; set; }
         public List<InformationSection> Section { get; set; }
