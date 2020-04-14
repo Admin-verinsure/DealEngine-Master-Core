@@ -60,19 +60,19 @@
                                     @if (User.HasClaim("EditManageDocuments", "EditManageDocuments"))
                                     {
                                         @if (productId == "")
-                                        {<i class="fa fa-edit">
-                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id">Edit</a></i>
+                                        {
+                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id"><i class="fa fa-edit"></i> Edit</a>
                                         }
                                         else
                                         {
-                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId">Edit</a>
+                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId"><i class="fa fa-edit"></i> Edit</a>
                                         }                                        
                                     }                            
-                                    <a class="btn btn-danger btn-xs" href="/File/DeleteDocument?id=@doc.Id">Delete</a>                                
+                                    <a class="btn btn-danger btn-xs" href="/File/DeleteDocument?id=@doc.Id"><i class="fa fa-trash"></i> Delete</a>                                
                                 </td>
                                 <td>
-                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)">Get Html</a>
-                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx">Get Docx</a>
+                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)"><i class="fa fa-download"></i> Get Html</a>
+                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx"><i class="fa fa-download"></i> Get Docx</a>
                                 </td>
                             </tr>
                         }
