@@ -1360,7 +1360,7 @@ namespace DealEngine.WebUI.Controllers
                 }
                 model.RevenueByActivityViewModel = revenueByActivityViewModel;
                 model.AnswerSheetId = sheet.Id;
-
+                model.Id = id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
@@ -2054,7 +2054,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheetId = Guid.Parse(collection["AnswerSheetId"]);
+                sheetId = Guid.Parse(collection["ClientInformationSheet.Id"]);
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(sheetId);
                 if (sheet == null)
                     return Json("Failure");
@@ -2610,7 +2610,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+                if (Guid.TryParse(HttpContext.Request.Form["ClientInformationSheet.Id"], out sheetId))
                 {
                     sheet = await _clientInformationService.GetInformation(sheetId);
                 }

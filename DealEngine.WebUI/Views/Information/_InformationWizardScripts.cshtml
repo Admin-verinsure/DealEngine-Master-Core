@@ -277,6 +277,8 @@
                $('#getAgreementDecModal').show();               
 
                var ID = $('#Id').val();
+               var answerid= $('#AnswerSheetId').val();
+               debugger;
                var postdata = {
                    id: ID
                }
@@ -616,8 +618,9 @@
                $('#tblBusinessContract').trigger('reloadGrid');
                $('#PrincipalDirectors').trigger('reloadGrid');
            })
-           .fail(function () {
-               alert("Unable to save.");
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+               alert("Unable to save....");
            });
         }
     });
