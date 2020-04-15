@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piitcomponentrateord", "piconstructioncomponentrateord", "pibusinessdevpmtcomponentrateord", "pimanufacturingcomponentrateord", 
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "piitcomponentrateord", "piconstructioncomponentrateord", "pibusinessdevpmtcomponentrateord", "pimanufacturingcomponentrateord",
                 "pifinancialcomponentrateord", "piothercomponentrateord", "piitcomponentminpremiumord", "piconstructioncomponentminpremiumord", "pibusinessdevpmtcomponentminpremiumord",
                 "pimanufacturingcomponentminpremiumord", "pifinancialcomponentminpremiumord", "piothercomponentminpremiumord",
                 "piitcomponentratecapm", "piconstructioncomponentratecapm", "pibusinessdevpmtcomponentratecapm", "pimanufacturingcomponentratecapm",
@@ -123,7 +123,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     if (uisorg.CertType == "Ordinary")
                     {
                         intordnumber += 1;
-                    } 
+                    }
                     else if (uisorg.CertType == "PMP")
                     {
                         intpmpnumber += 1;
@@ -144,15 +144,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear;
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYear > 0)
+                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
                     numberoffeeincome += 1;
                 }
-                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYear > 0)
+                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
                     numberoffeeincome += 1;
                 }
                 feeincome = totalfeeincome / numberoffeeincome;
@@ -246,7 +246,8 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     cAEConstruction.DateDeleted = null;
                     cAEConstruction.DeletedBy = null;
                 }
-            } else
+            }
+            else
             {
                 if (cAENonConstruction != null)
                 {
@@ -271,7 +272,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //}
 
             int TermLimit1mil = 1000000;
-            decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"]/100);
+            decimal TermPremium1mil = decPIBasePremium * (1 + rates["pi1millimitloadingrate"] / 100);
             decimal TermBrokerage1mil = 0m;
             TermBrokerage1mil = TermPremium1mil * agreement.Brokerage / 100;
             decimal TopupBrokerage1mil = 0m;
@@ -304,7 +305,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             ClientAgreementTerm term2millimitoption = GetAgreementTerm(underwritingUser, agreement, "PI", TermLimit2mil, TermExcess);
             term2millimitoption.TermLimit = TermLimit2mil;
-            term2millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium2mil + TopupBrokerage2mil) / 10), 0) *10;
+            term2millimitoption.Premium = Math.Round(Math.Ceiling((TermPremium2mil + TopupBrokerage2mil) / 10), 0) * 10;
             term2millimitoption.Excess = TermExcess;
             term2millimitoption.BrokerageRate = agreement.Brokerage;
             term2millimitoption.Brokerage = (TermBrokerage2mil > MinBrokerage) ? TermBrokerage2mil : MinBrokerage;
@@ -461,135 +462,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             return dict;
         }
 
-
-        decimal GetPIBasePremiumFor(IDictionary<string, decimal> rates, decimal feeincome, decimal decPRBDSP, decimal decPRCon, decimal decPRFASA, decimal decPRIT, decimal decPRMOP, decimal decPROther,
-            int intordnumber, int intpmpnumber, int intcapmnumber, int intpdnumber)
-        {
-            decimal pibasepremium = 0M;
-            decimal basepremiumOrd = 0M;
-            decimal basepremiumCAPM = 0M;
-            decimal basepremiumPMP = 0M;
-            decimal basepremiumPD = 0M;
-            decimal minpremiumOrd = 0M;
-            decimal minpremiumCAPM = 0M;
-            decimal minpremiumPMP = 0M;
-            decimal minpremiumPD = 0M;
-
-            if (intordnumber > 0)
-            {
-                basepremiumOrd = (feeincome * decPRIT / 100 * rates["piitcomponentrateord"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentrateord"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentrateord"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentrateord"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentrateord"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentrateord"] / 100);
-                minpremiumOrd = (decPRIT / 100 * rates["piitcomponentminpremiumord"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumord"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumord"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumord"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumord"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumord"] / 100);
-                basepremiumOrd = (basepremiumOrd > minpremiumOrd) ? basepremiumOrd : minpremiumOrd;
-            }
-            if (intcapmnumber > 0)
-            {
-                basepremiumCAPM = (feeincome * decPRIT / 100 * rates["piitcomponentratecapm"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratecapm"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratecapm"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratecapm"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratecapm"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratecapm"] / 100);
-                minpremiumCAPM = (decPRIT / 100 * rates["piitcomponentminpremiumcapm"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumcapm"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumcapm"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumcapm"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumcapm"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumcapm"] / 100);
-                basepremiumCAPM = (basepremiumCAPM > minpremiumCAPM) ? basepremiumCAPM : minpremiumCAPM;
-            }
-            if (intpmpnumber > 0)
-            {
-                basepremiumPMP = (feeincome * decPRIT / 100 * rates["piitcomponentratepmp"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratepmp"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratepmp"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratepmp"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratepmp"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratepmp"] / 100);
-                minpremiumPMP = (decPRIT / 100 * rates["piitcomponentminpremiumpmp"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpmp"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpmp"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpmp"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpmp"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumpmp"] / 100);
-                basepremiumPMP = (basepremiumPMP > minpremiumPMP) ? basepremiumPMP : minpremiumPMP;
-            }
-            if (intpdnumber > 0)
-            {
-                basepremiumPD = (feeincome * decPRIT / 100 * rates["piitcomponentratepd"] / 100) + (feeincome * decPRCon / 100 * rates["piconstructioncomponentratepd"] / 100) +
-                            (feeincome * decPRBDSP / 100 * rates["pibusinessdevpmtcomponentratepd"] / 100) + (feeincome * decPRMOP / 100 * rates["pimanufacturingcomponentratepd"] / 100) +
-                            (feeincome * decPRFASA / 100 * rates["pifinancialcomponentratepd"] / 100) + (feeincome * decPROther / 100 * rates["piothercomponentratepd"] / 100);
-                minpremiumPD = (decPRIT / 100 * rates["piitcomponentminpremiumpd"]) + (decPRCon / 100 * rates["piconstructioncomponentminpremiumpd"] / 100) +
-                                (decPRBDSP / 100 * rates["pibusinessdevpmtcomponentminpremiumpd"] / 100) + (decPRMOP / 100 * rates["pimanufacturingcomponentminpremiumpd"] / 100) +
-                                (decPRFASA / 100 * rates["pifinancialcomponentminpremiumpd"] / 100) + (decPROther / 100 * rates["piothercomponentminpremiumpd"] / 100);
-                basepremiumPD = (basepremiumPD > minpremiumPD) ? basepremiumPD : minpremiumPD;
-            }
-
-            pibasepremium = Math.Max(basepremiumOrd, Math.Max(basepremiumCAPM, Math.Max(basepremiumPMP, basepremiumPD)));
-
-            return pibasepremium;
-        }
-
-
-        void uwrfnumberofpersonnel(User underwritingUser, ClientAgreement agreement, int totalnumberofpersonnel, IDictionary<string, decimal> rates)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnumberofpersonnel" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnumberofpersonnel").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnumberofpersonnel" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (totalnumberofpersonnel > rates["maximumnumberofpersonnel"])
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnumberofpersonnel" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
-        void uwrfnonpminzmembers(User underwritingUser, ClientAgreement agreement, bool bolnonpmimember)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnonpminzmembers" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfoperatesoutsideofnz").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfnonpminzmembers").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnonpminzmembers" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (!bolnonpmimember)
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfnonpminzmembers" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
-
-        void uwrfotherornonpmactivities(User underwritingUser, ClientAgreement agreement, decimal decOPMA, decimal decNPMA)
-        {
-            if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotherornonpmactivities" && cref.DateDeleted == null) == null)
-            {
-                if (agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities") != null)
-                    agreement.ClientAgreementReferrals.Add(new ClientAgreementReferral(underwritingUser, agreement, agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").Name,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").Description,
-                        "",
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").Value,
-                        agreement.ClientAgreementRules.FirstOrDefault(cr => cr.RuleCategory == "uwreferral" && cr.DateDeleted == null && cr.Value == "uwrfotherornonpmactivities").OrderNumber));
-            }
-            else
-            {
-                if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotherornonpmactivities" && cref.DateDeleted == null).Status != "Pending")
-                {
-                    if (decOPMA > 0 || decNPMA > 0)
-                    {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotherornonpmactivities" && cref.DateDeleted == null).Status = "Pending";
-                    }
-                }
-            }
-        }
 
         decimal GetPIBasePremiumFor(IDictionary<string, decimal> rates, decimal feeincome, decimal decPRBDSP, decimal decPRCon, decimal decPRFASA, decimal decPRIT, decimal decPRMOP, decimal decPROther,
             int intordnumber, int intpmpnumber, int intcapmnumber, int intpdnumber)
