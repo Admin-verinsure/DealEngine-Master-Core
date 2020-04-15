@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "ed500klimitminpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "ed500klimitpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -61,7 +61,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.QuoteDate = DateTime.UtcNow;
 
             int TermLimit500k = 500000;
-            decimal TermPremium500k = rates["ed500klimitminpremium"];
+            decimal TermPremium500k = rates["ed500klimitpremium"];
             decimal TermBrokerage500k = 0m;
 
             int TermExcess = 0;
@@ -91,6 +91,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since ED policy first held";
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ ED UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
@@ -180,11 +184,12 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "false" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "false" || 
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.StaffRedundancyOptions").First().Value == "true") //this needs to be changed missing question in epl
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "2" ||
+                            (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.CoveredOptions").First().Value == "1" &&
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.LegalAdvisorOptions").First().Value == "2") || 
+                            agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.IsInsuredClaimOptions").First().Value == "1")
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwredissue" && cref.DateDeleted == null).Status = "Pending";
                         }

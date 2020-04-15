@@ -16,6 +16,11 @@
                             <h2>Get Insurance</h2>
                         </header>
 
+                        @Html.HiddenFor(m => m.AnswerSheetId)
+                        @Html.HiddenFor(m => m.Status)
+                        @*@Html.HiddenFor(m => m.AgreementStatus)*@
+                        @Html.HiddenFor(m => m.Id)
+                        @Html.HiddenFor(m => m.ListProductName)
 
                         <div role="content">
                             <!-- widget content -->
@@ -979,7 +984,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col col-12">
-                                                        <a href="~/Agreement/SendPolicyDocuments/@Model.ClientInformationSheet.Id" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-envelope"></i> Send Policy Documents</a>
+                                                        <a href="~/Agreement/SendPolicyDocuments/@Model.AnswerSheetId" class="btn txt-color-white bg-color-green btn-sm"><i class="fa fa-envelope"></i> Send Policy Documents</a>
                                                     </div>
                                                 </div>
                                             }
@@ -1122,6 +1127,7 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     <script>
         $(window).on("load", function () {
+            debugger;
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');
@@ -1129,7 +1135,8 @@
                 $("#getDetailsModal").modal('show');
             }
 
-            if ("@Model.ClientInformationSheet.Status" == "Submitted") {
+            if ("@Model.Status" == "Submitted") {
+                debugger;
                 if (document.getElementById('fieldset') != null) {
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {

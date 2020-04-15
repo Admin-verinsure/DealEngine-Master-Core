@@ -31,7 +31,7 @@
                                  //$("#Vessel").click(function () {
                                 $(window).on('load',function () {
                               $("#tblBoat").jqGrid({
-                                url: "/Services/GetBoats?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=false&transfered=false",
+                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=false&transfered=false",
                                 datatype: "xml",
                                   mytpe: "GET",
                                 async: true,
@@ -1531,7 +1531,7 @@
                             <script type="text/javascript">
                                 $(".BoatRemoved").click(function () {
                                $("#tblRemovedBoat").jqGrid({
-                                url: "/Services/GetBoats?informationId=@Model.ClientInformationSheet.Id&validated=true&removed=true&transfered=false",
+                                url: "/Services/GetBoats?informationId=@Model.AnswerSheetId&validated=true&removed=true&transfered=false",
                                 datatype: "xml",
                                    mtype: "GET",
                                 async: true,

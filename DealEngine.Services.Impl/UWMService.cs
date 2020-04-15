@@ -41,38 +41,54 @@ namespace DealEngine.Services.Impl
             var modules = RegisterModules();
             bool result = false;
             string referenceId = reference;
-            foreach (Product product in sheet.Programme.BaseProgramme.Products.OrderBy(t => t.OrderNumber)) {
-				if (!product.UnderwritingEnabled)
-					continue;
-
-                //Mark the existing agreement for this product deleted
-                ClientAgreement clientAgreement = sheet.Programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
-                if (clientAgreement != null)
-                    clientAgreement.Delete(createdBy);
-
-                //Check if the cover is required
-                try
+            try
+            {
+                foreach (Product product in sheet.Programme.BaseProgramme.Products.OrderBy(t => t.OrderNumber))
                 {
-                  if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "true")
+                    if (!product.UnderwritingEnabled)
                         continue;
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                
 
-                if (!product.IsMasterProduct)
-                {
-                    int.TryParse(referenceId, out int newReference);
-                    referenceId = (newReference + 1).ToString();
-                }
+                    //Mark the existing agreement for this product deleted
+                    ClientAgreement clientAgreement = sheet.Programme.Agreements.FirstOrDefault(a => a.Product != null && a.Product.Id == product.Id);
+                    if (clientAgreement != null)
+                        clientAgreement.Delete(createdBy);
 
-                string uwmCode = product.UnderwritingModuleCode;
-				if (string.IsNullOrWhiteSpace (uwmCode))
-					throw new Exception ("No underwriting module specificed for product '" + product.Id + "'");
-				var uwm = Load(uwmCode, _modules);
-				result &= uwm.Underwrite (createdBy, sheet, product, referenceId);
+                    //Check if the cover is required
+                    try
+                    {
+                        if (product.IsOptionalProduct && sheet.Answers.Where(sa => sa.ItemName == product.OptionalProductRequiredAnswer).First().Value != "1")
+                            continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+
+                    if (!product.IsMasterProduct)
+                    {
+                        int.TryParse(referenceId, out int newReference);
+                        referenceId = (newReference + 1).ToString();
+                    }
+
+                    string uwmCode = product.UnderwritingModuleCode;
+                    if (string.IsNullOrWhiteSpace(uwmCode))
+                        throw new Exception("No underwriting module specificed for product '" + product.Id + "'");
+                   
+                    var uwm = Load(uwmCode, _modules);
+                    
+                    try { 
+                    result &= uwm.Underwrite(createdBy, sheet, product, referenceId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+
+                    }
+
+                }
+            }catch(Exception ex){
+                Console.WriteLine(ex.Message);
 
             }
 			return result;

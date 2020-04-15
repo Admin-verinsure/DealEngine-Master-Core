@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "do500klimitminpremium", "maximumassetsize");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "do500klimitpremium", "maximumassetsize");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -61,14 +61,45 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.QuoteDate = DateTime.UtcNow;
 
             int TermLimit500k = 500000;
-            decimal TermPremium500K = rates["do500klimitminpremium"];
+            decimal TermPremium500K = rates["do500klimitpremium"];
             decimal TermBrokerage500k = 0m;
 
             int TermExcess = 0;
+            int intCompanyAge = 0;
+            decimal decDOAssets = 0m;
+            decimal decDOLiabs = 0m;
+
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value != null)
+            {
+                intCompanyAge = DateTime.Now.Subtract(Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value)).Days;
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
+            {
+                decDOAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value != null)
+            {
+                decDOLiabs = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value);
+            }
 
             //Return terms based on the limit options
 
             TermExcess = 1000;
+
+            ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
+            if (cAEDOInsExcl != null)
+            {
+                cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
+                cAEDOInsExcl.DeletedBy = underwritingUser;
+            }
+            if ((decDOAssets < decDOLiabs) || (intCompanyAge < 730))
+            {
+                if (cAEDOInsExcl != null)
+                {
+                    cAEDOInsExcl.DateDeleted = null;
+                    cAEDOInsExcl.DeletedBy = null;
+                }
+            }
 
             ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit500k, TermExcess);
             termsl500klimitoption.TermLimit = TermLimit500k;
@@ -95,6 +126,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since DO policy first held";
+            agreement.TerritoryLimit = "Worldwide";
+            agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ DO UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
@@ -184,9 +219,9 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers4").First().Value) > rates["maximumassetsize"])
+                        if (Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value) > rates["maximumassetsize"])
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfassetsize" && cref.DateDeleted == null).Status = "Pending";
                         }
@@ -210,16 +245,16 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "true")
+                    if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1")
                     {
-                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers7").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers8").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers10").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers11").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers12").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers13").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers14").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DirectorsandOfficers15").First().Value == "true")
+                        if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasClaimOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasCircumstanceOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasDeclinedOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasReceivershipOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasObligationOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasInvestigationOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasProcecutionOptions").First().Value == "1" ||
+                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.HasCriminalOptions").First().Value == "1")
                         {
                             agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrdoissue" && cref.DateDeleted == null).Status = "Pending";
                         }

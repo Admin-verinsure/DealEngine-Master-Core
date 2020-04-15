@@ -94,7 +94,6 @@
                    var claim5 = $('#Claimexp5').val();
                    var vesselExists = document.getElementById("Vessel");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
-                   var hjfhd = document.querySelector('[aria-describedby="tblBoat_BoatName"]');
                    var IsboatNamecount = 0;
                    var value = "";
 
@@ -159,6 +158,7 @@
                                alert("Unable to save.");
                            });
                    }
+
                }               
 
 
@@ -276,6 +276,7 @@
                $('#getAgreementDecModal').show();               
 
                var ID = $('#Id').val();
+               var answerid= $('#AnswerSheetId').val();
                var postdata = {
                    id: ID
                }
@@ -287,14 +288,12 @@
                     .done(function (data) {                        
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
-
                         for (var i = 0; i < prodname.length; i++) {
                             var ProdName = prodname[i];
                             var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
                             CoverOptions[i] = optionsselected;
                         }
-
                         var progId = $('#ClientProgrammeId').val();
                         var postData = { Answers: CoverOptions, ProgrammeId: progId };                        
 
@@ -615,8 +614,9 @@
                $('#tblBusinessContract').trigger('reloadGrid');
                $('#PrincipalDirectors').trigger('reloadGrid');
            })
-           .fail(function () {
-               alert("Unable to save.");
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+               alert("Unable to save....");
            });
         }
     });*@
@@ -2502,15 +2502,17 @@ function showAccordionPanel(id, panelNo) {
         var listc = ['Breakdown'];
         var formName = "";
         if (TableType == 'true') {
-            listc = [ 'Territory Breakdown' ];
+            listc = ['Territory Breakdown'];
             if (typeof revenueTable === 'undefined') {
                 revenueTable = $('#sharedRevenueTerritoriesTable');
                 formName = "revenue1";
             }
-        } else if (typeof revenueTable === 'undefined') {
+        } else {
             listc = ['Revenue Breakdown'];
-            revenueTable = $('#sharedRevenueActivityTable');
-            formName = "revenue2";
+            if (typeof revenueTable === 'undefined') {
+                revenueTable = $('#sharedRevenueActivityTable');
+                formName = "revenue2";
+            }
         }
 
         if (revenueTable != null) {
@@ -2544,7 +2546,7 @@ function showAccordionPanel(id, panelNo) {
             //        lista.push('New Zealand');
             //    }
             //}
-            }
+        }
         var header = $('<tr>');
         header.append($('<th>'));
         listc.forEach( function(countryName) {
@@ -2560,7 +2562,7 @@ function showAccordionPanel(id, panelNo) {
                     row.append($('<td>').append(
                         $('<section>').append(
                         $('<label>', { class: 'input'}).append(
-                            $('<input>', { type: 'number', class: 'form-control', form: formName, name: name, id: name, max:'100', pattern:'^[0-9]$', placeholder: '%'})
+                            $('<input>', { type: 'number', class: 'form-control', form: formName, name: name, id: name,  max:'100', pattern:'^[0-9]$', placeholder: '%'}).attr("form", formName)
                             ))));
                 });
                 count++;
@@ -7354,13 +7356,11 @@ async: true
 
             })
                 .done(function (url) {
-                                        debugger;
 
                     $("#documentsSection").on('load', url, function () {
                     });
                 }).fail(function (a, s, d) {
 
-                    debugger;
                                alert("Unable to save.");
                            });
         }

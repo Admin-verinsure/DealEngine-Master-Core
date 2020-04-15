@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "el250klimitminpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "el250klimitpremium", "eltopuppremiumover4employee");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -61,7 +61,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             agreement.QuoteDate = DateTime.UtcNow;
 
             int TermLimit250k = 250000;
-            decimal TermPremium250k = rates["el250klimitminpremium"];
+            decimal TermPremium250k = rates["el250klimitpremium"];
             decimal TermBrokerage250k = 0m;
 
             int TermExcess = 0;
@@ -69,6 +69,11 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Return terms based on the limit options
 
             TermExcess = 2500;
+
+            if (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.TotalEmployees").First().Value) > 4)
+            {
+                TermPremium250k += (Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZEPLViewModel.TotalEmployees").First().Value) - 4) * rates["eltopuppremiumover4employee"];
+            }
 
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "EL", TermLimit250k, TermExcess);
             termsl250klimitoption.TermLimit = TermLimit250k;
@@ -93,6 +98,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since EL policy first held";
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ EL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);
