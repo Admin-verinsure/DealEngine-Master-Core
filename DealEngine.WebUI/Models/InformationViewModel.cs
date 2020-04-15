@@ -396,10 +396,10 @@ namespace DealEngine.WebUI.Models
             HasActivityOptions = GetSelectListOptions();
             HasConfidencialOptions = GetSelectListOptions();
             HasBreachesOptions = GetSelectListOptions();
-            HasCircumstanceOptions = GetSelectListOptions();
+            HasKnowledgeOptions = GetSelectListOptions();
             HasOptionalCLEOptions = GetSelectListOptions();
             HasProceduresOptions = GetSelectListOptions();
-            HasApprovedVendorsOtions = GetSelectListOptions();
+            HasApprovedVendorsOptions = GetSelectListOptions();
             HasRenewalOptions = GetSelectListOptions();
             HasLocationOptions = GetSelectListOptions();
         }
@@ -428,16 +428,16 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasActivityOptions { get; set; }
         public IList<SelectListItem> HasConfidencialOptions { get; set; }
         public IList<SelectListItem> HasBreachesOptions { get; set; }
-        public IList<SelectListItem> HasCircumstanceOptions { get; set; }
+        public IList<SelectListItem> HasKnowledgeOptions { get; set; }
         public IList<SelectListItem> HasOptionalCLEOptions { get; set; }
         public IList<SelectListItem> HasProceduresOptions { get; set; }
-        public IList<SelectListItem> HasApprovedVendorsOtions { get; set; }
+        public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
         public IList<SelectListItem> HasRenewalOptions { get; set; }
         public IList<SelectListItem> HasLocationOptions { get; set; }
         
         public int CoverAmount { get; set; }
-        public DateTime? DateLapsed { get; set; }
-        public DateTime? RetroactiveDate { get; set; }
+        public string DateLapsed { get; set; }
+        public string RetroactiveDate { get; set; }
         public string InsurerName { get; set; }        
     }
     public class PMINZPIViewModel
