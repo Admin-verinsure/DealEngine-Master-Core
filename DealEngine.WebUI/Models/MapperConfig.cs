@@ -72,8 +72,17 @@ namespace DealEngine.WebUI.Models
             CreateMap<RiskCategory, InsuranceRiskCategory>().ReverseMap();
             CreateMap<Old_PolicyDocumentTemplate, PolicyDocumentViewModel>();
 
+            CreateMap<RevenueData, RevenueDataViewModel>();
 
-            CreateMap<RevenueData, RevenueDataViewModel>();                
+            CreateMap<AdditionalActivityInformation, AdditionalActivityViewModel>()
+                .IncludeAllDerived();
+                
+
+                //.ForMember(dest => dest.HasInspectionReportOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasIssuedCertificatesOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasObservationServicesOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasRecommendedCladdingOptions, map => map.Ignore())
+                //.ForMember(dest => dest.HasStateSchoolOptions, map => map.Ignore());
 
             //subsystem            
             CreateMap<InformationTemplate, SubInformationTemplate>()

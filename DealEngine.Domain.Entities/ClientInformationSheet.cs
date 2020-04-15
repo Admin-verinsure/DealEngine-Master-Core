@@ -60,7 +60,7 @@ namespace DealEngine.Domain.Entities
             ClientInformationSheetAuditLogs = new List<AuditLog>();
             BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
-            RevenueData = new RevenueData(createdBy);
+            RevenueData = new RevenueData(null, createdBy);
         }
 
 		public ClientInformationSheet (User createdBy, Organisation createdFor, InformationTemplate informationTemplate)
@@ -191,13 +191,59 @@ namespace DealEngine.Domain.Entities
 
     public class RevenueData : EntityBase
     {
-        protected RevenueData() : this(null) { }
-        public RevenueData(User createdBy) : base(createdBy)
+        protected RevenueData() 
+            : this (null)
         {
             Territories = new List<Territory>();
             Activities = new List<BusinessActivity>();
-            AdditionalActivityInformation = new AdditionalActivityInformation(createdBy);
+            AdditionalActivityInformation = new AdditionalActivityInformation(null);
         }
+
+        public RevenueData(Programme Programme = null, User user = null) 
+            : base(user) 
+        {
+            Territories = new List<Territory>();
+            Activities = new List<BusinessActivity>();
+            AdditionalActivityInformation = new AdditionalActivityInformation(user);
+
+            if (Programme != null)
+            {
+                Territories = CreateTerritories(Programme);
+                Activities = CreateActivities(Programme);
+            }                       
+        }
+
+        private IList<Territory> CreateTerritories(Programme programme)
+        {
+            Territories = new List<Territory>();
+            foreach (var template in programme.TerritoryTemplates)
+            {
+                Territories.Add(new Territory(null)
+                {
+                    TemplateId = template.Id,
+                    Location = template.Location,
+                    Pecentage = 0,
+                    Selected = false
+                });
+            }
+            return Territories;
+        }
+        private IList<BusinessActivity> CreateActivities(Programme programme)
+        {
+            Activities = new List<BusinessActivity>();
+            foreach (var template in programme.BusinessActivityTemplates)
+            {
+                Activities.Add(new BusinessActivity(null)
+                {
+                    Description = template.Description,
+                    AnzsciCode = template.AnzsciCode,
+                    Selected = false,
+                    Pecentage = 0
+                });
+            }
+            return Activities;
+        }
+
         public virtual IList<Territory> Territories { get; set; }
         public virtual IList<BusinessActivity> Activities { get; set; }
         public virtual decimal NextFinancialYearTotal { get; set; }
@@ -209,16 +255,16 @@ namespace DealEngine.Domain.Entities
     public class AdditionalActivityInformation : EntityBase
     {
         protected AdditionalActivityInformation() : this(null) { }
-        public AdditionalActivityInformation(User createdBy) : base(createdBy)
+        public AdditionalActivityInformation(User createdBy = null) : base(createdBy)
         {
         }
 
-        public virtual int HasInspectionReportOptions { get; set; }
-        public virtual int HasDisclaimerReportsOptions { get; set; }
-        public virtual int HasObservationServicesOptions { get; set; }
-        public virtual int HasRecommendedCladdingOptions { get; set; }
-        public virtual int HasStateSchoolOptions { get; set; }
-        public virtual int HasIssuedCertificatesOptions { get; set; }
+        public virtual string HasInspectionReportOptions { get; set; }
+        public virtual string HasDisclaimerReportsOptions { get; set; }
+        public virtual string HasObservationServicesOptions { get; set; }
+        public virtual string HasRecommendedCladdingOptions { get; set; }
+        public virtual string HasStateSchoolOptions { get; set; }
+        public virtual string HasIssuedCertificatesOptions { get; set; }
         public virtual string QualificationDetails { get; set; }
         public virtual string ValuationDetails { get; set; }
         public virtual string OtherDetails { get; set; }

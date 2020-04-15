@@ -106,43 +106,36 @@
                     DefaultRule(Value, Name);
                 }
                 if (Rule === "BuildSharedTable") {
-                    BuildSharedTable(DataItem);
+                    BuildSharedTable(DataItem, Name);
                     Value = "1";
                     DefaultRule(Value, Name);
                 }
-                //if (Rule === "validatetable") {
-                //    var element = document.getElementById(Name);
-                //    if (element != null)
-                //    if (DataItem === "validateactivities") {
-                //        document.getElementById(Name).hidden = false;
-                //    }
-                    
-                //}
-            } catch {
+            } catch (ex) {
+                //console.log(ex);
+                //debugger;
                 ////we expect this to fail for form elements with no change events but could use this later
             }      
         }
 
-        function BuildSharedTable(DataItem) {  
+        function BuildSharedTable(DataItem, Name) {  
             var array = DataItem.split(',');
-            var territories = document.getElementById(array[0]);
+            var list = document.getElementById(array[0]);
             var tableElement = document.getElementById(array[1]);
-            if (tableElement.children.length > 0) {
-                tableElement.removeChild(tableElement.children[0]);
+            if (tableElement.children.length == 2) {
+                tableElement.removeChild(tableElement.children[1]);
             }
-            debugger;
             var tbdy = document.createElement('tbody');
-            for (var t = 0; t < territories.options.length;t++) {
-                if (territories.options[t].selected === true) {                                
+            for (var t = 0; t < list.options.length;t++) {
+                if (list.options[t].selected === true) {                                
                     var tr = document.createElement('tr');
                     var td1 = document.createElement('td');
-                    td1.appendChild(document.createTextNode(territories[t].text));
+                    td1.appendChild(document.createTextNode(list[t].text));
                     tr.appendChild(td1);                    
                     var td2 = document.createElement('td');
-                    td2.innerHTML = CreateSharedInput(array[2], territories.options[t]);
+                    td2.innerHTML = CreateSharedInput(Name, list.options[t]);
                     tr.appendChild(td2);
-                }
-                tbdy.appendChild(tr);
+                    tbdy.appendChild(tr);
+                }                                
             }
             tableElement.appendChild(tbdy);
         }
@@ -156,17 +149,6 @@
             input.setAttribute("data-item", "validatetable" + element.parentElement.id);
             input.setAttribute("onchange", "OnChange(this.id, this.name)");
             return input.outerHTML;            
-        }
-
-        function SaveSharedRevenue() {            
-            var form = document.getElementById('myForm');
-            debugger;
-            $.ajax({
-                url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",
-                data: $("#tab_1 :input").serialize({ json: true })
-                //data: $("#myForm").serialize({ json:true })
-            })
         }
 
         function HideElement(id) {
@@ -208,7 +190,7 @@
         function ValidateSharedRevenueForm(tab) {
             var isValid = true;
             var hasItem = false;
-            if (tab == 1) {                
+            if (tab == 1) {
                 var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
                 var territories = document.getElementById("territories");
                 for (var i = 0; i < territories.options.length; i++) {
@@ -227,30 +209,56 @@
                 var activities = document.getElementById("activities");
                 var element;
                 for (var i = 0; i < activities.options.length; i++) {
-                    var additionalactivity = activities.options[i].value;
+                    var additionalactivityId = activities.options[i].value;
                     if (activities.options[i].selected === true) {
                         hasItem = true;
-                        element = document.getElementById(additionalactivity);
+                        element = document.getElementById(additionalactivityId);
                         if (element != null) {
                             element.hidden = false;
                         }
                     } else {
-                        element = document.getElementById(additionalactivity);
+                        element = document.getElementById(additionalactivityId);
                         if (element != null) {
                             element.hidden = true;
                         }
                     }
                 }
+                document.getElementById("noadditionalinfolabel").hidden = false;
+                var additionalinfotab = document.getElementById("RevenueTabs3");
+                for (var d = 1; d < additionalinfotab.children.length; d++) {
+                    if (additionalinfotab.children[d].hidden == false) {
+                        document.getElementById("additionalinfosubmit").hidden = false;
+                        document.getElementById("noadditionalinfolabel").hidden = true;
+                    }
+                }
                 isValid = ValidateTableValues(activityVals);
             }
+            else if (tab == 3) {
+                var contruction = document.getElementById("E");
+                if (contruction.hidden == false) {
+                    var contructionlist = document.querySelectorAll("[data-item='validatecontruction']");
+                    isValid = ValidateTableValues(contructionlist);
+                }
+                //var additionalinfotab = document.getElementById("RevenueTabs3");
+                //for (var d = 1; d < additionalinfotab.children.length; d++) {
+                //    if (additionalinfotab.children[d].hidden == false) {
+                //        debugger;
+                //        var list = additionalinfotab.children[d].querySelectorAll("[data-item='validatecontruction']");
+                //        isValid = ValidateTableValues(list);
+                //        debugger;
+                //    }
+                //}
+            }
             if (isValid) {
-                var form = document.getElementById('myForm');
-                $.ajax({
-                url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",
-                data: $("#myForm").serialize({ json: true })
-                //data: $("#myForm").serialize({ json:true })
-            })
+                if (tab == 3) {
+                    var form = document.getElementById('RevenueDataViewModel');
+                    $.ajax({
+                        url: '@Url.Action("SaveInformation", "Information")',
+                        type: "POST",
+                        data: $("#RevenueDataViewModel").serialize({ json: true })
+                        //data: $("#myForm").serialize({ json:true })
+                    })
+                }
                 tab += 1;
                 SetCurrentTab('RevenueTabs' + tab);                
             }

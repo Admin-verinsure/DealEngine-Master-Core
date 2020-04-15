@@ -193,49 +193,59 @@ namespace DealEngine.WebUI.Models
 
     public class RevenueDataViewModel
     {
+        public RevenueDataViewModel() { }
         public RevenueDataViewModel(Domain.Entities.Programme programme)
         {
             Territories = GetTerritories(programme);
             Activities = GetActivities(programme);
-            AdditionalInformation = new AdditionalActivityViewModel();
+            AdditionalActivityViewModel = new AdditionalActivityViewModel();
         }
-        private IList<SelectListItem> GetActivities(Domain.Entities.Programme programme)
+        private IList<BusinessActivity> GetActivities(Domain.Entities.Programme programme)
         {
-            Activities = new List<SelectListItem>();
+            Activities = new List<BusinessActivity>();
             foreach (var template in programme.BusinessActivityTemplates)
             {
-                Activities.Add(new SelectListItem
+                Activities.Add(new BusinessActivity(null)
                 {
-                    Text = template.Description,
-                    Value = template.AnzsciCode
+                    Description = template.Description,
+                    AnzsciCode = template.AnzsciCode,
+                    Selected = false,
+                    Pecentage = 0
                 });
             }
             return Activities;
         }
-        private IList<SelectListItem> GetTerritories(Domain.Entities.Programme programme)
+        private IList<Territory> GetTerritories(Domain.Entities.Programme programme)
         {
-            Territories = new List<SelectListItem>();
+            Territories = new List<Territory>();
             foreach (var template in programme.TerritoryTemplates)
             {
-                Territories.Add(new SelectListItem
+                Territories.Add(new Territory(null)
                 {
-                    Text = template.Location,
-                    Value = template.Id.ToString()
+                    Id = template.Id,
+                    Location = template.Location,
+                    Pecentage = 0,
+                    Selected = false
                 });
             }
             return Territories;            
         }
-        public IList<SelectListItem> Territories { get; set; }
-        public IList<SelectListItem> Activities { get; set; }
+        public IList<Territory> Territories { get; set; }
+        public IList<BusinessActivity> Activities { get; set; }
         public decimal NextFinancialYearTotal { get; set; }
         public decimal CurrentYearTotal { get; set; }
         public decimal LastFinancialYearTotal { get; set; }
-        public AdditionalActivityViewModel AdditionalInformation { get; set; }
+        public AdditionalActivityViewModel AdditionalActivityViewModel { get; set; }
     }
 
     public class AdditionalActivityViewModel
     {
-        public AdditionalActivityViewModel()
+        public AdditionalActivityViewModel(AdditionalActivityInformation additionalActivityInformation = null)
+        {
+            SetOptions();
+        }
+
+        public void SetOptions()
         {
             HasInspectionReportOptions = GetSelectListOptions();
             HasDisclaimerReportsOptions = GetSelectListOptions();
@@ -243,7 +253,28 @@ namespace DealEngine.WebUI.Models
             HasRecommendedCladdingOptions = GetSelectListOptions();
             HasStateSchoolOptions = GetSelectListOptions();
             HasIssuedCertificatesOptions = GetSelectListOptions();
-        }    
+
+            //var des = this.GetType();
+            //var src = info.GetType();
+            //foreach (var item in src.GetType())
+            //{
+            //    var property = (des)des.GetMember
+            //    if (item.Name.Replace("get_", string.Empty) == des.Name)
+            //    {
+            //        var test = item.GetType();
+            //        var test2 = field.GetType();
+            //        if (item.GetType() == field.GetType())
+            //        {
+
+            //        }
+            //        else
+            //        {
+
+            //        }
+            //    }
+            //}
+        }
+
         private IList<SelectListItem> GetSelectListOptions()
         {
             return new List<SelectListItem>()

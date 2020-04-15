@@ -8,6 +8,9 @@ namespace DealEngine.Domain.Entities
     {
         public virtual decimal Pecentage { get; set; }
         public virtual string Location { get; set; }
+        public virtual Guid TemplateId { get; set; }
+        public virtual bool Selected { get; set; }
+
         protected Territory() : base (null) { }
 
         public Territory(User createdBy)

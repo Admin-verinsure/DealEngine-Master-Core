@@ -1349,6 +1349,7 @@ namespace DealEngine.WebUI.Controllers
                 var sheet = clientProgramme.InformationSheet;
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
+                GetRevenueViewModel(model, sheet.RevenueData);
                 model.SharedRoleViewModel = sharedRoleViewModel;
 
                 model.ClientInformationSheet = sheet;
@@ -1373,42 +1374,38 @@ namespace DealEngine.WebUI.Controllers
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
-                        if(split.FirstOrDefault() == "")
+                        if(split.FirstOrDefault() == "RevenueDataViewModel")
                         {
-                            Console.WriteLine("");
+                            Console.WriteLine();
                         }
                         if (split.Count > 1)
                         {                            
                             var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
-                            var infomodel = modeltype.GetValue(model);                            
-                            var property = infomodel.GetType().GetProperty(split.LastOrDefault());
+                            var reflectModel = modeltype.GetValue(model);                            
+                            var property = model.GetType().GetProperty(split.LastOrDefault());
 
                             switch (property.PropertyType.Name)
                             {
                                 case "Int32":
                                     int.TryParse(answer.Value, out value);
-                                    property.SetValue(infomodel, value);
+                                    property.SetValue(model, value);
                                     break;
                                 case "IList`1":
-                                    var propertylist = (IList<SelectListItem>)property.GetValue(infomodel);
+                                    var propertylist = (IList<SelectListItem>)property.GetValue(model);
                                     var options = answer.Value.Split(',').ToList();
                                     foreach(var option in options)
                                     {
                                         propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
                                     }                                    
-                                    property.SetValue(infomodel, propertylist);
+                                    property.SetValue(model, propertylist);
                                     break;
                                 case "DateTime":
-                                    property.SetValue(infomodel, DateTime.Parse(answer.Value));
+                                    property.SetValue(model, DateTime.Parse(answer.Value));
                                     break;
                                 default:
-                                    property.SetValue(infomodel, answer.Value);
+                                    property.SetValue(model, answer.Value);
                                     break;
                             }                            
-                        }
-                        if (split.FirstOrDefault() == "")
-                        {
-
                         }
                     }
                     catch (Exception ex)
@@ -1711,6 +1708,40 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
+        }
+
+        private RevenueDataViewModel GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
+        {
+
+            try
+            {
+                if(revenueData != null)
+                {
+                    model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
+                    model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
+                    model.RevenueDataViewModel.AdditionalActivityViewModel.SetOptions();
+                }
+
+                //foreach (var territory in revenueData.Territories)
+                //{
+                //    model.RevenueDataViewModel.Territories.FirstOrDefault(t => t.Text == territory.Location).Selected = true;                    
+                //}
+                //foreach (var activity in revenueData.Activities)
+                //{
+                //    model.RevenueDataViewModel.Activities.FirstOrDefault(t => t.Value == activity.AnzsciCode).Selected = true;
+                //}
+                //model.RevenueDataViewModel.LastFinancialYearTotal = revenueData.LastFinancialYearTotal;
+                //model.RevenueDataViewModel.NextFinancialYearTotal = revenueData.NextFinancialYearTotal;
+                //model.RevenueDataViewModel.CurrentYearTotal = revenueData.CurrentYearTotal;
+                //model.RevenueDataViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
+
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
         }
 
         private IList<string> LoadWizardsteps(string wizardType)

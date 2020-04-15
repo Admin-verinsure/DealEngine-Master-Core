@@ -1,5 +1,10 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel   
-    <div id="sharedrevenue">
+@using DealEngine.Domain.Entities
+@{
+    IList<Territory> SelectedTerritories = Model.RevenueDataViewModel.Territories.Where(t => t.Selected == true).ToList();
+    IList<BusinessActivity> SelectedActivities = Model.RevenueDataViewModel.Activities.Where(t => t.Selected == true).ToList();
+}
+    <div class="form is-valid" id="RevenueDataViewModel">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="SharedRevenueTab1">
                 <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a>
@@ -10,7 +15,6 @@
             <li class="nav-item" id="SharedRevenueTab3">
                 <a class="nav-link" href="#RevenueTabs3" data-toggle="tab"> Additional Information </a>
             </li>
-            @*<li class="nav nav-tabs Summary" id="SharedRevenueTab4"> <a class="nav-link" href="#RevenueTabs4" data-toggle="tab"> Summary </a> </li>*@
         </ul>
         <div class="tab-content">
             <div id="RevenueTabs1" class="tab-pane active" role="tabpanel">
@@ -20,16 +24,16 @@
                             <label for="territories" class="label required">Please select the territories you trade in</label>
                         </div>
                         <div class="col-8">
-                            <select id="territories" name="RevenueByActivityViewModel.Territories" class="chosen-select form-control b" multiple data-rule="BuildSharedTable" data-item="territories,territoriestable,RevenueDataViewModel.Territories" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.RevenueByActivityViewModel.Territories)
+                            <select id="territories" name="RevenueDataViewModel.Territories" class="chosen-select form-control b" multiple data-rule="BuildSharedTable" data-item="territories,territoriestable" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.RevenueDataViewModel.Territories)
                                 {
-                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    <option selected="@option.Selected" value="@option.Id.ToString()">@option.Location</option>
                                 }
                             </select>
                         </div>
                     </div>
                 </div>
-                <div id="RevenueByActivityViewModel.Territories">
+                <div id="RevenueDataViewModel.Territories">
                     <div class="form-group">
                         <table id="territoriestable" class="table">
                             <thread class="thead-dark">
@@ -38,40 +42,67 @@
                                     <th>Percentage Amount (%)</th>
                                 </tr>
                             </thread>
+                            <tbody>
+                                @foreach (var select in SelectedTerritories)
+                                {
+                                    <tr>
+                                        <td>
+                                            @select.Location
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" id="@select.Location" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableterritories" value="@select.Pecentage" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
                         </table>
                     </div>
                     <div class="form-group">
-                        <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(1);">  Submit To Save  </a>
+                        <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(1);">  Continue  </a>
                     </div>
                 </div>
             </div>
             <div id="RevenueTabs2" class="tab-pane" role="tabpanel">
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-3">
-                            <label for="currentYear" class="label required">Estimate of current year</label>
-                            @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
-                        </div>
-                        <div class="col-3">
-                            <label for="lastFinancialYear">Last completed financial year</label>
-                            @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
-                        </div>
-                        <div class="col-3">
-                            <label for="nextFinancialYear">Estimate of next financial year</label>
-                            @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, new { @class = "form-control", @id = "nextFinancialYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-9">
+                                    <label for="currentYear" class="label required">Estimate of current year</label>
+                                </div>
+                                <div class="col-3">
+                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required=""})
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-9">
+                                    <label for="lastFinancialYear">Last completed financial year</label>
+                                </div>
+                                <div class="col-3">
+                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-9">
+                                    <label for="nextFinancialYear">Estimate of next financial year</label>
+                                </div>
+                                <div class="col-3">
+                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.NextFinancialYearTotal, new { @class = "form-control", @id = "nextFinancialYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="activities">Select Activites</label>
-                    <select id="activities" name="RevenueByActivityViewModel.Activities" multiple class="chosen-select form-control b" data-rule="BuildSharedTable" data-item="activities,activitiestable" onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var ou in Model.RevenueDataViewModel.Activities)
+                    <select id="activities" name="RevenueDataViewModel.Activities" multiple class="chosen-select form-control b" data-rule="BuildSharedTable" data-item="activities,activitiestable" onchange="OnChange(this.id, this.name)" required>
+                        @foreach (var option in Model.RevenueDataViewModel.Activities)
                         {
-                            <option selected="@ou.Selected" value="@ou.Value">@ou.Text</option>
+                            <option selected="@option.Selected" value="@option.AnzsciCode">@option.Description</option>
                         }
                     </select>
                 </div>
-                <div id="RevenueByActivityViewModel.Activities">
+                <div id="RevenueDataViewModel.Activities">
                     <div class="form-group">
                         <table id="activitiestable" class="table">
                             <thread class="thead-dark">
@@ -80,14 +111,32 @@
                                     <th>Percentage Amount (%)</th>
                                 </tr>
                             </thread>
+                            <tbody>
+                                @foreach (var select in SelectedActivities)
+                                {
+                                    <tr>
+                                        <td>
+                                            @select.Description
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" id="@select.Description" name="RevenueDataViewModel.Territories.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableactivities" value="@select.Pecentage" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
                         </table>
                     </div>
                     <div class="form-group">
-                        <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(2);">  Submit To Save  </a>
+                        <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedRevenueForm(2);">  Continue  </a>
                     </div>
                 </div>
             </div>
             <div id="RevenueTabs3" class="tab-pane" role="tabpanel">
+                <div id="noadditionalinfolabel">
+                    <div class="form-control">
+                        <label>No Additional Information Required</label>
+                    </div>
+                </div>
                 <div id="M692160" hidden>
                     <div class="form-group">
                         <div class="row">
@@ -95,7 +144,7 @@
                                 <label for="inspectionreportdetails">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.InspectionReportDetails, new { @class = "form-control", @id = "inspectionreportdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.InspectionReportDetails, new { @class = "form-control", @id = "inspectionreportdetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                         <div class="form-group">
@@ -104,8 +153,8 @@
                                     <label for="hasinspectionreportoptions">Please describe the nature of these reports and what they would be used for, (examples. Domestic pre-purchase property inspections, Commercial building Inspections for Earthquake Strengthening, Inspections relating to Building Feasibility reports)</label>
                                 </div>
                                 <div class="col-3">
-                                    <select id="hasinspectionreportoptions" name="RevenueByActivityViewModel.AdditionalInformation.HasInspectionReportOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                        @foreach (var option in Model.RevenueDataViewModel.AdditionalInformation.HasInspectionReportOptions)
+                                    <select id="hasinspectionreportoptions" name="RevenueByActivityViewModel.AdditionalActivityViewModel.HasInspectionReportOptions" class="custom-select" data-item="validateadditional" onchange="OnChange(this.id, this.name)" required>
+                                        @foreach (var option in Model.RevenueDataViewModel.AdditionalActivityViewModel.HasInspectionReportOptions)
                                         {
                                             <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                         }
@@ -122,7 +171,7 @@
                                 <label for="valuationdetails">Please state the types of Valuations provided, (examples. Domestic replacement valuation for insurance, Insurance valuation for Historic buildings)</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.ValuationDetails, new { @class = "form-control", @id = "valuationdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ValuationDetails, new { @class = "form-control", @id = "valuationdetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                     </div>
@@ -132,7 +181,7 @@
                                 <label for="qualificationdetails">Please provide details of the relevant qualifications held by the persons undertaking this Discipline</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.QualificationDetails, new { @class = "form-control", @id = "qualificationdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.QualificationDetails, new { @class = "form-control", @id = "qualificationdetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                     </div>
@@ -142,8 +191,8 @@
                                 <label for="hasdisclaimerreports">Do you include limitations of liability clauses and liability disclaimers in your reports?</label>
                             </div>
                             <div class="col-3">
-                                <select id="hasdisclaimerreports" name="RevenueByActivityViewModel.AdditionalInformation.HasDisclaimerReportsOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalInformation.HasDisclaimerReportsOptions)
+                                <select id="hasdisclaimerreports" name="RevenueByActivityViewModel.AdditionalActivityViewModel.HasDisclaimerReportsOptions" class="custom-select" data-item="validateadditional" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalActivityViewModel.HasDisclaimerReportsOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
@@ -164,8 +213,8 @@
                                 <label for="hasobservationservices">Was contracted to provide construction management or observation services?</label>
                             </div>
                             <div class="col-3">
-                                <select id="hasobservationservices" name="RevenueByActivityViewModel.AdditionalInformation.HasObservationServicesOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalInformation.HasObservationServicesOptions)
+                                <select id="hasobservationservices" name="RevenueByActivityViewModel.AdditionalActivityViewModel.HasObservationServicesOptions" class="custom-select" data-item="validateadditional" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalActivityViewModel.HasObservationServicesOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
@@ -179,8 +228,8 @@
                                 <label for="hasrecommendedcladding">Recommended the use of any cladding product?</label>
                             </div>
                             <div class="col-3">
-                                <select id="hasrecommendedcladding" name="RevenueByActivityViewModel.AdditionalInformation.HasRecommendedCladdingOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalInformation.HasRecommendedCladdingOptions)
+                                <select id="hasrecommendedcladding" name="RevenueByActivityViewModel.AdditionalActivityViewModel.HasRecommendedCladdingOptions" class="custom-select" data-item="validateadditional" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalActivityViewModel.HasRecommendedCladdingOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
@@ -194,8 +243,8 @@
                                 <label for="hasstateschool">Has undertaken in the past 10 years any work on Ministry of Education State Schools (i.e Not Private, Integrated or Designated Character Schools)?</label>
                             </div>
                             <div class="col-3">
-                                <select id="hasstateschool" name="RevenueByActivityViewModel.AdditionalInformation.HasStateSchoolOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalInformation.HasStateSchoolOptions)
+                                <select id="hasstateschool" name="RevenueByActivityViewModel.AdditionalActivityViewModel.HasStateSchoolOptions" class="custom-select" data-item="validateadditional" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalActivityViewModel.HasStateSchoolOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
@@ -209,8 +258,8 @@
                                 <label for="hasissuedcertificates">Issued practical completion certificates?</label>
                             </div>
                             <div class="col-3">
-                                <select id="hasissuedcertificates" name="RevenueByActivityViewModel.AdditionalInformation.HasIssuedCertificatesOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalInformation.HasIssuedCertificatesOptions)
+                                <select id="hasissuedcertificates" name="RevenueByActivityViewModel.AdditionalActivityViewModel.HasIssuedCertificatesOptions" class="custom-select" data-item="validateadditional" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.RevenueDataViewModel.AdditionalActivityViewModel.HasIssuedCertificatesOptions)
                                     {
                                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                     }
@@ -226,7 +275,7 @@
                                 <label for="otherdetails">You have specified Other Work not listed above, please provide further details:</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.OtherDetails, new { @class = "form-control", @id = "otherdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherDetails, new { @class = "form-control", @id = "otherdetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                     </div>
@@ -238,7 +287,7 @@
                                 <label for="rebuilddetails">If you have specified 20% or more of your fee income earned in the next 12 months to come from work related to the Canterbury earthquake rebuild work, please provide details:</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.RebuildDetails, new { @class = "form-control", @id = "rebuilddetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.RebuildDetails, new { @class = "form-control", @id = "rebuilddetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                     </div>
@@ -250,7 +299,7 @@
                                 <label for="otherprojectmanagementdetails">Please provide details of your Other Project Management activities:</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.OtherProjectManagementDetails, new { @class = "form-control", @id = "otherprojectmanagementdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.OtherProjectManagementDetails, new { @class = "form-control", @id = "otherprojectmanagementdetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                     </div>
@@ -262,7 +311,7 @@
                                 <label for="nonprojectmanagementdetails">Please provide details of your non Project Management activities:</label>
                             </div>
                             <div class="col-3">
-                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.NonProjectManagementDetails, new { @class = "form-control", @id = "nonprojectmanagementdetails", onchange = "OnChange(this.id, this.name)", @required = "" })
+                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.NonProjectManagementDetails, new { @class = "form-control", @id = "nonprojectmanagementdetails", onchange = "OnChange(this.id, this.name)", @required = "", @data_item="validateadditional" })
                             </div>
                         </div>
                     </div>
@@ -284,7 +333,7 @@
                                                 Commercial
                                             </td>
                                             <td>
-                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.ConstructionCommercialDetails, new { @id = "constructioncommercialdetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number" })
+                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionCommercialDetails, new { @id = "constructioncommercialdetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item="validatecontruction" })
                                             </td>
                                         </tr>
                                         <tr>
@@ -292,7 +341,7 @@
                                                 Dwellings
                                             </td>
                                             <td>
-                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.ConstructionDwellingDetails, new { @id = "constructionindustrialdetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number" })
+                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionDwellingDetails, new { @id = "constructiondwellingdetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item="validatecontruction" })
                                             </td>
                                         </tr>
                                         <tr>
@@ -300,7 +349,7 @@
                                                 Industrial
                                             </td>
                                             <td>
-                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.ConstructionIndustrialDetails, new { @id = "constructionindustrialdetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number" })
+                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionIndustrialDetails, new { @id = "constructionindustrialdetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item="validatecontruction" })
                                             </td>
                                         </tr>
                                         <tr>
@@ -308,7 +357,7 @@
                                                 Infrastructure
                                             </td>
                                             <td>
-                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.ConstructionInfrastructureDetails, new { @id = "constructioninfrastructuredetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number" })
+                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionInfrastructureDetails, new { @id = "constructioninfrastructuredetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item="validatecontruction" })
                                             </td>
                                         </tr>
                                         <tr>
@@ -316,7 +365,7 @@
                                                 School
                                             </td>
                                             <td>
-                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalInformation.ConstructionSchoolDetails, new { @id = "constructionschooldetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number" })
+                                                @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionSchoolDetails, new { @id = "constructionschooldetails", @class = "form-control", onchange = "OnChange(this.id, this.name)", @placeholder = "%", @type = "number", @data_item="validatecontruction" })
                                             </td>
                                         </tr>
                                     </tbody>
@@ -325,33 +374,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <a class="btn btn-sm btn-primary text-light" onclick="ValidateSharedform();">  Submit </a>
+                <div class="form-group" hidden id="additionalinfosubmit">
+                    <a class="btn btn-sm btn-success text-light" onclick="ValidateSharedRevenueForm(3);">  Continue  </a>
                 </div>
             </div>
         </div>
     </div>
-@*<script type="text/javascript">
-    $(function () {
-        //get all forms on load
-        var formIds = [];
-        var form = document.getElementsByClassName('is-valid');
-        debugger;
-        formIds.push(form);
-        for (var i = 0; i < formIds.length; i++) {
-            var form = document.getElementById(formIds[i]);
-            for (var e = 0; e < form.length; e++) {
-                var element = document.getElementById(form[e].id);
-                if (element != null) {
-                    OnChange(element.id, element.name);
-                    //after first load change to default view
-                    element.classList.remove("is-valid");
-                    element.classList.remove("is-invalid");
-                    element.classList.add("is-up");
-                }
-            }
-            form.classList.remove("is-valid");
-            form.classList.add("needs-validation");
-        }
-    });
-</script>*@
