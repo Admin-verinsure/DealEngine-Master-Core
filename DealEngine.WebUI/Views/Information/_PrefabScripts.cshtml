@@ -119,12 +119,12 @@
                 }
                 if (Rule === "CyberOptional") {
                     var isCondition = DoubleConditional(DataItem);
-                    CyberOptional(DataItem, isCondition);
+                    CyberOptional(DataItem, isCondition);                    
                 }
             } catch (ex) {
                 if (Rule === "CyberOptional") {
                     var isCondition = DoubleConditional(DataItem);
-                    CyberOptional(DataItem, isCondition);
+                    CyberOptional(DataItem, isCondition);                    
                 }
                 //console.log(ex);
                 ////we expect this to fail for form elements with no change events but could use this later
@@ -150,7 +150,7 @@
         var ids = DataItem.split(',');
         var q1 = document.getElementById(ids[0]);
         var q2 = document.getElementById(ids[1]);
-
+        
         if (q1.value == "1" && q2.value == "1") {
             return true;
         }
@@ -202,12 +202,12 @@
                 var label = document.createElement('label');
                 label.setAttribute("id", ids[2]);
                 label.innerHTML = conditional;
-                q2.parentElement.parentElement.parentElement.appendChild(label);
+                q2.parentElement.parentElement.parentElement.appendChild(label); 
                 return false;
             }
             else {
-                label = document.getElementById(ids[2]);
-                q2.parentElement.parentElement.parentElement.removeChild(label);
+                label = document.getElementById(ids[2]);                
+                q2.parentElement.parentElement.parentElement.removeChild(label);            
                 return true;
             }
         }
