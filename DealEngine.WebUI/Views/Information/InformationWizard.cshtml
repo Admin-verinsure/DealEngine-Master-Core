@@ -17,8 +17,8 @@
                         </header>
 
                         @Html.HiddenFor(m => m.AnswerSheetId)
-                        @*@Html.HiddenFor(m => m.Status)
-                        @Html.HiddenFor(m => m.AgreementStatus)*@
+                        @Html.HiddenFor(m => m.Status)
+                        @*@Html.HiddenFor(m => m.AgreementStatus)*@
                         @Html.HiddenFor(m => m.Id)
                         @Html.HiddenFor(m => m.ListProductName)
 
@@ -1132,6 +1132,7 @@
     <link rel="stylesheet" href="~/css/smartadmin-production.min.css">
     <script>
         $(window).on("load", function () {
+            debugger;
             advisoryModal = document.getElementById('advisoryModal');
             if (advisoryModal !== null) {
                 $("#advisoryModal").modal('show');
@@ -1139,7 +1140,8 @@
                 $("#getDetailsModal").modal('show');
             }
 
-            if ("@Model.ClientInformationSheet.Status" == "Submitted") {
+            if ("@Model.Status" == "Submitted") {
+                debugger;
                 if (document.getElementById('fieldset') != null) {
                     document.getElementById('fieldset').setAttribute("disabled", "disabled");
                 } else {
