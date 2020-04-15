@@ -94,7 +94,6 @@
                    var claim5 = $('#Claimexp5').val();
                    var vesselExists = document.getElementById("Vessel");
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
-                   var hjfhd = document.querySelector('[aria-describedby="tblBoat_BoatName"]');
                    var IsboatNamecount = 0;
                    var value = "";
 
@@ -278,7 +277,6 @@
 
                var ID = $('#Id').val();
                var answerid= $('#AnswerSheetId').val();
-               debugger;
                var postdata = {
                    id: ID
                }
@@ -290,14 +288,12 @@
                     .done(function (data) {                        
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
-
                         for (var i = 0; i < prodname.length; i++) {
                             var ProdName = prodname[i];
                             var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
                             CoverOptions[i] = optionsselected;
                         }
-
                         var progId = $('#ClientProgrammeId').val();
                         var postData = { Answers: CoverOptions, ProgrammeId: progId };                        
 
@@ -7360,7 +7356,6 @@ async: true
 
             })
                 .done(function (url) {
-                                        debugger;
 
                     $("#documentsSection").on('load', url, function () {
                     });
