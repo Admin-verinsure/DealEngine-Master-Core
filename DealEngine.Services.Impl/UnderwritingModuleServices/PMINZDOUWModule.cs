@@ -65,34 +65,41 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage500k = 0m;
 
             int TermExcess = 0;
-            //int intCompanyAge = 0;
+            int intCompanyAge = 0;
+            decimal decDOAssets = 0m;
+            decimal decDOLiabs = 0m;
 
-            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value != null)
-            //{
-
-            //}
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value != null)
+            {
+                intCompanyAge = DateTime.Now.Subtract(Convert.ToDateTime(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.FormDate").First().Value)).Days;
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value != null)
+            {
+                decDOAssets = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.AssetTotal").First().Value);
+            }
+            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value != null)
+            {
+                decDOLiabs = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "DAOLIViewModel.DebtTotal").First().Value);
+            }
 
             //Return terms based on the limit options
 
             TermExcess = 1000;
 
-            //ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
-
-            //if (cAEDOInsExcl != null)
-            //{
-            //    cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
-            //    cAEDOInsExcl.DeletedBy = underwritingUser;
-            //}
-            //if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
-            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
-            //{
-            //    if (cAEDOInsExcl != null)
-            //    {
-            //        cAEDOInsExcl.DateDeleted = null;
-            //        cAEDOInsExcl.DeletedBy = null;
-            //    }
-            //}
-
+            ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
+            if (cAEDOInsExcl != null)
+            {
+                cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
+                cAEDOInsExcl.DeletedBy = underwritingUser;
+            }
+            if ((decDOAssets < decDOLiabs) || (intCompanyAge < 730))
+            {
+                if (cAEDOInsExcl != null)
+                {
+                    cAEDOInsExcl.DateDeleted = null;
+                    cAEDOInsExcl.DeletedBy = null;
+                }
+            }
 
             ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit500k, TermExcess);
             termsl500klimitoption.TermLimit = TermLimit500k;
