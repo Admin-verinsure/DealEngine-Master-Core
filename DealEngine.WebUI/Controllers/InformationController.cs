@@ -1993,6 +1993,7 @@ namespace DealEngine.WebUI.Controllers
                         if (sheet.Status == "Submitted")
                         {
                             sheet.Status = "Started";
+                            sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Started";
                             sheet.UnlockDate = DateTime.UtcNow;
                             sheet.UnlockedBy = user;
                         }
