@@ -164,7 +164,7 @@
                         </div>
                         <div class="col-3">
                             <select id="hasknowledge" name="CLIViewModel.HasKnowledgeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.CLIViewModel.HasKnowledgeOptions)
+                                @foreach (var option in Model.CLIViewModel.HasKnowLedgeOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }

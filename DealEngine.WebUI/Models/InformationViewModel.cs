@@ -428,7 +428,7 @@ namespace DealEngine.WebUI.Models
             HasActivityOptions = GetSelectListOptions();
             HasConfidencialOptions = GetSelectListOptions();
             HasBreachesOptions = GetSelectListOptions();
-            HasCircumstanceOptions = GetSelectListOptions();
+            HasKnowLedgeOptions = GetSelectListOptions();
             HasOptionalCLEOptions = GetSelectListOptions();
             HasProceduresOptions = GetSelectListOptions();
             HasApprovedVendorsOptions = GetSelectListOptions();
@@ -460,7 +460,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasActivityOptions { get; set; }
         public IList<SelectListItem> HasConfidencialOptions { get; set; }
         public IList<SelectListItem> HasBreachesOptions { get; set; }
-        public IList<SelectListItem> HasCircumstanceOptions { get; set; }
+        public IList<SelectListItem> HasKnowLedgeOptions { get; set; }
         public IList<SelectListItem> HasOptionalCLEOptions { get; set; }
         public IList<SelectListItem> HasProceduresOptions { get; set; }
         public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
