@@ -2191,7 +2191,7 @@ namespace DealEngine.WebUI.Controllers
             User user = null;
             try
             {
-                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
+                if (Guid.TryParse(HttpContext.Request.Form["ClientInformationSheet.Id"], out sheetId))
                 {
                     sheet = await _customerInformationService.GetInformation(sheetId);
                 }
