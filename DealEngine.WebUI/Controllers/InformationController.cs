@@ -1423,8 +1423,7 @@ namespace DealEngine.WebUI.Controllers
                         Console.WriteLine("");
                     }
                 }
-
-
+               
                 foreach (var section in model.Sections)
                     foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
                     {                        
@@ -1705,8 +1704,8 @@ namespace DealEngine.WebUI.Controllers
 
                 model.ClaimProducts = availableProducts;
                 model.OrganisationDetails = organisationDetails;
-                model.UserDetails = userDetails;                
-
+                model.UserDetails = userDetails;
+                model.Status = sheet.Status;
                 List<ClientInformationAnswer> informationAnswers = await _clientInformationAnswer.GetAllClaimHistory();
                 informationAnswers.Where(c => c.ClientInformationSheet.Id == sheet.Id);
                 model.ClientInformationAnswers = informationAnswers;
@@ -2579,6 +2578,8 @@ namespace DealEngine.WebUI.Controllers
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         sheet.Status = "Submitted";
+                        ClientInformationAnswer clientInformationAnswer = sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status");
+                        sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Submitted";
                         sheet.SubmitDate = DateTime.UtcNow;
                         sheet.SubmittedBy = user;
                         await uow.Commit();
