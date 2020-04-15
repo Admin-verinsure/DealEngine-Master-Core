@@ -117,7 +117,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
-            
+
             agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
             agreement.Jurisdiction = "Worldwide excluding USA/Canada";
 

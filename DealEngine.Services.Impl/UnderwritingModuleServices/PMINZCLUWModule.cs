@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium", 
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium",
                 "cl1millimitincomeunder500k", "cl1millimitincome500kto2andhalfmilpremium", "clsocialengineeringextpremium");
 
             //Create default referral points based on the clientagreementrules

@@ -144,15 +144,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
+                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYear > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYear;
                     numberoffeeincome += 1;
                 }
-                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0)
+                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYear > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYear;
                     numberoffeeincome += 1;
                 }
                 feeincome = totalfeeincome / numberoffeeincome;
