@@ -65,10 +65,34 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage500k = 0m;
 
             int TermExcess = 0;
+            //int intCompanyAge = 0;
+
+            //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value != null)
+            //{
+
+            //}
 
             //Return terms based on the limit options
 
             TermExcess = 1000;
+
+            //ClientAgreementEndorsement cAEDOInsExcl = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Insolvency Exclusion");
+
+            //if (cAEDOInsExcl != null)
+            //{
+            //    cAEDOInsExcl.DateDeleted = DateTime.UtcNow;
+            //    cAEDOInsExcl.DeletedBy = underwritingUser;
+            //}
+            //if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+            //    agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1")
+            //{
+            //    if (cAEDOInsExcl != null)
+            //    {
+            //        cAEDOInsExcl.DateDeleted = null;
+            //        cAEDOInsExcl.DeletedBy = null;
+            //    }
+            //}
+
 
             ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "DO", TermLimit500k, TermExcess);
             termsl500klimitoption.TermLimit = TermLimit500k;

@@ -97,11 +97,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 2500;
 
+            ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
+
+            if (cAECLExt != null)
+            {
+                cAECLExt.DateDeleted = DateTime.UtcNow;
+                cAECLExt.DeletedBy = underwritingUser;
+            }
+
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOtions").First().Value == "1")
             {
                 extpremium = rates["clsocialengineeringextpremium"];
+
+                if (cAECLExt != null)
+                {
+                    cAECLExt.DateDeleted = null;
+                    cAECLExt.DeletedBy = null;
+                }
             }
 
             TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);

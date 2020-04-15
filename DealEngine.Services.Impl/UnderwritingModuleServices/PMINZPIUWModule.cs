@@ -226,6 +226,35 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             }
 
+            ClientAgreementEndorsement cAEConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Construction)");
+            ClientAgreementEndorsement cAENonConstruction = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Project Managers (Non-Construction)");
+
+            if (cAEConstruction != null)
+            {
+                cAEConstruction.DateDeleted = DateTime.UtcNow;
+                cAEConstruction.DeletedBy = underwritingUser;
+            }
+            if (cAENonConstruction != null)
+            {
+                cAENonConstruction.DateDeleted = DateTime.UtcNow;
+                cAENonConstruction.DeletedBy = underwritingUser;
+            }
+            if (decCon > 0)
+            {
+                if (cAEConstruction != null)
+                {
+                    cAEConstruction.DateDeleted = null;
+                    cAEConstruction.DeletedBy = null;
+                }
+            } else
+            {
+                if (cAENonConstruction != null)
+                {
+                    cAENonConstruction.DateDeleted = null;
+                    cAENonConstruction.DeletedBy = null;
+                }
+            }
+
             decPIBasePremium = GetPIBasePremiumFor(rates, feeincome, decPRBDSP, decPRCon, decPRFASA, decPRIT, decPRMOP, decPROther, intordnumber, intpmpnumber, intcapmnumber, intpdnumber);
 
             decimal MinBrokerage = rates["piminbrokerage"];
