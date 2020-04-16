@@ -1351,7 +1351,7 @@ namespace DealEngine.WebUI.Controllers
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 GetRevenueViewModel(model, sheet.RevenueData);
                 model.SharedRoleViewModel = sharedRoleViewModel;
-
+                model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;

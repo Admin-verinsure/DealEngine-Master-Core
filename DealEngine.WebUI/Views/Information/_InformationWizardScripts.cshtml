@@ -52,6 +52,12 @@
                $('tab1').click();
            }
 
+           $.ajax({
+                url: '@Url.Action("SaveInformation", "Information")',
+                type: "POST",                
+                data: $("#tab_1 :input").serialize({ json:true })
+            })
+
            if (stepNumber === 0) {
                //once prefab pages we can call all forms to validate for now hardcode the accordion header
                if (informationsheetstatus != "Submitted") {
