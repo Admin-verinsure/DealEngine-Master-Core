@@ -312,6 +312,8 @@ namespace DealEngine.WebUI.Models
         public decimal ConstructionIndustrialDetails { get; set; }
         public decimal ConstructionInfrastructureDetails { get; set; }
         public decimal ConstructionSchoolDetails { get; set; }
+        public string ConstructionEngineerDetails { get; set; }
+        
     }
 
     public class SharedRoleViewModel

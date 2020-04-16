@@ -199,47 +199,68 @@ namespace DealEngine.Domain.Entities
             AdditionalActivityInformation = new AdditionalActivityInformation(null);
         }
 
-        public RevenueData(Programme Programme = null, User user = null) 
+        public RevenueData(ClientInformationSheet sheet = null, User user = null) 
             : base(user) 
         {
             Territories = new List<Territory>();
             Activities = new List<BusinessActivity>();
             AdditionalActivityInformation = new AdditionalActivityInformation(user);
 
-            if (Programme != null)
+            if (sheet != null)
             {
-                Territories = CreateTerritories(Programme);
-                Activities = CreateActivities(Programme);
+                Territories = CreateTerritories(sheet);
+                Activities = CreateActivities(sheet);
             }                       
         }
 
-        private IList<Territory> CreateTerritories(Programme programme)
+        private IList<Territory> CreateTerritories(ClientInformationSheet sheet)
         {
-            Territories = new List<Territory>();
-            foreach (var template in programme.TerritoryTemplates)
+            if(sheet.RevenueData != null)
             {
-                Territories.Add(new Territory(null)
-                {
-                    TemplateId = template.Id,
-                    Location = template.Location,
-                    Pecentage = 0,
-                    Selected = false
-                });
+                Territories = sheet.RevenueData.Territories;
             }
+            if(Territories.Count != sheet.Programme.BaseProgramme.TerritoryTemplates.Count)
+            {
+                foreach (var template in sheet.Programme.BaseProgramme.TerritoryTemplates)
+                {
+                    var containsTerritory = Territories.Where(t => t.TemplateId == template.Id).ToList();
+                    if (containsTerritory.Count == 0)
+                    {
+                        Territories.Add(new Territory(null)
+                        {
+                            TemplateId = template.Id,
+                            Location = template.Location,
+                            Pecentage = 0,
+                            Selected = false
+                        });
+                    }
+                }
+            }
+            
             return Territories;
         }
-        private IList<BusinessActivity> CreateActivities(Programme programme)
+        private IList<BusinessActivity> CreateActivities(ClientInformationSheet sheet)
         {
-            Activities = new List<BusinessActivity>();
-            foreach (var template in programme.BusinessActivityTemplates)
+            if (sheet.RevenueData != null)
             {
-                Activities.Add(new BusinessActivity(null)
+                Activities = sheet.RevenueData.Activities;
+            }
+            if (Territories.Count != sheet.Programme.BaseProgramme.TerritoryTemplates.Count)
+            {
+                foreach (var template in sheet.Programme.BaseProgramme.BusinessActivityTemplates)
                 {
-                    Description = template.Description,
-                    AnzsciCode = template.AnzsciCode,
-                    Selected = false,
-                    Pecentage = 0
-                });
+                    var containsTerritory = Territories.Where(t => t.TemplateId == template.Id).ToList();
+                    if (containsTerritory.Count == 0)
+                    {
+                        Activities.Add(new BusinessActivity(null)
+                        {
+                            Description = template.Description,
+                            AnzsciCode = template.AnzsciCode,
+                            Selected = false,
+                            Pecentage = 0
+                        });
+                    }
+                }
             }
             return Activities;
         }
@@ -277,6 +298,7 @@ namespace DealEngine.Domain.Entities
         public virtual decimal ConstructionIndustrialDetails { get; set; }
         public virtual decimal ConstructionInfrastructureDetails { get; set; }
         public virtual decimal ConstructionSchoolDetails { get; set; }
+        public virtual string ConstructionEngineerDetails { get; set; }
     }
 
     public class SubClientInformationSheet : ClientInformationSheet

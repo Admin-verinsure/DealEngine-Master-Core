@@ -133,7 +133,7 @@ namespace DealEngine.Services.Impl
                 sheet.AddAnswer(key, collection[key]);
             }
 
-            sheet.RevenueData = new RevenueData(sheet.Programme.BaseProgramme);
+            sheet.RevenueData = new RevenueData(sheet);
             // get activity/revenue data            
             var activityRevenue = collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture));            
             foreach (string key in activityRevenue)
