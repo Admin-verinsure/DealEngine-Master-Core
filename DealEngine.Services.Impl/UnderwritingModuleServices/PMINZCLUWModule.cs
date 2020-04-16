@@ -97,11 +97,25 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             TermExcess = 2500;
 
+            ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
+
+            if (cAECLExt != null)
+            {
+                cAECLExt.DateDeleted = DateTime.UtcNow;
+                cAECLExt.DeletedBy = underwritingUser;
+            }
+
             if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOtions").First().Value == "1")
             {
                 extpremium = rates["clsocialengineeringextpremium"];
+
+                if (cAECLExt != null)
+                {
+                    cAECLExt.DateDeleted = null;
+                    cAECLExt.DeletedBy = null;
+                }
             }
 
             TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
@@ -151,6 +165,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since CL policy first held";
+            agreement.TerritoryLimit = "Worldwide excluding USA/Canada";
+            agreement.Jurisdiction = "Worldwide excluding USA/Canada";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ CL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

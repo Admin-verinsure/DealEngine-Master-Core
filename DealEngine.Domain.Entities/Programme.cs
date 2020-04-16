@@ -48,6 +48,8 @@ namespace DealEngine.Domain.Entities
 
         public virtual string PolicyNumberPrefixString { get; set; }
         public virtual string Claim { get; set; }
+        public virtual bool ProgEnableEmail { get; set; }
+        public virtual bool ProgEnableInsuredDateChange { get; set; }
 
         protected Programme() : this(null) { }
 
