@@ -18,6 +18,9 @@ namespace DealEngine.WebUI.Controllers
     public class ImageController : BaseController
     {
         IMapperSession<CKImage> _ckimageRepository;
+
+        IMapperSession<Document> _fileRepository;
+
         private readonly ICKImageService _ckimageService;
         private readonly IProductService _iproductService;
 
@@ -28,6 +31,7 @@ namespace DealEngine.WebUI.Controllers
 
         public ImageController(IUserService userRepository, 
             IMapperSession<CKImage> ckimageRepository, 
+            IMapperSession<Document> fileRepository, 
             ICKImageService ckimageService,
             IProductService iproductService, 
             IWebHostEnvironment hostingEnv,
@@ -39,6 +43,7 @@ namespace DealEngine.WebUI.Controllers
             _applicationLoggingService=applicationLoggingService;
             _logger=logger;
             _ckimageRepository = ckimageRepository;
+            _fileRepository = fileRepository;
             _ckimageService = ckimageService;
             _iproductService = iproductService;
             _hostingEnv = hostingEnv;
@@ -196,25 +201,16 @@ namespace DealEngine.WebUI.Controllers
                         }
                         
                         DealEngine.Domain.Entities.Document newFile = new DealEngine.Domain.Entities.Document {
-                            Name = "",
-                            Description = "",
+                            Name = filename,
+                            Description = "testing",
                             DocumentType = 1,
                             IsTemplate = true,
                             ContentType = model.File.ContentType,
                             FileRendered = false,                                                       
                             Path = path
-                        };
+                        };                       
 
-
-                        
-                        CKImage newCKImage = new CKImage
-                        {
-                            Name = filename,
-                            Path = path,
-                            
-                        };
-
-                        await _ckimageRepository.AddAsync(newCKImage);
+                        await _fileRepository.AddAsync(newFile);
 
                     }
 
