@@ -245,11 +245,11 @@ namespace DealEngine.Domain.Entities
             {
                 Activities = sheet.RevenueData.Activities;
             }
-            if (Territories.Count != sheet.Programme.BaseProgramme.TerritoryTemplates.Count)
+            if (Activities.Count != sheet.Programme.BaseProgramme.BusinessActivityTemplates.Count)
             {
                 foreach (var template in sheet.Programme.BaseProgramme.BusinessActivityTemplates)
                 {
-                    var containsTerritory = Territories.Where(t => t.TemplateId == template.Id).ToList();
+                    var containsTerritory = Activities.Where(t => t.AnzsciCode == template.AnzsciCode).ToList();
                     if (containsTerritory.Count == 0)
                     {
                         Activities.Add(new BusinessActivity(null)

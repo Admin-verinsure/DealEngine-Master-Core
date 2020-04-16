@@ -144,6 +144,7 @@ namespace DealEngine.Services.Impl
                 Type type = Type.GetType(modelType);
                 try
                 {
+                    int percent = 0;
                     var model = Activator.CreateInstance(type);
                     var ModelProperty = model.GetType().GetProperty(modelArray.ElementAt(1));
                     if(ModelProperty.Name == "Territories")
@@ -154,9 +155,10 @@ namespace DealEngine.Services.Impl
                             Guid.TryParse(modelArray.ElementAt(2), out id);
                             territory = sheet.RevenueData.Territories.FirstOrDefault(t => t.TemplateId == id);
                             try
-                            {
-                                territory.Pecentage = int.Parse(collection[key].ToString());
+                            {                                
+                                int.TryParse(collection[key].ToString(), out percent);
                                 territory.Selected = true;
+                                territory.Pecentage = percent;
                             }
                             catch(Exception ex)
                             {
@@ -172,8 +174,9 @@ namespace DealEngine.Services.Impl
                             activity = sheet.RevenueData.Activities.FirstOrDefault(t => t.AnzsciCode == modelArray.ElementAt(2));
                             try
                             {
-                                activity.Pecentage = int.Parse(collection[key].ToString());
+                                int.TryParse(collection[key].ToString(), out percent);
                                 activity.Selected = true;
+                                activity.Pecentage = int.Parse(collection[key].ToString());                                
                             }
                             catch (Exception ex)
                             {
