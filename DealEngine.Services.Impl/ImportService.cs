@@ -614,9 +614,9 @@ namespace DealEngine.Services.Impl
                             }
                         }
 
-                        user.FirstName = parts[3];
-                        user.LastName = parts[4];
-                        user.FullName = parts[3] + " " + parts[4];
+                        user.FirstName = parts[2];
+                        user.LastName = parts[3];
+                        user.FullName = parts[2] + " " + parts[3];
                         user.Email = email;
                         user.Address = "";
                         user.Phone = "12345";
@@ -784,7 +784,7 @@ namespace DealEngine.Services.Impl
             StreamReader reader;
             User user = null;
             Organisation organisation = null;
-            bool readFirstLine = false;
+            bool readFirstLine = true;
             string line;
             string email;
             string userName;
@@ -1053,7 +1053,7 @@ namespace DealEngine.Services.Impl
             var currentUser = CreatedUser;
             StreamReader reader;
             BusinessContract businessContract;
-            bool readFirstLine = false;
+            bool readFirstLine = true;
             string line;
             var fileName = WorkingDirectory + "PMINZProjects2019Final.csv";
 
