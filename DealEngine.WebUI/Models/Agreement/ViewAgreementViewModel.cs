@@ -95,6 +95,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public string excess { get; set; }
         public string premium { get; set; }
         public string TotalPremium { get; set; }
+        public string dependencyproduct { get; set; }
     }
 
     public class InsuranceExclusion
