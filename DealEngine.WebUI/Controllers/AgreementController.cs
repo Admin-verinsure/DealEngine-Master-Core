@@ -1502,6 +1502,7 @@ namespace DealEngine.WebUI.Controllers
                     model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                     model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
                     model.CurrencySymbol = "fa fa-dollar";
+                    model.ClientInformationSheet = agreement.ClientInformationSheet;
                     if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal &&
                         agreement.ClientInformationSheet.Programme.EGlobalBranchCode != null && agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null)
                     {

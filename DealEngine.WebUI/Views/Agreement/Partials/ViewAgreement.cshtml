@@ -52,21 +52,21 @@
         <table class="table-hover">
             <tbody>
                 <tr>
-                    <td width="60%" height="40">
+                    <td width="260" height="40">
                         <strong>Product:</strong>
                     </td>
-                    <td width="60%" height="40">
+                    <td width="350" height="40">
                         @Html.DisplayFor(m => m.ProductName)
                     </td>
                 </tr>
                 <tr>
-                    <td width="60%" height="40">
+                    <td width="260" height="40">
                         <strong>Policy Start Date:</strong>
                     </td>
-                    <td width="60%" height="40">
+                    <td width="350" height="40">
                         @Html.DisplayFor(m => m.StartDate) 4pm local time
 
-                        @if (Model.IsChange == false && !Model.InformationSheetStatus.StartsWith("Bound"))
+                        @if (Model.IsChange == false && !Model.InformationSheetStatus.StartsWith("Bound") && Model.ClientInformationSheet.Programme.BaseProgramme.ProgEnableInsuredDateChange)
                         {
                             <a style="color:green;font-size:24px" onclick="event.preventDefault;$('#getStartDate').show();"><i class="fa fa-calendar"></i></a>
 
@@ -74,34 +74,34 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="60%" height="40">
+                    <td width="260" height="40">
                         <strong>Policy End Date:</strong>
                     </td>
-                    <td width="60%" height="40">
+                    <td width="350" height="40">
                         @Html.DisplayFor(m => m.EndDate) 4pm local time
                     </td>
                 </tr>
                 <tr>
-                    <td width="60%" height="40">
+                    <td width="260" height="40">
                         <strong>Current @Html.DisplayNameFor(m => m.Status):</strong>
                     </td>
-                    <td width="60%" height="40">
+                    <td width="350" height="40">
                         @Html.DisplayFor(m => m.Status)
                     </td>
                 </tr>
                 <tr>
-                    <td width="60%" height="40">
+                    <td width="260" height="40">
                         <strong>Client Number #:</strong>
                     </td>
-                    <td width="60%" height="40">
+                    <td width="350" height="40">
                         @Html.DisplayFor(m => m.ClientNumber)
                     </td>
                 </tr>
                 <tr>
-                    <td width="60%" height="40">
+                    <td width="260" height="40">
                         <strong>Insurer Policy #:</strong>
                     </td>
-                    <td width="60%" height="40">
+                    <td width="350" height="40">
                         @Html.DisplayFor(m => m.PolicyNumber)
                     </td>
                 </tr>
