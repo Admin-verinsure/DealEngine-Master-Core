@@ -71,6 +71,8 @@ namespace DealEngine.WebUI.Models.Agreement
         public string CancelAgreementReason { get; set; }
         public bool SentOnlineAcceptance { get; set; }
         public string RetroactiveDate { get; set; }
+        public string TerritoryLimit { get; set; }
+        public string Jurisdiction { get; set; }
     }
 
     public class InsuranceInclusion
@@ -93,6 +95,7 @@ namespace DealEngine.WebUI.Models.Agreement
         public string excess { get; set; }
         public string premium { get; set; }
         public string TotalPremium { get; set; }
+        public string dependencyproduct { get; set; }
     }
 
     public class InsuranceExclusion

@@ -63,9 +63,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit100k = 100000;
-            decimal TermPremium100k = 0m;
-            decimal TermBrokerage100k = 0m;
             int TermLimit250k = 250000;
             decimal TermPremium250k = 0m;
             decimal TermBrokerage250k = 0m;
@@ -77,7 +74,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             decimal TermBrokerage1mil = 0m;
 
             int TermExcess = 0;
-            decimal feeincome = 0;
+            decimal feeincome = 0m;
             //Calculation
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
@@ -85,7 +82,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISTerritory.Location == "NZ") //NZ income only
                     {
-                        feeincome = Convert.ToDecimal(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "totalRevenue").First().Value) * uISTerritory.Pecentage / 100;
+                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear * uISTerritory.Pecentage / 100;
                     }
                 }
             }
@@ -93,16 +90,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Return terms based on the limit options
 
             TermExcess = 2500;
-
-            //TermPremium100k = GetPremiumFor(rates, feeincome, TermLimit100k);
-            //ClientAgreementTerm termsl100klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit100k, TermExcess);
-            //termsl100klimitoption.TermLimit = TermLimit100k;
-            //termsl100klimitoption.Premium = TermPremium100k;
-            //termsl100klimitoption.Excess = TermExcess;
-            //termsl100klimitoption.BrokerageRate = agreement.Brokerage;
-            //termsl100klimitoption.Brokerage = TermBrokerage100k;
-            //termsl100klimitoption.DateDeleted = null;
-            //termsl100klimitoption.DeletedBy = null;
 
             TermPremium250k = GetPremiumFor(rates, feeincome, TermLimit250k);
             ClientAgreementTerm termsl250klimitoption = GetAgreementTerm(underwritingUser, agreement, "CL", TermLimit250k, TermExcess);

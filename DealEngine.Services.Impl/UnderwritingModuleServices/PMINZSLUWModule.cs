@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl5millimitpremium", "sl10millimitpremium");
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "sl500klimitpremium", "sl1millimitpremium");
 
             //Create default referral points based on the clientagreementrules
             if (agreement.ClientAgreementReferrals.Count == 0)
@@ -60,34 +60,34 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             agreement.QuoteDate = DateTime.UtcNow;
 
-            int TermLimit5mil = 5000000;
-            decimal TermPremium5mil = rates["sl5millimitpremium"];
-            decimal TermBrokerage5mil = 0m;
-            int TermLimit10mil = 10000000;
-            decimal TermPremium10mil = rates["sl10millimitpremium"];
-            decimal TermBrokerage10mil = 0m;
+            int TermLimit500k = 500000;
+            decimal TermPremium500k = rates["sl500klimitpremium"];
+            decimal TermBrokerage500k = 0m;
+            int TermLimit1mil = 1000000;
+            decimal TermPremium1mil = rates["sl1millimitpremium"];
+            decimal TermBrokerage1mil = 0m;
             int TermExcess = 0;
 
-            TermBrokerage5mil = TermPremium5mil * agreement.Brokerage;
-            TermBrokerage10mil = TermPremium10mil * agreement.Brokerage;
+            TermBrokerage500k = TermPremium500k * agreement.Brokerage;
+            TermBrokerage1mil = TermPremium1mil * agreement.Brokerage;
 
-            ClientAgreementTerm termsl5millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit5mil, TermExcess);
-            termsl5millimitoption.TermLimit = TermLimit5mil;
-            termsl5millimitoption.Premium = TermPremium5mil;
-            termsl5millimitoption.Excess = TermExcess;
-            termsl5millimitoption.BrokerageRate = agreement.Brokerage;
-            termsl5millimitoption.Brokerage = TermBrokerage5mil;
-            termsl5millimitoption.DateDeleted = null;
-            termsl5millimitoption.DeletedBy = null;
+            ClientAgreementTerm termsl500klimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit500k, TermExcess);
+            termsl500klimitoption.TermLimit = TermLimit500k;
+            termsl500klimitoption.Premium = TermPremium500k;
+            termsl500klimitoption.Excess = TermExcess;
+            termsl500klimitoption.BrokerageRate = agreement.Brokerage;
+            termsl500klimitoption.Brokerage = TermBrokerage500k;
+            termsl500klimitoption.DateDeleted = null;
+            termsl500klimitoption.DeletedBy = null;
 
-            ClientAgreementTerm termsl10millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit10mil, TermExcess);
-            termsl10millimitoption.TermLimit = TermLimit10mil;
-            termsl10millimitoption.Premium = TermPremium10mil;
-            termsl10millimitoption.Excess = TermExcess;
-            termsl10millimitoption.BrokerageRate = agreement.Brokerage;
-            termsl10millimitoption.Brokerage = TermBrokerage10mil;
-            termsl10millimitoption.DateDeleted = null;
-            termsl10millimitoption.DeletedBy = null;
+            ClientAgreementTerm termsl1millimitoption = GetAgreementTerm(underwritingUser, agreement, "SL", TermLimit1mil, TermExcess);
+            termsl1millimitoption.TermLimit = TermLimit1mil;
+            termsl1millimitoption.Premium = TermPremium1mil;
+            termsl1millimitoption.Excess = TermExcess;
+            termsl1millimitoption.BrokerageRate = agreement.Brokerage;
+            termsl1millimitoption.Brokerage = TermBrokerage1mil;
+            termsl1millimitoption.DateDeleted = null;
+            termsl1millimitoption.DeletedBy = null;
 
             ////Referral points per agreement
 
@@ -102,6 +102,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 agreement.Status = "Quoted";
             }
 
+            string retrodate = "Inception or Date since SL policy first held";
+            agreement.TerritoryLimit = "New Zealand";
+            agreement.Jurisdiction = "New Zealand";
+            agreement.RetroactiveDate = retrodate;
 
             string auditLogDetail = "PMINZ SL UW created/modified";
             AuditLog auditLog = new AuditLog(underwritingUser, informationSheet, agreement, auditLogDetail);

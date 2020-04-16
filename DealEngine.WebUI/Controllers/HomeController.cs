@@ -696,12 +696,18 @@ namespace DealEngine.WebUI.Controllers
                     var correctEmail = await _userService.GetUserByEmail(email);
                     if (correctEmail != null)
                     {
-                        await _emailService.SendSystemEmailLogin(email);
-                        EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                        if (emailTemplate != null)
+                        if (programme.ProgEnableEmail)
                         {
-                            //UIS AGREEMENT
-                            await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            //send out login instruction email
+                            await _emailService.SendSystemEmailLogin(email);
+                            //send out information sheet instruction email
+                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                            if (emailTemplate != null)
+                            {
+                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, null, null);
+                            }
+                            //send out uis issue notification email
+                            //await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, sheet, programme.Owner);
                         }
                     }
 

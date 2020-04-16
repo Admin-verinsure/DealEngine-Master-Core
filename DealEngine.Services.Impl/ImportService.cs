@@ -35,7 +35,8 @@ namespace DealEngine.Services.Impl
             IMapperSession<Organisation> organisationRepository, 
             IBusinessActivityService businessActivityService)
         {
-            WorkingDirectory = "C://tmp//"; //"/tmp/ImportData/"; 
+            //WorkingDirectory = "/tmp/"; //"/tmp/ImportData/";
+            WorkingDirectory = "C:\\Users\\Public\\"; //Ray Local
             _businessActivityService = businessActivityService;
             _InsuranceAttributeService = insuranceAttributeService;
             _organisationTypeService = organisationTypeService;
@@ -547,6 +548,116 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportPMINZServiceIndividuals(User CreatedUser)
+        {
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "PMINZClients2019Final.csv";
+            var currentUser = CreatedUser;
+            Guid programmeID = Guid.Parse("6a82f324-964f-47a6-b1cd-78848c62f616"); //PMINZ Programme ID
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = true;
+            string line;
+            string email;
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(parts[4]))
+                        {
+                            email = parts[8] + "@techcertain.com";
+                            user = await _userService.GetUserByEmail(email);
+                        }
+                        else
+                        {
+                            email = parts[4];
+                        }
+
+                        organisation = await _organisationService.GetOrganisationByEmail(email);
+
+                        if (user == null)
+                        {
+                            user = new User(currentUser, Guid.NewGuid(), parts[8]);
+                        }
+                        organisation = await _organisationService.GetOrganisationByEmail(email);
+                        if (parts[0] == "f")
+                        {
+                            if (organisation == null)
+                            {
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[2] + " " + parts[3], organisationType, email);
+                                await _organisationService.CreateNewOrganisation(organisation);
+                            }
+                        }
+                        else
+                        {
+                            if (organisation == null)
+                            {
+                                var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Corporation – Limited liability");
+                                organisation = new Organisation(currentUser, Guid.NewGuid(), parts[1], organisationType, parts[4]);
+                                await _organisationService.CreateNewOrganisation(organisation);
+                            }
+                        }
+
+                        user.FirstName = parts[3];
+                        user.LastName = parts[4];
+                        user.FullName = parts[3] + " " + parts[4];
+                        user.Email = email;
+                        user.Address = "";
+                        user.Phone = "12345";
+
+                        if (!user.Organisations.Contains(organisation))
+                            user.Organisations.Add(organisation);
+                        user.SetPrimaryOrganisation(organisation);
+
+                        await _userService.ApplicationCreateUser(user);
+
+                        var programme = await _programmeService.GetProgramme(programmeID);
+                        var clientProgramme = await _programmeService.CreateClientProgrammeFor(programme.Id, user, organisation);
+
+                        var reference = await _referenceService.GetLatestReferenceId();
+                        var sheet = await _clientInformationService.IssueInformationFor(user, organisation, clientProgramme, reference);
+                        await _referenceService.CreateClientInformationReference(sheet);
+
+                        using (var uow = _unitOfWork.BeginUnitOfWork())
+                        {
+
+                            clientProgramme.BrokerContactUser = programme.BrokerContactUser;
+                            clientProgramme.ClientProgrammeMembershipNumber = parts[7];
+                            sheet.ClientInformationSheetAuditLogs.Add(new AuditLog(user, sheet, null, programme.Name + "UIS issue Process Completed"));
+                            try
+                            {
+                                await uow.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception(ex.Message);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
         public async Task ImportCEASServicePrincipals(User CreatedUser)
         {
             var currentUser = CreatedUser;
@@ -666,6 +777,198 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportPMINZServicePrincipals(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            User user = null;
+            Organisation organisation = null;
+            bool readFirstLine = false;
+            string line;
+            string email;
+            string userName;
+            //addresses need to be on one line            
+            var fileName = WorkingDirectory + "PMINZPersonnel2019Final.csv";
+            var insuranceAttribute = await _InsuranceAttributeService.GetInsuranceAttributeByName("project management personnel");
+            var organisationType = await _organisationTypeService.GetOrganisationTypeByName("Person - Individual");
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    //if has a title row
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    user = null;
+                    organisation = null;
+                    email = "";
+                    try
+                    {
+                        var hasProgramme = await _programmeService.HasProgrammebyMembership(parts[13]);
+                        var fullname = parts[0] + " " + parts[1];
+                        if (hasProgramme)
+                        {
+                            userName = parts[0].Replace(" ", string.Empty) + "_" + parts[1].Replace(" ", string.Empty);
+
+                            if (string.IsNullOrWhiteSpace(parts[2]))
+                            {
+                                email = parts[0].Replace(" ", string.Empty) + parts[1].Replace(" ", string.Empty) + "@techcertain.com";
+                            }
+                            else
+                            {
+                                email = parts[2];
+                            }
+
+                            organisation = new Organisation(currentUser, Guid.NewGuid(), fullname, organisationType, email);
+                            organisation.InsuranceAttributes.Add(insuranceAttribute);
+                            organisation.NZIAmembership = parts[13];
+                            organisation.Email = email;
+                            organisation.Phone = "12345";
+
+                            if (!string.IsNullOrEmpty(parts[3]))
+                            {
+                                organisation.JobTitle = parts[3];
+                            }
+                            if (!string.IsNullOrEmpty(parts[4]))
+                            {
+                                organisation.Qualifications = parts[4];
+                            }
+                            if (!string.IsNullOrEmpty(parts[5]))
+                            {
+                                organisation.ProfAffiliation = parts[5];
+                            }
+                            if (!string.IsNullOrEmpty(parts[6]))
+                            {
+                                organisation.CurrentMembershipNo = parts[6];
+                            }
+                            if (!string.IsNullOrEmpty(parts[7]))
+                            {
+                                if (parts[7] == "1")
+                                {
+                                    organisation.IsCurrentMembership = true;
+                                } else
+                                {
+                                    organisation.IsCurrentMembership = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(parts[9]))
+                            {
+                                if (parts[9] == "1")
+                                {
+                                    organisation.CertType = "PMP";
+                                } else if (parts[9] == "2") 
+                                {
+                                    organisation.CertType = "CAPM";
+                                } else if (parts[9] == "3")
+                                {
+                                    organisation.CertType = "ProjectDirector";
+                                } else 
+                                { 
+                                    organisation.CertType = "Ordinary"; 
+                                }
+                            } else
+                            {
+                                organisation.CertType = "Ordinary";
+                            }
+                            if (!string.IsNullOrEmpty(parts[10]))
+                            {
+                                if (parts[10] == "1")
+                                {
+                                    organisation.InsuredEntityRelation = "Director";
+                                }
+                                else if (parts[10] == "2")
+                                {
+                                    organisation.InsuredEntityRelation = "Employee";
+                                }
+                                else if (parts[10] == "3")
+                                {
+                                    organisation.InsuredEntityRelation = "Contractor";
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(parts[11]))
+                            {
+                                if (parts[11] == "1")
+                                {
+                                    organisation.IsContractorInsured = true;
+                                }
+                                else
+                                {
+                                    organisation.IsContractorInsured = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(parts[12]))
+                            {
+                                if (parts[12] == "1")
+                                {
+                                    organisation.IsInsuredRequired = true;
+                                }
+                                else
+                                {
+                                    organisation.IsInsuredRequired = false;
+                                }
+                            }
+
+                            using (var uom = _unitOfWork.BeginUnitOfWork())
+                            {
+                                insuranceAttribute.IAOrganisations.Add(organisation);
+                                try
+                                {
+                                    await uom.Commit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    await uom.Rollback();
+                                }
+                            }
+
+                            await _organisationService.CreateNewOrganisation(organisation);
+                            await _programmeService.AddOrganisationByMembership(organisation);
+
+                            user = await _userService.GetUserByEmail(email);
+
+                            if (user == null)
+                            {
+                                try
+                                {
+                                    user = await _userService.GetUser(userName);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Random random = new Random();
+                                    int randomNumber = random.Next(10, 99);
+                                    userName = userName + randomNumber.ToString();
+                                }
+                                user = new User(currentUser, Guid.NewGuid(), userName);
+                                user.FirstName = parts[0];
+                                user.LastName = parts[1];
+                                user.FullName = fullname;
+                                user.Email = email;
+                                user.Address = "Import Address";
+                                user.Phone = "12345";
+
+
+                                if (!user.Organisations.Contains(organisation))
+                                    user.Organisations.Add(organisation);
+
+                                user.SetPrimaryOrganisation(organisation);
+                                await _userService.ApplicationCreateUser(user);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+        }
+
         public async Task ImportCEASServiceClaims(User CreatedUser)
         {
             var currentUser = CreatedUser;
@@ -744,6 +1047,71 @@ namespace DealEngine.Services.Impl
                 }
             }
         }
+
+        public async Task ImportPMINZServiceContract(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            BusinessContract businessContract;
+            bool readFirstLine = false;
+            string line;
+            var fileName = WorkingDirectory + "PMINZProjects2019Final.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        businessContract = new BusinessContract(currentUser);
+                        businessContract.MembershipNumber = parts[7];
+                        businessContract.ProjectDescription = parts[0];
+                        businessContract.Fees = parts[1];
+                        businessContract.ConstructionValue = parts[2];
+                        businessContract.ProjectDuration = parts[3];
+                        if (parts[4] == "1")
+                        {
+                            businessContract.ProjectDirector = true;
+                        } else
+                        {
+                            businessContract.ProjectDirector = false;
+                        }
+                        if (parts[5] == "1")
+                        {
+                            businessContract.ProjectManager = true;
+                        }
+                        else
+                        {
+                            businessContract.ProjectManager = false;
+                        }
+                        if (parts[6] == "1")
+                        {
+                            businessContract.ProjectCoordinator = true;
+                        }
+                        else
+                        {
+                            businessContract.ProjectCoordinator = false;
+                        }
+
+                        await _programmeService.AddBusinessContractByMembership(businessContract);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
     }
 }
 

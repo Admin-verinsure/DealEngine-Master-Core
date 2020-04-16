@@ -10,11 +10,24 @@
         <div class="card-body">
             
             <div class="client-form">
-                @foreach (var item in Model)
+                @if (Model.Where(mstatus => mstatus.Status == "Referred").Count() > 0)
                 {
-                    @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
-                    break;
+                    @foreach (var item in Model.Where(mstatus => mstatus.Status == "Referred"))
+                    {
+                        @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
+                        break;
+                    }
                 }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        @await Html.PartialAsync("Partials/ViewAgreementDeclaration", item)
+                        break;
+                    }
+                }
+
+
             </div>            
         </div>        
     </div>    

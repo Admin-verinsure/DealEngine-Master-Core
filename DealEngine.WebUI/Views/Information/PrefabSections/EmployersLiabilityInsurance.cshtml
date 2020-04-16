@@ -5,7 +5,7 @@
             <div class="row">
 
 
-                <div class="panel-body" id="@Model.Id body">
+                <div class="panel-body" id="@Model.ClientProgramme.Id body">
 
                     <section class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
@@ -33,7 +33,7 @@
 
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <label class="label required">
-                                Is this a renewal of an existing policy placed with NZACS?
+                                Is this a renewal of an existing policy placed with @Model.Name ?
                             </label>
                         </section>
                         <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -183,7 +183,6 @@
                 };
             })
             .fail(function (a, s, d) {
-                debugger;
                 alert("Unable to save.");
             });
     });

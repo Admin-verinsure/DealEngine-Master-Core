@@ -25,7 +25,7 @@
                                  //$('#getDetailsModal').modal('hide');
 
 							    $("#tblBuilding").jqGrid({
-							        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=false",
+							        url: "/Services/GetBuildings?informationId=@Model.ClientInformationSheet.Id&removed=false",
 							        datatype: "xml",
                                     mtype: "GET",
                                     async: true,
@@ -203,7 +203,7 @@
                             <script type="text/javascript">
                                 $(".LocRemoved").click(function () {
 						        $("#tblRemovedBuilding").jqGrid({
-						        url: "/Services/GetBuildings?informationId=@Model.AnswerSheetId&removed=true",
+						        url: "/Services/GetBuildings?informationId=@Model.ClientInformationSheet.Id&removed=true",
 						        datatype: "xml",
                                     mtype: "GET",
                                 async: true,
