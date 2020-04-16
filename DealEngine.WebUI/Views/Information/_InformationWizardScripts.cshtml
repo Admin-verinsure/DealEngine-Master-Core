@@ -59,7 +59,13 @@
             })
 
            if (stepNumber === 0) {
-               //once prefab pages we can call all forms to validate for now hardcode the accordion header
+               //save answers regardless of validation
+               $.ajax({
+                   url: '@Url.Action("SaveInformation", "Information")',
+                   type: "POST",
+                   data: $("#tab_1 :input").serialize({ json: true })
+               })
+
                if (informationsheetstatus != "Submitted") {
                var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
                var formIds = [];

@@ -4,7 +4,7 @@
     IList<Territory> SelectedTerritories = Model.RevenueDataViewModel.Territories.Where(t => t.Selected == true).ToList();
     IList<BusinessActivity> SelectedActivities = Model.RevenueDataViewModel.Activities.Where(t => t.Selected == true).ToList();
 }
-    <div class="form is-valid" id="RevenueDataViewModel">
+    <div class="is-valid" id="RevenueDataViewModel">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" id="SharedRevenueTab1">
                 <a class="nav-link active" href="#RevenueTabs1" data-toggle="tab"> Territory </a>
@@ -383,10 +383,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group" hidden id="additionalinfosubmit">
-                    <a class="btn btn-sm btn-success text-light" onclick="ValidateSharedRevenueForm(3);">  Continue  </a>
-                </div>
+                </div>                
             </div>
         </div>
     </div>

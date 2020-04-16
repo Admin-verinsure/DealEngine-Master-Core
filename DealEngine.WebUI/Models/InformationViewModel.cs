@@ -627,7 +627,6 @@ namespace DealEngine.WebUI.Models
         public int DebtTotal { get; set; }
         public DateTime FormDate { get; set; }
         public string CompanyNameDetails { get; set; }
-        public string ClaimDetails { get; set; }
         public string CircumstanceDetails { get; set; }
         public string InvestigationDetails { get; set; }
         public string DeclinedDetails { get; set; }
