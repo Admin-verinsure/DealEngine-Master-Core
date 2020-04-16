@@ -431,7 +431,7 @@ namespace DealEngine.WebUI.Models
             HasCircumstanceOptions = GetSelectListOptions();
             HasOptionalCLEOptions = GetSelectListOptions();
             HasProceduresOptions = GetSelectListOptions();
-            HasApprovedVendorsOtions = GetSelectListOptions();
+            HasApprovedVendorsOptions = GetSelectListOptions();
             HasRenewalOptions = GetSelectListOptions();
             HasLocationOptions = GetSelectListOptions();
         }
@@ -463,7 +463,7 @@ namespace DealEngine.WebUI.Models
         public IList<SelectListItem> HasCircumstanceOptions { get; set; }
         public IList<SelectListItem> HasOptionalCLEOptions { get; set; }
         public IList<SelectListItem> HasProceduresOptions { get; set; }
-        public IList<SelectListItem> HasApprovedVendorsOtions { get; set; }
+        public IList<SelectListItem> HasApprovedVendorsOptions { get; set; }
         public IList<SelectListItem> HasRenewalOptions { get; set; }
         public IList<SelectListItem> HasLocationOptions { get; set; }
 

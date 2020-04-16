@@ -1,5 +1,40 @@
 ﻿@model DealEngine.WebUI.Models.InformationViewModel
-    <form id="CLIViewModel" class="is-valid">
+<form id="CLIViewModel" class="is-valid">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hassecurity" class="label required">
+                    We have security software controls to protect our computer systems, e.g. anti-virus protection, firewalls, etc?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hassecurity" name="CLIViewModel.HasSecurityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.CLIViewModel.HasSecurityOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-9">
+                <label for="hasprohibitaccess" class="label required">
+                    We have security controls in place to prohibit unauthorised access to our computer systems?
+                </label>
+            </div>
+            <div class="col-3">
+                <select id="hasprohibitaccess" name="CLIViewModel.HasProhibitAccessOptions" class="custom-select" data-rule="CyberLabel" data-item="hasprohibitaccess,hasprohibitaccess,cyberlabel" onchange="OnChange(this.id, this.name)" required>
+                    @foreach (var option in Model.CLIViewModel.HasProhibitAccessOptions)
+                    {
+                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="CLIViewModel.HasProhibitAccessOptions" hidden>
         <div class="form-group">
             <div class="row">
                 <div class="col-9">
@@ -21,23 +56,6 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-9">
-                        <label for="hassecurity" class="label required">
-                            We have security software controls to protect our computer systems, e.g. anti-virus protection, firewalls, etc?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hassecurity" name="CLIViewModel.HasSecurityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasSecurityOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
                         <label for="hasaccesscontrol" class="label required">
                             We have access controls in place (e.g. passwords) for employees and other users to deny access to sensitive data on computer systems?
                         </label>
@@ -51,156 +69,109 @@
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasprohibitaccess" class="label required">
-                            We have security controls in place to prohibit unauthorised access to our computer systems?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasprohibitaccess" name="CLIViewModel.HasProhibitAccessOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasProhibitAccessOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasbackup" class="label required">
-                            We have backup and recovery procedures for all data and IT systems?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasbackup" name="CLIViewModel.HasBackupOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasBackupOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="hasbackup" class="label required">
+                                We have backup and recovery procedures for all data and IT systems?
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="hasbackup" name="CLIViewModel.HasBackupOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasBackupOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>           
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="haslocation" class="label required">
-                            We do not have any domiciled operations or derive revenue from USA, Canada, UK, Europe or Australia?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="haslocation" name="CLIViewModel.HasLocationOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasLocationOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasactivity" class="label required">
-                            We do not have business operations that would be classified as: Financial Institution, Medical/Health, Call Centre, Telemarketing, Data Processing (Outsourcing), Internet Service,
-                            Telecommunications, Social Networking, Credit Bureaus, Payment Processing, Gaming, Cloud Provider
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasactivity" name="CLIViewModel.HasActivityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasActivityOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="haslocation" class="label required">
+                                We do not have any domiciled operations or derive revenue from USA, Canada, UK, Europe or Australia?
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="haslocation" name="CLIViewModel.HasLocationOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasLocationOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasconfidencial" class="label required">
-                            We do not collect, and/or processes and/or store credit card information?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasconfidencial" name="CLIViewModel.HasConfidencialOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasConfidencialOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasbreaches" class="label required">
-                            We have not sustained any single loss or losses, or suffered from any prior cyber breaches, including but not limited to data loss, network intrusion, hack attack (including telephone hacking), and any fines, in the last three years, for which this proposed insurance may respond to?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasbreaches" name="CLIViewModel.HasBreachesOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasBreachesOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="hasactivity" class="label required">
+                                We do not have business operations that would be classified as: Financial Institution, Medical/Health, Call Centre, Telemarketing, Data Processing (Outsourcing), Internet Service,
+                                Telecommunications, Social Networking, Credit Bureaus, Payment Processing, Gaming, Cloud Provider
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="hasactivity" name="CLIViewModel.HasActivityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasActivityOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hascircumstance" class="label required">
-                            We do not have any knowledge of any act, omission, fact, event or circumstance which might give rise to a loss under this proposed insurance after full enquiry of any of its directors, officers and employees?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hascircumstance" name="CLIViewModel.HasCircumstanceOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasCircumstanceOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>            
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-12">
-                        <label for="hascircumstance" class="label">
-                            <strong>Social Engineering Fraud Extension</strong>
-
-                            Social Engineering Fraud optional extension to cover Phishing (the fraudulent use of electronic communications or websites to impersonate you to solicit personal or confidential information about your clients) , Phreaking (the unauthorised and malicious use of your telephone system which results in charges which you are legally liable to pay) and Fake Invoice losses (voluntarily giving away of your own money to a third party due to that third party impersonating one of your employees, principals, clients or suppliers)
-                        </label>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="hasconfidencial" class="label required">
+                                We do not collect, and/or processes and/or store credit card information?
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="hasconfidencial" name="CLIViewModel.HasConfidencialOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasConfidencialOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-9">
-                        <label for="hasoptionalCLE" class="label required">
-                            Would you like to purchase this optional Cyber Liability Social Engineering Fraud Extension policy extension for $250?
-                        </label>
-                    </div>
-                    <div class="col-3">
-                        <select id="hasoptionalCLE" name="CLIViewModel.HasOptionalCLEOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                            @foreach (var option in Model.CLIViewModel.HasOptionalCLEOptions)
-                            {
-                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                            }
-                        </select>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="hasbreaches" class="label required">
+                                We have not sustained any single loss or losses, or suffered from any prior cyber breaches, including but not limited to data loss, network intrusion, hack attack (including telephone hacking), and any fines, in the last three years, for which this proposed insurance may respond to?
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="hasbreaches" name="CLIViewModel.HasBreachesOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasBreachesOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div id="CLIViewModel.HasOptionalCLEOptions" hidden>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-9">
+                            <label for="hasknowledge" class="label required">
+                                We do not have any knowledge of any act, omission, fact, event or circumstance which might give rise to a loss under this proposed insurance after full enquiry of any of its directors, officers and employees?
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <select id="hasknowledge" name="CLIViewModel.HasKnowledgeOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasKnowledgeOptions)
+                                {
+                                    <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-9">
@@ -209,7 +180,7 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            <select id="hasprocedures" name="CLIViewModel.HasProceduresOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                            <select id="hasprocedures" name="CLIViewModel.HasProceduresOptions" class="custom-select" data-rule="CyberOptional" data-item="hasapprovedvendors,hasprocedures" onchange="OnChange(this.id, this.name)" required>
                                 @foreach (var option in Model.CLIViewModel.HasProceduresOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -226,12 +197,42 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            <select id="hasapprovedvendors" name="CLIViewModel.HasApprovedVendorsOtions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
-                                @foreach (var option in Model.CLIViewModel.HasApprovedVendorsOtions)
+                            <select id="hasapprovedvendors" name="CLIViewModel.HasApprovedVendorsOptions" class="custom-select" data-rule="CyberOptional" data-item="hasapprovedvendors,hasprocedures" onchange="OnChange(this.id, this.name)" required>
+                                @foreach (var option in Model.CLIViewModel.HasApprovedVendorsOptions)
                                 {
                                     <option selected="@option.Selected" value="@option.Value">@option.Text</option>
                                 }
                             </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="CLIViewModel.HasApprovedVendorsOptions" hidden>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="label">
+                                    <strong>Social Engineering Fraud Extension</strong>
+
+                                    Social Engineering Fraud optional extension to cover Phishing (the fraudulent use of electronic communications or websites to impersonate you to solicit personal or confidential information about your clients) , Phreaking (the unauthorised and malicious use of your telephone system which results in charges which you are legally liable to pay) and Fake Invoice losses (voluntarily giving away of your own money to a third party due to that third party impersonating one of your employees, principals, clients or suppliers)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-9">
+                                <label for="hasoptionalCLE" class="label required">
+                                    Would you like to purchase this optional Cyber Liability Social Engineering Fraud Extension policy extension for $250?
+                                </label>
+                            </div>
+                            <div class="col-3">
+                                <select id="hasoptionalCLE" name="CLIViewModel.HasOptionalCLEOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                                    @foreach (var option in Model.CLIViewModel.HasOptionalCLEOptions)
+                                    {
+                                        <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -244,7 +245,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        <select id="hasrenewal" name="CLIViewModel.HasRenewalOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                        <select id="hasrenewal" name="CLIViewModel.HasRenewalOptions" class="custom-select" data-rule="reverse" data-item='PMINZPIViewModel.HasManagedProjectOptions' onchange="OnChange(this.id, this.name)" required>
                             @foreach (var option in Model.CLIViewModel.HasRenewalOptions)
                             {
                                 <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -275,7 +276,7 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            @Html.EditorFor(m => m.CLIViewModel.DateLapsed, new { @class = "Calenderdate form-control b", @id = "datelapsed", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextBoxFor(m => m.CLIViewModel.DateLapsed, new { @class = "form-control", @id = "datelapsed", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -299,11 +300,12 @@
                             </label>
                         </div>
                         <div class="col-3">
-                            @Html.EditorFor(m => m.CLIViewModel.RetroactiveDate, new { @class = "Calenderdate form-control b", @id = "retroactivedate", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextBoxFor(m => m.CLIViewModel.RetroactiveDate, new { @class = "form-control", @id = "retroactivedate", @type = "text", onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
+</form>
 

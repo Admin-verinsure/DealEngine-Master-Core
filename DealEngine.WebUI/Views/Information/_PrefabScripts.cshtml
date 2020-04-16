@@ -1,14 +1,13 @@
-﻿    <script type="text/javascript">
+﻿<script type="text/javascript">
 
         $(function () {
-            //get all forms on load            
+            //get all forms on load
             var forms = document.getElementsByClassName('is-valid');
             var formIds = [];
             for (var f = 0; f < forms.length; f++) {
                 //get each form id
                 formIds.push(forms[f].id);
             }
-            debugger;
             for (var i = 0; i < formIds.length; i++) {
                 var form = document.getElementById(formIds[i]);
                 for (var e = 0; e < form.length; e++) {
@@ -26,22 +25,22 @@
             }
         });
 
-        function OnChange(Id, Name) {            
+        function OnChange(Id, Name) {
             var obj = document.getElementById(Id);
             var value = obj.value;
             var dataRule = obj.getAttribute('data-rule');
             var dataItem = obj.getAttribute('data-item');
             var Tag = obj.tagName;
-            obj.classList.remove("is-up");            
+            obj.classList.remove("is-up");
 
             //validation
             if (Tag == "SELECT") {
                 SelectValidation(obj, value);
             } else if (Tag == "INPUT") {
                 InputValidation(obj, value);
-            }           
+            }
             //trigger
-            TriggerHandler(Name, value, dataRule, dataItem)              
+            TriggerHandler(Name, value, dataRule, dataItem);
         }
 
         function InputValidation(obj, value) {
@@ -77,26 +76,26 @@
 
         function DefaultRule(Value, Name) {
             if (Value === "1") {
-                    ShowElement(Name);              
+                    ShowElement(Name);
                 } else {
                     HideElement(Name);
                 }
         }
 
-        function TriggerHandler(Name, Value, Rule, DataItem) {                                                       
-            try {                
+        function TriggerHandler(Name, Value, Rule, DataItem) {
+            try {
                 //all rules go here
                 DefaultRule(Value, Name);
                 if (Rule === "clear") {
                     if (Value == 2) {
                         ClearObject(DataItem);
-                    }                    
+                    }
                 }
                 if (Rule === "contractingservice") {
-                    if (Value != "10" && Value != "") {            
+                    if (Value != "10" && Value != "") {
                         Value = "1";
                         DefaultRule(Value, Name);
-                    }                       
+                    }
                 }
                 if (Rule === "reverse") {
                     if (Value == "2") {
@@ -111,14 +110,54 @@
                     Value = "1";
                     DefaultRule(Value, Name);
                 }
+                if (Rule === "CyberLabel") {
+                    var valid = CreateCyberLabelInput(DataItem);
+                     if (!valid) {
+                         Value = "2";
+                         DefaultRule(Value, Name);
+                     }
+                }
+                if (Rule === "CyberOptional") {
+                    var isCondition = DoubleConditional(DataItem);
+                    CyberOptional(DataItem, isCondition);
+                }
             } catch (ex) {
+                if (Rule === "CyberOptional") {
+                    var isCondition = DoubleConditional(DataItem);
+                    CyberOptional(DataItem, isCondition);
+                }
                 //console.log(ex);
-                //debugger;
                 ////we expect this to fail for form elements with no change events but could use this later
-            }      
-        }
+            }
+    }
 
-        function BuildSharedTable(DataItem, Name) {  
+    function CyberOptional(DataItem, isCondition) {
+        var array = DataItem.split(',');
+        //hardcoded name
+        var el = document.getElementById(array[0]);
+        var el1 = document.getElementById(array[1]);
+        var name = "CLIViewModel.HasApprovedVendorsOptions";
+        debugger;
+        if (isCondition) {
+            DefaultRule("1", name);
+        }
+        else {
+            DefaultRule("2", name);
+        }
+    }
+
+    function DoubleConditional(DataItem) {
+        var ids = DataItem.split(',');
+        var q1 = document.getElementById(ids[0]);
+        var q2 = document.getElementById(ids[1]);
+
+        if (q1.value == "1" && q2.value == "1") {
+            return true;
+        }
+        return false
+    }
+
+        function BuildSharedTable(DataItem, Name) {
             var array = DataItem.split(',');
             var list = document.getElementById(array[0]);
             var tableElement = document.getElementById(array[1]);
@@ -127,119 +166,144 @@
             }
             var tbdy = document.createElement('tbody');
             for (var t = 0; t < list.options.length;t++) {
-                if (list.options[t].selected === true) {                                
+                if (list.options[t].selected === true) {
                     var tr = document.createElement('tr');
                     var td1 = document.createElement('td');
                     td1.appendChild(document.createTextNode(list[t].text));
-                    tr.appendChild(td1);                    
+                    tr.appendChild(td1);
                     var td2 = document.createElement('td');
                     td2.innerHTML = CreateSharedInput(Name, list.options[t]);
                     tr.appendChild(td2);
                     tbdy.appendChild(tr);
-                }                                
+                }
             }
             tableElement.appendChild(tbdy);
-        }
+    }
 
-        function CreateSharedInput(Id, element) {           
-            var input = document.createElement("input");
-            input.setAttribute("name", Id + "." + element.value);
-            input.setAttribute("id", element.text);
-            input.setAttribute("class", "form-control");
-            input.setAttribute("data-rule", "validatetable");
-            input.setAttribute("data-item", "validatetable" + element.parentElement.id);
-            input.setAttribute("onchange", "OnChange(this.id, this.name)");
-            return input.outerHTML;            
-        }
+    function CreateSharedInput(Id, element) {
+        var input = document.createElement("input");
+        input.setAttribute("name", Id + "." + element.value);
+        input.setAttribute("id", element.text);
+        input.setAttribute("class", "form-control");
+        input.setAttribute("data-rule", "validatetable");
+        input.setAttribute("data-item", "validatetable" + element.parentElement.id);
+        input.setAttribute("onchange", "OnChange(this.id, this.name)");
+        return input.outerHTML;
+    }
 
-        function HideElement(id) {
-            document.getElementById(id).hidden = true;
-        }
 
-        function ShowElement(id) {
-            document.getElementById(id).hidden = false;
-        }
-
-        function ClearObject(Id) {
-            var obj = document.getElementById(Id);
-            var Tag = obj.tagName;
-            //here we can define the changes per type
-            if (Tag == "SELECT") {                
-                for (var i = 0; i < obj.options.length; i++) {    
-                    if (obj.options[i].selected === true) {
-                        obj.options[i].selected = false;
-                    }
-                }
-                if (!obj.multiple) {
-                    obj.options[0].selected = true;                    
-                }                
-            }
-        }
-
-        function ValidateTableValues(table) {
-            var percentage = 0;
-            for (var v = 0; v < table.length; v++) {
-                percentage += parseInt(table[v].value);
-            }
-            if (percentage != 100) {
-                alert("Percentage calculation does not equal to 100%");
+    function CreateCyberLabelInput(DataId) {
+        var isYes =DoubleConditional(DataId)
+        var ids = DataId.split(',');
+        var conditional = "As you have answered no to one or both of the above questions then NZI are not able to provide Cyber Ultra cover and you will not be provided with an automatic quotation. Please contact your broker for more information.";
+        try {
+            var q2 = document.getElementById(ids[1]);
+            if (!isYes) {
+                var label = document.createElement('label');
+                label.setAttribute("id", ids[2]);
+                label.innerHTML = conditional;
+                q2.parentElement.parentElement.parentElement.appendChild(label);
                 return false;
             }
+            else {
+                label = document.getElementById(ids[2]);
+                q2.parentElement.parentElement.parentElement.removeChild(label);
+                return true;
+            }
+        }
+        catch (ex){
             return true;
         }
+    }
 
-        function ValidateSharedRevenueForm(tab) {
-            var isValid = true;
-            var hasItem = false;
-            if (tab == 1) {
-                var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
-                var territories = document.getElementById("territories");
-                for (var i = 0; i < territories.options.length; i++) {
-                    if (territories.options[i].selected === true) {
-                        hasItem = true;
-                    }
+    function HideElement(id) {
+        document.getElementById(id).hidden = true;
+    }
+
+    function ShowElement(id) {
+        document.getElementById(id).hidden = false;
+    }
+
+    function ClearObject(Id) {
+        var obj = document.getElementById(Id);
+        var Tag = obj.tagName;
+        //here we can define the changes per type
+        if (Tag == "SELECT") {
+            for (var i = 0; i < obj.options.length; i++) {
+                if (obj.options[i].selected === true) {
+                    obj.options[i].selected = false;
                 }
-                if (!hasItem) {
-                    isValid = false;
-                    alert("Please select territories.");
-                }
-                isValid = ValidateTableValues(territoryVals);
             }
-            else if (tab == 2) {
-                var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
-                var activities = document.getElementById("activities");
-                var element;
-                for (var i = 0; i < activities.options.length; i++) {
-                    var additionalactivityId = activities.options[i].value;
-                    if (activities.options[i].selected === true) {
-                        hasItem = true;
-                        element = document.getElementById(additionalactivityId);
-                        if (element != null) {
-                            element.hidden = false;
-                        }
-                    } else {
-                        element = document.getElementById(additionalactivityId);
-                        if (element != null) {
-                            element.hidden = true;
-                        }
-                    }
-                }
-                document.getElementById("noadditionalinfolabel").hidden = false;
-                var additionalinfotab = document.getElementById("RevenueTabs3");
-                for (var d = 1; d < additionalinfotab.children.length; d++) {
-                    if (additionalinfotab.children[d].hidden == false) {
-                        document.getElementById("additionalinfosubmit").hidden = false;
-                        document.getElementById("noadditionalinfolabel").hidden = true;
-                    }
-                }
-                isValid = ValidateTableValues(activityVals);
+            if (!obj.multiple) {
+                obj.options[0].selected = true;
             }
-            else if (tab == 3) {
-                var contruction = document.getElementById("E");
-                if (contruction.hidden == false) {
-                    var contructionlist = document.querySelectorAll("[data-item='validatecontruction']");
-                    isValid = ValidateTableValues(contructionlist);
+        }
+    }
+
+    function ValidateTableValues(table) {
+        var percentage = 0;
+        for (var v = 0; v < table.length; v++) {
+            percentage += parseInt(table[v].value);
+        }
+        if (percentage != 100) {
+            alert("Percentage calculation does not equal to 100%");
+            return false;
+        }
+        return true;
+    }
+
+    function ValidateSharedRevenueForm(tab) {
+        var isValid = true;
+        var hasItem = false;
+        if (tab == 1) {
+            var territoryVals = document.querySelectorAll("[data-item='validatetableterritories']");
+            var territories = document.getElementById("territories");
+            for (var i = 0; i < territories.options.length; i++) {
+                if (territories.options[i].selected === true) {
+                    hasItem = true;
                 }
+            }
+            if (!hasItem) {
+                isValid = false;
+                alert("Please select territories.");
+            }
+            isValid = ValidateTableValues(territoryVals);
+        }
+        else if (tab == 2) {
+            var activityVals = document.querySelectorAll("[data-item='validatetableactivities']");
+            var activities = document.getElementById("activities");
+            var element;
+            for (var i = 0; i < activities.options.length; i++) {
+                var additionalactivityId = activities.options[i].value;
+                if (activities.options[i].selected === true) {
+                    hasItem = true;
+                    element = document.getElementById(additionalactivityId);
+                    if (element != null) {
+                        element.hidden = false;
+                    }
+                } else {
+                    element = document.getElementById(additionalactivityId);
+                    if (element != null) {
+                        element.hidden = true;
+                    }
+                }
+            }
+            document.getElementById("noadditionalinfolabel").hidden = false;
+            var additionalinfotab = document.getElementById("RevenueTabs3");
+            for (var d = 1; d < additionalinfotab.children.length; d++) {
+                if (additionalinfotab.children[d].hidden == false) {
+                    document.getElementById("additionalinfosubmit").hidden = false;
+                    document.getElementById("noadditionalinfolabel").hidden = true;
+                }
+            }
+            isValid = ValidateTableValues(activityVals);
+        }
+        else if (tab == 3) {
+            var contruction = document.getElementById("E");
+            if (contruction.hidden == false) {
+                var contructionlist = document.querySelectorAll("[data-item='validatecontruction']");
+                isValid = ValidateTableValues(contructionlist);
+            }
                 //var additionalinfotab = document.getElementById("RevenueTabs3");
                 //for (var d = 1; d < additionalinfotab.children.length; d++) {
                 //    if (additionalinfotab.children[d].hidden == false) {
@@ -248,28 +312,27 @@
                 //        isValid = ValidateTableValues(list);
                 //        debugger;
                 //    }
-                //}
-            }
-            if (isValid) {
-                if (tab == 3) {
-                    var form = document.getElementById('RevenueDataViewModel');
-                    $.ajax({
-                        url: '@Url.Action("SaveInformation", "Information")',
-                        type: "POST",
-                        data: $("#RevenueDataViewModel").serialize({ json: true })
-                        //data: $("#myForm").serialize({ json:true })
-                    })
-                }
-                tab += 1;
-                SetCurrentTab('RevenueTabs' + tab);                
-            }
+            //}
         }
-
-    </script>
-    <style>
-        .required:after {
-            content: " *";
-            color: red;
-            font-size: 20px;
+        if (isValid) {
+            if (tab == 3) {
+                var form = document.getElementById('RevenueDataViewModel');
+                $.ajax({
+                    url: '@Url.Action("SaveInformation", "Information")',
+                    type: "POST",
+                    data: $("#RevenueDataViewModel").serialize({ json: true })
+                    //data: $("#myForm").serialize({ json:true })
+                })
+            }
+            tab += 1;
+            SetCurrentTab('RevenueTabs' + tab);
         }
-    </style>
+    }
+</script>
+<style>
+    .required:after {
+        content: " *";
+        color: red;
+        font-size: 20px;
+    }
+</style>
