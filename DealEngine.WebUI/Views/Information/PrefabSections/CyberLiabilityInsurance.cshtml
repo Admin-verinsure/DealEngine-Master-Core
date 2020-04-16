@@ -8,7 +8,7 @@
                 </label>
             </div>
             <div class="col-3">
-                <select id="hassecurity" name="CLIViewModel.HasSecurityOptions" class="custom-select" onchange="OnChange(this.id, this.name)" required>
+                <select id="hassecurity" name="CLIViewModel.HasSecurityOptions" class="custom-select" data-rule="CyberLabel" data-item="hasprohibitaccess,hassecurity,cyberlabel" onchange="OnChange(this.id, this.name)" required>
                     @foreach (var option in Model.CLIViewModel.HasSecurityOptions)
                     {
                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -25,7 +25,7 @@
                 </label>
             </div>
             <div class="col-3">
-                <select id="hasprohibitaccess" name="CLIViewModel.HasProhibitAccessOptions" class="custom-select" data-rule="CyberLabel" data-item="hasprohibitaccess,hasprohibitaccess,cyberlabel" onchange="OnChange(this.id, this.name)" required>
+                <select id="hasprohibitaccess" name="CLIViewModel.HasProhibitAccessOptions" class="custom-select" data-rule="CyberLabel" data-item="hasprohibitaccess,hassecurity,cyberlabel" onchange="OnChange(this.id, this.name)" required>
                     @foreach (var option in Model.CLIViewModel.HasProhibitAccessOptions)
                     {
                         <option selected="@option.Selected" value="@option.Value">@option.Text</option>
@@ -237,21 +237,21 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-9">
-                    <label for="hasrenewal" class="label required">
-                        Is this a renewal of an existing Cyber policy placed with @Model.Name ?
-                    </label>
-                </div>
-                <div class="col-3">
-                    <select id="hasrenewal" name="CLIViewModel.HasRenewalOptions" class="custom-select" data-rule="reverse" data-item='PMINZPIViewModel.HasManagedProjectOptions' onchange="OnChange(this.id, this.name)" required>
-                        @foreach (var option in Model.CLIViewModel.HasRenewalOptions)
-                        {
-                            <option selected="@option.Selected" value="@option.Value">@option.Text</option>
-                        }
-                    </select>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-9">
+                        <label for="hasrenewal" class="label required">
+                            Is this a renewal of an existing Cyber policy placed with @Model.Name ?
+                        </label>
+                    </div>
+                    <div class="col-3">
+                        <select id="hasrenewal" name="CLIViewModel.HasRenewalOptions" class="custom-select" data-rule="reverse" data-item='PMINZPIViewModel.HasManagedProjectOptions' onchange="OnChange(this.id, this.name)" required>
+                            @foreach (var option in Model.CLIViewModel.HasRenewalOptions)
+                            {
+                                <option selected="@option.Selected" value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>

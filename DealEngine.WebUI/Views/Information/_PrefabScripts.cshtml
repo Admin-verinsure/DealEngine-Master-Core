@@ -110,38 +110,27 @@
                 DefaultRule(Value, Name);
             }
             if (Rule === "CyberLabel") {
-                var valid = CreateCyberLabelInput(DataItem);
-                if (!valid) {
-                    Value = "2";
-                    DefaultRule(Value, Name);
-                }
+                var Value = DoubleConditional(DataItem);
+                var ids = DataItem.split(',');
+                var element = document.getElementById(ids[0]);
+                
+                Value = CreateCyberLabelInput(Value, element, ids[2]);
+                DefaultRule(Value, element.name);                
             }
             if (Rule === "CyberOptional") {
-                var convalue = DoubleConditional(DataItem);
-                CyberOptional(DataItem, convalue);
+                debugger;
+                Value = DoubleConditional(DataItem);
+                if (Value != "1") {
+                    Value = "2";
+                }
+                var ids = DataItem.split(',');
+                var element = document.getElementById(ids[0]);
+                DefaultRule(Value, element.name);
             }
         } catch (ex) {
-            if (Rule === "CyberOptional") {
-                var convalue = DoubleConditional(DataItem);
-                CyberOptional(DataItem, convalue);
-            }
+            //these rules need to be re-run regardless of the catch
             //console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
-        }
-    }
-
-    function CyberOptional(DataItem, convalue) {
-        var array = DataItem.split(',');
-        //hardcoded name
-        var el = document.getElementById(array[0]);
-        var el1 = document.getElementById(array[1]);
-        var name = "CLIViewModel.HasApprovedVendorsOptions";
-        debugger;
-        if (convalue == "1") {
-            DefaultRule("1", name);
-        }
-        else {
-            DefaultRule("2", name);
         }
     }
 
@@ -155,6 +144,10 @@
         }
         else if (q1.value == "2" && q2.value == "2") {
             return "2";
+        }
+        else if (q1.value == "2" && q2.value == "1" || q1.value == "1" && q2.value == "2") {
+            //default to ?
+            return "both";
         }
         else
             return "0";
@@ -194,38 +187,44 @@
         return input.outerHTML;
     }
 
+    function CreateCyberLabelInput(Value, Element, LabelId) {               
+        var conditional = "As you have answered no to one or both of the above questions then NZI are not able to provide Cyber Ultra cover and you will not be provided with an automatic quotation. Please contact your broker for more information.";        
+        var label = document.getElementById(LabelId);
+        if (Value == "2" || Value == "both") {
+            if (label == null) {
+                label = AttachLabel(LabelId, conditional);
+                Element.parentElement.parentElement.parentElement.appendChild(label);
+            }
+            return "2";
+        }
+        if (Value == "1") {
+            if (label != null) {
+                Element.parentElement.parentElement.parentElement.removeChild(label);
+            }
+            return "1";
+        }
+        return "2";
+    }
 
-    function CreateCyberLabelInput(DataId) {
-        var convalue = DoubleConditional(DataId);
-        var ids = DataId.split(',');
-        var conditional = "As you have answered no to one or both of the above questions then NZI are not able to provide Cyber Ultra cover and you will not be provided with an automatic quotation. Please contact your broker for more information.";
-        try {
-            var q2 = document.getElementById(ids[1]);
-            var label = document.getElementById(ids[2]);
-            if (convalue != "1" && convalue != "0") {                
-                q2.parentElement.parentElement.parentElement.appendChild(label); 
-                return false;
-            }
-            else {
-                label = document.getElementById(ids[2]);                
-                q2.parentElement.parentElement.parentElement.removeChild(label);            
-                return true;
-            }
-        }
-        catch (ex) {
-            var label = document.createElement('label');
-            label.setAttribute("id", ids[2]);
-            label.innerHTML = conditional;
-            return true;
-        }
+    function AttachLabel(id, conditional) {
+        var label = document.createElement('label');
+        label.setAttribute("id", id);
+        label.innerHTML = conditional;
+        return label;
     }
 
     function HideElement(id) {
-        document.getElementById(id).hidden = true;
+        var element = document.getElementById(id);
+        if (element != null) {
+            element.hidden = true;
+        }   
     }
 
     function ShowElement(id) {
-        document.getElementById(id).hidden = false;
+        var element = document.getElementById(id);
+        if (element != null) {
+            element.hidden = false;
+        }        
     }
 
     function ClearObject(Id) {
@@ -308,15 +307,6 @@
                 var contructionlist = document.querySelectorAll("[data-item='validatecontruction']");
                 isValid = ValidateTableValues(contructionlist);
             }
-                //var additionalinfotab = document.getElementById("RevenueTabs3");
-                //for (var d = 1; d < additionalinfotab.children.length; d++) {
-                //    if (additionalinfotab.children[d].hidden == false) {
-                //        debugger;
-                //        var list = additionalinfotab.children[d].querySelectorAll("[data-item='validatecontruction']");
-                //        isValid = ValidateTableValues(list);
-                //        debugger;
-                //    }
-            //}
         }
         if (isValid) {
             tab += 1;
