@@ -2587,10 +2587,23 @@ namespace DealEngine.WebUI.Controllers
                     }
 
                 }
-                //sheet owner is null
-                //await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
-                //send out information sheet submission notification email
-                //await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+
+                if (sheet.Programme.BaseProgramme.ProgEnableEmail)
+                {
+                    //sheet owner is null
+                    await _emailService.SendSystemEmailUISSubmissionConfirmationNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //send out information sheet submission notification email
+                    await _emailService.SendSystemEmailUISSubmissionNotify(user, sheet.Programme.BaseProgramme, sheet, sheet.Owner);
+                    //send out agreement refer notification email
+                    foreach (ClientAgreement agreement in clientProgramme.Agreements)
+                    {
+                        if (agreement.Status == "Referred")
+                        {
+                            await _emailService.SendSystemEmailAgreementReferNotify(user, sheet.Programme.BaseProgramme, agreement, sheet.Owner);
+                        }
+                    }
+                }
+
 
                 return Content("/Agreement/ViewAgreementDeclaration/" + sheet.Programme.Id);
             }
@@ -3358,13 +3371,16 @@ namespace DealEngine.WebUI.Controllers
             var clientAgreement = await _clientAgreementService.GetAgreement(Guid.Parse(ClientAgreement));
             var programme = clientAgreement.ClientInformationSheet.Programme.BaseProgramme;
 
-
-            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendAgreementOnlineAcceptanceInstructions");
-            if (emailTemplate != null)
+            if (programme.ProgEnableEmail)
             {
-                await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, null, null, null);
-                clientAgreement.SentOnlineAcceptance = true;
-                await _clientAgreementService.UpdateClientAgreement(clientAgreement);
+                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendAgreementOnlineAcceptanceInstructions");
+                if (emailTemplate != null)
+                {
+                    //send out agreement online acceptance instruction email
+                    await _emailService.SendEmailViaEmailTemplate(clientAgreement.ClientInformationSheet.Programme.Owner.Email, emailTemplate, null, null, null);
+                    clientAgreement.SentOnlineAcceptance = true;
+                    await _clientAgreementService.UpdateClientAgreement(clientAgreement);
+                }
             }
 
             return await RedirectToLocal();

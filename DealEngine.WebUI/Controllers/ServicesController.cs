@@ -4684,15 +4684,20 @@ namespace DealEngine.WebUI.Controllers
                                 }
 
                             }
-                            //send out login email
-                            await _emailService.SendSystemEmailLogin(email);
-                            EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
-                            if (emailTemplate != null)
+
+                            if (programme.ProgEnableEmail)
                             {
-                                await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, sheet, null);
+                                //send out login email
+                                await _emailService.SendSystemEmailLogin(email);
+                                EmailTemplate emailTemplate = programme.EmailTemplates.FirstOrDefault(et => et.Type == "SendInformationSheetInstruction");
+                                if (emailTemplate != null)
+                                {
+                                    await _emailService.SendEmailViaEmailTemplate(email, emailTemplate, null, sheet, null);
+                                }
+                                //send out information sheet issue notification email
+                                await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
                             }
-                            //send out information sheet issue notification email
-                            await _emailService.SendSystemEmailUISIssueNotify(programme.BrokerContactUser, programme, clientProgramme.InformationSheet, organisation);
+                            
                         }
                         catch(Exception ex)
                         {
