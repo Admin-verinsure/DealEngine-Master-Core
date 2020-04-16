@@ -332,7 +332,7 @@ namespace DealEngine.WebUI.Controllers
                             var hasRole = await _roleManager.RoleExistsAsync("Client");
                             if (hasRole)
                             {
-                                await _userManager.AddToRoleAsync(deUser, "Client");
+                               await _userManager.AddToRoleAsync(deUser, "Client");
                             }
                         }
                     }

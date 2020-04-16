@@ -57,6 +57,9 @@
                                 <td>@doc.Type</td>
                                 <td>@doc.Owner</td>
                                 <td>
+                                    @*@if (doc.Attachment == "")*@
+                                    <a class="btn btn-primary btn-xs" style="color:white;"><i class="fa fa-eye"></i> View</a>
+
                                     @if (User.HasClaim("EditManageDocuments", "EditManageDocuments"))
                                     {
                                         @if (productId == "")

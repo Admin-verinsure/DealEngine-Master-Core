@@ -47,6 +47,9 @@ namespace DealEngine.Domain.Entities
         public virtual bool IsMultipleOption { get; set; }
         public virtual bool IsOptionalProduct { get; set; }
         public virtual string OptionalProductRequiredAnswer { get; set; }
+        public virtual Programme Programme { get; set; }
+
+
         protected Product() : base(null) { }
 
         protected Product(User createdBy)

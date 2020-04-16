@@ -9,7 +9,7 @@ namespace DealEngine.Domain.Entities
 
 		public virtual string ContentType { get; set; }
 
-		protected File () : base (null) { }
+		public File () : base (null) { }
 
 		public File (User createdBy, string name, string contentType)
 			: base (createdBy)
@@ -44,7 +44,13 @@ namespace DealEngine.Domain.Entities
 
         public virtual bool IsTemplate { get; set; }
 
-        protected Document () { }
+		public virtual bool FileRendered { get; set; }
+
+		public virtual string Path { get; set; }
+
+
+
+        public Document () { }
 
 		public Document (User createdBy, string name, string contentType, int documentType)
 			: base (createdBy, name, contentType)
