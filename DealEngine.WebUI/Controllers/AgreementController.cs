@@ -2255,6 +2255,15 @@ namespace DealEngine.WebUI.Controllers
                                 await _fileService.UploadFile(renderedDoc);
                             }                            
                         }
+                        if (template.FileRendered == false) {
+                                var x = "breakpoint";
+                                // agreement.Documents.Add();
+                                // documents.Add();                            
+                        }
+
+
+
+
                     }
                 }
 
