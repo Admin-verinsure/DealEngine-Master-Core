@@ -112,7 +112,7 @@
 
                     </section>
 
-                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnelSec">
+                    <section class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 EditNonProjectPersonnel">
                         <label class=" label required nonOwnerSec ">Organisation Type</label>
                         <label class="input">
                             <select id="EditOrganisationType" onchange="EditPMINZOrgTyprselected('EditOrganisationType')" class="form-control b" name="OrganisationTypeName">
@@ -569,7 +569,7 @@
 
                                     {
                                         name: "update", align: 'center' ,width: 60, search: false, formatter: function (cellvalue, options, rowobject) {/*{ class=" btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash*/
-                                            return '<button onclick="SetPrincipalRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblCEASRemovedPrincipalDirectors\', \'#CEASPrincipalDirectors\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
+                                            return '<button onclick="SetPMINZNamedPartyRemovedStatus(\'' + cellvalue + '\', \'false\', \'#tblPMINZRemovedPrincipalDirectors\', \'#PMINZNamedParties\');" type="button" class=" btn btn-success btn-sm" ><i class="fa fa-undo"></i></button>';
 
                                         }
                                     },

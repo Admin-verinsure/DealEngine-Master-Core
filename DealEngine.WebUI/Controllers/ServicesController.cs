@@ -462,10 +462,11 @@ namespace DealEngine.WebUI.Controllers
                     throw new Exception("No valid information for id " + informationId);
 
                 var organisations = new List<Organisation>();
-                for (var i = 0; i < sheet.Organisation.Count; i++)
+                foreach (var org in sheet.Organisation.Where(o => o.Removed == removed))
                 {
-                    organisations.Add(sheet.Organisation.ElementAtOrDefault(i));
+                    organisations.Add(org);
                 }
+                
 
                 if (_search)
                 {
@@ -3003,6 +3004,10 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     throw new Exception("Unable to save - No Client information for " + model.AnswerSheetId);
                 string orgTypeName = "";
+                if(model.Type == "project management personnel")
+                {
+                    model.OrganisationTypeName = "Person - Individual";
+                }
 
                 try
                 {
