@@ -41,7 +41,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 }
             }
 
-            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium", 
+            IDictionary<string, decimal> rates = BuildRulesTable(agreement, "cl250klimitincomeunder500k", "cl250klimitincome500kto2andhalfmilpremium", "cl500klimitincomeunder500k", "cl500klimitincome500kto2andhalfmilpremium",
                 "cl1millimitincomeunder500k", "cl1millimitincome500kto2andhalfmilpremium", "clsocialengineeringextpremium");
 
             //Create default referral points based on the clientagreementrules
@@ -79,15 +79,15 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //Calculation
             if (agreement.ClientInformationSheet.RevenueData != null)
             {
-                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYear;
-                if (agreement.ClientInformationSheet.RevenueData.CurrentYear > 0)
+                totalfeeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal;
+                if (agreement.ClientInformationSheet.RevenueData.CurrentYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.CurrentYearTotal;
                     numberoffeeincome += 1;
                 }
-                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYear > 0)
+                if (agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal > 0)
                 {
-                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYear;
+                    totalfeeincome += agreement.ClientInformationSheet.RevenueData.NextFinancialYearTotal;
                     numberoffeeincome += 1;
                 }
                 feeincome = totalfeeincome / numberoffeeincome;
