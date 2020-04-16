@@ -27,7 +27,7 @@
             <a class="btn btn-primary btn-xs" href="~/Home/Index" id="backbutton"><i class="fa fa-home"></i> Back to Dashboard</a>
         </div>
 
-        <div class="form-group">
+        <div class="form-group nonsubmitted">
             <div class="input-group">
                 <p>On behalf of the Applicant:</p>
                 <p>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group nonsubmitted">
             <label class="radio">
                 <a>
                     <input id="agreementAccept" name="radio" type="radio">
@@ -46,7 +46,7 @@
                 </a>
             </label>
         </div>
-        <div class="form-group">
+        <div class="form-group nonsubmitted">
             <label class="radio">
                 <a>
                     <input id="agreementDecline" name="radio" type="radio" data-toggle="modal" data-target="#advisoryModalDecline">
@@ -81,13 +81,13 @@
 
 @if (Model.Status == "Referred")
 {
-
+    
     <script type="text/javascript">
         var prevbutton = document.getElementsByClassName("next");
         $(prevbutton).addClass("hidden");
         $(prevbutton).hide();
 
-        $(".declaration").addClass("hidden");
+        $(".nonsubmitted").addClass("hidden");
     </script>
 }
 else
@@ -97,7 +97,7 @@ else
         var back = document.getElementById("backbutton");
         $(back).addClass("hidden");
         $(back).hide();
-        $(".declaration").removeClass("hidden");
+        $(".nonsubmitted").removeClass("hidden");
     </script>
 
 }

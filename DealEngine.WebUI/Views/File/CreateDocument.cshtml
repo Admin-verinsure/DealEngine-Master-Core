@@ -198,17 +198,7 @@
 
     $(window).on("load", function () {
         debugger;
-        if ("@Model.Name" == "First Mate Cover Policy Wording") {
-            $("#documentType").val("0");
-        } else  if ("@Model.Name" == "First Mate Cover Policy Schedule") {
-            $("#documentType").val("2");
-        }else  if ("@Model.Name" == "First Mate Cover Insurance Certificate") {
-            $("#documentType").val("1");
-        }else  if ("@Model.Name" == "First Mate Cover Payment Confirmation") {
-            $("#documentType").val("3");
-        }else  if ("@Model.Name" == "First Mate Cover Invoice") {
-            $("#documentType").val("4");
-        }
+          $("#documentType").val("@Model.DocumentType");
     });
     </script>
 }

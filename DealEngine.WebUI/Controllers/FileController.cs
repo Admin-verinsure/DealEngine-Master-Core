@@ -171,14 +171,14 @@ namespace DealEngine.WebUI.Controllers
                 document.Contents = _fileService.ToBytes(System.Net.WebUtility.HtmlDecode(model.Content));
                 document.OwnerOrganisation = user.PrimaryOrganisation;
                 document.IsTemplate = true;
+                await _documentRepository.AddAsync(document);
+                //if (model.ProductId != null)
+                //{
+                //    product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
+                //    product.Documents.Add(document);
+                //    await _productRepository.AddAsync(product);
+                //}
 
-                if (model.ProductId != null)
-                {
-                    product = await _productRepository.GetByIdAsync(Guid.Parse(model.ProductId));
-                    product.Documents.Add(document);
-                    await _productRepository.AddAsync(product);
-                }
-                
                 return View(model);
             }
             catch (Exception ex)
@@ -189,7 +189,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
 		[HttpGet]
-		public async Task<IActionResult> ManageDocuments(string productId)
+		public async Task<IActionResult> ManageDocuments()
 		{
 			BaseListViewModel<DocumentInfoViewModel> models = new BaseListViewModel<DocumentInfoViewModel> ();
             User user = null;
@@ -201,11 +201,11 @@ namespace DealEngine.WebUI.Controllers
                 if (user.PrimaryOrganisation.IsBroker || user.PrimaryOrganisation.IsTC || user.PrimaryOrganisation.IsInsurer)
                 {
                     //docs = _documentRepository.FindAll().Where(d => !d.DateDeleted.HasValue && d.IsTemplate);
-                    if(productId != null)
-                    {
-                        var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
-                        docs = products.Documents.ToList();
-                    }
+                    //if(productId != null)
+                    //{
+                    //    var products = await _productRepository.GetByIdAsync(Guid.Parse(productId));
+                    //    docs = products.Documents.ToList();
+                    //}
 
                 }
 
@@ -260,7 +260,7 @@ namespace DealEngine.WebUI.Controllers
                         models.Add(new DocumentInfoViewModel
                         {
                             DisplayName = doc.Name,
-                            ProductId = productId,
+                            //ProductId = productId,
                             Type = documentType,
                             Owner = doc.OwnerOrganisation.Name,
                             Id = doc.Id,
