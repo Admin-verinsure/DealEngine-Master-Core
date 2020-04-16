@@ -159,7 +159,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
                 foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
                 {
-                    if (!bolworkoutsidenz && uISTerritory.Location != "New Zealand" && uISTerritory.Pecentage > 0) //Work outside New Zealand Check
+                    if (!bolworkoutsidenz && uISTerritory.Location != "New Zealand" && uISTerritory.Percentage > 0) //Work outside New Zealand Check
                     {
                         bolworkoutsidenz = true;
                     }
@@ -169,47 +169,47 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISActivity.AnzsciCode == "M696210") //Business Development & Strategic Planning
                     {
-                        decBDSP = uISActivity.Pecentage;
+                        decBDSP = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "E") //Construction
                     {
-                        decCon = uISActivity.Pecentage;
+                        decCon = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696230") //Design Management
                     {
-                        decDM = uISActivity.Pecentage;
+                        decDM = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696240") //Financial and Accounting Systems Analysis
                     {
-                        decFASA = uISActivity.Pecentage;
+                        decFASA = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696250") //Information Technology
                     {
-                        decIT = uISActivity.Pecentage;
+                        decIT = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696260") //Manufacturing & Operational Processes
                     {
-                        decMOP = uISActivity.Pecentage;
+                        decMOP = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696270") //Project Management Teaching and Coaching
                     {
-                        decPMTC = uISActivity.Pecentage;
+                        decPMTC = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696300") //Resource Consent and Implementation Management
                     {
-                        decRCIM = uISActivity.Pecentage;
+                        decRCIM = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696400") //Telecommunications Management
                     {
-                        decTM = uISActivity.Pecentage;
+                        decTM = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696500") //Other Project Management Activities
                     {
-                        decOPMA = uISActivity.Pecentage;
+                        decOPMA = uISActivity.Percentage;
                     }
                     else if (uISActivity.AnzsciCode == "M696600") //Non Project Management Activities
                     {
-                        decNPMA = uISActivity.Pecentage;
+                        decNPMA = uISActivity.Percentage;
                     }
 
                 }

@@ -217,7 +217,18 @@ namespace DealEngine.Domain.Entities
         {
             if(sheet.RevenueData != null)
             {
-                Territories = sheet.RevenueData.Territories;
+                foreach (var territory in sheet.RevenueData.Territories)
+                {
+                    Territories.Add(new Territory(null)
+                    {
+                        TemplateId = territory.TemplateId,
+                        Location = territory.Location,
+                        Percentage = 0,
+                        Selected = false
+                        //Percentage = territory.Percentage,
+                        //Selected = territory.Selected                    
+                    });
+                }
             }
             if(Territories.Count != sheet.Programme.BaseProgramme.TerritoryTemplates.Count)
             {
@@ -230,7 +241,7 @@ namespace DealEngine.Domain.Entities
                         {
                             TemplateId = template.Id,
                             Location = template.Location,
-                            Pecentage = 0,
+                            Percentage = 0,
                             Selected = false
                         });
                     }
@@ -243,7 +254,18 @@ namespace DealEngine.Domain.Entities
         {
             if (sheet.RevenueData != null)
             {
-                Activities = sheet.RevenueData.Activities;
+                foreach (var activity in sheet.RevenueData.Activities)
+                {
+                    Activities.Add(new BusinessActivity(null)
+                    {
+                        Description = activity.Description,
+                        AnzsciCode = activity.AnzsciCode,
+                        Percentage = 0,
+                        Selected = false
+                        //Selected = activity.Selected,
+                        //Percentage = activity.Percentage,                        
+                    });
+                }
             }
             if (Activities.Count != sheet.Programme.BaseProgramme.BusinessActivityTemplates.Count)
             {
@@ -257,7 +279,7 @@ namespace DealEngine.Domain.Entities
                             Description = template.Description,
                             AnzsciCode = template.AnzsciCode,
                             Selected = false,
-                            Pecentage = 0
+                            Percentage = 0
                         });
                     }
                 }

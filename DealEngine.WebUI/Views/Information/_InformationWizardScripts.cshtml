@@ -60,11 +60,11 @@
 
            if (stepNumber === 0) {
                //save answers regardless of validation
-               $.ajax({
+               @*$.ajax({
                    url: '@Url.Action("SaveInformation", "Information")',
                    type: "POST",
                    data: $("#tab_1 :input").serialize({ json: true })
-               })
+               })*@
 
                if (informationsheetstatus != "Submitted") {
                var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
@@ -196,11 +196,10 @@
                   }               
                }
 
-               postData = { clientInformationId: clientInformationSheet }
                $.ajax({
                    url: '@Url.Action("SubmitInformation", "Information")',
                    type: "POST",
-                   data: postData
+                   data: $("#tab_1 :input").serialize({ json: true })
                    //data: $("#tab_1 :input").serialize({ json: true })
                })
                    .done(function (url) {
@@ -537,15 +536,15 @@
         //    }
         //});
 
-        @*$("#accordion").on("accordionactivate", function (e, ui) {
+        $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {          
-            $.ajax({
+            @*$.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
                 data: $("#tab_1 :input").serialize({ json:true })
                 //data: $("#myForm").serialize({ json:true })
             })
-           .done(function (data) {
+           .done(function (data) {*@
                $('#tblBuilding').trigger('reloadGrid');
                $('#Principal,Partners or Directors').trigger('reloadGrid');
                $('#tblWaterLocation').trigger('reloadGrid');
@@ -561,17 +560,13 @@
                $('#BoatLandLocation').trigger('chosen:updated');
                $('#tblBusinessContract').trigger('reloadGrid');
                $('#PrincipalDirectors').trigger('reloadGrid');
-           })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-               alert("Unable to save....");
-           });
+           //})
+           //     .fail(function (jqXHR, textStatus, errorThrown) {
+           //         debugger;
+           //    alert("Unable to save....");
+           //});
         }
-    });*@
-
-    //$('.datepicker').each(function () {
-    //    $('#'+this.id).datepicker();
-    //});
+    });
 
     $('.AddButton').click(function () {
           $('#Addipeffectivedatesection').addClass('hidden');

@@ -213,7 +213,7 @@ namespace DealEngine.WebUI.Models
                     Description = template.Description,
                     AnzsciCode = template.AnzsciCode,
                     Selected = false,
-                    Pecentage = 0
+                    Percentage = 0
                 });
             }
             return Activities;
@@ -225,9 +225,9 @@ namespace DealEngine.WebUI.Models
             {
                 Territories.Add(new Territory(null)
                 {
-                    Id = template.Id,
+                    TemplateId = template.Id,
                     Location = template.Location,
-                    Pecentage = 0,
+                    Percentage = 0,
                     Selected = false
                 });
             }

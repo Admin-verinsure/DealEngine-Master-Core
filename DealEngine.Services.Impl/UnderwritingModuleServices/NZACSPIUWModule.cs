@@ -141,7 +141,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISTerritory.Location == "New Zealand") //New Zealand income only
                     {
-                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal * uISTerritory.Pecentage / 100;
+                        feeincome = agreement.ClientInformationSheet.RevenueData.LastFinancialYearTotal * uISTerritory.Percentage / 100;
                     }
 
                     ClientAgreementEndorsement clientAgreementEndorsement = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "USA / Canada Covered");
@@ -166,10 +166,10 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     if (uISActivity.AnzsciCode == "M692130") //Architecture - Schools Activity MOE
                     {
-                        schoolsactivitymoepercentage = uISActivity.Pecentage;
+                        schoolsactivitymoepercentage = uISActivity.Percentage;
                     } else if (uISActivity.AnzsciCode == "M692140") //Architecture - Schools Activity Non-MOE
                     {
-                        schoolsactivitynonmoepercentage = uISActivity.Pecentage;
+                        schoolsactivitynonmoepercentage = uISActivity.Percentage;
                     }
                 }
             }
@@ -931,7 +931,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             if (uISActivity.AnzsciCode == "M692130") //Architecture - Schools MOE Activity
                             {
-                                if (uISActivity.Pecentage > 50)
+                                if (uISActivity.Percentage > 50)
                                 {
                                     agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfmoeact" && cref.DateDeleted == null).Status = "Pending";
                                 }
@@ -963,7 +963,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             if (uISActivity.AnzsciCode == "M692160") //Inspection Reports Activity
                             {
-                                if (uISActivity.Pecentage > 10)
+                                if (uISActivity.Percentage > 10)
                                 {
                                     agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfiract" && cref.DateDeleted == null).Status = "Pending";
                                 }
@@ -995,7 +995,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             if (uISActivity.AnzsciCode == "M692210") //Valuations Activity
                             {
-                                if (uISActivity.Pecentage > 0)
+                                if (uISActivity.Percentage > 0)
                                 {
                                     agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfiract" && cref.DateDeleted == null).Status = "Pending";
                                 }
@@ -1027,7 +1027,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                         {
                             if (uISActivity.AnzsciCode == "M692295") //Other Work not listed above 
                             {
-                                if (uISActivity.Pecentage > 0)
+                                if (uISActivity.Percentage > 0)
                                 {
                                     agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfotheract" && cref.DateDeleted == null).Status = "Pending";
                                 }
@@ -1080,7 +1080,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                     {
                         foreach (var uISTerritory in agreement.ClientInformationSheet.RevenueData.Territories)
                         {
-                            if (uISTerritory.Location == "USA / Canada" && uISTerritory.Pecentage > 0) //USA / Canada income
+                            if (uISTerritory.Location == "USA / Canada" && uISTerritory.Percentage > 0) //USA / Canada income
                             {
                                 agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfusacanadaincome" && cref.DateDeleted == null).Status = "Pending";
                             }

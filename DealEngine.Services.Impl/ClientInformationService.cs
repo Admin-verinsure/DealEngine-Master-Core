@@ -15,21 +15,15 @@ namespace DealEngine.Services.Impl
     public class ClientInformationService : IClientInformationService
     {
         IMapperSession<ClientInformationSheet> _customerInformationRepository;
-        ITerritoryService _territoryService;
-        IBusinessActivityService _businessActivityService;
         IMapperSession<Boat> _boatRepository;
         IMapper _mapper;
 
         public ClientInformationService(
-            IBusinessActivityService businessActivityService,
-            ITerritoryService territoryService,
             IMapperSession<ClientInformationSheet> customerInformationRepository, 
             IMapperSession<Boat> boatRepository,
             IMapper mapper
             )
         {
-            _businessActivityService = businessActivityService;
-            _territoryService = territoryService;
             _mapper = mapper;
             _customerInformationRepository = customerInformationRepository;
             _boatRepository = boatRepository;
@@ -156,9 +150,8 @@ namespace DealEngine.Services.Impl
                             territory = sheet.RevenueData.Territories.FirstOrDefault(t => t.TemplateId == id);
                             try
                             {                                
-                                int.TryParse(collection[key].ToString(), out percent);
                                 territory.Selected = true;
-                                territory.Pecentage = percent;
+                                territory.Percentage = decimal.Parse(collection[key].ToString());
                             }
                             catch(Exception ex)
                             {
@@ -174,9 +167,8 @@ namespace DealEngine.Services.Impl
                             activity = sheet.RevenueData.Activities.FirstOrDefault(t => t.AnzsciCode == modelArray.ElementAt(2));
                             try
                             {
-                                int.TryParse(collection[key].ToString(), out percent);
                                 activity.Selected = true;
-                                activity.Pecentage = int.Parse(collection[key].ToString());                                
+                                activity.Percentage = decimal.Parse(collection[key].ToString());                                
                             }
                             catch (Exception ex)
                             {
@@ -215,6 +207,7 @@ namespace DealEngine.Services.Impl
                
             }
 
+            await UpdateInformation(sheet);
             //// get shared data
             //var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
             //NameValueCollection sharedData = new NameValueCollection();

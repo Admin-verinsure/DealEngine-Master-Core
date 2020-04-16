@@ -6,7 +6,7 @@ namespace DealEngine.Domain.Entities
 {
 	public class Territory : EntityBase, IAggregateRoot
     {
-        public virtual decimal Pecentage { get; set; }
+        public virtual decimal Percentage { get; set; }
         public virtual string Location { get; set; }
         public virtual Guid TemplateId { get; set; }
         public virtual bool Selected { get; set; }

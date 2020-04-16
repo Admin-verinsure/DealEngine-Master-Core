@@ -27,7 +27,7 @@
                             <select id="territories" name="RevenueDataViewModel.Territories" class="chosen-select form-control b" multiple data-rule="BuildSharedTable" data-item="territories,territoriestable" onchange="OnChange(this.id, this.name)" required>
                                 @foreach (var option in Model.RevenueDataViewModel.Territories)
                                 {
-                                    <option selected="@option.Selected" value="@option.Id.ToString()">@option.Location</option>
+                                    <option selected="@option.Selected" value="@option.TemplateId.ToString()">@option.Location</option>
                                 }
                             </select>
                         </div>
@@ -50,7 +50,7 @@
                                             @select.Location
                                         </td>
                                         <td>
-                                            <input class="form-control" type="text" id="@select.Location" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableterritories" value="@select.Pecentage" />
+                                            <input class="form-control" type="text" id="@select.Location" name="RevenueDataViewModel.Territories.@select.TemplateId.ToString()" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableterritories" value="@select.Percentage" />
                                         </td>
                                     </tr>
                                 }
@@ -68,18 +68,18 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-9">
-                                    <label for="currentYear" class="label required">Estimate of current year</label>
+                                    <label for="lastFinancialYear" class="label required">Last completed financial year</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required=""})
+                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-9">
-                                    <label for="lastFinancialYear">Last completed financial year</label>
+                                    <label for="currentYear">Estimate of current year</label>
                                 </div>
                                 <div class="col-3">
-                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.LastFinancialYearTotal, new { @class = "form-control", @id = "lastFinancialYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$" })
+                                    @Html.TextBoxFor(m => m.RevenueDataViewModel.CurrentYearTotal, new { @class = "form-control", @id = "currentYear", @type = "number", onchange = "OnChange(this.id, this.name)", @placeholder = "$", @required = "" })
                                 </div>
                             </div>
                             <div class="row">
@@ -119,7 +119,7 @@
                                             @select.Description
                                         </td>
                                         <td>
-                                            <input class="form-control" type="text" id="@select.Description" name="RevenueDataViewModel.Territories.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableactivities" value="@select.Pecentage" />
+                                            <input class="form-control" type="text" id="@select.Description" name="RevenueDataViewModel.Activities.@select.AnzsciCode" onchange="OnChange(this.id, this.name)" data-rule="validatetable" data-item="validatetableactivities" value="@select.Percentage" />
                                         </td>
                                     </tr>
                                 }
@@ -318,9 +318,6 @@
                 </div>
                 <div id="E" hidden>
                     <div class="form-group">
-                        <label>Please provide your best estimate of a percentage breakdown of your revenue from each of the following industry activities:</label>
-                    </div>
-                    <div class="form-group">
                         <div class="row">
                             <div class="col-3">
                                 <label>Please provide your best estimate of a percentage breakdown of your revenue from each of the following industry activities:</label>
@@ -376,7 +373,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-9">
-                                <label for="constructionengineerdetails">Please provide your bestiestimate of a percentage of your construction revenue where you untertook the role as Engineer to the Contract</label>
+                                <label for="constructionengineerdetails">Please provide your best estimate of a percentage of your construction revenue where you undertook the role as Engineer to the Contract</label>
                             </div>
                             <div class="col-3">
                                 @Html.TextBoxFor(t => t.RevenueDataViewModel.AdditionalActivityViewModel.ConstructionEngineerDetails, new { @class = "form-control", @id = "constructionengineerdetails", onchange = "OnChange(this.id, this.name)", @required = ""})

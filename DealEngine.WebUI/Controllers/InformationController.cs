@@ -1346,10 +1346,10 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
-                var sheet = clientProgramme.InformationSheet;
+                var sheet = clientProgramme.InformationSheet;                
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
                 GetRevenueViewModel(model, sheet.RevenueData);
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);                
                 model.SharedRoleViewModel = sharedRoleViewModel;
                 model.AnswerSheetId = sheet.Id;
                 model.ClientInformationSheet = sheet;
@@ -1906,12 +1906,7 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     return Json("Failure");
 
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    await _clientInformationService.SaveAnswersFor(sheet, collection);
-                    await _clientInformationService.UpdateInformation(sheet);
-                    await uow.Commit();
-                }
+                //await _clientInformationService.SaveAnswersFor(sheet, collection);
 
                 return Json("Success");
             }
@@ -2360,7 +2355,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitInformation(string clientInformationId)
+        public async Task<IActionResult> SubmitInformation(IFormCollection collection)
         {
             ClientInformationSheet sheet = null;
             User user = null;
@@ -2368,13 +2363,13 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationId));
+                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
                 if (isBaseSheet)
                 {
                     var programme = sheet.Programme.BaseProgramme;
                     var reference = await _referenceService.GetLatestReferenceId();
-
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (sheet.Status != "Submitted" && sheet.Status != "Bound")
@@ -2823,7 +2818,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
-                };
+                };                
                 model.Name = programme.Name;
                 Product product = null;
                 if (programme.Products.Count > 1)
