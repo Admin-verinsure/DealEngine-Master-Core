@@ -98,14 +98,27 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             TermExcess = 2500;
 
             ClientAgreementEndorsement cAECLExt = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Social Engineering Fraud Extension");
+            ClientAgreementEndorsement cAECLDRB = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Data Recovery and Business Interruption Exclusion (DRB)");
+            ClientAgreementEndorsement cAECLUPM = agreement.ClientAgreementEndorsements.FirstOrDefault(cae => cae.Name == "Unencrypted Portable Media Exclusion (UPM)");
 
             if (cAECLExt != null)
             {
                 cAECLExt.DateDeleted = DateTime.UtcNow;
                 cAECLExt.DeletedBy = underwritingUser;
             }
+            if (cAECLDRB != null)
+            {
+                cAECLDRB.DateDeleted = DateTime.UtcNow;
+                cAECLDRB.DeletedBy = underwritingUser;
+            }
+            if (cAECLUPM != null)
+            {
+                cAECLUPM.DateDeleted = DateTime.UtcNow;
+                cAECLUPM.DeletedBy = underwritingUser;
+            }
 
-            if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1" &&
+            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" && 
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasOptionalCLEOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasProceduresOptions").First().Value == "1" &&
                 agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasApprovedVendorsOtions").First().Value == "1")
             {
@@ -115,6 +128,24 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
                 {
                     cAECLExt.DateDeleted = null;
                     cAECLExt.DeletedBy = null;
+                }
+            }
+            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasAccessControlOptions").First().Value == "1")
+            {
+                if (cAECLUPM != null)
+                {
+                    cAECLUPM.DateDeleted = null;
+                    cAECLUPM.DeletedBy = null;
+                }
+            }
+            if (agreement.Product.IsOptionalProduct && agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == agreement.Product.OptionalProductRequiredAnswer).First().Value == "1" &&
+                agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "CLIViewModel.HasBackupOptions").First().Value == "1")
+            {
+                if (cAECLDRB != null)
+                {
+                    cAECLDRB.DateDeleted = null;
+                    cAECLDRB.DeletedBy = null;
                 }
             }
 

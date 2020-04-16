@@ -358,7 +358,7 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             //High Fee Income
             uwrfhighfeeincome(underwritingUser, agreement, feeincome, rates);
             //Contracting Services
-            //uwrfcontractingservices(underwritingUser, agreement);
+            uwrfcontractingservices(underwritingUser, agreement);
             //Claims / Insurance History
             uwrfpriorinsurance(underwritingUser, agreement);
             //No Projects Managed
@@ -653,16 +653,14 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             {
                 if (agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status != "Pending")
                 {
-                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Networksecurity").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "onlinestocktrading").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "fundsmanagementandinvestment").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "manufacturingcontrolprocess").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Mining").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Medical").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Defence").First().Value == "true" ||
-                        agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "oilandgas").First().Value == "true")
+                    if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value != null)
                     {
-                        agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
+                        var result = agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value.Substring(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "PMINZPIViewModel.ContractingServicesOptions").First().Value.Length - 2);
+                        if (result != "10")
+                        {
+                            agreement.ClientAgreementReferrals.FirstOrDefault(cref => cref.ActionName == "uwrfcontractingservices" && cref.DateDeleted == null).Status = "Pending";
+                        }
+                        
                     }
                 }
             }

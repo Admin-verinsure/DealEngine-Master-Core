@@ -262,14 +262,20 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (var terms in agreement.ClientAgreementTerms)
                     {
-                        foreach (var bvterm in terms.BoatTerms)
+                        if (terms.BoatTerms.Count() > 0)
                         {
-                            premium = premium + bvterm.Premium;
+                            foreach (var bvterm in terms.BoatTerms)
+                            {
+                                premium = premium + bvterm.Premium;
+                            }
                         }
-                        foreach (var mvterm in terms.MotorTerms)
+                        if (terms.MotorTerms.Count() > 0)
                         {
-                            premium = premium + mvterm.Premium;
-                        }
+                            foreach (var mvterm in terms.MotorTerms)
+                            {
+                                premium = premium + mvterm.Premium;
+                            }
+                        }                        
                     }
 
                     foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms)
@@ -277,7 +283,14 @@ namespace DealEngine.WebUI.Controllers
                         term.ReferralLoading = clientAgreementModel.RefferLodPrc;
                         term.ReferralLoadingAmount = clientAgreementModel.RefferLodAmt;
                         term.AuthorisationNotes = clientAgreementModel.AdditionalNotes;
-                        term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                        if (term.MotorTerms.Count() == 0 && term.MotorTerms.Count() == 0)
+                        {
+                            term.Premium = term.Premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                        } else
+                        {
+                            term.Premium = premium * (1 + clientAgreementModel.RefferLodPrc / 100) + clientAgreementModel.RefferLodAmt;
+                        }
+                        
                     }
 
                     foreach (var terms in agreement.ClientAgreementTerms)
@@ -1489,6 +1502,7 @@ namespace DealEngine.WebUI.Controllers
                     model.AdministrationFee = agreement.BrokerFee.ToString("C", UserCulture);
                     model.BrokerageRate = (agreement.Brokerage / 100).ToString("P2", UserCulture);
                     model.CurrencySymbol = "fa fa-dollar";
+                    model.ClientInformationSheet = agreement.ClientInformationSheet;
                     if (agreement.ClientInformationSheet.Programme.BaseProgramme.UsesEGlobal &&
                         agreement.ClientInformationSheet.Programme.EGlobalBranchCode != null && agreement.ClientInformationSheet.Programme.EGlobalClientNumber != null)
                     {
@@ -1767,6 +1781,7 @@ namespace DealEngine.WebUI.Controllers
                         model.InformationSheetId = answerSheet.Id;
                         models.Add(model);
                     }
+                    
                 }
                 
                 ViewBag.Title = clientProgramme.BaseProgramme.Name + " Agreement for " + insured.Name;
@@ -2256,6 +2271,19 @@ namespace DealEngine.WebUI.Controllers
                             }                            
                         }
                     }
+
+                    if (programme.BaseProgramme.ProgEnableEmail)
+                    {
+                        //send out policy document email
+                        EmailTemplate emailTemplate = programme.BaseProgramme.EmailTemplates.FirstOrDefault(et => et.Type == "SendPolicyDocuments");
+                        if (emailTemplate != null)
+                        {
+                            await _emailService.SendEmailViaEmailTemplate(programme.Owner.Email, emailTemplate, documents, null, null);
+                        }
+                        //send out agreement bound notification email
+                        await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                    }
+
                 }
 
                 using (var uow = _unitOfWork.BeginUnitOfWork())
@@ -2266,7 +2294,7 @@ namespace DealEngine.WebUI.Controllers
                         await uow.Commit();
                     }
                 }
-
+                
                 var url = "/Agreement/ViewAcceptedAgreement/" + programme.Id;
                 return Json(new { url });
 
@@ -2745,8 +2773,11 @@ namespace DealEngine.WebUI.Controllers
                             }
                         }
 
-                        //await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
-                        //await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                        if (programme.BaseProgramme.ProgEnableEmail)
+                        {
+                            await _emailService.SendEmailViaEmailTemplate(programme.BrokerContactUser.Email, emailTemplate, documents, null, null);
+                            await _emailService.SendSystemEmailAgreementBoundNotify(programme.BrokerContactUser, programme.BaseProgramme, agreement, programme.Owner);
+                        }
                     }
 
                     
