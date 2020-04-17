@@ -133,8 +133,12 @@
             }
             if (Rule === "DNOOptional") {
                 Value = DoubleConditional(DataItem);
-                if (Value != "0" || Value != "2") {
+                debugger;
+                if (Value =="both") {
                     Value = "1";
+                }
+                else {
+
                 }
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[1]);
