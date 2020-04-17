@@ -1110,6 +1110,64 @@ namespace DealEngine.Services.Impl
             }
         }
 
+        public async Task ImportPMINZServicePreRenewData(User CreatedUser)
+        {
+            var currentUser = CreatedUser;
+            StreamReader reader;
+            PreRenewOrRefData preRenewOrRefData;
+            bool readFirstLine = true;
+            string line;
+            var fileName = WorkingDirectory + "PMINZPolicyData2019Final.csv";
+
+            using (reader = new StreamReader(fileName))
+            {
+                while (!reader.EndOfStream)
+                {
+                    if (!readFirstLine)
+                    {
+                        line = reader.ReadLine();
+                        readFirstLine = true;
+                    }
+                    line = reader.ReadLine();
+                    string[] parts = line.Split(',');
+                    try
+                    {
+                        preRenewOrRefData = new PreRenewOrRefData(currentUser, parts[1], parts[0]);
+                        if (!string.IsNullOrEmpty(parts[2]))
+                            preRenewOrRefData.PIBoundLimit = parts[2];
+                        if (!string.IsNullOrEmpty(parts[3]))
+                            preRenewOrRefData.PIBoundPremium = parts[3];
+                        if (!string.IsNullOrEmpty(parts[4]))
+                            preRenewOrRefData.PIRetro = parts[4];
+                        if (!string.IsNullOrEmpty(parts[5]))
+                            preRenewOrRefData.GLRetro = parts[5];
+                        if (!string.IsNullOrEmpty(parts[6]))
+                            preRenewOrRefData.DORetro = parts[6];
+                        if (!string.IsNullOrEmpty(parts[7]))
+                            preRenewOrRefData.ELRetro = parts[7];
+                        if (!string.IsNullOrEmpty(parts[8]))
+                            preRenewOrRefData.EDRetro = parts[8];
+                        if (!string.IsNullOrEmpty(parts[9]))
+                            preRenewOrRefData.SLRetro = parts[9];
+                        if (!string.IsNullOrEmpty(parts[10]))
+                            preRenewOrRefData.CLRetro = parts[10];
+                        if (!string.IsNullOrEmpty(parts[11]))
+                            preRenewOrRefData.EndorsementProduct = parts[11];
+                        if (!string.IsNullOrEmpty(parts[12]))
+                            preRenewOrRefData.EndorsementTitle = parts[12];
+                        if (!string.IsNullOrEmpty(parts[13]))
+                            preRenewOrRefData.EndorsementText = parts[13];
+
+                        //await _programmeService.AddBusinessContractByMembership(businessContract);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
 
 
     }
