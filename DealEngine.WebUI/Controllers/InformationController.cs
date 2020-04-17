@@ -1379,48 +1379,36 @@ namespace DealEngine.WebUI.Controllers
                             var reflectModel = modeltype.GetValue(model);   
                             
                             var property = reflectModel.GetType().GetProperty(split.LastOrDefault());
-
-                            switch (property.PropertyType.Name)
+                            if(typeof(string) == property.PropertyType)
                             {
-                                case "Int32":
-                                    int.TryParse(answer.Value, out value);
-                                    property.SetValue(reflectModel, value);
-                                    break;
-                                case "IList`1":
-                                    var propertylist = (IList<SelectListItem>)property.GetValue(reflectModel);
-                                    var options = answer.Value.Split(',').ToList();
-                                    foreach(var option in options)
-                                    {
-                                        propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
-                                    }                                    
-                                    property.SetValue(reflectModel, propertylist);
-                                    break;
-                                case "DateTime":
-                                    property.SetValue(reflectModel, DateTime.Parse(answer.Value));
-                                    break;
-                                default:
-                                    property.SetValue(reflectModel, answer.Value);
-                                    break;
-                            }                            
+                                property.SetValue(reflectModel, answer.Value);
+                            }
+                            if (typeof(int) == property.PropertyType)
+                            {
+                                int.TryParse(answer.Value, out value);
+                                property.SetValue(reflectModel, value);
+                            }
+                            if (typeof(IList<SelectListItem>) == property.PropertyType)
+                            {
+                                var propertylist = (IList<SelectListItem>)property.GetValue(reflectModel);
+                                var options = answer.Value.Split(',').ToList();
+                                foreach (var option in options)
+                                {
+                                    propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
+                                }
+                                property.SetValue(reflectModel, propertylist);
+                            }
+                            if (typeof(DateTime) == property.PropertyType)
+                            {
+                                property.SetValue(reflectModel, DateTime.Parse(answer.Value));
+                            }                           
                         }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("");
                     }
-                }
-               
-                foreach (var section in model.Sections)
-                    foreach (var item in section.Items.Where(i => (i.Type != ItemType.LABEL && i.Type != ItemType.SECTIONBREAK && i.Type != ItemType.JSBUTTON && i.Type != ItemType.SUBMITBUTTON)))
-                    {                        
-                        var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == item.Name);
-                        if (answer != null)
-                        {
-                            item.Value = answer.Value;
-                        }
-                        else
-                            sheet.AddAnswer(item.Name, "");
-                    }
+                }               
 
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
