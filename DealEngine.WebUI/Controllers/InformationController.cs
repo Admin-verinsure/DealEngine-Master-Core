@@ -1373,36 +1373,33 @@ namespace DealEngine.WebUI.Controllers
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
-                        if(split.FirstOrDefault() == "RevenueDataViewModel")
-                        {
-                            Console.WriteLine();
-                        }
                         if (split.Count > 1)
                         {                            
                             var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
-                            var reflectModel = modeltype.GetValue(model);                            
-                            var property = model.GetType().GetProperty(split.LastOrDefault());
+                            var reflectModel = modeltype.GetValue(model);   
+                            
+                            var property = reflectModel.GetType().GetProperty(split.LastOrDefault());
 
                             switch (property.PropertyType.Name)
                             {
                                 case "Int32":
                                     int.TryParse(answer.Value, out value);
-                                    property.SetValue(model, value);
+                                    property.SetValue(reflectModel, value);
                                     break;
                                 case "IList`1":
-                                    var propertylist = (IList<SelectListItem>)property.GetValue(model);
+                                    var propertylist = (IList<SelectListItem>)property.GetValue(reflectModel);
                                     var options = answer.Value.Split(',').ToList();
                                     foreach(var option in options)
                                     {
                                         propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
                                     }                                    
-                                    property.SetValue(model, propertylist);
+                                    property.SetValue(reflectModel, propertylist);
                                     break;
                                 case "DateTime":
-                                    property.SetValue(model, DateTime.Parse(answer.Value));
+                                    property.SetValue(reflectModel, DateTime.Parse(answer.Value));
                                     break;
                                 default:
-                                    property.SetValue(model, answer.Value);
+                                    property.SetValue(reflectModel, answer.Value);
                                     break;
                             }                            
                         }
@@ -1447,16 +1444,6 @@ namespace DealEngine.WebUI.Controllers
                 }
 
                 model.Advisory = advisoryDesc;
-
-                for (var i = 0; i < model.Sections.Count(); i++)
-                {
-                    for (var j = 0; j < model.Sections.ElementAtOrDefault(i).Items.Count(); j++)
-                    {
-                        var answer = sheet.Answers.FirstOrDefault(a => a.ItemName == model.Sections.ElementAtOrDefault(i).Items.ElementAtOrDefault(j).Name);
-                        if (answer != null)
-                            model.Sections.ElementAtOrDefault(i).Items.ElementAtOrDefault(j).Value = answer.Value;
-                    }
-                }
 
                 var boats = new List<BoatViewModel>();
                 foreach (var b in sheet.Boats)

@@ -208,16 +208,6 @@ namespace DealEngine.Services.Impl
             }
 
             await UpdateInformation(sheet);
-            //// get shared data
-            //var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
-            //NameValueCollection sharedData = new NameValueCollection();
-            //foreach (string key in sharedKeys)
-            //    sharedData.Add(key, collection[key].FirstOrDefault());
-
-            //// setup the shared data just in case it doesn't exist for some reasons
-            ////ConfigureSharedData (sheet);
-
-            //// save data to shared data
         }
 
         public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)
