@@ -47,8 +47,7 @@ namespace DealEngine.WebUI.Controllers
         IAdvisoryService _advisoryService;
         IOrganisationService _organisationService;
         IInsuranceAttributeService _insuranceAttributeService;
-        IBusinessActivityService _businessActivityService;
-        IRevenueActivityService _revenueActivityService;
+        IBusinessActivityService _businessActivityService;        
         IProductService _productService;
         IMapper _mapper;
         IMapperSession<DropdownListItem> _IDropdownListItem;
@@ -61,8 +60,7 @@ namespace DealEngine.WebUI.Controllers
             IEmailTemplateService emailTemplateService,
             IApplicationLoggingService applicationLoggingService,
             ILogger<InformationController> logger,
-            IInformationSectionService informationSectionService,
-            IRevenueActivityService revenueActivityService,
+            IInformationSectionService informationSectionService,            
             IInsuranceAttributeService insuranceAttributeService,
             IOrganisationService organisationService,
             IActivityService activityService,
@@ -98,8 +96,7 @@ namespace DealEngine.WebUI.Controllers
             _organisationTypeService = organisationTypeService;
             _emailTemplateService = emailTemplateService;
             _applicationLoggingService = applicationLoggingService;
-            _logger = logger;
-            _revenueActivityService = revenueActivityService;
+            _logger = logger;            
             _insuranceAttributeService = insuranceAttributeService;
             _organisationService = organisationService;
             _appSettingService = appSettingService;
@@ -1349,18 +1346,12 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
-                var sheet = clientProgramme.InformationSheet;
+                var sheet = clientProgramme.InformationSheet;                
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);
+                GetRevenueViewModel(model, sheet.RevenueData);
+                SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);                
                 model.SharedRoleViewModel = sharedRoleViewModel;
-                RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();                
-                if (clientProgramme.BaseProgramme.TerritoryTemplates.Count > 0 && clientProgramme.BaseProgramme.BusinessActivityTemplates.Count > 0)
-                {
-                    revenueByActivityViewModel = await GetRevenueActivityViewModel(sheet);
-                }
-                model.RevenueByActivityViewModel = revenueByActivityViewModel;
                 model.AnswerSheetId = sheet.Id;
-                model.Id = id;
                 model.ClientInformationSheet = sheet;
                 model.ClientProgramme = clientProgramme;
                 model.CompanyName = _appSettingService.GetCompanyTitle;
@@ -1382,40 +1373,39 @@ namespace DealEngine.WebUI.Controllers
                     try
                     {
                         var split = answer.ItemName.Split('.').ToList();
-                        if(split.LastOrDefault() == "FormDate")
+                        if(split.FirstOrDefault() == "RevenueDataViewModel")
                         {
-                            Console.WriteLine("");
+                            Console.WriteLine();
                         }
                         if (split.Count > 1)
-                        {
-                            
+                        {                            
                             var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
-                            var infomodel = modeltype.GetValue(model);                            
-                            var property = infomodel.GetType().GetProperty(split.LastOrDefault());
+                            var reflectModel = modeltype.GetValue(model);                            
+                            var property = model.GetType().GetProperty(split.LastOrDefault());
 
                             switch (property.PropertyType.Name)
                             {
                                 case "Int32":
                                     int.TryParse(answer.Value, out value);
-                                    property.SetValue(infomodel, value);
+                                    property.SetValue(model, value);
                                     break;
                                 case "IList`1":
-                                    var propertylist = (IList<SelectListItem>)property.GetValue(infomodel);
+                                    var propertylist = (IList<SelectListItem>)property.GetValue(model);
                                     var options = answer.Value.Split(',').ToList();
                                     foreach(var option in options)
                                     {
                                         propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
                                     }                                    
-                                    property.SetValue(infomodel, propertylist);
+                                    property.SetValue(model, propertylist);
                                     break;
                                 case "DateTime":
-                                    property.SetValue(infomodel, DateTime.Parse(answer.Value));
+                                    property.SetValue(model, DateTime.Parse(answer.Value));
                                     break;
                                 default:
-                                    property.SetValue(infomodel, answer.Value);
+                                    property.SetValue(model, answer.Value);
                                     break;
-                            }
-                        }                        
+                            }                            
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1718,6 +1708,40 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
+        private RevenueDataViewModel GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
+        {
+
+            try
+            {
+                if(revenueData != null)
+                {
+                    model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
+                    model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
+                    model.RevenueDataViewModel.AdditionalActivityViewModel.SetOptions();
+                }
+
+                //foreach (var territory in revenueData.Territories)
+                //{
+                //    model.RevenueDataViewModel.Territories.FirstOrDefault(t => t.Text == territory.Location).Selected = true;                    
+                //}
+                //foreach (var activity in revenueData.Activities)
+                //{
+                //    model.RevenueDataViewModel.Activities.FirstOrDefault(t => t.Value == activity.AnzsciCode).Selected = true;
+                //}
+                //model.RevenueDataViewModel.LastFinancialYearTotal = revenueData.LastFinancialYearTotal;
+                //model.RevenueDataViewModel.NextFinancialYearTotal = revenueData.NextFinancialYearTotal;
+                //model.RevenueDataViewModel.CurrentYearTotal = revenueData.CurrentYearTotal;
+                //model.RevenueDataViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
+
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
+        }
+
         private IList<string> LoadWizardsteps(string wizardType)
         {
             IList<string> steps = new List<string>();
@@ -1798,183 +1822,7 @@ namespace DealEngine.WebUI.Controllers
             }
 
             return sharedRoleViewModel;
-        }
-        private async Task<RevenueByActivityViewModel> GetRevenueActivityViewModel(ClientInformationSheet sheet)
-        {
-            RevenueByActivityViewModel revenueByActivityViewModel = new RevenueByActivityViewModel();
-            var clientProgramme = sheet.Programme;
-
-            var territoryList = new List<TerritoryTemplate>();
-            var nzTemplate = await _territoryService.GetTerritoryTemplateByName("New Zealand");
-
-            var businessActivityList = new List<BusinessActivityTemplate>();
-            List<SelectListItem> territoryTemplates = new List<SelectListItem>();
-            List<SelectListItem> businessActivityTemplates = new List<SelectListItem>();
-
-            if (sheet.RevenueData != null && (sheet.RevenueData.Territories.Count != 0 || sheet.RevenueData.Activities.Count != 0))
-            {
-                if (sheet.RevenueData.Territories.Count > 0)
-                {
-                    foreach (var territory in sheet.RevenueData.Territories)
-                    {
-                        var template = await _territoryService.GetTerritoryTemplateById(territory.TerritoryTemplateId);
-                        territoryList.Add(template);
-
-                        territoryTemplates.Add(new SelectListItem
-                        {
-                            Value = template.Id.ToString(),
-                            Text = template.Location,
-                            Selected = true
-                        });
-
-                    }
-                    foreach (var template in clientProgramme.BaseProgramme.TerritoryTemplates)
-                    {
-                        if (!territoryList.Contains(template))
-                        {
-                            territoryTemplates.Add(new SelectListItem
-                            {
-                                Value = template.Id.ToString(),
-                                Text = template.Location,
-                                Selected = false
-                            });
-                        }
-                    }                    
-                }
-                else
-                {                    
-                    foreach (var template in clientProgramme.BaseProgramme.TerritoryTemplates)
-                    {
-                        territoryTemplates.Add(new SelectListItem
-                        {
-                            Value = template.Id.ToString(),
-                            Text = template.Location,
-                            Selected = false
-                        });
-
-                    }
-                }
-
-                if (sheet.RevenueData.Activities.Count > 0)
-                {
-                    foreach (var ba in sheet.RevenueData.Activities)
-                    {
-                        var template = await _businessActivityService.GetBusinessActivityTemplate(ba.BusinessActivityTemplate);
-                        businessActivityList.Add(template);
-                        businessActivityTemplates.Add(new SelectListItem
-                        {
-                            Value = template.Id.ToString(),
-                            Text = template.Description,
-                            Selected = true
-                        });
-                    }
-                    foreach (var template in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-                    {
-                        if (!businessActivityList.Contains(template))
-                        {
-                            businessActivityTemplates.Add(new SelectListItem
-                            {
-                                Value = template.Id.ToString(),
-                                Text = template.Description,
-                                Selected = false
-                            });
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-                    {
-                        businessActivityTemplates.Add(new SelectListItem
-                        {
-                            Value = bat.Id.ToString(),
-                            Text = bat.Description,
-                            Selected = false
-                        });
-                    }
-                }
-
-                if (sheet.RevenueData.AdditionalActivityInformation != null)
-                {
-                    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel
-                    {
-                        CanterburyEarthquakeRebuildWorkId = sheet.RevenueData.AdditionalActivityInformation.CanterburyEarthquakeRebuildWorkId,
-                        ValuationTextId = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId,
-                        OtherActivitiesTextId = sheet.RevenueData.AdditionalActivityInformation.OtherActivitiesTextId,
-                        ValuationTextId2 = sheet.RevenueData.AdditionalActivityInformation.ValuationTextId2,
-                        InspectionReportTextId = sheet.RevenueData.AdditionalActivityInformation.InspectionReportTextId,
-                        OtherProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.OtherProjectManagementTextId,
-                        NonProjectManagementTextId = sheet.RevenueData.AdditionalActivityInformation.NonProjectManagementTextId,
-                        ConstructionTextId = sheet.RevenueData.AdditionalActivityInformation.ConstructionTextId,
-                    };
-
-                    if (sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId > 0)
-                        revenueByActivityViewModel.AdditionalInformation.ValuationBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.ValuationBoolId.ToString()).Selected = true;
-
-                    if (sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId > 0)
-                        revenueByActivityViewModel.AdditionalInformation.InspectionReportBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.InspectionReportBoolId.ToString()).Selected = true;
-
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId.ToString()).Selected = true;
-
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2 > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId2.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId2.ToString()).Selected = true;
-
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3 > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId3.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId3.ToString()).Selected = true;
-
-                    if (sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4 > 0)
-                        revenueByActivityViewModel.AdditionalInformation.SchoolsDesignWorkBoolId4.FirstOrDefault(l => l.Value == sheet.RevenueData.AdditionalActivityInformation.SchoolsDesignWorkBoolId4.ToString()).Selected = true;
-                }
-                else
-                {
-                    revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
-                }
-
-                revenueByActivityViewModel.CurrentYear = sheet.RevenueData.CurrentYear;
-                revenueByActivityViewModel.NextFincialYear = sheet.RevenueData.NextFinancialYear;
-                revenueByActivityViewModel.LastFinancialYear = sheet.RevenueData.LastFinancialYear;
-                revenueByActivityViewModel.RevenueData = sheet.RevenueData;
-            }
-            else
-            {                
-                foreach(var template in clientProgramme.BaseProgramme.TerritoryTemplates)
-                {
-                    territoryTemplates.Add(new SelectListItem
-                    {
-                        Value = template.Id.ToString(),
-                        Text = template.Location,
-                        Selected = false
-                    });
-                }
-                foreach (var bat in clientProgramme.BaseProgramme.BusinessActivityTemplates)
-                {
-                    businessActivityTemplates.Add(new SelectListItem
-                    {
-                        Value = bat.Id.ToString(),
-                        Text = bat.Description,
-                        Selected = false
-                    });
-                }
-
-            }
-            revenueByActivityViewModel.AdditionalInformation = new AdditionalActivityViewModel();
-
-            if (territoryTemplates.Where(sl=>sl.Text == nzTemplate.Location).ToList().Count == 0)
-            {
-                territoryTemplates.Add(new SelectListItem
-                {
-                    Value = nzTemplate.Id.ToString(),
-                    Text = nzTemplate.Location,
-                    Selected = false
-                });
-            }
-
-            revenueByActivityViewModel.Territories = territoryTemplates;
-            revenueByActivityViewModel.Activities = businessActivityTemplates.OrderBy(ba => ba.Text).ToList();
-
-            return revenueByActivityViewModel;
-        }
+        }        
 
         [HttpGet]
         public async Task<IActionResult> Unlock(Guid id)
@@ -2058,12 +1906,7 @@ namespace DealEngine.WebUI.Controllers
                 if (sheet == null)
                     return Json("Failure");
 
-                using (var uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    await _clientInformationService.SaveAnswersFor(sheet, collection);
-                    await _clientInformationService.UpdateInformation(sheet);
-                    await uow.Commit();
-                }
+                //await _clientInformationService.SaveAnswersFor(sheet, collection);
 
                 return Json("Success");
             }
@@ -2370,12 +2213,9 @@ namespace DealEngine.WebUI.Controllers
                     {
                         if (item[1] != null)
                         {
-
-
                             for (var x = 0; x < item.Length - 1; x++)
                             {
                                 ClientInformationAnswer answer = await _clientInformationAnswer.GetSheetAnsByName(item[0], ClientInformationSheet);
-
                                 if (answer != null)
                                 {
                                     answer.Value = item[1];
@@ -2515,7 +2355,7 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitInformation(string clientInformationId)
+        public async Task<IActionResult> SubmitInformation(IFormCollection collection)
         {
             ClientInformationSheet sheet = null;
             User user = null;
@@ -2523,13 +2363,13 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationId));
+                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
                 if (isBaseSheet)
                 {
                     var programme = sheet.Programme.BaseProgramme;
                     var reference = await _referenceService.GetLatestReferenceId();
-
+                    await _clientInformationService.SaveAnswersFor(sheet, collection);
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {
                         if (sheet.Status != "Submitted" && sheet.Status != "Bound")
@@ -2611,7 +2451,7 @@ namespace DealEngine.WebUI.Controllers
             try
             {
                 user = await CurrentUser();
-                if (Guid.TryParse(HttpContext.Request.Form["ClientInformationSheet.Id"], out sheetId))
+                if (Guid.TryParse(HttpContext.Request.Form["AnswerSheetId"], out sheetId))
                 {
                     sheet = await _clientInformationService.GetInformation(sheetId);
                 }
@@ -2964,298 +2804,7 @@ namespace DealEngine.WebUI.Controllers
                 await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
                 return RedirectToAction("Error500", "Error");
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabOne(IFormCollection form)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var sheetId = form["ClientInformationSheetId"];
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId[0]));
-                if (sheet.RevenueData == null)
-                {
-                    sheet.RevenueData = new RevenueByActivity(user);
-                    await _revenueActivityService.AddRevenueByActivity(sheet.RevenueData);
-                }
-                else
-                {
-                    foreach (Territory territory in sheet.RevenueData.Territories)
-                    {
-                        territory.DateDeleted = DateTime.Now;
-                        territory.DeletedBy = user;
-                        await _territoryService.UpdateTerritory(territory);
-                    }
-                    sheet.RevenueData.Territories.Clear();
-                }
-
-                var territoryForm = form["form"];
-                var territoryFormString = territoryForm[0];
-                var territorySplit = territoryFormString.Split("&");
-                foreach (var str in territorySplit)
-                {
-                    var strSpit = str.Split('=');
-                    if (strSpit[0] != "Territories")
-                    {                        
-                        var territorytemplate = await _territoryService.GetTerritoryTemplateById(Guid.Parse(strSpit[0]));
-                        var newTerritory = new Territory(user);
-                        newTerritory.Location = territorytemplate.Location;
-                        newTerritory.Pecentage = decimal.Parse(strSpit[1]);
-                        newTerritory.TerritoryTemplateId = territorytemplate.Id;
-                        await _territoryService.AddTerritory(newTerritory);
-                        sheet.RevenueData.Territories.Add(newTerritory);
-                    }
-                }
-                await _clientInformationService.UpdateInformation(sheet);
-
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabTwo(IFormCollection form)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var sheetId = form["ClientInformationSheetId"];
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(sheetId[0]));
-                if (sheet.RevenueData == null)
-                {
-                    sheet.RevenueData = new RevenueByActivity(user);
-                }
-                else
-                {
-                    foreach (BusinessActivity businessActivity in sheet.RevenueData.Activities)
-                    {
-                        businessActivity.DateDeleted = DateTime.Now;
-                        businessActivity.DeletedBy = user;
-                        await _businessActivityService.UpdateBusinessActivity(businessActivity);
-                    }
-                    sheet.RevenueData.Activities.Clear();
-                }
-
-                var activityForm = form["form"];
-                var activityFormString = activityForm[0];
-                var activitySplit = activityFormString.Split("&");
-                foreach (var str in activitySplit)
-                {
-                    var strSpit = str.Split('=');
-                    if (strSpit[0] == "currentYear")
-                    {
-                        sheet.RevenueData.CurrentYear = decimal.Parse(strSpit[1]);
-                    }
-                    else if (strSpit[0] == "lastFinancialYear")
-                    {
-                        sheet.RevenueData.LastFinancialYear = decimal.Parse(strSpit[1]);
-                    }
-                    else if (strSpit[0] == "nextFinancialYear")
-                    {
-                        sheet.RevenueData.NextFinancialYear = decimal.Parse(strSpit[1]);
-                    }
-                    else if (strSpit[0] == "Activities")
-                    {
-
-                    }
-                    else
-                    {
-                        var businessActivityTemplate = await _businessActivityService.GetBusinessActivityTemplate(Guid.Parse(strSpit[0]));
-                        var newBusinessActivity = new BusinessActivity(user)
-                        {
-                            AnzsciCode = businessActivityTemplate.AnzsciCode,
-                            Classification = businessActivityTemplate.Classification,
-                            Description = businessActivityTemplate.Description,
-                            BusinessActivityTemplate = businessActivityTemplate.Id,
-                            Pecentage = decimal.Parse(strSpit[1])
-                        };
-                        await _businessActivityService.CreateBusinessActivity(newBusinessActivity);
-                        sheet.RevenueData.Activities.Add(newBusinessActivity);
-                    }
-                }
-
-                await _clientInformationService.UpdateInformation(sheet);
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveRevenueDataTabThree(IFormCollection form)
-        {
-            User user = null;
-
-            try
-            {
-                user = await CurrentUser();
-                var clientInformationSheetIdFormString = form["ClientInformationSheetId"].ToString();
-                var sheet = await _clientInformationService.GetInformation(Guid.Parse(clientInformationSheetIdFormString));
-                var additionalInformation = new AdditionalActivityInformation(user);
-                var serialisedAdditionalInformationTableFormString = form["form"].ToString();
-                var FormString = serialisedAdditionalInformationTableFormString.Split('&');
-
-                if (sheet.RevenueData == null)
-                {
-                    throw new Exception("Please complete Activities Tab");
-                }
-
-                //loop through form
-                foreach (var questionFormString in FormString)
-                {
-                    var questionSplit = questionFormString.Split("=");
-                    try
-                    {
-                        switch (questionSplit[0])
-                        {
-                            case "InspectionReportTextId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.InspectionReportTextId = questionSplit[1];
-                                }
-                                break;
-                            case "InspectionReportBoolId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.InspectionReportBoolId = int.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "ValuationTextId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ValuationTextId = questionSplit[1];
-                                }
-                                break;
-                            case "ValuationTextId2":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ValuationTextId2 = questionSplit[1];
-                                }
-
-                                break;
-                            case "ValuationBoolId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ValuationBoolId = int.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "SchoolsDesignWorkBoolId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.SchoolsDesignWorkBoolId = int.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "SchoolsDesignWorkBoolId2":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.SchoolsDesignWorkBoolId2 = int.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "SchoolsDesignWorkBoolId3":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.SchoolsDesignWorkBoolId3 = int.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "SchoolsDesignWorkBoolId4":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.SchoolsDesignWorkBoolId4 = int.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "OtherActivitiesTextId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.OtherActivitiesTextId = questionSplit[1];
-                                }
-                                break;
-                            case "CanterburyEarthquakeRebuildWorkId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.CanterburyEarthquakeRebuildWorkId = questionSplit[1];
-                                }
-                                break;
-                            case "OtherProjectManagementTextId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.OtherProjectManagementTextId = questionSplit[1];
-                                }
-                                break;
-                            case "NonProjectManagementTextId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.NonProjectManagementTextId = questionSplit[1];
-                                }
-                                break;
-                            case "ConstructionCommercial":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ConstructionCommercial = decimal.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "ConstructionDwellings":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ConstructionDwellings = decimal.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "ConstructionIndustrial":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ConstructionIndustrial = decimal.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "ConstructionInfrastructure":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ConstructionInfrastructure = decimal.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "ConstructionSchool":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ConstructionSchool = decimal.Parse(questionSplit[1]);
-                                }
-                                break;
-                            case "ConstructionTextId":
-                                if (questionSplit[1] != "")
-                                {
-                                    additionalInformation.ConstructionTextId = questionSplit[1];
-                                }
-                                break;
-                            default:
-                                throw new Exception("Add more form question 'cases'");
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-
-                sheet.RevenueData.AdditionalActivityInformation = additionalInformation;
-                await _clientInformationService.UpdateInformation(sheet);
-                return Json("OK");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
+        }                       
 
         public async Task<InformationViewModel> GetInformationViewModel(ClientProgramme clientProgramme)
         {
@@ -3265,11 +2814,11 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel
+                InformationViewModel model = new InformationViewModel(programme)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()
-                };
+                };                
                 model.Name = programme.Name;
                 Product product = null;
                 if (programme.Products.Count > 1)

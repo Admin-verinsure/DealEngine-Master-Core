@@ -116,6 +116,7 @@ namespace DealEngine.Services.Impl
 
         public async Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
         {
+            string modelLocation = "DealEngine.WebUI.Models.{1}, DealEngine.WebUI";
             if (sheet == null)
                 throw new ArgumentNullException(nameof(sheet));
             if (collection == null)
@@ -123,30 +124,100 @@ namespace DealEngine.Services.Impl
 
             foreach (var key in collection.Keys)
             {
-                //foreach (string value in collection[key])
-                //{
-                    //break the collection into objects                    
-                    sheet.AddAnswer(key, collection[key]);
-                //}
+                sheet.AddAnswer(key, collection[key]);
             }
 
-            // get activity/revenue data
-            var activityRevenue = collection.Keys.Where(s => s.StartsWith("actRevMat", StringComparison.CurrentCulture));
-            NameValueCollection activityRevenueData = new NameValueCollection();
+            sheet.RevenueData = new RevenueData(sheet);
+            // get activity/revenue data            
+            var activityRevenue = collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture));            
             foreach (string key in activityRevenue)
-                activityRevenueData.Add(key, collection[key].FirstOrDefault());
-            //await SaveRevenueData(sheet, activityRevenueData, null);
+            {
+                var modelArray = key.Split('.').ToList();
+                Guid id = Guid.Empty;
+                var modelType = modelLocation.Replace("{1}", modelArray.FirstOrDefault());
+                Type type = Type.GetType(modelType);
+                try
+                {
+                    int percent = 0;
+                    var model = Activator.CreateInstance(type);
+                    var ModelProperty = model.GetType().GetProperty(modelArray.ElementAt(1));
+                    if(ModelProperty.Name == "Territories")
+                    {
+                        Territory territory;                                                
+                        if(modelArray.Count > 2)
+                        {
+                            Guid.TryParse(modelArray.ElementAt(2), out id);
+                            territory = sheet.RevenueData.Territories.FirstOrDefault(t => t.TemplateId == id);
+                            try
+                            {                                
+                                territory.Selected = true;
+                                territory.Percentage = decimal.Parse(collection[key].ToString());
+                            }
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                        }                        
+                    }
+                    else if(ModelProperty.Name == "Activities")
+                    {
+                        BusinessActivity activity;
+                        if (modelArray.Count > 2)
+                        {
+                            activity = sheet.RevenueData.Activities.FirstOrDefault(t => t.AnzsciCode == modelArray.ElementAt(2));
+                            try
+                            {
+                                activity.Selected = true;
+                                activity.Percentage = decimal.Parse(collection[key].ToString());                                
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                        }                        
+                    }
+                    else if(ModelProperty.Name == "AdditionalActivityViewModel")
+                    {
+                        Console.WriteLine();
+                        var variabletype = sheet.RevenueData.AdditionalActivityInformation.GetType();                        
+                        var field = variabletype.GetProperty(modelArray.LastOrDefault());
 
-            // get shared data
-            var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
-            NameValueCollection sharedData = new NameValueCollection();
-            foreach (string key in sharedKeys)
-                sharedData.Add(key, collection[key].FirstOrDefault());
+                        if (field.PropertyType.Name == "Decimal")
+                        {
+                            var total = decimal.Parse(collection[key].ToString());
+                            field.SetValue(sheet.RevenueData.AdditionalActivityInformation, total);
+                        }
+                        else
+                        {
+                            field.SetValue(sheet.RevenueData.AdditionalActivityInformation, collection[key].ToString());
+                        }
+                    }
+                    else if(ModelProperty.PropertyType.Name == "Decimal")
+                    {
+                        var variabletype = sheet.RevenueData.GetType();
+                        var field = variabletype.GetProperty(ModelProperty.Name);
+                        var total = decimal.Parse(collection[key].ToString());
+                        field.SetValue(sheet.RevenueData, total);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+               
+            }
 
-            // setup the shared data just in case it doesn't exist for some reasons
-            //ConfigureSharedData (sheet);
+            await UpdateInformation(sheet);
+            //// get shared data
+            //var sharedKeys = collection.Keys.Where(s => s.StartsWith("shared", StringComparison.CurrentCulture));
+            //NameValueCollection sharedData = new NameValueCollection();
+            //foreach (string key in sharedKeys)
+            //    sharedData.Add(key, collection[key].FirstOrDefault());
 
-            // save data to shared data
+            //// setup the shared data just in case it doesn't exist for some reasons
+            ////ConfigureSharedData (sheet);
+
+            //// save data to shared data
         }
 
         public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)
