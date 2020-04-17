@@ -79,8 +79,8 @@
                                    event.stopPropagation();
                                    $("#more").trigger("click");
                                    //go back to div// go back to accordion to get id
-                                   var accordianId = form.parentElement.parentElement.parentElement.id;
                                    debugger;
+                                   var accordianId = form.parentElement.getAttribute("aria-labelledby");
                                    window.alert("Please complete this section " + accordianId);
                                    $("[id='" + accordianId + "']").trigger("click");
                                    element.scrollIntoView();

@@ -1365,50 +1365,12 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.Wizardsteps = LoadWizardsteps("Standard");
                 }
-
-                //build models from answers
-                foreach(var answer in sheet.Answers) 
-                {
-                    var value = 0;
-                    try
-                    {
-                        var split = answer.ItemName.Split('.').ToList();
-                        if (split.Count > 1)
-                        {                            
-                            var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
-                            var reflectModel = modeltype.GetValue(model);   
-                            
-                            var property = reflectModel.GetType().GetProperty(split.LastOrDefault());
-                            if(typeof(string) == property.PropertyType)
-                            {
-                                property.SetValue(reflectModel, answer.Value);
-                            }
-                            if (typeof(int) == property.PropertyType)
-                            {
-                                int.TryParse(answer.Value, out value);
-                                property.SetValue(reflectModel, value);
-                            }
-                            if (typeof(IList<SelectListItem>) == property.PropertyType)
-                            {
-                                var propertylist = (IList<SelectListItem>)property.GetValue(reflectModel);
-                                var options = answer.Value.Split(',').ToList();
-                                foreach (var option in options)
-                                {
-                                    propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
-                                }
-                                property.SetValue(reflectModel, propertylist);
-                            }
-                            if (typeof(DateTime) == property.PropertyType)
-                            {
-                                property.SetValue(reflectModel, DateTime.Parse(answer.Value));
-                            }                           
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("");
-                    }
-                }               
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
 
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
@@ -1683,9 +1645,59 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private RevenueDataViewModel GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
+        private async Task BuildModelFromAnswer(InformationViewModel model, IEnumerable<ClientInformationAnswer> Model)
         {
 
+
+            //build model
+
+            //build models from answers
+            foreach (var answer in Model)
+            {
+                var value = 0;
+                try
+                {
+                    var split = answer.ItemName.Split('.').ToList();
+                    if (split.Count > 1)
+                    {
+                        var modeltype = typeof(InformationViewModel).GetProperty(split.FirstOrDefault());
+                        var reflectModel = modeltype.GetValue(model);
+
+                        var property = reflectModel.GetType().GetProperty(split.LastOrDefault());
+                        if (typeof(string) == property.PropertyType)
+                        {
+                            property.SetValue(reflectModel, answer.Value);
+                        }
+                        if (typeof(int) == property.PropertyType)
+                        {
+                            int.TryParse(answer.Value, out value);
+                            property.SetValue(reflectModel, value);
+                        }
+                        if (typeof(IList<SelectListItem>) == property.PropertyType)
+                        {
+                            var propertylist = (IList<SelectListItem>)property.GetValue(reflectModel);
+                            var options = answer.Value.Split(',').ToList();
+                            foreach (var option in options)
+                            {
+                                propertylist.FirstOrDefault(i => i.Value == option).Selected = true;
+                            }
+                            property.SetValue(reflectModel, propertylist);
+                        }
+                        if (typeof(DateTime) == property.PropertyType)
+                        {
+                            property.SetValue(reflectModel, DateTime.Parse(answer.Value));
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("");
+                }
+            }
+        }
+
+        private RevenueDataViewModel GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
+        {
             try
             {
                 if(revenueData != null)
@@ -1694,21 +1706,6 @@ namespace DealEngine.WebUI.Controllers
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
                     model.RevenueDataViewModel.AdditionalActivityViewModel.SetOptions();
                 }
-
-                //foreach (var territory in revenueData.Territories)
-                //{
-                //    model.RevenueDataViewModel.Territories.FirstOrDefault(t => t.Text == territory.Location).Selected = true;                    
-                //}
-                //foreach (var activity in revenueData.Activities)
-                //{
-                //    model.RevenueDataViewModel.Activities.FirstOrDefault(t => t.Value == activity.AnzsciCode).Selected = true;
-                //}
-                //model.RevenueDataViewModel.LastFinancialYearTotal = revenueData.LastFinancialYearTotal;
-                //model.RevenueDataViewModel.NextFinancialYearTotal = revenueData.NextFinancialYearTotal;
-                //model.RevenueDataViewModel.CurrentYearTotal = revenueData.CurrentYearTotal;
-                //model.RevenueDataViewModel.AdditionalInformation = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
-
-
             }
             catch(Exception ex)
             {
