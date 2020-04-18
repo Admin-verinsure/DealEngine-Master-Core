@@ -116,22 +116,44 @@ namespace DealEngine.Services.Impl
 
         public async Task SaveAnswersFor(ClientInformationSheet sheet, IFormCollection collection)
         {
-            string modelLocation = "DealEngine.WebUI.Models.{1}, DealEngine.WebUI";
             if (sheet == null)
                 throw new ArgumentNullException(nameof(sheet));
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            foreach (var key in collection.Keys)
+            await BuildAnswerFromModel(sheet, collection);
+
+            await UpdateInformation(sheet);
+        }
+
+        private async Task BuildAnswerFromModel(ClientInformationSheet sheet, IFormCollection collection)
+        {
+            //find a faster way of getting all models
+            AnswerFromRevenue(sheet, collection, collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture)));            
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
+            SaveAnswer(sheet, collection, collection.Keys.Where(s => s.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+        }
+
+        private void SaveAnswer(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
+        {
+            foreach (var key in enumerable)
             {
                 sheet.AddAnswer(key, collection[key]);
             }
+        }
 
+        private void AnswerFromRevenue(ClientInformationSheet sheet, IFormCollection collection, IEnumerable<string> enumerable)
+        {
             sheet.RevenueData = new RevenueData(sheet);
+            string modelLocation = "DealEngine.WebUI.Models.{1}, DealEngine.WebUI";
             // get activity/revenue data            
-            var activityRevenue = collection.Keys.Where(s => s.StartsWith("RevenueDataViewModel", StringComparison.CurrentCulture));            
-            foreach (string key in activityRevenue)
+            foreach (string key in enumerable)
             {
+                int value = 0;
                 var modelArray = key.Split('.').ToList();
                 Guid id = Guid.Empty;
                 var modelType = modelLocation.Replace("{1}", modelArray.FirstOrDefault());
@@ -141,25 +163,25 @@ namespace DealEngine.Services.Impl
                     int percent = 0;
                     var model = Activator.CreateInstance(type);
                     var ModelProperty = model.GetType().GetProperty(modelArray.ElementAt(1));
-                    if(ModelProperty.Name == "Territories")
+                    if (ModelProperty.Name == "Territories")
                     {
-                        Territory territory;                                                
-                        if(modelArray.Count > 2)
+                        Territory territory;
+                        if (modelArray.Count > 2)
                         {
                             Guid.TryParse(modelArray.ElementAt(2), out id);
                             territory = sheet.RevenueData.Territories.FirstOrDefault(t => t.TemplateId == id);
                             try
-                            {                                
+                            {
                                 territory.Selected = true;
                                 territory.Percentage = decimal.Parse(collection[key].ToString());
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                             }
-                        }                        
+                        }
                     }
-                    else if(ModelProperty.Name == "Activities")
+                    else if (ModelProperty.Name == "Activities")
                     {
                         BusinessActivity activity;
                         if (modelArray.Count > 2)
@@ -168,18 +190,17 @@ namespace DealEngine.Services.Impl
                             try
                             {
                                 activity.Selected = true;
-                                activity.Percentage = decimal.Parse(collection[key].ToString());                                
+                                activity.Percentage = decimal.Parse(collection[key].ToString());
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                             }
-                        }                        
+                        }
                     }
-                    else if(ModelProperty.Name == "AdditionalActivityViewModel")
+                    else if (ModelProperty.Name == "AdditionalActivityViewModel")
                     {
-                        Console.WriteLine();
-                        var variabletype = sheet.RevenueData.AdditionalActivityInformation.GetType();                        
+                        var variabletype = sheet.RevenueData.AdditionalActivityInformation.GetType();
                         var field = variabletype.GetProperty(modelArray.LastOrDefault());
 
                         if (field.PropertyType.Name == "Decimal")
@@ -192,7 +213,7 @@ namespace DealEngine.Services.Impl
                             field.SetValue(sheet.RevenueData.AdditionalActivityInformation, collection[key].ToString());
                         }
                     }
-                    else if(ModelProperty.PropertyType.Name == "Decimal")
+                    else if (ModelProperty.PropertyType.Name == "Decimal")
                     {
                         var variabletype = sheet.RevenueData.GetType();
                         var field = variabletype.GetProperty(ModelProperty.Name);
@@ -200,14 +221,12 @@ namespace DealEngine.Services.Impl
                         field.SetValue(sheet.RevenueData, total);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-               
-            }
 
-            await UpdateInformation(sheet);
+            }
         }
 
         public async Task<List<ClientInformationSheet>> FindByBoatName(string searchValue)

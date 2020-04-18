@@ -52,55 +52,48 @@
                $('tab1').click();
            }
 
-           $.ajax({
-                url: '@Url.Action("SaveInformation", "Information")',
-                type: "POST",                
-                data: $("#tab_1 :input").serialize({ json:true })
-            })
-
            if (stepNumber === 0) {
-               //save answers regardless of validation
-               @*$.ajax({
-                   url: '@Url.Action("SaveInformation", "Information")',
-                   type: "POST",
-                   data: $("#tab_1 :input").serialize({ json: true })
-               })*@
-
                if (informationsheetstatus != "Submitted") {
-               var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
-               var formIds = [];
-               for (var i = 0; i < forms.length; i++) {
-                   formIds.push(forms[i].id);
-               }
-               for (var f = 0; f < formIds.length; f++) { 
-                   var form = document.getElementById(formIds[f]);
-                   for (var e = 0; e < form.length; e++) {
-                       var element = document.getElementById(form[e].id);
-                       if (element != null) {
-                           OnChange(element.id, element.name);
-                           //hardcoded to find the div visibility
-                           var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;                           
-                           if (element.classList.contains("is-invalid") && isHidden == false) {
-                               //write a message here or stop the process
-                               debugger;
-                               event.preventDefault();
-                               event.stopPropagation();
-                               $("#more").trigger("click");
-                               var accordianId = form.previousElementSibling.id;
-                               window.alert("Please complete this section " + accordianId);
-                               $("[id='" + accordianId + "']").trigger("click");
-                               element.scrollIntoView();
-                               throw accordianId + " incomplete";
+                   var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
+                   var formIds = [];
+                   for (var i = 0; i < forms.length; i++) {
+                       formIds.push(forms[i].id);
+                   }
+                   for (var f = 0; f < formIds.length; f++) {
+                       var form = document.getElementById(formIds[f]);
+                       var element = null;
+                       for (var e = 0; e < form.length; e++) {
+                           try {
+                               element = document.getElementById(form[e].id);
+                           }
+                           catch (ex) {
+                               //will have to add further function for forms with added elements
+                           }
+                           if (element != null) {
+                               OnChange(element.id, element.name);
+                               //hardcoded to find the div visibility
+                               var isHidden = element.parentElement.parentElement.parentElement.parentElement.hidden;
+                               if (element.classList.contains("is-invalid") && isHidden == false) {
+                                   //write a message here or stop the process
+                                   event.preventDefault();
+                                   event.stopPropagation();
+                                   $("#more").trigger("click");
+                                   //go back to div// go back to accordion to get id
+                                   var accordianId = form.parentElement.getAttribute("aria-labelledby");
+                                   window.alert("Please complete this section " + accordianId);
+                                   $("[id='" + accordianId + "']").trigger("click");
+                                   element.scrollIntoView();
+                                   throw accordianId + " incomplete";
+                               }
                            }
                        }
+                       form.classList.remove("needs-validation");
+                       form.classList.add("was-validated");
                    }
-                   form.classList.remove("needs-validation");
-                   form.classList.add("was-validated");
-               }
+                   event.preventDefault();
 
-               event.preventDefault();               
-                 if (stepDirection == "forward") {
-                   var claim1 = $('#Claimexp1').val();
+                   if (stepDirection == "forward") {
+                       var claim1 = $('#Claimexp1').val();
                    var claim2 = $('#Claimexp2').val();
                    var claim3 = $('#Claimexp3').val();
                    var claim4 = $('#Claimexp4').val();

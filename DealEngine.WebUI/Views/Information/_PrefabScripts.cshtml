@@ -10,7 +10,12 @@
         for (var i = 0; i < formIds.length; i++) {
             var form = document.getElementById(formIds[i]);
             for (var e = 0; e < form.length; e++) {
-                var element = document.getElementById(form[e].id);
+                try {
+                    element = document.getElementById(form[e].id);
+                }
+                catch (ex) {
+                    //will have to add further function for forms with added elements
+                }
                 if (element != null) {
                     OnChange(element.id, element.name);
                     //after first load change to default view
@@ -124,6 +129,19 @@
                 }
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[0]);
+                DefaultRule(Value, element.name);
+            }
+            if (Rule === "DNOOptional") {
+                Value = DoubleConditional(DataItem);
+                debugger;
+                if (Value =="both") {
+                    Value = "1";
+                }
+                else {
+
+                }
+                var ids = DataItem.split(',');
+                var element = document.getElementById(ids[1]);
                 DefaultRule(Value, element.name);
             }
         } catch (ex) {
