@@ -11,7 +11,9 @@
             var form = document.getElementById(formIds[i]);
             for (var e = 0; e < form.length; e++) {
                 try {
-                    element = document.getElementById(form[e].id);
+                    if (form[e].id != "") {
+                        element = document.getElementById(form[e].id);
+                    }
                 }
                 catch (ex) {
                     //will have to add further function for forms with added elements
@@ -43,6 +45,9 @@
         } else if (Tag == "INPUT") {
             InputValidation(obj, value);
         }
+        else if (Tag == "TEXTAREA") {
+            InputValidation(obj, value);
+        }
         //trigger
         TriggerHandler(Name, value, dataRule, dataItem);
     }
@@ -68,7 +73,7 @@
     }
 
     function SelectValidation(obj, value) {
-        if (value > 0) {
+        if (value != "") {
             obj.classList.add("is-valid");
             obj.classList.remove("is-invalid");
         }
@@ -133,7 +138,6 @@
             }
             if (Rule === "DNOOptional") {
                 Value = DoubleConditional(DataItem);
-                debugger;
                 if (Value =="both") {
                     Value = "1";
                 }

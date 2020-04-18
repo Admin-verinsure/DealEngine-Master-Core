@@ -40,7 +40,7 @@
                         </label>
                     </div>
                     <div class="col-3">
-                        @Html.TextBoxFor(m => m.DAOLIViewModel.FormDate, new { @class = "dateInput form-control", @id = "formdate", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
+                        @Html.TextBoxFor(m => m.DAOLIViewModel.FormDate, "{0:yyyy-MM-dd}", new { @class = "dateInput form-control", @id = "formdate", @type = "date", onchange = "OnChange(this.id, this.name)", @required = "" })
                     </div>
                 </div>
             </div>

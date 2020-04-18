@@ -64,7 +64,9 @@
                        var element = null;
                        for (var e = 0; e < form.length; e++) {
                            try {
-                               element = document.getElementById(form[e].id);
+                               if (form[e].id != "") {
+                                   element = document.getElementById(form[e].id);
+                               }                               
                            }
                            catch (ex) {
                                //will have to add further function for forms with added elements

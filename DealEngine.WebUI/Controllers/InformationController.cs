@@ -1348,7 +1348,17 @@ namespace DealEngine.WebUI.Controllers
                 var clientProgramme = await _programmeService.GetClientProgramme(id);
                 var sheet = clientProgramme.InformationSheet;                
                 InformationViewModel model = await GetInformationViewModel(clientProgramme);
-                GetRevenueViewModel(model, sheet.RevenueData);
+                
+                //build custom models
+                await GetRevenueViewModel(model, sheet.RevenueData);
+                
+                //build models from answers
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
+
                 SharedRoleViewModel sharedRoleViewModel = await GetSharedRoleViewModel(sheet);                
                 model.SharedRoleViewModel = sharedRoleViewModel;
                 model.AnswerSheetId = sheet.Id;
@@ -1365,12 +1375,7 @@ namespace DealEngine.WebUI.Controllers
                 {
                     model.Wizardsteps = LoadWizardsteps("Standard");
                 }
-                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZEPLViewModel", StringComparison.CurrentCulture)));
-                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("CLIViewModel", StringComparison.CurrentCulture)));
-                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("PMINZPIViewModel", StringComparison.CurrentCulture)));
-                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
-                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("ClaimsHistoryViewModel", StringComparison.CurrentCulture)));
-                await BuildModelFromAnswer(model, sheet.Answers.Where(s => s.ItemName.StartsWith("DAOLIViewModel", StringComparison.CurrentCulture)));
+
 
                 string advisoryDesc = "";
                 if (sheet.Status == "Not Started")
@@ -1647,10 +1652,6 @@ namespace DealEngine.WebUI.Controllers
 
         private async Task BuildModelFromAnswer(InformationViewModel model, IEnumerable<ClientInformationAnswer> Model)
         {
-
-
-            //build model
-
             //build models from answers
             foreach (var answer in Model)
             {
@@ -1696,7 +1697,7 @@ namespace DealEngine.WebUI.Controllers
             }
         }
 
-        private RevenueDataViewModel GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
+        private async Task GetRevenueViewModel(InformationViewModel model, RevenueData revenueData)
         {
             try
             {
@@ -1710,8 +1711,7 @@ namespace DealEngine.WebUI.Controllers
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }
-            return null;
+            }            
         }
 
         private IList<string> LoadWizardsteps(string wizardType)
