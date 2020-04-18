@@ -533,13 +533,13 @@
 
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {          
-            @*$.ajax({
+            $.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
                 data: $("#tab_1 :input").serialize({ json:true })
                 //data: $("#myForm").serialize({ json:true })
             })
-           .done(function (data) {*@
+           .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');
                $('#Principal,Partners or Directors').trigger('reloadGrid');
                $('#tblWaterLocation').trigger('reloadGrid');
@@ -555,11 +555,11 @@
                $('#BoatLandLocation').trigger('chosen:updated');
                $('#tblBusinessContract').trigger('reloadGrid');
                $('#PrincipalDirectors').trigger('reloadGrid');
-           //})
-           //     .fail(function (jqXHR, textStatus, errorThrown) {
-           //         debugger;
-           //    alert("Unable to save....");
-           //});
+           })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+               alert("Unable to save....");
+           });
         }
     });
 
