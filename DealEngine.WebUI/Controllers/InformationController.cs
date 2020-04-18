@@ -2331,18 +2331,22 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> SubmitInformation(IFormCollection collection)
         {
             ClientInformationSheet sheet = null;
+            ClientInformationSheet sheet1 = null;
+
             User user = null;
 
             try
             {
                 user = await CurrentUser();
-                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
+                //sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
+                sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["AnswerSheetId"]));
+
                 var isBaseSheet = await _clientInformationService.IsBaseClass(sheet);
                 if (isBaseSheet)
                 {
                     var programme = sheet.Programme.BaseProgramme;
                     var reference = await _referenceService.GetLatestReferenceId();
-                    //sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Started";
+                    sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Started";
                     await _clientInformationService.SaveAnswersFor(sheet, collection);
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {

@@ -1410,8 +1410,16 @@ namespace DealEngine.WebUI.Controllers
 
                     foreach (ClientAgreementTerm term in agreement.ClientAgreementTerms.Where(t => t.DateDeleted == null).OrderBy(acat => acat.TermLimit))
                     {
+                        if (null != agreement.Product.DependableProduct)
+                        {
+                            multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), Dependableproduct = agreement.Product.DependableProduct.Name });
 
-                        multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture) });
+                        }
+                        else
+                        {
+                            multiCoverOptions.Add(new MultiCoverOptions { TermId = term.Id, isSelected = (term.Bound == true) ? "checked" : "", ProductId = agreement.Product.Id, RiskName = agreement.Product.Name, Inclusion = "Limit: " + term.TermLimit.ToString("C", UserCulture), Exclusion = "Excess: " + term.Excess.ToString("C", UserCulture), TotalPremium = term.Premium.ToString("C", UserCulture), Dependableproduct = "NonDependable" });
+
+                        }
                     }
 
                     // List Agreement Premiums
