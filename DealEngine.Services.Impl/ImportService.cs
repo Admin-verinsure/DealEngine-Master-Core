@@ -32,7 +32,7 @@ namespace DealEngine.Services.Impl
             IUnitOfWork unitOfWork, 
             IOrganisationTypeService organisationTypeService, 
             IInsuranceAttributeService insuranceAttributeService,
-            IMapperSession<Organisation> organisationRepository, 
+            IMapperSession<Organisation> organisationRepository,
             IBusinessActivityService businessActivityService)
         {
             //WorkingDirectory = "/tmp/"; //"/tmp/ImportData/";
@@ -1158,7 +1158,8 @@ namespace DealEngine.Services.Impl
                         if (!string.IsNullOrEmpty(parts[13]))
                             preRenewOrRefData.EndorsementText = parts[13];
 
-                        //await _programmeService.AddBusinessContractByMembership(businessContract);
+                        await _programmeService.AddPreRenewOrRefDataByMembership(preRenewOrRefData);
+
                     }
                     catch (Exception ex)
                     {

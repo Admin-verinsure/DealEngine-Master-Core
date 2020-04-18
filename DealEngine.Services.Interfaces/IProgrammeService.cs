@@ -28,6 +28,7 @@ namespace DealEngine.Services.Interfaces
         Task AddOrganisationByMembership(Organisation organisation);
         Task AddClaimNotificationByMembership(ClaimNotification claimNotification);
         Task AddBusinessContractByMembership(BusinessContract businessContract);
+        Task AddPreRenewOrRefDataByMembership(PreRenewOrRefData preRenewOrRefData);
         Task<ClientProgramme> GetClientProgrammebyId(Guid clientProgrammeID);
         Task<List<ClientProgramme>> FindByOwnerName(string insuredName);
         Task<SubClientProgramme> CreateSubClientProgrammeFor(Guid programmeId);

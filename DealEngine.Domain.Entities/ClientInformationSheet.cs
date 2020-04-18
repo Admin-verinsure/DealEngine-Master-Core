@@ -41,6 +41,7 @@ namespace DealEngine.Domain.Entities
         public virtual User UnlockedBy { get; set; }        
         public virtual IList<AuditLog> ClientInformationSheetAuditLogs { get; protected set; }        
         public virtual IList<BusinessContract> BusinessContracts { get; protected set; }
+        public virtual IList<PreRenewOrRefData> PreRenewOrRefDatas { get; set; }
         protected ClientInformationSheet () : this (null) { }
 
 		protected ClientInformationSheet (User createdBy)
@@ -58,6 +59,7 @@ namespace DealEngine.Domain.Entities
             BoatUses = new List<BoatUse>();
             ClaimNotifications = new List<ClaimNotification>();
             ClientInformationSheetAuditLogs = new List<AuditLog>();
+            PreRenewOrRefDatas = new List<PreRenewOrRefData>();
             BusinessContracts = new List<BusinessContract>();
             Status = "Not Started";
             RevenueData = new RevenueData(null, createdBy);
@@ -140,6 +142,10 @@ namespace DealEngine.Domain.Entities
         public virtual void AddClientInformationSheetAuditLog(AuditLog clientInformationSheetAuditLog)
         {
             ClientInformationSheetAuditLogs.Add(clientInformationSheetAuditLog);
+        }
+        public virtual void AddPreRenewOrRefData(PreRenewOrRefData preRenewOrRefData)
+        {
+            PreRenewOrRefDatas.Add(preRenewOrRefData);
         }
         public virtual void AddBusinessContract(BusinessContract businessContract)
         {
