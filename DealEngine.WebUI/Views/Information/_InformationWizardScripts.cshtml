@@ -215,46 +215,62 @@
                }
 
                $('.sw-btn-prev').hide();
-               $('#getAgreementDecModal').show();               
-
+               //$('#getAgreementDecModal').show();               
+                var isvalid = 0;
                var ID = $('#Id').val();
                var answerid= $('#AnswerSheetId').val();
                var postdata = {
                    id: ID
                }
+               var proddata = "";
                $.ajax({
                    url: '@Url.Action("GetProductName", "Information")',
                    type: "POST",
+                    async: false,
                    data: postdata
                })
                     .done(function (data) {                        
-                        var prodname = data;
-                        var CoverOptions = new Array(prodname.length);
-                        for (var i = 0; i < prodname.length; i++) {
-                               var ProdName = prodname[i];
+                         proddata = data;
+                        
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        alert("There was an error getting ProductName.");
+                    });
+
+                      debugger;
+                      var CoverOptions = new Array(proddata.length);
+                        for (var i = 0; i < proddata.length; i++) {
+                               var ProdName = proddata[i];
                             var queryselector = "" + "input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
                             var producttable = "[id='" + ProdName + "'] tr";
-                            var isvalid = 0;
+                           
                             //var jhjk = '"[id='"+ProdName +"']' tr";
                              $(producttable).each(function () {
-                                   debugger;
                                  var $tds = $(this).find('td'),
                                      value = $tds.eq(5).text().trim();
                                  if (value != "") {
                                      var dependoption = "" + "input[name='" + value + "']:checked";
                                      var dependendoptionsselected = $(dependoption).val();
                                      if (dependendoptionsselected == "None" && optionsselected != "None") {
+
                                          alert("You cannot have " + ProdName + "Without " + value);
-                                         isvalid ++;
+                                         isvalid++;
                                          return false;
                                      }
                                  }
+                                 
+                                  
                              });
+
+                            if (isvalid != 0) {
+                                     break;
+                            }
+
                             CoverOptions[i] = optionsselected;
                         }
 
-                        if (isvalid != 0) {
+                        
+                        if (isvalid == 0) {
                             var progId = $('#ClientProgrammeId').val();
                             var postData = { Answers: CoverOptions, ProgrammeId: progId };
 
@@ -268,27 +284,27 @@
                                 .fail(function (a, s, d) {
                                     alert("Unable to save.");
                                 });
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        alert("There was an error getting ProductName.");
-                    });
 
-               if (isvalid != 0) {
-                   $.ajax({
-                       url: '@Url.Action("QuoteToAgree", "Information")',
-                       type: "GET",
-                       data: postdata
-                   })
-                       .done(function (url) {
-                           $("#agreementDeclarationView").load(url, function () {
-                               $('#getAgreementDecModal').hide();
-                           });
-                       })
-                       .fail(function (jqXHR, textStatus, errorThrown) {
-                           $('#getAgreementDecModal').hide();
-                           alert("There was an error getting your agreement declaration.");
-                       });
-               }
+
+                            $.ajax({
+                                url: '@Url.Action("QuoteToAgree", "Information")',
+                                type: "GET",
+                                data: postdata
+                            })
+                                .done(function (url) {
+                                    $("#agreementDeclarationView").load(url, function () {
+                                        $('#getAgreementDecModal').hide();
+                                    });
+                                })
+                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                    $('#getAgreementDecModal').hide();
+                                    alert("There was an error getting your agreement declaration.");
+                                });
+
+                        } else {
+                            return false;
+                        }
+
                if (status == "Bound") {
                    var nextbutton = document.getElementsByClassName("next");
                    $(nextbutton).addClass("hidden");
@@ -297,6 +313,8 @@
                    $(prevbutton).addClass("hidden");
                    $(prevbutton).hide();
                }
+
+               
            } else if (stepNumber === 2) {
                if (!$('#agreementAccept').is(":checked")) {
                    document.getElementById("advisoryModal").hidden = false;
