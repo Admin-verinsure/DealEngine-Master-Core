@@ -64,7 +64,9 @@
                        var element = null;
                        for (var e = 0; e < form.length; e++) {
                            try {
-                               element = document.getElementById(form[e].id);
+                               if (form[e].id != "") {
+                                   element = document.getElementById(form[e].id);
+                               }                               
                            }
                            catch (ex) {
                                //will have to add further function for forms with added elements
@@ -229,44 +231,64 @@
                         var prodname = data;
                         var CoverOptions = new Array(prodname.length);
                         for (var i = 0; i < prodname.length; i++) {
-                            var ProdName = prodname[i];
-                            var queryselector = ""+"input[name=\'" + ProdName + "\']:checked";
+                               var ProdName = prodname[i];
+                            var queryselector = "" + "input[name=\'" + ProdName + "\']:checked";
                             var optionsselected = $(queryselector).val();
+                            var producttable = "[id='" + ProdName + "'] tr";
+                            var isvalid = 0;
+                            //var jhjk = '"[id='"+ProdName +"']' tr";
+                             $(producttable).each(function () {
+                                   debugger;
+                                 var $tds = $(this).find('td'),
+                                     value = $tds.eq(5).text().trim();
+                                 if (value != "") {
+                                     var dependoption = "" + "input[name='" + value + "']:checked";
+                                     var dependendoptionsselected = $(dependoption).val();
+                                     if (dependendoptionsselected == "None" && optionsselected != "None") {
+                                         alert("You cannot have " + ProdName + "Without " + value);
+                                         isvalid ++;
+                                         return false;
+                                     }
+                                 }
+                             });
                             CoverOptions[i] = optionsselected;
                         }
-                        var progId = $('#ClientProgrammeId').val();
-                        var postData = { Answers: CoverOptions, ProgrammeId: progId };                        
 
-                        $.ajax({
-                            url: '@Url.Action("SaveCoverOptions", "Information")',
-                            type: "POST",
-                            data: postData
-                        })
-                            .done(function (data) {
+                        if (isvalid != 0) {
+                            var progId = $('#ClientProgrammeId').val();
+                            var postData = { Answers: CoverOptions, ProgrammeId: progId };
+
+                            $.ajax({
+                                url: '@Url.Action("SaveCoverOptions", "Information")',
+                                type: "POST",
+                                data: postData
                             })
-                            .fail(function (a, s, d) {
-                                alert("Unable to save.");
-                            });
-
+                                .done(function (data) {
+                                })
+                                .fail(function (a, s, d) {
+                                    alert("Unable to save.");
+                                });
+                        }
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         alert("There was an error getting ProductName.");
                     });
 
-               $.ajax({
-                   url: '@Url.Action("QuoteToAgree", "Information")',
-                   type: "GET",
-                   data: postdata
-               })
-                   .done(function (url) {
-                       $("#agreementDeclarationView").load(url, function () {
-                           $('#getAgreementDecModal').hide();
-                       });
+               if (isvalid != 0) {
+                   $.ajax({
+                       url: '@Url.Action("QuoteToAgree", "Information")',
+                       type: "GET",
+                       data: postdata
                    })
-                   .fail(function (jqXHR, textStatus, errorThrown) {
-                       $('#getAgreementDecModal').hide();
-                       alert("There was an error getting your agreement declaration.");
-                   });
-
+                       .done(function (url) {
+                           $("#agreementDeclarationView").load(url, function () {
+                               $('#getAgreementDecModal').hide();
+                           });
+                       })
+                       .fail(function (jqXHR, textStatus, errorThrown) {
+                           $('#getAgreementDecModal').hide();
+                           alert("There was an error getting your agreement declaration.");
+                       });
+               }
                if (status == "Bound") {
                    var nextbutton = document.getElementsByClassName("next");
                    $(nextbutton).addClass("hidden");
