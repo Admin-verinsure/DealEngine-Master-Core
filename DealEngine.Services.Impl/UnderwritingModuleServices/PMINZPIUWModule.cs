@@ -112,34 +112,6 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
             bool bolrenewalpremiumslowerthanexpiring = false;
             bool bolrenewalpremiumshigherthanexpiring = false;
 
-            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count()>0)
-            {
-                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
-                {
-                    //if (!bolnonpmimember && uisorg.IsCurrentMembership)
-                    //{
-                    //    bolnonpmimember = true;
-                    //}
-                    //if (uisorg.CertType == "Ordinary")
-                    //{
-                    //    intordnumber += 1;
-                    //}
-                    //else if (uisorg.CertType == "PMP")
-                    //{
-                    //    intpmpnumber += 1;
-                    //}
-                    //else if (uisorg.CertType == "CAPM")
-                    //{
-                    //    intcapmnumber += 1;
-                    //}
-                    //else if (uisorg.CertType == "ProjectDirector")
-                    //{
-                    //    intpdnumber += 1;
-                    //}
-                }
-            }
-
-
             if (agreement.ClientInformationSheet.Organisation.Count > 0)
             {
                 foreach (var uisorg in agreement.ClientInformationSheet.Organisation)
@@ -290,6 +262,18 @@ namespace DealEngine.Services.Impl.UnderwritingModuleServices
 
             int intexpiringlimit = 0;
             decimal decexpiringpremium = 0m;
+
+            if (agreement.ClientInformationSheet.PreRenewOrRefDatas.Count() > 0)
+            {
+                foreach (var preRenewOrRefData in agreement.ClientInformationSheet.PreRenewOrRefDatas)
+                {
+                    if (preRenewOrRefData.DataType == "preterm")
+                    {
+                        intexpiringlimit = Convert.ToInt32(preRenewOrRefData.PIBoundLimit);
+
+                    }
+                }
+            }
             //if (agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value != null)
             //{
             //    intexpiringlimit = Convert.ToInt32(agreement.ClientInformationSheet.Answers.Where(sa => sa.ItemName == "Claimexp1").First().Value);
