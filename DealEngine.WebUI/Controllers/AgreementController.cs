@@ -2198,7 +2198,7 @@ namespace DealEngine.WebUI.Controllers
 
         }
 
-        [HttpPost]
+                [HttpPost]
         public async Task<IActionResult> ByPassPayment (IFormCollection collection)
         {
             Guid sheetId = Guid.Empty;
@@ -2270,15 +2270,15 @@ namespace DealEngine.WebUI.Controllers
                                 await _fileService.UploadFile(renderedDoc);
                             }                            
                         }
-                        if (template.FileRendered == false) {
-                                var x = "breakpoint";
+                        if (template.FileRendered == false) 
+                        {
+                                //string y = template.Name;
+                                //var z = template.Id;
+                                //var x = "breakpoint" + template.Name + template.Path + template.DocumentType;
+                                // SystemDocument notRenderedDoc = await _fileService.GetDocument()
                                 // agreement.Documents.Add();
                                 // documents.Add();                            
                         }
-
-
-
-
                     }
 
                     if (programme.BaseProgramme.ProgEnableEmail)
