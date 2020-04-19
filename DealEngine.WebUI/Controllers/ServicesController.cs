@@ -867,19 +867,14 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchLocationStreet(Guid answerSheetId, string street)
         {
-            LocationViewModel model = new LocationViewModel();
+            
             User user = null;
 
             try
             {
-                user = await CurrentUser();
-                model.Street = street;
+                user = await CurrentUser();                
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                Location location = await _locationService.GetLocationByStreet(street);
-                if (location != null)
-                {
-                    model = LocationViewModel.FromEntity(location);
-                }
+                LocationViewModel model = new LocationViewModel(sheet);
                 return Json(model);
             }
             catch (Exception ex)
@@ -893,60 +888,57 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> AddLocation(LocationViewModel model)
         {
             User user = null;
+            throw new Exception("form rewrite");
+            //try
+            //{
+            //    if (model == null)
+            //        throw new ArgumentNullException(nameof(model));
+            //    user = await CurrentUser();
+            //    ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
+            //    if (sheet == null)
+            //        throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
 
-            try
-            {
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-                if (sheet == null)
-                    throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+            //    Location location = await _locationService.GetLocationById(model.LocationId);
+            //    if (location == null)
+            //        location = model.ToEntity(user);
+            //    model.UpdateEntity(location);
+            //    var OUList = new List<OrganisationalUnit>();
 
-                Location location = await _locationService.GetLocationById(model.LocationId);
-                if (location == null)
-                    location = model.ToEntity(user);
-                model.UpdateEntity(location);
-                var OUList = new List<OrganisationalUnit>();
+            //    if (sheet.Owner.OrganisationalUnits.Count > 0)
+            //        OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
 
-                if (sheet.Owner.OrganisationalUnits.Count > 0)
-                    OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
+            //    location.OrganisationalUnits = OUList;
+            //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+            //    {
+            //        sheet.Locations.Add(location);
+            //        await uow.Commit();
+            //    }
 
-                location.OrganisationalUnits = OUList;
-                using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-                {
-                    sheet.Locations.Add(location);
-                    await uow.Commit();
-                }
+            //    model.LocationId = location.Id;
 
-                model.LocationId = location.Id;
-
-                return Json(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }                        
+            //    return Json(model);
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+            //    return RedirectToAction("Error500", "Error");
+            //}                        
         }
 
         [HttpPost]
         public async Task<IActionResult> GetLocation(Guid answerSheetId, Guid locationId)
         {
-            LocationViewModel model = new LocationViewModel();
+            
             User user = null;
 
             try
             {
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
+                LocationViewModel model = new LocationViewModel(sheet);
                 Location location = sheet.Locations.FirstOrDefault(loc => loc.Id == locationId);
-                if (location != null)
-                {
-                    model = LocationViewModel.FromEntity(location);
-                    model.AnswerSheetId = answerSheetId;
-                    //model.SelectedOrganisationalUnits = location.OrganisationalUnits.Select(ou => ou.Id).ToArray();
-                }
+                model.Locations.Add(location);
+
                 return Json(model);
             }
             catch (Exception ex)
@@ -1089,7 +1081,7 @@ namespace DealEngine.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetLocationList(Guid answerSheetId)
         {
-            List<LocationViewModel> models = new List<LocationViewModel>();
+            LocationViewModel model = new LocationViewModel();
             User user = null;
 
             try
@@ -1097,35 +1089,11 @@ namespace DealEngine.WebUI.Controllers
                 user = await CurrentUser();
                 ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
                 foreach (var location in sheet.Locations)
-                    models.Add(LocationViewModel.FromEntity(location));
+                {
+                    model.Locations.Add(location);
+                }
 
-                return new JsonResult(models.ToArray());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-                return RedirectToAction("Error500", "Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetLocationsByCountry(Guid answerSheetId)
-        {
-            User user = null;
-            List<LocationViewModel> models = new List<LocationViewModel>();
-
-            try
-            {
-                user = await CurrentUser();
-                ClientInformationSheet sheet = await _clientInformationService.GetInformation(answerSheetId);
-                List<Location> countries = sheet.Locations.GroupBy(loc => loc.Country)
-                                              .Select(grp => grp.First())
-                                              .ToList();
-
-                foreach (var location in countries)
-                    models.Add(LocationViewModel.FromEntity(location));
-
-                return new JsonResult(models.ToArray());
+                return new JsonResult(model.Locations.ToArray());
             }
             catch (Exception ex)
             {
@@ -1478,14 +1446,8 @@ namespace DealEngine.WebUI.Controllers
 
                 foreach (Location loc in waterLocation.OrganisationalUnit.Locations)
                 {
-                    Locations.Add(new LocationViewModel
-                    {
-                        LocationId = loc.Id,
-                        Street = loc.Street
-                    });
-                }
-
-                model.lLocation = Locations;
+                    model.Locations.Add(loc);
+                }                
 
                 return Json(model);
             }
@@ -3661,7 +3623,7 @@ namespace DealEngine.WebUI.Controllers
         public async Task<IActionResult> OUSelected(Guid OUselect)
         {
             OrganisationalUnit orgunit = null;
-            var locations = new List<LocationViewModel>();
+            var location = new LocationViewModel();
             User user = null;
 
             try
@@ -3670,14 +3632,10 @@ namespace DealEngine.WebUI.Controllers
                 orgunit = await _organisationalUnitService.GetOrganisationalUnit(OUselect);
                 foreach (Location ou in orgunit.Locations)
                 {
-                    locations.Add(new LocationViewModel
-                    {
-                        LocationId = ou.Id,
-                        Street = ou.Street
-                    });
+                    location.Locations.Add(ou);
                 }
 
-                return Json(locations);
+                return Json(location);
             }
             catch (Exception ex)
             {

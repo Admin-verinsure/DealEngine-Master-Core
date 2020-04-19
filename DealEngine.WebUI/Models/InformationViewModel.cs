@@ -10,14 +10,15 @@ namespace DealEngine.WebUI.Models
     public class InformationViewModel : BaseViewModel
     {
         public InformationViewModel() { }
-        public InformationViewModel(Domain.Entities.Programme Programme)
+        public InformationViewModel(ClientInformationSheet ClientInformationSheet)
         {
             PMINZEPLViewModel = new PMINZEPLViewModel();
             CLIViewModel = new CLIViewModel();
             PMINZPIViewModel = new PMINZPIViewModel();
             DAOLIViewModel = new DAOLIViewModel();
             ClaimsHistoryViewModel = new ClaimsHistoryViewModel();
-            RevenueDataViewModel = new RevenueDataViewModel(Programme);
+            RevenueDataViewModel = new RevenueDataViewModel(ClientInformationSheet.Programme.BaseProgramme);
+            LocationViewModel = new LocationViewModel(ClientInformationSheet);
         }
         public Domain.Entities.Programme Programme;
         public string CompanyName { get; set; }
@@ -36,7 +37,7 @@ namespace DealEngine.WebUI.Models
         public IEnumerable<VehicleViewModel> RegisteredVehicles { get; set; }
         public IEnumerable<VehicleViewModel> UnregisteredVehicles { get; set; }
         public IEnumerable<OrganisationalUnitViewModel> OrganisationalUnits { get; set; }
-        public IEnumerable<LocationViewModel> Locations { get; set; }
+        public LocationViewModel LocationViewModel { get; set; }
         public IEnumerable<OrganisationViewModel> InterestedParties { get; set; }
         public OrganisationalUnitVM OrganisationalUnitsVM { get; set; }
         public IEnumerable<SelectListItem> ClaimProducts { get; set; }

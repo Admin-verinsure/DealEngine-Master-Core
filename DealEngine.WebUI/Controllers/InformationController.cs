@@ -815,7 +815,6 @@ namespace DealEngine.WebUI.Controllers
                 var organisationalUnits = new List<OrganisationalUnitViewModel>();
                 model.OrganisationalUnitsVM = new OrganisationalUnitVM();
                 model.OrganisationalUnitsVM.OrganisationalUnits = new List<SelectListItem>();
-                var locations = new List<LocationViewModel>();
                 var buildings = new List<BuildingViewModel>();
                 var waterLocations = new List<WaterLocationViewModel>();
                 foreach (OrganisationalUnit ou in sheet.Owner.OrganisationalUnits)
@@ -827,21 +826,6 @@ namespace DealEngine.WebUI.Controllers
                     });
 
                     model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
-
-                    foreach (Location loc in ou.Locations)
-                    {
-                        locations.Add(LocationViewModel.FromEntity(loc));
-
-                        foreach (Building bui in loc.Buildings)
-                        {
-                            buildings.Add(BuildingViewModel.FromEntity(bui));
-                        }
-
-                        foreach (WaterLocation wl in loc.WaterLocations)
-                        {
-                            waterLocations.Add(WaterLocationViewModel.FromEntity(wl));
-                        }
-                    }
                 }
 
                 var interestedParties = new List<OrganisationViewModel>();
@@ -885,7 +869,6 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
-                model.Locations = locations;
                 model.Buildings = buildings;
                 model.WaterLocations = waterLocations;
                 model.InterestedParties = interestedParties;
@@ -1110,11 +1093,6 @@ namespace DealEngine.WebUI.Controllers
                         model.OrganisationalUnitsVM.OrganisationalUnits.Add(new SelectListItem { Text = ou.Name, Value = ou.Id.ToString() });
                     }
 
-                    foreach (Location loc in sheet.Locations)
-                    {
-                        locations.Add(LocationViewModel.FromEntity(loc));
-                    }
-
                     foreach (Building bui in sheet.Buildings)
                     {
                         buildings.Add(BuildingViewModel.FromEntity(bui));
@@ -1162,7 +1140,6 @@ namespace DealEngine.WebUI.Controllers
                     };
 
                     model.OrganisationalUnits = organisationalUnits;
-                    model.Locations = locations;
                     model.Buildings = buildings;
                     model.WaterLocations = waterLocations;
                     model.InterestedParties = interestedParties;
@@ -1551,12 +1528,6 @@ namespace DealEngine.WebUI.Controllers
                     });
                 }
 
-
-                for (var i = 0; i < sheet.Locations.Count(); i++)
-                {
-                    locations.Add(LocationViewModel.FromEntity(sheet.Locations.ElementAtOrDefault(i)));
-                }
-
                 for (var i = 0; i < sheet.Buildings.Count(); i++)
                 {
                     buildings.Add(BuildingViewModel.FromEntity(sheet.Buildings.ElementAtOrDefault(i)));
@@ -1626,7 +1597,6 @@ namespace DealEngine.WebUI.Controllers
                 };
 
                 model.OrganisationalUnits = organisationalUnits;
-                model.Locations = locations;
                 model.Buildings = buildings;
                 //model.Buildings.
                 model.WaterLocations = waterLocations;
@@ -2788,7 +2758,7 @@ namespace DealEngine.WebUI.Controllers
             {
                 user = await CurrentUser();
                 Programme programme = clientProgramme.BaseProgramme;
-                InformationViewModel model = new InformationViewModel(programme)
+                InformationViewModel model = new InformationViewModel(clientProgramme.InformationSheet)
                 {
                     Name = programme.Name,
                     Sections = new List<InformationSectionViewModel>()

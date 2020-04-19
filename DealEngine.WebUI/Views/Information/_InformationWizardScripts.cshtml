@@ -6047,8 +6047,8 @@ async: true
     }
 
 
-     function ModalOUSelected() {
-                var oUselect = OrgUnitModal.options[OrgUnitModal.selectedIndex].value;
+    function ModalOUSelected() {
+        var oUselect = OrgUnitModal.options[OrgUnitModal.selectedIndex].value;
         $.ajax({
         // change back once mono decides to fix
              url: '@Url.Action("OUSelected", "Services")',
@@ -6088,7 +6088,7 @@ async: true
         // change back once mono decides to fix
              url: '@Url.Action("GetOU", "Services")',
              type: "POST",
-             data: JSON.stringify({ OrgId: orgId}),
+             data: $("#tab_1 :input").serialize({ json: true }),
              contentType: "application/json; charset=utf-8"
       })
             .done(function (data) {

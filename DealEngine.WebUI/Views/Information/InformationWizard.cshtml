@@ -143,9 +143,9 @@
                                                                                     <label class="input w100">
                                                                                         <select onchange="addNewLoc()" class="form-control b" id="WaterLocationLocationModal" name="WaterLocationLocation">
                                                                                             <option selected="selected" value="00000000-0000-0000-0000-000000000000">-- Select --</option>
-                                                                                            @foreach (var wloc in Model.Locations)
+                                                                                            @foreach (var wloc in Model.LocationViewModel.Locations)
                                                                                             {
-                                                                                                <option value="@wloc.LocationId">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                                                <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
                                                                                             }
                                                                                             <option value="add">Add Location</option>
                                                                                         </select>
@@ -197,9 +197,9 @@
                                                                                     <label class="input w100">
                                                                                         <select onchange="addNewLoc()" class="form-control b" id="BuildingLocationModal" name="BuildingLocation" required>
                                                                                             <option selected="selected" value="">-- Select --</option>
-                                                                                            @foreach (var wloc in Model.Locations)
+                                                                                            @foreach (var wloc in Model.LocationViewModel.Locations)
                                                                                             {
-                                                                                                <option value="@wloc.LocationId">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
+                                                                                                <option value="@wloc.Id">@string.Join(", ", wloc.Street, wloc.Suburb, wloc.City)</option>
                                                                                             }
                                                                                             <option value="add">Add Location</option>
                                                                                         </select>
@@ -630,9 +630,9 @@
                                                                                         <label class="input cgmodalInput">
                                                                                             <select onchange="addNewTrailerLoc()" class="form-control b" id="VehicleLocationModal" name="VehicleLocation" required>
                                                                                                 <option selected="selected" value="">-- Select --</option>
-                                                                                                @foreach (var tloc in Model.Locations)
+                                                                                                @foreach (var tloc in Model.LocationViewModel.Locations)
                                                                                                 {
-                                                                                                    <option value="@tloc.LocationId">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
+                                                                                                    <option value="@tloc.Id">@string.Join(", ", tloc.Street, tloc.Suburb, tloc.City)</option>
                                                                                                 }
                                                                                                 <option value="add">Add Location</option>
                                                                                             </select>

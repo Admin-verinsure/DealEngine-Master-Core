@@ -109,9 +109,9 @@
                             <label class="input">
                                 <select onchange="addLandLoc()" class="form-control bui" id="BuildingLocation" name="BuildingLocation">
                                     <option selected="selected" value="">-- Select --</option>
-                                    @foreach (var clloc in Model.Locations)
+                                    @foreach (var clloc in Model.LocationViewModel.Locations)
                                     {
-                                        <option value="@clloc.LocationId">@string.Join(", ", clloc.Street, clloc.Suburb, clloc.City)</option>
+                                        <option value="@clloc.Id">@string.Join(", ", clloc.Street, clloc.Suburb, clloc.City)</option>
                                     }
                                     <option value="add">Add Location</option>
                                 </select>
@@ -167,9 +167,9 @@
                             <label class="input">
                                 <select onchange="AddaddLandLoc()" class="form-control bui" id="AddBuildingLocation" name="BuildingLocation">
                                     <option selected="selected" value="">-- Select --</option>
-                                    @foreach (var clloc in Model.Locations)
+                                    @foreach (var clloc in Model.LocationViewModel.Locations)
                                     {
-                                        <option value="@clloc.LocationId">@string.Join(", ", clloc.Street, clloc.Suburb, clloc.City)</option>
+                                        <option value="@clloc.Id">@string.Join(", ", clloc.Street, clloc.Suburb, clloc.City)</option>
                                     }
                                     <option value="add">Add Location</option>
                                 </select>
