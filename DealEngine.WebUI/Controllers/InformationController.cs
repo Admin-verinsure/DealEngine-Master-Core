@@ -2346,7 +2346,6 @@ namespace DealEngine.WebUI.Controllers
                 {
                     var programme = sheet.Programme.BaseProgramme;
                     var reference = await _referenceService.GetLatestReferenceId();
-                    sheet.Answers.FirstOrDefault(i => i.ItemName == "ClientInformationSheet.Status").Value = "Started";
                     await _clientInformationService.SaveAnswersFor(sheet, collection);
                     using (var uow = _unitOfWork.BeginUnitOfWork())
                     {

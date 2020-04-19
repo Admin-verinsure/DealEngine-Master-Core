@@ -62,7 +62,9 @@
                    for (var f = 0; f < formIds.length; f++) {
                        var form = document.getElementById(formIds[f]);
                        var element = null;
+                       debugger;
                        for (var e = 0; e < form.length; e++) {
+                       //for (var e = form.length-1; e > 0; e--) {
                            try {
                                if (form[e].id != "") {
                                    element = document.getElementById(form[e].id);
@@ -553,7 +555,7 @@
 
         $("#accordion").on("accordionactivate", function (e, ui) {
             if (ui.oldPanel != null) {          
-            $.ajax({
+            @*$.ajax({
                 url: '@Url.Action("SaveInformation", "Information")',
                 type: "POST",                
                 data: $("#tab_1 :input").serialize({ json:true })
@@ -579,7 +581,7 @@
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     debugger;
                alert("Unable to save....");
-           });
+           });*@
         }
     });
 
