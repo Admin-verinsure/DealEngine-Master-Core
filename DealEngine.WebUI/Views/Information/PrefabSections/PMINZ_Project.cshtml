@@ -403,7 +403,7 @@
         var projectManager = document.querySelectorAll('input[name="AddProjectManager"]:checked');
         var projectCoordinator = document.querySelectorAll('input[name="AddProjectCoordinator"]:checked');
         var projectEngineer = document.querySelectorAll('input[name="AddProjectEngineer"]:checked');
-        var proddata = data + "&ProjectDirector=" + projectDirector + "&ProjectManager=" + projectManager + "&ProjectCoordinator=" + projectCoordinator + "&ProjectEngineer=" + projectEngineer;
+        var proddata = data + "&ProjectDirector=" + $(projectDirector).val() + "&ProjectManager=" +  $(projectManager).val() + "&ProjectCoordinator=" +  $(projectCoordinator).val() + "&ProjectEngineer=" +  $(projectEngineer).val();
            
         $.ajax({
 		// change back once mono decides to fix
@@ -432,7 +432,7 @@
         var projectManager = document.querySelectorAll('input[name="EditProjectManager"]:checked');
         var projectCoordinator = document.querySelectorAll('input[name="EditProjectCoordinator"]:checked');
         var projectEngineer = document.querySelectorAll('input[name="EditProjectEngineer"]:checked');
-        var proddata = data + "&ProjectDirector=" + projectDirector + "&ProjectManager=" + projectManager + "&ProjectCoordinator=" + projectCoordinator + "&ProjectEngineer=" + projectEngineer;
+        var proddata = data + "&ProjectDirector=" + $(projectDirector).val() + "&ProjectManager=" +  $(projectManager).val() + "&ProjectCoordinator=" +  $(projectCoordinator).val() + "&ProjectEngineer=" +  $(projectEngineer).val();
            
         $.ajax({
 		// change back once mono decides to fix
@@ -476,10 +476,10 @@
         $('#EditPMINZContractValue').val(data.constructionValue);
         $('#EditPMINZFees').val(data.fees);
         $('#EditPMINZDuration').val(data.projectDuration);
-        $('input[name="ProjectDirector"]').prop('checked', data.projectDirector);
-        $('input[name="ProjectManager"]').prop('checked', data.projectManager);
-        $('input[name="ProjectCoordinator"]').prop('checked', data.projectCoordinator);
-        $('input[name="ProjectEngineer"]').prop('checked', data.projectEngineer);
+        $('#EditPMINZProjectDirector').prop('checked', data.projectDirector);
+        $('#EditPMINZProjectManager').prop('checked', data.projectManager);
+        $('#EditPMINZProjectCoordinator').prop('checked', data.projectCoordinator);
+        $('#EditPMINZProjectEngineer').prop('checked', data.projectEngineer);
         $('#getDetailsModal').hide();
         UpdateChosen();
         });
