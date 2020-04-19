@@ -77,7 +77,7 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.TextAreaFor(m => m.LocationViewModel.StreetDetails, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextAreaFor(m => m.LocationViewModel.Street, new { id = "streetdetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.DropDownListFor(m => m.LocationViewModel.LocationTypes, Model.LocationViewModel.LocationTypes, new { id = "locationtypesoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.DropDownListFor(m => m.LocationViewModel.LocationType, Model.LocationViewModel.LocationType, new { id = "locationtypesoptions", @class = "custom-select", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.TextBoxFor(m => m.LocationViewModel.CityDetails, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextBoxFor(m => m.LocationViewModel.City, new { id = "citydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.TextBoxFor(m => m.LocationViewModel.CountryDetails, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextBoxFor(m => m.LocationViewModel.Country, new { id = "countrydetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
@@ -125,16 +125,14 @@
                             </label>
                         </div>
                         <div class="col-6">
-                            @Html.TextBoxFor(m => m.LocationViewModel.CommonNameDetails, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
+                            @Html.TextBoxFor(m => m.LocationViewModel.CommonName, new { id = "commonnamedetails", @class = "form-control", @onchange = "OnChange(this.id, this.name)", @required = "" })
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <a class="btn btn-sm btn-primary text-light">  Submit  </a>
+                    <a class="btn btn-sm btn-primary text-light" onclick="AddLocation()">  Submit  </a>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>

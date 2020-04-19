@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Linq.Dynamic;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -885,44 +886,52 @@ namespace DealEngine.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddLocation(LocationViewModel model)
+        public async Task<IActionResult> AddLocation(IFormCollection collection)
         {
             User user = null;
-            throw new Exception("form rewrite");
-            //try
-            //{
-            //    if (model == null)
-            //        throw new ArgumentNullException(nameof(model));
-            //    user = await CurrentUser();
-            //    ClientInformationSheet sheet = await _clientInformationService.GetInformation(model.AnswerSheetId);
-            //    if (sheet == null)
-            //        throw new Exception("Unable to save Location - No Client information for " + model.AnswerSheetId);
+            try
+            {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
+                user = await CurrentUser();
+                ClientInformationSheet sheet = await _clientInformationService.GetInformation(Guid.Parse(collection["ClientInformationSheet.Id"]));
+                var locationForm = collection.Keys.Where(s => s.StartsWith("LocationViewModel", StringComparison.CurrentCulture));
+                Location location = new Location(user);
+                var type = location.GetType();
+                foreach(var keyField in locationForm)
+                {
+                    var propertyName = keyField.Split('.').ToList();
+                    var property = type.GetProperty(propertyName.LastOrDefault());
+                    property.SetValue(location, collection[keyField].ToString());
+                }
+                var OUList = sheet.Owner.OrganisationalUnits.FirstOrDefault();
+                location.OrganisationalUnits.Add(OUList);
+                sheet.Locations.Add(location);
+                await _clientInformationService.UpdateInformation(sheet);
+                //if (location == null)
+                //    location = model.ToEntity(user);
+                //model.UpdateEntity(location);
+                //var OUList = new List<OrganisationalUnit>();
 
-            //    Location location = await _locationService.GetLocationById(model.LocationId);
-            //    if (location == null)
-            //        location = model.ToEntity(user);
-            //    model.UpdateEntity(location);
-            //    var OUList = new List<OrganisationalUnit>();
+                //if (sheet.Owner.OrganisationalUnits.Count > 0)
+                //    OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
 
-            //    if (sheet.Owner.OrganisationalUnits.Count > 0)
-            //        OUList.Add(sheet.Owner.OrganisationalUnits.ElementAtOrDefault(0));
+                //location.OrganisationalUnits = OUList;
+                //using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
+                //{
+                //    sheet.Locations.Add(location);
+                //    await uow.Commit();
+                //}
 
-            //    location.OrganisationalUnits = OUList;
-            //    using (IUnitOfWork uow = _unitOfWork.BeginUnitOfWork())
-            //    {
-            //        sheet.Locations.Add(location);
-            //        await uow.Commit();
-            //    }
+                //model.LocationId = location.Id;
 
-            //    model.LocationId = location.Id;
-
-            //    return Json(model);
-            //}
-            //catch (Exception ex)
-            //{
-            //    await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
-            //    return RedirectToAction("Error500", "Error");
-            //}                        
+                return Json(location);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLoggingService.LogWarning(_logger, ex, user, HttpContext);
+                return RedirectToAction("Error500", "Error");
+            }
         }
 
         [HttpPost]

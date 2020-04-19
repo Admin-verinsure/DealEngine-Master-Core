@@ -1,5 +1,4 @@
 ﻿<script type="text/javascript">
-    @await Html.PartialAsync("_DataTableScripts")
     $(function () {
         //get all forms on load
         var forms = document.getElementsByClassName('is-valid');
@@ -334,6 +333,7 @@
             SetCurrentTab('RevenueTabs' + tab);
         }
     }
+    
 </script>
 <style>
     .required:after {

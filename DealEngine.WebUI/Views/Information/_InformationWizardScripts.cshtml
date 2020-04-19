@@ -59,7 +59,8 @@
                    for (var i = 0; i < forms.length; i++) {
                        formIds.push(forms[i].id);
                    }
-                   for (var f = 0; f < formIds.length; f++) {
+                   debugger;
+                   for (var f = formIds.length; f > 0; f--) {
                        var form = document.getElementById(formIds[f]);
                        var element = null;
                        for (var e = 0; e < form.length; e++) {

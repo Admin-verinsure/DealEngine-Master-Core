@@ -10,7 +10,7 @@ namespace DealEngine.WebUI.Models
 		public LocationViewModel(ClientInformationSheet ClientInformationSheet)
 		{
 			Locations = GetLocations(ClientInformationSheet);
-			LocationTypes = GetLocationTypes();
+			LocationType = GetLocationTypes();
 
 		}
 
@@ -70,11 +70,11 @@ namespace DealEngine.WebUI.Models
 		}
 
 		public IList<Location> Locations { get; set; }
-		public string StreetDetails { get; set; }
-		public string CityDetails { get; set; }
-		public string CountryDetails { get; set; }
-		public string CommonNameDetails { get; set; }
-        public IList<SelectListItem> LocationTypes { get; set; }
+		public string Street { get; set; }
+		public string City { get; set; }
+		public string Country { get; set; }
+		public string CommonName { get; set; }
+        public IList<SelectListItem> LocationType { get; set; }
     }
 
 }
