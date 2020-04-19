@@ -54,6 +54,9 @@
 
            if (stepNumber === 0) {
                if (informationsheetstatus != "Submitted") {
+
+
+                   //<--!Boostrap validation method
                    var forms = document.getElementsByClassName('needs-validation');   //invalid forms            
                    var formIds = [];
                    for (var i = 0; i < forms.length; i++) {
@@ -63,10 +66,11 @@
                        var form = document.getElementById(formIds[f]);
                        var element = null;
                        for (var e = 0; e < form.length; e++) {
+                           //for (var e = form.length-1; e > 0; e--) {
                            try {
                                if (form[e].id != "") {
                                    element = document.getElementById(form[e].id);
-                               }                               
+                               }
                            }
                            catch (ex) {
                                //will have to add further function for forms with added elements
@@ -92,8 +96,47 @@
                        form.classList.remove("needs-validation");
                        form.classList.add("was-validated");
                    }
-                   event.preventDefault();
 
+                   //hardcoded shared revenue
+
+                   var territories = document.getElementById('territories');
+                   var activities = document.getElementById('activities');
+                   var hasItem = false;
+                   for (var i = 0; i < territories.options.length; i++) {
+                       if (territories.options[i].selected === true) {
+                           hasItem = true;
+                           break;
+                       }
+                   }
+                   if (!hasItem) {
+                       event.preventDefault();
+                       event.stopPropagation();
+                       var accordianId = "Fee Income / Activities";
+                       $("[id='" + accordianId + "']").trigger("click");
+                       //SetCurrentTab('RevenueTabs' + 1);
+                       window.alert("Please complete this section " + accordianId);
+                       throw accordianId + " incomplete";
+                   }
+                   hasItem = false;
+                   for (var i = 0; i < activities.options.length; i++) {
+                       if (activities.options[i].selected === true) {
+                           hasItem = true;
+                           break;
+                       }
+                   }
+                   if (!hasItem) {
+                       event.preventDefault();
+                       event.stopPropagation();
+                       var accordianId = "Fee Income / Activities";
+                       $("[id='" + accordianId + "']").trigger("click");
+                       //SetCurrentTab('RevenueTabs' + 1);
+                       window.alert("Please complete this section " + accordianId);
+                       throw accordianId + " incomplete";
+                   }
+
+                   //!-->
+
+                   event.preventDefault();
                    if (stepDirection == "forward") {
                        var claim1 = $('#Claimexp1').val();
                    var claim2 = $('#Claimexp2').val();
@@ -577,7 +620,7 @@
                 data: $("#tab_1 :input").serialize({ json:true })
                 //data: $("#myForm").serialize({ json:true })
             })
-           .done(function (data) {*@
+           .done(function (data) {
                $('#tblBuilding').trigger('reloadGrid');
                $('#Principal,Partners or Directors').trigger('reloadGrid');
                $('#tblWaterLocation').trigger('reloadGrid');
@@ -593,11 +636,11 @@
                $('#BoatLandLocation').trigger('chosen:updated');
                $('#tblBusinessContract').trigger('reloadGrid');
                $('#PrincipalDirectors').trigger('reloadGrid');
-           //})
-           //     .fail(function (jqXHR, textStatus, errorThrown) {
-           //         debugger;
-           //    alert("Unable to save....");
-           //});
+           })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+               alert("Unable to save....");
+           });*@
         }
     });
 
