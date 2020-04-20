@@ -148,10 +148,22 @@
                    var Isboatexist = document.querySelector('[aria-describedby="tblBoat_BoatName"]') !== null;
                    var IsboatNamecount = 0;
                    var Isnamedpartyexist = document.querySelector('[aria-describedby="PMINZNamedParties_OrganisationType"]') !== null;
-                   var Isnamedpartycount = 0;
-                   var value = "";
-                   debugger;
-                   
+                       var Isnamedpartycount = 0;
+                       var IsLocationCount = 0;
+                       var value = "";
+                       debugger;
+
+
+                       $('#tblLocation tr').each(function () {
+                           debugger;
+                           var $tds = $(this).find('td'),
+                               value = $tds.eq(2).text().toString();
+
+                           if (value != "") {
+                               IsLocationCount++;
+                           }
+                       });
+
 
                    $('#PMINZNamedParties tr').each(function () {
                        debugger;
@@ -190,7 +202,14 @@
                        $("[id='Insured Details / Named Parties']").trigger("click");
                        return false;
 
-                   }else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) &&  informationsheetstatus != "Bound") {
+                   }
+                   else  if (IsLocationCount == 0 && (informationsheetstatus != "Bound")) {
+
+                       window.alert("Please Add Atleast One Location  ");
+                       $("[id='Location']").trigger("click");
+                       return false;
+
+                   }else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
                        window.alert("Please Add Claims Experience to proceed for policy. ");
 

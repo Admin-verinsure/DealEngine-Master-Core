@@ -36,6 +36,7 @@
         var value = obj.value;
         var dataRule = obj.getAttribute('data-rule');
         var dataItem = obj.getAttribute('data-item');
+        var submitItem = obj.getAttribute('data-validateTable');
         var Tag = obj.tagName;
         obj.classList.remove("is-up");
 
@@ -49,7 +50,7 @@
             InputValidation(obj, value);
         }
         //trigger
-        TriggerHandler(Name, value, dataRule, dataItem);
+        TriggerHandler(Name, value, dataRule, dataItem, submitItem);
     }
 
     function InputValidation(obj, value) {
@@ -91,7 +92,7 @@
         }
     }
 
-    function TriggerHandler(Name, Value, Rule, DataItem) {
+    function TriggerHandler(Name, Value, Rule, DataItem, SubmitItem) {
         try {
             //all rules go here
             DefaultRule(Value, Name);
@@ -147,6 +148,25 @@
                 var ids = DataItem.split(',');
                 var element = document.getElementById(ids[1]);
                 DefaultRule(Value, element.name);
+            }
+            if (Rule === "ValidateOnSubmit") {
+                var tempVal = Value
+                debugger;
+                if (tempVal == "1") {
+                    obj.setAttribute('data-validateTable', SubmitItem);
+                    Value = "2";
+                }
+                debugger;
+                if (tempVal == "2") {
+                    var hasAtt = obj.querySelectorAll('data-validateTable');
+                    debugger;
+                    if (hasAtt != null) {
+                        obj.removeAttribute('data-validateTable');
+                    }
+                    Value = "1";
+                }
+                debugger;
+                DefaultRule(Value, Name);
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
