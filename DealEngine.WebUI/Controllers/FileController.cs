@@ -16,6 +16,7 @@ using HtmlToOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace DealEngine.WebUI.Controllers
 {
@@ -73,20 +74,42 @@ namespace DealEngine.WebUI.Controllers
                     {
                         // Testing HtmlToOpenXml
                         string html = _fileService.FromBytes(doc.Contents);
+                        string oldhtml = html;
+
+
+
                         using (MemoryStream virtualFile = new MemoryStream())
                         {
                             //using (WordprocessingDocument wordDocument = WordprocessingDocument.Open(virtualFile, false))
                             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(virtualFile, WordprocessingDocumentType.Document))
                             {
                                 // Add a main document part. 
-                                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();                 
                                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
+                                string showBorder = "<figure class=\"table\"><table style=\"border-bottom:solid;border-left:solid;border-right:solid;border-top:solid;\"><tbody><tr>";
+                                string noBorder = "<figure class=\"table\"><table><tbody><tr>";
 
+                                // Create document with a "main part" to it. No data has been added yet.
+                                if (html.Contains(showBorder)){
+                                    html = html.Replace(showBorder, "<table width=\"100%\" border=\"1\"><tbody><tr>");
+                                    // NEED TO DO CLOSING TAGS TOO      align=\"center\"     <tr style=\"font-weight:bold\">
+                                }
+                                if (html.Contains(noBorder)){
+                                    html = html.Replace(noBorder, "<table width=\"100%\" border=\"0\"><tbody><tr>");
+                                    // NEED TO DO CLOSING TAGS TOO      align=\"center\"     <tr style=\"font-weight:bold\">
+                                }
+                                
+                                // Create a new html convertor with input mainPart
                                 HtmlConverter converter = new HtmlConverter(mainPart);
+                                
+                                // Need to figure out how to add classes to style the document... (adding to the top of HTML document doesn't work, also lots of the table styling css doesn't actually work. Just the old way works where style isn't specified e.g <table width=\"100%\" border=\"0\"><tr style=\"font-weight: bold\"><td>Studio</td><td colspan=\"2\")
+                                // converter.HtmlStyles.DefaultStyle = converter.HtmlStyles.GetStyle("testClass");
+                                // converter.RefreshStyles();
+                                
                                 converter.ImageProcessing = ImageProcessing.AutomaticDownload;
                                 converter.ParseHtml(html);
                             }
-                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".doc");
+                            return File(virtualFile.ToArray(), MediaTypeNames.Application.Octet, doc.Name + ".docx");
                         }
                     }
                 }

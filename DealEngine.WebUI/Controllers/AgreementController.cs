@@ -2258,7 +2258,7 @@ namespace DealEngine.WebUI.Controllers
                     {
                         doc.Delete(user);
                     }
-                                       
+
                     foreach (SystemDocument template in agreeTemplateList)
                     {
                         //render docs except invoice
@@ -2281,6 +2281,12 @@ namespace DealEngine.WebUI.Controllers
                                 documents.Add(renderedDoc);
                                 await _fileService.UploadFile(renderedDoc);
                             }                            
+                        }
+                        if (template.FileRendered == false) 
+                        {
+                            SystemDocument notRenderedDoc = await _fileService.GetDocumentByID(template.Id);
+                            agreement.Documents.Add(notRenderedDoc);
+                            documents.Add(notRenderedDoc);
                         }
                     }
 

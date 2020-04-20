@@ -44,6 +44,8 @@
                             <th>Type</th>
                             <th>Owner</th>
                             <th>Actions</th>
+                            <th>Downloads</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -55,19 +57,25 @@
                                 <td>@doc.Type</td>
                                 <td>@doc.Owner</td>
                                 <td>
-                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)">Get Html</a>
-                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx">Get Docx</a>
+                                    @*@if (doc.Attachment == "")*@
+                                    <a class="btn btn-primary btn-xs" style="color:white;"><i class="fa fa-eye"></i> View</a>
+
                                     @if (User.HasClaim("EditManageDocuments", "EditManageDocuments"))
                                     {
                                         @if (productId == "")
                                         {
-                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id">Update</a>
+                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id"><i class="fa fa-edit"></i> Edit</a>
                                         }
                                         else
                                         {
-                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId">Update</a>
+                                            <a class="btn btn-primary btn-xs" href="/File/CreateDocument?id=@doc.Id&productId=@doc.ProductId"><i class="fa fa-edit"></i> Edit</a>
                                         }                                        
-                                    }
+                                    }                            
+                                    <a class="btn btn-danger btn-xs" href="/File/DeleteDocument?id=@doc.Id"><i class="fa fa-trash"></i> Delete</a>                                
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)"><i class="fa fa-download"></i> Get Html</a>
+                                    <a class="btn btn-primary btn-xs" href="/File/GetDocument/@(doc.Id)?format=docx"><i class="fa fa-download"></i> Get Docx</a>
                                 </td>
                             </tr>
                         }
