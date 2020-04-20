@@ -212,6 +212,10 @@ namespace DealEngine.WebUI.Controllers
 
                         await _fileRepository.AddAsync(newFile);
 
+                        Guid productID = Guid.Parse(model.Product);
+                        Product myProduct = await _iproductService.GetProductById(productID);                        
+                        myProduct.Documents.Add(newFile);
+                        await _iproductService.UpdateProduct(myProduct);
                     }
 
                     catch (Exception Ex)

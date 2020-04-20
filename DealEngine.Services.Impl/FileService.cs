@@ -117,6 +117,11 @@ namespace DealEngine.Services.Impl
 			return await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.Name == documentName);
         }
 
+        public async Task<Document> GetDocumentByID(Guid documentID)
+        {
+            return await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.Id == documentID);
+        }
+
         public async Task<Document> GetDocumentByType(Organisation primaryOrganisation, int DocumentType)
         {
             Document document = await _documentRepository.FindAll().FirstOrDefaultAsync(i => i.OwnerOrganisation == primaryOrganisation && i.DocumentType == DocumentType);

@@ -106,7 +106,7 @@
                     </div>
                     <div class="modal-footer" style="display:flex;">
                         <label for="selImg" style="float:left;">Selected Image: </label>
-                        <input type="text" id="selImg" name="selImg" style="float:left;width:44%;margin-left:.5rem;margin-right:1rem;">
+                        <input type="text" id="selImg" name="selImg" value="" style="float:left; width:44%; margin-left:.5rem; margin-right:1rem;">
                         <button id="importImg" type="button" class="btn btn-primary" data-dismiss="modal" onclick="importImg()">Import</button>
                     </div>
                 </div>
@@ -196,9 +196,23 @@
          });
     });
 
+    
+
     $(window).on("load", function () {
         debugger;
           $("#documentType").val("@Model.DocumentType");
     });
+
+    function selectImg(image) {
+        var imgName = image.getAttribute('name');
+        $('#selImg').val(imgName);
+    }
+
+    function importImg() {
+        var triggerMutationObserver = $('#importImg').val();
+        triggerMutationObserver += "1";
+        $('#importImg').val(triggerMutationObserver);
+    }
+
     </script>
 }
