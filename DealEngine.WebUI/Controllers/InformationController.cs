@@ -1686,7 +1686,13 @@ namespace DealEngine.WebUI.Controllers
                         }
                         if (typeof(DateTime) == property.PropertyType)
                         {
-                            property.SetValue(reflectModel, DateTime.Parse(answer.Value));
+                            var defaultDate = DateTime.Parse("01/01/0001");
+                            var date = DateTime.Parse(answer.Value);
+                            if(date == defaultDate)
+                            {
+                                date = DateTime.Now;
+                            }
+                            property.SetValue(reflectModel, date);
                         }
                     }
                 }
@@ -1701,7 +1707,7 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if(revenueData != null)
+                if(revenueData.Activities.Count != 0 || revenueData.Activities.Count != 0)
                 {
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
