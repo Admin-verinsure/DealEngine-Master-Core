@@ -37,20 +37,20 @@
         var dataRule = obj.getAttribute('data-rule');
         var dataItem = obj.getAttribute('data-item');
         var submitItem = obj.getAttribute('data-validateTable');
-        var Tag = obj.tagName;
+        var tag = obj.tagName;
         obj.classList.remove("is-up");
 
         //validation
-        if (Tag == "SELECT") {
+        if (tag == "SELECT") {
             SelectValidation(obj, value);
-        } else if (Tag == "INPUT") {
+        } else if (tag == "INPUT") {
             InputValidation(obj, value);
         }
-        else if (Tag == "TEXTAREA") {
+        else if (tag == "TEXTAREA") {
             InputValidation(obj, value);
         }
         //trigger
-        TriggerHandler(Name, value, dataRule, dataItem, submitItem);
+        TriggerHandler(obj, Name, value, dataRule, dataItem, submitItem);
     }
 
     function InputValidation(obj, value) {
@@ -92,7 +92,7 @@
         }
     }
 
-    function TriggerHandler(Name, Value, Rule, DataItem, SubmitItem) {
+    function TriggerHandler(obj, Name, Value, Rule, DataItem, SubmitItem) {
         try {
             //all rules go here
             DefaultRule(Value, Name);
@@ -158,11 +158,7 @@
                 }
                 debugger;
                 if (tempVal == "2") {
-                    var hasAtt = obj.querySelectorAll('data-validateTable');
-                    debugger;
-                    if (hasAtt != null) {
-                        obj.removeAttribute('data-validateTable');
-                    }
+                    obj.removeAttribute('data-validateTable');
                     Value = "1";
                 }
                 debugger;
@@ -170,7 +166,8 @@
             }
         } catch (ex) {
             //these rules need to be re-run regardless of the catch
-            //console.log(ex);
+            
+            console.log(ex);
             ////we expect this to fail for form elements with no change events but could use this later
         }
     }
