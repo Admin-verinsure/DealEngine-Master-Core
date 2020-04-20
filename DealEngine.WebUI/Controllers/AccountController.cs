@@ -326,9 +326,8 @@ namespace DealEngine.WebUI.Controllers
                     if (identityResult.Succeeded)
                     {
                         deUser = await _userManager.FindByNameAsync(userName);
-                        var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");
-                        if (user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
-                        //if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
+                        var isInRole = await _userManager.IsInRoleAsync(deUser, "Client");                        
+                        if (!user.PrimaryOrganisation.IsBroker && !user.PrimaryOrganisation.IsInsurer && !user.PrimaryOrganisation.IsTC && !isInRole)
                         {
                             var hasRole = await _roleManager.RoleExistsAsync("Client");
                             if (hasRole)
