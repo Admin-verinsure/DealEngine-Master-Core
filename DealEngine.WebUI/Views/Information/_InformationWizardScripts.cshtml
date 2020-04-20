@@ -201,15 +201,8 @@
                        window.alert("Please Add Atleast One Project Personnel with complete information to proceed for policy  ");
                        $("[id='Insured Details / Named Parties']").trigger("click");
                        return false;
-
-                   }
-                   else  if (IsLocationCount == 0 && (informationsheetstatus != "Bound")) {
-
-                       window.alert("Please Add Atleast One Location  ");
-                       $("[id='Location']").trigger("click");
-                       return false;
-
-                   }else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Bound") {
+                      
+                   } else if (!validateClaim(claim1, claim2, claim3, claim4, claim5) && informationsheetstatus != "Bound") {
                        //$("#Vessel").trigger("click");
                        window.alert("Please Add Claims Experience to proceed for policy. ");
 
