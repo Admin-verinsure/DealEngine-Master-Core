@@ -1701,7 +1701,7 @@ namespace DealEngine.WebUI.Controllers
         {
             try
             {
-                if(revenueData != null)
+                if(revenueData.Activities.Count> 0 || revenueData.Territories.Count > 0)
                 {
                     model.RevenueDataViewModel = _mapper.Map<RevenueDataViewModel>(revenueData);
                     model.RevenueDataViewModel.AdditionalActivityViewModel = _mapper.Map<AdditionalActivityViewModel>(revenueData.AdditionalActivityInformation);
