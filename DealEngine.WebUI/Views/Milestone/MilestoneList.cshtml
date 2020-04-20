@@ -34,14 +34,14 @@
                                 </td>
 
                                 <td>
-                                    @foreach (var Programme in vm.Programmes)
-                                    {
-                                        <select class="form-control b" id="milestoneprogramme" required>
-                                            <option selected="selected" value="">-- Select --</option>
+                                    <select class="form-control b" id="milestoneprogramme" required>
+                                        <option selected="selected" value="">-- Select --</option>
+                                        @foreach (var Programme in vm.Programmes)
+                                        {
                                             <option value="@Programme.Id.ToString()"> @Programme.Name</option>
-                                        </select>
-                                    }
-                                </td>
+                                        }
+                                    </select>
+                                    </td>
 
                                 <td>
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
